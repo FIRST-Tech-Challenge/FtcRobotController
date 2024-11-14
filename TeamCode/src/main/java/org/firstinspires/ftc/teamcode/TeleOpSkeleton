@@ -8,7 +8,7 @@
     import com.qualcomm.robotcore.hardware.Servo;
     import com.qualcomm.robotcore.util.ElapsedTime;
 
-// TODO - change variable names to 2025 robot
+// Pending - change variable names to 2025 robot
 // TODO - adjust static variables for new mecanum drive hardware
 // TODO - fix Mecanum motor assignments and code for normal operations
 
@@ -20,17 +20,17 @@
 
     public class TeleOpSkeleton extends LinearOpMode {
         // Final variables (Meaning they don't change)
-        *******************************OUTDATED*****************************************************************************
+        //*******************************OUTDATED*****************************************************************************
         //static final double COUNTS_PER_MOTOR_REV = 288;    // eg: TETRIX Motor Encoder
         //static final double DRIVE_GEAR_REDUCTION = 1;      // This is < 1.0 if geared UP
         //static final double WHEEL_DIAMETER_INCHES = .5;    // For figuring circumference
         //static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-        *********************************************************************************************************************
+        //*********************************************************************************************************************
 
-        static final int MAX_LIFT_HEIGHT = 4285;
+        static final int MAX_LIFT_HEIGHT = 1000; //Start Low and test and adjust from there
 
         //Creates Timer cvariables to keep track of time passed
-        private ElapsedTime ClawTime = new ElapsedTime();        // Sets up timer functions
+        private ElapsedTime IntakeClawTime = new ElapsedTime();        // Sets up timer functions
         private ElapsedTime LiftTime = new ElapsedTime();
         private ElapsedTime runtime = new ElapsedTime();          // Sets up a timer function
         private ElapsedTime runtime2 = new ElapsedTime();         // Sets up a timer function
@@ -43,8 +43,8 @@
         private double denominator = 1;        // declare motor power calculation variable
         private int precision = 2;             // chassis motor power reduction factor 1=full 2=1/2 power 4=1/4 power
         private double liftPower = 1;          // declare lift motor power variable *******
-        private boolean IntakeClosed = false;     // Claw state variable
-        private boolean OuttakeClosed = false;     // Claw state variable
+        private boolean IntakeClawClosed = false;     // Claw state variable
+        private boolean OuttakeClawClosed = false;     // Claw state variable
         private int LiftTarget = 0;            // Lift target position variable
 
         @Override
@@ -52,30 +52,43 @@
             // Declare our motors
             // Make sure your ID's match your configuration
 
-            DcMotor Fleft = hardwareMap.dcMotor.get("Front Left");    // Front left wheel
-            DcMotor Bleft = hardwareMap.dcMotor.get("Back Left");    // Back left wheel
-            DcMotor Fright = hardwareMap.dcMotor.get("Front Right");  // Front right wheel
-            DcMotor Bright = hardwareMap.dcMotor.get("Back Right");  // Back right wheel
-            Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");
-            Servo OuttakeClaw = hardwareMap.servo.get("Outtake Claw");
+            //*********************************** MOTORS ************************************************
+            DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right"); // Front right wheel - Chub Port 0
+            DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");  // Back right wheel - Chub Port 1
+            DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");    // Back left wheel - Chub Port 2
+            DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");  // Front left wheel - Chub Port 3
 
-            DcMotor LeftLiftMotor = hardwareMap.dcMotor.get("Left Lift");    // Left lift
-            DcMotor RightLiftMotor = hardwareMap.dcMotor.get("Right Lift");   // Right lift
+            DcMotor IntakeRight = hardwareMap.dcMotor.get("Intake Right"); // Ehub Port 0
+            DcMotor IntakeLeft = hardwareMap.dcMotor.get("Intake Left");   // Ehub Port 1
+            DcMotor LeftLift = hardwareMap.dcMotor.get("Left Lift");       // Ehub Port 2
+            DcMotor RightLift = hardwareMap.dcMotor.get("Right Lift");     // Ehub Port 3
 
-            DcMotor VirtualFourBar = hardwareMap.dcMotor.get("Virtual Four Bar");
+            //*********************************** SERVOS ************************************************
+            Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0
+            Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1
+            Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2
+            Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3
+            Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4
+            Servo RightHook = hardwareMap.servo.get("Right Hook");                // Chub Port 5
+
+            Servo OuttakeClaw = hardwareMap.servo.get("Outtake Claw");            // Ehub Port 0
+            Servo OuttakeWrist = hardwareMap.servo.get("Outtake Wrist");          // Ehub Port 1
+            Servo RightOuttakeV4B = hardwareMap.servo.get("Right Outtake V4B");   // Ehub Port 2
+            Servo LeftOuttakeV4B = hardwareMap.servo.get("Left Outtake V4B");     // Ehub Port 3
+            Servo LeftHook = hardwareMap.servo.get("Left Hook");                  // Ehub Port 4
 
             // Reverse the right side motors
 
 // TODO - this was a bandaid fix......... 
 
-             Bleft.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
-            // Fleft.setDirection(DcMotorSimple.Direction.REVERSE);
-            Fright.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
-            //Bright.setDirection(DcMotorSimple.Direction.REVERSE);
+             BackLeft.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
+            // FrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
+            //BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            VirtualFourBar.setDirection(DcMotorSimple.Direction.REVERSE);        // Reverses the direction the motor turns
+            IntakeVirtualFourBar.setDirection(DcMotorSimple.Direction.REVERSE);        // Reverses the direction the motor turns
 
-//            LeftLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//          LeftLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             RightLiftMotor.setDirection(DcMotorSimple.Direction.REVERSE);     // Reverses the direction the motor turns
 
             RightLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);   // Resets the position so it sets it's current position to 0
@@ -89,16 +102,16 @@
 
             // Set motor zero power behavior
 
-            Fleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
-            Fright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
-            Bleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locks when stopped
-            Bright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
+            FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
+            FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
+            BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locks when stopped
+            BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
 
             LeftLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
             RightLiftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);// Sets the motor to be locked when stopped
 
-            IntakeClaw.setPosition(0);                         // Closes Claw1
-            OuttakeClaw.setPosition(0);                         // Closes Claw2
+            IntakeClaw.setPosition(0);                         // Closes Intake Claw
+            OuttakeClaw.setPosition(0);                        // Closes Outtake Claw
 
             waitForStart();                               // Waits for us to hit play before continuing
 
@@ -173,10 +186,10 @@
 
                 // issue Drive Wheels motor power
 
-                Fleft.setPower(frontLeftPower);    // Sets the front left wheel's power
-                Bleft.setPower(backLeftPower);     // Sets the back left wheel's power
-                Fright.setPower(frontRightPower);  // Sets the front right wheel's power
-                Bright.setPower(backRightPower);   // Sets the back right wheel's power
+                FrontLeft.setPower(frontLeftPower);    // Sets the front left wheel's power
+                BackLeft.setPower(backLeftPower);     // Sets the back left wheel's power
+                FrontRight.setPower(frontRightPower);  // Sets the front right wheel's power
+                BackRight.setPower(backRightPower);   // Sets the back right wheel's power
 
 
                 telemetry.addData("Right Lift Height", RightLiftMotor.getCurrentPosition());    // Displays the ticks of the right lift motor on the driver hub
