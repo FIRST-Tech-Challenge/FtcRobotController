@@ -8,14 +8,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.elevator.Elevator;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 
 
 
 @Config
-@TeleOp(name = "FieldCentric")
-public class FieldCentric extends LinearOpMode {
-
+@TeleOp(name = "PrimaryOpMode")
+public class PrimaryOpMode extends LinearOpMode {
 
     public static class Params {
         public double speedMult = 1;
@@ -53,6 +54,11 @@ public class FieldCentric extends LinearOpMode {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
@@ -73,6 +79,7 @@ public class FieldCentric extends LinearOpMode {
         imu.resetYaw();
 
         PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
+        Elevator elevator = new Elevator(hardwareMap.dcMotor.get("armLeft"), hardwareMap.dcMotor.get("armRight"));
 
         waitForStart();
 
@@ -119,10 +126,13 @@ public class FieldCentric extends LinearOpMode {
                 rx -= FixError;
             }
 
-            if (gamepad1.dpad_right)
-                wantedAngle -= Math.PI / 2;
-            if (gamepad1.dpad_left)
-                wantedAngle += Math.PI / 2;
+            //controls the elevator
+            if (gamepad1.left_bumper)
+                elevator.ChangePower(0.5);
+            else if (gamepad1.right_bumper)
+                elevator.ChangePower(-0.5);
+            else
+                elevator.ChangePower(0);
 
             pid.setSetPoint(wantedAngle);
 
