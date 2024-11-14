@@ -11,15 +11,14 @@ import org.firstinspires.ftc.teamcode.Systems.Servos;
 public class TeleMain extends LinearOpMode {
 
     Motors motors;
-    //Servos servos;
     Input input;
+
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         motors = new Motors(hardwareMap);
-        //servos = new Servos(hardwareMap);
         input = new Input(hardwareMap);
 
         waitForStart();

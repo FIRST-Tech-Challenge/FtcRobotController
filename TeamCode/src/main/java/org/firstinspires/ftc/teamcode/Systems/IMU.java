@@ -14,8 +14,7 @@ public class IMU {
 
     BHI260IMU imu;
 
-    public
-    IMU()
+    public IMU()
     {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
 
@@ -25,7 +24,7 @@ public class IMU {
                                                      RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD) ));
     }
 
-    public double getAngle(double angle) {
+    public double getAngle(char angle) {
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
@@ -34,18 +33,18 @@ public class IMU {
         double pitch = robotOrientation.getPitch(AngleUnit.DEGREES);
         //double roll  = robotOrientation.getRoll(AngleUnit.DEGREES); // robot will most likely not flip over
 
-        if(angle == 0)
+        if(angle == 'y')
             return yaw;
-        if(angle == 1)
+        if(angle == 'p')
             return pitch;
-//        if(angle == 2)   //robot is probably not flipping over so no need for roll
+//        if(angle == 'r')   //robot is probably not flipping over so no need for roll
 //            return roll;
         else
             return 0;
 
     }
 
-    public float getAngularVelocity(int angle) {
+    public float getAngularVelocity(char angle) {
 
         AngularVelocity myRobotAngularVelocity;
 
@@ -56,11 +55,11 @@ public class IMU {
         //float yRotationRate = myRobotAngularVelocity.yRotationRate;
 
 
-        if(angle == 0)
+        if(angle == 'z')
             return zRotationRate;
-        if(angle == 1)
+        if(angle == 'x')
             return xRotationRate;
-//        if(angle == 2)   //robot is probably not flipping over so no need for roll
+//        if(angle == 'y')   //robot is probably not flipping over so no need for roll
 //            return yRotationRate;
         else
             return 0;
