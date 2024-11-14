@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.util.Units;
 /**
  * four wheel mecanum drive train for auto op mode, that hold references to odometers
  */
+@Deprecated
 public class AutoFourWheelMecanumDriveTrain extends FourWheelMecanumDrive {
 
     private MecanumDriveKinematics driveKinematics;

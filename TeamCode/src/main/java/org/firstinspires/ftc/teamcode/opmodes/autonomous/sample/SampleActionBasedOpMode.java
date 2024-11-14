@@ -17,7 +17,7 @@ import java.util.Queue;
 
 import kotlin.Unit;
 
-@Autonomous(name = "sample action based", preselectTeleOp = "main_teleop")
+//@Autonomous(name = "sample action based", preselectTeleOp = "main_teleop")
 public class SampleActionBasedOpMode extends ActionBasedOpMode {
 
     @Override

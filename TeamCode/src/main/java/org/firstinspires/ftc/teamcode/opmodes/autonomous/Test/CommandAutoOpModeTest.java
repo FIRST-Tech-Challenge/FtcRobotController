@@ -23,16 +23,12 @@ public class CommandAutoOpModeTest extends CommandAutoOpMode {
                         commandFactory.extandSlider(),
                         commandFactory.pivotToInTake()
                 ),
-//                commandFactory.driveToTarget(0, -400),
-                commandFactory.waitFor(2000),
+                commandFactory.driveToTarget(200, 200),
+                commandFactory.turnAngleRelative(90),
                 new ParallelCommandGroup(
                         commandFactory.collapseSlider(),
                         commandFactory.pivotToDelivery()
                 )
-//                commandFactory.turnAngleRelative(90)
-//                commandFactory.followTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-//                                new Pose2d(0, Units.inchesToMeters(10), Rotation2d.fromDegrees(90)))
-//                        .andThen(commandFactory.stopDriveTrain())
         );
     }
 }
