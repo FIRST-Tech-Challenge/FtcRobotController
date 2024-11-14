@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
-import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.helperClasses.PIDModel;
 
 import java.util.concurrent.TimeUnit;
@@ -30,8 +29,9 @@ public class RotationHandler implements NKNComponent {
     double resError;
     private DcMotor motor;
     private ExtensionHandler extensionHandler;
-    final private PIDModel normalPIDModel= new PIDModel(0.86,0.005,15) ;
-    final private PIDModel extendedPIDModel = new PIDModel(1.2,0.007,30);
+    final private PIDModel fallenPIDModel = new PIDModel(1.5,0,0);
+    final private PIDModel risenPIDModel = new PIDModel(0.9,0,0);
+    final private PIDModel extendedPIDModel = new PIDModel(1.2,0.007 / 2000,10);
 
     public RotationHandler() {}
 
@@ -110,8 +110,11 @@ public class RotationHandler implements NKNComponent {
 
     private double controlLoop(double current, ElapsedTime runtime) {
         diff = (targetRotationPosition.target - current);
+
+        //
         if ((isErrorPositive && diff < 0) || (!isErrorPositive && diff > 0)){
-            normalPIDModel.resetError();
+            fallenPIDModel.resetError();
+            risenPIDModel.resetError();
             extendedPIDModel.resetError();
         }
         if (diff > 0){
@@ -119,16 +122,25 @@ public class RotationHandler implements NKNComponent {
         }else{
             isErrorPositive = false;
         }
-        //calculates PID values
+        // If there, stop
         if (Math.abs(diff) <= threshold) {
             return 0;
         }
-        if(extensionHandler.targetPosition() != ExtensionHandler.ExtensionPositions.HIGH_BASKET){
-            extendedPIDModel.resetError();
-            return normalPIDModel.calculate(current, targetRotationPosition.target, runtime);
-        } else {
-            normalPIDModel.resetError();
+
+        // Calculate motor force based on which pid we need to use
+        if(extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.HIGH_BASKET){
+            fallenPIDModel.resetError();
+            risenPIDModel.resetError();
             return extendedPIDModel.calculate(current, targetRotationPosition.target, runtime);
+
+        } else if (potHandler.getPotVoltage() < RotationPositions.HIGH.target) {
+            extendedPIDModel.resetError();
+            risenPIDModel.resetError();
+            return fallenPIDModel.calculate(current, targetRotationPosition.target, runtime);
+        } else {
+            extendedPIDModel.resetError();
+            fallenPIDModel.resetError();
+            return risenPIDModel.calculate(current, targetRotationPosition.target, runtime);
         }
     }
 
@@ -137,7 +149,7 @@ public class RotationHandler implements NKNComponent {
     }
 
     public enum RotationPositions {
-        PICKUP(0.58), PREPICKUP(0.92), HIGH(1.47), RESTING(2.2), SPECIMEN(2.26);
+        PICKUP(0.58), PREPICKUP(0.92), HIGH(1.38), RESTING(2.24), SPECIMEN(2.26);
 
         public final double target;
 
