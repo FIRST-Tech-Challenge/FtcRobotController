@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,10 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
+/** @noinspection FieldMayBeFinal*/
+@Config
 @TeleOp(name = "Testing Suite", group = "TeleOp")
 public class TestingSuite extends LinearOpMode {
     // Please Update
-    private static final String[] MOTOR_OPTIONS = {
+    private static String[] MOTOR_OPTIONS = {
             "frontLeft",
             "frontRight",
             "rearLeft",
@@ -23,14 +26,14 @@ public class TestingSuite extends LinearOpMode {
             "linearActuator"
     };
 
-    private static final String[] SERVO_OPTIONS = {
+    private static String[] SERVO_OPTIONS = {
             "clawR",
             "clawL",
             "wrist"
     };
 
     // Credit to Gemini for this unreadable line that is supposed to combine the 2 arrays above
-    private static final String[] LIST_OPTIONS = Stream.concat(Arrays.stream(MOTOR_OPTIONS),
+    private static String[] LIST_OPTIONS = Stream.concat(Arrays.stream(MOTOR_OPTIONS),
                     Arrays.stream(SERVO_OPTIONS)).toArray(String[]::new);
 
 
@@ -59,18 +62,25 @@ public class TestingSuite extends LinearOpMode {
                 } else if (gamepad1.dpad_down) {
                     listSelection.set((listSelection.get() + 1) % LIST_OPTIONS.length);
                 } else if (gamepad1.a) {
-                    if (listSelection.get() <= MOTOR_OPTIONS.length) {
+                    if (listSelection.get() < MOTOR_OPTIONS.length) {
                         selectedMotor[0] = LIST_OPTIONS[listSelection.get()];
                         isMotor.set(true);
-                        listConfirmed.set(true);
-                        menuActive.set(false);
+                    } else {
+                        selectedServo[0] = LIST_OPTIONS[listSelection.get()];
+                        isMotor.set(false);
                     }
+                    listConfirmed.set(true);
+                    menuActive.set(false);
                 }
             });
 
             // Display selection
-            telemetry.addLine("\nSelected Motor:");
-            telemetry.addData("Motor", (MOTOR_OPTIONS[listSelection.get()] + (listConfirmed.get() ? " (Confirmed)" : "")));
+            telemetry.addLine("\nSelected Item:");
+            if (listSelection.get() < MOTOR_OPTIONS.length) {
+                telemetry.addData("Motor", MOTOR_OPTIONS[listSelection.get()] + (listConfirmed.get() ? " (Confirmed)" : ""));
+            } else {
+                telemetry.addData("Servo", SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length] + (listConfirmed.get() ? " (Confirmed)" : ""));
+            }
 
             telemetry.update();
         }
@@ -78,12 +88,13 @@ public class TestingSuite extends LinearOpMode {
         if (isMotor.get()) {
             DcMotor testMotor = hardwareMap.get(DcMotor.class, selectedMotor[0]);
             testMotor.setDirection(DcMotor.Direction.FORWARD);
-            testMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);waitForStart();
+            testMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            waitForStart();
             while (opModeIsActive()) {
                 // Left Trigger = negative direction
                 // Right Trigger = positive direction
                 // IMPORTANT: SOME MOTORS MAY BE REVERSED IN OTHER PARTS OF THE CODE
-                float power = -gamepad1.left_trigger + gamepad2.right_trigger;
+                float power = -gamepad1.left_trigger + gamepad1.right_trigger;
                 testMotor.setPower(power);
 
                 telemetry.addData("Testing Motor", MOTOR_OPTIONS[listSelection.get()]);
@@ -93,12 +104,13 @@ public class TestingSuite extends LinearOpMode {
                 telemetry.update();
             }
         } else {
-            Servo testServo = hardwareMap.get(Servo.class, selectedMotor[0]);
+            Servo testServo = hardwareMap.get(Servo.class, selectedServo[0]);
             testServo.setDirection(Servo.Direction.FORWARD);
-            waitForStart();
             boolean ltLastClicked = false;
             boolean rtLastClicked = false;
             double position = 0;
+            
+            waitForStart();
             while (opModeIsActive()) {
                 // Left Trigger = negative direction
                 // Right Trigger = positive direction
