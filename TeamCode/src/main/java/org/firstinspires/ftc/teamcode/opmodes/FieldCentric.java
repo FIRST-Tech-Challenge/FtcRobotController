@@ -30,12 +30,8 @@ public class FieldCentric extends LinearOpMode {
     }
     public static Params PARAMS = new Params();
 
-    double wantedAngle = 0;
-
     @Override
     public void runOpMode() throws InterruptedException {
-
-        PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
 
         // Declare our motors
         // Make sure your ID's match your configuration
@@ -44,7 +40,7 @@ public class FieldCentric extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRight");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRight");
 
-// Reset the motor encoder so that it reads zero ticks
+        // Reset the motor encoder so that it reads zero ticks
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,38 +62,42 @@ public class FieldCentric extends LinearOpMode {
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
+
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
+
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+        imu.resetYaw();
+
+        PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        imu.resetYaw();
-        wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) % (Math.PI*2);
+        double wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) % (Math.PI*2);
         pid.setSetPoint(wantedAngle);
         boolean isTurning = false;
+
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = 1.1 * -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
+
+
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.y) {
+            if (gamepad1.y)
                 imu.resetYaw();
-            }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            telemetry.addData("Angle", Math.toDegrees(botHeading));
 
             //Calls the function that calculates how much we should resist the error
             double FixError = pid.calculate(botHeading);
-
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
@@ -106,29 +106,25 @@ public class FieldCentric extends LinearOpMode {
             rotX *= PARAMS.speedMult;
             rotY *= PARAMS.speedMult;
             rx *= PARAMS.turnMult;
-            //trying to add the fix to the rotation to the current rotation (didn't work, perhaps because of the parameters, perhaps because I didn't understand the library)
-            // should work now
 
             if (rx == 0 && isTurning) {
                 wantedAngle = botHeading % (Math.PI*2);
-                pid.setSetPoint(wantedAngle);
                 isTurning = false;
             }
-
-            if (rx != 0 && !isTurning) {
+            else if (rx != 0 && !isTurning) {
                 isTurning = true;
             }
-
-
+            //makes sure the robot doesn't fix small angles
             if (Math.abs(Math.toDegrees(botHeading-wantedAngle)) > 6 && !isTurning){
                 rx -= FixError;
             }
 
+            if (gamepad1.dpad_right)
+                wantedAngle -= Math.PI / 2;
+            if (gamepad1.dpad_left)
+                wantedAngle += Math.PI / 2;
 
-
-            telemetry.addData("rx:", rx);
-            telemetry.addData("wanted angle",wantedAngle);
-            // Counteract imperfect strafing
+            pid.setSetPoint(wantedAngle);
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
@@ -143,6 +139,17 @@ public class FieldCentric extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+
+
+            /* ##################################################
+                             TELEMETRY ADDITIONS
+               ################################################## */
+
+            telemetry.addData("Angle", Math.toDegrees(botHeading));
+            telemetry.addData("rx:", rx);
+            telemetry.addData("wanted angle",wantedAngle);
+            telemetry.addData("x", x);
+            telemetry.addData("y", y);
             telemetry.update();
         }
     }
