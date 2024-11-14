@@ -20,8 +20,7 @@ public class TestingSuite extends LinearOpMode {
             "frontRight",
             "rearLeft",
             "rearRight",
-            "extensorLeft",
-            "extensorRight",
+            "linearActuator"
     };
 
     private static final String[] SERVO_OPTIONS = {
