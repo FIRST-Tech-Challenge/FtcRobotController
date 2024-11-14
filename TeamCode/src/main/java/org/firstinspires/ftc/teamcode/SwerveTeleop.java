@@ -11,25 +11,21 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import static java.lang.Math.*;
 
 import org.apache.commons.math3.analysis.function.Abs;
 //import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 
+
 @TeleOp(name="2024-25 Swerve Teleop Code", group="Linear OpMode")
 public class SwerveTeleop extends LinearOpMode {
 
-//    public static double P = , I = , D = ;
-//    public static double k = ;
-
-//    public static double WHEEL_RADIUS = ;
-//    public static double GEAR_RATIO = 4*2.88 / // output wheel speed / input motor speed
-//    public static final double TICKS_PER_REV = ; // tickers per revolution
     private ElapsedTime runtime = new ElapsedTime();
-
     public SwerveModule rightFront;
     public SwerveModule leftFront;
     public SwerveModule leftBack;
     public SwerveModule rightBack;
+    public SwerveModule[] swerveModules;
     private DcMotorEx mrightFront;
     private DcMotorEx mleftFront;
     private DcMotorEx mleftBack;
@@ -52,7 +48,7 @@ public class SwerveTeleop extends LinearOpMode {
 
     public final double TRACKWIDTH = 12.6378;
     public final double WHEELBASE = 12.6378;
-
+    private final double R = Math.hypot(TRACKWIDTH, WHEELBASE);
 
 
     @Override
@@ -100,7 +96,7 @@ public class SwerveTeleop extends LinearOpMode {
         leftFront = new SwerveModule(mleftFront, sleftFront, eleftFront, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
         leftBack = new SwerveModule(mleftBack, sleftBack, eleftBack, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
         rightBack = new SwerveModule(mrightBack, srightBack, erightBack, Math.hypot(TRACKWIDTH/2, WHEELBASE/2), 1, 1, 1);
-
+        swerveModules = new SwerveModule[]{rightFront, leftFront, leftBack, rightBack};
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -146,8 +142,6 @@ public class SwerveTeleop extends LinearOpMode {
         }
     }
 
-//    public void read(){
-//        position = encoder.getCurrentPositon();
-//    }
+
 
 }
