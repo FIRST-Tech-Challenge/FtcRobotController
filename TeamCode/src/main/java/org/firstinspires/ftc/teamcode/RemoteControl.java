@@ -60,9 +60,10 @@ public class RemoteControl extends LinearOpMode {
     //Op mode runs when the robot runs. It runs the whole time.
     public void runOpMode() {
 
-        // Initialize the hardware variables.
+        // Initialize the hardware variables.   // todo: this comment is now useless, it is the same as the function name
         initializeHardwareVariables();
 
+        // todo: all of this initialization for vertical, viperSlide, and claw should go inside your initializeHardwareVariables() function
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -91,10 +92,12 @@ public class RemoteControl extends LinearOpMode {
             lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
 
+            // todo: these comments are now useless
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power.
             setWheelPower();
 
+            // todo: all of this code that contains references to the wheel power should go inside the setWheelPower() function
             // Normalize the values so no wheel power exceeds 100%
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
@@ -106,7 +109,7 @@ public class RemoteControl extends LinearOpMode {
                 rightBackPower /= max;
             }
 
-            if(wheelClimb == false) {
+            if(wheelClimb == false) { // todo: this produces a warning. Ask Julia about this cool coding trick
                 // Send calculated power to wheels
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
@@ -123,17 +126,21 @@ public class RemoteControl extends LinearOpMode {
                 // Hook onto the bar
                 setVertical(VERTICAL_CLIMB_POSITION, 2500);
             }
+            // todo: add a comment to explain what this button does
             else if (gamepad1.dpad_down) {
                 if (vertical.getCurrentPosition() > 100) {
-                    wheelClimb = true;
+                    wheelClimb = true;  // todo: here to disable the joysticks from controlling the wheels.
+                                        // if we accidentally hit this button, how can we recover?
                     vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     vertical.setPower(-0.8);
                     leftBackDrive.setPower(0.5);
                     rightBackDrive.setPower(0.5);
                 }
                 else {
-                    wheelClimb = false;
-                    setVertical(VERTICAL_MIN, 1000);
+                        leftBackDrive.setPower(0);
+                        rightBackDrive.setPower(0);
+                        wheelClimb = false;
+                        setVertical(VERTICAL_MIN, 1000);
                 }
             }
 
@@ -211,7 +218,7 @@ public class RemoteControl extends LinearOpMode {
             printDataOnScreen();
         }
         claw.close();
-        setVertical (100, 80);
+        setVertical (100, 80); // TODO: this isn't working, let's ask Ryan about lowering ourselves after the points are counted
     }
 
     private void initializeHardwareVariables() {
