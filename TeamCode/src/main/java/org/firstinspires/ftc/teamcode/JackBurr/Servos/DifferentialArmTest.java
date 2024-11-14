@@ -47,6 +47,18 @@ public class DifferentialArmTest extends OpMode {
             if(right_servo.getPosition() >= 0.1){
                 right_servo.setPosition(right_servo.getPosition() - 0.1);
             }
+            timer.reset();
         }
+        if(gamepad1.dpad_right && timer.seconds() > 0.3){
+            if(left_servo.getPosition() <= 0.9){
+                left_servo.setPosition(left_servo.getPosition() + 0.1);
+            }
+            if(right_servo.getPosition() <= 0.9){
+                right_servo.setPosition(right_servo.getPosition() + 0.1);
+            }
+            timer.reset();
+        }
+        telemetry.addData("Left Servo:", left_servo.getPosition());
+        telemetry.addData("Right Servo:", right_servo.getPosition());
     }
 }
