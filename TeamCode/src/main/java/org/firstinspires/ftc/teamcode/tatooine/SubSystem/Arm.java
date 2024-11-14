@@ -51,6 +51,7 @@ public class Arm {
     private final double POS_RIGHT_OFFSET = 98.4;
     private final double OPEN_POSE_LEFT = 154.5;
     private final double OPEN_POSE_RIGHT = 166.5;
+    private final double extendTolerance = 0.1;
 
 
 
@@ -254,6 +255,8 @@ public class Arm {
     //Sets the Extension Servo position
     public class moveExtension implements Action {
         private double goal = 0;
+        private double leftPosAfter;
+        private double rightPosRight;
         public moveExtension(double goal){
             this.goal = goal;
         }
@@ -267,6 +270,21 @@ public class Arm {
             this.goal = goal;
         }
 
+        public double getRightPosAfter() {
+            if (goal == 0) {
+                return 0;
+            } else {
+                return getPositionRight() / (OPEN_POSE_RIGHT / goal);
+            }
+        }
+        public double getLeftPosAfter() {
+            if (goal == 0) {
+                return 0;
+            } else {
+                return getPositionLeft() / (OPEN_POSE_LEFT / goal);
+            }
+        }
+
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -277,11 +295,13 @@ public class Arm {
             if (isDebug) {
                 telemetryPacket.put("servo (E) Position", extendServoLeft.getPosition());
                 telemetry.addData("servo (E) Position", extendServoLeft.getPosition());
-                telemetry.addData("posLeft",positionLeft);
-                telemetry.addData("posRight ",positionRight);
-
+                telemetry.addData("posLeft",getPositionLeft());
+                telemetry.addData("posRight ",getPositionRight());
+                telemetry.addData("return", !MathUtil.inTolerance(goal, getRightPosAfter(),extendTolerance));
+                telemetry.addData("getRightPosAfter",getPositionRight() / (OPEN_POSE_RIGHT / goal));
+                telemetry.addData("goal",goal);
             }
-            return extendServoLeft.getPosition() != goal && extendServoRight.getPosition() != goal;
+            return !MathUtil.inTolerance(goal,getRightPosAfter(),extendTolerance);
         }
     }
 

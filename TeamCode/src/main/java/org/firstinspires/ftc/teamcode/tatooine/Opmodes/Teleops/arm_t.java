@@ -52,8 +52,6 @@ public class arm_t extends LinearOpMode {
             runningActions = newActions;
 
             dash.sendTelemetryPacket(packet);
-            telemetry.addData("posLeft", Math.abs(arm.getPositionLeft()));
-            telemetry.addData("posRight",Math.abs(arm.getPositionRight()));
             telemetry.update();
 
         }
