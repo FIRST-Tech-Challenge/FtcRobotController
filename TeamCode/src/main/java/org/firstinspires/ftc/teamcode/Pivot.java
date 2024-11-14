@@ -83,11 +83,11 @@ public class Pivot {
     }
 
     public void move(double velocity) {
-        int currentPosition = getCurrentPosition();
-        if (velocity > 0 && currentPosition >= MAX_POSITION || velocity < 0 && currentPosition <= MIN_POSITION) {
-            setState(Pivot.PivotState.HOLDING, 0);
-            return;
-        }
+//        int currentPosition = getCurrentPosition();
+//        if (velocity > 0 && currentPosition >= MAX_POSITION || velocity < 0 && currentPosition <= MIN_POSITION) {
+//            setState(Pivot.PivotState.HOLDING, 0);
+//            return;
+//        }
         setState(PivotState.MOVING, velocity);
     }
 

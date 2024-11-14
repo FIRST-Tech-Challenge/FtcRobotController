@@ -406,9 +406,11 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot should turn.
     public void turnTo(double angle, double speed) {
         wantedHeading = angle;
-        while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR && robot.opModeIsActive()) {
+        double degreesToHeading = Math.abs(normalize(getAngleImuDegrees() - wantedHeading));
+        while (degreesToHeading > MAX_CORRECTION_ERROR && robot.opModeIsActive()) {
+            degreesToHeading = Math.abs(normalize(getAngleImuDegrees() - wantedHeading));
             robot.telemetry.addData("Current Action", "Turning To Angle");
-            robot.telemetry.addData("Degrees to destination", wantedHeading - getAngleImuDegrees());
+            robot.telemetry.addData("Degrees to destination", degreesToHeading);
             robot.telemetry.addData("", "");
             move(0, 0, 0, speed);
         }
@@ -441,6 +443,11 @@ public class MecanumRobotController {
     // Params:
     //      - Telemetry telemetry: The telemetry to send the information to.
     public void sendTelemetry(Telemetry telemetry) {
+        SparkFunOTOS.Pose2D pos = getPosition();
+        telemetry.addData("X coordinate", pos.x);
+        telemetry.addData("Y coordinate", pos.y);
+        telemetry.addData("Heading angle", pos.h);
+        telemetry.addData("", "");
         telemetry.addData("Forward", currentForward);
         telemetry.addData("Strafe", currentStrafe);
         telemetry.addData("Turn", currentTurn);
@@ -450,15 +457,6 @@ public class MecanumRobotController {
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
-        telemetry.addData("", "");
-        telemetry.addData("Front Left Target", frontLeft.getCurrentPosition() - frontLeft.getTargetPosition());
-        telemetry.addData("Front Right Target", frontRight.getCurrentPosition() - frontRight.getTargetPosition());
-        telemetry.addData("Back Left Target", backLeft.getCurrentPosition() - backLeft.getTargetPosition());
-        telemetry.addData("Back Right Target", backRight.getCurrentPosition() - backRight.getTargetPosition());
-        telemetry.addData("Front Left Pos", frontLeft.getCurrentPosition());
-        telemetry.addData("Back Left Pos", backLeft.getCurrentPosition());
-        telemetry.addData("Front Right Pos", frontRight.getCurrentPosition());
-        telemetry.addData("Back Right Pos", backRight.getCurrentPosition());
 
         telemetry.update();
     }
