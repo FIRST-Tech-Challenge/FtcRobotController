@@ -93,6 +93,12 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         }
 
         Log.i(LOG_TAG, String.format("Wheels power: fL: %f, fR: %f, bL: %f, bR: %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower));
+        telemetry.addData("frontLeft power", frontLeftPower);
+        telemetry.addData("frontRight power", frontRightPower);
+        telemetry.addData("backLeft power", backLeftPower);
+        telemetry.addData("backRight power", backRightPower);
+        telemetry.update();
+
         driveTrain.setWheelsPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 

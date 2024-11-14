@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import android.util.Log;
+
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.AngleTracker;
@@ -19,7 +22,6 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
 
     double turnInRadians;
     double error = Double.MAX_VALUE;
-    double start = 0;
 
     AngleTracker angleTracker = new AngleTracker();
     double angleTurnedInRadians = 0;
@@ -49,7 +51,8 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     @Override
     public void execute() {
         odo.update();
-        angleTurnedInRadians = angleTracker.update(odo.getHeading());
+        double heading = odo.getHeading();
+        angleTurnedInRadians = angleTracker.update(heading);
         error = turnInRadians - angleTurnedInRadians;
         if (isTargetReached()) {
             finished.set(true);
@@ -60,6 +63,13 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
         if(Math.abs(power) < min) {
             power = min * Math.signum(power);
         }
+
+        Log.i(LOG_TAG, String.format("heading=%f, error=%f, power=%f", heading, error, power));
+
+        telemetry.addData("heading", heading);
+        telemetry.addData("error", error);
+        telemetry.addData("power", power);
+        telemetry.update();
 
         driveTrain.driveRobotCentric(0, power, 0);
 

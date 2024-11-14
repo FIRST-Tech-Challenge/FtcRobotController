@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 /**
  * Tracks continuous angle rotation without wraparound issues
  */
@@ -28,30 +30,12 @@ public class AngleTracker {
         }
 
         // Get shortest difference
-        double diff = AngleUtil.normalizeAngleDifference(currentAngle, previousAngle);
+        double diff = AngleUnit.RADIANS.normalize(currentAngle - previousAngle); //AngleUtil.normalizeAngleDifference(currentAngle, previousAngle);
 
         // Update total and previous
         totalRotation += diff;
         previousAngle = currentAngle;
 
         return totalRotation;
-    }
-
-    /**
-     * Get the total accumulated rotation
-     *
-     * @return Total rotation in radians
-     */
-    public double getTotalRotation() {
-        return totalRotation;
-    }
-
-    /**
-     * Reset the tracker to initial state
-     */
-    public void reset() {
-        totalRotation = 0.0;
-        previousAngle = 0.0;
-        firstReading = true;
     }
 }
