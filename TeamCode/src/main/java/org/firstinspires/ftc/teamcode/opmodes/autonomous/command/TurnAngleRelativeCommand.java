@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.util.AngleTracker;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,15 +21,24 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     double error = Double.MAX_VALUE;
     double start = 0;
 
+    AngleTracker angleTracker = new AngleTracker();
+    double angleTurnedInRadians = 0;
+
 
     public TurnAngleRelativeCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double turnInDegrees) {
         this.driveTrain = driveTrain;
         odo = driveTrain.getOdo();
         this.telemetry = telemetry;
         this.turnInRadians = Math.toRadians(turnInDegrees);
-        odo.update();
-        start = odo.getHeading();
+    }
+
+    @Override
+    public void initialize() {
         driveTrain.resetOdo();
+        odo.update();
+
+        // record start point
+        angleTracker.update(odo.getHeading());
     }
 
     @Override
@@ -39,15 +49,14 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
     @Override
     public void execute() {
         odo.update();
-        double current = odo.getHeading();
-        error = turnInRadians - current;
+        angleTurnedInRadians = angleTracker.update(odo.getHeading());
+        error = turnInRadians - angleTurnedInRadians;
         if (isTargetReached()) {
             finished.set(true);
             return;
         }
 
         double power = error * -0.02;
-
         if(Math.abs(power) < min) {
             power = min * Math.signum(power);
         }
