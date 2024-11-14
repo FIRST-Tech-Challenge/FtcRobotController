@@ -74,13 +74,6 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
             power = minPower * Math.signum(power);
         }
 
-        Log.i(LOG_TAG, String.format("heading=%f, error=%f, power=%f", heading, error, power));
-
-        telemetry.addData("heading", heading);
-        telemetry.addData("error", error);
-        telemetry.addData("power", power);
-        telemetry.update();
-
         driveTrain.driveRobotCentric(0, power, 0);
     }
 
