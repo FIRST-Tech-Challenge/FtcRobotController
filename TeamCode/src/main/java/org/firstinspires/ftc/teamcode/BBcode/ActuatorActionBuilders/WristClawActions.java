@@ -31,65 +31,92 @@ public class WristClawActions {
 
 
     //Generates Action for CloseClaw
-    public class CloseClaw implements Action {
+    public class CloseClawAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.CloseClaw();
             return false;
         }
     }
+    public Action CloseClaw() {
+        return new CloseClawAction();
+    }
+
 
     //Generates Action for MoveUp
-    public class MoveUp implements Action {
+    public class MoveUpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveUp();
             return false;
         }
     }
+    public Action MoveUp() {
+        return new MoveUpAction();
+    }
+
 
     //Generates Action for MoveFlip
-    public class MoveFlip implements Action {
+    public class MoveFlipAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveFlip();
             return false;
         }
     }
+    public Action MoveFlip() {
+        return new MoveFlipAction();
+    }
+
 
     //Generates Action for MoveDown
-    public class MoveDown implements Action {
+    public class MoveDownAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveDown();
             return false;
         }
     }
+    public Action MoveDown() {
+        return new MoveDownAction();
+    }
+
 
     //Generates Action for MoveDump
-    public class MoveDump implements Action {
+    public class MoveDumpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveDump();
             return false;
         }
     }
+    public Action MoveDump() {
+        return new MoveDumpAction();
+    }
+
 
     //Generates Action for MoveCenter
-    public class MoveCenter implements Action {
+    public class MoveCenterAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveCenter();
             return false;
         }
     }
+    public Action MoveCenter() {
+        return new MoveCenterAction();
+    }
+
 
     //Generates Action for MoveWristInit
-    public class MoveWristInit implements Action {
+    public class MoveWristInitAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             _WristClaw.MoveWristInit();
             return false;
         }
+    }
+    public Action MoveWristInit() {
+        return new MoveWristInitAction();
     }
 }
