@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
 public class CommandFactory {
 
     private static final PIDController xPIDController = new PIDController(0.015, 0, 0.05);
@@ -32,12 +33,12 @@ public class CommandFactory {
 
 
 
-    private AutoMecanumDriveTrain driveTrain;
-    private RollingIntake intake;
-    private LimeLight vision;
-    private Telemetry telemetry;
-    private DeliveryPivot pivot;
-    private DeliverySlider slider;
+    private final AutoMecanumDriveTrain driveTrain;
+    private final RollingIntake intake;
+    private final LimeLight vision;
+    private final Telemetry telemetry;
+    private final DeliveryPivot pivot;
+    private final DeliverySlider slider;
 
     public CommandFactory(Telemetry telemetry, AutoMecanumDriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider) {
         this.driveTrain = driveTrain;
@@ -80,30 +81,16 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.DeliveryPositionFromStart);
     }
 
-//    public MecanumControllerCommand followTrajectory(Pose2d... waypoints) {
-//        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(Arrays.asList(waypoints), trajectoryConfig);
-//        return new MecanumControllerCommand(
-//                trajectory,
-//                driveTrain::getCurrentPose,
-//                driveTrain.getDriveKinematics(),
-//                xPIDController,
-//                yPIDController,
-//                rotPIDController,
-//                MAX_VELOCITY,
-//                driveTrain::driveWithWheelSpeeds
-//        );
-//    }
-
     public InstantCommand stopDriveTrain() {
-        return new InstantCommand(() -> driveTrain.stop(), driveTrain);
+        return new InstantCommand(driveTrain::stop, driveTrain);
     }
 
     public InstantCommand elbowToIntakePosition() {
-        return new InstantCommand(() -> intake.SetElbowInIntakePosition());
+        return new InstantCommand(intake::SetElbowInIntakePosition);
     }
 
     public InstantCommand elbowToSpecimenPosition() {
-        return new InstantCommand(() -> intake.SetElbowInSpecimenPosition());
+        return new InstantCommand(intake::SetElbowInSpecimenPosition);
     }
 
     public IntakeCommand intake() {

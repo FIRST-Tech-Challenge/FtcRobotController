@@ -23,11 +23,9 @@ import org.firstinspires.ftc.teamcode.util.Units;
 public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
     private static final double METER_PER_SEC_TO_POWER = 400;
-    private final Pose2d INITIAL_POSE = new Pose2d(0, 0, new Rotation2d(0));
 
     GoBildaPinpointDriver odo;
 
-    ElapsedTime stopWatch = new ElapsedTime();
 
     long waitTimeNano = 300 * 1000;
 
@@ -78,24 +76,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
             telemetry.addData("theta", Math.toDegrees(odo.getHeading()));
             telemetry.update();
         }
-    }
-
-    public void DriveToTargetOp() {
-        DriveToTarget(0, 300, Double.NaN);
-    }
-
-    public void DriveToTarget(double targetX, double targetY, double targetAngleInDegrees) {
-        odo.update();
-
-        double targetAngleInRadians;
-        if(Double.isNaN(targetAngleInDegrees)) {
-            targetAngleInRadians = odo.getHeading();
-        } else {
-            targetAngleInRadians = Math.toRadians(targetAngleInDegrees);
-        }
-
-        DriveToTarget(targetX, targetY);
-        TurnAngle(targetAngleInRadians);
     }
 
     public void DriveToTarget(double targetX, double targetY) {
@@ -166,9 +146,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         bR.motor.setPower(0);
     }
 
-    public void TurnAngleOp() {
-        TurnAngle(45);
-    }
 
     public void TurnAngle(double targetAngleInDegrees) {
         double targetAngleInRadians = Math.toRadians(targetAngleInDegrees);

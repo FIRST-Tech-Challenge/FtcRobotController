@@ -29,12 +29,6 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         this.fR = new Motor(hardwareMap, "FR");
         this.bR = new Motor(hardwareMap, "BR");
 
-        if (revertMotor) {
-            this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-            this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        }
-
         fL.encoder.reset();
         fR.encoder.reset();
         bL.encoder.reset();
@@ -54,6 +48,12 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         fR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        if (revertMotor) {
+            this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+            this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        }
 
     }
 
