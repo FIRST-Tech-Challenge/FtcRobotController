@@ -26,6 +26,7 @@ public class Main extends LinearOpMode {
     private DcMotor Back_Left_Wheel;
     private  DcMotor Back_Right_Wheel;
     private DcMotor Arm_Motor;
+    private double dist_to_move = 0;
     //private Controls_Update ControlsUpdate = new Controls_Update();
     //private Data_Update DataUpdate = new Data_Update();
     //private Thread dta = new Thread(DataUpdate);
@@ -47,7 +48,7 @@ public class Main extends LinearOpMode {
                 float right_stick_x = gamepad1.right_stick_x;
                 //telemetry.addData("Test", true);
                 telemetry.addData("left_stick_x", gamepad2.left_stick_x);
-                Arm_Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 initialize_direction();//sets up the direction for motors and servos
                 Arm_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 Hand_Rotator_Servo.setPosition(Hand_Rotator_Servo.getPosition() + gamepad2.left_stick_x*0.001);
@@ -76,9 +77,17 @@ public class Main extends LinearOpMode {
                     Hand_Servo.setPosition(0);
                 }
                 telemetry.addData("Hand Servo grip", Hand_Servo.getPosition());
-
-
-                Arm_Motor.setTargetPosition(0);
+                double dist_to_move = 0;
+                if(gamepad2.left_stick_y > 0) {
+                    dist_to_move += gamepad2.left_stick_y*0.001;
+                }
+                if (dist_to_move >= 1){
+                    dist_to_move = 0;
+                    Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() + 1);
+                } else if(dist_to_move <= -1) {
+                    Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
+                }
+                Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
                 //Hand_Rotator_Servo.setPosition(0.5);
                 Back_Left_Wheel.setPower(((left_stick_y - left_stick_x)*-1) + right_stick_x);
                 Back_Right_Wheel.setPower(((left_stick_y + left_stick_x)*-1) - right_stick_x);
