@@ -75,9 +75,9 @@ public class Odometry extends SubsystemBase {
 
         double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
-        double fieldForwardChange = ForwardChange * Math.cos(-IMUHeading) - LateralChange * Math.sin(-IMUHeading);
+        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
 
-        double fieldLateralChange = ForwardChange * Math.sin(-IMUHeading) + LateralChange * Math.cos(-IMUHeading);
+        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
 
         fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
 
@@ -87,6 +87,7 @@ public class Odometry extends SubsystemBase {
 
         RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
         RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
+        RobotContainer.ActiveOpMode.telemetry.addData("Yaw", Math.toDegrees(fieldAngle));
 
         // update FTC dashboard with latest odometry info - in separate function below for clarity
         UpdateDashBoard();
