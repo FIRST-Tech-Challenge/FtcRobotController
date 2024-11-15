@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.teleop.MecanumDrive;
@@ -24,7 +22,18 @@ import org.firstinspires.ftc.teamcode.teleop.PIDFMotorController;
 @Config
 @Autonomous
 public class autoRoadRunnerITD extends LinearOpMode {
-    public class SpecClaw {
+    public static boolean USER_INPUT_FLAG = false;
+    public static int SLIDES_ABOVE_BAR = 1900;
+    public static int SLIDES_BELOW_BAR = 1270;
+    public static int SLIDES_SPEC_PICKUP = 0;
+    public static double SPEC_CLAW_CLOSE = 0.2;
+    public static double SPEC_CLAW_OPEN = 0.8;
+    public static int INTAKE_ARM_UP = 10;
+    public static int INTAKE_ARM_DOWN = 250;
+    public static double SLIDE_MAX_SPEED = 0.5;
+    public static double ARM_MAX_SPEED = 0.5;
+
+    public static class SpecClaw {
         private final Servo specServo;
 
         public SpecClaw(HardwareMap hardwareMap) {
@@ -34,7 +43,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class CloseClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                specServo.setPosition(0.2);
+                specServo.setPosition(SPEC_CLAW_CLOSE);
                 return false;
             }
         }
@@ -46,7 +55,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class OpenClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                specServo.setPosition(0.8);
+                specServo.setPosition(SPEC_CLAW_OPEN);
                 return false;
             }
         }
@@ -56,111 +65,125 @@ public class autoRoadRunnerITD extends LinearOpMode {
         }
     }
 
-    public class Slides {
-        private final DcMotorEx rightSlideMotor;
+    public static class Slides {
         private final PIDFMotorController slideController;
 
         public Slides(HardwareMap hardwareMap) {
-            rightSlideMotor = hardwareMap.get(DcMotorEx.class, "rightSlideMotor");
-            rightSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            double SLIDE_TICKS_IN_DEGREES = 537.7 / 360.0;
-            slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES, 0.5, 2);
+            DcMotorEx rightSlideMotor = hardwareMap.get(DcMotorEx.class, "rightSlideMotor");
+            rightSlideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            double slideTicksInDegrees = 537.7 / 360.0;
+            slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, slideTicksInDegrees, SLIDE_MAX_SPEED);
+            slideController.resetMotorEncoder();
         }
 
-        public class SlidesUp implements Action {
+        public class SlidesPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                slideController.driveToPosition(1900);
+                double power = slideController.runIteration();
+                packet.put("slides motor power", power);
+                return true;
+            }
+        }
+
+        public Action slidesPIDIteration() {
+            return new SlidesPIDIteration();
+        }
+
+        public class MoveSlidesAction implements Action {
+            private final int targetPosition;
+
+            public MoveSlidesAction(int targetPosition) {
+                this.targetPosition = targetPosition;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                slideController.setTargetPosition(targetPosition);
+                packet.put("slides target position", targetPosition);
                 return false;
             }
         }
 
-        public Action slidesUp() {
-            return new SlidesUp();
+        public Action slidesToAboveBar() {
+            return new MoveSlidesAction(SLIDES_ABOVE_BAR);
         }
 
-        public class SlidesDown implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                slideController.driveToPosition(0);
-                return false;
-            }
+        public Action slidesToBelowBar() {
+            return new MoveSlidesAction(SLIDES_BELOW_BAR);
         }
 
-        public Action slidesDown() {
-            return new SlidesDown();
-        }
-
-        public class SlidesHold implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                slideController.driveToPosition(1270);
-                return false;
-            }
-        }
-
-        public Action slidesHold() {
-            return new SlidesHold();
+        public Action slidesToSpecPickup() {
+            return new MoveSlidesAction(SLIDES_SPEC_PICKUP);
         }
     }
 
-    public class IntakeArm {
-        private final DcMotorEx intakeArmMotor;
+    public static class IntakeArm {
         private final PIDFMotorController armController;
 
         public IntakeArm(HardwareMap hardwareMap) {
-            intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
-            intakeArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            double ARM_TICKS_IN_DEGREES = 1425.1 / 360.0;
-            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES, 0.2, 5);
+            DcMotorEx intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
+            intakeArmMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            double armTicksInDegrees = 1425.1 / 360.0;
+            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, ARM_MAX_SPEED);
+            armController.resetMotorEncoder();
         }
 
-        public class IntakeArmUp implements Action {
+        public class ArmPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(10);
+                double power = armController.runIteration();
+                packet.put("intake arm motor power", power);
+                return true;
+            }
+        }
+
+        public Action armPIDIteration() {
+            return new ArmPIDIteration();
+        }
+
+        public class moveArmAction implements Action {
+            private final int targetPosition;
+
+            public moveArmAction(int targetPosition) {
+                this.targetPosition = targetPosition;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                armController.setTargetPosition(targetPosition);
+                packet.put("intake arm target position", targetPosition);
                 return false;
             }
         }
 
         public Action intakeArmUp() {
-            return new IntakeArmUp();
+            return new moveArmAction(INTAKE_ARM_UP);
         }
-
-        public class IntakeArmDown implements Action {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                armController.driveToPosition(250);
-                return false;
-            }
-        }
-
 
         public Action intakeArmDown() {
-            return new IntakeArmDown();
+            return new moveArmAction(INTAKE_ARM_DOWN);
         }
     }
 
-    @Config
-    public class WaitForUser implements Action {
-        private boolean flag = false;
-
+    public static class WaitForUser implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            while(!flag){
-                sleep(100);
+            if(USER_INPUT_FLAG){
+                USER_INPUT_FLAG = false;
+                packet.put("Waiting For User", false);
+                return false;
             }
-            return false;
+            packet.put("Waiting For User", true);
+            USER_INPUT_FLAG = false;
+            return true;
         }
     }
-
 
     public Action waitForUser() {
         return new WaitForUser();
     }
 
+    @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(13, -61.5, Math.toRadians(270));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
@@ -168,71 +191,82 @@ public class autoRoadRunnerITD extends LinearOpMode {
         Slides slides = new Slides(hardwareMap);
         IntakeArm intakeArm = new IntakeArm(hardwareMap);
 
-
-        TrajectoryActionBuilder firstSpec0 = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(13,-50))
-                .waitSeconds(3);
-        TrajectoryActionBuilder firstSpec = drive.actionBuilder(beginPose)
-                .waitSeconds(2)// go to sub, place spec
-                .strafeTo(new Vector2d(0, -30))
-                .waitSeconds(2);
-        TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose) // strafe to right
-                .waitSeconds(5)
-                .strafeTo(new Vector2d(0, -34))
-                .waitSeconds(5);
+        TrajectoryActionBuilder moveAwayFromBarrier = drive.actionBuilder(beginPose)
+                .strafeTo(new Vector2d(13, -50));
+        TrajectoryActionBuilder moveIntoSpec1Position = drive.actionBuilder(beginPose)
+                .strafeTo(new Vector2d(0, -30));
+        TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose)
+                .strafeTo(new Vector2d(0, -34));
         TrajectoryActionBuilder firstSpec2 = drive.actionBuilder(beginPose)
-                .waitSeconds(5)//push bot sample into human-player zone
                 .strafeTo(new Vector2d(37, -35))
                 .strafeTo(new Vector2d(37, -10))
                 .splineTo(new Vector2d(47, -10), Math.toRadians(270))
                 .strafeTo(new Vector2d(47, -51))
                 .strafeTo(new Vector2d(47, -59))
                 .strafeTo(new Vector2d(47, -45))
-                .waitSeconds(3) //wait for player person to give spec
-                .strafeTo(new Vector2d(47, -61.5))
-                .waitSeconds(5);
+                .waitSeconds(3)
+                .strafeTo(new Vector2d(47, -61.5));
         TrajectoryActionBuilder secondSpec = drive.actionBuilder(beginPose)
-                .waitSeconds(5)
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(47, -45))
                 .splineTo(new Vector2d(4, -52), Math.toRadians(270))
-                .strafeTo(new Vector2d(4, -27))
-                .waitSeconds(5);
+                .strafeTo(new Vector2d(4, -27));
         TrajectoryActionBuilder secondSpec1 = drive.actionBuilder(beginPose)
-                .waitSeconds(5)
                 .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47, -58))
-                .waitSeconds(5);
-        Action trajectoryAction0 = firstSpec0.build();
-        Action trajectoryAction1 = firstSpec.build();
+                .strafeTo(new Vector2d(47, -58));
+
+        Action moveAwayFromBarrierAction = moveAwayFromBarrier.build();
+        Action moveIntoSpec1PositionAction = moveIntoSpec1Position.build();
         Action trajectoryAction2 = firstSpec1.build();
         Action trajectoryAction3 = firstSpec2.build();
         Action trajectoryAction4 = secondSpec.build();
         Action trajectoryAction5 = secondSpec1.build();
 
-        waitForStart();
-        Actions.runBlocking(
-                new SequentialAction(
-                        specClaw.closeClaw(),
-                        trajectoryAction0,
-                        intakeArm.intakeArmDown(),
-                        slides.slidesUp(),
-                        trajectoryAction1,
-                        slides.slidesHold(),
-                        specClaw.openClaw(),
-                        trajectoryAction2,
-                        slides.slidesDown(),
-                        trajectoryAction3,
-                        specClaw.closeClaw(),
-                        slides.slidesUp(),
-                        trajectoryAction4,
-                        slides.slidesHold(),
-                        specClaw.openClaw(),
-                        trajectoryAction5,
-                        slides.slidesDown(),
-                        intakeArm.intakeArmUp()
-                )
+        Action autoSequence = new SequentialAction(
+                specClaw.closeClaw(), // Hold onto Spec
+                waitForUser(),
+                moveAwayFromBarrierAction, // Move away from the barrier
+                waitForUser(),
+                intakeArm.intakeArmDown(), // Move the intake arm out of the way of the slides
+                waitForUser(),
+                slides.slidesToAboveBar(), // Move the slides to above the bar to prepare for the first spec
+                waitForUser(),
+                moveIntoSpec1PositionAction, // Move into position to place the first spec
+                waitForUser(),
+                slides.slidesToBelowBar(), // Clip the spec onto the bar
+                waitForUser(),
+                specClaw.openClaw(), // Release the spec
+                waitForUser(),
+                trajectoryAction2,
+                waitForUser(),
+                slides.slidesToSpecPickup(),
+                waitForUser(),
+                trajectoryAction3,
+                waitForUser(),
+                specClaw.closeClaw(),
+                waitForUser(),
+                slides.slidesToAboveBar(),
+                waitForUser(),
+                trajectoryAction4,
+                waitForUser(),
+                slides.slidesToBelowBar(),
+                waitForUser(),
+                specClaw.openClaw(),
+                waitForUser(),
+                trajectoryAction5,
+                waitForUser(),
+                slides.slidesToSpecPickup(),
+                waitForUser(),
+                new SleepAction(3),
+                intakeArm.intakeArmUp()
         );
+        Action pidControlLoops = new ParallelAction(
+                slides.slidesPIDIteration(),
+                intakeArm.armPIDIteration()
+        );
+
+        waitForStart();
+        Actions.runBlocking(new ParallelAction(autoSequence, pidControlLoops));
     }
 }
