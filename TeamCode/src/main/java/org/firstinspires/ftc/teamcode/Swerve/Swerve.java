@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.SwerveModuleState
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.SimpleMotorFeedforward;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.filter.SlewRateLimiter;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 import org.firstinspires.ftc.teamcode.Utils;
 
 public class Swerve {
@@ -47,8 +48,8 @@ public class Swerve {
     odometry.setEncoderResolution(goBILDA_4_BAR_POD);
     odometry.setEncoderDirections(FORWARD, FORWARD);
 
-    double trackLengthMeters = .31;
-    double trackWidthMeters = .38;
+    double trackLengthMeters = Units.inchesToMeters(12.25);
+    double trackWidthMeters = Units.inchesToMeters(14.5);
     kinematics =
         new SwerveDriveKinematics(
             new Translation2d(trackLengthMeters / 2, trackWidthMeters / 2),
@@ -82,19 +83,36 @@ public class Swerve {
             ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
+  double maxErrorDeg = 0;
+
   public void drive(ChassisSpeeds speeds) {
+    var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    if (translationalMagnitude > Module.maxDriveSpeedMetersPerSec) {
+      speeds.vxMetersPerSecond *= Module.maxDriveSpeedMetersPerSec / translationalMagnitude;
+      speeds.vyMetersPerSecond *= Module.maxDriveSpeedMetersPerSec / translationalMagnitude;
+
+      translationalMagnitude = Module.maxDriveSpeedMetersPerSec;
+    }
+    speeds.omegaRadiansPerSecond *=
+        MathUtil.interpolate(
+            1,
+            .5,
+            MathUtil.inverseInterpolate(0, Module.maxDriveSpeedMetersPerSec, translationalMagnitude));
+
+    var scalar = Math.cos(Units.degreesToRadians(maxErrorDeg));
     speeds =
         new ChassisSpeeds(
-            xLimiter.calculate(speeds.vxMetersPerSecond),
-            yLimiter.calculate(speeds.vyMetersPerSecond),
-            yawLimiter.calculate(speeds.omegaRadiansPerSecond));
+            xLimiter.calculate(speeds.vxMetersPerSecond * scalar),
+            yLimiter.calculate(speeds.vyMetersPerSecond * scalar),
+            yawLimiter.calculate(speeds.omegaRadiansPerSecond * scalar));
 
     var setpoint = kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpoint, Module.maxDriveSpeedMetersPerSec * speedMult);
 
+    maxErrorDeg = 0;
     for (int i = 0; i < 4; i++) {
-      modules[i].run(setpoint[i]);
+      maxErrorDeg = Math.max(modules[i].run(setpoint[i]), maxErrorDeg);
     }
   }
 
@@ -114,7 +132,7 @@ public class Swerve {
       yInput /= translationalMagnitude;
     }
 
-    drive(
+    fieldRelativeDrive(
         new ChassisSpeeds(
             xInput * Module.maxDriveSpeedMetersPerSec * speedMult,
             yInput * Module.maxDriveSpeedMetersPerSec * speedMult,
@@ -167,10 +185,22 @@ public class Swerve {
     Module(OpMode opMode, int id) {
       String pos;
       switch (id) {
-        case 0 -> pos = "FL";
-        case 1 -> pos = "FR";
-        case 2 -> pos = "BL";
-        case 3 -> pos = "BR";
+        case 0 -> {
+          pos = "FL";
+          steerPID = new PIDController(6, 0, 0.1);
+        }
+        case 1 -> {
+          pos = "FR";
+          steerPID = new PIDController(6, 0, 0.1);
+        }
+        case 2 -> {
+          pos = "BL";
+          steerPID = new PIDController(6, 0, 0.1);
+        }
+        case 3 -> {
+          pos = "BR";
+          steerPID = new PIDController(6, 0, 0.1);
+        }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
 
@@ -181,7 +211,6 @@ public class Swerve {
       drivePID = new PIDController(.5 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
-      steerPID = new PIDController(5, 0, 0);
       steerPID.enableContinuousInput(-Math.PI, Math.PI);
       steerFeedforward = new SimpleMotorFeedforward(0, 1 / maxSteerSpeedRadPerSec);
 
@@ -189,7 +218,7 @@ public class Swerve {
       this.id = id;
     }
 
-    void run(SwerveModuleState state) {
+    double run(SwerveModuleState state) {
       var servoPos = getServoPos();
       state.optimize(servoPos);
       state.cosineScale(servoPos);
@@ -198,9 +227,15 @@ public class Swerve {
           driveFeedforward.calculate(state.speedMetersPerSecond)
               + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
 
-      telemetry.addData(
-          "Swerve/Module " + id + "/Angle error", state.angle.minus(servoPos).getDegrees());
-      runServoVel(steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
+      var errorDeg = state.angle.minus(servoPos).getDegrees();
+      telemetry.addData("Swerve/Module " + id + "/Angle error (Deg)", errorDeg);
+      if (!MathUtil.isNear(0, errorDeg, .5)) {
+        runServoVel(steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
+      } else {
+        runServoVel(0);
+      }
+
+      return errorDeg;
     }
 
     public double getDrivePosition() {
