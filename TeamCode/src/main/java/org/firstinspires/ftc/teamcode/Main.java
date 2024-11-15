@@ -79,20 +79,18 @@ public class Main extends LinearOpMode {
                 }
                 telemetry.addData("Hand Servo grip", Hand_Servo.getPosition());
 
-                dist_to_move += gamepad2.left_stick_y*0.01;
+                dist_to_move += gamepad2.left_stick_y*0.1;
                 Arm_Motor.setPower(power);
                 if (dist_to_move >= 1){
                     dist_to_move = 0;
-                    power = 0.5;
+                    power = 1;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() + 1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else if(dist_to_move <= -1) {
                     dist_to_move = 0;
-                    power = 0.5;
+                    power = 1;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                } else {
-                    Arm_Motor.setPower(0.00001);
                 }
                 Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
                 //Hand_Rotator_Servo.setPosition(0.5);
