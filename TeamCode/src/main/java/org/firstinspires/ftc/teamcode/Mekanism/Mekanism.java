@@ -116,7 +116,7 @@ public class Mekanism {
     if (x > 1) x = .5;
     if (x < -1) x = -.5;
     // The above makes this if statement impossible to trigger??? - Tada
-    if (slide.getCurrentPosition() > pubLength && x > 1) slide.setPower(-x * 2);
+    if (slide.getCurrentPosition() > pubLength && x > 0) slide.setPower(-x * 2);
     pivot.setPower(x);
   }
 
@@ -158,7 +158,7 @@ public class Mekanism {
       if (wrist.getPosition() >= .1) {
         wrist.setPosition(0);
       } else {
-        wrist.setPosition(.7);
+        wrist.setPosition(.6);
       }
     }
   }

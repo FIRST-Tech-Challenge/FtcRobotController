@@ -39,7 +39,7 @@ public class clipTest extends LinearOpMode {
     ramp1.setPosition(0);
     ramp2.setPosition(0.15);
 
-    ramp1.scaleRange(0, 10);
-    ramp2.scaleRange(0, 10);
+    ramp1.scaleRange(0, 1);
+    ramp2.scaleRange(0, 1);
   }
 }
