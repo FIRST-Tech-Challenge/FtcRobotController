@@ -13,7 +13,7 @@ public class ElevatorRetractCommand extends CommandBase {
 
     @Override
     public void execute() {
-        elevator.extend();
+        elevator.retract();
     }
 
     @Override

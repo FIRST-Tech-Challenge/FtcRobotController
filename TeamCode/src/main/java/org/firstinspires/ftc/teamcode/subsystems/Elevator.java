@@ -26,7 +26,7 @@ public class Elevator extends SubsystemBase {
 
     public Elevator(HardwareMap hm, Telemetry tm){
         motor = hm.get(DcMotorEx.class, "Extend");
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        pivot = hm.get(DcMotorEx.class, "Tilt");
 //        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,13 +51,13 @@ public class Elevator extends SubsystemBase {
 
         extending = true;
 
-        if (isExtended()){
-            brake();
-        } else {
+//        if (isExtended()){
+//            brake();
+//        } else {
             extending = true;
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPower(whatPower);
-        }
+//        }
     }
 
 //    public void extend(int position) {
@@ -71,6 +71,8 @@ public class Elevator extends SubsystemBase {
 
     public void retract(double whatPower) {
         telemetry.addData("ElevatorState", "extend");
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setPower(whatPower);
 
         retracting = true;
 
@@ -104,7 +106,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean isRetracted(){
-        return bottomLimit.isPressed() || getDistance() == retractingPosition;
+        return bottomLimit.isPressed();
     }
 
     public boolean isExtended(){
@@ -119,21 +121,21 @@ public class Elevator extends SubsystemBase {
         telemetry.addData("ElevatorDistance", getDistance());
         telemetry.addData("IsHomed", isHomed);
 
-        if (bottomLimit.isPressed() && !extending && !retracting) {
-            isHomed = true;
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        if (bottomLimit.isPressed() && retracting) {
-            retracting = false;
-            retractingPosition = Integer.MIN_VALUE;
-            brake();
-        }
-
-        if (isExtended() && extending) {
-            extending = false;
-            extendingPosition = Integer.MIN_VALUE;
-            brake();
-        }
+//        if (bottomLimit.isPressed() && !extending && !retracting) {
+//            isHomed = true;
+//            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        }
+//
+//        if (bottomLimit.isPressed() && retracting) {
+//            retracting = false;
+//            retractingPosition = Integer.MIN_VALUE;
+//            brake();
+//        }
+//
+//        if (isExtended() && extending) {
+//            extending = false;
+//            extendingPosition = Integer.MIN_VALUE;
+//            brake();
+//        }
     }
 }

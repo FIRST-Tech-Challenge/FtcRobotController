@@ -16,15 +16,16 @@ public class Wrist extends SubsystemBase {
     public Wrist(HardwareMap hardwareMap, Telemetry telemetry){
         tm = telemetry;
         //TODO: fix this name from config
-        servo = new SimpleServo(hardwareMap, "wrist", 0, 300);
+        servo = new SimpleServo(hardwareMap, "wrist", -100, 100);
         servo.setInverted(false);
+        //setAngle(0);
     }
 
     public void addFifteen() {
-        servo.rotateBy(15);
+        setAngle(0);
     }
     public void subFifteen() {
-        servo.rotateBy(-15);
+        setAngle(40);
     }
     public void setAngle(double angle){
         servo.turnToAngle(angle);
@@ -33,7 +34,7 @@ public class Wrist extends SubsystemBase {
         setAngle(200);
     }
     public void close(){
-        setAngle(65);
+        setAngle(-25);
     }
 
     @Override
