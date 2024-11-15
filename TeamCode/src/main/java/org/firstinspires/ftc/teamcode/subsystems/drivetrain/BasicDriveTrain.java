@@ -59,13 +59,14 @@ public abstract class BasicDriveTrain extends SubsystemBase {
 
         directionFlag = directionFlag * -1d;
 
-        if(isDrivingForward()) {
-            feedback.DriverControllerGreen();
-        } else {
-            feedback.DriverControllerRed();
+        if (feedback != null) {
+            if (isDrivingForward()) {
+                feedback.DriverControllerGreen();
+            } else {
+                feedback.DriverControllerRed();
+            }
+            feedback.DriverRumbleBlip(1);
         }
-
-        feedback.DriverRumbleBlip(1);
     }
 
     public void setPowerRatio(double powerRatio) {
