@@ -40,8 +40,8 @@ public class OctQuad extends SubsystemBase {
         octoquad.resetAllPositions();
 
         // set encoder directions
-        octoquad.setSingleEncoderDirection(0, OctoQuadBase.EncoderDirection.REVERSE);
-        octoquad.setSingleEncoderDirection(1, OctoQuadBase.EncoderDirection.FORWARD);
+        octoquad.setSingleEncoderDirection(0, OctoQuadBase.EncoderDirection.FORWARD);
+        octoquad.setSingleEncoderDirection(1, OctoQuadBase.EncoderDirection.REVERSE);
         octoquad.setSingleEncoderDirection(2, OctoQuadBase.EncoderDirection.FORWARD);
 
         // set all encoders to quadrature

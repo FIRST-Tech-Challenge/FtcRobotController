@@ -56,7 +56,7 @@ public class RobotContainer {
     public static CommandOpMode ActiveOpMode;
 
     // team alliance color = false if robot on blue alliance, true for red
-    public static boolean isRedAlliance=false;
+    public static boolean isRedAlliance;
 
     // FTC dashboard and telemetries
     public static FtcDashboard DashBoard;
@@ -97,6 +97,10 @@ public class RobotContainer {
     public static Claw claw;
 
     public static ClawTouchSensor clawTouch;
+
+    //Angle of the robot at the start of auto
+    public static double RedStartAngle = 90;
+    public static double BlueStartAngle = -90;
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
@@ -118,6 +122,7 @@ public class RobotContainer {
         // instead of creating a full command, just to run one line of java code.
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
 
@@ -142,7 +147,13 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new BackDepositePose());
 
-       // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
+        if (isRedAlliance){
+            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
+        } else {//if (!isRedAlliance) {
+            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(BlueStartAngle))));
+        }
+
+        // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
 
        // driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.RotateTo(55)));
 
@@ -170,8 +181,8 @@ public class RobotContainer {
         // whenReleased - runs once when button is released
         // togglewhenPressed - turns command on and off at each button press
 
-        CommandScheduler.getInstance().schedule(new ArmStowLow());
-        odometry.setCurrentPos(new Pose2d(1.1,1.7,new Rotation2d(-90*Math.PI/180.0)));
+        //CommandScheduler.getInstance().schedule(new ArmStowLow());
+        //odometry.setCurrentPos(new Pose2d(1.1,1.7,new Rotation2d(-90*Math.PI/180.0)));
 
     }
 

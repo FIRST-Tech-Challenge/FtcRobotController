@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.CommandGroups;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class ExampleCommandGroup extends SequentialCommandGroup {
     public ExampleCommandGroup() {
 
         addCommands (
+                new InstantCommand(()-> RobotContainer.odometry.setCurrentPos(new Pose2d(0.9,1.6,new Rotation2d(Math.toRadians(-90))))),
+
                 new FollowPath(
                         2.0,
                         1.0,
