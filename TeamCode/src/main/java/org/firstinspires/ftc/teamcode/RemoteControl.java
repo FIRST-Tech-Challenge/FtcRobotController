@@ -24,6 +24,7 @@ public class RemoteControl extends LinearOpMode {
     double rightFrontPower = 0;
     double leftBackPower = 0;
     double rightBackPower = 0;
+    double max = 0;
     boolean wheelClimb = false;
 
     // Collect joystick position data
@@ -51,7 +52,7 @@ public class RemoteControl extends LinearOpMode {
     // This chunk controls our claw
     Servo claw = null;
     final double CLAW_MIN = 0.05;        // Claw is closed
-    final double CLAW_MAX = 0.32;        // Claw is open
+    final double CLAW_MAX = 0.2;        // Claw is open
     double claw_position = CLAW_MIN;
 
     final ElapsedTime runtime = new ElapsedTime();
@@ -60,22 +61,7 @@ public class RemoteControl extends LinearOpMode {
     //Op mode runs when the robot runs. It runs the whole time.
     public void runOpMode() {
 
-        // Initialize the hardware variables.   // todo: this comment is now useless, it is the same as the function name
         initializeHardwareVariables();
-
-        // todo: all of this initialization for vertical, viperSlide, and claw should go inside your initializeHardwareVariables() function
-        vertical = hardwareMap.get(DcMotor.class, "vertical");
-        vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
-        viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        viperSlide.setDirection(DcMotor.Direction.REVERSE);
-        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        claw = hardwareMap.get(Servo.class, "claw");
-        claw.setDirection(Servo.Direction.REVERSE);
-        claw.setPosition(CLAW_MIN);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
@@ -92,24 +78,9 @@ public class RemoteControl extends LinearOpMode {
             lateral = gamepad1.left_stick_x;
             yaw = gamepad1.right_stick_x;
 
-            // todo: these comments are now useless
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power.
             setWheelPower();
 
-            // todo: all of this code that contains references to the wheel power should go inside the setWheelPower() function
-            // Normalize the values so no wheel power exceeds 100%
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
-            }
-
-            if(wheelClimb == false) { // todo: this produces a warning. Ask Julia about this cool coding trick
+            if(!wheelClimb) {
                 // Send calculated power to wheels
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
@@ -126,11 +97,10 @@ public class RemoteControl extends LinearOpMode {
                 // Hook onto the bar
                 setVertical(VERTICAL_CLIMB_POSITION, 2500);
             }
-            // todo: add a comment to explain what this button does
+            // Active climb
             else if (gamepad1.dpad_down) {
                 if (vertical.getCurrentPosition() > 100) {
-                    wheelClimb = true;  // todo: here to disable the joysticks from controlling the wheels.
-                                        // if we accidentally hit this button, how can we recover?
+                    wheelClimb = true;
                     vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     vertical.setPower(-0.8);
                     leftBackDrive.setPower(0.5);
@@ -206,6 +176,7 @@ public class RemoteControl extends LinearOpMode {
             if (gamepad1.x) {
                 setVertical(355, 3000);
                 setViper(0, 1500);
+                wheelClimb = false;
             }
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
@@ -218,7 +189,6 @@ public class RemoteControl extends LinearOpMode {
             printDataOnScreen();
         }
         claw.close();
-        setVertical (100, 80); // TODO: this isn't working, let's ask Ryan about lowering ourselves after the points are counted
     }
 
     private void initializeHardwareVariables() {
@@ -234,6 +204,18 @@ public class RemoteControl extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        vertical = hardwareMap.get(DcMotor.class, "vertical");
+        vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
+        viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperSlide.setDirection(DcMotor.Direction.REVERSE);
+        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setDirection(Servo.Direction.REVERSE);
+        claw.setPosition(CLAW_MIN);
     }
 
     private void setWheelPower(){
@@ -241,6 +223,16 @@ public class RemoteControl extends LinearOpMode {
         rightFrontPower = (axial - lateral - yaw) / 2;
         leftBackPower = (axial - lateral + yaw) / 2;
         rightBackPower = (axial + lateral - yaw) / 2;
+
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
     }
 
     public void setVertical(int height){

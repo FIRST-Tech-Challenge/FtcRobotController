@@ -38,8 +38,9 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.9;    // Claw is closed
-    final double CLAW_MAX = 0.7;    // Claw is open
+    final double CLAW_MIN = 0.05;        // Claw is closed
+    final double CLAW_MAX = 0.2;        // Claw is open
+    double claw_position = CLAW_MIN;   // Claw is open
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -78,6 +79,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
+        claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
