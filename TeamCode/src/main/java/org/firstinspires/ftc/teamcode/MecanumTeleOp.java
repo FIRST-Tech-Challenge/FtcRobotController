@@ -96,6 +96,7 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backRight.setPower(backRightPower / 2);
             wrist();
             servoMoves();
+            twist(hardware);
             lift(hardware);
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
@@ -260,14 +261,12 @@ public class MecanumTeleOp extends LinearOpMode {
         arm.setPower(emerg ? 1.0 : 0.3);
         telemetry.addData("arm deg", degrees);
     }
-    public void twist() {
-        Servo servo = hardwareMap.get(Servo.class,"twist");
-        Hardware hardware = new Hardware(hardwareMap);
+    public void twist(Hardware hardware) {
         final double MAX_TWIST_POS = 1;     // Maximum rotational position
         final double MIN_TWIST_POS = 0.0;     // Minimum rotational position
-        if(gamepad2.right_stick_x>=0.5 && gamepad2.right_stick_y>=-0.25 && gamepad2.right_stick_y<=0.25){
+        if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
             hardware.twist.setPosition(MAX_TWIST_POS);
-        } else if (gamepad2.right_stick_x<=-0.5 && gamepad2.right_stick_y>=-0.5 && gamepad2.right_stick_y<=0.5){
+        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.5 && gamepad2.left_stick_x<=0.5){
             hardware.twist.setPosition(MIN_TWIST_POS);
         }
     }
