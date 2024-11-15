@@ -38,7 +38,7 @@ public class Main extends LinearOpMode {
          */
         //create failsafe so if joysticks are not being used then switch between joystick and dpad for checking movement
         initialize_motors();//motor setup
-        initialize_servos();//setvo setup
+        initialize_servos();//servo setup
         //wait for start to be pressed
         waitForStart();
         //if op mode is active then we can continue
@@ -91,6 +91,8 @@ public class Main extends LinearOpMode {
                     power = 0.5;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else {
+                    Arm_Motor.setPower(0.00001);
                 }
                 Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
                 //Hand_Rotator_Servo.setPosition(0.5);
