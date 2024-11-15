@@ -136,7 +136,7 @@ public class Hardware2025Bot
     public int          VIPER_EXTEND_AUTO1 = 1400;   // raised to where the specimen hook is above the high bar
     public int          VIPER_EXTEND_AUTO2 =  980;   // retract to clip the specimen to the bar
     public int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
-    public int          VIPER_EXTEND_FULL1 = 2250;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
+    public int          VIPER_EXTEND_FULL1 = 2000;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
     public int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
@@ -292,6 +292,17 @@ public class Hardware2025Bot
 //      sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "distance" );
 
     } /* init */
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void resetEncoders() {
+        wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    } // resetEncoders
 
     /*--------------------------------------------------------------------------------------------*/
     public void initIMU()

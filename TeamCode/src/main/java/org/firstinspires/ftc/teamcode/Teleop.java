@@ -113,10 +113,21 @@ public abstract class Teleop extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
+        telemetry.addLine("Press X (cross) to reset encoders");
+        telemetry.addLine("(to run Teleop without Auto first)");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        while (!isStarted()) {
+            // Check for operator input that changes Autonomous options
+            captureGamepad1Buttons();
+            // Normally autonomous resets encoders.  Do we need to for teleop??
+            if( gamepad1_cross_now && !gamepad1_cross_last) {
+                robot.resetEncoders();
+            }
+            // Pause briefly before looping
+            idle();
+        } // !isStarted
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
@@ -724,8 +735,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Position for scoring a specimen on the submersible bar
-            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
-            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
+ //           robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
+ //           robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
         }
 
     }  // processCollectorControls
