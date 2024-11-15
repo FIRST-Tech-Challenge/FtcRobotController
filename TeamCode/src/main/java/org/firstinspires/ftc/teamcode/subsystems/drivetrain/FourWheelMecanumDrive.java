@@ -60,6 +60,9 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
     @Override
     protected void createDrive() {
         this.drive = new MecanumDrive(this.fL, this.fR, this.bL, this.bR);
+        if (revertMotor) {
+            this.drive.setRightSideInverted(true);
+        }
     }
 
     public Motor getfL() {

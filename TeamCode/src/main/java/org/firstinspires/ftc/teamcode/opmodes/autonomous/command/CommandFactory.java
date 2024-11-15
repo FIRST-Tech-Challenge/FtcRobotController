@@ -108,4 +108,8 @@ public class CommandFactory {
     public OuttakeCommand outtake() {
         return new OuttakeCommand(intake);
     }
+
+    public RoboticCentricDriveCommand driveRobotCentric(double strafeSpeed, double forwardSpeed, double rotSpeed, long timeToDriveMs) {
+        return new RoboticCentricDriveCommand(driveTrain, strafeSpeed, forwardSpeed, rotSpeed, timeToDriveMs);
+    }
 }
