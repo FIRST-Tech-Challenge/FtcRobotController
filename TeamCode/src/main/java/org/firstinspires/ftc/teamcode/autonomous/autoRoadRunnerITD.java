@@ -195,9 +195,9 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(13, -50));
         TrajectoryActionBuilder moveIntoSpec1Position = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(0, -30));
-        TrajectoryActionBuilder firstSpec1 = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder driveBack = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(0, -34));
-        TrajectoryActionBuilder firstSpec2 = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder pushSampleGrabSpec = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(37, -35))
                 .strafeTo(new Vector2d(37, -10))
                 .splineTo(new Vector2d(47, -10), Math.toRadians(270))
@@ -206,22 +206,22 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(47, -45))
                 .waitSeconds(3)
                 .strafeTo(new Vector2d(47, -61.5));
-        TrajectoryActionBuilder secondSpec = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder goToSubSecondSpec = drive.actionBuilder(beginPose)
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(47, -45))
                 .splineTo(new Vector2d(4, -52), Math.toRadians(270))
                 .strafeTo(new Vector2d(4, -27));
-        TrajectoryActionBuilder secondSpec1 = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder goBackAndPark = drive.actionBuilder(beginPose)
                 .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
                 .strafeTo(new Vector2d(47, -58));
 
         Action moveAwayFromBarrierAction = moveAwayFromBarrier.build();
         Action moveIntoSpec1PositionAction = moveIntoSpec1Position.build();
-        Action trajectoryAction2 = firstSpec1.build();
-        Action trajectoryAction3 = firstSpec2.build();
-        Action trajectoryAction4 = secondSpec.build();
-        Action trajectoryAction5 = secondSpec1.build();
+        Action driveBackAction = driveBack.build();
+        Action pushSampleGrabSpecAction = pushSampleGrabSpec.build();
+        Action goToSubSecondSpecAction = goToSubSecondSpec.build();
+        Action goBackAndParkAction = goBackAndPark.build();
 
         Action autoSequence = new SequentialAction(
                 specClaw.closeClaw(), // Hold onto Spec
@@ -238,32 +238,32 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 waitForUser(),
                 specClaw.openClaw(), // Release the spec
                 waitForUser(),
-                trajectoryAction2,
+                driveBackAction, //drive back to put slides fully down
                 waitForUser(),
-                slides.slidesToSpecPickup(),
+                slides.slidesToSpecPickup(), //brings slides to pos 0 (fully down)
                 waitForUser(),
-                trajectoryAction3,
+                pushSampleGrabSpecAction, //pushes sample into player person zone, then grabs spec
                 waitForUser(),
-                specClaw.closeClaw(),
+                specClaw.closeClaw(), // Hold onto Spec
                 waitForUser(),
-                slides.slidesToAboveBar(),
+                slides.slidesToAboveBar(), //bring slides up to Spec Position
                 waitForUser(),
-                trajectoryAction4,
+                goToSubSecondSpecAction, //go to sub to put on second spec
                 waitForUser(),
-                slides.slidesToBelowBar(),
+                slides.slidesToBelowBar(), //clip on spec
                 waitForUser(),
-                specClaw.openClaw(),
+                specClaw.openClaw(), // Release the spec
                 waitForUser(),
-                trajectoryAction5,
+                goBackAndParkAction, //park in player person zone
                 waitForUser(),
-                slides.slidesToSpecPickup(),
+                slides.slidesToSpecPickup(), //bring slides down
                 waitForUser(),
                 new SleepAction(3),
-                intakeArm.intakeArmUp()
+                intakeArm.intakeArmUp() //bring intake arm in to get ready for teleop
         );
         Action pidControlLoops = new ParallelAction(
-                slides.slidesPIDIteration(),
-                intakeArm.armPIDIteration()
+                slides.slidesPIDIteration(), //cycling through slides to hold PID
+                intakeArm.armPIDIteration() //cycling through intakeArm to hold PID
         );
 
         waitForStart();
