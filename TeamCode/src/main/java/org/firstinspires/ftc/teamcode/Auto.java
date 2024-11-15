@@ -67,6 +67,6 @@ public class Auto extends LinearOpMode {
     }
     private void display() {
         telemetry.addData("arm position", Arm_Motor.getCurrentPosition());
-
+        telemetry.update();
     }
 }
