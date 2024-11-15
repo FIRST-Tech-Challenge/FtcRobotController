@@ -29,6 +29,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     public static int ARM_GRAB_POSITION = 500;
     public static int ARM_HOLD_POSITION = 400;
     public static int ARM_TRANSFER_POSITION = 200;
+    public static int ARM_SUB_HOLD = 400;
     public static double WRIST_TRANSFER_POSITION = 0.1;
     public static double WRIST_GRAB_POSITION = 0.55;
     public static double ARM_CLAW_FULL_OPEN = 0;
@@ -175,6 +176,9 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         } else if (gamepad1.y){
             armController.setTargetPosition(ARM_TRANSFER_POSITION);
             rightWristServo.setPosition(WRIST_TRANSFER_POSITION);
+        } else if (gamepad1.x){
+            armController.setTargetPosition(ARM_SUB_HOLD);
+            rightWristServo.setPosition(WRIST_GRAB_POSITION);
         } else if (gamepad1.right_bumper){
             clawIntake.setPosition(ARM_CLAW_FULL_CLOSE);
         } else if (gamepad1.left_bumper){
