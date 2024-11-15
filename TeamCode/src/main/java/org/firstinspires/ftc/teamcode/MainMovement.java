@@ -137,17 +137,17 @@ public class MainMovement extends LinearOpMode {
             //if not in dead zone
             if (LangleInDegrees >= -22.5 && LangleInDegrees <= 22.5) {
                 // right quadrant, move right
-                setMotorPowers(-1, -1, 1, 1, netS);
+                setMotorPowers(-1, 1, 1, -1, netS);
                 telemetry.addData("Left Stick in RIGHT quadrant", null);
 
             } else if (LangleInDegrees > 22.5 && LangleInDegrees < 67.5) {
                 // top-right quadrant
-                setMotorPowers(0, 0, 1, 1, netS);
+                setMotorPowers(0, 1, 1, 0, netS);
                 telemetry.addData("Left Stick in TOP-RIGHT quadrant", null);
 
             } else if (LangleInDegrees > -67.5 && LangleInDegrees < -22.5) {
                 // bottom-right quadrant
-                setMotorPowers(-1, -1, 0, 0, netS);
+                setMotorPowers(-1, 0, 0, -1, netS);
                 telemetry.addData("Left Stick in BOTTOM-RIGHT quadrant", null);
 
             } else if (LangleInDegrees >= 67.5 && LangleInDegrees <= 112.5) {
@@ -162,17 +162,17 @@ public class MainMovement extends LinearOpMode {
 
             } else if (LangleInDegrees > 112.5 && LangleInDegrees < 157.5) {
                 // top-left quadrant
-                setMotorPowers(1, 1, 0, 0, netS);
+                setMotorPowers(1, 0, 0, 1, netS);
                 telemetry.addData("Left Stick in TOP-LEFT quadrant", null);
 
             } else if (LangleInDegrees > -157.5 && LangleInDegrees < -112.5) {
                 // bottom-left quadrant
-                setMotorPowers(0, 0, -1, -1, netS);
+                setMotorPowers(0, -1, -1, 0, netS);
                 telemetry.addData("Left Stick in BOTTOM-LEFT quadrant", null);
 
             } else if (LangleInDegrees >= 157.5 || LangleInDegrees <= -157.5) {
                 // left quadrant
-                setMotorPowers(1, 1, -1, -1, netS);
+                setMotorPowers(1, -1, -1, 1, netS);
                 telemetry.addData("Left Stick in LEFT quadrant", null);
 
             }
