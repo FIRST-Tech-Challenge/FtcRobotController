@@ -122,6 +122,7 @@ public class RobotContainer {
         // instead of creating a full command, just to run one line of java code.
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
 
