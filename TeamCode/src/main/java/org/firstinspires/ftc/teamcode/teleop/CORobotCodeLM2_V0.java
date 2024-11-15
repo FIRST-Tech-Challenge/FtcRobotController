@@ -1,216 +1,208 @@
-//package org.firstinspires.ftc.teamcode.teleop;
-//
-//import com.acmerobotics.dashboard.config.Config;
-//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-//import com.qualcomm.robotcore.hardware.CRServo;
-//import com.qualcomm.robotcore.hardware.IMU;
-//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-//import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.DcMotorEx;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-//import com.qualcomm.robotcore.hardware.Servo;
-//
-//import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-//
-///**
-// * TeleOp mode for controlling the robot. Integrates driving, arm, slide, and intake systems.
-// * Uses PIDF controllers to manage motor movements for precise positioning.
-// */
-//@Config
-//@TeleOp
-//public class CORobotCodeLM2_V0 extends LinearOpMode {
-//
-//    private PIDFMotorController armController;
-//    private PIDFMotorController slideController;
-//
-//    // Define hardware components
-//    private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
-//    private Servo rightWristServo, specServo, bucketServo;
-//    private Servo clawIntake;
-//    private IMU imu;
-//
-//    // PIDF values and position constants
-//    private static final double ARM_TICKS_IN_DEGREES = 1425.1 / 360.0;
-//    private static final double SLIDE_TICKS_IN_DEGREES = 537.7 / 360.0;
-//
-//    @Override
-//    public void runOpMode() throws InterruptedException {
-//        // Initialize hardware
-//        initializeHardware();
-//
-//        // Reset IMU orientation
-//        IMU.Parameters imuParameters = new IMU.Parameters(
-//                new RevHubOrientationOnRobot(
-//                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-//                )
-//        );
-//        imu.initialize(imuParameters);
-//
-//        // Wait for start
-//        telemetry.addLine("Initialized. Ready to start.");
-//        telemetry.update();
-//        setupPosition();
-//        waitForStart();
-//
-//
-//
-//        if (isStopRequested()) return;
-//
-//        while (opModeIsActive()) {
-//            handleDriving();
-//            handleArmAndSlideControl();
-//            handleIntake();
-//            handleBucketControl();
-//            handleSpec();
-//
-//            telemetry.update();
-//        }
-//    }
-//
-//    /**
-//     * Pre-loop setup sequence to reset arm and slide positions
-//     */
-//    private void setupPosition() {
-//        // Slide motor moves to initial position
-//        slideController.driveToPosition(700);
-//        sleep(3000);
-//        slideController.driveToPosition(0);
-//
-//        // Position the wrist and intake arm for initial setup
-//        rightWristServo.setPosition(0.1);
-//        sleep(1000);
-//        armController.driveToPosition(-420); // Move arm to initial position
-//        sleep(1500);
-//
-//        // Reset encoder and prepare arm for teleop
-//        armController.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        armController.motor.setTargetPosition(0);
-//        armController.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        armController.driveToPosition(300);
-//        sleep(1000);
-//    }
-//
-//    /**
-//     * Initializes the hardware components and PIDF controllers.
-//     */
-//    private void initializeHardware() {
-//        // Initialize motors and servos
-//        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
-//        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
-//        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
-//        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
-//
-//        DcMotorEx intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
-//        DcMotorEx rightSlideMotor = hardwareMap.get(DcMotorEx.class, "rightSlideMotor");
-//
-//        rightWristServo = hardwareMap.get(Servo.class, "rightWristServo");
-//        specServo = hardwareMap.get(Servo.class, "specServo");
-//        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
-//        clawIntake = hardwareMap.get(Servo.class, "clawIntake");
-//
-//        // Initialize PIDF controllers for the arm and slide
-//        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, ARM_TICKS_IN_DEGREES, 0.2);
-//        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, SLIDE_TICKS_IN_DEGREES, 0.3);
-//
-//        // Set directions for drivetrain motors
-//        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-//
-//        // Initialize the IMU
-//        imu = hardwareMap.get(IMU.class, "imu");
-//    }
-//
-//    /**
-//     * Manages the drivetrain controls using mecanum drive with field-oriented control.
-//     */
-//    private void handleDriving() {
-//        double y = -gamepad1.left_stick_y; // Forward/backward
-//        double x = gamepad1.left_stick_x;  // Left/right
-//        double rx = gamepad1.right_stick_x; // Rotation
-//
-//        if (gamepad1.options) {
-//            imu.resetYaw();
-//        }
-//
-//        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//
-//        // Field-oriented adjustments
-//        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-//        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-//
-//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-//        double frontLeftPower = (rotY + rotX + rx) / denominator;
-//        double backLeftPower = (rotY - rotX + rx) / denominator;
-//        double frontRightPower = (rotY - rotX - rx) / denominator;
-//        double backRightPower = (rotY + rotX - rx) / denominator;
-//
-//        // Set motor powers
-//        frontLeftMotor.setPower(frontLeftPower);
-//        backLeftMotor.setPower(backLeftPower);
-//        frontRightMotor.setPower(frontRightPower);
-//        backRightMotor.setPower(backRightPower);
-//    }
-//
-//    /**
-//     * Controls the arm and slide using PIDF control.
-//     */
-//    private void handleArmAndSlideControl() {
-//        // Move arm to position based on button presses
-//        if (gamepad1.y) {
-//            armController.driveToPosition(300);  // Set target position for arm
-//            sleep(500);
-//            rightWristServo.setPosition(0.55);   // Example position
-//            bucketServo.setPosition(0.27);
-//        } else if (gamepad1.a) {
-//            armController.driveToPosition(80);
-//            rightWristServo.setPosition(0.5);
-//            sleep(200);
-//            rightWristServo.setPosition(0.43);
-//        } else if (gamepad1.x) {
-//            armController.driveToPosition(200);
-//            rightWristServo.setPosition(0.5);
-//        } else if (gamepad2.dpad_up) {
-//            slideController.driveToPosition(2250);
-//        } else if (gamepad2.dpad_down) {
-//            slideController.driveToPosition(1750);
-//        } else if (gamepad2.right_bumper) {
-//            slideController.driveToPosition(4250);
-//        } else if (gamepad2.left_bumper) {
-//            slideController.driveToPosition(0);
-//        }
-//    }
-//
-//    /**
-//     * Controls the intake system based on gamepad inputs.
-//     */
-//    private void handleIntake() {
-//         if (gamepad1.right_bumper) {
-//            clawIntake.setPosition(1);
-//        } else if (gamepad1.left_bumper){
-//            clawIntake.setPosition(0);
-//        }
-//    }
-//
-//    /**
-//     * Controls the bucket position based on gamepad2 inputs.
-//     */
-//    private void handleBucketControl() {
-//        if (gamepad2.a) {
-//            bucketServo.setPosition(0.27); // Default position
-//        } else if (gamepad2.y) {
-//            bucketServo.setPosition(0.9); // Release position
-//        }
-//    }
-//    private void handleSpec(){
-//        if (gamepad2.b) {
-//            specServo.setPosition(0.2); //close spec claw
-//        }
-//        if (gamepad2.x) {
-//            specServo.setPosition(0.8); //open spec claw
-//        }
-//    }
-//}
+package org.firstinspires.ftc.teamcode.teleop;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+/**
+ * TeleOp mode for controlling the robot. Integrates driving, arm, slide, and intake systems.
+ * Uses PIDF controllers to manage motor movements for precise positioning.
+ */
+@Config
+@TeleOp
+public class CORobotCodeLM2_V0 extends LinearOpMode {
+
+    public static double MAX_ARM_POWER = 0.5;
+    public static double MAX_SLIDE_POWER = 0.5;
+    public static int SLIDE_DEPOSIT_POSITION = 4250;
+    public static int SLIDE_SPEC_BAR_POSITION = 2250;
+    public static int SLIDE_SPEC_CLIP_POSITION = 1750;
+    public static int SLIDE_SPEC_GRAB_POSITION = 0;
+    public static int ARM_GRAB_POSITION = 500;
+    public static int ARM_HOLD_POSITION = 400;
+    public static int ARM_TRANSFER_POSITION = 200;
+    public static int WRIST_TRANSFER_POSITION = 0;
+    public static int WRIST_GRAB_POSITION = 0;
+    public static double ARM_CLAW_FULL_OPEN = 0;
+    public static double ARM_CLAW_FULL_CLOSE = 1;
+    public static double ARM_CLAW_TRANSFER_OPEN = 0.5;
+    public static double SPEC_CLAW_OPEN = 0;
+    public static double SPEC_CLAW_CLOSE = 1;
+    public static double BUCKET_DEPOSIT_POSITION = 0.27;
+    public static double BUCKET_TRANSFER_POSITION = 0.9;
+    private PIDFMotorController armController;
+    private PIDFMotorController slideController;
+
+    // Define hardware components
+    private DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
+    private Servo rightWristServo, specServo, bucketServo;
+    private Servo clawIntake;
+    private IMU imu;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        // Initialize hardware
+        initializeHardware();
+
+        // Reset IMU orientation
+        IMU.Parameters imuParameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                )
+        );
+        imu.initialize(imuParameters);
+
+        // Wait for start
+        telemetry.addLine("Initialized. Ready to start.");
+        telemetry.update();
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        while (opModeIsActive()) {
+            handleDriving();
+            slideControl();
+            intakeControl();
+            bucketControl();
+            specClawControl();
+
+            runPIDIterations();
+            telemetry.update();
+        }
+    }
+
+    /**
+     * Initializes the hardware components and PIDF controllers.
+     */
+    private void initializeHardware() {
+        // Initialize motors and servos
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+
+        DcMotorEx intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
+        DcMotorEx rightSlideMotor = hardwareMap.get(DcMotorEx.class, "rightSlideMotor");
+
+        rightWristServo = hardwareMap.get(Servo.class, "rightWristServo");
+        specServo = hardwareMap.get(Servo.class, "specServo");
+        bucketServo = hardwareMap.get(Servo.class, "bucketServo");
+        clawIntake = hardwareMap.get(Servo.class, "clawIntake");
+
+        double armTicksInDegrees = 1425.1 / 360.0;
+        double slideTicksInDegrees = 537.7 / 360.0;
+
+        // Initialize PIDF controllers for the arm and slide
+        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, MAX_ARM_POWER);
+        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, slideTicksInDegrees, MAX_SLIDE_POWER);
+
+        // Set directions for drivetrain motors
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        // Initialize the IMU
+        imu = hardwareMap.get(IMU.class, "imu");
+    }
+
+    /**
+     * Manages the drivetrain controls using mecanum drive with field-oriented control.
+     */
+    private void handleDriving() {
+        double y = -gamepad1.left_stick_y; // Forward/backward
+        double x = gamepad1.left_stick_x;  // Left/right
+        double rx = gamepad1.right_stick_x; // Rotation
+
+        if (gamepad1.options) {
+            imu.resetYaw();
+        }
+
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Field-oriented adjustments
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        // Set motor powers
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
+    }
+
+    private void slideControl(){
+        double inputPosition = gamepad2.left_trigger + gamepad2.right_trigger;
+        int slidePosition = (int) (inputPosition / 2 * SLIDE_DEPOSIT_POSITION);
+        if (slidePosition != 0) {
+            slideController.setTargetPosition(slidePosition);
+        } else {
+            if (gamepad2.dpad_up) {
+                slideController.setTargetPosition(SLIDE_DEPOSIT_POSITION);
+            } else if (gamepad2.dpad_down) {
+                slideController.setTargetPosition(SLIDE_SPEC_GRAB_POSITION);
+            } else if (gamepad2.dpad_left) {
+                slideController.setTargetPosition(SLIDE_SPEC_BAR_POSITION);
+            } else if (gamepad2.dpad_right) {
+                slideController.setTargetPosition(SLIDE_SPEC_CLIP_POSITION);
+            }
+        }
+    }
+
+    private void intakeControl(){
+        if (gamepad1.a){
+            armController.setTargetPosition(ARM_GRAB_POSITION);
+            rightWristServo.setPosition(WRIST_GRAB_POSITION);
+            clawIntake.setPosition(ARM_CLAW_FULL_OPEN);
+        } else if (gamepad1.x){
+            armController.setTargetPosition(ARM_HOLD_POSITION);
+            rightWristServo.setPosition(WRIST_TRANSFER_POSITION);
+        } else if (gamepad1.y){
+            armController.setTargetPosition(ARM_TRANSFER_POSITION);
+            rightWristServo.setPosition(WRIST_TRANSFER_POSITION);
+        } else if (gamepad1.left_bumper){
+            clawIntake.setPosition(ARM_CLAW_FULL_CLOSE);
+        } else if (gamepad1.right_bumper){
+            clawIntake.setPosition(ARM_CLAW_TRANSFER_OPEN);
+        }
+    }
+
+    /**
+     * Controls the bucket position based on gamepad2 inputs.
+     */
+    private void bucketControl() {
+        if (gamepad2.a) {
+            bucketServo.setPosition(BUCKET_TRANSFER_POSITION); // Default position
+        } else if (gamepad2.y) {
+            bucketServo.setPosition(BUCKET_DEPOSIT_POSITION); // Release position
+        }
+    }
+    private void specClawControl(){
+        if (gamepad2.b) {
+            specServo.setPosition(SPEC_CLAW_CLOSE); //close spec claw
+        }
+        if (gamepad2.x) {
+            specServo.setPosition(SPEC_CLAW_OPEN); //open spec claw
+        }
+    }
+
+    private void runPIDIterations() {
+        armController.runIteration();
+        slideController.runIteration();
+    }
+}
