@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Syborgs extends LinearOpMode {
@@ -72,5 +74,23 @@ public class Syborgs extends LinearOpMode {
         liftMotor.setTargetPosition(0);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        intake = hardwareMap.crservo.get("intake");
+        wrist = hardwareMap.servo.get("wrist");
+
+        intake.setPower(INTAKE_OFF);
+        wrist.setPosition(WRIST_FOLDED_OUT);
+
+        telemetry.addLine("Robot Ready.");
+        telemetry.update();
+
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP)
+        );
+        imu.initialize(parameters);
+
+        waitForStart();
     }
 }
