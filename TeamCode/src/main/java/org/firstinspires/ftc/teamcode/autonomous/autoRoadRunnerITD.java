@@ -32,6 +32,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static int INTAKE_ARM_DOWN = 250;
     public static double SLIDE_MAX_SPEED = 0.5;
     public static double ARM_MAX_SPEED = 0.5;
+    public static double WRIST_SERVO_DOWN = 0;
 
     public static class SpecClaw {
         private final Servo specServo;
@@ -64,7 +65,24 @@ public class autoRoadRunnerITD extends LinearOpMode {
             return new OpenClaw();
         }
     }
+    public static class WristServo {
+        private final Servo rightWristServo;
 
+        public WristServo(HardwareMap hardwareMap) {
+            rightWristServo = hardwareMap.get(Servo.class, "rightWristServo");
+        }
+
+        public class WristServoIn implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                rightWristServo.setPosition(WRIST_SERVO_DOWN);
+                return false;
+            }
+        }
+        public Action wristServoIn() {
+            return new WristServoIn();
+        }
+    }
     public static class Slides {
         private final PIDFMotorController slideController;
 
@@ -190,6 +208,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
         SpecClaw specClaw = new SpecClaw(hardwareMap);
         Slides slides = new Slides(hardwareMap);
         IntakeArm intakeArm = new IntakeArm(hardwareMap);
+        WristServo wristServo = new WristServo(hardwareMap);
 
         TrajectoryActionBuilder moveAwayFromBarrier = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(13, -50));
@@ -259,6 +278,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 slides.slidesToSpecPickup(), //bring slides down
                 waitForUser(),
                 new SleepAction(3),
+                wristServo.wristServoIn(),
                 intakeArm.intakeArmUp() //bring intake arm in to get ready for teleop
         );
         Action pidControlLoops = new ParallelAction(
