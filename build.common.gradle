@@ -23,6 +23,7 @@ android {
 
     compileSdkVersion 30
 
+
     signingConfigs {
         release {
             def apkStoreFile = System.getenv("APK_SIGNING_STORE_FILE")
@@ -114,6 +115,5 @@ android {
 }
 
 repositories {
-    mavenCentral()
 }
 
