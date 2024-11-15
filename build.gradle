@@ -26,4 +26,6 @@ allprojects {
 
 repositories {
     mavenCentral()
+    maven { url = 'https://maven.brott.dev/' }
+
 }
