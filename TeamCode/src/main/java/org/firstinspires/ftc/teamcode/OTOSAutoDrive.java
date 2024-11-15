@@ -43,9 +43,12 @@ public class OTOSAutoDrive extends LinearOpMode {
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.9;    // Claw is closed
-    final double CLAW_MAX = 0.7;    // Claw is open
+    final double CLAW_MIN = 0.00;    // Claw is closed
+    final double CLAW_MAX = 0.16;    // Claw is open
 
+    Servo ascentStick = null;
+    final double ASCENT_MIN = 0.2;          // Stick is down
+    final double ASCENT_MAX = 0.46;         // Stick is up
     @Override
     public void runOpMode() {
         // Define all the hardware
@@ -72,7 +75,12 @@ public class OTOSAutoDrive extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
+        claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
+
+        ascentStick = hardwareMap.get(Servo.class, "ascentStick");
+        ascentStick.setDirection(Servo.Direction.REVERSE);
+        ascentStick.setPosition(ASCENT_MIN);
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
@@ -88,13 +96,15 @@ public class OTOSAutoDrive extends LinearOpMode {
         waitForStart();
 
         // Code here
+        ascentStick.setPosition(ASCENT_MAX);
         setVertical(VERTICAL_MAX);                        // Raising Arm
         sleep(300);
         setViper(VIPER_MAX);                              // Extending Viper
-        driveToLoc(3, 14, 20);     // Go to basket
+        ascentStick.setPosition(ASCENT_MIN);
+        driveToLoc(3, 13, 20);     // Go to basket
         sleep(600);
-        setClaw(CLAW_MAX);                               // Drop the block
-        driveToLoc(36, 1, 0);
+        setClaw(CLAW_MAX);                                // Drop the block
+        driveToLoc(36, 2, 0);
         setViper(1800);
         setVertical(100, 1000);
         sleep(1500);
@@ -105,30 +115,53 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(12, 13, 45);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                              // Drop second block
-        driveToLoc(36, -4, 0);
+        driveToLoc(36, -2, 0);
         setViper(1000);
         sleep(500);
         setVertical(60, 1500);
-        sleep(1500);
+        sleep(1700);
         setClaw(CLAW_MIN);                               // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(12, 14, 45);   // Go to basket
+        driveToLoc(11, 14, 45);   // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                               // Drop third block
-        driveToLoc(25, 5, 45, 4);
+        driveToLoc(25, 5, 0, 4);
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
-        driveToLoc(53, 0, 0); // Change X-value to 48 later
+        driveToLoc(60, 0, 0); // Change X-value to 48 later
+        driveToLoc(60, 0, 180);
+        //driveForward(300, 0.4);
+        //sleep(500);
+        RobotLog.vv("Milla", "Set to max");
+        ascentStick.setPosition(ASCENT_MAX);
+        sleep(1000);
+        RobotLog.vv("Milla", "End program");
         claw.close();                                    // Release tension on the claw
-
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
     }
 
+    public void setAscentStick(double target) {
+        RobotLog.vv("Rockin' Robots", "Set Ascent Stick to: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+        ascentStick.setPosition(target);
+        sleep(1000);
+        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+    }
+
+    public void driveForward(double msToDrive, double speedToDrive) {
+        RobotLog.vv("Rockin' Robots", "Before Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        leftFrontDrive.setPower(speedToDrive);
+        rightFrontDrive.setPower(speedToDrive);
+        leftBackDrive.setPower(speedToDrive);
+        rightBackDrive.setPower(speedToDrive);
+        RobotLog.vv("Rockin' Robots", "after Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        //sleep((long)msToDrive);
+        //stopMoving();
+    }
     public void setViper(int length){
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(2000);
@@ -146,7 +179,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void setClaw(double position){
+    public void setClaw(double position) {
         claw.setPosition(position);
         sleep(300);
     }
@@ -187,6 +220,12 @@ public class OTOSAutoDrive extends LinearOpMode {
         double xDistance = xTarget - xLoc;
         double yDistance = yTarget - yLoc;
         double hDistance = hTarget - hLoc;
+        if(hDistance > 180) {
+            hDistance -= 360;
+        }
+        else if(hDistance < -180) {
+            hDistance += 360;
+        }
 
         RobotLog.vv("Rockin' Robots", "xDistance: %.2f, yDistance: %.2f, hDistance: %.2f, " +
                         "leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
@@ -231,6 +270,12 @@ public class OTOSAutoDrive extends LinearOpMode {
             xDistance = xTarget - xLoc;
             yDistance = yTarget - yLoc;
             hDistance = hTarget - hLoc;
+            if(hDistance > 180) {
+                hDistance -= 360;
+            }
+            else if(hDistance < -180) {
+                hDistance += 360;
+            }
         }
         stopMoving();
         RobotLog.vv("Rockin' Robots", "Done Moving: xDist: %.2f, yDist: %.2f, hDist: %.2f",
