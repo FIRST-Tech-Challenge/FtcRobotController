@@ -25,12 +25,16 @@ public class Lift{
      */
     public Lift(HardwareMap hw, String nameLift, String nameEncoder){
         lift = hw.get(DcMotor.class, nameLift);
-        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
+        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, "lift")));
     }
     public void moveLift(double power){
         lift.setPower(power);
     }
-    public int getPosition(){
+    public double getPosition(){
         return encoder.getPositionAndVelocity().position;
+    }
+    public void setPosition(int targetPosition, double power){
+        lift.setPower(power);
+        lift.setTargetPosition(targetPosition);
     }
 }
