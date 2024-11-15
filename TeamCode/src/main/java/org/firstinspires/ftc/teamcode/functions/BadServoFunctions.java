@@ -7,16 +7,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class BadServoFunctions {
+        /*
         public Servo wristServo;
         public Servo wristServo2;
-        public Servo clawServo;
+         */
+        public Servo claw;
 
         public BadServoFunctions(HardwareMap hardwareMap) {
+           /*
             wristServo = hardwareMap.get(Servo.class,"wrist_1");
             wristServo2 = hardwareMap.get(Servo.class,"wrist_2");
-            clawServo = hardwareMap.get(Servo.class,"claw");
+            */
+            claw = hardwareMap.get(Servo.class,"claw");
         }
-
+/*
         // Method to control the wrist position
         public void controlWrist (Gamepad gamepad2, Telemetry telemetry) {
             // Get position of the wrist so it knows
@@ -45,20 +49,18 @@ public class BadServoFunctions {
             telemetry.addData("Wrist 1 Position", wristPosition);
             telemetry.addData("Wrist 2 Position",wristPosition2);
         }
-
+*/
         // Method to control the claw position
         public void controlClaw (Gamepad gamepad2, Telemetry telemetry){
-            clawServo.setPosition(0.5); // Starting position for claw
-            double clawPosition = clawServo.getPosition();
 
-           if(gamepad2.right_bumper){
-               clawServo.setPosition(0);
-           } else if (gamepad2.left_bumper) {
-               clawServo.setPosition(-1);
+           if(gamepad2.a) {
+               claw.setPosition(0);
+           }else if (gamepad2.b){
+               claw.setPosition(0.5);
            }
 
             // Send telemetry data to the driver station
-
+            double clawPosition = claw.getPosition();
             telemetry.addData("Claw Position", clawPosition);
             telemetry.update();
         }

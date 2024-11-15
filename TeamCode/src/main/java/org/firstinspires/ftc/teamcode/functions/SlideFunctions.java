@@ -34,7 +34,7 @@ public class SlideFunctions {
     }
 
 
-    public void SlideControl(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry){
+    public void SlideControl(Gamepad gamepad2, Telemetry telemetry){
 
         double slidePowerConst = 0.9; //max power of slide
         double slidePower = -gamepad2.left_stick_y;
@@ -55,7 +55,7 @@ public class SlideFunctions {
         telemetry.addData("Slide Position", slidePosition);
     }
 
-    public void ArmControl(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
+    public void ArmControl(Gamepad gamepad2, Telemetry telemetry) {
         double armPower = gamepad2.right_stick_y;
         armMotor.setPower(armPower);
 
