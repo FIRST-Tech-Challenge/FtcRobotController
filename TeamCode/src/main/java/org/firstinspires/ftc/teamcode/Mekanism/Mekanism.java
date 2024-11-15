@@ -145,15 +145,14 @@ public class Mekanism {
     }
   }
 
-  public void moveWrist(boolean move) {
+  public void moveWrist() {
     // Philip, what the hell?
     // Is this a terrible toggle switch??? - Tada
-    if (move) {
+    // yes new and updated for you - philip
       if (wrist.getPosition() >= .1) {
         wrist.setPosition(0);
       } else {
         wrist.setPosition(.7);
       }
-    }
   }
 }
