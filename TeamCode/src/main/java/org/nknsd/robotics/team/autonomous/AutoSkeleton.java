@@ -1,5 +1,7 @@
 package org.nknsd.robotics.team.autonomous;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
@@ -7,6 +9,7 @@ import org.nknsd.robotics.team.components.IMUComponent;
 import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
+import org.nknsd.robotics.team.helperClasses.PIDModel;
 
 public class AutoSkeleton {
     private final double maxSpeed;                  // Maximum speed the robot can move at
@@ -21,6 +24,10 @@ public class AutoSkeleton {
     private ExtensionHandler extensionHandler;
     private double targetRotation = 0;
     private IntakeSpinnerHandler intakeSpinnerHandler;
+    private PIDModel movementPIDx;
+    private PIDModel movementPIDy;
+    private boolean xDirPos = true;
+    private boolean yDirPos = true;
 
 
 
@@ -28,6 +35,17 @@ public class AutoSkeleton {
         this.maxSpeed = maxSpeed;
         this.movementMargin = movementMargin;
         this.turnMargin = turnMargin;
+
+        // Creating PID
+//        double kP = ( maxSpeed / (TILE_LENGTH * 2) ) * 10;
+//        double kI = maxSpeed / (TILE_LENGTH * 2 * 4000); //I is REALLY FREAKING SMALL
+//        double kD = 5;
+        double kP = 0.5;
+        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 4000); //I is REALLY FREAKING SMALL
+        double kD = 5;
+
+        movementPIDx = new PIDModel(kP, kI, kD);
+        movementPIDy = new PIDModel(kP, kI, kD);
     }
 
     public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler intakeSpinnerHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
@@ -41,6 +59,11 @@ public class AutoSkeleton {
 
     public void setTargetPosition(double x, double y) {
         targetPositions[0] = x; targetPositions[1] = y;
+        movementPIDx.resetError(); movementPIDy.resetError();
+
+        FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
+        xDirPos = pos.x < x;
+        yDirPos = pos.y < y;
     }
 
     public void setTargetRotation(double turning) {
@@ -59,71 +82,73 @@ public class AutoSkeleton {
         return extensionHandler.isExtensionDone();
     }
 
-    // Takes in the x & y distances and outputs how fast we should go
-    private double funSpeedFunction(double num) {
-        if (num > 0) {
-            num -= movementMargin * 0.5;
-            num /= movementMargin * 2;
-            // still finishing num = m
-        }
-
-        return num;
-    }
-
-    public boolean runToPosition(Telemetry telemetry) {
+    public boolean runToPosition(Telemetry telemetry, ElapsedTime runtime) {
         // Get position
         FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
         double x = pos.x;
         double y = pos.y;
         double yaw = imuComponent.getYaw();
-        //double yaw = pos.heading;
 
         telemetry.addData("Cur X", x);
         telemetry.addData("Cur Y", y);
 
-        // Find difference in position
-        x = (targetPositions[0] * TILE_LENGTH - x);
-        y = (targetPositions[1] * TILE_LENGTH - y);
 
-        telemetry.addData("Targ X", targetPositions[0] * TILE_LENGTH);
-        telemetry.addData("Targ Y", targetPositions[1] * TILE_LENGTH);
+        // Calculating distance
+        double xTarg = targetPositions[0] * TILE_LENGTH;
+        double yTarg = targetPositions[1] * TILE_LENGTH;
 
-        // Check if we're close enough
-        double dist = Math.sqrt((x * x) + (y * y));
-
-        // Check if we're at the right heading
+        double xDist = (xTarg - x);
+        double yDist = (yTarg - y);
+        double dist = Math.sqrt((xDist * xDist) + (yDist * yDist));
         double angleDiff = Math.abs(targetRotation - yaw);
 
-        telemetry.addData("Dist", dist);
-        telemetry.addData("Angle Diff", angleDiff);
+        telemetry.addData("Targ X", xTarg);
+        telemetry.addData("Targ Y", yTarg);
 
+
+        // Check if we're at our target
         if (dist <= movementMargin && angleDiff <= turnMargin) {
             wheelHandler.absoluteVectorToMotion(0, 0, 0, 0, telemetry);
             return true;
         }
-        if (Math.abs(x) < movementMargin) {
-            x = 0;
+
+
+        // Calculate force to use
+        double xSpeed = 0;
+        double ySpeed = 0;
+        if (Math.abs(xDist) > movementMargin) {
+            if (xDist > 0 ^ xDirPos) {
+                movementPIDx.resetError();
+                //xDirPos = !xDirPos;
+            }
+
+            telemetry.addData("PID DATA", "x");
+            xSpeed = movementPIDx.calculateWithTelemetry(x, xTarg, runtime, telemetry);
         }
-        if (Math.abs(y) < movementMargin) {
-            y = 0;
+        if (Math.abs(yDist) > movementMargin) {
+            if (yDist > 0 ^ yDirPos) {
+                movementPIDy.resetError();
+                //yDirPos = !yDirPos;
+            }
+
+            telemetry.addData("PID DATA", "y");
+            ySpeed = movementPIDy.calculateWithTelemetry(y, yTarg, runtime, telemetry);
         }
 
-        //Reduce x & y
-        x /= 1.9;
-        y /= 1.9;
-
-        //Clamp x & y
-        x = Math.min(maxSpeed, Math.max(-maxSpeed, x));
-        y = Math.min(maxSpeed, Math.max(-maxSpeed, y));
-
-        telemetry.addData("Speed X", x);
-        telemetry.addData("Speed Y", y);
 
         double turning = targetRotation - yaw;
         turning /= 90;
-        turning = Math.min(maxSpeed, Math.max(-maxSpeed, turning));
 
-        wheelHandler.absoluteVectorToMotion(x, y, turning, yaw, telemetry);
+        xSpeed = Math.max(Math.min(xSpeed, maxSpeed), -maxSpeed);
+        ySpeed = Math.max(Math.min(ySpeed, maxSpeed), -maxSpeed);
+
+        telemetry.addData("Speed X", xSpeed);
+        telemetry.addData("Speed Y", ySpeed);
+        telemetry.addData("Speed Turning", turning);
+
+
+        // Run motors
+        wheelHandler.absoluteVectorToMotion(xSpeed, ySpeed, turning, yaw, telemetry);
 
         return false;
     }

@@ -28,7 +28,7 @@ public class AutoStepSleep implements NKNAutoStep {
     }
 
     @Override
-    public void run(Telemetry telemetry) {}
+    public void run(Telemetry telemetry, ElapsedTime runtime) {}
 
     @Override
     public boolean isDone(ElapsedTime runtime) {

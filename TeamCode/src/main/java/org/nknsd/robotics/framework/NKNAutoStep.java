@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public interface NKNAutoStep {
     void link(AutoSkeleton autoSkeleton);
-    void run(Telemetry telemetry);
+    void run(Telemetry telemetry, ElapsedTime runtime);
     boolean isDone(ElapsedTime runtime);
     String getName();
     void begin(ElapsedTime runtime, Telemetry telemetry);

@@ -30,7 +30,7 @@ public class BasketAuto extends NKNProgram {
 
 
         // Core mover
-        AutoSkeleton autoSkeleton = new AutoSkeleton(0.3, 0.8, 1.5);
+        AutoSkeleton autoSkeleton = new AutoSkeleton(0.4, 0.8, 1.5);
 
         AutoHeart autoHeart = new AutoHeart(stepList);
         components.add(autoHeart);
@@ -78,11 +78,13 @@ public class BasketAuto extends NKNProgram {
         // Declare steps
         AutoStepSleep sleep = new AutoStepSleep(700);
 
-        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.7, 0.35, -135);
-        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(0.92, 0.9, -70);
+        AutoStepMove moveSlightForward = new AutoStepMove(0, 0.2);
+        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.73, 0.32, -135);
+        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(1.05, 0.955, -70);
+        AutoStepMove moveToPickup = new AutoStepMove(-0.25, 0.25);
         AutoStepMove slightYellowPlaceAdjust = new AutoStepMove(-0.07, 0.05);
-        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2, 90);
-        AutoStepMove driveInToPark = new AutoStepMove(0.57, 0);
+        AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2.2, 90);
+        AutoStepMove driveInToPark = new AutoStepMove(0.64, 0);
 
         AutoStepRotateArm rotateToHigh = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
         AutoStepRotateArm rotateToPickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PICKUP);
@@ -97,6 +99,7 @@ public class BasketAuto extends NKNProgram {
         AutoStepServo neutralServo = new AutoStepServo(IntakeSpinnerHandler.HandStates.REST, 0);
 
         // Put away first block
+        stepList.add(moveSlightForward);
         stepList.add(orientToBasket);
         stepList.add(rotateToHigh);
         stepList.add(extendToHigh);
@@ -107,6 +110,7 @@ public class BasketAuto extends NKNProgram {
         stepList.add(pickUpFirstYellow);
         stepList.add(gripBlock);
         stepList.add(rotateToPickup);
+        stepList.add(moveToPickup);
         stepList.add(sleep);
         stepList.add(rotateToRest);
 
