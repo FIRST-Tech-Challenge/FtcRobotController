@@ -36,7 +36,7 @@ public class MainMovement extends LinearOpMode {
     private float clawSpeed = 1.0f;
     private float linearSlideSpeed = 0.75f;
 
-    boolean open = false; // Is the claw open? False = closed, true = open 
+    boolean clawOpen = false; // Is the claw open? False = closed, true = open 
     
 
     @Override
@@ -203,38 +203,38 @@ public class MainMovement extends LinearOpMode {
 
     private void LimbMovement() {
 
-        if(open) {
+        if (clawOpen) {
             telemetry.addData("chamber claw open, position = ", clawServo.getPosition());
         } else {
             telemetry.addData("chamber claw closed, position = ", clawServo.getPosition());
         }
 
         //open or close chamber claw
-        if(gamepad2.x){
-            open = !open;
-            if(open) {
-                clawServo.setPosition(1); //open
+        if (gamepad2.x) {
+            clawOpen = !clawOpen; // switch claws open state
+            if (clawOpen) {
+                clawServo.setPosition(1); //claw open
             } else {
-                clawServo.setPosition(0); //close
+                clawServo.setPosition(0); //claw closed
             }
             sleep(250); //creates cooldown for switching claw positions
 
         }
 
         //rotate chamber claw left
-        if(gamepad2.left_trigger > 0){
+        if (gamepad2.left_trigger > 0) {
             clawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
             telemetry.addData("rotating chamber claw left", null);
         }
 
         //rotate chamber claw right
-        if(gamepad2.right_trigger > 0){
+        if (gamepad2.right_trigger > 0) {
             clawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
             telemetry.addData("rotating chamber claw right", null);
         }
 
         // moves linear slide
-        if(Math.abs(gamepad2.left_stick_y) > joystickDeadzone){
+        if (Math.abs(gamepad2.left_stick_y) > joystickDeadzone) {
             linearSlide.setPower(linearSlideSpeed * gamepad2.left_stick_y / -2);
             telemetry.addData("linear slide speed:", linearSlideSpeed * -gamepad2.left_stick_y /2);
         } else {
