@@ -260,7 +260,7 @@ public class RemoteControl extends LinearOpMode {
         telemetry.addData("Joystick Lateral", "%4.2f", lateral);
         telemetry.addData("Joystick Yaw", "%4.2f", yaw);
         telemetry.addData("Target claw position", "%4.2f", claw_position);
-        telemetry.addData("Claw position", "4.2f", claw.getPosition());
+        telemetry.addData("Claw position", "%4.2f", claw.getPosition());
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
