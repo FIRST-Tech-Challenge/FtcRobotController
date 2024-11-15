@@ -96,6 +96,7 @@ public class Settings {
         @Config
         public static class VerticalExtensor {
             // Positions in encoder ticks
+            // TODO: TUNE
             public static int PICKUP = 0;
             public static int HOVER = -20;
             public static int LOW_RUNG = -500;
@@ -108,13 +109,14 @@ public class Settings {
         @Config
         public static class HorizontalExtensor {
             // Positions in encoder ticks
+            // TODO: TUNE
             public static int COLLAPSED = 0;
-            public static int LEVEL_1 = 20;
-            public static int LEVEL_2 = 500;
-            public static int EXPANDED = 1000;
+            public static int LEVEL_1 = 50;
+            public static int LEVEL_2 = 100;
+            public static int EXPANDED = 200;
 
             // Motor power settings
-            public static double MOVEMENT_POWER = 0.5;
+            public static double MOVEMENT_POWER = 0.7;
         }
 
         @Config
