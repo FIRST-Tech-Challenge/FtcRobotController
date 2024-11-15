@@ -34,7 +34,7 @@ public class Main extends LinearOpMode {
             OmniFunction.OmniUpdate(gamepad1,telemetry);
             Slides.ArmControl(gamepad2, telemetry);
             Slides.SlideControl(gamepad2, telemetry);
-           // Servos.controlWrist(gamepad2,telemetry);
+            Servos.controlWrist(gamepad2,telemetry);
             Servos.controlClaw(gamepad2,telemetry);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
