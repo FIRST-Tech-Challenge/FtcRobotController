@@ -37,7 +37,7 @@ public class Main extends LinearOpMode {
          */
         //create failsafe so if joysticks are not being used then switch between joystick and dpad for checking movement
         initialize_motors();//motor setup
-        initialize_servos();//setvo setup
+        initialize_servos();//servo setup
         //wait for start to be pressed
         waitForStart();
         //if op mode is active then we can continue
