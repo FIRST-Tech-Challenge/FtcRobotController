@@ -94,6 +94,8 @@ public class Main extends LinearOpMode {
                     Arm_Motor.setPower(0.5);
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else {
+                    Arm_Motor.setPower(0.00001);
                 }
                 Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
                 //Hand_Rotator_Servo.setPosition(0.5);
