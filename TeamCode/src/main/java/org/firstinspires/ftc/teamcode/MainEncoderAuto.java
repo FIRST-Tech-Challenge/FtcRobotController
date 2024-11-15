@@ -99,8 +99,8 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }
 
-    protected void moveClaw(boolean open) {
-        if(open) {
+    protected void moveClaw(boolean clawOpen) {
+        if(clawOpen) {
             clawServo.setPosition(1);
         } else {
             clawServo.setPosition(0);
