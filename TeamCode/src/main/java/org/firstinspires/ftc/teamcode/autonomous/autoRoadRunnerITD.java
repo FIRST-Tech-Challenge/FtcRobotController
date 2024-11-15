@@ -228,7 +228,8 @@ public class autoRoadRunnerITD extends LinearOpMode {
         TrajectoryActionBuilder goToSubSecondSpec = pushSampleGrabSpec.fresh()
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(55, -45))
-                .splineTo(new Vector2d(4, -50), Math.toRadians(270))
+                .turn(Math.toRadians(180))
+                .strafeTo(new Vector2d(4,-45))
                 .strafeTo(new Vector2d(4, -27));
         TrajectoryActionBuilder goBackAndPark = goToSubSecondSpec.fresh()
                 .waitSeconds(1)

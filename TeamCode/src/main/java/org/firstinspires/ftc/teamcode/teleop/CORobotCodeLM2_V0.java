@@ -21,12 +21,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class CORobotCodeLM2_V0 extends LinearOpMode {
 
     public static double MAX_ARM_POWER = 0.5;
-    public static double MAX_SLIDE_POWER = 0.5;
+    public static double MAX_SLIDE_POWER = 0.7;
     public static int SLIDE_DEPOSIT_POSITION = 4250;
     public static int SLIDE_SPEC_BAR_POSITION = 2250;
     public static int SLIDE_SPEC_CLIP_POSITION = 1750;
     public static int SLIDE_SPEC_GRAB_POSITION = 0;
-    public static int ARM_GRAB_POSITION = 500;
+    public static int ARM_GRAB_POSITION = 505;
     public static int ARM_HOLD_POSITION = 400;
     public static int ARM_TRANSFER_POSITION = 200;
     public static int ARM_SUB_HOLD = 400;
