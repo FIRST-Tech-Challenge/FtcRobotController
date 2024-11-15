@@ -39,6 +39,7 @@ public class Auto extends LinearOpMode {
             while (opModeIsActive()) {
                 display(); //telemetry data
                 Arm_Motor.setTargetPosition(180);
+                Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
     }
@@ -67,6 +68,6 @@ public class Auto extends LinearOpMode {
     }
     private void display() {
         telemetry.addData("arm position", Arm_Motor.getCurrentPosition());
-
+        telemetry.update();
     }
 }
