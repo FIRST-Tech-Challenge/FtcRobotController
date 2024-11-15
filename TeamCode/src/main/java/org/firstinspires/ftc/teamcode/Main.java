@@ -51,13 +51,13 @@ public class Main extends LinearOpMode {
 
                 initialize_direction();//sets up the direction for motors and servos
                 Arm_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                Hand_Rotator_Servo.setPosition(Hand_Rotator_Servo.getPosition() + gamepad2.left_stick_x*0.001);
+                Hand_Rotator_Servo.setPosition(Hand_Rotator_Servo.getPosition() + gamepad2.left_stick_x*0.01);
                 //Hand_Servo.setPosition(Hand_Servo.getPosition());
                 telemetry.addData("Hand Servo Position", Hand_Servo.getPosition());
                 telemetry.addData("Hand Servo Position incorrect", Hand_Rotator_Servo.getPosition());
                 telemetry.addData("direction", Hand_Servo.getDirection());
                 telemetry.addData("arm position", Arm_Motor.getCurrentPosition());
-
+                telemetry.addData("Dist To Move", dist_to_move);
                 //Hand_Servo.setDirection(gamepad2.a ? Servo.Direction.REVERSE: Servo.Direction.FORWARD);
                 //Hand_Servo.setPosition(gamepad2.a ? 0.65: 0);
 
@@ -77,16 +77,21 @@ public class Main extends LinearOpMode {
                     Hand_Servo.setPosition(0);
                 }
                 telemetry.addData("Hand Servo grip", Hand_Servo.getPosition());
-                double dist_to_move = 0;
-                if(gamepad2.left_stick_y > 0) {
-                    dist_to_move += gamepad2.left_stick_y*0.001;
+
+                dist_to_move += gamepad2.left_stick_y*0.01;
+                Arm_Motor.setPower(0.5);
+                if (Arm_Motor.getTargetPosition() == Arm_Motor.getCurrentPosition()){
+                    Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
+                    Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 if (dist_to_move >= 1){
                     dist_to_move = 0;
+                    Arm_Motor.setPower(0.5);
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() + 1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else if(dist_to_move <= -1) {
                     dist_to_move = 0;
+                    Arm_Motor.setPower(0.5);
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
