@@ -169,15 +169,15 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
             armController.setTargetPosition(ARM_GRAB_POSITION);
             rightWristServo.setPosition(WRIST_GRAB_POSITION);
             clawIntake.setPosition(ARM_CLAW_FULL_OPEN);
-        } else if (gamepad1.x){
+        } else if (gamepad1.b){
             armController.setTargetPosition(ARM_HOLD_POSITION);
             rightWristServo.setPosition(WRIST_TRANSFER_POSITION);
         } else if (gamepad1.y){
             armController.setTargetPosition(ARM_TRANSFER_POSITION);
             rightWristServo.setPosition(WRIST_TRANSFER_POSITION);
-        } else if (gamepad1.left_bumper){
-            clawIntake.setPosition(ARM_CLAW_FULL_CLOSE);
         } else if (gamepad1.right_bumper){
+            clawIntake.setPosition(ARM_CLAW_FULL_CLOSE);
+        } else if (gamepad1.left_bumper){
             clawIntake.setPosition(ARM_CLAW_TRANSFER_OPEN);
         }
     }
