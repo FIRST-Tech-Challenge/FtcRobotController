@@ -17,9 +17,8 @@ public class RightAuto extends LinearOpMode {
         //drives forward and puts the specimen on the rung
         robot.encoderDrive(1,19.4);
         robot.setArmPos(1045);
-        robot.setExtendPos(13.94);
-        robot.setArmPos(550);
-        robot.runIntakeForTime(1.0, -1);
+        robot.setExtendPos(13.948);
+        robot.setArmPos(450);
         robot.setExtendPos(0.25);
         robot.setArmPos(25);
 

@@ -621,11 +621,11 @@ public class Bot {
      * @param time how long to run intake
      */
     public void autoIntake(double time){
-        this.setArmPos(-230);
-        this.setExtendPos(8.39);
+        this.setArmPos(-260);
+        this.setExtendPos(9.0);
         this.runIntakeForTime(time, 1);
-        this.setExtendPos(0.0);
-        this.setArmPos(0);
+        this.setExtendPos(0.25);
+        this.setArmPos(25);
     }
 
     /**
