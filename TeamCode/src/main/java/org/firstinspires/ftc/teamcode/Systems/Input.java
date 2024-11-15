@@ -38,4 +38,9 @@ public class Input {
         motors.MoveMotor(2, -power); // right front
         motors.MoveMotor(3, -power); // right back
     }
+
+    public void Arm(double power)
+    {
+        motors.MoveMotor(4,power);
+    }
 }

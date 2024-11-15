@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.Systems.Servos;
 public class clawServoMove extends LinearOpMode {
 
     Servos servos;
-    int count = 0;
 
 
     @Override
@@ -17,11 +16,21 @@ public class clawServoMove extends LinearOpMode {
 
         servos = new Servos(hardwareMap);
 
+
         waitForStart();
+
+        servos.moveServo(0,0);
+        sleep(3000);
 
         while(opModeIsActive())
         {
+
+
+            servos.moveServo(0,90);
+            sleep(500);
             servos.moveServo(0,180);
+            sleep(500);
+            servos.moveServo(0,270);
             sleep(500);
             servos.moveServo(0,0);
             sleep(500);

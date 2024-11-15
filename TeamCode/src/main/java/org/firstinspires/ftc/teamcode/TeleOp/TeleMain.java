@@ -12,6 +12,7 @@ public class TeleMain extends LinearOpMode {
 
     Motors motors;
     Input input;
+    Servos servos;
 
 
 
@@ -23,20 +24,23 @@ public class TeleMain extends LinearOpMode {
 
         waitForStart();
 
-        double move;
-        double spin;
-        double strafe;
-
         while (opModeIsActive())
         {
-            move = gamepad1.left_stick_y * 100;
-            spin = gamepad1.right_stick_x * 100;
-            strafe = gamepad1.left_stick_x * 100;
+            double move = gamepad1.left_stick_y * 100;
+            double spin = gamepad1.right_stick_x * 100;
+            double strafe = gamepad1.left_stick_x * 100;
+            double arm = gamepad2.left_stick_y * 100;
 
             input.Move(move);
             input.Spin(spin);
             input.Strafe(strafe);
+            input.Arm(arm);
 
+            telemetry.addData("MOVE:", "left_y (%.2f),", move);
+            telemetry.addData("SPIN:", "right_x (%.2f),", spin);
+            telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
+            telemetry.addData("ARM:", "arm_x (%.2f),", arm);
+            telemetry.update(); // telemtryy
         }
     }
 }
