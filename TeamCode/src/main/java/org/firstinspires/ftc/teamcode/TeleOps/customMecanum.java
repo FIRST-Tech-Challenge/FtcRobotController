@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.myUtil.Hardware;
+import org.firstinspires.ftc.teamcode.myUtil.MecanumHardAuto;
 import org.firstinspires.ftc.teamcode.myUtil.threads.teleOp.lineUp;
 
 @SuppressWarnings("unused")
@@ -66,12 +74,12 @@ public class customMecanum extends OpMode {
             //Determines how much the robot has been turned since the beginning of the opMode
             double angle2;
 
-                try {
+            try {
 //                    angle2 = r.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-                    angle2 = 0;
-                } catch (Exception e) {
-                    angle2 = 0;
-                }
+                angle2 = 0;
+            } catch (Exception e) {
+                angle2 = 0;
+            }
 
             angle2 %= 2 * Math.PI;
 
@@ -128,11 +136,11 @@ public class customMecanum extends OpMode {
             double v1 = 0;
             double v2 = 0;
             if (angled) {
-                 v1 = velocity * Math.cos(angle + (Math.PI / 4) - angle2 - twist);
-                 v2 = velocity * Math.sin(angle + (Math.PI / 4) - angle2 - twist);
+                v1 = velocity * Math.cos(angle + (Math.PI / 4) - angle2 - twist);
+                v2 = velocity * Math.sin(angle + (Math.PI / 4) - angle2 - twist);
             }else{
-                 v1 = velocity * Math.cos(angle + (Math.PI / 4));
-                 v2 = velocity * Math.sin(angle + (Math.PI / 4));
+                v1 = velocity * Math.cos(angle + (Math.PI / 4));
+                v2 = velocity * Math.sin(angle + (Math.PI / 4));
             }
 
 
@@ -181,11 +189,11 @@ public class customMecanum extends OpMode {
 
         if(gamepad2.left_bumper) {
             r.linear_slide.setDirection(DcMotorSimple.Direction.REVERSE);
-            r.linear_slide.setPower(0.6);
+            r.linear_slide.setPower(0.7);
         }
         else if(gamepad2.right_bumper){
             r.linear_slide.setDirection(DcMotorSimple.Direction.FORWARD);
-            r.linear_slide.setPower(0.6);
+            r.linear_slide.setPower(0.7);
         }else{
             r.linear_slide.setPower(0);
         }
@@ -208,11 +216,8 @@ public class customMecanum extends OpMode {
             r.claw.setPosition(0);
         }
 
-        if(gamepad2.left_stick_y == 0){
-            r.arm1.setPosition(0.3);
-        }else {//
-            r.arm1.setPosition(Math.abs(gamepad2.left_stick_y) * 0.5);
-        }
+        r.arm1.setPosition(Math.abs(gamepad2.left_stick_y - 1) * 0.5);
+
 
         if(gamepad2.right_stick_y > 0){
             r.arm.setDirection(DcMotorSimple.Direction.REVERSE);

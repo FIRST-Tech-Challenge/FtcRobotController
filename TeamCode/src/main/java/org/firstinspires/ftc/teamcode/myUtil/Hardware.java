@@ -9,18 +9,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
+import java.sql.Time;
+
 public class Hardware {
     OpMode opMode;
     public DcMotor frm, flm, blm, brm, linear_slide, arm;
-    public Servo claw, arm1, arm2;
-    public CRServo kraken; // crservo
+    public Servo claw;
+    public Servo arm1;
+    public CRServo kraken;
     public BNO055IMU imu;
 
 
     public BNO055IMU.Parameters parameters;
 
 
-   public DcMotor[] drive;
+    public DcMotor[] drive;
 
     public void initRobot(OpMode opMode){
         this.opMode = opMode;
@@ -34,10 +38,8 @@ public class Hardware {
             blm = opMode.hardwareMap.dcMotor.get("blm");
             linear_slide = opMode.hardwareMap.dcMotor.get("linear_slide");
             arm = opMode.hardwareMap.dcMotor.get("arm");
-
             claw = opMode.hardwareMap.servo.get("claw");
             arm1 = opMode.hardwareMap.servo.get("arm1");
-            arm2 = opMode.hardwareMap.servo.get("arm2");
             drive = new DcMotor[]{frm, flm, brm, blm};
             for (DcMotor motor: drive){
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -117,3 +119,4 @@ public class Hardware {
         }
     }
 }
+
