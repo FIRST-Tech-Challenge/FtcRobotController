@@ -20,7 +20,7 @@ public class LeftAuto extends LinearOpMode {
         //extend pos is in inches(2 digits)
 
         //drives forward and plants a C4 on the referee's back
-        robot.encoderDrive(1,19.4);
+        robot.encoderDrive(1,19.45);
         robot.setArmPos(1045);
         robot.setExtendPos(13.948);
         robot.setArmPos(450);
