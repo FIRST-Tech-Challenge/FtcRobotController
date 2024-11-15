@@ -48,7 +48,7 @@ public class Main extends LinearOpMode {
                 float right_stick_x = gamepad1.right_stick_x;
                 //telemetry.addData("Test", true);
                 telemetry.addData("left_stick_x", gamepad2.left_stick_x);
-                Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 initialize_direction();//sets up the direction for motors and servos
                 Arm_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 Hand_Rotator_Servo.setPosition(Hand_Rotator_Servo.getPosition() + gamepad2.left_stick_x*0.001);
@@ -84,8 +84,11 @@ public class Main extends LinearOpMode {
                 if (dist_to_move >= 1){
                     dist_to_move = 0;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() + 1);
+                    Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else if(dist_to_move <= -1) {
+                    dist_to_move = 0;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
+                    Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
                 //Hand_Rotator_Servo.setPosition(0.5);
