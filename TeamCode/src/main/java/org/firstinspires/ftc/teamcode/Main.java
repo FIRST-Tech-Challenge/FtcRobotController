@@ -27,6 +27,7 @@ public class Main extends LinearOpMode {
     private  DcMotor Back_Right_Wheel;
     private DcMotor Arm_Motor;
     private double dist_to_move = 0;
+    private double power = 0;
     //private Controls_Update ControlsUpdate = new Controls_Update();
     //private Data_Update DataUpdate = new Data_Update();
     //private Thread dta = new Thread(DataUpdate);
@@ -79,19 +80,15 @@ public class Main extends LinearOpMode {
                 telemetry.addData("Hand Servo grip", Hand_Servo.getPosition());
 
                 dist_to_move += gamepad2.left_stick_y*0.01;
-                Arm_Motor.setPower(0.5);
-                if (Arm_Motor.getTargetPosition() == Arm_Motor.getCurrentPosition()){
-                    Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition());
-                    Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
+                Arm_Motor.setPower(power);
                 if (dist_to_move >= 1){
                     dist_to_move = 0;
-                    Arm_Motor.setPower(0.5);
+                    power = 0.5;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() + 1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } else if(dist_to_move <= -1) {
                     dist_to_move = 0;
-                    Arm_Motor.setPower(0.5);
+                    power = 0.5;
                     Arm_Motor.setTargetPosition(Arm_Motor.getCurrentPosition() -1);
                     Arm_Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
