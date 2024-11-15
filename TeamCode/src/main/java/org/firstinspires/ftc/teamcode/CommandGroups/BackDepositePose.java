@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.CommandGroups;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 // Example Sequential Command Group
@@ -12,28 +11,25 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class ArmStowLow extends SequentialCommandGroup {
+public class BackDepositePose extends SequentialCommandGroup {
 
     // constructor
-    public ArmStowLow() {
+    public BackDepositePose() {
 
         addCommands (
-        // What position should do is provide a starting pos safley no mater where we start the arm at the begining of a match
 
-                // lifts the shoulder up 60 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
+                // lifts the shoulder up 45 degrees
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
 
-                // folds elbow in 135 degrees
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
+                // folds the elbow in 60 degrees
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(60)),
 
-                // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
+                // folds the wrist in 135 degrees
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(135)),
 
-                //wait for 2 seconds
-                 new Pause(2),
+                // folds the wrist in 135 degrees
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))
 
-                // folds the elbow in 0
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0))
 
         );
     }

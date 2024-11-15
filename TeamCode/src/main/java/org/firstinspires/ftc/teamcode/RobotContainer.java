@@ -15,6 +15,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowLow;
+import org.firstinspires.ftc.teamcode.CommandGroups.BackDepositePose;
+import org.firstinspires.ftc.teamcode.CommandGroups.DepositePos;
+import org.firstinspires.ftc.teamcode.CommandGroups.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.CommandGroups.HuntingPos;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
@@ -26,6 +30,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.ElbowJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
@@ -49,6 +54,9 @@ public class RobotContainer {
 
     // active OpMode - used so any subsystem and command and access it and its members
     public static CommandOpMode ActiveOpMode;
+
+    // team alliance color = false if robot on blue alliance, true for red
+    public static boolean isRedAlliance=false;
 
     // FTC dashboard and telemetries
     public static FtcDashboard DashBoard;
@@ -87,10 +95,17 @@ public class RobotContainer {
     public static ElbowJoint elbowJoint;
 
     public static Claw claw;
+
+    public static ClawTouchSensor clawTouch;
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
-    public static void Init_TeleOp(CommandOpMode mode) {
+    // mode - current opmode that is being run
+    // RedAlliance - true if robot in red alliance, false if blue
+    public static void Init_TeleOp(CommandOpMode mode, boolean RedAlliance) {
+        // set alliance colour
+        isRedAlliance = RedAlliance;
+
         // Initialize robot subsystems
         Init(mode);
 
@@ -115,9 +130,17 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DepositePos());
+
+
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
+
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new HuntingPos());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new DropToGrab());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new BackDepositePose());
 
        // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
 
@@ -147,13 +170,23 @@ public class RobotContainer {
         // whenReleased - runs once when button is released
         // togglewhenPressed - turns command on and off at each button press
 
+        CommandScheduler.getInstance().schedule(new ArmStowLow());
+        odometry.setCurrentPos(new Pose2d(1.1,1.7,new Rotation2d(-90*Math.PI/180.0)));
+
     }
 
 
     // Robot initialization for auto - Run this once at start of auto
-    public static void Init_Auto(CommandOpMode mode) {
+    // mode - current opmode that is being run
+    // RedAlliance - true if robot in red alliance, false if blue
+    public static void Init_Auto(CommandOpMode mode, boolean RedAlliance) {
+        // set alliance colour
+        isRedAlliance = RedAlliance;
+
         // Initialize robot subsystems
         Init(mode);
+
+        // perform any autonomous-specific initialization here
     }
 
     // robot initialization - common to both auto and teleop
@@ -195,6 +228,7 @@ public class RobotContainer {
         wristRotateServo= new PivotingWrist();
         elbowJoint = new ElbowJoint();
         claw = new Claw();
+        clawTouch = new ClawTouchSensor();
         // insert other subsystems here
         // claw = new Claw();
 

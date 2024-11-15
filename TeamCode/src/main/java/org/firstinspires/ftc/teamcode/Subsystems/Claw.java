@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -12,11 +13,13 @@ public class Claw extends SubsystemBase {
     // Create wrist Servo
     private final Servo clawServo;
 
+
     /** Place code here to initialize subsystem */
     public Claw() {
 
         // Creates a Servo using the hardware map
         clawServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "clawServo");
+
 
     }
 
@@ -31,6 +34,7 @@ public class Claw extends SubsystemBase {
     public void ControlClaw(ClawState state){
         clawServo.setPosition(state.getValue());
     }
+
 
 
 }

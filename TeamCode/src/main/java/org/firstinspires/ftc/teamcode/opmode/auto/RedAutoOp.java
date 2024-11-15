@@ -1,11 +1,9 @@
-package org.firstinspires.ftc.teamcode.opmode.teleop;
+package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
-import org.firstinspires.ftc.teamcode.utility.VisionSystem;
 
 /*
  * This file contains an example of an "OpMode".
@@ -13,16 +11,25 @@ import org.firstinspires.ftc.teamcode.utility.VisionSystem;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
-@TeleOp(name="Drive TeleOp", group="OpMode")
+@Autonomous(name="Red Auto", group="OpMode")
 //@Disabled
-public class MainTeleop extends CommandOpMode {
+public class RedAutoOp extends CommandOpMode {
 
-    private VisionSystem visionSystem;
     // Initialize all objects, set up subsystems, etc...
     @Override
     public void initialize() {
-        // initialize for TeleOp in robot container
-        RobotContainer.Init_TeleOp(this);
+
+        // initialize for Auto in robot container
+        // set team alliance color to red (isRedAlliance=true)
+        RobotContainer.Init_Auto(this, true);
+
+        // do not proceed until start button is pressed
+        waitForStart();
+
+        // ---------- autonomous command ----------
+
+        // add autonomous command to scheduler and run it
+        new ExampleCommandGroup().schedule();
     }
 
     // Run Op Mode. Is called after user presses play button

@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
 
 
 // command template
@@ -10,15 +13,15 @@ public class CloseClaw extends CommandBase {
 
     // constructor
     public CloseClaw() {
-
         // add subsystem requirements (if any) - for example:
-        //addRequirements(RobotContainer.claw);
+        addRequirements(RobotContainer.claw);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-    //RobotContainer.claw.ClawClosed();
+
+      RobotContainer.claw.ControlClaw(ClawState.CLOSE);
     }
 
     // This method is called periodically while command is active

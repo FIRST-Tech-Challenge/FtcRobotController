@@ -61,7 +61,7 @@ public class Camera extends SubsystemBase {
 
         // set camera exposure and gain
         // values used from example code
-        setCameraExposure(2, 250);
+        setCameraExposure(1, 200);
 
         RobotContainer.DashBoard.startCameraStream(CameraPortal, 0);
     }

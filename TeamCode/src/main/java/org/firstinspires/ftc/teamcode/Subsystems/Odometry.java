@@ -14,11 +14,9 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 //@Config // EXAMPLE - use @Config to add public variables to dashboard for realtime updating
 public class Odometry extends SubsystemBase {
 
-    // for Dashboard demo purposes only!
-    // values on dashboard for edit must be public and static
-    public static double parameter1= 20.0;
-    public static int parameter2 = 7;
-    private static int parameter3 = 12;
+    // stored robot position (static) used to keep robot pose between opmodes
+    // value persists even if new odometry system is created.
+    private static Pose2d StoredRobotPose = new Pose2d(0,0, new Rotation2d(0));
 
     // Local objects and variables here
     private double previousLeftPos;
@@ -37,6 +35,8 @@ public class Odometry extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public Odometry() {
 
+        // initialize field position from stored value (i.e. previous op-mode)
+        setCurrentPos(StoredRobotPose);
     }
 
     /** Method called periodically by the scheduler
@@ -75,9 +75,9 @@ public class Odometry extends SubsystemBase {
 
         double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
-        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
+        double fieldForwardChange = ForwardChange * Math.cos(-IMUHeading) - LateralChange * Math.sin(-IMUHeading);
 
-        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
+        double fieldLateralChange = ForwardChange * Math.sin(-IMUHeading) + LateralChange * Math.cos(-IMUHeading);
 
         fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
 
@@ -90,6 +90,9 @@ public class Odometry extends SubsystemBase {
 
         // update FTC dashboard with latest odometry info - in separate function below for clarity
         UpdateDashBoard();
+
+        // save position to data store, in case op mode ends
+        StoredRobotPose = new Pose2d(fieldX, fieldY, new Rotation2d(fieldAngle));
     }
 
     // place special subsystem methods here
