@@ -26,8 +26,8 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static int SLIDES_ABOVE_BAR = 1900;
     public static int SLIDES_BELOW_BAR = 1270;
     public static int SLIDES_SPEC_PICKUP = 0;
-    public static double SPEC_CLAW_CLOSE = 0.2;
-    public static double SPEC_CLAW_OPEN = 0.8;
+    public static double SPEC_CLAW_CLOSE = 0.5;
+    public static double SPEC_CLAW_OPEN = 0.9;
     public static int INTAKE_ARM_UP = 10;
     public static int INTAKE_ARM_DOWN = 250;
     public static double SLIDE_MAX_SPEED = 0.5;
@@ -212,11 +212,11 @@ public class autoRoadRunnerITD extends LinearOpMode {
 
         TrajectoryActionBuilder moveAwayFromBarrier = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(13, -50));
-        TrajectoryActionBuilder moveIntoSpec1Position = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder moveIntoSpec1Position = moveAwayFromBarrier.fresh()
                 .strafeTo(new Vector2d(0, -30));
-        TrajectoryActionBuilder driveBack = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder driveBack = moveIntoSpec1Position.fresh()
                 .strafeTo(new Vector2d(0, -34));
-        TrajectoryActionBuilder pushSampleGrabSpec = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder pushSampleGrabSpec = driveBack.fresh()
                 .strafeTo(new Vector2d(37, -35))
                 .strafeTo(new Vector2d(37, -10))
                 .splineTo(new Vector2d(47, -10), Math.toRadians(270))
@@ -225,12 +225,12 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(47, -45))
                 .waitSeconds(3)
                 .strafeTo(new Vector2d(47, -61.5));
-        TrajectoryActionBuilder goToSubSecondSpec = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder goToSubSecondSpec = pushSampleGrabSpec.fresh()
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(47, -45))
                 .splineTo(new Vector2d(4, -52), Math.toRadians(270))
                 .strafeTo(new Vector2d(4, -27));
-        TrajectoryActionBuilder goBackAndPark = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder goBackAndPark = goToSubSecondSpec.fresh()
                 .waitSeconds(1)
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
                 .strafeTo(new Vector2d(47, -58));

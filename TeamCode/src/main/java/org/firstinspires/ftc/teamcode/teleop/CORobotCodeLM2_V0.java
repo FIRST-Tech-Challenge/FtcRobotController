@@ -34,8 +34,8 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     public static double ARM_CLAW_FULL_OPEN = 0;
     public static double ARM_CLAW_FULL_CLOSE = 1;
     public static double ARM_CLAW_TRANSFER_OPEN = 0.5;
-    public static double SPEC_CLAW_OPEN = 0;
-    public static double SPEC_CLAW_CLOSE = 1;
+    public static double SPEC_CLAW_OPEN = 0.9;
+    public static double SPEC_CLAW_CLOSE = 0.5;
     public static double BUCKET_DEPOSIT_POSITION = 0.27;
     public static double BUCKET_TRANSFER_POSITION = 0.9;
     private PIDFMotorController armController;
