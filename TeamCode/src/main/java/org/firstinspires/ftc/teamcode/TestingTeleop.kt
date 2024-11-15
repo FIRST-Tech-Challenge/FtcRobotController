@@ -76,6 +76,8 @@ class TestingTeleop : OpMode() {
 
         arm.mode = RUN_TO_POSITION
         extension.mode = RUN_TO_POSITION
+        arm.power = 1.0
+        extension.power = 1.0
     }
 
     override fun loop() {

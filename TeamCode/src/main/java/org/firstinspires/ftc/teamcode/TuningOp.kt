@@ -40,6 +40,9 @@ class TuningOp : OpMode() {
 
         if (gamepad.right_trigger > 0) dave.closePincer()
         if (gamepad.right_bumper) dave.openPincer()
+
+        if (gamepad.left_trigger > 0) dave.retractFullPower()
+        if (gamepad.left_bumper) dave.resetExtension()
     }
 }
 

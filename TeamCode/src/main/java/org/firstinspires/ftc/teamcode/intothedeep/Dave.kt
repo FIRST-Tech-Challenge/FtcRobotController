@@ -10,6 +10,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -200,6 +201,18 @@ class Dave(
         armExtension -= extensionRate
     }
 
+    fun retractFullPower() {
+        extension.mode = RUN_WITHOUT_ENCODER
+        extension.power = -1.0
+    }
+
+    fun resetExtension() {
+        extension.power = 0.0
+        extension.mode = RUN_TO_POSITION
+        extension.velocity = 2000.0
+        extension.targetPosition = extension.currentPosition
+    }
+
     fun closePincer() {
         pincerPosition = pincerClosePosition
     }
@@ -230,6 +243,7 @@ fun Telemetry.motorPosition(name: String, motor: DcMotorEx) {
     this.addData("$name target", motor.targetPosition)
     this.addData("$name Position", motor.currentPosition)
     this.addData("$name velocity", motor.velocity)
+    this.addData("$name power", motor.power)
 }
 
 

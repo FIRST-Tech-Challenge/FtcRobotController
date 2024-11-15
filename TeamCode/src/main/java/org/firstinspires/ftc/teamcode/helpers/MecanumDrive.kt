@@ -33,6 +33,7 @@ data class MotorDirections(val leftFrontMotor: Direction, val rightFrontMotor: D
     }
 }
 
+@Config
 class MecanumDrive(
     private val leftFrontMotor: LeftFrontMotor,
     private val rightFrontMotor: RightFrontMotor,
