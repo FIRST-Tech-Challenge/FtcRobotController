@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.KeyReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.DriveDistanceCmd;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@TeleOp(name = "Tele-op 2024-25")
+@TeleOp(name = "Macro Recorder! :)")
 public class MacroRecorder extends CommandOpMode {
 
     private GamepadEx driverOp;
@@ -30,6 +31,8 @@ public class MacroRecorder extends CommandOpMode {
     private ButtonReader DPAD_UP;
     private ButtonReader DPAD_LEFT;
     private ButtonReader DPAD_RIGHT;
+
+    private ButtonReader br;
 
     private List<String> moves;
 
@@ -46,16 +49,20 @@ public class MacroRecorder extends CommandOpMode {
         turnCW = new TurnCmd(-5, 0.4, drive, robotImu, telemetry);
         turnCCW = new TurnCmd(5, 0.4, drive, robotImu, telemetry);
 
-        ButtonReader DPAD_UP = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_UP);
-        ButtonReader DPAD_LEFT = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_LEFT);
-        ButtonReader DPAD_RIGHT = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_RIGHT);
+        DPAD_UP = new ButtonReader(driverOp, GamepadKeys.Button.LEFT_STICK_BUTTON);
+        DPAD_LEFT = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_LEFT);
+        DPAD_RIGHT = new ButtonReader(driverOp, GamepadKeys.Button.DPAD_RIGHT);
 
-        moves.set(0, "BEGIN");
+        br = new ButtonReader(driverOp, GamepadKeys.Button.A);
+
+        moves = new ArrayList<>();
+
+        moves.add("BEGIN");
 
 
-        register(drive);
+//        register(drive);
         //register(linearSlide);
-        drive.setDefaultCommand(driveCmd);
+//        drive.setDefaultCommand(driveCmd);
         //linearSlide.setDefaultCommand(linearSlideCmd);
 
     }
@@ -63,7 +70,10 @@ public class MacroRecorder extends CommandOpMode {
 
     @Override
     public void run() {
+
+        telemetry.addData("TEEEST!","TOOOST!");
         super.run();
+
 
         if (DPAD_UP.wasJustPressed()) {
             driveCmd.execute();
@@ -76,7 +86,7 @@ public class MacroRecorder extends CommandOpMode {
             moves.add("CCW");
         }
 
-        ButtonReader br = new ButtonReader(driverOp, GamepadKeys.Button.A);
+
         if (br.wasJustPressed()) {
             List<String> newmoves = new ArrayList<String>();
             String last_move = "";

@@ -22,8 +22,8 @@ public class MoveArm extends CommandBase {
 
     }
 
-    @Override
-    public void execute() {
-        armSub.move(speed);
-    }
+//    @Override
+//    public void execute() {
+//        armSub.move(speed);
+//    }
 }

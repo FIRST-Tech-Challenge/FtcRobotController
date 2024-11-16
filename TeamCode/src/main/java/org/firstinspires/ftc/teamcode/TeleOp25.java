@@ -6,16 +6,19 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.ArmDown;
 import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
 import org.firstinspires.ftc.teamcode.commands.MoveArm;
-import org.firstinspires.ftc.teamcode.commands.MoveArmToPos;
+import org.firstinspires.ftc.teamcode.commands.ArmUp;
+import org.firstinspires.ftc.teamcode.commands.MoveLinearSlide;
 import org.firstinspires.ftc.teamcode.commands.MoveWristLeft;
 import org.firstinspires.ftc.teamcode.commands.MoveWristRight;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSub;
+import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSub;
 import org.firstinspires.ftc.teamcode.subsystems.WristSub;
 
 
@@ -36,10 +39,12 @@ public class TeleOp25 extends CommandOpMode {
     private MoveWristLeft wristLeft;
     private MoveWristRight wristRight;
     private ArmSub armSub;
-    private MoveArm armUp;
-    private MoveArm armDown;
-    private MoveArm armOff;
-    private MoveArmToPos moveArmToPos;
+    private ArmUp armUp;
+    private ArmDown armDown;
+    private LinearSlideSub linearSlideSub;
+    private MoveLinearSlide linearSlideUp;
+    private MoveLinearSlide linearSlideDown;
+    private MoveLinearSlide linearSlideOff;
 
 
 
@@ -67,19 +72,41 @@ public class TeleOp25 extends CommandOpMode {
                 .whenPressed(new InstantCommand(this::toggleFieldCentric));
 
         armSub = new ArmSub(hardwareMap, telemetry);
-        armUp = new MoveArm(armSub, telemetry, 0.5);
-        armDown = new MoveArm(armSub, telemetry, -0.5);
-        armOff = new MoveArm(armSub, telemetry, -0);
+        armUp = new ArmUp(armSub, toolOp, telemetry);
+        armDown = new ArmDown(armSub, toolOp, telemetry);
+
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileHeld(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(armDown);
 
 
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(armOff);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armDown);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armOff);
+//        armUp = new MoveArm(armSub, telemetry, 0.5);
+//        armDown = new MoveArm(armSub, telemetry, -0.5);
+//        armOff = new MoveArm(armSub, telemetry, 0);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(moveArmToPos.storePos(armSub.getMotor().getCurrentPosition()));
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(moveArmToPos.storePos(armSub.getMotor().getCurrentPosition()));
-        moveArmToPos.moveToPos();
+
+
+
+
+//
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenReleased(armOff);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armDown);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armOff);
+
+//        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
+//        linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
+//        linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
+//        linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
+
+//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(linearSlideUp);
+//        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(linearSlideDown);
+//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(linearSlideOff);
+//        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(linearSlideOff);
+
+
+
+
+//        moveArmToPos.moveToPos();
 
         // Intake
         // A: Output Sample
@@ -98,17 +125,13 @@ public class TeleOp25 extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristRight);
 
         register(drive);
-        //register(linearSlide);
         drive.setDefaultCommand(driveCmd);
-        //linearSlide.setDefaultCommand(linearSlideCmd);
-
     }
 
     @Override
     public void run() {
         super.run();
-        
-        moveArmToPos = new MoveArmToPos(armSub);
+
 
 
         telemetry.addData("Field Centric?", fieldCentric);

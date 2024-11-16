@@ -43,12 +43,12 @@
 ### Expansion Hub
 
 #### Motors
-|Port|Type|Name|
-|---:|---|---|
-|0 | REV Robotics 40:1 HD Hex Motor | armMotor |
-|1 | | |
-|2 | | |
-|3 | | |
+|Port| Type                           | Name        |
+|---:|--------------------------------|-------------|
+|0 | REV Robotics 40:1 HD Hex Motor | armMotor    |
+|1 | ReV Robotics 40:1 HD Hex Motor | linearSlide |
+|2 |                                |             |
+|3 |                                |             |
 
 #### Servos
 |Port|Type|Name|
