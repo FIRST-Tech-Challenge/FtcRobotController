@@ -84,11 +84,11 @@ public class MainMovement extends LinearOpMode {
         // set all the motor powers to the floats defined
         leftBack.setPower(-BL * speed * 0.5);    // ATTENTION // - leftBack motor is multiplied by negative b/c left-side motors are backwards
         
-        rightFront.setPower(BR * speed * 0.5);     // ATTENTION // - rightFront motor is set to the BR b/c motors on robot are flipped
+        rightFront.setPower(FR * speed * 0.5);     
         
         leftFront.setPower(-FL * speed * 0.5);    // ATTENTION // - leftFront motor is multiplied by negative b/c left-side motors are backwards
         
-        rightBack.setPower(FR * speed * 0.5);     // ATTENTION // - rightBack motor is set to the FR b/c motors on robot are flipped
+        rightBack.setPower(BR * speed * 0.5);     
     }
 
     private void epicRotationMovement() {
