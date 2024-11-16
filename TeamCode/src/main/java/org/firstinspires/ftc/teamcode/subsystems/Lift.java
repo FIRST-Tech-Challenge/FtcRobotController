@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift{
     public int Lift_SPEED = 20;
+
     private DcMotor lift;
     private Encoder encoder;
 
@@ -26,6 +27,11 @@ public class Lift{
     public Lift(HardwareMap hw, String nameLift, String nameEncoder){
         lift = hw.get(DcMotor.class, nameLift);
         encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, "lift")));
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setPower(0);
+//        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        lift.setPower(1);
     }
     public void moveLift(double power){
         lift.setPower(power);
@@ -33,8 +39,9 @@ public class Lift{
     public double getPosition(){
         return encoder.getPositionAndVelocity().position;
     }
-    public void setPosition(int targetPosition, double power){
-        lift.setPower(power);
+    public void setPosition(int targetPosition){
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setTargetPosition(targetPosition);
+        lift.setPower(1.0);
     }
 }
