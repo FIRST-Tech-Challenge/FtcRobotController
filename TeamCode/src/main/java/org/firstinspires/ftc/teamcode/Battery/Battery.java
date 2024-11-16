@@ -6,18 +6,20 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 public class Battery {
+    public static double threshold = 0.5;
     HardwareMap hardwareMap;
-    VoltageSensor voltageSensor;
+    public VoltageSensor voltageSensor;
     public ElapsedTime timer = new ElapsedTime();
-    public Battery (HardwareMap hardwareMap){
-        this.hardwareMap = hardwareMap;
-        voltageSensor = hardwareMap.get(VoltageSensor.class, "Voltage Sensor");
+    public Battery (HardwareMap hwmap){
+        this.hardwareMap = hwmap;
+        voltageSensor = hwmap.voltageSensor.iterator().next();
     }
+
 
     public double getVoltage() {
         double voltage = voltageSensor.getVoltage();
         double timeLastUpdate = timer.seconds();
-        if (timeLastUpdate > 0.5) {
+        if (timeLastUpdate > threshold) {
             voltage = voltageSensor.getVoltage();
             timer.reset();
         }
