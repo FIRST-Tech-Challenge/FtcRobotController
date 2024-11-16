@@ -124,7 +124,7 @@ public class AutonomousLeftRed extends AutonomousBase {
         // Strafe right 12"
         driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         // Turn 180 deg
-//      driveToPosition( 12.0, 12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
+        driveToPosition( 12.0, 12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         // Report the final odometry position/orientation
         telemetry.addData("Final", "x=%.1f, y=%.1f, %.1f deg",
                 robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );

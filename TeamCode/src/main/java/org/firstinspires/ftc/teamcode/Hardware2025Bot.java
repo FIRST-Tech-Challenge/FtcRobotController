@@ -101,6 +101,7 @@ public class Hardware2025Bot
 
     public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public int          TILT_ANGLE_BASKET   =  3675;  // encoder at rotation back to the basket for scoring
+    public int          TILT_ANGLE_RAISED   =  2000;  // encoder at rotation back to the basket for scoring
     public int          TILT_ANGLE_HANG1    =  1400;  // encoder when preparing for level 2 ascent
     public int          TILT_ANGLE_HANG2    =   400;   // encoder at the end of level 2 ascent
     public int          TILT_ANGLE_ZERO     =     0;   // encoder for parking fullyh reset in auto
@@ -208,9 +209,9 @@ public class Hardware2025Bot
 
         // Locate the odometry controller in our hardware settings
         odom = hwMap.get(GoBildaPinpointDriver.class,"odom");      // Control Hub I2C port 3
-        odom.setOffsets(-135.0, 145.0);      // odometry pod locations relative center of robot
+        odom.setOffsets(0.0, -48.0);    // odometry pod locations relative center of robot
         odom.setEncoderResolution( GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD ); // 4bar pods
-        odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odom.resetPosAndIMU();
 
         // Define and Initialize drivetrain motors

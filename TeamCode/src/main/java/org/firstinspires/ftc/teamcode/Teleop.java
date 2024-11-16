@@ -76,7 +76,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
     boolean ascent2started       = false; // Do we need to monitor currents and set min holding power?
-    boolean enableOdometry       = false; // Process/report odometry updates?
+    boolean enableOdometry       = true; // Process/report odometry updates?
 
     int geckoWheelState = 0;
 	
@@ -144,7 +144,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.odom.update();
                 Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
                 String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}",
-                      pos.getY(DistanceUnit.INCH), pos.getX(DistanceUnit.INCH), -pos.getHeading(AngleUnit.DEGREES));
+                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), pos.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Position", posStr);
                 Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
@@ -644,10 +644,14 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Retract lift to the collection position
-            // TO DO: If raised to the basket, do this auto before lowering
-            // (don't want to do it if we use this backing out of sumbersimble
-            // robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
-            // robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+            boolean armRaised = (robot.viperMotorPos > robot.TILT_ANGLE_RAISED)? true: false;
+            // If raised to the basket, do this automatically before lowering
+            // (don't want to do it if we use this backing out of submersimble
+            if (armRaised) {
+                robot.elbowServo.setPosition(robot.ELBOW_SERVO_GRAB);
+                robot.wristServo.setPosition(robot.WRIST_SERVO_GRAB);
+                sleep(250);
+            }
             robot.startViperSlideExtension( robot.VIPER_EXTEND_GRAB );
         }
         //===================================================================

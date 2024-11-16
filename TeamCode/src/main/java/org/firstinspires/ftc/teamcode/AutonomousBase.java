@@ -304,7 +304,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
         robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
         robotGlobalYCoordinatePosition = pos.getY(DistanceUnit.INCH);
-        robotOrientationRadians        = -pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward)
+        robotOrientationRadians        = pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward), +90deg CCW
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/
@@ -1034,10 +1034,10 @@ public abstract class AutonomousBase extends LinearOpMode {
         boolean reachedDestination = false;
         double xWorld = robotGlobalXCoordinatePosition;  // inches
         double yWorld = robotGlobalYCoordinatePosition;  // inches
-        double xMovement, yMovement, turnMovement;
+        double xMovement = 0.0, yMovement = 0.0, turnMovement = 0.0;
         // Not sure why, but the x and y are backwards
-        double deltaX = yTarget - xWorld;
-        double deltaY = xTarget - yWorld;
+        double deltaX = xTarget - xWorld;
+        double deltaY = yTarget - yWorld;
         double driveAngle = Math.atan2(deltaY, deltaX);
         double deltaAngle = AngleWrapRadians(toRadians(angleTarget) - robotOrientationRadians);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -1080,6 +1080,26 @@ public abstract class AutonomousBase extends LinearOpMode {
             ApplyMovement(yMovement, xMovement, turnMovement);
         }
 
+        boolean ODOMETRY_DEBUG = false;
+        if( ODOMETRY_DEBUG ) {
+            sleep(250);       // allow 0.25 seconds of progress (from prior loop)...
+            robot.driveTrainMotorsZero(); // then stop and observe
+            telemetry.addData("World X (inches)", "%.2f in", xWorld );
+            telemetry.addData("World Y (inches)", "%.2f in", yWorld );
+            telemetry.addData("Orientation (deg)","%.2f deg", Math.toDegrees(robotOrientationRadians) );
+            telemetry.addData("distanceToPoint", "%.2f in", magnitude);
+            telemetry.addData("angleToPoint", "%.4f deg", Math.toDegrees(driveAngle));
+            telemetry.addData("deltaAngleToPoint", "%.4f deg", Math.toDegrees(deltaAngle));
+            telemetry.addData("relative_x_to_point", "%.2f in", deltaX);
+            telemetry.addData("relative_y_to_point", "%.2f in", deltaY);
+            //telemetry.addData("robot_radian_err", "%.4f deg", Math.toDegrees(robot_radian_err));
+            telemetry.addData("movement_x_power", "%.2f", xMovement);
+            telemetry.addData("movement_y_power", "%.2f", yMovement);
+            telemetry.addData("rotation_power", "%.2f", turnMovement);
+            telemetry.update();
+            sleep(5000);  // so we can read the output above
+        } // ODOMETRY_DEBUG
+
         return reachedDestination;
     }
     /**
@@ -1118,10 +1138,10 @@ public abstract class AutonomousBase extends LinearOpMode {
 //        double backLeft = movement_y-movement_turn-movement_x*1.5;
 //        double backRight = movement_y+movement_turn+movement_x*1.5;
 //        double frontRight = movement_y+movement_turn-movement_x*1.5;
-        double frontRight = xMovement - yMovement - turnMovement;
-        double frontLeft  = xMovement + yMovement + turnMovement;
-        double backRight  = xMovement + yMovement - turnMovement;
-        double backLeft   = xMovement - yMovement + turnMovement;
+        double frontRight = yMovement - xMovement + turnMovement;
+        double frontLeft  = yMovement + xMovement - turnMovement;
+        double backRight  = yMovement + xMovement + turnMovement;
+        double backLeft   = yMovement - xMovement - turnMovement;
 
         //find the maximum of the powers
         double maxRawPower = Math.abs(frontLeft);
@@ -1188,7 +1208,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param driveType (DRIVE_TO or DRIVE_THRU)
      * @return boolean true/false for DONE?
      */
-    public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
+/*  public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
                                     double speedMax, double turnMax, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
         double x_world = robotGlobalYCoordinatePosition;  // inches (X/Y backward! see notes)
@@ -1301,7 +1321,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.driveTrainMotors( frontLeft, frontRight, backLeft, backRight );
         return false;
     } // moveToPosition
-
+*/
     /**
      * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)
      * @param angleRadians
