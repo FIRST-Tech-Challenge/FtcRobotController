@@ -28,11 +28,11 @@ public class ArmSub extends SubsystemBase{
         return armMotor;
     }
 
-    public void armUp() {
-        setPos(getMotor().getCurrentPosition() + 25);
+    public void armUp(DoubleSupplier trigger) {
+        setPos(getMotor().getCurrentPosition() + 25 * (1 - trigger));
     }
-    public void armDown() {
-        setPos(getMotor().getTargetPosition() - 25);
+    public void armDown(DoubleSupplier trigger) {
+        setPos(getMotor().getTargetPosition() - 25 * (1 - trigger)));
     }
 
     public void setPos(int pos) {

@@ -19,7 +19,7 @@ public class ArmDown extends CommandBase {
 
     @Override
     public void execute() {
-        armSub.armDown();
+        armSub.armDown(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER););
     }
 
     @Override
