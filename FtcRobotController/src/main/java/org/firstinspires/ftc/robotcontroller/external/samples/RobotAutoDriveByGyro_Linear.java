@@ -374,7 +374,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /**
      * Take separate drive (fwd/rev) and turn (right/left) requests,
-     * combines them, and applies the appropriate speed commands to the left and right wheel motors.
+     * combines them, and applies the appropriate speed commands.md to the left and right wheel motors.
      * @param drive forward motor speed
      * @param turn  clockwise turning motor speed.
      */

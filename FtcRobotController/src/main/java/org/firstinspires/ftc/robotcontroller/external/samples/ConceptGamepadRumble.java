@@ -49,14 +49,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *
  *   Note: Whenever a new Rumble command is issued, any currently executing rumble action will
  *   be truncated, and the new action started immediately.  Take these precautions:
- *      1) Do Not SPAM the rumble motors by issuing rapid fire commands
- *      2) Multiple sources for rumble commands must coordinate to avoid tromping on each other.
+ *      1) Do Not SPAM the rumble motors by issuing rapid fire commands.md
+ *      2) Multiple sources for rumble commands.md must coordinate to avoid tromping on each other.
  *
  *   This can be achieved several possible ways:
  *   1) Only having one source for rumble actions
- *   2) Issuing rumble commands on transitions, rather than states.
+ *   2) Issuing rumble commands.md on transitions, rather than states.
  *      e.g. The moment a touch sensor is pressed, rather than the entire time it is being pressed.
- *   3) Scheduling rumble commands based on timed events. e.g. 10 seconds prior to endgame
+ *   3) Scheduling rumble commands.md based on timed events. e.g. 10 seconds prior to endgame
  *   4) Rumble on non-overlapping mechanical actions. e.g. arm fully-extended or fully-retracted.
  *   5) Use isRumbling() to hold off on a new rumble if one is already in progress.
  *
