@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.aether.collaborative_multitasking.SharedResource;
 
@@ -57,6 +58,11 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @AutoClearEncoder
     public DcMotor encoderVerticalSlide;
 
+    @HardwareName("arm")
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    @AutoClearEncoder
+    public DcMotor arm;
+
     @EncoderFor("frontLeft")
     @AutoClearEncoder
     @Reversed
@@ -74,6 +80,14 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("gyro")
     public NavxMicroNavigationSensor gyro;
 
+    @HardwareName("claw")
+    public Servo claw;
+
+    @HardwareName("twist")
+    public Servo twist;
+
+    @HardwareName("wrist")
+    public Servo wrist;
 
 
     @Override
