@@ -140,9 +140,9 @@ public class TeleOpMain extends LinearOpMode {
             double backRightPower = (y + x - rx) / denominator;
 
             // slow speeds
-            if (gamepad1.left_bumper)
+            if (gamepad1.left_trigger != 0)
                 s = 4;
-            else if (gamepad1.right_bumper)
+            else if (gamepad1.right_trigger != 0)
                 s = 2;
             else
                 s = 1;
@@ -160,7 +160,7 @@ public class TeleOpMain extends LinearOpMode {
                 backLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontRight.setDirection(DcMotor.Direction.FORWARD);
                 backRight.setDirection(DcMotor.Direction.FORWARD);
-            } else if (gamepad1.b) {
+            } else if (gamepad1.a) {
                 direction = -1;
                 frontLeft.setDirection(DcMotor.Direction.FORWARD);
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -181,9 +181,9 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Horizontal slide
-            if (gamepad2.left_bumper) {
+            if (gamepad1.dpad_up) {
                 slideMotor.setPower(-1);
-            } else if (gamepad2.right_bumper) {
+            } else if (gamepad1.dpad_down) {
                 slideMotor.setPower(1);
             } else {
                 slideMotor.setPower(0);
@@ -191,20 +191,20 @@ public class TeleOpMain extends LinearOpMode {
 
             // Wrist
             // SERVO CONTROLLER INFO: leftWrist:        left limit = 1, right limit = 0     rightWrist: left limit = 0, right limit = 1
-            if (gamepad2.a) {           // pick up
+            if (gamepad1.b) {           // pick up
                 leftWrist.setPosition(0.9);
                 rightWrist.setPosition(0.1);
-            } else if (gamepad2.b) {      // deposit
+            } else if (gamepad1.x) {      // deposit
                 leftWrist.setPosition(0);
                 rightWrist.setPosition(1);
             }
 
             // Grabber
-            if (gamepad2.dpad_up) {
+            if (gamepad1.right_bumper) {
                 leftGrabber.setPosition(0);
                 rightGrabber.setPosition(1);
             }
-            else if (gamepad2.dpad_down) {
+            else if (gamepad1.left_bumper) {
                 leftGrabber.setPosition(1);
                 rightGrabber.setPosition(0);
             }
