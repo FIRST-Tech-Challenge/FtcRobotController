@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public class MecanumTeleOp extends LinearOpMode {
     private Hardware hardware;
     double Wristpos = 0.28;
-    double Twistpos = 0.0;
+    double Twistpos = 0.17;
 
     @Override
     public void runOpMode() {
@@ -37,6 +37,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
         hardware.wrist.setPosition(0.28);
+        hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -54,7 +55,6 @@ public class MecanumTeleOp extends LinearOpMode {
         telemetry.log().clear();
         telemetry.log().add("Gyro Calibrated. Press Start.");
         telemetry.clear();
-        telemetry.update();
 
         waitForStart();
         if (isStopRequested()) return;
@@ -98,7 +98,7 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backRight.setPower(backRightPower / 2);
             wrist();
             servoMoves();
-            twist(hardware);
+            twist();
             lift(hardware);
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
@@ -263,7 +263,7 @@ public class MecanumTeleOp extends LinearOpMode {
         arm.setPower(emerg ? 1.0 : 0.3);
         telemetry.addData("arm deg", degrees);
     }
-    public void twist(Hardware hardware) {
+    public void twist() {
         if(gamepad2.left_stick_x>=0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
             Twistpos+=0.01;
             hardware.twist.setPosition(Twistpos);
@@ -271,7 +271,7 @@ public class MecanumTeleOp extends LinearOpMode {
             Twistpos-=0.01;
             hardware.twist.setPosition(Twistpos);
         }
-        telemetry.addData("Twist Position",hardware.twist.getPosition());
+        telemetry.addData("Twist Position",Twistpos);
 
     }
     public void wrist() {
