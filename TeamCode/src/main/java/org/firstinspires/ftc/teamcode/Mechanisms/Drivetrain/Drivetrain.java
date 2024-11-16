@@ -48,6 +48,7 @@ public class Drivetrain {
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
     public static double distanceThreshold = 0.2;
     public static double angleThreshold = 0.1;
+    public static double maxVoltage = 12.5;
     public Battery battery;
 
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
@@ -71,10 +72,10 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        this.motorLeftFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), battery, 12.5);
-        this.motorLeftBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), battery, 12.5);
-        this.motorRightBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), battery, 12.5);
-        this.motorRightFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), battery, 12.5);
+        this.motorLeftFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), battery, maxVoltage);
+        this.motorLeftBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), battery, maxVoltage);
+        this.motorRightBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), battery, maxVoltage);
+        this.motorRightFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), battery, maxVoltage);
         //casting
 
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);

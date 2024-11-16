@@ -10,10 +10,11 @@ public class Battery {
     HardwareMap hardwareMap;
     public VoltageSensor voltageSensor;
     public ElapsedTime timer = new ElapsedTime();
-    double voltage = voltageSensor.getVoltage();
+    double voltage;
     public Battery (HardwareMap hwmap){
         this.hardwareMap = hwmap;
         this.voltageSensor = hwmap.voltageSensor.iterator().next();
+        voltage = voltageSensor.getVoltage();
     }
 
 
