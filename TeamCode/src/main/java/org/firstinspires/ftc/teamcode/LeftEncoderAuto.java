@@ -8,7 +8,7 @@ public class LeftEncoderAuto extends MainEncoderAuto {
     public void runOpMode() {
         // Call the parent class method to use its setup
         super.runOpMode();
-        driveInches(24, 0.25f, dir.FORWARD, 5);
+        driveInches(24, 0.5f, dir.LEFT, 50);
        /* moveSlide(20, 1, true, 5);
         driveInches(7, 1, dir.FORWARD, 5);
         moveSlide(2, 1, false, 1);

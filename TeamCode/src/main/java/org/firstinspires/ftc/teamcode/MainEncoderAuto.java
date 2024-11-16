@@ -19,8 +19,8 @@ public class MainEncoderAuto extends LinearOpMode {
     //move left a few inches (for other team's auto
 
     ///////////////////////////////code///////////////////////////////
-    private ElapsedTime     runtime = new ElapsedTime();
-    static final double countsPerRev = 1440;
+    private ElapsedTime runtime = new ElapsedTime();
+    static final double countsPerRev = 1.043;
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
     static final double countsPerInch  = countsPerRev / (wheelDiameter * Math.PI);
     static final double slideCountsPerInch = 1440;
@@ -34,12 +34,12 @@ public class MainEncoderAuto extends LinearOpMode {
         rightBack  = hardwareMap.get(DcMotor.class, "br");
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
-        linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
+        linearSlide = hardwareMap.get(DcMotor.class, "ls");
 
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
-        clawServo = hardwareMap.get(Servo.class, "clawServo");
+        clawServo = hardwareMap.get(Servo.class, "cs");
         telemetry.addData("Starting pos: ", leftBack.getCurrentPosition());
         telemetry.update();
         waitForStart();
@@ -57,7 +57,10 @@ public class MainEncoderAuto extends LinearOpMode {
         int rbDir = 1;
         int lfDir = 1;
         int rfDir = 1;
-        int targetPos;
+        double targetPos = 0;
+        double ticks = 0;
+        double deltaTime = 0;
+        double lastRuntimeSeconds = 0;
 
         //sets some motors to negative power depending on direction
         switch(direction) {
@@ -80,25 +83,26 @@ public class MainEncoderAuto extends LinearOpMode {
         }
         if(opModeIsActive()) {
             runtime.reset();
-            targetPos = (int)(inches * countsPerInch);
-            leftBack.setTargetPosition(targetPos + leftBack.getCurrentPosition());
-            rightBack.setTargetPosition(targetPos + rightBack.getCurrentPosition());
-            leftFront.setTargetPosition(targetPos + leftFront.getCurrentPosition());
-            rightFront.setTargetPosition(targetPos + rightFront.getCurrentPosition());
-
             leftBack.setPower(lbDir * speed);
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
             rightFront.setPower(rfDir * speed);
-            while(opModeIsActive() && timeoutS < runtime.seconds() && (leftBack.isBusy() && rightBack.isBusy() && leftFront.isBusy() && rightFront.isBusy())) {
-                telemetry.addData("currently going", String.valueOf(direction), " to ", targetPos);
+            targetPos = countsPerInch / speed;
+            while(opModeIsActive() && timeoutS > runtime.seconds() && ticks < targetPos) {
+                deltaTime = runtime.seconds() - lastRuntimeSeconds;
+                lastRuntimeSeconds = runtime.seconds();
+                ticks += deltaTime * speed;
+                telemetry.addData("currently going", String.valueOf(direction), " to ", ticks);
+                telemetry.addData("Current Pos  ", ticks);
+                telemetry.addData("target Pos  ", targetPos);
                 telemetry.update();
+
             }
-            leftBack.setPower(0);
+          /*  leftBack.setPower(0);
             rightBack.setPower(0);
             leftFront.setPower(0);
             rightFront.setPower(0);
-            sleep(100);
+            sleep(100);*/
         }
     }
 
