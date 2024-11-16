@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.view.ViewOutlineProvider;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -49,13 +50,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
-
+@Config
 @TeleOp(name="Mecanum Driver", group="TeleOp")
 public class MecanumDriver extends OpMode {
     private MecanumRobotController robotController;
     private final ElapsedTime runtime = new ElapsedTime();
     private int pivotPosition = 0;
     private int viperPosition = 0;
+    private double hingePosition = 0.3;
     private double timeAPressed = 0;
     private double timeXPressed = 0;
     private final static double TURN_POWER = 2.0;
@@ -127,8 +129,8 @@ public class MecanumDriver extends OpMode {
 //                hardwareMap.get(DcMotorEx.class, "PIVOTRIGHT"),
 //                PIVOT_POSITION_OFFSET_COUNTS
 //        );
-//        intake = new Intake(hardwareMap);
-        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, photoSensor);
+        intake = new Intake(hardwareMap);
+//        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, photoSensor);
 //
 //        telemetry.addData("Status", "Initialized");
     }
@@ -140,7 +142,8 @@ public class MecanumDriver extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-//        intake.close();
+        intake.close();
+        intake.hingeTo(hingePosition);
 //        intake.unwhack();
 //        claw.setPosition(0.75);
 //        wrist.setPosition(WRIST_MIN_POS);
@@ -197,19 +200,24 @@ public class MecanumDriver extends OpMode {
 //        }
 //
 //        // Open/close intake
-//        if (gamepad2.a && runtime.seconds() - timeAPressed >= INTAKE_COOLDOWN) {
-//            telemetry.addData("Button", "A pressed");
-//            timeAPressed = runtime.seconds();
-//            if (intake.isOpen()/*clawOpen*/) {
-//                intake.close();
-////                claw.setPosition(0.75);
-////                clawOpen = false;
-//            } else {
-//                intake.open();
-////                claw.setPosition(0.65);
-////                clawOpen = true;
-//            }
-//        }
+        if (gamepad2.a && runtime.seconds() - timeAPressed >= INTAKE_COOLDOWN) {
+            telemetry.addData("Button", "A pressed");
+            timeAPressed = runtime.seconds();
+            if (intake.isOpen()/*clawOpen*/) {
+                intake.close();
+//                claw.setPosition(0.75);
+//                clawOpen = false;
+            } else {
+                intake.open();
+//                claw.setPosition(0.65);
+//                clawOpen = true;
+            }
+        }
+
+        hingePosition += gamepad2.left_stick_y * 0.05;
+        hingePosition = Math.min(Math.max(0, hingePosition), intake.HINGE_MAX_POSITION);
+
+        intake.hingeTo(hingePosition);
 //
 //        if (gamepad2.x && runtime.seconds() - timeXPressed >= WHACK_COOLDOWN) {
 //            timeXPressed = runtime.seconds();
@@ -243,19 +251,19 @@ public class MecanumDriver extends OpMode {
 //            wrist.setPosition(Math.min(WRIST_MAX_POS, wrist.getPosition() + 0.03));
 //        }
 
-        SparkFunOTOS.Pose2D position = photoSensor.getPosition();
-        for (int i = 0; i < 10; ++i) {
-            robotController.turnTo(180, TURN_POWER);
-            robotController.turnTo(-180, TURN_POWER);
-            robotController.turnTo(0, TURN_POWER);
-        }
-
-
-        telemetry.addData("Position", position.x + ", " + position.y);
-        telemetry.addData("Rotation", position.h);
+//        SparkFunOTOS.Pose2D position = photoSensor.getPosition();
+//        for (int i = 0; i < 10; ++i) {
+//            robotController.turnTo(180, TURN_POWER);
+//            robotController.turnTo(-180, TURN_POWER);
+//            robotController.turnTo(0, TURN_POWER);
+//        }
+//
+//
+//        telemetry.addData("Position", position.x + ", " + position.y);
+//        telemetry.addData("Rotation", position.h);
 //        telemetry.addData("", "");
-//        telemetry.addData("Claw Left Position", intake.getLeftPosition());
-//        telemetry.addData("Claw Right Position", intake.getRightPosition());
+        telemetry.addData("Claw Left Position", intake.getLeftClawPosition());
+        telemetry.addData("Claw Right Position", intake.getRightClawPosition());
 ////        telemetry.addData("Claw Position", claw.getPosition());
 ////        telemetry.addData("Wrist Position", wrist.getPosition());
 //        telemetry.addData("Viper Slide Position", viperSlide.getCurrentPosition());

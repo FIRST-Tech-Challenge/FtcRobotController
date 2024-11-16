@@ -26,7 +26,7 @@ public class AutoRedObservation extends LinearOpMode {
         initialize();
         waitForStart();
         intake.close();
-        intake.unwhack();
+//        intake.unwhack();
         pivot.setTargetPosition(-1170);
         robotController.distanceDrive(25, -12.528807709151522, DRIVE_SPEED);
         viperSlide.setTargetPosition(1230);
@@ -35,7 +35,7 @@ public class AutoRedObservation extends LinearOpMode {
         robotController.sleep(0.5);
         viperSlide.setTargetPosition(700);
         robotController.sleep(0.5);
-        intake.largeOpen();
+//        intake.largeOpen();
         viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
         robotController.sleep(0.5);
         pivot.setTargetPosition(-510);

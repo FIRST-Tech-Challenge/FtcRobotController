@@ -26,7 +26,7 @@ public class AutoBlueObservation extends LinearOpMode {
         initialize();
         waitForStart();
         intake.close();
-        intake.unwhack();
+//        intake.unwhack();
         pivot.setTargetPosition(-1170);
         robotController.distanceDrive(25, -12.528807709151522, DRIVE_SPEED);
         // Pivot: -1170, viper: 1280

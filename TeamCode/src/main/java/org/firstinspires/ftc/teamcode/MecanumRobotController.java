@@ -9,6 +9,7 @@
 //      P: Parameters, the list of parameters and explanations of them.
 
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-
+@Config
 public class MecanumRobotController {
     public static final boolean DEFAULT_FIELD_CENTRIC = true;
     public static final boolean DEFAULT_SEND_TELEMETRY = true;
@@ -32,11 +33,14 @@ public class MecanumRobotController {
     public static final double MAX_CORRECTION_ERROR = 2.0;
     public static final double TURN_SPEED_RAMP = 4.0;
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
-    public static final double INCHES_LEFT_TO_SLOW_DOWN = 8;
+    public static final double INCHES_LEFT_TO_SLOW_DOWN = 3;
     public static final double TURN_DRIFT_TIME = 0.15;
-    public static double Kp = 0.07;
+    public static final double MIN_DIST_TO_STOP = 0.3;
+    public static double Kp = 0.1;
     public static double Kd = 0.0002;
     public static double Ki = 0.00;
+    public static final double ANGULAR_SCALAR = 0.9954681619;
+    public static double LINEAR_SCALAR = 1.0;
 
     private final DcMotorEx backLeft;
     private final DcMotorEx backRight;
@@ -60,6 +64,7 @@ public class MecanumRobotController {
     private double turnStartedTime;
     private double turnStoppedTime;
     private double headingOffset;
+    private double distance;
     private int kTuner;
 
 
@@ -89,11 +94,11 @@ public class MecanumRobotController {
         this.photoSensor.setLinearUnit(DistanceUnit.INCH);
         this.photoSensor.setAngularUnit(AngleUnit.DEGREES);
 
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 180);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 0);
         this.photoSensor.setOffset(offset);
 
-        this.photoSensor.setLinearScalar(1.0);
-        this.photoSensor.setAngularScalar(1.0);
+        this.photoSensor.setAngularScalar(ANGULAR_SCALAR);
+        this.photoSensor.setLinearScalar(LINEAR_SCALAR);
 
         this.photoSensor.calibrateImu();
         this.photoSensor.resetTracking();
@@ -191,10 +196,11 @@ public class MecanumRobotController {
         double frontLeftPower = Range.clip((forward - strafe - turn) / 3, -1.0, 1.0);
         double frontRightPower = Range.clip((forward + strafe + turn) / 3, -1.0, 1.0);
 
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
+        // * 2000 to convert from power to velocity
+        backLeft.setVelocity(2000 * backLeftPower);
+        backRight.setVelocity(2000 * backRightPower);
+        frontLeft.setVelocity(2000 * frontLeftPower);
+        frontRight.setVelocity(2000 * frontRightPower);
     }
 
     // Behavior: Overloaded method of move. This sets the default of isTelemetry.
@@ -206,7 +212,7 @@ public class MecanumRobotController {
     private void move(double forward, double strafe, double turn, double headingCorrectionPower) {
         move(forward, strafe, turn, headingCorrectionPower, DEFAULT_SEND_TELEMETRY);
     }
-    
+
     public SparkFunOTOS.Pose2D getPosition() {
         return photoSensor.getPosition();
     }
@@ -243,7 +249,7 @@ public class MecanumRobotController {
         }
 
         double moveCountMult = Math.sqrt(Math.pow(Math.cos(direction * (Math.PI / 180)) * (1.0 / FORWARD_COUNTS_PER_INCH), 2) +
-                                Math.pow(Math.sin(direction * (Math.PI / 180)) * (1.0 / STRAFE_COUNTS_PER_INCH), 2));
+                Math.pow(Math.sin(direction * (Math.PI / 180)) * (1.0 / STRAFE_COUNTS_PER_INCH), 2));
 
         int forwardCounts = (int)(forward * distance / moveCountMult);
         int strafeCounts = (int)(strafe * distance / moveCountMult);
@@ -267,9 +273,9 @@ public class MecanumRobotController {
         while ((backLeft.isBusy() || backRight.isBusy() || frontLeft.isBusy() || frontRight.isBusy())
                 && robot.opModeIsActive()) {
             double distanceToDestination = (Math.abs(backLeftTarget - backLeft.getCurrentPosition()) +
-                                        Math.abs(backRightTarget - backRight.getCurrentPosition()) +
-                                        Math.abs(frontLeftTarget - frontLeft.getCurrentPosition()) +
-                                        Math.abs(frontRightTarget - frontRight.getCurrentPosition())) / 4.0;
+                    Math.abs(backRightTarget - backRight.getCurrentPosition()) +
+                    Math.abs(frontLeftTarget - frontLeft.getCurrentPosition()) +
+                    Math.abs(frontRightTarget - frontRight.getCurrentPosition())) / 4.0;
             double distanceToDestinationInches = 2 * Math.sqrt(Math.pow(Math.cos(direction) *
                     (distanceToDestination / FORWARD_COUNTS_PER_INCH), 2) + Math.pow(Math.sin(direction) *
                     (distanceToDestination / STRAFE_COUNTS_PER_INCH), 2));
@@ -277,9 +283,9 @@ public class MecanumRobotController {
             robot.telemetry.addData("Distance To Target", distanceToDestination * moveCountMult);
             robot.telemetry.addData("", "");
             if (distanceToDestinationInches <= INCHES_LEFT_TO_SLOW_DOWN) {
-                move(0.01 + speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, 0.0);
+                move(0.01 + speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, HEADING_CORRECTION_POWER);
             } else {
-                move(speed, 0.0, 0.0, 0.0);
+                move(speed, 0.0, 0.0, HEADING_CORRECTION_POWER);
             }
 
             if (distanceToDestinationInches < 1) {
@@ -305,6 +311,28 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot will move.
     public void distanceDrive(double distance, double direction, double speed) throws RuntimeException {
         distanceDrive(distance, direction, speed, DEFAULT_FIELD_CENTRIC);
+    }
+
+    // Behavior: Drives the robot to a given position on the field relative to the starting position.
+    //           The position is given in inches. It will also turn the robot to the desired heading
+    //           given in the position parameter.
+    // Params:
+    //      - SparkFunOTOS.Pose2D position: The position to drive the robot to.
+    //      - double speed: The speed at which the robot will move.
+    public void positionDrive(SparkFunOTOS.Pose2D wantedPosition, double speed) {
+        SparkFunOTOS.Pose2D currentPosition = getPosition();
+        distance = Math.sqrt(Math.pow(currentPosition.x - wantedPosition.x, 2) + Math.pow(currentPosition.y - wantedPosition.y, 2));
+        while (distance > MIN_DIST_TO_STOP) {
+            currentPosition = getPosition();
+            wantedHeading = wantedPosition.h;
+            double dy = wantedPosition.y - currentPosition.y;
+            double dx = wantedPosition.x - currentPosition.x;
+            double moveDirection = Math.atan2(dy, dx);
+            double forward = -speed * Math.cos((moveDirection - currentPosition.h) * (Math.PI / 180));
+            double strafe = -speed * Math.sin((moveDirection - currentPosition.h) * (Math.PI / 180));
+            move(forward, strafe, 0.0, HEADING_CORRECTION_POWER);
+            distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        }
     }
 
     // Behavior: Drives the robot continuously based on forward, strafe, and turn power.
@@ -406,11 +434,9 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot should turn.
     public void turnTo(double angle, double speed) {
         wantedHeading = angle;
-        double degreesToHeading = Math.abs(normalize(getAngleImuDegrees() - wantedHeading));
-        while (degreesToHeading > MAX_CORRECTION_ERROR && robot.opModeIsActive()) {
-            degreesToHeading = Math.abs(normalize(getAngleImuDegrees() - wantedHeading));
+        while (Math.abs(getAngleImuDegrees() - wantedHeading) > MAX_CORRECTION_ERROR && robot.opModeIsActive()) {
             robot.telemetry.addData("Current Action", "Turning To Angle");
-            robot.telemetry.addData("Degrees to destination", degreesToHeading);
+            robot.telemetry.addData("Degrees to destination", wantedHeading - getAngleImuDegrees());
             robot.telemetry.addData("", "");
             move(0, 0, 0, speed);
         }
@@ -444,9 +470,9 @@ public class MecanumRobotController {
     //      - Telemetry telemetry: The telemetry to send the information to.
     public void sendTelemetry(Telemetry telemetry) {
         SparkFunOTOS.Pose2D pos = getPosition();
-        telemetry.addData("X coordinate", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+        telemetry.addData("X Position", pos.x);
+        telemetry.addData("Y Position", pos.y);
+        telemetry.addData("Heading", pos.h);
         telemetry.addData("", "");
         telemetry.addData("Forward", currentForward);
         telemetry.addData("Strafe", currentStrafe);
@@ -457,6 +483,8 @@ public class MecanumRobotController {
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
+        telemetry.addData("", "");
+        telemetry.addData("Distance to dest", distance);
 
         telemetry.update();
     }
@@ -486,7 +514,7 @@ public class MecanumRobotController {
 
         double startTime = runtime.seconds();
         while (robot.opModeIsActive() && (runtime.seconds() - startTime) < time) {
-            move(0, 0, 0, HEADING_CORRECTION_POWER);
+            move(0, 0, 0, 0);
         }
 
         // Stop the robot

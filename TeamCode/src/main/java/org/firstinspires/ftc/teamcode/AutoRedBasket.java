@@ -26,16 +26,7 @@ public class AutoRedBasket extends LinearOpMode {
         initialize();
         waitForStart();
         // robotController.turnTo(45, TURN_SPEED);
-        robotController.distanceDrive(29, 180, DRIVE_SPEED);
-        robotController.sleep(2);
-        robotController.distanceDrive(7, 0, DRIVE_SPEED);
-        robotController.turnTo(180, TURN_SPEED);
-        robotController.distanceDrive(60, 270, DRIVE_SPEED);
-        robotController.distanceDrive(7, 180, DRIVE_SPEED);
-        robotController.sleep(2);
-        robotController.distanceDrive(24, 0, DRIVE_SPEED);
-        robotController.turnTo(135, TURN_SPEED);
-        robotController.sleep(5);
+        robotController.positionDrive(new SparkFunOTOS.Pose2D(0, 24, 0), 1.0);
     }
 
     public void initialize() {
