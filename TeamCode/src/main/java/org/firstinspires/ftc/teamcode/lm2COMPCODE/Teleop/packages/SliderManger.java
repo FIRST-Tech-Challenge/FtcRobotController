@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.COMPETITIONCODE.data;
+package org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 /*

@@ -17,8 +17,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.SliderManger;
-import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.servoManger;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.SliderManger;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.servoManger;
 
 import java.util.Locale;
 

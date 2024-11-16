@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.SliderManger;
-import org.firstinspires.ftc.teamcode.COMPETITIONCODE.data.servoManger;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.SliderManger;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.servoManger;
 
 import java.io.File;
 
