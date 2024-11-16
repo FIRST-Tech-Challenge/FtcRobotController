@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.monkeys;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,7 +11,7 @@ import org.nknsd.robotics.team.monkeys.ExtensionMonkeyProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Extension Monkey", group="Tests")
+@TeleOp(name = "Extension Monkey", group="Tests") @Disabled
 public class NKNOpMode_ExtensionMonkey extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 

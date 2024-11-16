@@ -11,7 +11,7 @@ import org.nknsd.robotics.team.autonomous.TestingAuto;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Auto Test [Don't run]") @Disabled
+@Autonomous(name = "Auto Test [Don't run]")
 public class NKNAutonomous_Testing extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
