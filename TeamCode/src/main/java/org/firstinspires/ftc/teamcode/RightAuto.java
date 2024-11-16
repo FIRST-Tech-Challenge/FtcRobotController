@@ -222,6 +222,7 @@ public class RightAuto extends LinearOpMode {
         scheduler.task(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
+            hardware.twist.setPosition(0.17);
             hardware.arm.setTargetPosition(0);
             hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }));

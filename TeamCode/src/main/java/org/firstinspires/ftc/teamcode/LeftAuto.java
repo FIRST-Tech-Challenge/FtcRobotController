@@ -213,7 +213,7 @@ public class LeftAuto extends LinearOpMode {
                         arm.setPower(0.5);
                         arm.setTargetPosition(ARM_BASKET_TICKS);
                     }))
-                    .then(pause(2.000))
+                    .then(pause(1.500))
                     .then(run(() -> wrist.setPosition(0.94)))
                     .then(pause(0.500))
                     .then(run(() -> claw.setPosition(0.02)))
@@ -417,6 +417,7 @@ public class LeftAuto extends LinearOpMode {
         scheduler.task(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
+            hardware.twist.setPosition(0.17);
         }));
         scheduler
                 .task(moveTo(scheduler, SCORE_HIGH_BASKET))
