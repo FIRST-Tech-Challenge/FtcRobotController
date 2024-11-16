@@ -373,6 +373,7 @@ public class LeftAuto extends LinearOpMode {
     Hardware hardware;
     EncoderTracking tracker;
     final Pose SCORE_HIGH_BASKET = new Pose(12, 16, Math.toRadians(-45));
+    final Pose PARK = new Pose(12, 16, Math.toRadians(0));
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
@@ -415,25 +416,24 @@ public class LeftAuto extends LinearOpMode {
         ));
         scheduler.task(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
+            hardware.wrist.setPosition(0.28);
         }));
         scheduler
                 .task(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
-                .then(moveTo(scheduler, new Pose(28, 11.5, Math.toRadians(-180))))
+                .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
-                .then(moveTo(scheduler, new Pose(28, 21.5, Math.toRadians(-180))))
+                .then(moveTo(scheduler, new Pose(28, 22, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
                 .then(new OneShot(scheduler, () -> scoredIn.set(finalizeTimer.time())))
-                .then(moveTo(scheduler,
-                        new Pose(65, 12, Math.toRadians(0))))
-                .then(moveTo(scheduler,
-                        new Pose(65, -12, Math.toRadians(0))))
+                .then(moveTo(scheduler, PARK));
+//                .then(moveTo(scheduler,
+//                        new Pose(65, -12, Math.toRadians(0))))
         // park
-        ;
 
         telemetry.addLine("Initialized.");
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));
