@@ -48,7 +48,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.2;          // Stick is down
-    final double ASCENT_MAX = 0.46;         // Stick is up
+    final double ASCENT_MAX = 0.49;         // Stick is up
     @Override
     public void runOpMode() {
         // Define all the hardware
@@ -96,15 +96,13 @@ public class OTOSAutoDrive extends LinearOpMode {
         waitForStart();
 
         // Code here
-        ascentStick.setPosition(ASCENT_MAX);
         setVertical(VERTICAL_MAX);                        // Raising Arm
         sleep(300);
         setViper(VIPER_MAX);                              // Extending Viper
-        ascentStick.setPosition(ASCENT_MIN);
-        driveToLoc(3, 13, 20);     // Go to basket
+        driveToLoc(2, 13, 20);     // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                // Drop the block
-        driveToLoc(36, 2, 0);
+        driveToLoc(35, 2, 0);
         setViper(1800);
         setVertical(100, 1000);
         sleep(1500);
@@ -112,33 +110,31 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(12, 13, 45);  // Go to basket
+        driveToLoc(11, 12, 45);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                              // Drop second block
         driveToLoc(36, -2, 0);
         setViper(1000);
-        sleep(500);
-        setVertical(60, 1500);
+        sleep(700);
+        setVertical(0, 1500);
         sleep(1700);
         setClaw(CLAW_MIN);                               // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(11, 14, 45);   // Go to basket
+        driveToLoc(10, 13, 45);   // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                               // Drop third block
         driveToLoc(25, 5, 0, 4);
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
-        driveToLoc(60, 0, 0); // Change X-value to 48 later
-        driveToLoc(60, 0, 180);
-        //driveForward(300, 0.4);
-        //sleep(500);
-        RobotLog.vv("Milla", "Set to max");
+        driveToLoc(55, 3, 0); // Change X-value to 48 later
+        RobotLog.vv("Rockin'", "Set to max");
         ascentStick.setPosition(ASCENT_MAX);
-        sleep(1000);
-        RobotLog.vv("Milla", "End program");
+        driveToLoc(55, 5, 180, 4);
+        moveForward(0.5, 1000);
+        RobotLog.vv("Rockin'", "End program");
         claw.close();                                    // Release tension on the claw
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
@@ -152,16 +148,6 @@ public class OTOSAutoDrive extends LinearOpMode {
         RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
     }
 
-    public void driveForward(double msToDrive, double speedToDrive) {
-        RobotLog.vv("Rockin' Robots", "Before Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        leftFrontDrive.setPower(speedToDrive);
-        rightFrontDrive.setPower(speedToDrive);
-        leftBackDrive.setPower(speedToDrive);
-        rightBackDrive.setPower(speedToDrive);
-        RobotLog.vv("Rockin' Robots", "after Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        //sleep((long)msToDrive);
-        //stopMoving();
-    }
     public void setViper(int length){
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(2000);
@@ -182,6 +168,15 @@ public class OTOSAutoDrive extends LinearOpMode {
     public void setClaw(double position) {
         claw.setPosition(position);
         sleep(300);
+    }
+
+    private void moveForward(double speed, long msDuration) {
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+        sleep(msDuration);
+        stopMoving();
     }
 
     private void stopMoving() {
