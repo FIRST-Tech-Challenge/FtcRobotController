@@ -10,6 +10,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 public class Mekanism {
   private final DcMotorEx pivot;
   private final DcMotorEx slide;
+  private final DcMotorEx slide2;
 
   private final DigitalChannel limitSwitch;
 
@@ -46,6 +48,14 @@ public class Mekanism {
 
     pivot.setPower(0);
     slide.setPower(0);
+
+    //slide2
+    slide2 = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class,"slide 2");
+    slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    slide2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
+    slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    slide2.setPower(0);
 
     limitSlide = 4200;
     limitPivot = 2750;
@@ -101,6 +111,7 @@ public class Mekanism {
     }
 
     slide.setPower(x);
+    slide2.setPower(x);
   }
 
   public void setPivot(double x, boolean raiseLimit) {
