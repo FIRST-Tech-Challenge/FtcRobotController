@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -19,6 +20,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
     private Hardware hardware;
+    double Wristpos = 0.28;
+    double Twistpos = 0.17;
+    double VerticalSlideSpeed = 0.75;
 
     @Override
     public void runOpMode() {
@@ -28,10 +32,13 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.verticalSlide.setTargetPosition(0);
         hardware.arm.setTargetPosition(0);
         armTargetPosDeg = 0.0;
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
+        hardware.wrist.setPosition(0.28);
+        hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -49,7 +56,6 @@ public class MecanumTeleOp extends LinearOpMode {
         telemetry.log().clear();
         telemetry.log().add("Gyro Calibrated. Press Start.");
         telemetry.clear();
-        telemetry.update();
 
         waitForStart();
         if (isStopRequested()) return;
@@ -97,17 +103,16 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backLeft.setPower(backLeftPower * currentSpeed);
             hardware.frontRight.setPower(frontRightPower * currentSpeed);
             hardware.backRight.setPower(backRightPower * currentSpeed);
-            /*if(gamepad2.dpad_up){
-                hardware.verticalLift.setPower(0.5);
-
-            }
-            else if(gamepad2.dpad_down){
-                hardware.verticalLift.setPower(-0.5);
-            }
-            else{
-                hardware.verticalLift.setPower(0.0);
-            }*/
+            wrist();
+            servoMoves();
+            twist();
             lift(hardware);
+            if (gamepad2.y) {
+                ScoreHighBasket(hardware);
+            }
+            if(gamepad2.x){
+                PickUpYellow(hardware);
+            }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             telemetry.addData("Vertical position", verticalPosition);
@@ -141,7 +146,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         hardware.verticalSlide.setTargetPosition(targetPosition);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(0.5);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
         ElapsedTime Timer = new ElapsedTime();
         double timeoutSeconds = 3.0;
         int allowedErrorTicks = 5;
@@ -156,41 +161,58 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    int maintainHeightTicks = 0;
 
     private void lift(Hardware hardware) {
 
         //Hardware hardware = new Hardware(hardwareMap);
         int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
 
+
         if (gamepad2.dpad_up && verticalPosition < maxVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(0.5);
-        } else if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(-0.5);
-        } else {
-            hardware.verticalSlide.setPower(0.0);
+            hardware.verticalSlide.setPower(VerticalSlideSpeed);
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            maintainHeightTicks = verticalPosition;
+            return;
+        }
+
+        if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
+            hardware.verticalSlide.setPower(-VerticalSlideSpeed);
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            maintainHeightTicks = verticalPosition;
+            return;
         }
 
         if (gamepad2.b) {
             targetLift(hardware, highChamberTicks);
+            maintainHeightTicks = highChamberTicks;
         }
 
-        if (gamepad2.y) {
-            targetLift(hardware, highBasketTicks);
-        }
         if (gamepad2.a) {
             targetLift(hardware, 0);
+            maintainHeightTicks = 0;
+        }
+        if (verticalPosition < 47 && maintainHeightTicks < 47) {
+            hardware.verticalSlide.setPower(0);
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else {
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.verticalSlide.setPower(VerticalSlideSpeed);
+            hardware.verticalSlide.setTargetPosition(maintainHeightTicks);
         }
     }
 
+
+
     double armTargetPosDeg = 0.0;
-    int liftMinClearanceTicks = 180;
+    int liftMinClearanceTicks = 350;
 
     private static int deg2arm(double degrees) {
-        return (int) (degrees / 360.0 * 537.7);
+        return (int) (degrees / 360.0 * spinTickPerRev);
     }
 
     private double getArmPosDeg() {
-        double rotations = hardware.arm.getCurrentPosition() / 537.7;
+        double rotations = hardware.arm.getCurrentPosition() / spinTickPerRev;
         // 0 = straight down
         return rotations * 360.0;
     }
@@ -206,12 +228,14 @@ public class MecanumTeleOp extends LinearOpMode {
         return true;
     }
 
+    static final double spinTickPerRev = 751.8;
+
     private void arm(Hardware hardware) {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
         // 537.7 ppr
         DcMotor arm = hardware.arm;
         double stick_pos = -gamepad2.right_stick_y;
-        double rotations = arm.getCurrentPosition() / 537.7;
+        double rotations = arm.getCurrentPosition() / spinTickPerRev;
         double degrees = rotations * 360.0; // 0 = straight down
         // Negative: towards front;
         // Positive: towards back.
@@ -245,5 +269,90 @@ public class MecanumTeleOp extends LinearOpMode {
         arm.setTargetPosition(deg2arm(armTargetPosDeg));
         arm.setPower(emerg ? 1.0 : 0.3);
         telemetry.addData("arm deg", degrees);
+    }
+    public void twist() {
+        if(gamepad2.left_stick_x>=0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
+            Twistpos+=0.01;
+            hardware.twist.setPosition(Twistpos);
+        } else if (gamepad2.left_stick_x<=-0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
+            Twistpos-=0.01;
+            hardware.twist.setPosition(Twistpos);
+        }
+        telemetry.addData("Twist Position",Twistpos);
+
+    }
+    public void wrist() {
+        if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
+            Wristpos += 0.01;
+            hardware.wrist.setPosition(Wristpos);
+        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
+            Wristpos-= 0.01;
+            hardware.wrist.setPosition(Wristpos);
+        }
+
+        telemetry.addData("Wrist Position",hardware.wrist.getPosition());
+    }
+    public void servoMoves(){
+        Servo servo = hardwareMap.get(Servo.class,"claw");
+        final double open = 0.02;
+        final double close = 0.55;
+        if(gamepad2.left_bumper) {
+            servo.setPosition(open);
+        } else if (gamepad2.right_bumper) {
+            servo.setPosition(close);
+
+        }
+    }
+   //////////////////////////////////////////////////////////////////////////////////////////////////
+    public void ScoreHighBasket(Hardware hardware)  {
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        hardware.verticalSlide.setTargetPosition(highBasketTicks);
+        maintainHeightTicks = highBasketTicks;
+        sleep(2000);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.5);
+        hardware.arm.setTargetPosition(222);
+        sleep(500);
+        hardware.wrist.setPosition(0.94);
+        sleep(500);
+        hardware.claw.setPosition(0.02);
+        sleep(500);
+        hardware.claw.setPosition(0.55);
+        sleep(100);
+        hardware.wrist.setPosition(0.28);
+        sleep(500);
+        hardware.arm.setTargetPosition(0);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(0);
+        maintainHeightTicks = 0;
+    }
+    public void PickUpYellow(Hardware hardware){
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        hardware.verticalSlide.setTargetPosition(224);
+        maintainHeightTicks = 224;
+        sleep(500);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.5);
+        hardware.arm.setTargetPosition(67);
+        sleep(500);
+        hardware.wrist.setPosition(0.94);
+        sleep(500);
+        hardware.claw.setPosition(0.02);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(110);
+        maintainHeightTicks = 25;
+        sleep(500);
+        hardware.claw.setPosition(0.55);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(200);
+        maintainHeightTicks = 200;
+        sleep(500);
+        hardware.wrist.setPosition(0.28);
+        sleep(500);
+        hardware.arm.setTargetPosition(0);
+        sleep(500);
+
     }
 }
