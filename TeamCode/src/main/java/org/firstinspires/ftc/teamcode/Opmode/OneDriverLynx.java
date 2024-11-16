@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Arm;
 import org.firstinspires.ftc.teamcode.Hardware.Claw;
+import org.firstinspires.ftc.teamcode.Hardware.ColorSensor;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.Hang;
 import org.firstinspires.ftc.teamcode.Hardware.Slides;
@@ -48,6 +49,7 @@ public class OneDriverLynx extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         stickyGamepad gp = new stickyGamepad(gamepad1);
+        ColorSensor color = new ColorSensor(hardwareMap, "Red");
         waitForStart();
         double frequency = 0;
         double loopTime = 0;
@@ -203,6 +205,7 @@ public class OneDriverLynx extends LinearOpMode {
             telemetry.addData("arm degrees:", robot.arm.getCurrentArmPosition());
             telemetry.addData("Left Trigger:", gamepad1.left_trigger);
             telemetry.addData("Right Trigger:", gamepad1.right_trigger);
+            telemetry.addData("Color:", color.getColor());
 
             telemetry.update();
         }

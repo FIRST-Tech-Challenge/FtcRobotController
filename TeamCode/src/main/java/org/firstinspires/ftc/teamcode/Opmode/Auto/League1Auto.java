@@ -37,6 +37,7 @@ public class League1Auto extends LinearOpMode {
     double timeStamp = 0;
     PARKING parking = PARKING.NEAR;
     boolean isThirdCycle = false;
+    boolean slideNonsense = true;
     RoboActions actions;
     public void runOpMode() throws InterruptedException {
         //bulk reading
@@ -153,18 +154,34 @@ public class League1Auto extends LinearOpMode {
                         ActionStamp = timer.milliseconds();
                         actionToggle = false;
                     }
-                    if(isThirdCycle){
-                        slides.setTargetSlidesPosition(7.5);
-                    }else {
-                        slides.setTargetSlidesPosition(7);
-                    }
+
                     if (timer.milliseconds() > ActionStamp + 500) {
+                        if (isThirdCycle) {
+                            slides.setTargetSlidesPosition(7.5);
+                        } else {
+                            slides.setTargetSlidesPosition(7);
+                        }
+                    }
+                    if (timer.milliseconds() > ActionStamp + 650) {
                         arm.intake();
                     }
+                    if (timer.milliseconds() > ActionStamp + 750) {
+                        claw.close();
+                    }
+
+
+//                        arm.intake();
+
+//                    }
+//                    if (timer.milliseconds() > ActionStamp + 750) {
+////                        claw.close();
+//
+
                     if (timer.milliseconds() > ActionStamp + 1000) {
 
-                        claw.close();
+                        slides.setTargetSlidesPosition(2);
                         actionToggle = true;
+
                         currentAction = Actions.REST;
                     }
 
