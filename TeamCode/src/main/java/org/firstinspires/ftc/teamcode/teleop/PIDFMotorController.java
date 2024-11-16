@@ -11,6 +11,7 @@ public class PIDFMotorController {
     private final double f;
     private final double ticksInDegrees;
     private final double maxSpeed;
+    private final int initialPositionForFF;
     private int targetPosition;
 
     public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed) {
@@ -18,6 +19,17 @@ public class PIDFMotorController {
         this.f = f;
         this.ticksInDegrees = ticksInDegrees;
         this.maxSpeed = maxSpeed;
+        this.initialPositionForFF = 0;
+
+        this.pidController = new PIDController(p, i, d);
+    }
+
+    public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed, int initialPositionForFF) {
+        this.motor = motor;
+        this.f = f;
+        this.ticksInDegrees = ticksInDegrees;
+        this.maxSpeed = maxSpeed;
+        this.initialPositionForFF = initialPositionForFF;
 
         this.pidController = new PIDController(p, i, d);
     }
@@ -38,7 +50,7 @@ public class PIDFMotorController {
         double pidOutput = pidController.calculate(currentPosition, targetPosition);
 
         // Calculate feed-forward component
-        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees)) * f;
+        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees) - Math.toRadians(initialPositionForFF)) * f;
 
         // Sum PID and feed-forward for final motor power
         double power = pidOutput + ff;

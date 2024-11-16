@@ -32,6 +32,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static int INTAKE_ARM_DOWN = 250;
     public static double SLIDE_MAX_SPEED = 0.5;
     public static double ARM_MAX_SPEED = 0.5;
+    public static double ARM_INITIAL_ANGLE = 50; //deg
     public static double WRIST_SERVO_DOWN = 0;
 
     public static class SpecClaw {
@@ -144,7 +145,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
             DcMotorEx intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
             intakeArmMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             double armTicksInDegrees = 1425.1 / 360.0;
-            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, ARM_MAX_SPEED);
+            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, ARM_MAX_SPEED, ARM_INITIAL_ANGLE);
             armController.resetMotorEncoder();
         }
 
