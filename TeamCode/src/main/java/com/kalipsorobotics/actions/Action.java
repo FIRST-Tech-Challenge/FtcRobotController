@@ -9,6 +9,9 @@ public abstract class Action {
     public boolean getIsDone() {
         return isDone;
     }
+    public boolean getHasStarted() {
+        return hasStarted;
+    }
     public void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
     }

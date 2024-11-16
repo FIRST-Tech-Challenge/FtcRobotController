@@ -4,7 +4,7 @@ import com.kalipsorobotics.actions.MoveLSAction;
 import com.kalipsorobotics.actions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.math.CalculateTickInches;
-import com.kalipsorobotics.modules.Outtake2024;
+import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,7 +17,7 @@ public class TestHanging extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        Outtake2024 outtake = new Outtake2024(opModeUtilities);
+        Outtake outtake = new Outtake(opModeUtilities);
 
         MoveLSAction moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(30), outtake);
         WaitAction waitAction = new WaitAction(5);

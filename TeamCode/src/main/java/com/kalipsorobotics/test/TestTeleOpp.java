@@ -2,8 +2,10 @@ package com.kalipsorobotics.test;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.CheckPointDone;
 import com.kalipsorobotics.localization.Odometry;
 
+import com.kalipsorobotics.math.Point;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -57,11 +59,12 @@ public class TestTeleOpp extends LinearOpMode {
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
         purePursuitAction.addPoint(0,0);
-        //purePursuitAction.addPoint(400,0);
-        purePursuitAction.addPoint(1000,0);
-        //purePursuitAction.addPoint(400,-400);
+        purePursuitAction.addPoint(400,0);
+//        purePursuitAction.addPoint(1000,0);
+//        purePursuitAction.addPoint(400,-400);
 
-
+        Point checkpoint1 = new Point(100, 0);
+        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
 
         waitForStart();
 
@@ -74,8 +77,15 @@ public class TestTeleOpp extends LinearOpMode {
 //            action4.update();
 
             odometry.updatePosition();
-            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
             purePursuitAction.updateCheckDone();
+            checkPointDone.updateCheckDone();
+
+            if (checkPointDone.getIsDone()) {
+                Log.d("checkpointdone", "done");
+            }
+
+            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
+            //purePursuitAction.updateCheckDone();
             //driveTrain.setPower(0.2,-0.2,0.2,-0.2);
 
 //            telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
