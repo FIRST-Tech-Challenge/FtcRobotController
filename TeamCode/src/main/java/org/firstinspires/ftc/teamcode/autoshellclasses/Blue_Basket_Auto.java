@@ -65,7 +65,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         public class wristDown implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(.36);
+                wrist.setPosition(.4725);
                 return false;
             }
         }
@@ -76,7 +76,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         public class wristUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(0.755);
+                wrist.setPosition(0.855);
                 return false;
             }
         }
