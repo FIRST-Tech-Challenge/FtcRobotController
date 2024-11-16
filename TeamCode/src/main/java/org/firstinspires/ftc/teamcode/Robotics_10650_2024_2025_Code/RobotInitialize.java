@@ -65,14 +65,14 @@ public class RobotInitialize {
 
     // Enables the class to be referenced in other classes such as the Autonomous Code
     // and the TeleOpCode_RobotCentric
-    public RobotInitialize(LinearOpMode opMode) {
+    public RobotInitialize(LinearOpMode opMode, boolean isAuto) {
         this.opMode = opMode;
-        initialize();
+        initialize(isAuto);
     }
 
     // The main function that sets all of the hardware to different variables
     // The motors and the gyroscope are initialized here
-    public void initialize() {
+    public void initialize(boolean isAuto) {
         // map the devices to the hardware map
 
         //Drivetrain motors
@@ -117,8 +117,11 @@ public class RobotInitialize {
         liftExtender.setVelocityPIDFCoefficients(2.67,2.05,0, 3.3);
 
         liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
-            liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        if (isAuto) {
+            liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
+            liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+        }
             liftExtender.setZeroPowerBehavior(BRAKE);
 
 
@@ -128,10 +131,13 @@ public class RobotInitialize {
             //Initial conditions of the liftPitch MOTOR
             //PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1); (This does nothing)
             //PIDF Coefficients for the liftPitch MOTOR
-            liftPitch.setVelocityPIDFCoefficients(1,1,-2.5, 1);
+            liftPitch.setVelocityPIDFCoefficients(1,1,-2.5, 3);
             liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
-            liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        if (isAuto) {
+            liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
+            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+        }
             liftPitch.setZeroPowerBehavior(BRAKE);
 
         //Manipulator Servos
@@ -154,7 +160,7 @@ public class RobotInitialize {
         clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
         clawRoll.setPosition(0);
         pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        pitch.setPosition(0.0461);
+        pitch.setPosition(0.0481);
 
 //        roll.setDirection(Servo.Direction.FORWARD);
 //        roll.setPosition(0);
@@ -266,13 +272,17 @@ public class RobotInitialize {
     // located and where it is trying to go it does not return anything and
     // has parameters of the distance it needs to travel (measured in encoder ticks)
     // and the velocity that it moves (measured in encoder ticks per second)
+
     public void strafeR(int distance, int velocity){
         int relativeDistance = distance + getPosStrafe();
+
+
         // Go forwards or backwards
         //if difference <10 then stop
         // 10 is the accuracy tolerance in 10 encoder ticks
         while (opMode.opModeIsActive() && Math.abs(getPosStrafe() - relativeDistance) >= 14) {
             //if
+            opMode.telemetry.addData("velocity", fLeft.getVelocity());
 
             if (getPosStrafe() < relativeDistance) {
                 // Change into a function with a parameter, function name: setMotorVelocity
@@ -291,8 +301,8 @@ public class RobotInitialize {
             } else{
                 setDrivetrainMotorVelocity(0);
             }
-            setDrivetrainMotorVelocity(0);
         }
+        setDrivetrainMotorVelocity(0);
         //stopMechanisms();
     }
     // Parameter of time that it is run in milliseconds

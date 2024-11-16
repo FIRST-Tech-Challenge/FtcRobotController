@@ -21,7 +21,7 @@ public class AutonomousCodeHighChamber extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Way for the RobotInitialize class to be used inside of this class
-        robot = new RobotInitialize(this);
+        robot = new RobotInitialize(this, true);
         // Waits for a person to press start on the control hub
         // then it runs the rest of the program
         waitForStart();

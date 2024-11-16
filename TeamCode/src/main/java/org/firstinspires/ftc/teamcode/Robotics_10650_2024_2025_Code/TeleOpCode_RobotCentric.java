@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp (name = "TeleOp_RobotCentric")
 public class TeleOpCode_RobotCentric extends LinearOpMode {
@@ -15,6 +16,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
     double maxLifEtxtension =0;
+    double minLiftExtension =0;
     int x = 0;
 
     final double liftDist = 8.25;
@@ -24,7 +26,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 // create and define the initialization variable
-        robot = new RobotInitialize(this);
+        robot = new RobotInitialize(this, false);
 
         // initialization of the control of the robot when start is pressed
         waitForStart();
@@ -239,9 +241,31 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                pitchSpeed = 10;
 //            } else if (!gamepad2.right_bumper){
 //                pitchSpeed = 25;
+
 //            }
-            if (liftPitchPosition<=2900&&liftPitchPosition>=0||
-                    (liftPitchPosition>=2900&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
+
+            if (gamepad2.share) {
+                telemetry.addData("is share pressed?", "yes");
+                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            } else{
+                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+
+            }
+
+//            if (gamepad2.options) {
+//                minLiftExtension = -2300;
+//                telemetry.addData("is options pressed?", "yes");
+//
+//            }else{
+//                minLiftExtension = 0;
+//
+//            }
+
+//                robot.liftExtender(0, 0.3);
+//            }
+            if (liftPitchPosition<=2325&&liftPitchPosition>=0||
+                    (liftPitchPosition>=2325&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
                     // maximum horizontal position and further (try something less than this)
                     (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
                 if(liftExtenderPosition > maxLifEtxtension) {
@@ -319,6 +343,11 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
             //if in bounnds, set new target pos
+
+            //used to be ((Math.abs(gamepad2.right_stick_y)>0.2)&&(liftExtenderPosition<=maxLifEtxtension)
+            //                    &&(liftExtenderPosition>=0)||(robot.liftExtender.getCurrentPosition()<0&&
+            //                    gamepad2.right_stick_y<0)||(robot.liftExtender.getCurrentPosition()>
+            //                    maxLifEtxtension&&gamepad2.right_stick_y>0))
             if ((Math.abs(gamepad2.right_stick_y)>0.2)&&(liftExtenderPosition<=maxLifEtxtension)
                     &&(liftExtenderPosition>=0)||(robot.liftExtender.getCurrentPosition()<0&&
                     gamepad2.right_stick_y<0)||(robot.liftExtender.getCurrentPosition()>
@@ -338,7 +367,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
                 //Determines if the liftExtender should go up or down based on the controller inputs
-            if (liftExtenderPosition<=5&&robot.liftExtender.getCurrentPosition()<=5) {
+            if (liftExtenderPosition<=(5)&&robot.liftExtender.getCurrentPosition()<=(5)) {
                 //when down, save power
                 robot.liftExtender.setVelocity(0);
             }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
@@ -376,7 +405,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
             if (gamepad2.dpad_right) {
                 //roll turns up
-                robot.pitch.setPosition(0.0461);
+                //before: 0.0461
+                robot.pitch.setPosition(0.0481);
             }
             if(gamepad2.dpad_down){
                //pitch moves up

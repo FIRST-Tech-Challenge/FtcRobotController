@@ -22,7 +22,7 @@ public class pidTele extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 // create and define the initialization variable
-        robot = new RobotInitialize(this);
+        robot = new RobotInitialize(this, false);
 
 
         // initialization of the control of the robot when start is pressed
