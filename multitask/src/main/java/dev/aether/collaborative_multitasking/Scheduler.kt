@@ -19,4 +19,6 @@ abstract class Scheduler {
         cancel: Boolean,
         dropNonStarted: Boolean
     )
+
+    abstract fun taskCount(): Int
 }

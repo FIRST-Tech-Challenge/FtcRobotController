@@ -333,4 +333,6 @@ class MultitaskScheduler
         cancel = true,
         dropNonStarted = false
     )
+
+    override fun taskCount(): Int = tasks.size
 }

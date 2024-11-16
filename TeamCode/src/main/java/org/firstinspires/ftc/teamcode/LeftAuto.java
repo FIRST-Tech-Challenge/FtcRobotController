@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
@@ -37,7 +38,7 @@ import kotlin.Unit;
 @Autonomous // Appear on the autonomous drop down
 // STOP POSTING ABOUT DefaultLocale IM TIRED OF SEEING IT
 @SuppressLint("DefaultLocale")
-public class BlueAuto extends LinearOpMode {
+public class LeftAuto extends LinearOpMode {
     final static class BackgroundTasks extends TaskTemplate {
         EncoderTracking tracker;
         LoopStopwatch timer;
@@ -123,7 +124,7 @@ public class BlueAuto extends LinearOpMode {
                 targetTime.reset();
             }
             // Waits at the target for one second
-            if (targetTime.time() > 1.0) {
+            if (targetTime.time() > .5) {
                 finished = true;
                 return;
             }
@@ -207,23 +208,21 @@ public class BlueAuto extends LinearOpMode {
                         verticalSlide.setPower(VERTICAL_SLIDE_SPEED);
                         verticalSlide.setTargetPosition(HIGH_BASKET_TICKS);
                     }))
-                    .then(pause(2.000))
                     .then(run(() -> {
                         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         arm.setPower(0.5);
                         arm.setTargetPosition(ARM_BASKET_TICKS);
                     }))
-                    .then(pause(0.500))
+                    .then(pause(2.000))
                     .then(run(() -> wrist.setPosition(0.94)))
                     .then(pause(0.500))
                     .then(run(() -> claw.setPosition(0.02)))
                     .then(pause(0.500))
                     .then(run(() -> claw.setPosition(0.55)))
-                    .then(pause(0.100))
                     .then(run(() -> wrist.setPosition(0.28)))
                     .then(pause(0.500))
                     .then(run(() -> arm.setTargetPosition(0)))
-                    .then(pause(0.500))
+                    .then(pause(0.200))
                     .then(run(() -> verticalSlide.setTargetPosition(0)));
         }
 
@@ -302,12 +301,10 @@ public class BlueAuto extends LinearOpMode {
                         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         arm.setPower(0.5);
                         arm.setTargetPosition(ARM_PICK_UP_TICKS);
+                        wrist.setPosition(0.94);
+                        claw.setPosition(0.02);
                     }))
-                    .then(pause(0.500))
-                    .then(run(() -> wrist.setPosition(0.94)))
-                    .then(pause(0.500))
-                    .then(run(() -> claw.setPosition(0.02)))
-                    .then(pause(0.500))
+                    .then(pause(0.750))
                     .then(run(() -> verticalSlide.setTargetPosition(PICK_UP_TICKS_2)))
                     .then(pause(0.500))
                     .then(run(() -> claw.setPosition(0.55)))
@@ -315,7 +312,6 @@ public class BlueAuto extends LinearOpMode {
                     .then(run(() -> verticalSlide.setTargetPosition(PICK_UP_TICKS_3)))
                     .then(pause(0.500))
                     .then(run(() -> wrist.setPosition(0.28)))
-                    .then(pause(0.500))
                     .then(run(() -> arm.setTargetPosition(0)));
         }
 
@@ -366,7 +362,7 @@ public class BlueAuto extends LinearOpMode {
     public static final double VERTICAL_SLIDE_SPEED = 0.75;
     public static final int HIGH_BASKET_TICKS = 2180;
     public static final int PICK_UP_TICKS = 224;
-    public static final int PICK_UP_TICKS_2 = 110;
+    public static final int PICK_UP_TICKS_2 = 60;
     public static final int PICK_UP_TICKS_3 = 200;
     public static final int ARM_BASKET_TICKS = 222;
     public static final int ARM_PICK_UP_TICKS = 67;
@@ -401,6 +397,10 @@ public class BlueAuto extends LinearOpMode {
 
         hardware = new Hardware(hardwareMap);
         tracker = new EncoderTracking(hardware);
+        ElapsedTime scoreTimer = new ElapsedTime();
+        ElapsedTime finalizeTimer = new ElapsedTime();
+        AtomicReference<Double> scoredIn = new AtomicReference<>((double) 0);
+        double doneIn = 0;
         loopTimer = new LoopStopwatch();
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.15 seconds
         ramps = new Ramps(
@@ -419,14 +419,15 @@ public class BlueAuto extends LinearOpMode {
         scheduler
                 .task(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
-                .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
+                .then(moveTo(scheduler, new Pose(28, 11.5, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
-                .then(moveTo(scheduler, new Pose(28, 22, Math.toRadians(-180))))
+                .then(moveTo(scheduler, new Pose(28, 21.5, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
+                .then(new OneShot(scheduler, () -> scoredIn.set(finalizeTimer.time())))
                 .then(moveTo(scheduler,
                         new Pose(65, 12, Math.toRadians(0))))
                 .then(moveTo(scheduler,
@@ -435,12 +436,14 @@ public class BlueAuto extends LinearOpMode {
         ;
 
         telemetry.addLine("Initialized.");
-        telemetry.addLine(String.format("%d in queue.", scheduler.register$multitask()))
+        telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));
         telemetry.update();
 
         waitForStart(); // Wait for start button
 
         telemetry.update();
+        scoreTimer.reset();
+        finalizeTimer.reset();
 
         while (scheduler.hasJobs() && opModeIsActive()) {
             scheduler.tick();
@@ -451,9 +454,11 @@ public class BlueAuto extends LinearOpMode {
                     });
             telemetry.update();
         }
+        doneIn = finalizeTimer.time();
         while (opModeIsActive()) {
             hardware.driveMotors.setAll(0);
-            telemetry.addLine("done");
+            telemetry.addLine(String.format("done in %.2fs", doneIn));
+            telemetry.addLine(String.format("scored in %.2fs", scoredIn.get()));
             telemetry.addData("x", tracker.getPose().x()); // Print x attribute for pose
             telemetry.addData("y", tracker.getPose().y()); // Print y attribute for pose
             telemetry.addData("heading (rad)", tracker.getPose().heading()); // Print the heading in radians
