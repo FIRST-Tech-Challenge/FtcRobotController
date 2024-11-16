@@ -306,17 +306,17 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
         hardware.arm.setTargetPosition(222);
-        sleep(1000);
+        sleep(500);
         hardware.wrist.setPosition(0.94);
-        sleep(1000);
+        sleep(500);
         hardware.claw.setPosition(0.02);
-        sleep(1000);
+        sleep(500);
         hardware.claw.setPosition(0.55);
-        sleep(1000);
+        sleep(100);
         hardware.wrist.setPosition(0.28);
-        sleep(1000);
+        sleep(500);
         hardware.arm.setTargetPosition(0);
-        sleep(1000);
+        sleep(500);
         hardware.verticalSlide.setTargetPosition(0);
         maintainHeightTicks = 0;
     }
