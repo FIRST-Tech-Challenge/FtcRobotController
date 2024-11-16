@@ -83,6 +83,9 @@ public class TeleOpMain extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
+        leftWristServo.setPosition(0);
+        rightWristServo.setPosition(1);
+
 //        leftGrabber.setPosition(0);
 //        rightGrabber.setPosition(1);
 
@@ -173,7 +176,7 @@ public class TeleOpMain extends LinearOpMode {
                 rightViper.setPower(0);
             }
 
-            // Regular slide
+            // Horizontal slide
             if(gamepad2.left_bumper) {
                 slideMotor.setPower(-1);
             }
@@ -184,7 +187,17 @@ public class TeleOpMain extends LinearOpMode {
                 slideMotor.setPower(0);
             }
 
-            // todo fix motor detection
+            // Wrist
+            if (gamepad2.a) {           // pick up
+                leftWristServo.setPosition(1);
+                rightWristServo.setPosition(0);
+            }
+            else if (gamepad2.b) {      // deposit
+                leftWristServo.setPosition(0);
+                rightWristServo.setPosition(1);
+            }
+
+            // todo fix continuous servo detection
 //            // Grabber
 //
 //            if (gamepad1.a) {
