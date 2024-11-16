@@ -19,17 +19,17 @@ import java.util.stream.Stream;
 public class TestingSuite extends LinearOpMode {
     // Please Update
     private static String[] MOTOR_OPTIONS = {
-            "frontLeft",
-            "frontRight",
-            "rearLeft",
-            "rearRight",
-            "linearActuator"
+            Settings.Hardware.IDs.FRONT_LEFT_MOTOR,
+            Settings.Hardware.IDs.FRONT_RIGHT_MOTOR,
+            Settings.Hardware.IDs.REAR_LEFT_MOTOR,
+            Settings.Hardware.IDs.REAR_RIGHT_MOTOR,
+            Settings.Hardware.IDs.LINEAR_ACTUATOR,
     };
 
     private static String[] SERVO_OPTIONS = {
-            "clawR",
-            "clawL",
-            "wrist"
+            Settings.Hardware.IDs.GECKO_LEFT,
+            Settings.Hardware.IDs.GECKO_RIGHT,
+            Settings.Hardware.IDs.WRIST,
     };
 
     // Credit to Gemini for this unreadable line that is supposed to combine the 2 arrays above
