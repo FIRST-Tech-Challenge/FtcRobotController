@@ -274,7 +274,7 @@ public class Settings {
     // Deploy flags
     public static class Deploy {
         // Core Mechanisms
-        public static final boolean ARM = true;
+        public static final boolean ARM = false;
         public static final boolean SHOULDER = false;
 
         // Navigation Systems
