@@ -19,8 +19,11 @@ public class TeleOpMain extends LinearOpMode {
 
     private DcMotor slideMotor;
 
-    private Servo leftWristServo;
-    private Servo rightWristServo;
+    private Servo leftBucket;
+    private Servo rightBucket;
+
+    private Servo leftWrist;
+    private Servo rightWrist;
 
     private Servo leftGrabber;
     private Servo rightGrabber;
@@ -43,7 +46,7 @@ public class TeleOpMain extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Initialize motors
+        // Initialize motors and servos
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -54,14 +57,16 @@ public class TeleOpMain extends LinearOpMode {
 
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
 
-//        leftGrabber = hardwareMap.get(Servo.class, "leftGrabber");
-//        rightGrabber = hardwareMap.get(Servo.class, "rightGrabber");
+        leftBucket = hardwareMap.get(Servo.class, "leftBucket");
+        rightBucket = hardwareMap.get(Servo.class, "rightBucket");
 
+        leftWrist = hardwareMap.get(Servo.class, "leftWrist");
+        rightWrist = hardwareMap.get(Servo.class, "rightWrist");
 
-        leftWristServo = hardwareMap.get(Servo.class, "leftWrist");
-        rightWristServo = hardwareMap.get(Servo.class, "rightWrist");
+        leftGrabber = hardwareMap.get(Servo.class, "leftGrabber");
+        rightGrabber = hardwareMap.get(Servo.class, "rightGrabber");
 
-
+        // Motor and servo setup
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -83,11 +88,8 @@ public class TeleOpMain extends LinearOpMode {
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
-        leftWristServo.setPosition(0);
-        rightWristServo.setPosition(1);
-
-//        leftGrabber.setPosition(0);
-//        rightGrabber.setPosition(1);
+        leftWrist.setPosition(0);
+        rightWrist.setPosition(1);
 
         double direction = 1;
 
@@ -163,11 +165,10 @@ public class TeleOpMain extends LinearOpMode {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
             }
 
-            // todo fix both buttons go up
             // Viper Slide
             if (gamepad2.left_trigger != 0) {
-                leftViper.setPower(-gamepad2.left_trigger);
-                rightViper.setPower(gamepad2.left_trigger);
+                leftViper.setPower(gamepad2.left_trigger);
+                rightViper.setPower(-gamepad2.left_trigger);
             } else if (gamepad2.right_trigger != 0) {
                 leftViper.setPower(-gamepad2.right_trigger);
                 rightViper.setPower(gamepad2.right_trigger);
@@ -177,41 +178,39 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Horizontal slide
-            if(gamepad2.left_bumper) {
+            if (gamepad2.left_bumper) {
                 slideMotor.setPower(-1);
-            }
-            else if(gamepad2.right_bumper) {
+            } else if (gamepad2.right_bumper) {
                 slideMotor.setPower(1);
-            }
-            else {
+            } else {
                 slideMotor.setPower(0);
             }
 
             // Wrist
+            // SERVO CONTROLLER INFO: leftWrist:        left limit = 1, right limit = 0     rightWrist: left limit = 0, right limit = 1
             if (gamepad2.a) {           // pick up
-                leftWristServo.setPosition(1);
-                rightWristServo.setPosition(0);
-            }
-            else if (gamepad2.b) {      // deposit
-                leftWristServo.setPosition(0);
-                rightWristServo.setPosition(1);
+                leftWrist.setPosition(1);
+                rightWrist.setPosition(0);
+            } else if (gamepad2.b) {      // deposit
+                leftWrist.setPosition(0);
+                rightWrist.setPosition(1);
             }
 
             // todo fix continuous servo detection
-//            // Grabber
-//
-//            if (gamepad1.a) {
-//                leftGrabber.setPosition(0.5);
-//                rightGrabber.setPosition(0.5);
-//            }
-//            else if (gamepad1.b) {
-//                leftGrabber.setPosition(0);
-//                rightGrabber.setPosition(1);
-//            }
-//            if(gamepad1.back && gamepad1.b) {
-//                leftGrabber.setDirection(0);
-//                rightGrabber.setDirection(1);
-//            }
+            // Grabber
+            if (gamepad2.dpad_up) {
+                leftGrabber.setPosition(0);
+                rightGrabber.setPosition(1);
+            }
+            else if (gamepad2.dpad_down) {
+                leftGrabber.setPosition(1);
+                rightGrabber.setPosition(0);
+            }
+            else {
+                leftGrabber.setPosition(0.5);
+                rightGrabber.setPosition(0.5);
+            }
+
 
             // Debug
 
