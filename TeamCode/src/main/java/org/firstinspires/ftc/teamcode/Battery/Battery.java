@@ -10,14 +10,14 @@ public class Battery {
     HardwareMap hardwareMap;
     public VoltageSensor voltageSensor;
     public ElapsedTime timer = new ElapsedTime();
+    double voltage = voltageSensor.getVoltage();
     public Battery (HardwareMap hwmap){
         this.hardwareMap = hwmap;
-        voltageSensor = hwmap.voltageSensor.iterator().next();
+        this.voltageSensor = hwmap.voltageSensor.iterator().next();
     }
 
 
     public double getVoltage() {
-        double voltage = voltageSensor.getVoltage();
         double timeLastUpdate = timer.seconds();
         if (timeLastUpdate > threshold) {
             voltage = voltageSensor.getVoltage();
