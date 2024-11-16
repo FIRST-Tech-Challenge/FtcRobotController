@@ -28,9 +28,9 @@ public class TestOdometryFuse  extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             driveTrain.setPower(-gamepad1.right_stick_y);
-            telemetry.addData("x: ", odometryFuse.PointCollectData().getX());
-            telemetry.addData("y: ", odometryFuse.PointCollectData().getY());
-            telemetry.addData("H: ", odometryFuse.HeadingUpdateData("right"));
+            telemetry.addData("x: ", odometryFuse.pointCollectData().getX());
+            telemetry.addData("y: ", odometryFuse.pointCollectData().getY());
+            telemetry.addData("H: ", odometryFuse.headingUpdateData("right"));
             telemetry.update();
         }
     }
