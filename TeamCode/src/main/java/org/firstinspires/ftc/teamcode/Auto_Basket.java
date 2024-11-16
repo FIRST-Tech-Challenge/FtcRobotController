@@ -72,36 +72,59 @@ public class Auto_Basket extends CommonUtil {
         waitForStart();
 
         while (opModeIsActive()) {
-           moveSideways_wCorrection("right",24,0.6);
-           sleep(500);
 
-           moveBackwards_wDistance_wGyro(24,0.5);
-           sleep(500);
+            moveBackwards_wDistance_wGyro(24,0.5);
+            sleep(200);
 
-           //move linear slide up and place specimen
+            slideUp(1,500);
+            sleep(200);
 
-            moveForward_wDistance_wGyro(24,0.5);
-            sleep(500);
+            basketDown();
+            sleep(1000);
+            slideDown(0.8,500);
+            sleep(200);
 
-            //intake sample
+            moveForward_wDistance_wGyro(2,0.3);
+            moveSideways_wCorrection("left",12,0.6);
+            sleep(200);
 
-            moveSideways_wCorrection("left",24,0.5);
-            sleep(500);
+            turn("left",90);
+            sleep(200);
 
-            moveForward_wDistance_wGyro(18,0.5);
-            sleep(500);
+            armDown();
+            intakeOn();
 
-            //place sample in top basket
+            moveBackwards_wDistance_wGyro(10,0.5);
+            sleep(200);
 
-            moveBackwards_wDistance_wGyro(18,0.5);
-            sleep(500);
+            armUp();
+            intakeReverse();
+            sleep(300);
+            intakeOff();
 
-            moveSideways_wCorrection("right",12,0.5);
-            sleep(500);
+            armDown(); //idle position
+            turn("right",90);
+            sleep(200);
 
-            moveForward_wDistance_wGyro(3,0.3);
-            sleep(500);
-            //intake sample
+            moveSideways_wCorrection("left",2,0.6);
+            sleep(200);
+
+            slideUp(1,2000);
+            sleep(200);
+
+            moveBackwards_wDistance_wGyro(2,0.5);
+            sleep(200);
+
+            //then we place the sample and repeat process boi
+
+
+
+
+
+
+
+
+
 
 
             sleep(9000000);

@@ -33,6 +33,7 @@ public class CommonUtil extends LinearOpMode {
     Orientation myRobotOrientation;
 
     double ENC2DIST = 200/29; //2000.0/48.0; // FW/BW
+    double ENC2DIST_BACK = 150/14;
     double ENC2DIST_SIDEWAYS = 2911.0/57.0;
     ElapsedTime timer = new ElapsedTime();
 
@@ -54,6 +55,7 @@ public class CommonUtil extends LinearOpMode {
     Servo s2 = null;
     Servo s3 = null;
     Servo s5 = null;
+    Servo s6 = null;
 
     CRServo s4 = null;
 
@@ -91,6 +93,7 @@ public class CommonUtil extends LinearOpMode {
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(CRServo.class, "s4");
         s5 = hardwareMap.get(Servo.class,"s5");
+        s6 = hardwareMap.get(Servo.class,"s6");
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
@@ -154,23 +157,41 @@ public class CommonUtil extends LinearOpMode {
     public void intakeOn(){
         s4.setPower(1);
     }
+
     public void intakeReverse(){
         s4.setPower(-1);
     }
+
     public void intakeOff(){
         s4.setPower(0);
     }
-    public void armUp() { m0.setPower(-1); }
-    public void armDown() { m0.setPower(0.3); }
-    public void armOff() { m0.setPower(0); }
+
+    public void armUp() {
+
+        s6.setPosition(0.5);
+    }
+
+    public void armDown() {
+        s6.setPosition(1);
+    }
+
+    public void armIdle() {
+        s6.setPosition(0.8);
+    }
+
+
     public void clawOpen() { s5.setDirection(Servo.Direction.FORWARD);
         s5.setPosition(1); }
+
     public void clawClose() { s5.setDirection(Servo.Direction.REVERSE);
         s5.setPosition(1); }
+
     public void basketUp() { s3.setDirection(Servo.Direction.FORWARD);
         s3.setPosition(0.5); }
+
     public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
         s3.setPosition(1); }
+
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
         double power = (targetAngle - currentAngle) * 0.0054; // was 0.006
@@ -185,9 +206,7 @@ public class CommonUtil extends LinearOpMode {
     public double PID_FB (double targetEC, double currentEC, double Mpower)
     {
         double power = (targetEC -currentEC)*0.003;
-        if (Mpower > 0.3){
-            Mpower = 0.3;
-        }
+
         if (power > Mpower) {
             power = Mpower;
         }else if(power < -1*(Mpower)) {
@@ -295,6 +314,7 @@ public class CommonUtil extends LinearOpMode {
 //        br.setPower(-1);
 //        sleep(100);
         // apply zero power to avoid continuous power to the wheels
+
         setMotorToZeroPower();
 
         // return current encoder count
@@ -320,7 +340,7 @@ public class CommonUtil extends LinearOpMode {
         int prevEncoderCount = 0;
         double currErrEC = 0;
 
-        double encoderAbsCounts = ENC2DIST *DistanceAbsIn;
+        double encoderAbsCounts = ENC2DIST_BACK *DistanceAbsIn;
         telemetry.addData("Im here",currZAngle);
 
         // Resetting encoder counts
@@ -340,17 +360,22 @@ public class CommonUtil extends LinearOpMode {
             double correction = PID_Turn(0,currZAngle,"off");
             currEncoderCount = bl.getCurrentPosition();
             double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount),Mpower);
+            int moveTime = (int) ((10*Mpower)*((double)50 /3));
+            int movePause = (int) ((10*Mpower)*((double)10/3));
 
-            bl.setPower(-power-correction);
-            fl.setPower(-power-correction);
-            fr.setPower(-power+correction);
-            br.setPower(-power+correction);
+            bl.setPower(-1*(power)+correction);
+            fl.setPower(-1*(power)+correction);
+            fr.setPower(-1*(power)+correction);
+            br.setPower(-1*(power)+correction);
             telemetry.addData("bw:power", power);
             telemetry.addData("bw:correction", correction);
             telemetry.update();
 
             // quick correct for angle if it is greater than 10 [Aarush]
             double absError_angle = Math.abs(currZAngle);
+//            sleep(moveTime);
+//            setMotorToZeroPower();
+//            sleep(movePause);
             if (absError_angle > 10)
             {
                 turnToZeroAngle();
@@ -364,14 +389,17 @@ public class CommonUtil extends LinearOpMode {
 //            else
 //                // nothing to do
 
-            idle();
+
         }
 
-        turnToZeroAngle();
+
         // apply zero power to avoid continuous power to the wheels
+        turnToZeroAngle();
         setMotorToZeroPower();
 
         // return current encoder count
+
+        sleep(1000);
         currEncoderCount = bl.getCurrentPosition();
         myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         currZAngle = myRobotOrientation.thirdAngle;
@@ -379,6 +407,7 @@ public class CommonUtil extends LinearOpMode {
         telemetry.addData("bw:currZAngle", currZAngle);
         telemetry.update();
         return (currEncoderCount);
+
     }
 
     public void clawClosed()
@@ -569,18 +598,18 @@ public class CommonUtil extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        while (bl.getCurrentPosition() < encoderAbsCounts) {
+        while (bl.getCurrentPosition() > encoderAbsCounts) {
             myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            bl.setPower(power);
-            fl.setPower(power);
-            fr.setPower(power);
-            br.setPower(power);
+            bl.setPower(-power);
+            fl.setPower(-power);
+            fr.setPower(-power);
+            br.setPower(-power);
             telemetry.update();
             idle();
         }
 //        bl.setPower(-2*power);
 //        fl.setPower(-2*power);
-        fr.setPower(-2*power);
+//        fr.setPower(-2*power);
 //        br.setPower(-2*power);
         sleep(200);
         bl.setPower(0);

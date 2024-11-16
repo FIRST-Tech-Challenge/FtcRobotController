@@ -73,6 +73,17 @@ public class Unit_Test extends CommonUtil {
         waitForStart();
 
         while (opModeIsActive()) {
+//            bl.setPower(0.65);
+//            fl.setPower(-0.6);
+//            fr.setPower(0.65);
+//            br.setPower(-0.55);
+//
+//            sleep(3000);
+//            bl.setPower(0);
+//            fl.setPower(0);
+//            fr.setPower(0);
+//            br.setPower(0);
+
 //            moveForward_wDistance_wGyro(10,0.5);
 //            sleep(500);
 //
@@ -108,7 +119,13 @@ public class Unit_Test extends CommonUtil {
 //            sleep(500);
 //            drone_Test();
 //         encoder_test(200,0.3);
-            turn("left",90);
+
+            armDown();
+            sleep(5000);
+            armUp();
+            sleep(5000);
+            armIdle();
+
          sleep(9000000);
 
         }

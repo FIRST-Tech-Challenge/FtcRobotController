@@ -34,6 +34,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
     Servo s3 = null;
     CRServo s4 = null;
     Servo s5 = null;
+    Servo s6 = null;
     double left1Y, right1Y,left1X,right1X;
     double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
@@ -43,6 +44,9 @@ public class Teleop_live_2controllers extends LinearOpMode {
     boolean gamepad1LB_previous = false;
     boolean gamepad2RB_previous = false;
     boolean gamepad2LB_previous = false;
+    boolean gamepad1dpadDown_previous = false;
+    boolean gamepad1dpadRight_previous = false;
+    boolean gamepad1dpadLeft_previous = false;
 
     double m2Power, blPower, flPower,brPower, frPower;
     static final double DEADZONE = 0.1;
@@ -105,6 +109,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(CRServo.class,"s4");
         s5 = hardwareMap.get(Servo.class, "s5");
+        s6 = hardwareMap.get(Servo.class, "s6");
         s1.setDirection(Servo.Direction.FORWARD);
 //        s2.setDirection(Servo.Direction.FORWARD);
          s3.setDirection(Servo.Direction.REVERSE);
@@ -184,9 +189,8 @@ public class Teleop_live_2controllers extends LinearOpMode {
           //Intake arm motor
            if(gamepad1.x){
                m0.setPower(-1);
-           }else{
-               m0.setPower(0);
            }
+
 
            if(gamepad1.y){
                m0.setPower(0.3);
@@ -194,7 +198,6 @@ public class Teleop_live_2controllers extends LinearOpMode {
                m0.setPower(0);
            }
 
-            gamepad1x_previous = gamepad1.x;
 
 
 
@@ -210,6 +213,25 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 s5.setPosition(1); //close
             }
             gamepad1LB_previous = gamepad1.left_bumper;
+
+
+            if (gamepad1.dpad_down != gamepad1dpadDown_previous&& gamepad1.dpad_down) {
+                s6.setPosition(0.8);
+            }
+            gamepad1dpadDown_previous = gamepad1.dpad_down;
+
+
+            if (gamepad1.dpad_right != gamepad1dpadRight_previous&& gamepad1.dpad_right) {
+                s6.setPosition(1);
+            }
+            gamepad1dpadRight_previous = gamepad1.dpad_right;
+
+            if (gamepad1.dpad_left != gamepad1dpadLeft_previous&& gamepad1.dpad_left) {
+                s6.setPosition(0.5);
+            }
+            gamepad1dpadLeft_previous = gamepad1.dpad_left;
+
+
 
 
 
