@@ -26,13 +26,13 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static int SLIDES_ABOVE_BAR = 1900;
     public static int SLIDES_BELOW_BAR = 1270;
     public static int SLIDES_SPEC_PICKUP = 0;
-    public static double SPEC_CLAW_CLOSE = 0.2;
-    public static double SPEC_CLAW_OPEN = 0.8;
+    public static double SPEC_CLAW_CLOSE = 0.3;
+    public static double SPEC_CLAW_OPEN = 0.9;
     public static int INTAKE_ARM_UP = 10;
     public static int INTAKE_ARM_DOWN = 250;
-    public static double SLIDE_MAX_SPEED = 0.5;
+    public static double SLIDE_MAX_SPEED = 0.7;
     public static double ARM_MAX_SPEED = 0.5;
-    public static double WRIST_SERVO_DOWN = 0;
+    public static double WRIST_SERVO_DOWN = 0.05;
 
     public static class SpecClaw {
         private final Servo specServo;
@@ -193,7 +193,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
             }
             packet.put("Waiting For User", true);
             USER_INPUT_FLAG = false;
-            return true;
+            return false;
         }
     }
 
@@ -214,33 +214,34 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(13, -50))
                 .waitSeconds(0.001);
         TrajectoryActionBuilder moveIntoSpec1Position = moveAwayFromBarrier.fresh()
-                .strafeTo(new Vector2d(0, -28))
+                .waitSeconds(1.5)
+                .strafeTo(new Vector2d(0, -25.5))
                 .waitSeconds(0.001);
         TrajectoryActionBuilder driveBack = moveIntoSpec1Position.fresh()
                 .strafeTo(new Vector2d(0, -35))
                 .waitSeconds(0.001);
         TrajectoryActionBuilder pushSampleGrabSpec = driveBack.fresh()
-                .strafeTo(new Vector2d(45, -35))
-                .strafeTo(new Vector2d(45, -10))
-                .splineTo(new Vector2d(55, -10), Math.toRadians(270))
-                .strafeTo(new Vector2d(55, -51))
-                .strafeTo(new Vector2d(55, -57))
-                .strafeTo(new Vector2d(55, -45))
-                .waitSeconds(3)
-                .strafeTo(new Vector2d(55, -59))
+                .strafeTo(new Vector2d(40, -35))
+                .strafeTo(new Vector2d(40, -10))
+                .splineTo(new Vector2d(50, -10), Math.toRadians(270))
+                .strafeTo(new Vector2d(50, -51))
+                .strafeTo(new Vector2d(50, -57))
+                .strafeTo(new Vector2d(50, -45))
+                .waitSeconds(2.5)
+                .strafeTo(new Vector2d(50, -63.2))
                 .waitSeconds(0.001);
         TrajectoryActionBuilder goToSubSecondSpec = pushSampleGrabSpec.fresh()
                 .waitSeconds(0.5)
-                .strafeTo(new Vector2d(55, -45))
+                .strafeTo(new Vector2d(50, -45))
                 .turn(Math.toRadians(180))
                 .strafeTo(new Vector2d(4,-45))
-                .strafeTo(new Vector2d(4, -27))
+                .strafeTo(new Vector2d(4, -25.5))
                 .waitSeconds(0.001);
         TrajectoryActionBuilder goBackAndPark = goToSubSecondSpec.fresh()
                 .waitSeconds(1)
                 .strafeTo(new Vector2d(4, -45))
-                .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47, -58))
+                .splineTo(new Vector2d(47, -45), Math.toRadians(90))
+                .strafeTo(new Vector2d(47, -54))
                 .waitSeconds(0.001);
 
         Action moveAwayFromBarrierAction = moveAwayFromBarrier.build();
@@ -285,8 +286,9 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 waitForUser(),
                 slides.slidesToSpecPickup(), //bring slides down
                 waitForUser(),
-                new SleepAction(3),
+                new SleepAction(1), //wait for slides to come down
                 wristServo.wristServoIn(),
+                new SleepAction(0.5), //wait for servo to go in
                 intakeArm.intakeArmUp() //bring intake arm in to get ready for teleop
         );
         Action pidControlLoops = new ParallelAction(
