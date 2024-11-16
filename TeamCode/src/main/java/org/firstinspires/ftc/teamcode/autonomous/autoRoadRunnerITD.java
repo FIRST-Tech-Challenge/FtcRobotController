@@ -215,11 +215,14 @@ public class autoRoadRunnerITD extends LinearOpMode {
         WristServo wristServo = new WristServo(hardwareMap);
 
         TrajectoryActionBuilder moveAwayFromBarrier = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(13, -50));
+                .strafeTo(new Vector2d(13, -50))
+                .waitSeconds(0.001);
         TrajectoryActionBuilder moveIntoSpec1Position = moveAwayFromBarrier.fresh()
-                .strafeTo(new Vector2d(0, -28));
+                .strafeTo(new Vector2d(0, -28))
+                .waitSeconds(0.001);
         TrajectoryActionBuilder driveBack = moveIntoSpec1Position.fresh()
-                .strafeTo(new Vector2d(0, -35));
+                .strafeTo(new Vector2d(0, -35))
+                .waitSeconds(0.001);
         TrajectoryActionBuilder pushSampleGrabSpec = driveBack.fresh()
                 .strafeTo(new Vector2d(45, -35))
                 .strafeTo(new Vector2d(45, -10))
@@ -228,17 +231,21 @@ public class autoRoadRunnerITD extends LinearOpMode {
                 .strafeTo(new Vector2d(55, -57))
                 .strafeTo(new Vector2d(55, -45))
                 .waitSeconds(3)
-                .strafeTo(new Vector2d(55, -59));
+                .strafeTo(new Vector2d(55, -59))
+                .waitSeconds(0.001);
         TrajectoryActionBuilder goToSubSecondSpec = pushSampleGrabSpec.fresh()
                 .waitSeconds(0.5)
                 .strafeTo(new Vector2d(55, -45))
                 .turn(Math.toRadians(180))
                 .strafeTo(new Vector2d(4,-45))
-                .strafeTo(new Vector2d(4, -27));
+                .strafeTo(new Vector2d(4, -27))
+                .waitSeconds(0.001);
         TrajectoryActionBuilder goBackAndPark = goToSubSecondSpec.fresh()
                 .waitSeconds(1)
+                .strafeTo(new Vector2d(4, -45))
                 .splineTo(new Vector2d(47, -47), Math.toRadians(90))
-                .strafeTo(new Vector2d(47, -58));
+                .strafeTo(new Vector2d(47, -58))
+                .waitSeconds(0.001);
 
         Action moveAwayFromBarrierAction = moveAwayFromBarrier.build();
         Action moveIntoSpec1PositionAction = moveIntoSpec1Position.build();
