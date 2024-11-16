@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanism.Arm;
+package org.firstinspires.ftc.teamcode.Arm;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -11,8 +11,8 @@ public class Arm {
     Servo servoWrist;
     Servo servoArmLeft;
     Servo servoArmRight;
-    public Arm(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
+    public Arm(HardwareMap hwMap) {
+        this.hardwareMap = hwMap;
         servoWrist = hardwareMap.get(Servo.class, "servoWrist");
         servoArmLeft = hardwareMap.get(Servo.class, "servoArmLeft");
         servoArmRight = hardwareMap.get(Servo.class, "servoArmRight");
@@ -23,17 +23,17 @@ public class Arm {
         EXTEND      // pushes arm out
     }
 
-    public Action servoArm(armState stateofArm){
+    public Action servoArm(armState armPos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (stateofArm == armState.RETRACT) {
+                if (armPos == armState.RETRACT) {
                     servoArmLeft.setPosition(0.5);
                     servoArmRight.setPosition(0.5);
                     servoWrist.setPosition(-0.5);
 
                 }
-                if (stateofArm == armState.EXTEND) {
+                if (armPos == armState.EXTEND) {
                     servoArmLeft.setPosition(-1);
                     servoArmLeft.setPosition(-1);
                     servoWrist.setPosition(0);

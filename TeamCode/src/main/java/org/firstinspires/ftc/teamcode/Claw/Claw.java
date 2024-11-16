@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanism.Claw;
+package org.firstinspires.ftc.teamcode.Claw;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -21,14 +21,14 @@ public class Claw {
         CLOSE, //spins to close servo, should only be closed enough to hold piece
         OPEN   //spins to have nearly fully open servo
     }
-    public Action servoClaw(clawState stateofClaw){
+    public Action servoClaw(clawState clawPos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (stateofClaw == clawState.OPEN) {
+                if (clawPos == clawState.OPEN) {
                     clawServo.setPosition(1);
                 }
-                if (stateofClaw == clawState.CLOSE) {
+                if (clawPos == clawState.CLOSE) {
                     clawServo.setPosition(0);
                 }
                 // servo parameter -1, 0   0, 1

@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Drivetrain.Tuners;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,7 +16,9 @@ public class TuneArm extends LinearOpMode {
     @Override
     public void runOpMode() {
         Arm arm = new Arm(hardwareMap);
+
         waitForStart();
+
         while (opModeIsActive()) {
             if (gamepad1.right_bumper){
                 Actions.runBlocking(arm.servoArm(Arm.armState.EXTEND));

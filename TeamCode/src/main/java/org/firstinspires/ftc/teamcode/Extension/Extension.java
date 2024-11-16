@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanism.Extension;
+package org.firstinspires.ftc.teamcode.Extension;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -18,20 +18,20 @@ public class Extension {
     }
 
     public enum extensionState {
-        retract, //pull extension back
-        extend   //push extension forward
+        RETRACT, //pull extension back
+        EXTEND   //push extension forward
     }
 
-    public Action servoExtension(extensionState stateofExtension) {
+    public Action servoExtension(extensionState extensionPos) {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (stateofExtension == extensionState.retract) {
+                if (extensionPos == extensionState.RETRACT) {
                     servoExtendLeft.setPosition(0.5);
                     servoExtendRight.setPosition(-0.5);
 
                 }
-                if (stateofExtension == extensionState.extend) {
+                if (extensionPos == extensionState.EXTEND) {
                     servoExtendLeft.setPosition(-1);
                     servoExtendRight.setPosition(1);
                 }

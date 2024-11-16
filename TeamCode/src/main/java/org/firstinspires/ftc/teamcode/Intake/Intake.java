@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanism.Intake;
+package org.firstinspires.ftc.teamcode.Intake;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 

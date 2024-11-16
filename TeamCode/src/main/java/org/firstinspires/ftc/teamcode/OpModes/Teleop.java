@@ -51,8 +51,6 @@ public class Teleop extends LinearOpMode {
             packet.fieldOverlay()
                     .setFill("white")
                     .fillRect(0,0,10, 10);
-//                    .drawGrid(-72, -72, 72, 72, 12, 12);
-//                    .drawImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAAAPFBMVEX+/v7///8hHR6lpKUAAAD6+vrOzs6XlZZWU1QtKSrW1tZta2x0cnKampqsrKxPTU3Dw8OEg4Pv7u4NAAXZd1g3AAABLElEQVR4nO3cOZKEMBAFUUmIfafvf9cBIsZPjzIyjYoy3wl+yk9t1w9j+bhx6Lv25aTnTHMty9p83LqUOk//qK3ux4v7unTsdcsvavud1/0EKOfr/G0PaqpnDNJTzmedcmrn/QpjulXXPrepq0cg0606apf6kmKhUunTsIQy3aplSOMaDbWOqTTRUE0RhRJFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0UTRRNFE0ULiwo5ihVyPizk0FrISbqQ430hZw5jDkLGnM6MOTIabo71D8yDEg3YNJqVAAAAAElFTkSuQmCC", drivetrain.state.get(0,0), drivetrain.state.get(1,0), 16 / 12, 17 / 12);
             dashboard.sendTelemetryPacket(packet);
 
         }

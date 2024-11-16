@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanism.Lift;
+package org.firstinspires.ftc.teamcode.Lift;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
