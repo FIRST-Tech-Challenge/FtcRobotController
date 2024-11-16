@@ -1,18 +1,17 @@
 package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
+import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.BasicOmniOpMode_Linear;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
-
-import java.util.Collection;
 
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
@@ -25,23 +24,23 @@ public class OdometryFuse {
         this.rightEncoder = rightEncoder;
         this.backEncoder = backEncoder;
         wheelResetData();
-        SparkResetData(true, 0.0);
+        sparkResetData(true, 0.0);
     }
-    public Point WheelUpdateData() {
-        double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
+    public Point wheelUpdateData() {
+        double TICKSTOINCH = 1 ;//40 / -13510.0 * (40.0 / 40.3612);
         return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
     }
-    public Point SparkUpdateData() {
+    public Point sparkUpdateData() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(-pos.x, -pos.y));
     }
-    public Point AverageUpdateData() {
+    public Point averageUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
-    public double HeadingUpdateData(String direction) {
+    public double headingUpdateData(String direction) {
         if (direction.equals("right")) {
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             return(-pos.h); }
@@ -51,16 +50,21 @@ public class OdometryFuse {
         else { return(0.0); }
     }
 
-    public Point Filter(Point sparkPoint, Point wheelPoint) {
+    public Point filter(Point sparkPoint, Point wheelPoint) {
         int diffenceDebug = 1;
-        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(WheelUpdateData()); }
-        else { return(SparkUpdateData()); }
+        if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(wheelUpdateData()); }
+        else { return(sparkUpdateData()); }
     }
-    public void SparkResetData(Boolean reCalibrate, double heading) {
+    public void sparkResetData(Boolean reCalibrate, double heading) {
         myOtos.resetTracking();
         if (reCalibrate) { myOtos.calibrateImu(); }
-        myOtos.setOffset(new SparkFunOTOS.Pose2D(WheelUpdateData().getX(), WheelUpdateData().getY(), heading));
+        myOtos.setOffset(new SparkFunOTOS.Pose2D(wheelUpdateData().getX(), wheelUpdateData().getY(), heading));
     }
+    public void dataCollectLog() {
+        Log.d("odometry", "" + sparkUpdateData().getX() + sparkUpdateData().getY() + headingUpdateData("right"));
+
+    }
+
     public void wheelResetData() {
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -68,9 +72,9 @@ public class OdometryFuse {
         rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public boolean autoTurn(Double degree, String direction) {
-        final double offset = HeadingUpdateData(direction);
+        final double offset = headingUpdateData(direction);
         while (true) {
-            if (HeadingUpdateData(direction) - offset > degree) {
+            if (headingUpdateData(direction) - offset > degree) {
                 break;
             }
         }
@@ -80,16 +84,16 @@ public class OdometryFuse {
     public boolean autoForward(double inches, String XorY) {
         final double offset;
         if (XorY.equalsIgnoreCase("x")) {
-            offset = PointCollectData().getX();
+            offset = pointCollectData().getX();
             while (true) {
-                if (PointCollectData().getX() - offset > inches) {
+                if (pointCollectData().getX() - offset > inches) {
                     return true;
                 }
             }
         } else if (XorY.equalsIgnoreCase("y")) {
-            offset = PointCollectData().getY();
+            offset = pointCollectData().getY();
             while (true) {
-                if (PointCollectData().getY() - offset > inches) {
+                if (pointCollectData().getY() - offset > inches) {
                     return true;
                 }
             }
@@ -97,17 +101,17 @@ public class OdometryFuse {
     }
 
     public boolean autoMecanum(double x, double y) {
-        final Point offset = PointCollectData();
+        final Point offset = pointCollectData();
         while (true) {
-            if (PointCollectData().getY() - offset.getY() > y &&
-                    PointCollectData().getX() - offset.getX() > x) return true;
+            if (pointCollectData().getY() - offset.getY() > y &&
+                    pointCollectData().getX() - offset.getX() > x) return true;
         }
     }
 
 
 
-    public Point PointCollectData() {
-        return(Filter(SparkUpdateData(), WheelUpdateData()));
+    public Point pointCollectData() {
+        return(filter(sparkUpdateData(), wheelUpdateData()));
     }
 
     @SuppressLint("DefaultLocale")

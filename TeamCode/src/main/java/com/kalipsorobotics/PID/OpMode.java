@@ -75,15 +75,15 @@ public class OpMode extends LinearOpMode {
                 driveTrain.headingController.reset();
 
                 driveTrain.odometryFuse.wheelResetData();
-                driveTrain.odometryFuse.SparkResetData(true, 0);
+                driveTrain.odometryFuse.sparkResetData(true, 0);
                 System.out.println("Reset PID Controller");
 
                 driveTrain.move(xMovement, yMovement, hMovement, telemetry);
             }
 
 
-            Point pos = driveTrain.odometryFuse.PointCollectData();
-            double heading = driveTrain.odometryFuse.HeadingUpdateData("right");
+            Point pos = driveTrain.odometryFuse.pointCollectData();
+            double heading = driveTrain.odometryFuse.headingUpdateData("right");
             telemetry.addLine(String.format("x | currently at %f", pos.getX()));
             telemetry.addLine(String.format("y | currently at %f", pos.getY()));
             telemetry.addLine(String.format("h | currently at %f", heading));

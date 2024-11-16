@@ -69,7 +69,7 @@ public class TestingDriveTrain {
         Point pos = odometryFuse.PointCollectData();  // current
         double curX = -pos.getX();
         double curY = -pos.getY();
-        double curH = MathFunctions.angleWrapDeg(odometryFuse.HeadingUpdateData("leftwq" +
+        double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("leftwq" +
                 ""));
 
         Pose2D target = new Pose2D(curX + dx, curY + dy, curH + dh);
@@ -84,7 +84,7 @@ public class TestingDriveTrain {
             pos = odometryFuse.PointCollectData();
             curX = -pos.getX();  // odometryfuse returns negative
             curY = -pos.getY();
-            curH = MathFunctions.angleWrapDeg(odometryFuse.HeadingUpdateData("left"));
+            curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left"));
 
             double x = Range.clip(xController.calculate(curX, target.x), -1., 1.);
             double y = Range.clip(yController.calculate(curY, target.y), -1., 1.);
