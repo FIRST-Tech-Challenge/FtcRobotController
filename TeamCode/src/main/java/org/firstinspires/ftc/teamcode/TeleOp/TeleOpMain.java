@@ -2,22 +2,23 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Debug.Debug;
 
 @TeleOp(name = "TeleOpMain", group = "Main")
 public class TeleOpMain extends LinearOpMode {
-    public DcMotor frontLeft;
-    public DcMotor backLeft;
-    public DcMotor frontRight;
-    public DcMotor backRight;
+    public DcMotorEx frontLeft;
+    public DcMotorEx backLeft;
+    public DcMotorEx frontRight;
+    public DcMotorEx backRight;
 
-    private DcMotor leftViper;
-    private DcMotor rightViper;
+    private DcMotorEx leftViper;
+    private DcMotorEx rightViper;
 
-    private DcMotor slideMotor;
+    private DcMotorEx slideMotor;
 
     private Servo leftBucket;
     private Servo rightBucket;
@@ -47,15 +48,15 @@ public class TeleOpMain extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize motors and servos
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
-        leftViper = hardwareMap.get(DcMotor.class, "leftViper");
-        rightViper = hardwareMap.get(DcMotor.class, "rightViper");
+        leftViper = hardwareMap.get(DcMotorEx.class, "leftViper");
+        rightViper = hardwareMap.get(DcMotorEx.class, "rightViper");
 
-        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
 
         leftBucket = hardwareMap.get(Servo.class, "leftBucket");
         rightBucket = hardwareMap.get(Servo.class, "rightBucket");
@@ -67,26 +68,31 @@ public class TeleOpMain extends LinearOpMode {
         rightGrabber = hardwareMap.get(Servo.class, "rightGrabber");
 
         // Motor and servo setup
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftViper.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightViper.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        leftViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        leftViper.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightViper.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
+        backRight.setDirection(DcMotorEx.Direction.FORWARD);
 
         leftWrist.setPosition(0);
         rightWrist.setPosition(1);
@@ -96,12 +102,16 @@ public class TeleOpMain extends LinearOpMode {
 
         double direction = 1;
 
+        int horizontalSlideLimit = 550;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
         debug = new Debug(this);
+
+
 
         while (opModeIsActive() && !emergencyStop) {
             // Emergency stop
@@ -156,16 +166,16 @@ public class TeleOpMain extends LinearOpMode {
             // Switching directions
             if (gamepad1.y) {
                 direction = 1;
-                frontLeft.setDirection(DcMotor.Direction.REVERSE);
-                backLeft.setDirection(DcMotor.Direction.REVERSE);
-                frontRight.setDirection(DcMotor.Direction.FORWARD);
-                backRight.setDirection(DcMotor.Direction.FORWARD);
+                frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+                backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+                frontRight.setDirection(DcMotorEx.Direction.FORWARD);
+                backRight.setDirection(DcMotorEx.Direction.FORWARD);
             } else if (gamepad1.a) {
                 direction = -1;
-                frontLeft.setDirection(DcMotor.Direction.FORWARD);
-                backLeft.setDirection(DcMotor.Direction.FORWARD);
-                frontRight.setDirection(DcMotor.Direction.REVERSE);
-                backRight.setDirection(DcMotor.Direction.REVERSE);
+                frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+                backLeft.setDirection(DcMotorEx.Direction.FORWARD);
+                frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+                backRight.setDirection(DcMotorEx.Direction.REVERSE);
             }
 
             // Viper Slide
@@ -181,13 +191,19 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Horizontal slide
-            if (gamepad1.dpad_up) {
-                slideMotor.setPower(-1);
-            } else if (gamepad1.dpad_down) {
+            //todo auto must reset to zero
+            if (gamepad1.right_bumper && slideMotor.getCurrentPosition() < 550) {
                 slideMotor.setPower(1);
+            } else if (gamepad1.left_bumper && slideMotor.getCurrent(CurrentUnit.AMPS) < 2) {
+
+                slideMotor.setPower(-1);
             } else {
+                if(slideMotor.getCurrentPosition() >= 547) {
+                    telemetry.addData("Limit reached, ", "Stopped");
+                }
                 slideMotor.setPower(0);
             }
+            telemetry.update();
 
             // Wrist
             // SERVO CONTROLLER INFO: leftWrist:        left limit = 1, right limit = 0     rightWrist: left limit = 0, right limit = 1
@@ -200,11 +216,11 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Grabber
-            if (gamepad1.right_bumper) {
+            if (gamepad1.dpad_up) {
                 leftGrabber.setPosition(0);
                 rightGrabber.setPosition(1);
             }
-            else if (gamepad1.left_bumper) {
+            else if (gamepad1.dpad_down) {
                 leftGrabber.setPosition(1);
                 rightGrabber.setPosition(0);
             }
