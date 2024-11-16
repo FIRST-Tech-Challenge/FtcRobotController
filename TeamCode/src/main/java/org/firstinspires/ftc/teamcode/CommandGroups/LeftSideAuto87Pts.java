@@ -5,9 +5,12 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
-import org.firstinspires.ftc.teamcode.RobotContainer;
 
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
+import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 
 import java.util.ArrayList;
 
@@ -17,96 +20,130 @@ import java.util.ArrayList;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class ExampleCommandGroup extends SequentialCommandGroup {
+public class LeftSideAuto87Pts extends SequentialCommandGroup {
 
     // constructor
-    public ExampleCommandGroup() {
-
+    public LeftSideAuto87Pts() {
+        // start pos (0.25, 1.6, -90) on field
         addCommands (
-                new InstantCommand(()-> RobotContainer.odometry.setCurrentPos(new Pose2d(0.9,1.6,new Rotation2d(Math.toRadians(-90))))),
+                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(0.25, 1.6, new Rotation2d(Math.toRadians(-90))))),
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(0.25, 1.0, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90))),
+
+                new SpecimenPlacePos(),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
                 new FollowPath(
-                        2.0,
+                        1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
-                        new Rotation2d(Math.toRadians(-135.0))
-                ),
+                        new Pose2d(0.25, 0.85, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90))),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
+
+                new OpenClaw(),
 
                 new FollowPath(
-                        2.0,
+                        1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-135.0)),
+                        new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.24, 0.95, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
+                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90))),
+
+                new HuntingPos(),
 
                 new FollowPath(
-                        2.0,
+                        1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
-                        new Rotation2d(Math.toRadians(-135.0))
-                ),
+                        new Pose2d(0.25, 0.8, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90))),
+
+                // use camera to orient to specimen
+                // claw will close using touch sensor when it touches a sample
+                new DropToGrab(),
 
                 new FollowPath(
-                        2.0,
+                        1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-135.0)),
+                        new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.50, 0.95, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
+                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90))),
+
+                new ArmStowHigh(),
 
                 new FollowPath(
-                        2.0,
+                        1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
-                        new Rotation2d(Math.toRadians(-135.0))
-                ),
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-135.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.75, 0.95, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
-                        new Rotation2d(Math.toRadians(-135.0))
-                )
+                        new Pose2d(1.38, 1.38, new Rotation2d(Math.toRadians(-135))),
+                        new Rotation2d(Math.toRadians(-135))),
 
-        // new command1
-        // new command2
-        // new command3
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+
+                new BackDepositePose(),
+
+                new OpenClaw(),
+
+                new ArmStowHigh(),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
+
+//Finish Later
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.38, 1.38, new Rotation2d(Math.toRadians(-135))),
+                        new Rotation2d(Math.toRadians(-135)))
+
+
         );
+
+
     }
 
 }
+
+//                Example
+//                new FollowPath(
+//                        2.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        new Rotation2d(Math.toRadians(90.0)),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
+//                        new Rotation2d(Math.toRadians(-135.0))
 
 // Example #1: Lily's 2023 FRC super cube auto
 /*          // enable arm, and lift to stow position

@@ -38,10 +38,15 @@ public class ManualDrive extends CommandBase {
     public void execute() {
 
         // get joystick input - for competition
-        double dX = -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
-        double dY = -RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
+        double dX = RobotContainer.ActiveOpMode.gamepad1.left_stick_x;
+        double dY = -RobotContainer.ActiveOpMode.gamepad1.left_stick_y;
         double omega = -3.0 * RobotContainer.ActiveOpMode.gamepad1.right_stick_x;
         double speedTrigger = RobotContainer.ActiveOpMode.gamepad1.right_trigger;
+
+        if (RobotContainer.isRedAlliance==false){
+            dX = dX * -1;
+            dY = dY * -1;
+        }
 
         // implement dead-zoning of joystick inputs
         dX = Math.abs(dX) > 0.05 ? dX : 0;
