@@ -34,17 +34,16 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
-import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
-import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
-import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.AUTONOMOUS.packges.messages.DriveCommandMessage;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.AUTONOMOUS.packges.messages.MecanumCommandMessage;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.AUTONOMOUS.packges.messages.MecanumLocalizerInputsMessage;
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.AUTONOMOUS.packges.messages.PoseMessage;
 
 import java.lang.Math;
 import java.util.Arrays;
