@@ -91,6 +91,9 @@ public class TeleOpMain extends LinearOpMode {
         leftWrist.setPosition(0);
         rightWrist.setPosition(1);
 
+        leftBucket.setPosition(1);
+        rightBucket.setPosition(0);
+
         double direction = 1;
 
         telemetry.addData("Status", "Initialized");
@@ -189,14 +192,13 @@ public class TeleOpMain extends LinearOpMode {
             // Wrist
             // SERVO CONTROLLER INFO: leftWrist:        left limit = 1, right limit = 0     rightWrist: left limit = 0, right limit = 1
             if (gamepad2.a) {           // pick up
-                leftWrist.setPosition(1);
-                rightWrist.setPosition(0);
+                leftWrist.setPosition(0.9);
+                rightWrist.setPosition(0.1);
             } else if (gamepad2.b) {      // deposit
                 leftWrist.setPosition(0);
                 rightWrist.setPosition(1);
             }
 
-            // todo fix continuous servo detection
             // Grabber
             if (gamepad2.dpad_up) {
                 leftGrabber.setPosition(0);
@@ -210,6 +212,16 @@ public class TeleOpMain extends LinearOpMode {
                 leftGrabber.setPosition(0.5);
                 rightGrabber.setPosition(0.5);
             }
+
+            // Bucket
+            if (gamepad2.y) {           // receiving
+                leftBucket.setPosition(1);
+                rightBucket.setPosition(0);
+            } else if (gamepad2.x) {      // scoring
+                leftBucket.setPosition(0.55);
+                rightBucket.setPosition(0.45);
+            }
+
 
 
             // Debug
