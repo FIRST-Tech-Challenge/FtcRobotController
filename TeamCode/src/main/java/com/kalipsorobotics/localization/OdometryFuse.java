@@ -1,7 +1,9 @@
 package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
+import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,7 +27,7 @@ public class OdometryFuse {
         sparkResetData(true, 0.0);
     }
     public Point wheelUpdateData() {
-        double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
+        double TICKSTOINCH = 1 ;//40 / -13510.0 * (40.0 / 40.3612);
         return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
     }
     public Point sparkUpdateData() {
@@ -58,6 +60,11 @@ public class OdometryFuse {
         if (reCalibrate) { myOtos.calibrateImu(); }
         myOtos.setOffset(new SparkFunOTOS.Pose2D(wheelUpdateData().getX(), wheelUpdateData().getY(), heading));
     }
+    public void dataCollectLog() {
+        Log.d("odometry", "" + sparkUpdateData().getX() + sparkUpdateData().getY() + headingUpdateData("right"));
+
+    }
+
     public void wheelResetData() {
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
