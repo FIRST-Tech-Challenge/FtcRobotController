@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.TeleOps;
 
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -102,12 +100,18 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double yaw     =  gamepad1.right_stick_x;
 
             //To switch the neg value given to pos value.
-            double slideDriveJoystick = -gamepad2.right_stick_y;
+            double slideExtensionJoystick = -gamepad2.right_stick_y;
             //Need to ask if I should invert this.
             double slideRotateJoystick = gamepad2.left_stick_y;
 
-            //Check to make sure the joystick is actually being moved instead of it just getting bumped.
-            driveBase.driveRobot(axial, lateral, yaw);
-            driveBase.teleOpSlideDrive(slideDriveJoystick);
+            //to drive slower.
+            boolean driveSlower = gamepad1.right_bumper;
+            
+            if (driveSlower) {
+                driveBase.driveRobot(axial * 0.5, lateral * 0.5, yaw * 0.5);
+                //driveBase.teleOpSlideDrive(slideExtensionJoystick);
+            } else {
+                driveBase.driveRobot(axial, lateral, yaw);
+            }
         }
     }}

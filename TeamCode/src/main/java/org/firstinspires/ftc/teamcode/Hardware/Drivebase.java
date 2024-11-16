@@ -80,8 +80,8 @@ public class Drivebase {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     private CRServo clawRotate;
     private Servo clawPosition;
-    private DcMotor leftSlideDrive;
-    private DcMotor rightSlideDrive;
+    private DcMotor leftSlideExtension;
+    private DcMotor rightSlideExtension;
     private DcMotor leftSlideRotate;
     private DcMotor rightSlideRotate;
     private final DcMotor FLDrive;
@@ -135,8 +135,8 @@ public class Drivebase {
         BLDrive = hardwareMap.dcMotor.get("BLDrive");
         BRDrive = hardwareMap.dcMotor.get("BRDrive");
 
-        leftSlideDrive = hardwareMap.dcMotor.get("leftSlideDrive");
-        rightSlideDrive = hardwareMap.dcMotor.get("rightSlideDrive");
+        //leftSlideExtension = hardwareMap.dcMotor.get("leftSlideExtension");
+        //rightSlideExtension = hardwareMap.dcMotor.get("rightSlideExtension");
         //leftSlideRotate = hardwareMap.dcMotor.get("leftSlideRotate");
         //rightSlideRotate= hardwareMap.dcMotor.get("rightSlideRotate");
 
@@ -162,8 +162,8 @@ public class Drivebase {
         FRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BLDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BRDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftSlideDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightSlideDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftSlideExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightSlideExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //leftSlideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightSlideRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -174,8 +174,10 @@ public class Drivebase {
         FRDrive.setDirection(DcMotor.Direction.FORWARD);
         BLDrive.setDirection(DcMotor.Direction.REVERSE);
         BRDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftSlideDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightSlideDrive.setDirection(DcMotor.Direction.REVERSE);
+        //leftSlideExtension.setDirection(DcMotor.Direction.REVERSE);
+        //rightSlideExtension.setDirection(DcMotor.Direction.FORWARD);
+        //leftSlideRotate.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightSlideRotate.setDirection(DcMotorSimple.Direction.FORWARD);
         //clawRotate.setDirection(CRServo.Direction.FORWARD);
 
         //clawPosition.setPosition(MID_SERVO);
@@ -186,13 +188,13 @@ public class Drivebase {
         BLDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftSlideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightSlideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //leftSlideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //rightSlideRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftSlideDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightSlideDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //leftSlideExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightSlideExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //leftSlideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //rightSlideRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -386,6 +388,9 @@ public class Drivebase {
             BRDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+    public void moveSlower(double axial, double lateral, double yaw) {
+        driveRobot(axial * .2, lateral * .2, yaw * .2);
+    }
 
     /**
      *  Spin on the central axis to point in a new direction.
@@ -491,43 +496,43 @@ public class Drivebase {
         if(power > 0.05 || power < -0.05) {
             //set upper limit.
             //check if you've reached the upper limit.
-            if(leftSlideDrive.getCurrentPosition() > 6000 || rightSlideDrive.getCurrentPosition() > 6000) {
+            if(leftSlideExtension.getCurrentPosition() > 6000 || rightSlideExtension.getCurrentPosition() > 6000) {
                 //if upper limit's been reached and person is trying to bring slides in let them.
                 if(power < 0) {
-                    leftSlideDrive.setPower(power);
-                    rightSlideDrive.setPower(power);
+                    leftSlideExtension.setPower(power);
+                    rightSlideExtension.setPower(power);
                 }
                 //upper limit's been reached and person is trying to bring slides out further so stop them.
                 else {
-                    leftSlideDrive.setPower(0);
-                    rightSlideDrive.setPower(0);
+                    leftSlideExtension.setPower(0);
+                    rightSlideExtension.setPower(0);
                 }
             }
             //set lower limit.
             //check if you've reached the lower limit.
-            else if(leftSlideDrive.getCurrentPosition() <= 100 || rightSlideDrive.getCurrentPosition() <= 100) {
+            else if(leftSlideExtension.getCurrentPosition() <= 100 || rightSlideExtension.getCurrentPosition() <= 100) {
                 //if slides have reached their lower limit and person's trying to bring slides out let them.
                 if(power > 0) {
-                    leftSlideDrive.setPower(power);
-                    rightSlideDrive.setPower(power);
+                    leftSlideExtension.setPower(power);
+                    rightSlideExtension.setPower(power);
                 }
                 //limit's been reached and person is trying to bring slides in further so stop them.
                 else {
-                    leftSlideDrive.setPower(0);
-                    rightSlideDrive.setPower(0);
+                    leftSlideExtension.setPower(0);
+                    rightSlideExtension.setPower(0);
                 }
             }
             //neither limit has been reached so slides can go in or out.
             else
             {
-                leftSlideDrive.setPower(power);
-                rightSlideDrive.setPower(power);
+                leftSlideExtension.setPower(power);
+                rightSlideExtension.setPower(power);
             }
         }
         //no joystick power applied.
         else {
-            leftSlideDrive.setPower(0);
-            rightSlideDrive.setPower(0);
+            leftSlideExtension.setPower(0);
+            rightSlideExtension.setPower(0);
         }
         sendTelemetry(true);
     }
@@ -541,26 +546,26 @@ public class Drivebase {
         // Ensure that the OpMode is still active
         if (opModeIsActive.get()) {
 
-            leftSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightSlideDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightSlideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            leftSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftSlideDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_SLIDES);
-            newRightTarget = rightSlideDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH_SLIDES);
-            leftSlideDrive.setTargetPosition(newLeftTarget);
-            rightSlideDrive.setTargetPosition(newRightTarget);
+            newLeftTarget = leftSlideExtension.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH_SLIDES);
+            newRightTarget = rightSlideExtension.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH_SLIDES);
+            leftSlideExtension.setTargetPosition(newLeftTarget);
+            rightSlideExtension.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            leftSlideDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightSlideDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlideExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightSlideExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftSlideDrive.setPower(Math.abs(speed));
-            rightSlideDrive.setPower(Math.abs(speed));
+            leftSlideExtension.setPower(Math.abs(speed));
+            rightSlideExtension.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -570,22 +575,22 @@ public class Drivebase {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive.get() &&
                     (runtime.seconds() < timeoutS) &&
-                    (leftSlideDrive.isBusy() && rightSlideDrive.isBusy())) {
+                    (leftSlideExtension.isBusy() && rightSlideExtension.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d",
-                        leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
+                        leftSlideExtension.getCurrentPosition(), rightSlideExtension.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            leftSlideDrive.setPower(0);
-            rightSlideDrive.setPower(0);
+            leftSlideExtension.setPower(0);
+            rightSlideExtension.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightSlideDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftSlideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightSlideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     //pos power's rotating upwards.
@@ -616,7 +621,8 @@ public class Drivebase {
         telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
         telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
         telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
-        telemetry.addData("CurEncoders:",  "%7d :%7d", leftSlideDrive.getCurrentPosition(), rightSlideDrive.getCurrentPosition());
+        //telemetry.addData("CurEncoders:",  "%7d :%7d", leftSlideExtension.getCurrentPosition(), rightSlideExtension.getCurrentPosition());
+
         telemetry.update();
     }
 
