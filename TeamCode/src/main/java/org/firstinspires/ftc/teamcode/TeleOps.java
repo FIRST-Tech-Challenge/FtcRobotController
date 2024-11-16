@@ -25,7 +25,7 @@ public class TeleOps extends LinearOpMode {
 
 
         robot.switchPipeline(1);
-        telemetry.addData("pipeline", "red");
+        telemetry.addData("pipeline: 1", null);
 
         while (opModeInInit()) {
 
@@ -56,16 +56,26 @@ public class TeleOps extends LinearOpMode {
             robot.resetAngle(gamepad1.x);
 
             robot.onLoop(0, "manual drive");
+
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
             robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
+            robot.pinchControl(gamepad1.a, gamepad1.b);
+            robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 
             double[] values = robot.detectOne();
 
-            telemetry.addData("tx: ", values[0]);
-            telemetry.addData("ty: ", values[1]);
-            telemetry.addData("angle: ", values[2]);
+            telemetry.addData("angle: ", values[0]);
+
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());
+            telemetry.addData("rotate position", robot.rotate.getPosition());
+
+            if (robot.pivotOutOfRange) {
+
+                telemetry.addData("ERROR", "Pivot is out of Range");
+
+            }
+
             telemetry.update();
 
 

@@ -8,21 +8,17 @@ package org.firstinspires.ftc.teamcode.bots;
 
 public class PivotBot extends LimelightBot {
 
-    public int slideTarget = 0;
-    public int pivotTarget = 0;
-    public DcMotorEx pivotMotor = null;
-    public DcMotorEx slideMotor = null;
-    
-    public int pivotPosition = 0;
+    private int maximumPivot = 1300;
+    private int minumimPivot = -100;
+    public boolean pivotOutOfRange = false;
 
-    private int slidePower = 200;
+    public int slideTarget = 110;
+    public int pivotTarget = 100;
 
-    private final int limitMax = 200;
+    private double pivotPower = 0.5;
 
-    public boolean isDown = true;
-    protected boolean isEndOfAuto = false;
-
-    public final double endPosition = 300;
+    private DcMotorEx pivotMotor = null;
+    private DcMotorEx slideMotor = null;
 
     @Override
     public void init(HardwareMap ahwMap) {
@@ -32,7 +28,7 @@ public class PivotBot extends LimelightBot {
         pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setPower(0);
+        pivotMotor.setPower(pivotPower);
 
         slideMotor = hwMap.get(DcMotorEx.class, "slide");
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -40,6 +36,10 @@ public class PivotBot extends LimelightBot {
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setPower(0);
+
+        pivotMotor.setTargetPosition(pivotTarget);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivotPower = 0.5;
     }
 
     public PivotBot(LinearOpMode opMode) {
@@ -56,9 +56,23 @@ public class PivotBot extends LimelightBot {
 
     protected void onTick() {
         super.onTick();
-        pivotMotor.setTargetPosition(pivotTarget);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivotMotor.setPower(0.3);
+
+        if (pivotTarget > minumimPivot - 100 && pivotTarget < maximumPivot + 100){
+
+            pivotOutOfRange = false;
+
+            pivotMotor.setTargetPosition(pivotTarget);
+            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+//            pivotPower = 0.3 + ((Math.abs(pivotTarget - pivotMotor.getCurrentPosition()) / maximumPivot) * 0.5);
+            pivotMotor.setPower(0.6);
+
+        } else {
+
+            pivotOutOfRange = true;
+            pivotMotor.setPower(0);
+
+        }
 
         slideMotor.setTargetPosition(slideTarget);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -67,15 +81,15 @@ public class PivotBot extends LimelightBot {
 
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (slideMotor.getCurrentPosition() < 2000) {
-                slideTarget = slideMotor.getCurrentPosition() + 50;
+            if (slideMotor.getCurrentPosition() < 2350) {
+                slideTarget = slideMotor.getCurrentPosition() + ((1950 - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         if (down) {
-            if (slideMotor.getCurrentPosition() > 60) {
-                slideTarget = slideMotor.getCurrentPosition() - 50;
+            if (slideMotor.getCurrentPosition() > 170) {
+                slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -83,21 +97,40 @@ public class PivotBot extends LimelightBot {
     }
 
     public void pivotControl(boolean up, boolean down){
+//        if (slideMotor.getCurrentPosition() < 200) {
+//            if (up) {
+//                pivotTarget = maximumPivot;
+//                pivotPower = 0.6;
+//            }
+//            if (down) {
+//                pivotTarget = minumimPivot;
+//                pivotPower = 0.6;
+//            }
+//        }
         if (up) {
-            pivotTarget = 800;
-            pivotMotor.setTargetPosition(pivotTarget);
-            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor.getCurrentPosition() < maximumPivot) {
+                pivotTarget = pivotMotor.getCurrentPosition() + ((maximumPivot - pivotMotor.getCurrentPosition()) / 10);
+                pivotMotor.setTargetPosition(pivotTarget);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
         }
         if (down) {
-            pivotTarget = 200;
-            pivotMotor.setTargetPosition(pivotTarget);
-            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (pivotMotor.getCurrentPosition() > minumimPivot) {
+                pivotTarget = pivotMotor.getCurrentPosition() - (pivotMotor.getCurrentPosition() / 10);
+                pivotMotor.setTargetPosition(pivotTarget);
+                pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
         }
     }
 
     public void pivotTo(int pos){
         pivotMotor.setTargetPosition(pos);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void moveSlide(int pos){
+        slideMotor.setTargetPosition(pos);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
