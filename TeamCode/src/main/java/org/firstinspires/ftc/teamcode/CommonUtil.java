@@ -55,6 +55,8 @@ public class CommonUtil extends LinearOpMode {
     Servo s3 = null;
     Servo s5 = null;
 
+    Servo s12 = null;
+
     CRServo s4 = null;
 
     //All Our functions!
@@ -91,9 +93,11 @@ public class CommonUtil extends LinearOpMode {
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(CRServo.class, "s4");
         s5 = hardwareMap.get(Servo.class,"s5");
+        s12 = hardwareMap.get(Servo.class,"s12");
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
+        s12.setDirection(Servo.Direction.FORWARD);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -171,6 +175,8 @@ public class CommonUtil extends LinearOpMode {
         s3.setPosition(0.5); }
     public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
         s3.setPosition(1); }
+
+
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
         double power = (targetAngle - currentAngle) * 0.0054; // was 0.006
@@ -384,6 +390,11 @@ public class CommonUtil extends LinearOpMode {
     public void clawClosed()
     {
         s1.setPosition(0.2);
+    }
+
+    public void wristFlex()
+    {
+        s12.setPosition(0.5);
     }
 
 
