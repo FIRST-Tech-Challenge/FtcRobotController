@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTracking;
 /**
@@ -31,10 +32,12 @@ public class TunePoseController extends LinearOpMode {
     public static double desiredX = 0;
     public static double desiredY = 0;
     public static double desiredTheta = 0;
+    Battery battery;
     @Override
     public void runOpMode() {
         // Set dashboard
-        drivetrain = new Drivetrain(hardwareMap);
+        battery = new Battery(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         tracking = new TelemetryTracking();
@@ -60,7 +63,7 @@ public class TunePoseController extends LinearOpMode {
             );
             drivetrain.localize();
             //drivetrain.goToPose(desiredPose);
-            Actions.runBlocking(drivetrain.goToPose(desiredPose, 0));
+            Actions.runBlocking(drivetrain.goToPose(desiredPose));
             telemetry.addData("x", drivetrain.state.get(0,0));
             telemetry.addData("y", drivetrain.state.get(1,0));
             telemetry.addData("theta", drivetrain.state.get(2,0));

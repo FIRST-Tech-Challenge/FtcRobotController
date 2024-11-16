@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 @Autonomous(name = "Test Color Detection", group = "Autonomous")
@@ -17,10 +18,12 @@ public class TuneColorDetection extends LinearOpMode {
 
     // Use FTCDashboard
     FtcDashboard dashboard;
+    Battery battery;
     @Override
     public void runOpMode() {
         // Initialize Limelight
-        drivetrain = new Drivetrain(hardwareMap);
+        battery = new Battery(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");

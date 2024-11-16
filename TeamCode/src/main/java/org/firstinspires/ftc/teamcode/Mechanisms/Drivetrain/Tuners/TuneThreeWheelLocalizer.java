@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 /**
@@ -25,13 +26,14 @@ public class TuneThreeWheelLocalizer extends LinearOpMode {
     // Use FTCDashboard
     FtcDashboard dashboard;
 
-
+    Battery battery;
 
 
     @Override
     public void runOpMode() {
         // Set dashboard
-        drivetrain = new Drivetrain(hardwareMap);
+        battery = new Battery(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 

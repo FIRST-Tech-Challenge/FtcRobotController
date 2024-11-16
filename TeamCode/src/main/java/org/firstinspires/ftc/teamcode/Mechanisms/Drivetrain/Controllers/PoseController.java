@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
-import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 
 @Config
 public class PoseController {

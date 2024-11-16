@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
@@ -21,10 +22,12 @@ public class TuneFeedForwardGains extends LinearOpMode{
     public static double maxAcceleration = 50.0;
     public static double maxVelocity = 60;
     public static double maxDistance = 84;
+    Battery battery;
     @Override
     public void runOpMode() {
         // Set dashboard
-        drivetrain = new Drivetrain(hardwareMap);
+        battery = new Battery(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         TelemetryPacket packet = new TelemetryPacket();

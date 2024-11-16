@@ -17,20 +17,20 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.ejml.simple.SimpleMatrix;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Controllers.DrivetrainMotorController;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Controllers.GeometricController;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Controllers.PoseController;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Geometry.Path;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Localizers.TwoWheelOdometery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
-import org.firstinspires.ftc.teamcode.Hardware.Actuators.DCMotorAdvanced;
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
 
 public class Drivetrain {
     /**
      * Hardware map
      */
     HardwareMap hardwareMap = null;
-    public int opSwitch = 1;
     public SimpleMatrix state = new SimpleMatrix(6, 1);
     public TwoWheelOdometery twoWheelOdo;
 
@@ -39,15 +39,16 @@ public class Drivetrain {
     /**
      * Drive motors
      */
-    public DCMotorAdvanced motorLeftFront = null;
-    public DCMotorAdvanced motorLeftBack = null;
-    public DCMotorAdvanced motorRightBack = null;
-    public DCMotorAdvanced motorRightFront = null;
+    public DcMotorAdvanced motorLeftFront = null;
+    public DcMotorAdvanced motorLeftBack = null;
+    public DcMotorAdvanced motorRightBack = null;
+    public DcMotorAdvanced motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
     public static double distanceThreshold = 0.2;
     public static double angleThreshold = 0.1;
+    public Battery battery;
 
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
             new double[]{0},
@@ -62,7 +63,7 @@ public class Drivetrain {
             new double[]{0}
     });
     public ElapsedTime deltaT = new ElapsedTime();
-    public Drivetrain(HardwareMap hardwareMap){
+    public Drivetrain(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
         this.motorController = new DrivetrainMotorController(hardwareMap);
         this.geometricController = new GeometricController();
@@ -70,10 +71,10 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        this.motorLeftFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), hardwareMap, 12.5);
-        this.motorLeftBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), hardwareMap, 12.5);
-        this.motorRightBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), hardwareMap, 12.5);
-        this.motorRightFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), hardwareMap, 12.5);
+        this.motorLeftFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), battery, 12.5);
+        this.motorLeftBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), battery, 12.5);
+        this.motorRightBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), battery, 12.5);
+        this.motorRightFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), battery, 12.5);
         //casting
 
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -143,7 +144,7 @@ public class Drivetrain {
         setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
         prevWheelSpeeds = wheelSpeeds;
     }*/
-    public Action goToPose(SimpleMatrix desiredPose, int step) {
+    public Action goToPose(SimpleMatrix desiredPose) {
         return new Action() {
             //private boolean initialized = false;
 
@@ -162,9 +163,8 @@ public class Drivetrain {
                 prevWheelSpeeds = wheelSpeeds;
                 if (Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold){
                     setPower(stopMatrix);
-                    opSwitch++;
                 }
-                return step == opSwitch;
+                return !(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold);
             }
         };
     }

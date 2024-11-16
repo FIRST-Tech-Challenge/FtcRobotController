@@ -13,10 +13,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
-import org.firstinspires.ftc.teamcode.Hardware.Actuators.DCMotorAdvanced;
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 
 @Config
@@ -26,8 +27,8 @@ public class Lift {
     PID pid;
     double motorPower;
     int currentPosition;
-    DCMotorAdvanced liftMotorLeft;
-    DCMotorAdvanced liftMotorRight;
+    DcMotorAdvanced liftMotorLeft;
+    DcMotorAdvanced liftMotorRight;
     Encoder encoder;
     TouchSensor limiter;
     public static double kA=0.12;
@@ -45,11 +46,11 @@ public class Lift {
     // FIGURE OUT LIMIT SWITCHES/TOUCH SENSORS THEY SHOULD BE HERE
 
 
-    public Lift(HardwareMap hardwareMap){
+    public Lift(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
 
-        this.liftMotorLeft = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), hardwareMap, 12.5);
-        this.liftMotorRight = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), hardwareMap, 12.5);
+        this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, 12.5);
+        this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, 12.5);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -75,7 +76,7 @@ public class Lift {
     // FUNCTION TO RESET CURRENT ENCODER POSITION WHEN LIMIT SWITCHES ARE HIT
     private void checkLimit(){
         if (limiter.isPressed()){
-            encoder.resetEncoder();
+            encoder.reset();
         }
     }
 
