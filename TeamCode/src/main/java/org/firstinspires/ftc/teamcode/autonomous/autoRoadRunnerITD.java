@@ -33,6 +33,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static double SLIDE_MAX_SPEED = 0.7;
     public static double ARM_MAX_SPEED = 0.5;
     public static double WRIST_SERVO_DOWN = 0.05;
+    public static int ARM_INITIAL_ANGLE = 50; //deg
 
     public static class SpecClaw {
         private final Servo specServo;
@@ -97,8 +98,10 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class SlidesPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double power = slideController.runIteration();
-                packet.put("slides motor power", power);
+                PIDFMotorController.MotorData data = slideController.runIteration();
+                packet.put("slides power", data.SetPower);
+                packet.put("slides position", data.CurrentPosition);
+                packet.put("slides target", data.TargetPosition);
                 return true;
             }
         }
@@ -142,15 +145,17 @@ public class autoRoadRunnerITD extends LinearOpMode {
             DcMotorEx intakeArmMotor = hardwareMap.get(DcMotorEx.class, "intakeArmMotor");
             intakeArmMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             double armTicksInDegrees = 1425.1 / 360.0;
-            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, ARM_MAX_SPEED);
+            armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, ARM_MAX_SPEED, ARM_INITIAL_ANGLE);
             armController.resetMotorEncoder();
         }
 
         public class ArmPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double power = armController.runIteration();
-                packet.put("intake arm motor power", power);
+                PIDFMotorController.MotorData data = armController.runIteration();
+                packet.put("arm power", data.SetPower);
+                packet.put("arm position", data.CurrentPosition);
+                packet.put("arm target", data.TargetPosition);
                 return true;
             }
         }

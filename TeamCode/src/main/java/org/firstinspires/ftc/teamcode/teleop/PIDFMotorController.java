@@ -11,13 +11,25 @@ public class PIDFMotorController {
     private final double f;
     private final double ticksInDegrees;
     private final double maxSpeed;
-    private int targetPosition;
+    private final int initialPositionForFF;
+    private Integer targetPosition = null;
 
     public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed) {
         this.motor = motor;
         this.f = f;
         this.ticksInDegrees = ticksInDegrees;
         this.maxSpeed = maxSpeed;
+        this.initialPositionForFF = 0;
+
+        this.pidController = new PIDController(p, i, d);
+    }
+
+    public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed, int initialPositionForFF) {
+        this.motor = motor;
+        this.f = f;
+        this.ticksInDegrees = ticksInDegrees;
+        this.maxSpeed = maxSpeed;
+        this.initialPositionForFF = initialPositionForFF;
 
         this.pidController = new PIDController(p, i, d);
     }
@@ -31,14 +43,19 @@ public class PIDFMotorController {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public double runIteration() {
+    public MotorData runIteration() {
+        if (targetPosition == null){
+            int currentPosition = motor.getCurrentPosition();
+            return new MotorData(0, currentPosition, 0);
+        }
+
         int currentPosition = motor.getCurrentPosition();
 
         // Calculate the PID output
         double pidOutput = pidController.calculate(currentPosition, targetPosition);
 
         // Calculate feed-forward component
-        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees)) * f;
+        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees) - Math.toRadians(initialPositionForFF)) * f;
 
         // Sum PID and feed-forward for final motor power
         double power = pidOutput + ff;
@@ -46,7 +63,7 @@ public class PIDFMotorController {
 
         // Set motor power
         motor.setPower(power);
-        return power;
+        return new MotorData(targetPosition, currentPosition, power);
     }
 
     private double limitPower(double power){
@@ -54,5 +71,16 @@ public class PIDFMotorController {
             return maxSpeed;
         }
         return Math.max(power, -maxSpeed);
+    }
+
+    public class MotorData{
+        public double TargetPosition;
+        public double CurrentPosition;
+        public double SetPower;
+        public MotorData(double targetPosition,double currentPosition, double setPower){
+            this.TargetPosition = targetPosition;
+            this.CurrentPosition = currentPosition;
+            this.SetPower = setPower;
+        }
     }
 }

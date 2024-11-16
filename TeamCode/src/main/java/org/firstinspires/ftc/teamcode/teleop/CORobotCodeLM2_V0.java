@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class CORobotCodeLM2_V0 extends LinearOpMode {
 
     public static double MAX_ARM_POWER = 0.5;
+    public static int ARM_INITIAL_POSITION = 50; //deg
     public static double MAX_SLIDE_POWER = 0.7;
     public static int SLIDE_DEPOSIT_POSITION = 4250;
     public static int SLIDE_SPEC_BAR_POSITION = 2250;
@@ -62,6 +65,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         );
         imu.initialize(imuParameters);
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Wait for start
         telemetry.addLine("Initialized. Ready to start.");
         telemetry.update();
@@ -103,7 +107,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         double slideTicksInDegrees = 537.7 / 360.0;
 
         // Initialize PIDF controllers for the arm and slide
-        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, MAX_ARM_POWER);
+        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, MAX_ARM_POWER, ARM_INITIAL_POSITION);
         slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, slideTicksInDegrees, MAX_SLIDE_POWER);
 
         // Set directions for drivetrain motors
@@ -206,7 +210,11 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     }
 
     private void runPIDIterations() {
-        armController.runIteration();
-        slideController.runIteration();
+        PIDFMotorController.MotorData armMotorData = armController.runIteration();
+        PIDFMotorController.MotorData slideMotorData = slideController.runIteration();
+        telemetry.addData("Arm Position", armMotorData.CurrentPosition);
+        telemetry.addData("Arm Target", armMotorData.TargetPosition);
+        telemetry.addData("Slides Position", slideMotorData.CurrentPosition);
+        telemetry.addData("Slides Target", slideMotorData.TargetPosition);
     }
 }
