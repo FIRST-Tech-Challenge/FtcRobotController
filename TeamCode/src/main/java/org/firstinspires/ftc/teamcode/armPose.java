@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 /**
  * Arm Poses for autonomous and Teleop
  */
-public enum armPose {
+public enum  armPose {
     /**
      * Pose: Arm Up slightly, extendo in
      */

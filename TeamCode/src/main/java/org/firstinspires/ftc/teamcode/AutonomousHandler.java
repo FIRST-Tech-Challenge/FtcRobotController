@@ -35,6 +35,12 @@ public class AutonomousHandler {
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("CapstanPosition", "INIT");
         packet.put("Capstan", "INIT");
+        packet.put("x", 0);
+        packet.put("y", 0);
+        packet.put("Goaly", 0);
+        packet.put("Goalx", 0);
+        packet.put("angle", 0);
+        dashboard.sendTelemetryPacket(packet);
     }
 
     public void resetPID(float p, float i, float d) {

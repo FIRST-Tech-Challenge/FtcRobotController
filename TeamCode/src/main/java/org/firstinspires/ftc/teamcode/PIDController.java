@@ -25,11 +25,12 @@ public class PIDController {
         timer = new ElapsedTime();
     }
     public float getOutput(float state, float reference, TelemetryPacket packet, String name) {
+        float error = reference - state;
         if (reference != previousReference) {
             integralSummation = 0;
+            lastError = error;
         }
-        float error = reference - state;
-        integralSummation += (float) (error * timer.seconds());
+        integralSummation += error;
         float derivative = (float) ((error - lastError) / timer.seconds());
         lastError = error;
         previousReference = reference;

@@ -56,49 +56,42 @@ public class ramAuro extends OpMode {
 
         InstructionHandler instructionHandler = new InstructionHandler();
         instructionHandler.addInstruction(
-                5,
+                3,
                 new SparkFunOTOS.Pose2D(0,0,0),
                 armPose.AUTO_1,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
-                5,
+                3,
                 new SparkFunOTOS.Pose2D(0,10,0),
                 armPose.CHAMBER_A,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,15,0),
+                3,
+                new SparkFunOTOS.Pose2D(0,26.75,0),
                 armPose.CHAMBER_A,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
+                3,
+                new SparkFunOTOS.Pose2D(0,26.75,0),
                 armPose.CHAMBER_A,
-                wristState.UP,
-                clawState.CLOSED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
-                armPose.CHAMBER_B,
-                wristState.UP,
-                clawState.CLOSED
-        );
-        instructionHandler.addInstruction(
-                5,
-                new SparkFunOTOS.Pose2D(0,22,0),
-                armPose.CHAMBER_B,
                 wristState.UP,
                 clawState.OPENED
         );
         instructionHandler.addInstruction(
-                5,
+                3,
+                new SparkFunOTOS.Pose2D(0,17,0),
+                armPose.REST,
+                wristState.UP,
+                clawState.OPENED
+        );
+        instructionHandler.addInstruction(
+                3,
                 new SparkFunOTOS.Pose2D(0,10,0),
                 armPose.REST,
                 wristState.UP,
@@ -120,7 +113,7 @@ public class ramAuro extends OpMode {
         );
         instructionHandler.addInstruction(
                 5,
-                new SparkFunOTOS.Pose2D(-24,50,0),
+                new SparkFunOTOS.Pose2D(-24,70,0),
                 armPose.REST,
                 wristState.UP,
                 clawState.OPENED

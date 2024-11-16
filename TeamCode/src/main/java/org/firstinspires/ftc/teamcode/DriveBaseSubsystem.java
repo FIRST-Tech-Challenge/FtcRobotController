@@ -11,9 +11,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
 public class DriveBaseSubsystem {
-    public static float Translational_P = 0.06f;
-    public static float Translational_I = 0.000007f; // 0.000005 is good
-    public static float Translational_D = 0.03f;
+    public static float Translational_P = 0.012f;
+    public static float Translational_I = 0f; // 0.000005 is good
+    public static float Translational_D = 0.015f;
     // Motors & Sensors
     private static DcMotor _frontLeftMotor;
     private static DcMotor _frontRightMotor;

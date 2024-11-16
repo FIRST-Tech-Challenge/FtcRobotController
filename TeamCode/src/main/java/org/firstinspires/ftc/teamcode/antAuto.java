@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,9 +10,13 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import java.util.HashMap;
 
+@Config
 @Autonomous(name="antAuto", group="Auto")
 public class antAuto extends OpMode {
     private AutonomousHandler autoHandler;
+    public static float Trans_P = 0.01f;
+    public static float Trans_I = 0;
+    public static float Trans_D = 0;
 
     @Override
     public void init() {
@@ -66,52 +71,20 @@ public class antAuto extends OpMode {
 
         // State too
         SystemState stateToo = new SystemState();
-        stateToo.clawPosition = clawState.CLOSED;
+        stateToo.clawPosition = clawState.OPENED;
         stateToo.wristPosition = wristState.UP;
         stateToo.armPosition = armPose.CHAMBER_B;
-        stateToo.drivePose = new SparkFunOTOS.Pose2D(0, 20.13, 0);
-        stateToo.ignorePosTime = 10;
-
-        // State 2
-        SystemState stateTwo = new SystemState();
-        stateTwo.clawPosition = clawState.CLOSED;
-        stateTwo.wristPosition = wristState.UP;
-        stateTwo.armPosition = armPose.CHAMBER_B;
-        stateTwo.drivePose = new SparkFunOTOS.Pose2D(0, 27.45, 0);
-        stateTwo.ignorePosTime = 10;
-
-        // State 3 / tree
-        SystemState statetree = new SystemState();
-        statetree.clawPosition = clawState.CLOSED;
-        statetree.wristPosition = wristState.UP;
-        statetree.armPosition = armPose.CHAMBER_A;
-        statetree.drivePose = new SparkFunOTOS.Pose2D(0, 27.76, 0);
-        statetree.ignorePosTime = 10;
-
-        // State treee
-        SystemState statefore = new SystemState();
-        statefore.clawPosition = clawState.OPENED;
-        statefore.wristPosition = wristState.UP;
-        statefore.armPosition = armPose.REST;
-        statefore.drivePose = new SparkFunOTOS.Pose2D(0, 20, 0);
-        statefore.ignorePosTime = 10;
-        // State 4 / for
-        SystemState statefor = new SystemState();
-        statefor.clawPosition = clawState.OPENED;
-        statefor.wristPosition = wristState.UP;
-        statefor.armPosition = armPose.REST;
-        statefor.drivePose = new SparkFunOTOS.Pose2D(0, 18, 0);
-        statefor.ignorePosTime = 10;
-
-
+        stateToo.drivePose = new SparkFunOTOS.Pose2D(0, 50, 0);
+        stateToo.ignorePosTime = 100000;
         // Generate Path
         HashMap<Integer, SystemState> instructions = new HashMap<>();
         instructions.put(0, stateOne); // Arm Up
         instructions.put(1, stateToo); //lik ofrword or smth
-        instructions.put(2, stateTwo); //lik frotneordward n stuf
-        instructions.put(3, statetree); //lik backward n stuf
-        instructions.put(4, statefore); //lick to the wait broskie, kinda radical
-        instructions.put(5, statefor); //lik back all da way brah
+        instructions.put(2, stateOne); // Arm Up
+        instructions.put(3, stateToo); //lik ofrword or smth
+        instructions.put(4, stateOne); // Arm Up
+        instructions.put(5, stateToo); //lik ofrword or smth
+        instructions.put(6, stateOne); // Arm Up
 
 
         // ACS & DBS & Handler
@@ -127,5 +100,6 @@ public class antAuto extends OpMode {
     @Override
     public void loop() {
         autoHandler.periodicFunction();
+        autoHandler.resetPID(Trans_P, Trans_I, Trans_D);
     }
 }
