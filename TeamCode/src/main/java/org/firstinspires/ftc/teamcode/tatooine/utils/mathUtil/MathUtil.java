@@ -46,5 +46,9 @@ public class MathUtil {
     public static double voltageToDegrees(double voltage){
         return voltage/ 3.3*360;
     }
+
+    public static boolean inTolerance(double dp,double cp,double tolerance){
+        return Math.abs(cp) < Math.abs(dp+tolerance) && Math.abs(cp) > Math.abs(dp-tolerance);
+    }
 }
 
