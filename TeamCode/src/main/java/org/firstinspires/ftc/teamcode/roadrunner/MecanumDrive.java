@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
 
@@ -34,17 +34,17 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
-import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
-import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
-import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.Settings;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -55,10 +55,9 @@ import java.util.List;
 public final class MecanumDrive {
     public static class Params {
         // IMU orientation
-        // TODO: fill in these values based on
-        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+        // tuned 11/16, see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
@@ -215,12 +214,11 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // TODO: make sure your config has motors with these names (or change them)
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        // auto-tuned 11/16 per settings; see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        leftFront = hardwareMap.get(DcMotorEx.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
+        leftBack = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.REAR_LEFT_MOTOR);
+        rightBack = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.REAR_RIGHT_MOTOR);
+        rightFront = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
