@@ -53,10 +53,10 @@ public class MainEncoderAuto extends LinearOpMode {
 
     }
     protected void driveInches(float inches, float speed, dir direction, float timeoutS) {
-        int lbDir = 1;
-        int rbDir = 1;
-        int lfDir = 1;
-        int rfDir = 1;
+        double lbDir = 1;
+        double rbDir = 1;
+        double lfDir = 1;
+        double rfDir = 1;
         double targetPos = 0;
         double ticks = 0;
         double deltaTime = 0;
@@ -65,12 +65,16 @@ public class MainEncoderAuto extends LinearOpMode {
         //sets some motors to negative power depending on direction
         switch(direction) {
             case LEFT:
-                rbDir = -1;
-                lfDir = -1;
+                rbDir = -1.5;
+                lfDir = -1.5;
+                lbDir = 1.5;
+                rfDir = 1.5;
                 break;
             case RIGHT:
-                lbDir = -1;
-                rfDir = -1;
+                lbDir = -1.5;
+                rfDir = -1.5;
+                lfDir = 1.5;
+                rbDir = 1.5;
                 break;
             case FORWARD:
                 break;
@@ -87,7 +91,7 @@ public class MainEncoderAuto extends LinearOpMode {
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
             rightFront.setPower(rfDir * speed);
-            targetPos = countsPerInch / speed;
+            targetPos = inches * countsPerInch / speed / (24*12);
             while(opModeIsActive() && timeoutS > runtime.seconds() && ticks < targetPos) {
                 deltaTime = runtime.seconds() - lastRuntimeSeconds;
                 lastRuntimeSeconds = runtime.seconds();
@@ -98,11 +102,11 @@ public class MainEncoderAuto extends LinearOpMode {
                 telemetry.update();
 
             }
-          /*  leftBack.setPower(0);
-            rightBack.setPower(0);
-            leftFront.setPower(0);
-            rightFront.setPower(0);
-            sleep(100);*/
+//            leftBack.setPower(0);
+ //           rightBack.setPower(0);
+   //         leftFront.setPower(0);
+     //       rightFront.setPower(0);
+       //     sleep(100);
         }
     }
 

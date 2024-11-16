@@ -60,7 +60,7 @@ public class MainMovement extends LinearOpMode {
 
         while (opModeIsActive()) {
             // detecting the x and y position of both joysticks
-            LjoystickX = gamepad1.left_stick_x; 
+            LjoystickX = gamepad1.left_stick_x;
             LjoystickY = gamepad1.left_stick_y;
             RjoystickX = gamepad1.right_stick_x;
             RjoystickY = gamepad1.right_stick_y;
@@ -126,7 +126,7 @@ public class MainMovement extends LinearOpMode {
             rotationSpeed = speedSlow;
             
         } else if (gamepad1.right_bumper) {     // fast mode !
-            netS = (Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone))) * speedFast; // Speed is multiplied by the speedFast variable 
+            netS = (Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone))) * speedFast; // Speed is multiplied by the speedFast variable
             rotationSpeed = speedFast;
 
         } else {    // default- no bumpers are held !
