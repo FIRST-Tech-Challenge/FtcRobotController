@@ -2,14 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 
 
-import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
@@ -28,6 +24,7 @@ public class Main extends LinearOpMode {
     private DcMotor Arm_Motor;
     private double dist_to_move = 0;
     private double power = 0;
+
     //private Controls_Update ControlsUpdate = new Controls_Update();
     //private Data_Update DataUpdate = new Data_Update();
     //private Thread dta = new Thread(DataUpdate);
