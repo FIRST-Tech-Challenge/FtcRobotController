@@ -21,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public class MecanumTeleOp extends LinearOpMode {
     private Hardware hardware;
     double Wristpos = 0.28;
+    double Twistpos = 0.0;
+
     @Override
     public void runOpMode() {
         hardware = new Hardware(hardwareMap);
@@ -262,30 +264,26 @@ public class MecanumTeleOp extends LinearOpMode {
         telemetry.addData("arm deg", degrees);
     }
     public void twist(Hardware hardware) {
-        final double MAX_TWIST_POS = 1;     // Maximum rotational position
-        final double MIN_TWIST_POS = 0.0;     // Minimum rotational position
-        if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
-            hardware.twist.setPosition(MAX_TWIST_POS);
-        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.5 && gamepad2.left_stick_x<=0.5){
-            hardware.twist.setPosition(MIN_TWIST_POS);
+        if(gamepad2.left_stick_x>=0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
+            Twistpos+=0.01;
+            hardware.twist.setPosition(Twistpos);
+        } else if (gamepad2.left_stick_x<=-0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
+            Twistpos-=0.01;
+            hardware.twist.setPosition(Twistpos);
         }
+        telemetry.addData("Twist Position",hardware.twist.getPosition());
+
     }
     public void wrist() {
-        Servo servo = hardwareMap.get(Servo.class,"wrist");
-      //  Hardware hardware = new Hardware(hardwareMap);
-      // final double MAX_WRIST_POS = 1;     // Maximum rotational position
-      //  final double MIN_WRIST_POS = 0.0;
-
         if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
             Wristpos += 0.01;
             hardware.wrist.setPosition(Wristpos);
-        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.5 && gamepad2.left_stick_x<=0.5){
+        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
             Wristpos-= 0.01;
             hardware.wrist.setPosition(Wristpos);
         }
 
         telemetry.addData("Wrist Position",hardware.wrist.getPosition());
-        telemetry.update();
     }
     public void servoMoves(){
         Servo servo = hardwareMap.get(Servo.class,"claw");
