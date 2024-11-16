@@ -1,27 +1,71 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Action;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class MainAuto {
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
     private final Logger logger;
+    private final MecanumDrive drive;
+
+    private final String allianceColor;
+    private final Vector2d scoringPosition;
+    private final Vector2d humanPlayerPosition;
+    private final Vector2d parkingPosition;
 
     /**
      * Creates a new autonomous controller instance
      * 
-     * @param base  Base robot instance to control
-     * @param color Selected alliance color
+     * @param base     Base robot instance to control
+     * @param color    Selected alliance color
+     * @param position Starting position ("left" or "right")
      */
-    public MainAuto(BaseRobot base, String color) {
+    public MainAuto(BaseRobot base, String color, String position) {
         this.baseRobot = base;
         this.hardwareMap = baseRobot.hardwareMap;
         this.logger = baseRobot.logger;
+        this.allianceColor = color;
+
+        // Set positions based on alliance color
+        if (color.equalsIgnoreCase("red")) {
+            scoringPosition = Settings.Autonomous.FieldPositions.RED_SCORING_POSITION;
+            humanPlayerPosition = Settings.Autonomous.FieldPositions.RED_HUMAN_PLAYER;
+            parkingPosition = Settings.Autonomous.FieldPositions.RED_PARKING;
+        } else {
+            scoringPosition = Settings.Autonomous.FieldPositions.BLUE_SCORING_POSITION;
+            humanPlayerPosition = Settings.Autonomous.FieldPositions.BLUE_HUMAN_PLAYER;
+            parkingPosition = Settings.Autonomous.FieldPositions.BLUE_PARKING;
+        }
+
+        // Initialize drive with correct starting position
+        Pose2d initialPose;
+        switch (color.toLowerCase() + " " + position.toLowerCase()) {
+            case "red right":
+                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.RED_RIGHT_START, 0);
+                break;
+            case "red left":
+                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.RED_LEFT_START, 0);
+                break;
+            case "blue right":
+                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.BLUE_RIGHT_START, Math.PI);
+                break;
+            case "blue left":
+                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.BLUE_LEFT_START, Math.PI);
+                break;
+            default:
+                initialPose = new Pose2d(0, 0, 0);
+        }
+        this.drive = new MecanumDrive(hardwareMap, initialPose);
     }
 
     /**
@@ -62,9 +106,12 @@ public class MainAuto {
      * 4. Return to safe position
      */
     private void getNextSpecimen() {
-        baseRobot.odometry.moveCounts("backward", 100); // TODO tune
-        baseRobot.odometry.moveCounts("right", 100);
-        baseRobot.odometry.moveCounts("tright", Settings.Autonomous.Movement.TURN_NINETY_DEGREES);
+        Action trajectory = drive.actionBuilder(drive.pose)
+                .lineToX(humanPlayerPosition.x)
+                .lineToY(humanPlayerPosition.y)
+                .build();
+
+        Actions.runBlocking(trajectory);
         getSpecimenFromHumanPlayer();
     }
 
@@ -96,22 +143,15 @@ public class MainAuto {
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeOnChamber(String mode, ChamberHeight chamberHeight) {
-        baseRobot.odometry.update(); // Update robot's current position
+        drive.updatePoseEstimate();
 
-        switch (mode) {
-            case "red right":
-            case "blue right":
-                baseRobot.odometry.moveCounts("left", 50);
-                baseRobot.odometry.moveCounts("forward", 100);
-                placeSpecimen(chamberHeight);
-                break;
-            case "red left":
-            case "blue left":
-                baseRobot.odometry.moveCounts("right", 50);
-                baseRobot.odometry.moveCounts("forward", 100);
-                placeSpecimen(chamberHeight);
-                break;
-        }
+        Action trajectory = drive.actionBuilder(drive.pose)
+                .lineToX(scoringPosition.x)
+                .lineToY(scoringPosition.y)
+                .build();
+
+        Actions.runBlocking(trajectory);
+        placeSpecimen(chamberHeight);
     }
 
     /**
@@ -120,10 +160,14 @@ public class MainAuto {
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeNextSpecimenOnChamber(ChamberHeight chamberHeight) {
-        baseRobot.odometry.update(); // Update robot's current position
+        drive.updatePoseEstimate();
 
-        baseRobot.odometry.moveCounts("left", 50); // TODO tune
-        baseRobot.odometry.moveCounts("forward", 100); // TODO tune
+        Action trajectory = drive.actionBuilder(drive.pose)
+                .lineToY(drive.pose.position.y - 50) // left 50
+                .lineToX(drive.pose.position.x + 100) // forward 100
+                .build();
+
+        Actions.runBlocking(trajectory);
         placeSpecimen(chamberHeight);
     }
 
@@ -158,8 +202,14 @@ public class MainAuto {
      * @param mode Current autonomous mode
      */
     public void park(String mode) {
-        baseRobot.odometry.moveCounts("backward", 100); // TODO tune
-        baseRobot.odometry.moveCounts("right", 100); // TODO tune
+        drive.updatePoseEstimate();
+
+        Action trajectory = drive.actionBuilder(drive.pose)
+                .lineToX(parkingPosition.x)
+                .lineToY(parkingPosition.y)
+                .build();
+
+        Actions.runBlocking(trajectory);
     }
 
     /**
@@ -169,7 +219,7 @@ public class MainAuto {
      */
     public void immediatelyPark(String mode) {
         switch (mode.toLowerCase()) {
-            // TODO this all sucks
+            // ! TODO this all sucks
             case "red right":
             case "blue right":
                 baseRobot.mecanumDrive(0, -0.5, 0);

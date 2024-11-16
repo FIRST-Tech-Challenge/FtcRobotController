@@ -90,7 +90,7 @@ public class AutoBase extends LinearOpMode {
         }
 
         // Create remaining components after menu selection
-        MainAuto auto = new MainAuto(baseRobot, color);
+        MainAuto auto = new MainAuto(baseRobot, color, position);
 
         // Add ready status
         telemetry.addData("Status", "Ready to start!");

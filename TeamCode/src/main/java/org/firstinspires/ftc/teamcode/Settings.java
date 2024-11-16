@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import java.lang.reflect.Field;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Vector2d;
 
 @Config
 /** @noinspection unused */
@@ -137,6 +138,27 @@ public class Settings {
     // Autonomous settings
     @Config
     public static class Autonomous {
+        @Config
+        public static class FieldPositions {
+            // Starting positions
+            public static Vector2d RED_RIGHT_START = new Vector2d(36, -60);
+            public static Vector2d RED_LEFT_START = new Vector2d(-36, -60);
+            public static Vector2d BLUE_RIGHT_START = new Vector2d(36, 60);
+            public static Vector2d BLUE_LEFT_START = new Vector2d(-36, 60);
+
+            // Scoring positions
+            public static Vector2d RED_SCORING_POSITION = new Vector2d(24, -36);
+            public static Vector2d BLUE_SCORING_POSITION = new Vector2d(24, 36);
+
+            // Human player positions
+            public static Vector2d RED_HUMAN_PLAYER = new Vector2d(-36, -60);
+            public static Vector2d BLUE_HUMAN_PLAYER = new Vector2d(-36, 60);
+
+            // Parking positions
+            public static Vector2d RED_PARKING = new Vector2d(-60, -60);
+            public static Vector2d BLUE_PARKING = new Vector2d(-60, 60);
+        }
+
         @Config
         public static class Movement {
             /** Encoder counts for moving forward one unit */
