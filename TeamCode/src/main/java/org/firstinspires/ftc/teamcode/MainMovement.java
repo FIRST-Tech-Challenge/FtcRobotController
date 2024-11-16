@@ -68,7 +68,7 @@ public class MainMovement extends LinearOpMode {
             epicRotationMovement(); // rotation on gary, the robot
             legendaryStrafeMovement(); // movement on gary
             LimbMovement(); // controlling linear slide and claw on gary, OUR robot
-            telemetry.addData("Status", "Run Time: " + runtime.toString()); // tracks how long program has been running 
+            telemetry.addData("Status", "Run Time: " + Runtime.getRuntime()); // tracks how long program has been running
             telemetry.update(); //update output screen
         }
 

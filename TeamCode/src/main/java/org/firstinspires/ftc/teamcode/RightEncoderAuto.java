@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name="RightEncoderAuto", group="Robot")
-@Disabled
 public class RightEncoderAuto extends MainEncoderAuto {
     public void runOpMode() {
         // Call the parent class method to use its setup

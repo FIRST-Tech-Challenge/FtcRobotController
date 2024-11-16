@@ -36,6 +36,9 @@ public class MainEncoderAuto extends LinearOpMode {
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
         linearSlide = hardwareMap.get(DcMotor.class, "linearSlide");
 
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         telemetry.addData("Starting pos: ", leftBack.getCurrentPosition());
         telemetry.update();
