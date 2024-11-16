@@ -21,6 +21,8 @@ import dev.aether.collaborative_multitasking.SharedResource;
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static class Locks {
         public static final SharedResource DriveMotors = new SharedResource("DriveMotors");
+        public static final SharedResource VerticalSlide = new SharedResource("VerticalSlide");
+        public static final SharedResource ArmAssembly = new SharedResource("ArmAssembly");
     }
 
     public static final double TRACK_WIDTH = 11.3385888;

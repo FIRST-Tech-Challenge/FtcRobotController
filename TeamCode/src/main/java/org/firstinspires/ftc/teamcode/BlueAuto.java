@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,13 +21,17 @@ import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
+import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
+import dev.aether.collaborative_multitasking.ext.Pause;
 import kotlin.Unit;
 
 @Autonomous // Appear on the autonomous drop down
@@ -162,11 +168,9 @@ public class BlueAuto extends LinearOpMode {
             hardware.driveMotors.setAll(0.0);
         }
 
-        private static final Set<SharedResource> REQUIREMENTS = new HashSet<>();
-
-        static {
-            REQUIREMENTS.add(Hardware.Locks.DriveMotors);
-        }
+        private static final Set<SharedResource> REQUIREMENTS = Set.of(
+                Hardware.Locks.DriveMotors
+        );
 
         @Override
         public @NotNull Set<SharedResource> requirements() {
@@ -174,30 +178,205 @@ public class BlueAuto extends LinearOpMode {
         }
     }
 
+    final static class ScoreHighBasket extends TaskTemplate {
+        private final DcMotor verticalSlide;
+        private final DcMotor arm;
+        private final Servo wrist;
+        private final Servo twist;
+        private final Servo claw;
+        private ITask target = null;
+        private final List<ITask> subTasks = new ArrayList<>();
+        private final Scheduler scheduler = getScheduler();
+
+        public ScoreHighBasket(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            verticalSlide = hardware.verticalSlide;
+            arm = hardware.arm;
+            wrist = hardware.wrist;
+            twist = hardware.twist;
+            claw = hardware.claw;
+            ITask head = scheduler
+                    .task(that -> {
+                        that.canStart(() -> this.getState() == State.Ticking);
+                        that.isCompleted(() -> true);
+                        return Unit.INSTANCE;
+                    });
+            target = head
+                    .then(run(() -> {
+                        verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        verticalSlide.setPower(VERTICAL_SLIDE_SPEED);
+                        verticalSlide.setTargetPosition(HIGH_BASKET_TICKS);
+                    }))
+                    .then(pause(2.000))
+                    .then(run(() -> {
+                        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        arm.setPower(0.5);
+                        arm.setTargetPosition(ARM_BASKET_TICKS);
+                    }))
+                    .then(pause(0.500))
+                    .then(run(() -> wrist.setPosition(0.94)))
+                    .then(pause(0.500))
+                    .then(run(() -> claw.setPosition(0.02)))
+                    .then(pause(0.500))
+                    .then(run(() -> claw.setPosition(0.55)))
+                    .then(pause(0.100))
+                    .then(run(() -> wrist.setPosition(0.28)))
+                    .then(pause(0.500))
+                    .then(run(() -> arm.setTargetPosition(0)))
+                    .then(pause(0.500))
+                    .then(run(() -> verticalSlide.setTargetPosition(0)));
+        }
+
+        private ITask run(Runnable r) {
+            ITask t = new OneShot(scheduler, r);
+            subTasks.add(t);
+            return t;
+        }
+
+        private ITask pause(double seconds) {
+            ITask t = new Pause(scheduler, seconds);
+            subTasks.add(t);
+            return t;
+        }
+
+        private final Set<SharedResource> requirements = Set.of(
+                Hardware.Locks.DriveMotors,
+                Hardware.Locks.VerticalSlide,
+                Hardware.Locks.ArmAssembly
+        );
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requirements;
+        }
+
+        @Override
+        public void invokeOnStart() {
+            // push all the tasks into the queue
+
+        }
+
+        @Override
+        public void invokeOnFinish() {
+            scheduler.filteredStop(subTasks::contains, true);
+        }
+
+        @Override
+        public boolean invokeIsCompleted() {
+            return target.getState() == State.Finished || target.getState() == State.Cancelled;
+        }
+    }
+
+    final static class PickUpYellow extends TaskTemplate {
+        private final DcMotor verticalSlide;
+        private final DcMotor arm;
+        private final Servo wrist;
+        private final Servo twist;
+        private final Servo claw;
+        private ITask target = null;
+        private List<ITask> subTasks = new ArrayList<>();
+        private final Scheduler scheduler = getScheduler();
+
+        public PickUpYellow(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            verticalSlide = hardware.verticalSlide;
+            arm = hardware.arm;
+            wrist = hardware.wrist;
+            twist = hardware.twist;
+            claw = hardware.claw;
+            ITask head = scheduler
+                    .task(that -> {
+                        that.canStart(() -> this.getState() == State.Ticking);
+                        that.isCompleted(() -> true);
+                        return Unit.INSTANCE;
+                    });
+            target = head
+                    .then(run(() -> {
+                        verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        verticalSlide.setPower(VERTICAL_SLIDE_SPEED);
+                        verticalSlide.setTargetPosition(PICK_UP_TICKS);
+                    }))
+                    .then(pause(0.500))
+                    .then(run(() -> {
+                        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        arm.setPower(0.5);
+                        arm.setTargetPosition(ARM_PICK_UP_TICKS);
+                    }))
+                    .then(pause(0.500))
+                    .then(run(() -> wrist.setPosition(0.94)))
+                    .then(pause(0.500))
+                    .then(run(() -> claw.setPosition(0.02)))
+                    .then(pause(0.500))
+                    .then(run(() -> verticalSlide.setTargetPosition(PICK_UP_TICKS_2)))
+                    .then(pause(0.500))
+                    .then(run(() -> claw.setPosition(0.55)))
+                    .then(pause(0.500))
+                    .then(run(() -> verticalSlide.setTargetPosition(PICK_UP_TICKS_3)))
+                    .then(pause(0.500))
+                    .then(run(() -> wrist.setPosition(0.28)))
+                    .then(pause(0.500))
+                    .then(run(() -> arm.setTargetPosition(0)));
+        }
+
+        private ITask run(Runnable r) {
+            ITask t = new OneShot(scheduler, r);
+            subTasks.add(t);
+            return t;
+        }
+
+        private ITask pause(double seconds) {
+            ITask t = new Pause(scheduler, seconds);
+            subTasks.add(t);
+            return t;
+        }
+
+        private final Set<SharedResource> requirements = Set.of(
+                Hardware.Locks.DriveMotors,
+                Hardware.Locks.VerticalSlide,
+                Hardware.Locks.ArmAssembly
+        );
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requirements;
+        }
+
+        @Override
+        public void invokeOnStart() {
+        }
+
+        @Override
+        public void invokeOnFinish() {
+            scheduler.filteredStop(subTasks::contains, true);
+        }
+
+        @Override
+        public boolean invokeIsCompleted() {
+            return target.getState() == State.Finished || target.getState() == State.Cancelled;
+        }
+    }
+
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
 
-    public static final double ACCEPT_DIST = .5; // inch. euclidean distance
+    // Constants //
+    public static final double ACCEPT_DIST = 1; // inch. euclidean distance
     public static final double ACCEPT_TURN = Math.toRadians(5);
+    public static final double VERTICAL_SLIDE_SPEED = 0.75;
+    public static final int HIGH_BASKET_TICKS = 2180;
+    public static final int PICK_UP_TICKS = 224;
+    public static final int PICK_UP_TICKS_2 = 110;
+    public static final int PICK_UP_TICKS_3 = 200;
+    public static final int ARM_BASKET_TICKS = 222;
+    public static final int ARM_PICK_UP_TICKS = 67;
+
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
 
     Hardware hardware;
     EncoderTracking tracker;
-    final Pose SCORE_HIGH_BASKET = new Pose(8, 19, Math.toRadians(-45));
-    final Pose[] TARGETS = {
-            SCORE_HIGH_BASKET,
-            new Pose(28, 12, Math.toRadians(-180)),
-            SCORE_HIGH_BASKET,
-            new Pose(28, 22, Math.toRadians(-180)),
-            SCORE_HIGH_BASKET,
-            new Pose(65, 12, Math.toRadians(90)),
-            new Pose(65, -8, Math.toRadians(90)),
-//                new Pose(48, 0, Math.toRadians(90)),
-//                new Pose(0, 0, Math.toRadians(0))
-    };
-    private int targetIndex;
-    private ElapsedTime runTime;
-    private ElapsedTime targetTime;
+    final Pose SCORE_HIGH_BASKET = new Pose(12, 16, Math.toRadians(-45));
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
@@ -208,14 +387,20 @@ public class BlueAuto extends LinearOpMode {
         );
     }
 
+    private ScoreHighBasket scoreHighBasket(Scheduler s) {
+        return new ScoreHighBasket(s, hardware);
+    }
+
+    private PickUpYellow pickUpYellow(Scheduler s) {
+        return new PickUpYellow(s, hardware);
+    }
+
     @Override
     public void runOpMode() {
         MultitaskScheduler scheduler = new MultitaskScheduler();
 
         hardware = new Hardware(hardwareMap);
         tracker = new EncoderTracking(hardware);
-        runTime = new ElapsedTime();
-        targetTime = new ElapsedTime(); // Set targetTime to reference the ElapsedTime object
         loopTimer = new LoopStopwatch();
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.15 seconds
         ramps = new Ramps(
@@ -228,35 +413,42 @@ public class BlueAuto extends LinearOpMode {
         scheduler.task(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
+        scheduler.task(new OneShot(scheduler, () -> {
+            hardware.claw.setPosition(0.55);
+        }));
         scheduler
                 .task(moveTo(scheduler, SCORE_HIGH_BASKET))
-                // score
+                .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
-                // pick up
+                .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
-                // score
+                .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler, new Pose(28, 22, Math.toRadians(-180))))
-                // pick up
+                .then(pickUpYellow(scheduler))
                 .then(moveTo(scheduler, SCORE_HIGH_BASKET))
-                // score
+                .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler,
-                        new Pose(65, 12, Math.toRadians(90))))
+                        new Pose(65, 12, Math.toRadians(0))))
                 .then(moveTo(scheduler,
-                        new Pose(65, -8, Math.toRadians(90))))
-                // park
-                ;
+                        new Pose(65, -12, Math.toRadians(0))))
+        // park
+        ;
 
         telemetry.addLine("Initialized.");
+        telemetry.addLine(String.format("%d in queue.", scheduler.register$multitask()))
         telemetry.update();
 
         waitForStart(); // Wait for start button
 
         telemetry.update();
 
-        while (scheduler.hasJobs()) {
+        while (scheduler.hasJobs() && opModeIsActive()) {
             scheduler.tick();
             scheduler.displayStatus(true, true,
-                    str -> { telemetry.addLine(str); return Unit.INSTANCE; });
+                    str -> {
+                        telemetry.addLine(str);
+                        return Unit.INSTANCE;
+                    });
             telemetry.update();
         }
         while (opModeIsActive()) {
