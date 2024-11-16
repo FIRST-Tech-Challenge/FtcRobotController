@@ -244,14 +244,20 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 //            }
 
-            if (gamepad2.share) {
-                telemetry.addData("is share pressed?", "yes");
-                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            } else{
-                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+            telemetry.addData("is right stick pressed?", gamepad2.right_stick_button);
+            telemetry.addData("is left stick pressed?", gamepad2.left_stick_button);
 
-            }
+
+
+
+//            if (gamepad2.share) {
+//                telemetry.addData("is share pressed?", "yes");
+//                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            } //else{
+                //robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                //robot.liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+
+            //}
 
 //            if (gamepad2.options) {
 //                minLiftExtension = -2300;
@@ -328,16 +334,42 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             //Bounds on the liftExtender motor
             //Lift PIDF might be able to be tuned more to improve but it does reasonably well currently
             double pitchAngle = robot.liftPitch.getCurrentPosition()*(90)/2595;
-            if (pitchAngle>=31.25){
-                maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle)));
+
+
+            //the button removes bounds when pressed
+            if (gamepad2.right_stick_button){ //test these
+                //removes bounds
+                minLiftExtension = -2300;
+                maxLifEtxtension = 40000;
+            } else{ //make sure bounds are active if the button is not pressed
+                minLiftExtension = 0;
+                if (pitchAngle>=31.25){
+                    maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+                } else{
+                    maxLifEtxtension = 2780;
+
+                }
+
+            }
+
+            if (gamepad2.left_stick_button){ //when this button is pressed
+                robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                //press this button to set the zero point after adjusting with right stick button
             } else{
-                maxLifEtxtension = 2780;
+                robot.liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             }
             telemetry.addData("max lift etension", 1567/(Math.sin(Math.toRadians(pitchAngle))));
             telemetry.addData("cos", (Math.sin(Math.toRadians(pitchAngle))));
             telemetry.addData("pitch angle", (robot.liftPitch.getCurrentPosition()*90)/2595);
             telemetry.addData("pitch angle", pitchAngle);
+
+            if (pitchAngle>=31.25){
+                maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+            } else{
+                maxLifEtxtension = 2780;
+
+            }
 
 
 
