@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Mecanum Robot TeleOp", group = "Iterative Opmode")
-public class MecanumRobotTeleOpIterative extends OpMode {
+@TeleOp(name = "RobotStateMachine", group = "Iterative Opmode")
+public class RobotStateMachineTeleOpIterative extends OpMode {
 
     // Drive motors
     private DcMotor frontLeftMotor;
@@ -25,8 +25,8 @@ public class MecanumRobotTeleOpIterative extends OpMode {
     private Servo intakeServo;
 
     // Arm and Wrist target positions for each state
-    private static final int ARM_POSITION_INIT = 300;
-    private static final int ARM_POSITION_INTAKE = 450;
+    private static final int ARM_POSITION_INIT = 0;
+    private static final int ARM_POSITION_INTAKE = 0;
     private static final int ARM_POSITION_WALL_GRAB = 1100;
     private static final int ARM_POSITION_WALL_UNHOOK = 1700;
     private static final int ARM_POSITION_HOVER_HIGH = 2600;
@@ -45,7 +45,7 @@ public class MecanumRobotTeleOpIterative extends OpMode {
     private RobotState currentState = RobotState.INIT;
 
     // Claw toggle state
-    private boolean clawOpen = true;
+    private boolean clawOpen = false;
     private boolean lastBump = false;
     private boolean lastHook = false;
     private boolean lastGrab = false;
@@ -53,17 +53,6 @@ public class MecanumRobotTeleOpIterative extends OpMode {
     //target position
     private int targetArm = 0;
     private int targetWrist = 0;
-
-    private enum RobotState {
-        INIT,
-        INTAKE,
-        WALL_GRAB,
-        WALL_UNHOOK,
-        HOVER_HIGH,
-        CLIP_HIGH,
-        LOW_BASKET,
-        MANUAL
-    }
 
     @Override
     public void init() {
@@ -100,6 +89,7 @@ public class MecanumRobotTeleOpIterative extends OpMode {
                 targetWrist = WRIST_POSITION_INIT;
                 telemetry.addData("State", "INIT");
                 break;
+
             case INTAKE:
                 targetArm = ARM_POSITION_INTAKE;
                 targetWrist = WRIST_POSITION_SAMPLE;
@@ -129,11 +119,13 @@ public class MecanumRobotTeleOpIterative extends OpMode {
                 targetWrist = WRIST_POSITION_SPEC;
                 telemetry.addData("State", "CLIP_HIGH");
                 break;
+
             case LOW_BASKET:
                 targetArm = ARM_POSITION_LOW_BASKET;
                 targetWrist = WRIST_POSITION_SAMPLE;
                 telemetry.addData("State", "LOW_BASKET");
                 break;
+
             case MANUAL:
                 telemetry.addData("State", "MANUAL");
                 break;
@@ -143,37 +135,50 @@ public class MecanumRobotTeleOpIterative extends OpMode {
         if (gamepad1.a) {
             currentState = RobotState.INTAKE;
         } else if (gamepad1.b && !lastGrab) {
-            if(currentState == RobotState.WALL_GRAB){
+            if (currentState == RobotState.WALL_GRAB) {
                 currentState = RobotState.WALL_UNHOOK;
-            }else{
+            } else {
                 currentState = RobotState.WALL_GRAB;
             }
         } else if (gamepad1.y && !lastHook) {
-            if(currentState == RobotState.HOVER_HIGH){
+            if (currentState == RobotState.HOVER_HIGH) {
                 currentState = RobotState.CLIP_HIGH;
-            }else{
+            } else {
                 currentState = RobotState.HOVER_HIGH;
             }
         } else if (gamepad1.x) {
             currentState = RobotState.LOW_BASKET;
         } else if (gamepad1.left_bumper) {
             currentState = RobotState.INIT;
-        } else if (gamepad1.dpad_up){ //manual control
+        } else if (gamepad1.dpad_up) { //manual control
             currentState = RobotState.MANUAL;
             targetArm += 10;
-        } else if (gamepad1.dpad_down){
+        } else if (gamepad1.dpad_down) {
             currentState = RobotState.MANUAL;
             targetArm -= 10;
-        } else if (gamepad1.dpad_left){
+        } else if (gamepad1.dpad_left) {
             currentState = RobotState.MANUAL;
             targetWrist += 1;
-        } else if (gamepad1.dpad_right){
+        } else if (gamepad1.dpad_right) {
             currentState = RobotState.MANUAL;
             targetWrist -= 1;
         }
 
         lastGrab = gamepad1.b;
         lastHook = gamepad1.y;
+
+        armMotor.setTargetPosition(targetArm);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wristMotor.setTargetPosition(targetWrist);
+        wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+        wristMotor.setPower(1);
+
+        // Send telemetry data to the driver station
+        telemetry.addData("Arm Position", armMotor.getCurrentPosition());
+        telemetry.addData("Arm Power", armMotor.getPower());
+        telemetry.addData("Wrist Position", wristMotor.getCurrentPosition());
+        telemetry.addData("Wrist Power", wristMotor.getPower());
     }
 
     /**
@@ -273,73 +278,33 @@ public class MecanumRobotTeleOpIterative extends OpMode {
     }
 
     /**
-     * Controls the arm movement using the triggers
-     */
-    private void controlArm() {
-        // Calculate arm power from triggers
-        double armUp = gamepad1.right_trigger;
-        double armDown = gamepad1.left_trigger;
-        double armPower = armUp - armDown;
-
-        // Apply power to the arm motor
-        armMotor.setPower(armPower);
-
-//        arm.setTargetPosition(targetArm);
-//        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        wrist.setTargetPosition(targetWrist);
-//        wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Telemetry for debugging
-        telemetry.addData("Arm Power", armPower);
-    }
-
-    /**
-     * Controls the arm movement using the triggers
-     */
-    private void controlWrist() {
-        double wristPower = 0;
-
-        // Control wrist motor with left bumper and right bumper
-        if (gamepad1.dpad_up) {
-            wristPower = 1.0; // Move wrist up
-        } else if (gamepad1.dpad_down) {
-            wristPower = -1.0; // Move wrist down
-        }
-
-        wristMotor.setPower(wristPower);
-        telemetry.addData("Wrist Power", wristPower);
-    }
-
-    /**
      * Controls the claw using buttons
      */
     private void controlClaw() {
-        if (gamepad1.a) {
-            // Open claw
-            clawServo.setPosition(CLAW_OPEN_POSITION);
-            telemetry.addData("Claw", "Opened");
-        } else if (gamepad1.b) {
-            // Close claw
-            clawServo.setPosition(CLAW_CLOSED_POSITION);
-            telemetry.addData("Claw", "Closed");
+        // Toggle claw position when right_bumper is pressed
+        if (gamepad1.right_bumper && !lastBump) {
+            clawOpen = !clawOpen;
+            if (clawOpen) {
+                clawServo.setPosition(CLAW_OPEN_POSITION);
+            } else {
+                clawServo.setPosition(CLAW_CLOSED_POSITION);
+            }
         }
+        lastBump = gamepad1.right_bumper;
+        telemetry.addData("Claw Position", clawOpen ? "Open" : "Closed");
     }
 
     /**
      * Controls the intake system using buttons
      */
     private void controlIntake() {
-        if (gamepad1.x) {
-            // Activate intake system
+        // Control intake servo with triggers
+        if (gamepad1.right_trigger > 0.1) {
             intakeServo.setPosition(1.0);
-            telemetry.addData("Intake System", "Activated");
-        } else if (gamepad1.y) {
-            // Deactivate intake system
+        } else if (gamepad1.left_trigger > 0.1) {
             intakeServo.setPosition(0.0);
-            telemetry.addData("Intake System", "Deactivated");
         } else {
             intakeServo.setPosition(0.5);
-            telemetry.addData("Intake System", "Stop");
         }
     }
 }
