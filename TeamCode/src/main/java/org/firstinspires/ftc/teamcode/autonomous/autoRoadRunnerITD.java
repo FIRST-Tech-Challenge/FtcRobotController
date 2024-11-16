@@ -32,7 +32,7 @@ public class autoRoadRunnerITD extends LinearOpMode {
     public static int INTAKE_ARM_DOWN = 250;
     public static double SLIDE_MAX_SPEED = 0.5;
     public static double ARM_MAX_SPEED = 0.5;
-    public static double ARM_INITIAL_ANGLE = 50; //deg
+    public static int ARM_INITIAL_ANGLE = 50; //deg
     public static double WRIST_SERVO_DOWN = 0;
 
     public static class SpecClaw {

@@ -12,7 +12,7 @@ public class PIDFMotorController {
     private final double ticksInDegrees;
     private final double maxSpeed;
     private final int initialPositionForFF;
-    private int targetPosition;
+    private Integer targetPosition = null;
 
     public PIDFMotorController(DcMotorEx motor, double p, double i, double d, double f, double ticksInDegrees, double maxSpeed) {
         this.motor = motor;
@@ -44,6 +44,11 @@ public class PIDFMotorController {
     }
 
     public MotorData runIteration() {
+        if (targetPosition == null){
+            int currentPosition = motor.getCurrentPosition();
+            return new MotorData(0, currentPosition, 0);
+        }
+
         int currentPosition = motor.getCurrentPosition();
 
         // Calculate the PID output
