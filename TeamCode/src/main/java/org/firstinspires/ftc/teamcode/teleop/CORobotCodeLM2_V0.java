@@ -211,7 +211,9 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     private void runPIDIterations() {
         PIDFMotorController.MotorData armMotorData = armController.runIteration();
         PIDFMotorController.MotorData slideMotorData = slideController.runIteration();
-
-
+        telemetry.addData("Arm Position", armMotorData.CurrentPosition);
+        telemetry.addData("Arm Target", armMotorData.TargetPosition);
+        telemetry.addData("Slides Position", slideMotorData.CurrentPosition);
+        telemetry.addData("Slides Target", slideMotorData.TargetPosition);
     }
 }
