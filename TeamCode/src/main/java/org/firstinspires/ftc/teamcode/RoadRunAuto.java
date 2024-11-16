@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.Logger;
-import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.Action;
 
 /** @noinspection FieldCanBeLocal, unused */
-public class MainAuto extends AutonomousController {
-    public MainAuto(BaseRobot base, String color, String position) {
+public class RoadRunAuto extends AutonomousController {
+    public RoadRunAuto(BaseRobot base, String color, String position) {
         super(base, color, position);
     }
 
@@ -39,7 +39,11 @@ public class MainAuto extends AutonomousController {
         return new MecanumDrive(hardwareMap, initialPose);
     }
 
-    @Override
+    /**
+     * Executes the main autonomous routine
+     * 
+     * @param mode Selected autonomous mode (e.g., "red left", "blue right")
+     */
     public void run(String mode) {
 
         if (Settings.Deploy.SKIP_AUTONOMOUS) {
@@ -59,19 +63,6 @@ public class MainAuto extends AutonomousController {
         baseRobot.logger.update("Autonomous phase", "Parking");
         park(mode);
         baseRobot.logger.update("Autonomous phase", "VICTORY!!!");
-        if (Settings.Deploy.VICTORY) {
-            victory();
-        }
-    }
-
-    @Override
-    public void placeOnChamber(String mode, AutonomousController.ChamberHeight chamberHeight) {
-
-    }
-
-    @Override
-    public void placeNextSpecimenOnChamber(AutonomousController.ChamberHeight chamberHeight) {
-
     }
 
     /**
@@ -178,33 +169,15 @@ public class MainAuto extends AutonomousController {
      * 
      * @param mode Current autonomous mode
      */
+    public void park(String mode) {
+        drive.updatePoseEstimate();
 
-    /**
-     * Executes victory celebration sequence if enabled
-     * Performs a series of movements and claw operations
-     */
-    public void victory() {
-        // do a lil dance
-        baseRobot.arm.claw.open();
-        pause(500);
-        baseRobot.arm.claw.close();
-        pause(500);
-        baseRobot.odometry.moveCounts("tright", 20, 0.2);
-        baseRobot.odometry.moveCounts("tleft", 40, 0.2);
-        baseRobot.odometry.moveCounts("tright", 20, 0.2);
-        baseRobot.arm.claw.open();
-        pause(500);
-        baseRobot.arm.claw.close();
-        pause(500);
+        Action trajectory = drive.actionBuilder(drive.pose)
+                .lineToX(parkingPosition.x)
+                .lineToY(parkingPosition.y)
+                .build();
+
+        Actions.runBlocking(trajectory);
     }
 
-    /**
-     * Enum defining possible chamber heights for scoring
-     */
-    public enum ChamberHeight {
-        /** Lower scoring position */
-        LOW,
-        /** Upper scoring position */
-        HIGH
-    }
 }
