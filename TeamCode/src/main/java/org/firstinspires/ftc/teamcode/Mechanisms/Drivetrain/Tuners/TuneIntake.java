@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 @Config
 @Autonomous(name = "Test Intake", group = "Autonomous")

@@ -8,7 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 @Config
 @Autonomous(name = "Test Claw", group = "Autonomous")
 public class TuneClaw extends LinearOpMode {

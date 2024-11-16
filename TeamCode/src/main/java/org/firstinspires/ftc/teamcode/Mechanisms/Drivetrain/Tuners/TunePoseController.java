@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTracking;
 /**
  * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST
  * YOUR DRIVETRAIN'S MOTOR DIRECTIONS.

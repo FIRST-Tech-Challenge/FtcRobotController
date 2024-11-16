@@ -70,10 +70,10 @@ public class Drivetrain {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        this.motorLeftFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"));
-        this.motorLeftBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"));
-        this.motorRightBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"));
-        this.motorRightFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"));
+        this.motorLeftFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lfm"), hardwareMap, 12.5);
+        this.motorLeftBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), hardwareMap, 12.5);
+        this.motorRightBack = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), hardwareMap, 12.5);
+        this.motorRightFront = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), hardwareMap, 12.5);
         //casting
 
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -113,12 +113,6 @@ public class Drivetrain {
     public void localize() {
         state = twoWheelOdo.calculate();
     }
-    public void resetOp(){
-        opSwitch = 0;
-    }
-    public void setOp(){
-        opSwitch = 1;
-    }
     public void setPower(SimpleMatrix powers) {
         double u0 = powers.get(0, 0);
         double u1 = powers.get(1, 0);
@@ -128,18 +122,10 @@ public class Drivetrain {
         double u1Prev = wheelPowerPrev.get(1, 0);
         double u2Prev = wheelPowerPrev.get(2, 0);
         double u3Prev = wheelPowerPrev.get(3, 0);
-        if (Math.abs(u0Prev - u0) > acceptablePowerDifference) {
-            motorLeftFront.setPower(powers.get(0, 0));
-        }
-        if (Math.abs(u1Prev - u1) > acceptablePowerDifference) {
-            motorLeftBack.setPower(powers.get(1, 0));
-        }
-        if (Math.abs(u2Prev - u2) > acceptablePowerDifference) {
-            motorRightBack.setPower(powers.get(2, 0));
-        }
-        if (Math.abs(u3Prev - u3) > acceptablePowerDifference) {
-            motorRightFront.setPower(powers.get(3, 0));
-        }
+        motorLeftFront.setPower(powers.get(0, 0));
+        motorLeftBack.setPower(powers.get(1, 0));
+        motorRightBack.setPower(powers.get(2, 0));
+        motorRightFront.setPower(powers.get(3, 0));
         wheelPowerPrev.set(0,0,u0);
         wheelPowerPrev.set(1,0,u1);
         wheelPowerPrev.set(2,0,u2);

@@ -48,8 +48,8 @@ public class Lift {
     public Lift(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
 
-        this.liftMotorLeft = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
-        this.liftMotorRight = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
+        this.liftMotorLeft = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), hardwareMap, 12.5);
+        this.liftMotorRight = new DCMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), hardwareMap, 12.5);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);

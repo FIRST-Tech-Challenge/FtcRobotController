@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.Drivetrain.Utils.TelemetryTracking;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTracking;
 /**
  * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST
  * YOUR DRIVETRAIN'S MOTOR DIRECTIONS.
@@ -60,7 +60,6 @@ public class TestAuton extends LinearOpMode {
         telemetry.addData("desiredY", 0);
         telemetry.addData("desiredTheta", 0);
         telemetry.update();
-        drivetrain.resetOp();
         waitForStart();
         looptime.reset();
         Actions.runBlocking(
