@@ -31,7 +31,7 @@ public class PIDFMotorController {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public double runIteration() {
+    public MotorData runIteration() {
         int currentPosition = motor.getCurrentPosition();
 
         // Calculate the PID output
@@ -46,7 +46,7 @@ public class PIDFMotorController {
 
         // Set motor power
         motor.setPower(power);
-        return power;
+        return new MotorData(targetPosition, currentPosition, power);
     }
 
     private double limitPower(double power){
@@ -54,5 +54,16 @@ public class PIDFMotorController {
             return maxSpeed;
         }
         return Math.max(power, -maxSpeed);
+    }
+
+    public class MotorData{
+        public double TargetPosition;
+        public double CurrentPosition;
+        public double SetPower;
+        public MotorData(double targetPosition,double currentPosition, double setPower){
+            this.TargetPosition = targetPosition;
+            this.CurrentPosition = currentPosition;
+            this.SetPower = setPower;
+        }
     }
 }

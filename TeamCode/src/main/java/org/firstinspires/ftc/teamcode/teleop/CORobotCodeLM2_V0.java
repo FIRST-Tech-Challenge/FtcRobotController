@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -62,6 +64,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         );
         imu.initialize(imuParameters);
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Wait for start
         telemetry.addLine("Initialized. Ready to start.");
         telemetry.update();
@@ -206,7 +209,9 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
     }
 
     private void runPIDIterations() {
-        armController.runIteration();
-        slideController.runIteration();
+        PIDFMotorController.MotorData armMotorData = armController.runIteration();
+        PIDFMotorController.MotorData slideMotorData = slideController.runIteration();
+
+
     }
 }

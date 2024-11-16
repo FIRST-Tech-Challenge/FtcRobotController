@@ -97,8 +97,10 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class SlidesPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double power = slideController.runIteration();
-                packet.put("slides motor power", power);
+                PIDFMotorController.MotorData data = slideController.runIteration();
+                packet.put("slides power", data.SetPower);
+                packet.put("slides position", data.CurrentPosition);
+                packet.put("slides target", data.TargetPosition);
                 return true;
             }
         }
@@ -149,8 +151,10 @@ public class autoRoadRunnerITD extends LinearOpMode {
         public class ArmPIDIteration implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double power = armController.runIteration();
-                packet.put("intake arm motor power", power);
+                PIDFMotorController.MotorData data = armController.runIteration();
+                packet.put("arm power", data.SetPower);
+                packet.put("arm position", data.CurrentPosition);
+                packet.put("arm target", data.TargetPosition);
                 return true;
             }
         }
