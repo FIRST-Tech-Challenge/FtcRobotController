@@ -32,7 +32,7 @@ public class PinchBot extends PivotBot{
         rotate = hardwareMap.get(Servo.class, "rotate");
 
         pinch.setPosition(0.5);
-        rotate.setPosition(0.78);
+        rotate.setPosition(0.5);
     }
 
     protected void onTick() {

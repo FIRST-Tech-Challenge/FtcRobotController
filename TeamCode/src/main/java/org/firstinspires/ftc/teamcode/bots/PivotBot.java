@@ -81,7 +81,7 @@ public class PivotBot extends LimelightBot {
 
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (slideMotor.getCurrentPosition() < 1950) {
+            if (slideMotor.getCurrentPosition() < 2350) {
                 slideTarget = slideMotor.getCurrentPosition() + ((1950 - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
