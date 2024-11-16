@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 @Config
@@ -16,9 +17,11 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 public class TuneIntake extends LinearOpMode {
     Drivetrain drivetrain = null;
     public static double speed = 1;
+    Battery battery;
     @Override
     public void runOpMode(){
-        drivetrain = new Drivetrain(hardwareMap);
+        battery = new Battery(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "lfm");
         Servo intakeServo = hardwareMap.get(Servo.class, "intakeServo");
         waitForStart();

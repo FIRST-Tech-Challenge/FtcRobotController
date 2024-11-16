@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -16,16 +15,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 
 @Config
-public class DCMotorAdvanced {
+public class DcMotorAdvanced {
     private DcMotorEx motor;
     private double batteryVoltage;
     private double maxVoltage;
     public double previousPower=0;
     public static double acceptablePowerDifference = 0.000001;
     private Battery battery;
-    public DCMotorAdvanced(DcMotorEx motor, HardwareMap hardwareMap, double maxVoltage){
+    public DcMotorAdvanced(DcMotorEx motor, Battery battery, double maxVoltage){
         this.motor = motor;
-        this.battery = new Battery(hardwareMap);
+        this.battery = battery;
         this.batteryVoltage = battery.getVoltage();
         this.maxVoltage = maxVoltage;
     }

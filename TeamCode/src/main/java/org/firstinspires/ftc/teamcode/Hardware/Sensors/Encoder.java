@@ -17,16 +17,11 @@ public class Encoder {
     public void encoder(DcMotorEx encoder){
         this.encoder = encoder;
     }
-    public void updateEncoder(){
-        storedPos = encoder.getCurrentPosition();
-    }
 
-
-    public void resetEncoder(){
+    public void reset(){
         storedPos = encoder.getCurrentPosition();
     }
     public int getCurrentPosition(){
-        updateEncoder();
         return getCurrentPosition() - storedPos;
     }
     public double getVelocity(){

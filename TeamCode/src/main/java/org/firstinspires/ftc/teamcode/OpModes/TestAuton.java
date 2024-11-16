@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTracking;
+import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
+
 /**
  * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST
  * YOUR DRIVETRAIN'S MOTOR DIRECTIONS.
@@ -32,10 +34,12 @@ public class TestAuton extends LinearOpMode {
     Drivetrain drivetrain = null;
     // Use FTCDashboard
     FtcDashboard dashboard;
+    Robot robot;
     @Override
     public void runOpMode() {
         // Set dashboard
-        drivetrain = new Drivetrain(hardwareMap);
+        robot = new Robot(hardwareMap);
+        drivetrain = robot.drivetrain;
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         ElapsedTime looptime = new ElapsedTime();
@@ -65,9 +69,9 @@ public class TestAuton extends LinearOpMode {
         Actions.runBlocking(
             new ParallelAction(
                 new SequentialAction(
-                drivetrain.goToPose(desiredPose, 0),
+                drivetrain.goToPose(desiredPose),
 
-                drivetrain.goToPose(desiredPoseTwo, 1),
+                drivetrain.goToPose(desiredPoseTwo),
 
                 drivetrain.stopMotors()
                 ),

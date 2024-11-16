@@ -8,7 +8,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,12 @@ public class TeleopWithActions extends OpMode {
 
     Drivetrain drivetrain = null;
     FtcDashboard dashboard;
+    Robot robot;
     @Override
     public void init() {
-        drivetrain = new Drivetrain(hardwareMap);
+        robot = new Robot(hardwareMap);
         dashboard = FtcDashboard.getInstance();
+        drivetrain = robot.drivetrain;
     }
 
     @Override
