@@ -22,6 +22,7 @@ public class MecanumTeleOp extends LinearOpMode {
     private Hardware hardware;
     double Wristpos = 0.28;
     double Twistpos = 0.17;
+    double VerticalSlideSpeed = 0.75;
 
     @Override
     public void runOpMode() {
@@ -139,7 +140,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         hardware.verticalSlide.setTargetPosition(targetPosition);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(0.5);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
         ElapsedTime Timer = new ElapsedTime();
         double timeoutSeconds = 3.0;
         int allowedErrorTicks = 5;
@@ -163,14 +164,14 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         if (gamepad2.dpad_up && verticalPosition < maxVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(0.5);
+            hardware.verticalSlide.setPower(VerticalSlideSpeed);
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             maintainHeightTicks = verticalPosition;
             return;
         }
 
         if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(-0.5);
+            hardware.verticalSlide.setPower(-VerticalSlideSpeed);
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             maintainHeightTicks = verticalPosition;
             return;
@@ -190,7 +191,7 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hardware.verticalSlide.setPower(0.5);
+            hardware.verticalSlide.setPower(VerticalSlideSpeed);
             hardware.verticalSlide.setTargetPosition(maintainHeightTicks);
         }
     }
@@ -299,7 +300,7 @@ public class MecanumTeleOp extends LinearOpMode {
    //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket(Hardware hardware)  {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(0.5);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
         maintainHeightTicks = highBasketTicks;
         sleep(2000);
@@ -322,7 +323,7 @@ public class MecanumTeleOp extends LinearOpMode {
     }
     public void PickUpYellow(Hardware hardware){
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(0.5);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
         maintainHeightTicks = 224;
         sleep(2000);
