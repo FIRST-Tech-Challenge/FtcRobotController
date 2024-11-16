@@ -71,7 +71,7 @@ public class Teleop extends LinearOpMode {
             if(gamepad2.back){
                 sr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 sr.setPower(gamepad2.right_stick_y);
-                sc.setPower(gamepad2.left_stick_y);
+                sc.setPower(gamepad2.left_stick_x);
             }
             if(gamepad2.start && gamepad1.start){
                 sr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
