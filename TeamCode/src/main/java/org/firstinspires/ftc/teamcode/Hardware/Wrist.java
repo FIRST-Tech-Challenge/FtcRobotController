@@ -27,6 +27,12 @@ public class Wrist {
         setPosition(.95);
     }
 
+    public void holdSpecimen() {
+        setPosition(1);
+    }
+    public void specimen() {
+        setPosition(.55);
+    }
 
 
 }

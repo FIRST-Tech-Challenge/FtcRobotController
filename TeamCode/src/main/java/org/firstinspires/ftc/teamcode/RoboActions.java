@@ -102,6 +102,23 @@ public class RoboActions {
         wrist.deposit();
         arm.preSubmerse();
     }
+    public void specimenIntake() {
+        wrist.specimen();
+        claw.open();
+        arm.preTake();
+        slides.setTargetSlidesPosition(1.5);
+    }
+    public void finishSpecimenIntake() {
+        claw.close();
+    }
+    public void dropSpecimenIntake() {
+        arm.specimenIntake();
+    }
+    public void holdingSpecimen() {
+        slides.setTargetSlidesPosition(0);
+        wrist.holdSpecimen();
+        arm.holdSpecimen();
+    }
     public void returnToMain() {
         wrist.intake();
     }

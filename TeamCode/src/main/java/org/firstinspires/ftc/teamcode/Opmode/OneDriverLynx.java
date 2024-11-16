@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Opmode;
 
+import android.provider.Settings;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -34,7 +36,8 @@ public class OneDriverLynx extends LinearOpMode {
         DEFAULT, INTAKE_READY, CLOSE_INTAKE, FINISHED_INTAKE, READY_DEPOSIT, SLIDES_BEGIN_SCORE,
         WRIST_SCORE, FINISH_SCORE, POST_SCORE, RETURN_TO_DEFAULT,
         BEGIN_SUBMERSIBLE, SUBMERSIBLE_SLIDER, SUBMERSIBLE_INTAKE_OPEN, SUBMERSIBLE_INTAKE_CLOSE,
-        SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN
+        SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN, SPECIMENINTAKE, SPECIMENINTAKE2, HOLDINGSPECIMEN,
+        SPECIMENINTAKE3, SPECIMENSCORE1, SPECIMENSCORE2, SPECIMENSCORE3, SPECIMENSCORE4, SPECIMENSCORE5, SPECIMENSCORE6, SPECIMENSCORE7
     }
 
     GlobalStateMachine globalStateMachine = GlobalStateMachine.DEFAULT;
@@ -90,6 +93,14 @@ public class OneDriverLynx extends LinearOpMode {
                     globalStateMachine = GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE;
                 } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
                     globalStateMachine = GlobalStateMachine.SUBMERSIBLE_FINISH_1;
+                } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE) {
+                    globalStateMachine = GlobalStateMachine.SPECIMENINTAKE2;
+                } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE2) {
+                    globalStateMachine = GlobalStateMachine.SPECIMENINTAKE3;
+                } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE3) {
+                    globalStateMachine = GlobalStateMachine.HOLDINGSPECIMEN;
+                } else if (globalStateMachine == GlobalStateMachine.HOLDINGSPECIMEN) {
+                    globalStateMachine = GlobalStateMachine.SPECIMENSCORE1;
                 }
             }
             else if (gp.left_bumper) {//advances backwards
@@ -106,6 +117,8 @@ public class OneDriverLynx extends LinearOpMode {
                 globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
             } else if (gp.a && (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE || globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER)) { // switch back from submersible
                 globalStateMachine = GlobalStateMachine.DEFAULT;
+            } else if (gp.b) {
+                globalStateMachine = GlobalStateMachine.SPECIMENINTAKE;
             }
 
 
@@ -148,7 +161,7 @@ public class OneDriverLynx extends LinearOpMode {
                 slideInches = 0;
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
-                double increment = inchesPerSecond * loopTime * (gamepad1.left_trigger - gamepad1.right_trigger);
+                double increment = inchesPerSecond * loopTime * Math.pow((gamepad1.left_trigger - gamepad1.right_trigger), 2);
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
                 if (slideInches < 0.5) slideInches = 0.5;
@@ -172,7 +185,39 @@ public class OneDriverLynx extends LinearOpMode {
                     robot.returnToMain();
                     globalStateMachine = GlobalStateMachine.FINISHED_INTAKE;
                 }
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE) {
+                robot.specimenIntake();
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE2) {
+                robot.dropSpecimenIntake();
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE3) {
+                robot.finishSpecimenIntake();
             }
+            else if (globalStateMachine == GlobalStateMachine.HOLDINGSPECIMEN) {
+                robot.holdingSpecimen();
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE1) {
+                robot.arm.setTargetArmPosition(85);
+                timeStamp = timer.milliseconds();
+                globalStateMachine = GlobalStateMachine.SPECIMENSCORE2;
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE2) {
+                if (timeStamp + 1000 < timer.milliseconds()) {
+                    robot.slides.setTargetSlidesPosition(1);
+                    robot.arm.setTargetArmPosition(92);
+                    timeStamp = timer.milliseconds();
+                    globalStateMachine = GlobalStateMachine.SPECIMENSCORE3;
+                }
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE3) {
+                if (timeStamp + 1000 < timer.milliseconds()) {
+                    robot.slides.setTargetSlidesPosition(2.5);
+                    timeStamp = timer.milliseconds();
+                    globalStateMachine = GlobalStateMachine.SPECIMENSCORE4;
+                }
+            }
+
+
+
+
+
+
             if (gamepad1.dpad_down){
                 robot.hangPower(-1);
             } else if (gamepad1.dpad_up){

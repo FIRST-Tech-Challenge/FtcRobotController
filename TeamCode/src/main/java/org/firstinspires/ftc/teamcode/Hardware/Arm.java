@@ -61,8 +61,14 @@ public class Arm {
         setTargetArmPosition(20);
     }
 
+    public void holdSpecimen() { setTargetArmPosition(40);}
+
     public void intake() {
         setTargetArmPosition(0);
+    }
+
+    public void specimenIntake() {
+        setTargetArmPosition(3);
     }
 
     public void update() {
