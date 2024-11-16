@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Claw;
+package org.firstinspires.ftc.teamcode.Mechanism.Claw;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -18,8 +18,8 @@ public class Claw {
     }
 
     public enum clawState {
-        CLOSE,
-        OPEN
+        CLOSE, //spins to close servo, should only be closed enough to hold piece
+        OPEN   //spins to have nearly fully open servo
     }
     public Action servoClaw(clawState stateofClaw){
         return new Action() {

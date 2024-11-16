@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Arm;
+package org.firstinspires.ftc.teamcode.Mechanism.Arm;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -19,8 +19,8 @@ public class Arm {
     }
 
     public enum armState {
-        RETRACT,
-        EXTEND
+        RETRACT,    // pulls arm in
+        EXTEND      // pushes arm out
     }
 
     public Action servoArm(armState stateofArm){
