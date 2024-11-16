@@ -65,7 +65,7 @@ public class clawSlideImport extends LinearOpMode {
     pivot.setPower(.01);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
-    pivot.setDirection(DcMotorSimple.Direction.REVERSE);
+    pivot.setDirection(DcMotorSimple.Direction.FORWARD);   //for gray robot try reversing this
 
     limitSlide = 4750;
     limitPivot = 2500;
@@ -126,7 +126,7 @@ public class clawSlideImport extends LinearOpMode {
     wrist.setPosition(.2); //needs editing
 
     //TODO: get proper set slide and set pivot code
-    setPivot(1);
+    setPivot(-1);
     setSlide(1);
 
     if (ramp1.getPosition() == .15) {

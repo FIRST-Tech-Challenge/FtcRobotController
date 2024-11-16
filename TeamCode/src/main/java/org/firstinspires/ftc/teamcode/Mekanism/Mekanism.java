@@ -161,7 +161,7 @@ public class Mekanism {
     // Is this a terrible toggle switch??? - Tada
     // yes new and updated for you - philip
       if (wrist.getPosition() >= .1) {
-        wrist.setPosition(0);
+        wrist.setPosition(0.15);
       } else {
         wrist.setPosition(.7);
       }
