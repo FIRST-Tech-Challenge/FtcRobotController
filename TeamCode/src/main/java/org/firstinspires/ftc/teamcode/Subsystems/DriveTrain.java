@@ -68,10 +68,10 @@ public class DriveTrain extends SubsystemBase {
         rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // set motor speed control PID coefficients
-        leftFrontDrive.setVelocityPIDFCoefficients (22.0, 0.0, 0.0, 11.7);
-        leftBackDrive.setVelocityPIDFCoefficients (22.0, 0.0, 0.0, 11.7);
-        rightFrontDrive.setVelocityPIDFCoefficients (22.0, 0.0, 0.0, 11.7);
-        rightBackDrive.setVelocityPIDFCoefficients (22.0, 0.0, 0.0, 11.7);
+        leftFrontDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
+        leftBackDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
+        rightFrontDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
+        rightBackDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
 
         // set motor to closed-loop speed control mode
         leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.CommandGroups;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
+import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 // Example Sequential Command Group
@@ -17,11 +18,15 @@ public class DropToGrab extends SequentialCommandGroup {
     public DropToGrab() {
         addCommands(
 
-                // moves elbow to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(165)),
+
 
                 // drops the elbow to 175 degrees for pick up
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+
+                // moves elbow to 165 degrees so slightly down from hunting pos
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(165)),
+
+                new Pause(1),
 
                 // same as in hunting pos moving wrist 45 degrees
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),

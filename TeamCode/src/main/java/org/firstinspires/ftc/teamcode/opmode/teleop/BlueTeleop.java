@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowLow;
+import org.firstinspires.ftc.teamcode.CommandGroups.StartingArmStowHigh;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
@@ -28,7 +30,7 @@ public class BlueTeleop extends CommandOpMode {
         // ---------- autonomous command ----------
 
         // add autonomous command to scheduler and run it
-        new ArmStowLow().schedule();
+        new StartingArmStowHigh().schedule();
     }
 
     // Run Op Mode. Is called after user presses play button
