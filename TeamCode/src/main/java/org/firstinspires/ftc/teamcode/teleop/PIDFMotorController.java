@@ -10,7 +10,7 @@ public class PIDFMotorController {
     private final DcMotorEx motor;
     private final double f;
     private final double ticksInDegrees;
-    private final double maxSpeed;
+    private double maxSpeed;
     private final int initialPositionForFF;
     private Integer targetPosition = null;
 
@@ -43,6 +43,14 @@ public class PIDFMotorController {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public int getCurrentPosition(){
+        return motor.getCurrentPosition();
+    }
+
+    public void setMaxSpeed(double maxSpeed){
+        this.maxSpeed = maxSpeed;
+    }
+
     public MotorData runIteration() {
         if (targetPosition == null){
             int currentPosition = motor.getCurrentPosition();
@@ -55,7 +63,7 @@ public class PIDFMotorController {
         double pidOutput = pidController.calculate(currentPosition, targetPosition);
 
         // Calculate feed-forward component
-        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees) - Math.toRadians(initialPositionForFF)) * f;
+        double ff = Math.cos(Math.toRadians(targetPosition / ticksInDegrees) - Math.toRadians(initialPositionForFF) + Math.toRadians(90)) * f;
 
         // Sum PID and feed-forward for final motor power
         double power = pidOutput + ff;

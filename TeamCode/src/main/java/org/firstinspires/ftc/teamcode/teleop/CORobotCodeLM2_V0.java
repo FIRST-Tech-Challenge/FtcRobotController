@@ -22,25 +22,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 public class CORobotCodeLM2_V0 extends LinearOpMode {
 
-    public static double MAX_ARM_POWER = 0.5;
-    public static int ARM_INITIAL_POSITION = 50; //deg
-    public static double MAX_SLIDE_POWER = 0.7;
+    public static double MAX_ARM_POWER = 0.7;
+    public static int ARM_INITIAL_ANGLE = 50; //deg
+    public static double MAX_SLIDE_POWER_UP = 0.9;
+    public static double MAX_SLIDE_POWER_DOWN = 0.3;
     public static int SLIDE_DEPOSIT_POSITION = 4250;
     public static int SLIDE_SPEC_BAR_POSITION = 2250;
     public static int SLIDE_SPEC_CLIP_POSITION = 1750;
     public static int SLIDE_SPEC_GRAB_POSITION = 0;
-    public static int ARM_GRAB_POSITION = 505;
+    public static int ARM_GRAB_POSITION = 535;
     public static int ARM_HOLD_POSITION = 400;
     public static int ARM_TRANSFER_POSITION = 200;
-    public static int ARM_SUB_HOLD = 400;
-    public static double WRIST_TRANSFER_POSITION = 0.15;
+    public static int ARM_SUB_HOLD = 250;
+    public static double WRIST_TRANSFER_POSITION = 0.20;
     public static double WRIST_GRAB_POSITION = 0.6;
-    public static double ARM_CLAW_FULL_OPEN = 0;
-    public static double ARM_CLAW_FULL_CLOSE = 0.65;
-    public static double ARM_CLAW_TRANSFER_OPEN = 0.4;
+    public static double ARM_CLAW_FULL_OPEN = 0.4;
+    public static double ARM_CLAW_FULL_CLOSE = 0.63;
+    public static double ARM_CLAW_TRANSFER_OPEN = 0.55;
     public static double SPEC_CLAW_OPEN = 0.9;
     public static double SPEC_CLAW_CLOSE = 0.3;
-    public static double BUCKET_DEPOSIT_POSITION = 0.27;
+    public static double BUCKET_DEPOSIT_POSITION = 0.1;
     public static double BUCKET_TRANSFER_POSITION = 0.9;
     private PIDFMotorController armController;
     private PIDFMotorController slideController;
@@ -107,8 +108,8 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         double slideTicksInDegrees = 537.7 / 360.0;
 
         // Initialize PIDF controllers for the arm and slide
-        armController = new PIDFMotorController(intakeArmMotor, 0.01, 0.23, 0.001, 0.4, armTicksInDegrees, MAX_ARM_POWER, ARM_INITIAL_POSITION);
-        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, slideTicksInDegrees, MAX_SLIDE_POWER);
+        armController = new PIDFMotorController(intakeArmMotor, 0.008, 0.13, 0.001, 0.4, armTicksInDegrees, MAX_ARM_POWER, ARM_INITIAL_ANGLE);
+        slideController = new PIDFMotorController(rightSlideMotor, 0.01, 0.25, 0.001, 0, slideTicksInDegrees, MAX_SLIDE_POWER_UP);
 
         // Set directions for drivetrain motors
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -155,18 +156,28 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         double inputPosition = gamepad2.left_trigger + gamepad2.right_trigger;
         int slidePosition = (int) (inputPosition / 2 * SLIDE_DEPOSIT_POSITION);
         if (slidePosition != 0) {
-            slideController.setTargetPosition(slidePosition);
+            moveSlidesToPosition(slidePosition);
         } else {
             if (gamepad2.dpad_up) {
-                slideController.setTargetPosition(SLIDE_DEPOSIT_POSITION);
+                moveSlidesToPosition(SLIDE_DEPOSIT_POSITION);
             } else if (gamepad2.dpad_down) {
-                slideController.setTargetPosition(SLIDE_SPEC_GRAB_POSITION);
+                moveSlidesToPosition(SLIDE_SPEC_GRAB_POSITION);
             } else if (gamepad2.dpad_left) {
-                slideController.setTargetPosition(SLIDE_SPEC_BAR_POSITION);
+                moveSlidesToPosition(SLIDE_SPEC_BAR_POSITION);
             } else if (gamepad2.dpad_right) {
-                slideController.setTargetPosition(SLIDE_SPEC_CLIP_POSITION);
+                moveSlidesToPosition(SLIDE_SPEC_CLIP_POSITION);
             }
         }
+    }
+
+    private void moveSlidesToPosition(int position){
+        if(slideController.getCurrentPosition() < position){
+            slideController.setMaxSpeed(MAX_SLIDE_POWER_UP);
+        } else {
+            slideController.setMaxSpeed(MAX_SLIDE_POWER_DOWN);
+        }
+
+        slideController.setTargetPosition(position);
     }
 
     private void intakeControl(){
@@ -214,6 +225,7 @@ public class CORobotCodeLM2_V0 extends LinearOpMode {
         PIDFMotorController.MotorData slideMotorData = slideController.runIteration();
         telemetry.addData("Arm Position", armMotorData.CurrentPosition);
         telemetry.addData("Arm Target", armMotorData.TargetPosition);
+        telemetry.addData("Arm Power", armMotorData.SetPower);
         telemetry.addData("Slides Position", slideMotorData.CurrentPosition);
         telemetry.addData("Slides Target", slideMotorData.TargetPosition);
     }
