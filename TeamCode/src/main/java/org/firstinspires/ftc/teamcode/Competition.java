@@ -11,8 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import java.util.Locale;
@@ -21,7 +19,7 @@ import java.util.Locale;
 public class Competition extends LinearOpMode {
 
     private Limelight3A limelight;
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    GoBildaPinpointDriver imu; // Declare OpMode member for the Odometry Computer
     double oldTime = 0;
 
     @Override
@@ -34,29 +32,29 @@ public class Competition extends LinearOpMode {
         limelight.start();
 
         //GoBilda Odometry Pod Setup
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "imu");
         odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset());
-        telemetry.addData("Y offset", odo.getYOffset());
-        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Device Scalar", odo.getYawScalar());
+        telemetry.addData("X offset", imu.getXOffset());
+        telemetry.addData("Y offset", imu.getYOffset());
+        telemetry.addData("Device Version Number:", imu.getDeviceVersion());
+        telemetry.addData("Device Scalar", imu.getYawScalar());
         telemetry.update();
 
         // Initialize the motors
         // Declare motor variables
-        DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        DcMotor frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        DcMotor rearLeft = hardwareMap.get(DcMotor.class, "rearLeft");
-        DcMotor rearRight = hardwareMap.get(DcMotor.class, "rearRight");
+        DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        DcMotor leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        DcMotor rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         // Set motor directions (reverse left side if needed)
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        rearLeft.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         resetRuntime();
@@ -79,14 +77,14 @@ public class Competition extends LinearOpMode {
                 double loopTime = newTime - oldTime;
                 double frequency = 1 / loopTime;
                 oldTime = newTime;
-                Pose2D pos = odo.getPosition();
+                Pose2D pos = imu.getPosition();
                 String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Position", data);
-                Pose2D vel = odo.getVelocity();
+                Pose2D vel = imu.getVelocity();
                 String velocity = String.format(Locale.US, "{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Velocity", velocity);
-                telemetry.addData("Status", odo.getDeviceStatus());
-                telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
+                telemetry.addData("Status", imu.getDeviceStatus());
+                telemetry.addData("Pinpoint Frequency", imu.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
                 telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
             }
             // Get joystick inputs
@@ -95,33 +93,33 @@ public class Competition extends LinearOpMode {
             double rotation = gamepad1.right_stick_x; // Rotation
 
             // Calculate power for each motor
-            double frontLeftPower = y + x + rotation;
-            double frontRightPower = y - x - rotation;
-            double rearLeftPower = y - x + rotation;
-            double rearRightPower = y + x - rotation;
+            double leftFrontPower = y + x + rotation;
+            double rightFrontPower = y - x - rotation;
+            double leftBackPower = y - x + rotation;
+            double rightBackPower = y + x - rotation;
 
             // Normalize power values to keep them between -1 and 1
-            double maxPower = Math.max(1.0, Math.abs(frontLeftPower));
-            maxPower = Math.max(maxPower, Math.abs(frontRightPower));
-            maxPower = Math.max(maxPower, Math.abs(rearLeftPower));
-            maxPower = Math.max(maxPower, Math.abs(rearRightPower));
+            double maxPower = Math.max(1.0, Math.abs(leftFrontPower));
+            maxPower = Math.max(maxPower, Math.abs(rightFrontPower));
+            maxPower = Math.max(maxPower, Math.abs(leftBackPower));
+            maxPower = Math.max(maxPower, Math.abs(rightBackPower));
 
-            frontLeftPower /= maxPower;
-            frontRightPower /= maxPower;
-            rearLeftPower /= maxPower;
-            rearRightPower /= maxPower;
+            leftFrontPower /= maxPower;
+            rightFrontPower /= maxPower;
+            leftBackPower /= maxPower;
+            rightBackPower /= maxPower;
 
             // Set power to the motors
-            frontLeft.setPower(frontLeftPower);
-            frontRight.setPower(frontRightPower);
-            rearLeft.setPower(rearLeftPower);
-            rearRight.setPower(rearRightPower);
+            leftFront.setPower(leftFrontPower);
+            rightFront.setPower(rightFrontPower);
+            leftBack.setPower(leftBackPower);
+            rightBack.setPower(rightBackPower);
 
             // Telemetry for debugging
-            telemetry.addData("Front Left Power", frontLeftPower);
-            telemetry.addData("Front Right Power", frontRightPower);
-            telemetry.addData("Rear Left Power", rearLeftPower);
-            telemetry.addData("Rear Right Power", rearRightPower);
+            telemetry.addData("Front Left Power", leftFrontPower);
+            telemetry.addData("Front Right Power", rightFrontPower);
+            telemetry.addData("Rear Left Power", leftBackPower);
+            telemetry.addData("Rear Right Power", rightBackPower);
             telemetry.update();
         }
     }
