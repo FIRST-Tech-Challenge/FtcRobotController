@@ -22,7 +22,7 @@ public class TestHanging extends LinearOpMode {
         MoveLSAction moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(30), outtake);
         WaitAction waitAction = new WaitAction(5);
         waitAction.setDependentAction(moveLSUp);
-        MoveLSAction moveLSDown = new MoveLSAction(CalculateTickInches.inchToTicksLS(26), outtake);
+        MoveLSAction moveLSDown = new MoveLSAction(CalculateTickInches.inchToTicksLS(-4), outtake);
         moveLSDown.setDependentAction(waitAction);
 
         waitForStart();

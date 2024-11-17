@@ -23,7 +23,6 @@ public class TestingDriveTrain {
     public final PIDController headingController;
     public final OdometryFuse odometryFuse;
 
-
     public TestingDriveTrain(HardwareMap hardwareMap) {
         fLeft = hardwareMap.get(DcMotor.class, "fLeft");
         fRight = hardwareMap.get(DcMotor.class, "fRight");
@@ -66,7 +65,7 @@ public class TestingDriveTrain {
     @SuppressLint("DefaultLocale")
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
         double startingTime = SystemClock.elapsedRealtimeNanos();
-        Point pos = odometryFuse.PointCollectData();  // current
+        Point pos = odometryFuse.pointCollectData();  // current
         double curX = -pos.getX();
         double curY = -pos.getY();
         double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("leftwq" +
@@ -81,7 +80,7 @@ public class TestingDriveTrain {
                 (Math.abs(target.x - curX) > 0.1 || Math.abs(target.y - curY) > 0.1 || Math.abs(target.h - curH) > 2)
                         && ((SystemClock.elapsedRealtimeNanos() - startingTime) / 1e9) < 5
         ) {  // I think this while loop is causing an exit error
-            pos = odometryFuse.PointCollectData();
+            pos = odometryFuse.pointCollectData();
             curX = -pos.getX();  // odometryfuse returns negative
             curY = -pos.getY();
             curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left"));

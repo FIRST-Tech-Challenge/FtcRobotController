@@ -57,10 +57,10 @@ public class DriveTrain {
     public void setBRightPower(double power) { bRight.setPower(power); }
 
     public void setPower (double fLeftPower, double fRightPower, double bLeftPower, double bRightPower){
-//        setFLeftPower(fLeftPower);
-//        setFRightPower(fRightPower);
-//        setBLeftPower(bLeftPower);
-//        setBRightPower(bRightPower);
+        setFLeftPower(fLeftPower);
+        setFRightPower(fRightPower);
+        setBLeftPower(bLeftPower);
+        setBRightPower(bRightPower);
         Log.d("purepursaction_power", "power " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
     }
 
