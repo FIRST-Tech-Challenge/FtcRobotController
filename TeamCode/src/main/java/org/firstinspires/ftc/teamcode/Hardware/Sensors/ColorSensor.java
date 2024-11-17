@@ -16,7 +16,7 @@ public class ColorSensor extends ColorSensorComposition {
    public ColorSensor(HardwareMap hardwareMap){
        this.hardwareMap = hardwareMap;
        this.colorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
-       this.distanceSensor = (DistanceSensor) hardwareMap.get(ColorSensor.class , "DistanceSensor");
+       this.distanceSensor = hardwareMap.get(DistanceSensor.class , "DistanceSensor");
 
        final int colorTolerance = 180;
    }

@@ -13,8 +13,8 @@ public class Extension {
 
     public Extension(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        servoExtendLeft = hardwareMap.get(Servo.class, "servoExtendLeft");
-        servoExtendRight = hardwareMap.get(Servo.class, "servoExtendRight");
+        servoExtendLeft = hardwareMap.get(Servo.class, "leftExtension");
+        servoExtendRight = hardwareMap.get(Servo.class, "rightExtension");
     }
 
     public enum extensionState {

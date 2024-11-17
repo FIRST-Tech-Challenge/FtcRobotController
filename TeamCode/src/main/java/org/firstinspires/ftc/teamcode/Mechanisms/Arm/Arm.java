@@ -13,9 +13,9 @@ public class Arm {
     Servo servoArmRight;
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        this.servoWrist = hardwareMap.get(Servo.class, "servoWrist");
-        this.servoArmLeft = hardwareMap.get(Servo.class, "servoArmLeft");
-        this.servoArmRight = hardwareMap.get(Servo.class, "servoArmRight");
+        this.servoWrist = hardwareMap.get(Servo.class, "wrist");
+        this.servoArmLeft = hardwareMap.get(Servo.class, "armRight");
+        this.servoArmRight = hardwareMap.get(Servo.class, "armLeft");
     }
 
     public enum armState {
