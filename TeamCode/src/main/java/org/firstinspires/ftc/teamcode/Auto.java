@@ -27,6 +27,7 @@ public class Auto extends LinearOpMode {
         initialize_motors();//motor setup
         initialize_servos();//servo setup
         initialize_direction(); //direction setup
+        Arm_Motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //wait for start to be pressed
         waitForStart();
         //
