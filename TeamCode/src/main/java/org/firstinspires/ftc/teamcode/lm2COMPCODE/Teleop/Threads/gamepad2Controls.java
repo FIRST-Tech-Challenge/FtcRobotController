@@ -53,6 +53,31 @@ public class gamepad2Controls extends Thread{
                         }
                     }
                 }
+                int target = -2830;
+                while(!mainFile.isStopRequested()&& !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
+                    SM.setPos(target, 1);
+                } if (gamepad2.a) {
+                    clawRotateServo.setServoPosition(0.6);
+                    mainFile.safeWaitSeconds(0.5);
+                    clawServo.setServoPosition(0.7);
+                    mainFile.safeWaitSeconds(0.5);
+                    clawServo.setServoPosition(0.33);
+                    mainFile.safeWaitSeconds(0.5);
+                    clawRotateServo.setServoPosition(0.05);
+                    mainFile.safeWaitSeconds(0.5);
+                    clawServo.setServoPosition(0.7);
+                    mainFile.safeWaitSeconds(0.5);
+                    target = 0;
+                }
+                if (-gamepad2.right_stick_y <= 0.3) {
+                    SM.setPos(0, 0.5);
+                }
+                if (-gamepad2.left_stick_y >= 0.3) {
+                    SM.setPos(180, 0.5);
+                }
+                while(!mainFile.isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
+                    SM.setPos(target, 1);
+                }
                 if(-gamepad2.right_stick_y <= -0.3 && !gamepad2.back){
                     clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATEMIDDLE);
                     SM.setPos(CONSTANTS.SLIDEROTATEMIN, 0.5);
@@ -100,4 +125,6 @@ public class gamepad2Controls extends Thread{
             mainFile.telemetry.addLine(String.valueOf(e));
         }
     }
+
+
 }
