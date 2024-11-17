@@ -12,7 +12,8 @@ public class DynamicInput {
     private Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
-    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevClawLeft, prevClawRight;
+    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevClawLeft,
+            prevClawRight;
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
@@ -95,10 +96,11 @@ public class DynamicInput {
 
     public static class Actions {
         public final boolean extendExtensor, retractExtensor, groundExtensor, ceilingExtensor, extensorBusy;
-        public final double clawRight, clawLeft;
+        public final boolean intakeIn, intakeOut, intakeStop;
         public final boolean wristUp, wristDown;
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorCeiling;
         public final double boostAmount, brakeAmount;
+        public final boolean linearActuatorExtend, linearActuatorRetract;
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
@@ -107,8 +109,9 @@ public class DynamicInput {
             this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
             this.ceilingExtensor = getButtonState(subCtrl, subSettings.buttonMapping.ceilingExtensor);
             this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
-            this.clawRight = getAxisValue(subCtrl, subSettings.buttonMapping.clawRight);
-            this.clawLeft = getAxisValue(subCtrl, subSettings.buttonMapping.clawLeft);
+            this.intakeIn = getButtonState(subCtrl, subSettings.buttonMapping.intakeIn);
+            this.intakeOut = getButtonState(subCtrl, subSettings.buttonMapping.intakeOut);
+            this.intakeStop = getButtonState(subCtrl, subSettings.buttonMapping.intakeStop);
             this.wristUp = getButtonState(subCtrl, subSettings.buttonMapping.wristUp);
             this.wristDown = getButtonState(subCtrl, subSettings.buttonMapping.wristDown);
             this.ascendExtensorExtend = getButtonState(subCtrl,
@@ -123,32 +126,24 @@ public class DynamicInput {
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.boost));
             this.brakeAmount = mainSettings.applyBoostCurve(
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.brake));
+            this.linearActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorExtend);
+            this.linearActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorRetract);
         }
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor, justCeilingExtensor, justClawLeft, justClawRight;
-        private final boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevClawLeft, prevClawRight;
+        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor, justCeilingExtensor;
         public final boolean shoulderUp, shoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevCeiling, boolean prevClawLeft, boolean prevClawRight) {
+                boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevCeiling) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
-
-            this.prevExtendExtensor = prevExtend;
-            this.prevRetractExtensor = prevRetract;
-            this.prevGroundExtensor = prevGround;
-            this.prevCeilingExtensor = prevCeiling;
-            this.prevClawLeft = prevClawLeft;
-            this.prevClawRight = prevClawRight;
 
             this.justExtendExtensor = extendExtensor && !prevExtend;
             this.justRetractExtensor = retractExtensor && !prevRetract;
             this.justGroundExtensor = groundExtensor && !prevGround;
             this.justCeilingExtensor = ceilingExtensor && !prevCeiling;
-            this.justClawLeft = clawLeft > 0.5 && !prevClawLeft;
-            this.justClawRight = clawRight > 0.5 && !prevClawRight;
 
             this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
             this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);
@@ -165,15 +160,13 @@ public class DynamicInput {
 
     public ContextualActions getContextualActions() {
         ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
-                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevClawLeft, prevClawRight);
+                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor);
 
         // Update previous states
         prevExtendExtensor = actions.extendExtensor;
         prevRetractExtensor = actions.retractExtensor;
         prevGroundExtensor = actions.groundExtensor;
         prevCeilingExtensor = actions.ceilingExtensor;
-        prevClawLeft = actions.clawLeft > 0.5;
-        prevClawRight = actions.clawRight > 0.5;
 
         return actions;
     }
@@ -230,6 +223,12 @@ public class DynamicInput {
                 return gamepad.right_stick_button;
             case GUIDE:
                 return gamepad.guide;
+            case OPTIONS:
+                return gamepad.options;
+            case LEFT_TRIGGER:
+                return gamepad.left_trigger > 0;
+            case RIGHT_TRIGGER:
+                return gamepad.right_trigger > 0;
             default:
                 throw new IllegalArgumentException("Unexpected button: " + button);
         }

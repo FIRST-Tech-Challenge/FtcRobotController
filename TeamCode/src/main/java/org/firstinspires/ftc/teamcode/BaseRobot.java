@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.LinearActuator;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.systems.Odometry;
 import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
-import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Shoulder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +34,7 @@ public class BaseRobot {
     public final Telemetry telemetry;
     public final Logger logger;
     public Arm arm;
+    public LinearActuator linearActuator;
     public Odometry odometry;
 
     /**
@@ -78,6 +79,10 @@ public class BaseRobot {
             arm = new Arm(this);
         }
 
+        if (Settings.Deploy.LINEAR_ACTUATOR) {
+            linearActuator = new LinearActuator(this);
+        }
+
         if (Settings.Deploy.ODOMETRY) {
             odometry = new Odometry(this);
         }
@@ -102,8 +107,7 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        strafePower = -strafePower; // ! TODO strafe power is provided in the opposite space by dynamic input, fix
-                                    // this later
+        strafePower = -strafePower;
         double frontLeft = drivePower + strafePower + rotation;
         double frontRight = drivePower - strafePower - rotation;
         double rearLeft = drivePower - strafePower + rotation;
@@ -156,34 +160,30 @@ public class BaseRobot {
         if (Settings.Deploy.ARM) {
             DynamicInput.ContextualActions actions = input.getContextualActions();
 
-            if (actions.justRetractExtensor) {
-                arm.extensor.retract();
-            } else if (actions.justExtendExtensor) {
-                arm.extensor.extend();
-            } else if (actions.justGroundExtensor) {
-                arm.extensor.ground();
-            } else if (actions.justCeilingExtensor) {
-                arm.extensor.ceiling();
+            if (actions.intakeIn) {
+                arm.intake.intake();
             }
-
-            if (actions.justClawRight) {
-                arm.claw.setRightServo(!arm.claw.openedR);
+            if (actions.intakeOut) {
+                arm.intake.outtake();
             }
-            if (actions.justClawLeft) {
-                arm.claw.setLeftServo(!arm.claw.openedL);
+            if (actions.intakeStop) {
+                arm.intake.stop();
             }
             if (actions.wristUp) {
                 arm.wrist.setPosition(Wrist.Position.VERTICAL);
             } else if (actions.wristDown) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
+        }
 
-            if (Settings.Deploy.SHOULDER) {
-                if (actions.shoulderUp) {
-                    arm.shoulder.setPosition(Shoulder.Position.HIGH_RUNG);
-                } else if (actions.shoulderDown) {
-                    arm.shoulder.setPosition(Shoulder.Position.RESTING);
-                }
+        if (Settings.Deploy.LINEAR_ACTUATOR) {
+            DynamicInput.Actions actions = input.getActions();
+
+            if (actions.linearActuatorExtend) {
+                linearActuator.extend();
+            }
+            if (actions.linearActuatorRetract) {
+                linearActuator.retract();
             }
         }
     }

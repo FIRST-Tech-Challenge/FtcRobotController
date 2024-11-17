@@ -79,14 +79,10 @@ public class MainAuto {
      */
     private void getSpecimenFromHumanPlayer() {
         baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-        baseRobot.arm.claw.open();
-        baseRobot.arm.extensor.setPosition(Extensor.Position.PICKUP);
         pause(500);
         baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
         pause(100);
-        baseRobot.arm.claw.close();
         pause(250);
-        baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
     }
 
     /**
@@ -140,15 +136,12 @@ public class MainAuto {
             placeHeight = Extensor.Position.LOW_RUNG;
         }
 
-        baseRobot.arm.extensor.setPosition(placeHeight);
         baseRobot.arm.wrist.setPosition(Wrist.Position.CHAMBER);
         baseRobot.odometry.moveCounts("forward", 60, 0.1);
         pause(2500);
-        baseRobot.arm.claw.open();
         pause(1000);
         baseRobot.odometry.moveCounts("backward", 10, 0.1);
         baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-        baseRobot.arm.extensor.setPosition(Extensor.Position.HOVER);
         pause(2000);
     }
 
@@ -192,16 +185,12 @@ public class MainAuto {
      */
     public void victory() {
         // do a lil dance
-        baseRobot.arm.claw.open();
         pause(500);
-        baseRobot.arm.claw.close();
         pause(500);
         baseRobot.odometry.moveCounts("tright", 20, 0.2);
         baseRobot.odometry.moveCounts("tleft", 40, 0.2);
         baseRobot.odometry.moveCounts("tright", 20, 0.2);
-        baseRobot.arm.claw.open();
         pause(500);
-        baseRobot.arm.claw.close();
         pause(500);
     }
 
