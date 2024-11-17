@@ -18,16 +18,25 @@ public class IdealLoop {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 16)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(
+                        // starting location of blue right
                         new Pose2d(-36, 60, Math.toRadians(270)))
+                        // moves in front of submersible to the right to pick up sample
                         .splineToSplineHeading(new Pose2d(-14, 30, Math.toRadians(270)), Math.toRadians(270))
                         .waitSeconds(1)
+                        // moves back to net zone to score sample
                         .lineTo(new Vector2d(-14, 37))
-                        .splineToSplineHeading(new Pose2d(-50, 55, Math.toRadians(90)), Math.toRadians(180))
+                        // moves toward the wall
+                        .splineToSplineHeading(new Pose2d(-37, 60, Math.toRadians(135)), Math.toRadians(90))
                         .waitSeconds(1)
-                        .splineTo(new Vector2d(-14, 30), Math.toRadians(-90))
+                        // moves back in front of the submersible to the right to pick up sample
+                        .lineTo(new Vector2d(-30,50))
+                        .splineToSplineHeading(new Pose2d(-14, 30, Math.toRadians(-90)), Math.toRadians(-90))
                         .waitSeconds(1)
-                        .lineTo(new Vector2d(37, 30))
-                        .splineTo(new Vector2d(25, 10), Math.toRadians(270))
+                        // moves to the left of the submersible
+                        .lineTo(new Vector2d(40, 30))
+                        // parks in observation zone to the left of the submersible
+                        // robot faces away from rod so linear actuator makes contact and we score points
+                        .lineToSplineHeading(new Pose2d(25, 10, Math.toRadians(0)))
                         .build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)
