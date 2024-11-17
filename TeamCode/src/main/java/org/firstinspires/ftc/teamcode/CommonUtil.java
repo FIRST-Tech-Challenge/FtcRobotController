@@ -160,9 +160,9 @@ public class CommonUtil extends LinearOpMode {
     public void intakeOff(){
         s4.setPower(0);
     }
-    public void armUp() { m0.setPower(-1); }
-    public void armDown() { m0.setPower(0.3); }
-    public void armOff() { m0.setPower(0); }
+    public void armUp() {  }
+    public void armDown() { }
+    public void armOff() {  }
     public void clawOpen() { s5.setDirection(Servo.Direction.FORWARD);
         s5.setPosition(1); }
     public void clawClose() { s5.setDirection(Servo.Direction.REVERSE);

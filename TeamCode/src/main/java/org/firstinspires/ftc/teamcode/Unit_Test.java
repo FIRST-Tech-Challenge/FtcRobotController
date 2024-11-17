@@ -124,7 +124,7 @@ public class Unit_Test extends CommonUtil {
             sleep(5000);
             armUp();
             sleep(5000);
-            armIdle();
+
 
          sleep(9000000);
 
