@@ -74,7 +74,7 @@ public class antAuto extends OpMode {
         stateToo.clawPosition = clawState.OPENED;
         stateToo.wristPosition = wristState.UP;
         stateToo.armPosition = armPose.CHAMBER_B;
-        stateToo.drivePose = new SparkFunOTOS.Pose2D(0, 50, 0);
+        stateToo.drivePose = new SparkFunOTOS.Pose2D(20, 0, 0);
         stateToo.ignorePosTime = 100000;
         // Generate Path
         HashMap<Integer, SystemState> instructions = new HashMap<>();

@@ -28,6 +28,7 @@ public class DriveBaseSubsystem {
 
     // Pose Vars
     private static SparkFunOTOS.Pose2D currentPose;
+    private static double angleSummation = 0;
     private static SparkFunOTOS.Pose2D previousPose;
     private static Long timeAtLastCycle;
     private static SparkFunOTOS.Pose2D goal;
@@ -48,7 +49,7 @@ public class DriveBaseSubsystem {
         // PID Stuff
         translationX.init(Translational_P, Translational_I, Translational_D);
         translationY.init(Translational_P, Translational_I, Translational_D);
-        headingPID.init(0.02f, 0, 0.015f);
+        headingPID.init(0.01f, 0, 0);
 
         // Make sure odo is ready
         _odometry.begin();
@@ -115,6 +116,12 @@ public class DriveBaseSubsystem {
 
     void periodicUpdate(TelemetryPacket packet) {
         currentPose.set(_odometry.getPosition());
+        if ((previousPose.h - currentPose.h) < -350) {
+            angleSummation = angleSummation + 360;
+        } else if ((previousPose.h - currentPose.h) > 350) {
+            angleSummation = angleSummation - 360;
+        }
+        currentPose.h = currentPose.h + angleSummation;
         driveMech(-translationX.getOutput((float) -currentPose.y, (float) goal.x, packet, "transX"), translationY.getOutput((float) -currentPose.x, (float) goal.y, packet, "transY"), headingPID.getOutput((float) -currentPose.h, (float) goal.h, packet, "head"), Math.toRadians(currentPose.h), packet);
         telemetry.addData("Current Pose", "(" + -currentPose.x + ", " + currentPose.y + ", " + currentPose.h + ")");
         telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
@@ -125,7 +132,9 @@ public class DriveBaseSubsystem {
         packet.put("Goalx", goal.x);
         packet.put("Goaly", goal.y);
         packet.put("GoalAngle", goal.h);
+        packet.put("AngleSUmation", angleSummation);
         previousPose.set(currentPose);
+        previousPose.h = previousPose.h + angleSummation;
         timeAtLastCycle = System.currentTimeMillis();
     }
 

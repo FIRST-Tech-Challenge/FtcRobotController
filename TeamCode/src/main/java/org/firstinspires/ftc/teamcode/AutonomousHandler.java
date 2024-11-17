@@ -39,6 +39,7 @@ public class AutonomousHandler {
         packet.put("y", 0);
         packet.put("Goaly", 0);
         packet.put("Goalx", 0);
+        packet.put("GoalAngle", 0);
         packet.put("angle", 0);
         dashboard.sendTelemetryPacket(packet);
     }
