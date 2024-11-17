@@ -47,13 +47,13 @@ public class BlueLeft extends LinearOpMode {
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-//        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-//                .strafeTo(new Vector2d(4, 0))
-//                .waitSeconds(2);
-//
-//        Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(2, -2), Math.toRadians(45))
-//                .build();
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .strafeTo(new Vector2d(10.25, 0))
+                .waitSeconds(2);
+
+        Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10.25, 19.5), Math.toRadians(-45))
+                .build();
 
 
         // Between initialization and start
@@ -66,23 +66,23 @@ public class BlueLeft extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
+//
+//        Actions.runBlocking(
+//                drive.actionBuilder(initialPose).strafeTo(new Vector2d(6,6)).waitSeconds(2).build());
 
-        Actions.runBlocking(
-                drive.actionBuilder(initialPose).strafeTo(new Vector2d(6,6)).waitSeconds(2).build());
-
-//        Action trajectoryActionChosen = tab1.build();
+        Action trajectoryActionChosen = tab1.build();
 
         // Start
 
         telemetry.addData("Status", "Running");
         telemetry.update();
 
-//        Actions.runBlocking(
-//                new SequentialAction(
-//                        trajectoryActionChosen,
-//                        trajectoryActionCloseOut
-//                )
-//        );
+        Actions.runBlocking(
+                new SequentialAction(
+                        trajectoryActionChosen,
+                        trajectoryActionCloseOut
+                )
+        );
 
 //        if (opModeIsActive()) {
 //
