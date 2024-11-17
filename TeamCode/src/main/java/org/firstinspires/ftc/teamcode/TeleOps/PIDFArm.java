@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
 @TeleOp (name = "PIDFArm")
-public class PIDF_Arm extends OpMode {
+public class PIDFArm extends OpMode {
     private PIDController controller;
     private PIDController controller2;
 

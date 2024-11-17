@@ -10,7 +10,6 @@ public class FiniteMachineStateArm {
     private final RobotHardware robot;
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
     private final TelemetryManager telemetryManager;
-    private Color_sensor colorSensor;
 
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
 
@@ -54,7 +53,6 @@ public class FiniteMachineStateArm {
     final double RETRACT_TIME;  // retract waiting time
 
     public void Init() {
-        colorSensor = new Color_sensor(robot);
         liftTimer.reset();
         robot.liftMotorLeft.setTargetPosition(LIFT_LOW);
         robot.liftMotorRight.setTargetPosition(LIFT_LOW);
