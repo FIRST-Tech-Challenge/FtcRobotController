@@ -2,12 +2,15 @@ package com.kalipsorobotics.actions;
 
 public abstract class Action {
 
-    public Action dependentAction;
+    protected Action dependentAction;
     boolean isDone = false;
-    public boolean hasStarted = false;
+    protected boolean hasStarted = false;
 
     public boolean getIsDone() {
         return isDone;
+    }
+    public boolean getHasStarted() {
+        return hasStarted;
     }
     public void setDependentAction(Action newAction) {
         this.dependentAction = newAction;
@@ -26,7 +29,7 @@ public abstract class Action {
         updateIsDone();
     }
 
-    boolean updateIsDone() {
+    private boolean updateIsDone() {
         isDone = checkDoneCondition();
         return isDone;
     }

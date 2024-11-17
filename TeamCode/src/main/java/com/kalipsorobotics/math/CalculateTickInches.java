@@ -2,25 +2,46 @@ package com.kalipsorobotics.math;
 
 public class CalculateTickInches {
 
-    double ticksPerRevolution = 2000;
-    double odoCircumfMm = 48 * Math.PI;
-    double ticksPerMm = ticksPerRevolution / odoCircumfMm;
+    static double ticksPerRevolutionOdometry = 2000;
+    static double ticksPerRevolutionLS = 145.1;
+    static double lsCircumfMm = 36 * Math.PI;
+    static double odoCircumfMm = 48 * Math.PI;
 
-    double mmPerInch = 25.4;
+    static double mmPerInch = 25.4;
 
-    public double mmToTicksDriveTrain(double mm) {
-        return (mm * ticksPerMm);
+    public static double getTicksPerMm(double ticksPerRevolution, double circumf) {
+        return ticksPerRevolution/circumf;
     }
 
-    public double ticksToMmDriveTrain(double ticks) {
-        return (ticks / ticksPerMm);
+    public static double mmToTicksDriveTrain(double mm) {
+        return (mm * getTicksPerMm(ticksPerRevolutionOdometry, odoCircumfMm));
     }
 
-    public double inchToTicksDriveTrain(double inches) {
+    public static double ticksToMmDriveTrain(double ticks) {
+        return (ticks / getTicksPerMm(ticksPerRevolutionOdometry, odoCircumfMm));
+    }
+
+    public static double inchToTicksDriveTrain(double inches) {
         return (mmToTicksDriveTrain(inches * mmPerInch));
     }
 
-    public double ticksToInchesDriveTrain(double ticks) {
+    public static double ticksToInchesDriveTrain(double ticks) {
         return (ticksToMmDriveTrain(ticks / mmPerInch));
+    }
+
+    public static double mmToTicksLS(double mm) {
+        return (mm * getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
+    }
+
+    public static double ticksToMmLS(double ticks) {
+        return (ticks / getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
+    }
+
+    public static double inchToTicksLS(double inches) {
+        return (mmToTicksLS(inches * mmPerInch));
+    }
+
+    public static double ticksToInchesLS(double ticks) {
+        return (ticksToMmLS(ticks / mmPerInch));
     }
 }

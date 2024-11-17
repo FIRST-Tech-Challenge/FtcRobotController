@@ -10,8 +10,8 @@ public class MoveLSAction extends Action {
 
     Outtake outtake;
     DcMotor linearSlide, linearSlideTwo;
-    final double ERROR_TOLERANCE = 50;
-    final double P_CONSTANT = 0.0035;
+    final double ERROR_TOLERANCE = 90;
+    final double P_CONSTANT = 0.005;
     double targetTicks;
     double currentTicks;
     double error;
@@ -21,7 +21,7 @@ public class MoveLSAction extends Action {
         linearSlide = outtake.linearSlideMotor1;
         linearSlideTwo = outtake.linearSlideMotor2;
         this.dependentAction = new DoneStateAction();
-        this.targetTicks = targetTicks;
+        this.targetTicks = -targetTicks;
     }
 
     private double calculatePower() {
@@ -31,6 +31,7 @@ public class MoveLSAction extends Action {
 
     private void refreshError() {
         error = targetTicks - currentTicks;
+        Log.d("movels", error + " " + targetTicks + " " + currentTicks);
     }
 
     @Override
@@ -40,6 +41,7 @@ public class MoveLSAction extends Action {
         if (Math.abs(error) <= ERROR_TOLERANCE) {
             linearSlide.setPower(0);
             linearSlideTwo.setPower(0);
+            Log.d("movels", "done");
             //outtake.getOpModeUtilities().getOpMode().sleep(100);
             return true;
         } else {
@@ -52,11 +54,12 @@ public class MoveLSAction extends Action {
         this.currentTicks = linearSlide.getCurrentPosition();
 
         if(!hasStarted) {
-            this.targetTicks += currentTicks;
+            Log.d("movels", "started");
+            this.targetTicks -= currentTicks;
             hasStarted = true;
         }
 
-        linearSlide.setPower(calculatePower());
-        linearSlideTwo.setPower(calculatePower());
+        linearSlide.setPower(calculatePower()+0.1);
+        linearSlideTwo.setPower(calculatePower()+0.1);
     }
 }

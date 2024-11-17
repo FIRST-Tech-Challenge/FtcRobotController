@@ -28,7 +28,7 @@ public class PigeonHead {
     public void positionUpdate() {
         //might have to be fixed
         OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightEncoder, backEncoder);
-        double heading = odometryFuse.HeadingUpdateData("right");
+        double heading = odometryFuse.headingUpdateData("right");
         servo.setPosition(-heading);
     }
 
@@ -43,3 +43,51 @@ public class PigeonHead {
         servo.setPosition(0);
     }
 }
+//
+//import Servo; // Import the servo library
+//
+//
+//
+//public class PigeonHead {
+//
+//
+//
+//    Servo servo; // Create a Servo object
+//
+//
+//
+//    public void setup() {
+//
+//        servo = new Servo(pinNumber); // Initialize servo on the specified pin
+//
+//    }
+//
+//
+//
+//    public void moveBeak(int position) { // Function to move the beak
+//
+//        servo.setPosition(position);
+//
+//    }
+//
+//
+//
+//    public static void main(String[] args) {
+//
+//        PigeonHead pigeon = new PigeonHead();
+//
+//        pigeon.setup();
+//
+//
+//
+//        // Example: Move beak to open position
+//
+//        pigeon.moveBeak(0.5);
+//
+//
+//
+//        // Add more code for different movements as needed
+//
+//    }
+//
+//}

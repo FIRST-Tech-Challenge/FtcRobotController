@@ -1,5 +1,11 @@
 package com.kalipsorobotics.test;
 
+import com.kalipsorobotics.actions.MoveLSAction;
+import com.kalipsorobotics.actions.PurePursuitAction;
+import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.math.CalculateTickInches;
+import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,70 +13,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class TestHanging extends LinearOpMode {
 
-    public void moveLsUp(DcMotor linearSlideMotorOne, DcMotor linearSlideMotorTwo, double inches){
-
-        linearSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double inchesToMM = inches * 25.4;
-        double TICKSPERMM = 2 * Math.PI * 18 / 145.1;
-        double mmToTicks = inchesToMM * TICKSPERMM;
-        double targetTicks = linearSlideMotorOne.getCurrentPosition() + mmToTicks;
-        double currentTicks = linearSlideMotorOne.getCurrentPosition() * mmToTicks;
-        linearSlideMotorOne.setPower(0.5);
-        linearSlideMotorTwo.setPower(0.5);
-
-        while(currentTicks < targetTicks){
-            linearSlideMotorOne.setPower(0.5);
-            linearSlideMotorTwo.setPower(0.5);
-            currentTicks = linearSlideMotorOne.getCurrentPosition();
-        }
-
-        linearSlideMotorOne.setPower(0);
-        linearSlideMotorTwo.setPower(0);
-
-    }
-
-    public void moveLsDown(DcMotor linearSlideMotorOne, DcMotor linearSlideMotorTwo, double inches){
-
-        linearSlideMotorOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotorTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double inchesToMM = inches * 25.4;
-        double TICKSPERMM = 2 * Math.PI * 18 / 145.1;
-        double mmToTicks = inchesToMM * TICKSPERMM;
-        double targetTicks = linearSlideMotorOne.getCurrentPosition() - mmToTicks;
-        double currentTicks = linearSlideMotorOne.getCurrentPosition() * mmToTicks;
-        linearSlideMotorOne.setPower(-0.5);
-        linearSlideMotorTwo.setPower(-0.5);
-
-        while(currentTicks > targetTicks){
-            linearSlideMotorOne.setPower(-0.5);
-            linearSlideMotorTwo.setPower(-0.5);
-            currentTicks = linearSlideMotorOne.getCurrentPosition();
-        }
-
-        linearSlideMotorOne.setPower(0);
-        linearSlideMotorTwo.setPower(0);
-
-    }
-
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor linearSlideOne = hardwareMap.dcMotor.get("linearSlideOne");
-        DcMotor linearSlideTwo = hardwareMap.dcMotor.get("linearSlideTwo");
+        OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        Outtake outtake = new Outtake(opModeUtilities);
+
+        MoveLSAction moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(30), outtake);
+        WaitAction waitAction = new WaitAction(5);
+        waitAction.setDependentAction(moveLSUp);
+        MoveLSAction moveLSDown = new MoveLSAction(CalculateTickInches.inchToTicksLS(26), outtake);
+        moveLSDown.setDependentAction(waitAction);
 
         waitForStart();
         while (opModeIsActive()) {
-            if(gamepad1.x){
-                moveLsUp(linearSlideOne, linearSlideTwo, 25);
-            }
-
+            moveLSUp.updateCheckDone();
+            waitAction.updateCheckDone();
+            moveLSDown.updateCheckDone();
         }
     }
 }

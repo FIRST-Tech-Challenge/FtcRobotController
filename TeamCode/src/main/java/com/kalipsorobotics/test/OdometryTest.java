@@ -3,6 +3,7 @@ package com.kalipsorobotics.test;
 
 //import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import android.annotation.SuppressLint;
+import android.widget.RadioButton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
+import org.firstinspires.ftc.ftccommon.internal.manualcontrol.commands.LogCommands;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 

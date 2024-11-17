@@ -1,5 +1,7 @@
 package com.kalipsorobotics.actions;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class WaitAction extends Action {
@@ -15,7 +17,13 @@ public class WaitAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         if (hasStarted) {
-            return elapsedTime.seconds() >= waitTimeSeconds;
+//            boolean done = elapsedTime.seconds() >= waitTimeSeconds;
+            Log.d("waitaction", "elapsed time " + elapsedTime.seconds());
+            if(elapsedTime.seconds() >= waitTimeSeconds) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         return false;
