@@ -42,6 +42,7 @@ public class Lift {
     public static double maxAcceleration = 50.0;
     public static double maxVelocity = 60;
     boolean reverse;
+    public static double maxVoltage = 12.5;
 
     // FIGURE OUT LIMIT SWITCHES/TOUCH SENSORS THEY SHOULD BE HERE
 
@@ -49,8 +50,8 @@ public class Lift {
     public Lift(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
 
-        this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, 12.5);
-        this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, 12.5);
+        this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
+        this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
