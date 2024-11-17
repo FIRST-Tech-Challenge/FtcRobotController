@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.Components;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,79 +13,84 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class HorizontalSlide {
     private DcMotorEx slideMotor;
-    private final int maxPosition;
-    private final int minPosition;
     private final double power;
     private final double currentLimit;
+
+    private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
 
-    public HorizontalSlide(HardwareMap hardwareMap, int maxPosition, int minPosition, double currentLimit, Telemetry telemetry) {
-        this.slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
+    int maxSlidePosition = 675;
 
 
-        this.maxPosition = maxPosition;
-        this.minPosition = minPosition;
+//    private final Gamepad gamepad1;
+//    private final Gamepad gamepad2;
+
+
+    public HorizontalSlide(OpMode opMode, double currentLimit) {
+        slideMotor = opMode.hardwareMap.get(DcMotorEx.class, "slideMotor");
         this.power = 1;
         this.currentLimit = currentLimit;
-        this.telemetry = telemetry;
+        this.telemetry = opMode.telemetry;
+        this.hardwareMap = opMode.hardwareMap;
     }
 
     public void moveForward() {
-        if (slideMotor.getCurrentPosition() < maxPosition) {
+        if (slideMotor.getCurrentPosition() < maxSlidePosition) {
             slideMotor.setPower(power);
-            telemetry.addData("position: ", slideMotor.getCurrentPosition());
         } else {
             stopMotor();
         }
-        telemetry.update();
     }
 
     public void moveBackward() {
-        telemetry.addData("moving", "backward");
-        if (slideMotor.getCurrentPosition() > minPosition && slideMotor.getCurrent(CurrentUnit.AMPS) < currentLimit) {
+        if (slideMotor.getCurrent(CurrentUnit.AMPS) < currentLimit) {
             slideMotor.setPower(-power);
-            telemetry.addData("position: ", slideMotor.getCurrentPosition());
-            telemetry.addData("power usage: ", slideMotor.getCurrent(CurrentUnit.AMPS));
         } else {
             stopMotor();
         }
-        telemetry.update();
+
+    }
+
+    public void checkInputs(Boolean extend, Boolean retract, Boolean reset) {
+        if (extend) {
+            moveForward();
+        } else if (retract) {
+            moveBackward();
+        } else {
+            stopMotor();
+        }
+        telemetry.addData("hSlide Power: ", slideMotor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("hSlide Position: ", slideMotor.getCurrentPosition());
+
+        if(reset) {
+            resetEncoder();
+        }
+
     }
 
     public void resetEncoder() {
-        while(slideMotor.getCurrent(CurrentUnit.AMPS) < currentLimit) {
-            moveBackward();
-            telemetry.addData("moving back", "to reset encoder");
-            telemetry.update();
-        }
-        telemetry.addData("hit limit", getPos());
-        telemetry.update();
+//        while(slideMotor.getCurrent(CurrentUnit.AMPS) < currentLimit) {
+//            moveBackward();
+//            telemetry.addData("moving back", "to reset encoder");
+//            telemetry.update();
+//        }
+//        telemetry.addData("hit limit", getPos());
+//        telemetry.update();
 
         slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData("reset encoders", "");
-        telemetry.update();
     }
+
     // Stops the slide
     public void stopMotor() {
         slideMotor.setPower(0);
     }
 
-    // Check if the slide has reached the maximum position
 
-    // Check if the slide has reached the minimum position
-    public boolean isAtMin() {
-        return slideMotor.getCurrentPosition() <= minPosition;
-    }
-
-
-    // Gets the current position of the slide
     public int getPos() {
         return slideMotor.getCurrentPosition();
     }
 
-    // Sets the power of the slide manually
     public void setPower(double power) {
         slideMotor.setPower(power);
     }

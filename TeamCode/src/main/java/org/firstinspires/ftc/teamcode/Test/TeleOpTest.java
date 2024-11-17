@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Test;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,23 +32,19 @@ public class TeleOpTest extends LinearOpMode {
 
     boolean emergencyStop = false;
 
+
+    int flipDistanceLimit = 550;
+    int slideDistanceLimit = 675;
+
     Debug debug;
 
     @Override
     public void runOpMode() {
         // Initialize motors
+        HorizontalSlide hSlide = new HorizontalSlide(this, 3);
+
 
         debug = new Debug(this);
-
-//        leftViper = hardwareMap.get(DcMotor.class, "leftViper");
-//        rightViper = hardwareMap.get(DcMotor.class, "rightViper");
-
-//        leftViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rightViper.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-//        leftViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        rightViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         double direction = 1;
 
@@ -57,6 +55,16 @@ public class TeleOpTest extends LinearOpMode {
 
         while (opModeIsActive() && !emergencyStop) {
 
+            if(gamepad1.guide) {
+                telemetry.addData("giude button: ", "pressed");
+                telemetry.update();
+                Log.d("TeleOpTest", "guide button pressed");
+            }
+
         }
+
+        Log.d("TeleOpTest", "OpMode started");
+
+
     }
 }
