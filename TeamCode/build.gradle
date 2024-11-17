@@ -1,3 +1,6 @@
+import javax.inject.Inject
+import java.util.regex.Pattern
+
 //
 // build.gradle in TeamCode
 //
@@ -29,10 +32,80 @@ android {
     }
 }
 
+ext {
+    isPushPaths = false
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+    implementation project(':multitask')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
+
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+def ADBexe = android.getAdbExecutable()
+
+interface IsDeviceConnectedParams extends ValueSourceParameters {
+    Property<File> getADBExe();
+}
+abstract class IsDeviceConnectedSource implements ValueSource<Boolean, IsDeviceConnectedParams> {
+    @Inject
+    abstract ExecOperations getExecOperations()
+
+    @Override
+    Boolean obtain() {
+        final File ADB_EXE = parameters.ADBExe.get()
+        new ByteArrayOutputStream().withStream { baos ->
+            getExecOperations().exec {
+                it.commandLine(ADB_EXE.toPath().toString(), "devices")
+                it.workingDir(".")
+                it.standardOutput = baos
+                it.setIgnoreExitValue(true)
+            }
+            def result = baos.toString()
+            def trimmed = Pattern.compile("^.*?\\n").matcher(result).replaceAll("")
+            return trimmed.contains("device")
+        }
+    }
+}
+
+
+def pushPaths = tasks.register("pushPaths", Exec) {
+    def deviceStatusProvider = providers.of(IsDeviceConnectedSource) {
+        parameters {
+            it.ADBExe.set(android.getAdbExecutable())
+        }
+    }
+    def buildDirPath = layout.buildDirectory.asFile.get().toPath()
+    def pathOutputPath = buildDirPath.resolve("outputs").resolve("paths")
+
+    enabled = deviceStatusProvider.get()
+
+    doFirst {
+        if (!pathOutputPath.toFile().exists()){
+            println("No sources, skipping")
+            throw new StopExecutionException()
+        }
+        if (!deviceStatusProvider.get()) {
+            println("Not connected when the build started, skipping")
+            throw new StopExecutionException()
+        }
+    }
+    doLast {
+        println("Uploaded path binaries to the robot.")
+    }
+
+    dependsOn(":TeamCode:testDebugUnitTest")
+    workingDir pathOutputPath.toString()
+    ignoreExitValue true
+    commandLine(android.getAdbExecutable().toPath().toString(), "push", pathOutputPath.toString(), "/sdcard/")
+}
+
+afterEvaluate {
+    tasks.named("assembleDebug").configure {
+        finalizedBy(":TeamCode:pushPaths")
+    }
 }
