@@ -135,7 +135,7 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DepositePos());
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new BackDepositePose());
 
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());

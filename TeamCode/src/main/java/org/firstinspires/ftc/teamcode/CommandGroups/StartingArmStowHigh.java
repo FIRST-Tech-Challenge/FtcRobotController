@@ -12,22 +12,23 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class ArmStowHigh extends SequentialCommandGroup {
+public class StartingArmStowHigh extends SequentialCommandGroup {
 
     // constructor
-    public ArmStowHigh() {
+    public StartingArmStowHigh() {
 
         addCommands (
         // What this position should do is give the camera a good vantage point as well as keep the arm out of the way
 
+                //powers shoulder
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
+                // folds the elbow in 270
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
-
+                new Pause(1.5),
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(135)),
-
-                // folds the elbow in 270
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),

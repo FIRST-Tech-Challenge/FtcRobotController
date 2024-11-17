@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 
@@ -23,6 +24,7 @@ public class HuntingPos extends SequentialCommandGroup {
     // constructor
     public HuntingPos() {
         addCommands(
+
 
                 // sets the elbow to a straight position at 135 degrees
                 new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(135)),
