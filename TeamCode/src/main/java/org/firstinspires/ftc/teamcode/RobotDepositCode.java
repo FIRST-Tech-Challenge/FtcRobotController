@@ -38,13 +38,11 @@ public class RobotDepositCode {
 
     public DepositSlideState currentState = DepositSlideState.START_POSITION;
     private ElapsedTime debounceTimer = new ElapsedTime();
-    private ElapsedTime dumpTime = new ElapsedTime();
     private ElapsedTime retractTime = new ElapsedTime();
 
     DepositSlideState depositSlideState = DepositSlideState.START_POSITION;
 
     public static final double DEBOUNCE_THRESHOLD = 0.25;
-    public static final double DUMPTIME_THRESHOLD = 2.5;
     public static final double RETRACTTIME_THRESHOLD = 2.0;
 
     public void init() {
