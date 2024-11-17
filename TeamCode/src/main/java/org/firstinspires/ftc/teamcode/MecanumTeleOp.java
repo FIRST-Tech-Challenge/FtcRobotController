@@ -379,7 +379,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.twist.setPosition(0.17);
         sleep(500);
         hardware.claw.setPosition(0.02); // TBD
-        sleep(5000);
+//        sleep(5000);
         armTargetPosDeg = 87.58;
     }
 }
