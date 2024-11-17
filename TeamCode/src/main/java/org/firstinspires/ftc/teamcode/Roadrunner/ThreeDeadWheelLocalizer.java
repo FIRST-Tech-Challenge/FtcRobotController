@@ -19,11 +19,15 @@ import org.firstinspires.ftc.teamcode.Roadrunner.messages.ThreeDeadWheelInputsMe
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = 0.0; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 1.0; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks =  -9750.144235960885; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 9309.643994379829; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks = 1200.7521957520921; // x position of the perpendicular encoder (in tick units)
     }
 
+//    public static double encoderTicksToInches(double ticks) {
+//        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+//    }
+// todo 1 inch is roughly 87.31 ticks
     public static Params PARAMS = new Params();
 
     public final Encoder par0, par1, perp;
