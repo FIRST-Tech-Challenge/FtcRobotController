@@ -22,12 +22,12 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
-        setPosition(0.3);
+        setPosition(0.256);
         isIn = true;
     }
 
     public void moveOut() {
-        setPosition(0.7);
+        setPosition(0.675);
         isIn = false;
     }
 

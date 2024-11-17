@@ -43,10 +43,10 @@ public class OuttakeTest extends LinearOpMode {
             }
 
             if (gamepad1.y) {
-                pivotPosition = pivotPosition + 0.01;
+                pivotPosition = pivotPosition + 0.001;
                 outtakePivotAction.setPosition(pivotPosition);
             } else if (gamepad1.x) {
-                pivotPosition = pivotPosition - 0.01;
+                pivotPosition = pivotPosition - 0.001;
                 outtakePivotAction.setPosition(pivotPosition);
             }
 
@@ -59,10 +59,10 @@ public class OuttakeTest extends LinearOpMode {
             }
 
             if (gamepad1.dpad_left) {
-                pigeonPosition = pigeonPosition + 0.01;
+                pigeonPosition = pigeonPosition + 0.001;
                 outtakePigeonAction.setPosition(pigeonPosition);
             } else if (gamepad1.dpad_right) {
-                pigeonPosition = pigeonPosition - 0.01;
+                pigeonPosition = pigeonPosition - 0.001;
                 outtakePigeonAction.setPosition(pigeonPosition);
             }
 

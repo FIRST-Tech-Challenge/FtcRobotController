@@ -11,8 +11,8 @@ public class OuttakeSlideAction {
 
     public OuttakeSlideAction(Outtake outtake) {
         this.outtake = outtake;
-        this.linearSlideMotor1 = outtake.linearSlideMotor1;
-        this.linearSlideMotor2 = outtake.linearSlideMotor2;
+        this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
+        this.linearSlideMotor2 = outtake.getLinearSlide2();
     }
 
 

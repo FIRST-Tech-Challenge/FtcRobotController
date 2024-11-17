@@ -12,7 +12,7 @@ public class Outtake {
 
     public DcMotor linearSlideMotor1, linearSlideMotor2;
     public Servo outtakePivotServo;
-    public Servo clawServo;
+    public Servo outtakeClawServo;
     public Servo outtakePigeonServo;
 
     public Outtake(OpModeUtilities opModeUtilities) {
@@ -24,7 +24,7 @@ public class Outtake {
         linearSlideMotor1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
         linearSlideMotor2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
         outtakePivotServo = opModeUtilities.getHardwareMap().servo.get("outtakePivotServo");
-        clawServo = opModeUtilities.getHardwareMap().servo.get("clawServo");
+        outtakeClawServo = opModeUtilities.getHardwareMap().servo.get("clawServo");
         outtakePigeonServo = opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo");
 
         linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -32,18 +32,24 @@ public class Outtake {
         linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        linearSlideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         linearSlideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public DcMotor getLinearSlideMotor1() {
+        return linearSlideMotor1;
+    }
     public DcMotor getLinearSlide2() {
         return linearSlideMotor2;
     }
     public Servo getOuttakePivotServo() {
         return outtakePivotServo;
     }
-    public Servo getClaw() {
-        return clawServo;
+    public Servo getOuttakeClawServo() {
+        return outtakeClawServo;
     }
     public Servo getOuttakePigeonServo() {
         return outtakePigeonServo;

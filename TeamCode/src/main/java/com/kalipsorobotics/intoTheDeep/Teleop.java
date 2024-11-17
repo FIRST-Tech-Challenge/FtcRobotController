@@ -50,6 +50,9 @@ public class Teleop extends LinearOpMode {
         outtakeClawAction.close();
         outtakePivotAction.moveIn();
 
+        //Pigeon
+        outtakePigeonAction.moveIn();
+
         waitForStart();
         while (opModeIsActive()) {
 
@@ -108,8 +111,6 @@ public class Teleop extends LinearOpMode {
                 outtakePivotAction.togglePosition();
             }
             prevDpadUp = gamepad2.dpad_up;
-
-
 
         }
     }

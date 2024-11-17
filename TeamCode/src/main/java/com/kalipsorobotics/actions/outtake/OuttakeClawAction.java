@@ -12,7 +12,7 @@ public class OuttakeClawAction {
     private boolean isClosed = true;
     public OuttakeClawAction(Outtake outtake) {
         this.outtake = outtake;
-        this.outtakeClawServo = outtake.clawServo;
+        this.outtakeClawServo = outtake.getOuttakeClawServo();
     }
 
     public void setPosition(double position) {

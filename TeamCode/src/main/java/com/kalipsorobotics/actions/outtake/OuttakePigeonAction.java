@@ -8,7 +8,7 @@ public class OuttakePigeonAction {
     private final Outtake outtake;
     private final Servo outtakePigeonServo;
 
-    private boolean isAlignedWithRobot;
+    private boolean isIn;
     public OuttakePigeonAction(Outtake outtake) {
         this.outtake = outtake;
         this.outtakePigeonServo = outtake.getOuttakePigeonServo();
@@ -19,17 +19,18 @@ public class OuttakePigeonAction {
     }
 
     public void moveIn() {
-        setPosition(0.3);
-        isAlignedWithRobot = true;
+        setPosition(0.524);
+        isIn = true;
     }
 
     public void moveOut() {
-        setPosition(0.65);
-        isAlignedWithRobot = false;
+        //Place holder
+        setPosition(0.524);
+        isIn = false;
     }
 
     public void togglePosition() {
-        if (!isAlignedWithRobot) {
+        if (!isIn) {
             moveIn();
         } else {
             moveOut();

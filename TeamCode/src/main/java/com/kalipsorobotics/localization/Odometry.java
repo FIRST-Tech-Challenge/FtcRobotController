@@ -14,7 +14,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class Odometry {
     OpModeUtilities opModeUtilities;
-    final static private double TRACK_WIDTH = 304.8;
+    final static private double TRACK_WIDTH = 273.05;
     static private final double BACK_DISTANCE_TO_MID = 69.85;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
@@ -40,7 +40,7 @@ public class Odometry {
         final double TICKS_PER_REV = 2000;
         final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
         final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
-//        final double TICKS_TO_MM = 13.2625995;
+//      final double TICKS_TO_MM = 13.2625995;
         return ticks / TICKS_TO_MM;
     }
 
