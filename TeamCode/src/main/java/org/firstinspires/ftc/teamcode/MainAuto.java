@@ -1,41 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Extensor;
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Action;
 
 /** @noinspection FieldCanBeLocal, unused */
-public class MainAuto extends AutonomousController {
-    public MainAuto(BaseRobot base, String color, String position) {
-        super(base, color, position);
+public class MainAuto {
+    private final BaseRobot baseRobot;
+    private final HardwareMap hardwareMap;
+    private final Logger logger;
+
+    /**
+     * Creates a new autonomous controller instance
+     * 
+     * @param base  Base robot instance to control
+     * @param color Selected alliance color
+     */
+    public MainAuto(BaseRobot base, String color) {
+        this.baseRobot = base;
+        this.hardwareMap = baseRobot.hardwareMap;
+        this.logger = baseRobot.logger;
     }
 
-    @Override
-    protected MecanumDrive initializeDrive(String color, String position) {
-        Pose2d initialPose;
-        switch (color.toLowerCase() + " " + position.toLowerCase()) {
-            case "red right":
-                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.RED_RIGHT_START, 0);
-                break;
-            case "red left":
-                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.RED_LEFT_START, 0);
-                break;
-            case "blue right":
-                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.BLUE_RIGHT_START, Math.PI);
-                break;
-            case "blue left":
-                initialPose = new Pose2d(Settings.Autonomous.FieldPositions.BLUE_LEFT_START, Math.PI);
-                break;
-            default:
-                initialPose = new Pose2d(0, 0, 0);
-        }
-        return new MecanumDrive(hardwareMap, initialPose);
-    }
-
-    @Override
+    /**
+     * Executes the main autonomous routine
+     * 
+     * @param mode Selected autonomous mode (e.g., "red left", "blue right")
+     */
     public void run(String mode) {
 
         if (Settings.Deploy.SKIP_AUTONOMOUS) {
@@ -60,16 +53,6 @@ public class MainAuto extends AutonomousController {
         }
     }
 
-    @Override
-    public void placeOnChamber(String mode, AutonomousController.ChamberHeight chamberHeight) {
-
-    }
-
-    @Override
-    public void placeNextSpecimenOnChamber(AutonomousController.ChamberHeight chamberHeight) {
-
-    }
-
     /**
      * Retrieves the next specimen from the collection area
      * Sequence:
@@ -79,12 +62,9 @@ public class MainAuto extends AutonomousController {
      * 4. Return to safe position
      */
     private void getNextSpecimen() {
-        Action trajectory = drive.actionBuilder(drive.pose)
-                .lineToX(humanPlayerPosition.x)
-                .lineToY(humanPlayerPosition.y)
-                .build();
-
-        Actions.runBlocking(trajectory);
+        baseRobot.odometry.moveCounts("backward", 100); // TODO tune
+        baseRobot.odometry.moveCounts("right", 100);
+        baseRobot.odometry.moveCounts("tright", Settings.Autonomous.Movement.TURN_NINETY_DEGREES);
         getSpecimenFromHumanPlayer();
     }
 
@@ -116,15 +96,22 @@ public class MainAuto extends AutonomousController {
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeOnChamber(String mode, ChamberHeight chamberHeight) {
-        drive.updatePoseEstimate();
+        baseRobot.odometry.update(); // Update robot's current position
 
-        Action trajectory = drive.actionBuilder(drive.pose)
-                .lineToX(scoringPosition.x)
-                .lineToY(scoringPosition.y)
-                .build();
-
-        Actions.runBlocking(trajectory);
-        placeSpecimen(chamberHeight);
+        switch (mode) {
+            case "red right":
+            case "blue right":
+                baseRobot.odometry.moveCounts("left", 50);
+                baseRobot.odometry.moveCounts("forward", 100);
+                placeSpecimen(chamberHeight);
+                break;
+            case "red left":
+            case "blue left":
+                baseRobot.odometry.moveCounts("right", 50);
+                baseRobot.odometry.moveCounts("forward", 100);
+                placeSpecimen(chamberHeight);
+                break;
+        }
     }
 
     /**
@@ -133,14 +120,10 @@ public class MainAuto extends AutonomousController {
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeNextSpecimenOnChamber(ChamberHeight chamberHeight) {
-        drive.updatePoseEstimate();
+        baseRobot.odometry.update(); // Update robot's current position
 
-        Action trajectory = drive.actionBuilder(drive.pose)
-                .lineToY(drive.pose.position.y - 50) // left 50
-                .lineToX(drive.pose.position.x + 100) // forward 100
-                .build();
-
-        Actions.runBlocking(trajectory);
+        baseRobot.odometry.moveCounts("left", 50); // TODO tune
+        baseRobot.odometry.moveCounts("forward", 100); // TODO tune
         placeSpecimen(chamberHeight);
     }
 
@@ -174,6 +157,34 @@ public class MainAuto extends AutonomousController {
      * 
      * @param mode Current autonomous mode
      */
+    public void park(String mode) {
+        baseRobot.odometry.moveCounts("backward", 100); // TODO tune
+        baseRobot.odometry.moveCounts("right", 100); // TODO tune
+    }
+
+    /**
+     * Emergency parking routine - moves directly to parking position
+     * 
+     * @param mode Current autonomous mode
+     */
+    public void immediatelyPark(String mode) {
+        switch (mode.toLowerCase()) {
+            // TODO this all sucks
+            case "red right":
+            case "blue right":
+                baseRobot.mecanumDrive(0, -0.5, 0);
+                pause(2000);
+                baseRobot.mecanumDrive(0, 0, 0);
+                break;
+            case "red left":
+            case "blue left":
+                baseRobot.mecanumDrive(0, 0.5, 0);
+                pause(2000);
+                baseRobot.mecanumDrive(0, 0, 0);
+                break;
+        }
+        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
+    }
 
     /**
      * Executes victory celebration sequence if enabled
@@ -192,6 +203,19 @@ public class MainAuto extends AutonomousController {
         pause(500);
         baseRobot.arm.claw.close();
         pause(500);
+    }
+
+    /**
+     * Utility method to pause execution
+     * 
+     * @param ms Milliseconds to pause
+     */
+    private void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
