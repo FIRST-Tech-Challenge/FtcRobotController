@@ -49,6 +49,7 @@ class HWTest : LinearOpMode() {
         telemetry.addLine(message)
         telemetry.addLine()
         telemetry.addLine("[A]: $yes. [B]: $no.")
+        telemetry.update()
         var res = true
         while (opModeIsActive()) {
             val a = gamepad1.a
@@ -76,11 +77,11 @@ class HWTest : LinearOpMode() {
 
     fun testEncoderA(enc: Encoder, label: String) {
         val basis = enc.getCurrentPosition()
-        telemetry.addLine("Move the $label...")
-        telemetry.addLine("or press B to skip")
-        telemetry.update()
         var res = false
         while (opModeIsActive()) {
+            telemetry.addLine("Move the $label...")
+            telemetry.addLine("or press B to skip")
+            telemetry.update()
             val delta = enc.getCurrentPosition() - basis
             if (abs(delta) > 10) {
                 res = true
@@ -99,11 +100,11 @@ class HWTest : LinearOpMode() {
 
     fun testEncoderB(enc: DcMotor, label: String) {
         val basis = enc.currentPosition
-        telemetry.addLine("Move the $label...")
-        telemetry.addLine("or press B to skip")
-        telemetry.update()
         var res = false
         while (opModeIsActive()) {
+            telemetry.addLine("Move the $label...")
+            telemetry.addLine("or press B to skip")
+            telemetry.update()
             val delta = enc.currentPosition - basis
             if (abs(delta) > 10) {
                 res = true
