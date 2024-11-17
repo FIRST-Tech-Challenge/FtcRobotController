@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Components.HorizontalSlide;
 import org.firstinspires.ftc.teamcode.Debug.Debug;
 
 @TeleOp(name = "TeleOpMain", group = "Main")
 public class TeleOpMain extends LinearOpMode {
+
     public DcMotorEx frontLeft;
     public DcMotorEx backLeft;
     public DcMotorEx frontRight;
@@ -18,7 +21,7 @@ public class TeleOpMain extends LinearOpMode {
     private DcMotorEx leftViper;
     private DcMotorEx rightViper;
 
-    private DcMotorEx slideMotor;
+//    private DcMotorEx slideMotor;
 
     private Servo leftBucket;
     private Servo rightBucket;
@@ -45,6 +48,7 @@ public class TeleOpMain extends LinearOpMode {
 
     Debug debug;
 
+
     @Override
     public void runOpMode() {
         // Initialize motors and servos
@@ -56,7 +60,7 @@ public class TeleOpMain extends LinearOpMode {
         leftViper = hardwareMap.get(DcMotorEx.class, "leftViper");
         rightViper = hardwareMap.get(DcMotorEx.class, "rightViper");
 
-        slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
+//        slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
 
         leftBucket = hardwareMap.get(Servo.class, "leftBucket");
         rightBucket = hardwareMap.get(Servo.class, "rightBucket");
@@ -75,11 +79,13 @@ public class TeleOpMain extends LinearOpMode {
 
         leftViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+//        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         leftViper.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightViper.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+//        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         frontLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -94,6 +100,11 @@ public class TeleOpMain extends LinearOpMode {
         frontRight.setDirection(DcMotorEx.Direction.FORWARD);
         backRight.setDirection(DcMotorEx.Direction.FORWARD);
 
+        int flipDistanceLimit = 550;
+        int slideDistanceLimit = 675;
+
+        HorizontalSlide hSlide = new HorizontalSlide(hardwareMap, slideDistanceLimit, 0, 4, telemetry);
+
         leftWrist.setPosition(0);
         rightWrist.setPosition(1);
 
@@ -102,7 +113,7 @@ public class TeleOpMain extends LinearOpMode {
 
         double direction = 1;
 
-        int horizontalSlideLimit = 550;
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -170,7 +181,7 @@ public class TeleOpMain extends LinearOpMode {
                 backLeft.setDirection(DcMotorEx.Direction.REVERSE);
                 frontRight.setDirection(DcMotorEx.Direction.FORWARD);
                 backRight.setDirection(DcMotorEx.Direction.FORWARD);
-            } else if (gamepad1.a) {
+            } else if (gamepad1.b) {
                 direction = -1;
                 frontLeft.setDirection(DcMotorEx.Direction.FORWARD);
                 backLeft.setDirection(DcMotorEx.Direction.FORWARD);
@@ -191,31 +202,32 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             // Horizontal slide
-            //todo auto must reset to zero
-            if (gamepad1.right_bumper && slideMotor.getCurrentPosition() < 550) {
-                slideMotor.setPower(1);
-            } else if (gamepad1.left_bumper && slideMotor.getCurrent(CurrentUnit.AMPS) < 2) {
 
-                slideMotor.setPower(-1);
-            } else {
-                if(slideMotor.getCurrentPosition() >= 547) {
-                    telemetry.addData("Limit reached, ", "Stopped");
-                }
-                slideMotor.setPower(0);
+            if (gamepad1.right_bumper) {
+                hSlide.moveForward();
+            } else if (gamepad1.left_bumper) {
+                hSlide.moveBackward();
             }
-            telemetry.update();
+            else {
+                hSlide.stopMotor();
+            }
 
             // Wrist
             // SERVO CONTROLLER INFO: leftWrist:        left limit = 1, right limit = 0     rightWrist: left limit = 0, right limit = 1
-            if (gamepad1.b) {           // pick up
+            if (gamepad1.a && hSlide.getPos() < flipDistanceLimit) {           // pick up
                 leftWrist.setPosition(0.9);
                 rightWrist.setPosition(0.1);
-            } else if (gamepad1.x) {      // deposit
+            } else if (gamepad1.x && hSlide.getPos() < flipDistanceLimit) {      // deposit
                 leftWrist.setPosition(0);
                 rightWrist.setPosition(1);
             }
+            else if(gamepad1.back && hSlide.getPos() < flipDistanceLimit) {
+                leftWrist.setPosition(0.6);
+                rightWrist.setPosition(0.4);
+            }
 
-            // Grabber
+            // Grabber (intake)
+            //todo add a check for waiting until it gets high enough
             if (gamepad1.dpad_up) {
                 leftGrabber.setPosition(0);
                 rightGrabber.setPosition(1);
@@ -224,10 +236,22 @@ public class TeleOpMain extends LinearOpMode {
                 leftGrabber.setPosition(1);
                 rightGrabber.setPosition(0);
             }
+            // gamepad 2 controls
+
+            else if (gamepad2.right_bumper) {
+                leftGrabber.setPosition(0);
+                rightGrabber.setPosition(1);
+            }
+            else if (gamepad2.left_bumper) {
+                leftGrabber.setPosition(1);
+                rightGrabber.setPosition(0);
+            }
             else {
                 leftGrabber.setPosition(0.5);
                 rightGrabber.setPosition(0.5);
             }
+
+
 
             // Bucket
             if (gamepad2.y) {           // receiving
@@ -299,35 +323,4 @@ public class TeleOpMain extends LinearOpMode {
         rightViper.setPower(0);
     }
 
-    private void startAccelerating(double newTargetPower, double duration, double incrementDividend) {
-        if (isAccelerating) {
-            // Adjust the increment based on the remaining time and power difference
-            double remainingTime = duration - (System.currentTimeMillis() - lastUpdateTime);
-            double powerDifference = newTargetPower - currentPower;
-            this.increment = powerDifference / (remainingTime / incrementDividend);
-        } else {
-            this.targetPower = newTargetPower;
-            this.increment = newTargetPower / (duration / incrementDividend);
-            this.isAccelerating = true;
-            this.lastUpdateTime = System.currentTimeMillis();
-        }
-    }
-
-    private void accelerateMotors() {
-        if (isAccelerating && !emergencyStop) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastUpdateTime >= updateDelay) {
-                currentPower += increment;
-                if (currentPower >= targetPower) {
-                    currentPower = targetPower;
-                    isAccelerating = false;
-                }
-                frontLeft.setPower(currentPower);
-                backLeft.setPower(currentPower);
-                frontRight.setPower(currentPower);
-                backRight.setPower(currentPower);
-                lastUpdateTime = currentTime;
-            }
-        }
-    }
 }
