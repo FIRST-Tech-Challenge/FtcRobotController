@@ -45,16 +45,18 @@ public class Elevator {
             case SPECIMEN:
                 leftMotor.setTargetPosition(ElevatorConstants.SpecimenPos);
                 rightMotor.setTargetPosition(ElevatorConstants.SpecimenPos);
-                rightMotor.setPower(0.5);
-                leftMotor.setPower(0.5);
+                //power is elevator speed
+                rightMotor.setPower(0.9);
+                leftMotor.setPower(0.9);
                 leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 currentElevPosL = getElevatorPosL();
                 currentElevPosR = getElevatorPosR();
                 break;
             case MANUAL:
-                leftMotor.setTargetPosition((int) (currentElevPosL + gamepadVal * 25));
-                rightMotor.setTargetPosition((int) (currentElevPosR + gamepadVal * 25));
+                //the number is the elevator speed (PID already in the settargetposition func)
+                leftMotor.setTargetPosition((int) (currentElevPosL + gamepadVal * 100));
+                rightMotor.setTargetPosition((int) (currentElevPosR + gamepadVal * 100));
                 currentElevPosL = getElevatorPosL();
                 currentElevPosR = getElevatorPosR();
                 break;
