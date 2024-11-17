@@ -1,6 +1,7 @@
 package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.Log;
 
 import com.kalipsorobotics.math.CalculateTickInches;
@@ -12,6 +13,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class OdometryFuse {
     OpModeUtilities opModeUtilities;
@@ -25,6 +33,41 @@ public class OdometryFuse {
         this.backEncoder = backEncoder;
         wheelResetData();
         sparkResetData(true, 0.0);
+    }
+    public void fileDataUpdate(HardwareMap hardwareMap) {
+        hardwareMap.appContext.deleteFile("odometry Data");
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = hardwareMap.appContext.openFileOutput("odometry Data", Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            objectOutputStream = new ObjectOutputStream(outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            objectOutputStream.writeObject(sparkUpdateData().getX());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            objectOutputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            objectOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public Point wheelUpdateData() {
         double TICKSTOINCH = 1 ;//40 / -13510.0 * (40.0 / 40.3612);
@@ -59,10 +102,6 @@ public class OdometryFuse {
         myOtos.resetTracking();
         if (reCalibrate) { myOtos.calibrateImu(); }
         myOtos.setOffset(new SparkFunOTOS.Pose2D(wheelUpdateData().getX(), wheelUpdateData().getY(), heading));
-    }
-    public void dataCollectLog() {
-        Log.d("odometry", "" + sparkUpdateData().getX() + sparkUpdateData().getY() + headingUpdateData("right"));
-
     }
 
     public void wheelResetData() {
