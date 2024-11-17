@@ -9,32 +9,48 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous(name = "RoadRunner Autonomous", group = "Autonomous")
 public class RoadRunnerAuto extends AutoBase {
+    private MecanumDrive drive;
+
     @Override
     public void runOpMode() {
-        super.runOpMode(); // This runs the menu selection
-
-        // Initialize RoadRunner drive
-        MecanumDrive drive = new MecanumDrive(hardwareMap, getStartingPose());
-
-        // Wait for start
+        super.runOpMode(); // Run menu selection
+        
+        // Initialize drive system
+        drive = new MecanumDrive(hardwareMap, getStartingPose());
+        
         waitForStart();
+        if (isStopRequested()) return;
+        
+        runAuto();
+    }
 
-        if (isStopRequested())
+    private void runAuto() {
+        if (Settings.Deploy.SKIP_AUTONOMOUS) {
+            justPark();
             return;
+        }
+        
+        // TODO: Add actual autonomous path here
+    }
 
-        // Execute the trajectory based on selected position
+    private void justPark() {
+        double strafeDistance = startingPosition.equals("Right") ? -36 : 36;
         drive.actionBuilder(getStartingPose())
-                .forward(24)
-                .strafeRight(position.equals("Right") ? -36 : 36) // Strafe left if Right, right if Left
+                .splineTo(
+                    new Vector2d(
+                        getStartingPose().position.x + strafeDistance, 
+                        getStartingPose().position.y
+                    ),
+                    getStartingPose().heading
+                )
                 .build();
     }
 
     private Pose2d getStartingPose() {
-        // Get starting pose based on selected position
-        double x = position.equals("Right") ? 36 : -36;
+        double x = startingPosition.equals("Right") ? 36 : -36;
         double y = color.equals("Red") ? -60 : 60;
         double heading = color.equals("Red") ? Math.toRadians(90) : Math.toRadians(-90);
-
+        
         return new Pose2d(x, y, heading);
     }
 }
