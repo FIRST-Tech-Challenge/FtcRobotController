@@ -113,6 +113,9 @@ public class MecanumTeleOp extends LinearOpMode {
             if(gamepad2.x){
                 PickUpYellow(hardware);
             }
+            if(gamepad2.b){
+                PickUpSpecimen(hardware);
+            }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             telemetry.addData("Vertical position", verticalPosition);
@@ -183,10 +186,12 @@ public class MecanumTeleOp extends LinearOpMode {
             return;
         }
 
+        /*
         if (gamepad2.b) {
             targetLift(hardware, highChamberTicks);
             maintainHeightTicks = highChamberTicks;
         }
+        */
 
         if (gamepad2.a) {
             targetLift(hardware, 0);
@@ -353,6 +358,28 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
         hardware.arm.setTargetPosition(0);
         sleep(500);
+    }
 
+    private void PickUpSpecimen(Hardware hardware) {
+        // Lift --> arm out --> Lift to 0 --> move wrist --> open claw
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        hardware.verticalSlide.setTargetPosition(224);
+        maintainHeightTicks = 224;
+        sleep(500);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.5);
+        hardware.arm.setTargetPosition(170);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(0);
+        maintainHeightTicks = 0;
+        sleep(500);
+        hardware.wrist.setPosition(1.0);
+        sleep(500);
+        hardware.twist.setPosition(0.17);
+        sleep(500);
+        hardware.claw.setPosition(0.02); // TBD
+        sleep(5000);
+        armTargetPosDeg = 87.58;
     }
 }
