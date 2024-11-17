@@ -15,6 +15,9 @@ public class gamepad2_button_presets {
     if (-gamepad2.right_stick_y >= 0.3) {
         SM.setPos(675, 0.5);
     }
+    if (-gamepad2.right_stick_y <= 0.3) {
+        SM.setPos(0, 0.5);
+    }
     
     if (-gamepad2.left_stick_y >= 0.3) {
         SM.setPos(180, 0.5);

@@ -78,6 +78,8 @@ public class gamepad2Controls extends Thread{
                 while(!mainFile.isStopRequested() && !(Math.abs(target-sc.getCurrentPosition()) <= 10)){
                     SM.setPos(target, 1);
                 }
+
+
                 if(-gamepad2.right_stick_y <= -0.3 && !gamepad2.back){
                     clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATEMIDDLE);
                     SM.setPos(CONSTANTS.SLIDEROTATEMIN, 0.5);
