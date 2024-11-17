@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.Threads;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.lm2COMPCODE.CONSTANTS;
 import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.SliderManger;
 import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.packages.servoManger;
 import org.firstinspires.ftc.teamcode.lm2COMPCODE.Teleop.Teleop;
+
+import kotlin.io.ConstantsKt;
 
 public class gamepad2Controls extends Thread{
     public boolean running = true;
@@ -38,12 +41,12 @@ public class gamepad2Controls extends Thread{
                 bypassEnabled = gamepad2.back;
                 resetEnabled = gamepad2.start;
                 if(sc.getCurrentPosition() < -20 && sr.getCurrentPosition() > 600) {
-                    SM.move(gamepad2.left_stick_y - 0.01 > 1.0 ? gamepad2.left_stick_y : gamepad2.left_stick_y - 0.01);
+                    SM.move(-gamepad2.left_stick_y - 0.01 > 1.0 ? -gamepad2.left_stick_y : -gamepad2.left_stick_y - 0.01);
                 }else{
                     if(sc.getCurrentPosition() > -1100) {
-                        SM.move(gamepad2.left_stick_y);
+                        SM.move(-gamepad2.left_stick_y);
                     }else{
-                        if(gamepad2.left_stick_y > 0.0) {
+                        if(-gamepad2.left_stick_y > 0.0) {
                             SM.move(1.0);
                         }else{
                             SM.move(0.0);
@@ -51,31 +54,35 @@ public class gamepad2Controls extends Thread{
                     }
                 }
                 if(-gamepad2.right_stick_y <= -0.3 && !gamepad2.back){
-                    clawRotateServo.setServoPosition(0.4);
-                    SM.setPos(0, 0.5);
+                    clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATEMIDDLE);
+                    SM.setPos(CONSTANTS.SLIDEROTATEMIN, 0.5);
                 }
                 if(-gamepad2.right_stick_y >= 0.3 && !gamepad2.back){
-                    SM.setPos(675, 0.5);
+                    SM.setPos(CONSTANTS.SLIDEROTATEMAX, 0.5);
+                }
+                if(sr.getCurrentPosition() > CONSTANTS.SLIDEROTATEMAX - 10 && !(-gamepad2.right_stick_y <= -0.3)){
+                    sr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    sr.setPower(0.1);
                 }
                 if(gamepad2.b) {
-                    clawRotateServo.setServoPosition(0.1);
+                    clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATELOW);
                 }
                 if(gamepad2.a) {
-                    clawRotateServo.setServoPosition(0.05);
+                    clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATELOWEST);
                 }
                 if(gamepad2.y) {
-                    clawRotateServo.setServoPosition(0.4);
+                    clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATEMIDDLE);
                 }
                 if(gamepad2.x) {
-                    clawRotateServo.setServoPosition(0.6);
+                    clawRotateServo.setServoPosition(CONSTANTS.SERVOROTATEHIGH);
                 }
                 if(gamepad2.right_bumper){
-                    clawServo.setServoPosition(0.7);
+                    clawServo.setServoPosition(CONSTANTS.SERVOCLOSE);
                 }
                 if(gamepad2.left_bumper){
-                    clawServo.setServoPosition(0.33);
+                    clawServo.setServoPosition(CONSTANTS.SERVOOPEN);
                 }
-                if(gamepad2.dpad_left){
+                /*(if(gamepad2.dpad_left){
                     clawRotateServo2.setServoPosition(0.8);
                 }else if(gamepad2.dpad_right){
                     clawRotateServo2.setServoPosition(0.3);
@@ -84,8 +91,9 @@ public class gamepad2Controls extends Thread{
                 }else if(gamepad2.dpad_down){
                     clawRotateServo2.setServoPosition(0.9);
                 }else{
-                    clawRotateServo2.setServoPosition(0.5);
-                }
+
+                }*/
+                clawRotateServo2.setServoPosition(CONSTANTS.SERVOROTATE2MID);
             }
         }catch(Exception e){
             mainFile.telemetry.addLine("ERROR");
