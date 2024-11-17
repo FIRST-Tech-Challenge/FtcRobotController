@@ -27,58 +27,65 @@ public class AutoRedObservation extends LinearOpMode {
         waitForStart();
         intake.close();
 //        intake.unwhack();
-        pivot.setTargetPosition(-1170);
-        robotController.distanceDrive(25, -12.528807709151522, DRIVE_SPEED);
-        viperSlide.setTargetPosition(1230);
-        robotController.sleep(1);
-        pivot.setTargetPosition(-1000);
-        robotController.sleep(0.5);
-        viperSlide.setTargetPosition(700);
+        pivot.setTargetPosition(0);
+        viperSlide.setTargetPosition(0);
+//        pivot.setTargetPosition(-1300);
+//        viperSlide.setTargetPosition(1230);
+        robotController.distanceDrive(9, -45, DRIVE_SPEED);
+        robotController.distanceDrive(24, 0, DRIVE_SPEED);
+        robotController.sleep(0.1);
+//        pivot.setTargetPosition(-1000);
+        robotController.sleep(0.2);
+//        viperSlide.setTargetPosition(700);
         robotController.sleep(0.5);
 //        intake.largeOpen();
-        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
+//        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
         robotController.sleep(0.5);
-        pivot.setTargetPosition(-510);
+//        pivot.setTargetPosition(-510);
+        robotController.distanceDrive(5, 180.0, DRIVE_SPEED);
 
-        robotController.distanceDrive(27.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(27.0, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(39, 180.0, DRIVE_SPEED);
-        robotController.distanceDrive(39, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(39, 180.0, DRIVE_SPEED);
-        robotController.distanceDrive(10.0, 0.0, DRIVE_SPEED);
-        robotController.distanceDrive(6.0, -90.0, DRIVE_SPEED);
-        robotController.turnTo(180.0, TURN_SPEED);
-        robotController.sleep(1.5);
-
-
-        viperSlide.setTargetPosition(1400);
+        robotController.distanceDrive(27.0, 90.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(27.0, -0.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(43, 180.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(43, -0.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(11.0, 90.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(43, 180.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(11.0, 0.0, DRIVE_SPEED + 0.75);
+        robotController.distanceDrive(6.0, -90.0, DRIVE_SPEED + 0.75);
+//        pivot.setTargetPosition(-2400);
         robotController.distanceDrive(10.0, 180.0, DRIVE_SPEED);
-        robotController.sleep(0.5);
-        intake.close();
-        robotController.sleep(0.2);
-        pivot.setTargetPosition(-700);
-        robotController.sleep(0.5);
-        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
-        robotController.distanceDrive(39, -82, DRIVE_SPEED);
-        robotController.turnTo(0.0, TURN_SPEED);
-        robotController.distanceDrive(8.0, -90, DRIVE_SPEED);
-
-        pivot.setTargetPosition(-1400);
-        robotController.distanceDrive(9.0, -12.528807709151522, DRIVE_SPEED);
-        viperSlide.setTargetPosition(800);
-        robotController.sleep(0.5);
-        pivot.setTargetPosition(-800);
-        robotController.sleep(0.5);
-        viperSlide.setTargetPosition(700);
-        robotController.sleep(0.5);
-        intake.open();
-        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
-        robotController.sleep(0.5);
-
-        pivot.setTargetPosition(-1375);
-        robotController.sleep(10);
+        robotController.sleep(1);
+        robotController.distanceDrive(48, -82, DRIVE_SPEED);
+        robotController.distanceDrive(5, 0, DRIVE_SPEED);
+//
+//
+//        viperSlide.setTargetPosition(1400);
+//        robotController.distanceDrive(10.0, 180.0, DRIVE_SPEED);
+//        robotController.sleep(0.5);
+//        intake.close();
+//        robotController.sleep(0.2);
+//        pivot.setTargetPosition(-700);
+//        robotController.sleep(0.5);
+//        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
+//        robotController.distanceDrive(39, -82, DRIVE_SPEED);
+//        robotController.turnTo(0.0, TURN_SPEED);
+//        robotController.distanceDrive(8.0, -90, DRIVE_SPEED);
+//
+//        pivot.setTargetPosition(-1400);
+//        robotController.distanceDrive(9.0, -12.528807709151522, DRIVE_SPEED);
+//        viperSlide.setTargetPosition(800);
+//        robotController.sleep(0.5);
+//        pivot.setTargetPosition(-800);
+//        robotController.sleep(0.5);
+//        viperSlide.setTargetPosition(700);
+//        robotController.sleep(0.5);
+//        intake.open();
+//        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
+//        robotController.sleep(0.5);
+//
+//        pivot.setTargetPosition(-1375);
+//        robotController.sleep(10);
 
 //        robotController.distanceDrive(27.0, 90.0, DRIVE_SPEED);
 //        robotController.distanceDrive(27.0, -0.0, DRIVE_SPEED);

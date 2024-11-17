@@ -173,12 +173,12 @@ public class MecanumRobotController {
             double derivative = (error - lastError) / PIDTimer.seconds();
             integralSum += error * PIDTimer.seconds();
 
-            Double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
+            double headingCorrection = -((Kp * error) + (Kd * derivative) + (Ki * integralSum));
             headingCorrection = normalize(headingCorrection);
             lastError = error;
             PIDTimer.reset();
 
-            turn = headingCorrectionPower * (headingCorrection.isNaN() ? 0.0 : headingCorrection);
+            turn = headingCorrectionPower * (Double.isNaN(headingCorrection) ? 0.0 : headingCorrection);
         }
 
         // Set fields so the robot knows what its current forward, strafe, and turn is in other methods.
@@ -333,6 +333,8 @@ public class MecanumRobotController {
             move(forward, strafe, 0.0, HEADING_CORRECTION_POWER);
             distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         }
+        // Stop the robot
+        move(0, 0, 0, 0);
     }
 
     // Behavior: Drives the robot continuously based on forward, strafe, and turn power.
