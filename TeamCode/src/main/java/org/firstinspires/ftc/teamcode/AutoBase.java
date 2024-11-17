@@ -51,7 +51,7 @@ public class AutoBase extends LinearOpMode {
         telemetry.update();
 
         // Give hardware time to initialize
-        sleep(500); // Add a small delay for hardware initialization
+        sleep(500);
 
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger(0);
@@ -89,28 +89,47 @@ public class AutoBase extends LinearOpMode {
             telemetry.update();
         }
 
-        // Create remaining components after menu selection
-        AutonomousController auto;
-        if (Settings.Deploy.USE_ROADRUNNER) {
-            auto = new RoadRunAuto(baseRobot, color, position);
-        } else {
-            auto = new MainAuto(baseRobot, color, position);
+        // Add validation to ensure configuration was selected
+        if (color == null || position == null) {
+            telemetry.addData("Error", "Configuration not selected!");
+            telemetry.update();
+            return; // Exit if configuration is invalid
         }
 
-        // Add ready status
+        // Create remaining components after menu selection
+        AutonomousController auto;
+        try {
+            if (Settings.Deploy.USE_ROADRUNNER) {
+                auto = new RoadRunAuto(baseRobot, color, position);
+            } else {
+                auto = new MainAuto(baseRobot, color, position);
+            }
+        } catch (Exception e) {
+            telemetry.addData("Error", "Failed to initialize auto: " + e.getMessage());
+            telemetry.update();
+            return;
+        }
+
+        // Add ready status with more debug info
         telemetry.addData("Status", "Ready to start!");
         telemetry.addData("Configuration", color + " " + position);
+        telemetry.addData("Auto Type", Settings.Deploy.USE_ROADRUNNER ? "RoadRunner" : "Main");
+        telemetry.addData("Disabled Features", Settings.getDisabledFlags());
         telemetry.update();
 
         // Now wait for start
         waitForStart();
 
+        if (isStopRequested())
+            return;
+
         try {
-            if (opModeIsActive()) {
-                auto.run(color + " " + position);
-            }
-        } catch (RuntimeException e) {
-            // Shutdown handled by ShutdownManager
+            telemetry.addData("Status", "Running autonomous...");
+            telemetry.update();
+            auto.run(color + " " + position);
+        } catch (Exception e) {
+            telemetry.addData("Error", "Auto failed: " + e.getMessage());
+            telemetry.update();
         }
     }
 }

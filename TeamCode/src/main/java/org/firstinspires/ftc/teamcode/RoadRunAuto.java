@@ -36,6 +36,10 @@ public class RoadRunAuto extends AutonomousController {
             default:
                 initialPose = new Pose2d(0, 0, 0);
         }
+        baseRobot.telemetry.addData("Auto Init", "Creating RoadRunner drive");
+        baseRobot.telemetry.addData("Initial Pose", "x=%.2f y=%.2f heading=%.2f",
+                initialPose.position.x, initialPose.position.y, initialPose.heading);
+        baseRobot.telemetry.update();
         return new MecanumDrive(hardwareMap, initialPose);
     }
 
