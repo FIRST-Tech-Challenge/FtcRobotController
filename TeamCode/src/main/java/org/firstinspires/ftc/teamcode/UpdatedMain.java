@@ -34,16 +34,16 @@ public class UpdatedMain extends LinearOpMode {
         //wait for start
         waitForStart();
         if(opModeIsActive()){
-            /*//resets encoder so arm current position is now the start
+            //resets encoder so arm current position is now the start
             arm_rotator_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             //sets target position so the mode can be set
             arm_rotator_motor.setTargetPosition(0);
             //sets Run Mode to RUN_TO_POSITION
-            arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
+            arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             while(opModeIsActive()){
                 update_driving();
                 update_grip();
-                update_arm_rotation(options.Set1);
+                update_arm_rotation(options.Set2);
                 update_hand_rotato();
                 display_data();
                 telemetry.update();
@@ -99,6 +99,7 @@ public class UpdatedMain extends LinearOpMode {
      */
     public void display_data(){
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
+        telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
     }
     public void update_driving(){
         double left_stick_x = gamepad1.left_stick_x;
@@ -143,13 +144,21 @@ public class UpdatedMain extends LinearOpMode {
     public void update_grip(){
 
         if (gamepad2.left_bumper){
-            hand_grip_servo.setPosition(0.65);
+            if (hand_grip_servo.getPosition() < 0.65) {
+                hand_grip_servo.setPosition(hand_grip_servo.getPosition() + 0.005);
+            }
+
         } else if (gamepad2.right_bumper){
-            hand_grip_servo.setPosition(0);
+            if (hand_grip_servo.getPosition() > 0) {
+                hand_grip_servo.setPosition(hand_grip_servo.getPosition() - 0.005);
+            }
         }
     }
     public void update_hand_rotato(){
-        hand_rotation_servo.setPosition(hand_grip_servo.getPosition() + gamepad2.left_trigger + (gamepad2.right_trigger)*-1);
+        if (gamepad2.left_trigger ==1 || gamepad2.right_trigger == 1){
+            hand_rotation_servo.setPosition(hand_rotation_servo.getPosition() + (gamepad2.left_trigger + (gamepad2.right_trigger)*-1)*0.005);
+        }
+
     }
     private enum options{
         Set1,
