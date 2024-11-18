@@ -31,11 +31,11 @@ public class UpdatedMain extends LinearOpMode {
     private Telemetry dashboardTelemerty = dashboard.getTelemetry();
     
     // Runtime modifiable values
+    // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you dont)
     public static double arm_less_zero = 0.5;
     public static double arm_more_zero = 0.4;
-    
     public static double triggerModifier = 0.005;
-    
+    // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
     //main loop
     @Override
     public void runOpMode() throws InterruptedException {
@@ -138,7 +138,7 @@ public class UpdatedMain extends LinearOpMode {
         // What is the point of the option argument? - @GoldStar184 (this is public im not using my real name)
         //TODO: Extend this over muliple lines
         arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? arm_less_zero : arm_more_zero)) *-1);
-        //TODO: When we get a encoder on this use set pos and not use power ever again
+        //TODO: When we get a encoder on this use set pos and not use power ever again 
     }
     public void update_grip(){/*
         if (gamepad2.left_bumper){
