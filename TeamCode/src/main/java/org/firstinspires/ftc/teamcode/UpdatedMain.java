@@ -25,9 +25,12 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor back_left_wheel;
     private DcMotor front_right_wheel;
     private DcMotor back_right_wheel;
+
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemerty = dashboard.getTelemetry();
     //main loop
+    private static double arm_less_zero = 0.3;
+    private static double arm_more_zero = 0.3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -114,7 +117,7 @@ public class UpdatedMain extends LinearOpMode {
         front_right_wheel.setPower(((left_stick_y - left_stick_x)*-1) - right_stick_x);
     }
     public void update_arm_rotation(options option){
-        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.4 : 0.5)) *-1);
+        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? arm_less_zero : arm_more_zero)) *-1);
     }
     public void update_grip(){/*
         if (gamepad2.left_bumper){
