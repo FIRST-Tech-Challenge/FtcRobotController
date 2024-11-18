@@ -11,7 +11,7 @@ public class ArmTester extends LinearOpMode {
     private GamepadEvents controller;
     private double armPos;
     boolean reverseArm;
-    private double[] armPositions = {0.4, 0.3, 0.1, 0.0};
+    private double[] armPositions = {0, 0.1, 0.3, 0.5};
 //    private double[] armPositions = {.25, -.25, 0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
