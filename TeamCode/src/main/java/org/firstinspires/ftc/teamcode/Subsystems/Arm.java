@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Arm {
-    public final DcMotor arm;
+    public final DcMotor Arm;
     public final Gamepad gamepad2;
     private static int HIGH = 50;
     public static int MID = 10;
@@ -24,46 +24,41 @@ public class Arm {
         this.hardwareMap = opMode.hardwareMap;
         this.gamepad2 = opMode.gamepad2;
         this.telemetry = opMode.telemetry;
-        arm = (DcMotor) hardwareMap.get("ArmMotor");
+        Arm = (DcMotor) hardwareMap.get("ArmMotor");
 
         //The slides must be set to correct directions
-        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        Arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //brake
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setTargetPosition(0);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setTargetPosition(0);
 
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //setting power, power can vary 0-1
-        arm.setPower(0.5);
+        Arm.setPower(0.5);
         //
-        arm.setTargetPosition(INTAKE);
+        Arm.setTargetPosition(INTAKE);
     }
     public void teleOp() {
         if (gamepad2.dpad_up) outtake();
         else if (gamepad2.dpad_down) intake();
         else if (gamepad2.dpad_right) zeroPos();
-        else manual();
 
-        telemetry.addData("The right slide position in TICKS is: ", arm.getCurrentPosition());
+        telemetry.addData("The right slide position in TICKS is: ", Arm.getCurrentPosition());
 
     }
     public void outtake() {
-        arm.setTargetPosition(HIGH);
+        Arm.setTargetPosition(HIGH);
     }
     public void intake() {
         //Use this for high chamber
-        arm.setTargetPosition(MID);
+        Arm.setTargetPosition(MID);
     }
 
     public void zeroPos() {
-        arm.setTargetPosition(INTAKE);
-    }
-    public void manual() {
-        while (gamepad2.left_stick_y >= 0.5 && gamepad2.left_stick_y <= -0.5) {
-            arm.setPower(-gamepad2.left_stick_y);
-        }
+        Arm.setTargetPosition(INTAKE);
+
     }
 }
