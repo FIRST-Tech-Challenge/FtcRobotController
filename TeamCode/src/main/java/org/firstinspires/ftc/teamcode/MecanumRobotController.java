@@ -64,7 +64,6 @@ public class MecanumRobotController {
     private double turnStartedTime;
     private double turnStoppedTime;
     private double headingOffset;
-    private double distance;
     private int kTuner;
 
 
@@ -321,15 +320,15 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot will move.
     public void positionDrive(SparkFunOTOS.Pose2D wantedPosition, double speed) {
         SparkFunOTOS.Pose2D currentPosition = getPosition();
-        distance = Math.sqrt(Math.pow(currentPosition.x - wantedPosition.x, 2) + Math.pow(currentPosition.y - wantedPosition.y, 2));
-        while (distance > MIN_DIST_TO_STOP) {
-            currentPosition = getPosition();
+        double distance = Math.sqrt(Math.pow(currentPosition.x - wantedPosition.x, 2) + Math.pow(currentPosition.y - wantedPosition.y, 2));
+        while (distance > MIN_DIST_TO_STOP && robot.opModeIsActive()) {
             wantedHeading = wantedPosition.h;
+            currentPosition = getPosition();
             double dy = wantedPosition.y - currentPosition.y;
             double dx = wantedPosition.x - currentPosition.x;
             double moveDirection = Math.atan2(dy, dx);
-            double forward = -speed * Math.cos((moveDirection - currentPosition.h) * (Math.PI / 180));
-            double strafe = -speed * Math.sin((moveDirection - currentPosition.h) * (Math.PI / 180));
+            double forward = -speed * Math.cos((moveDirection - currentPosition.h));
+            double strafe = -speed * Math.sin((moveDirection - currentPosition.h));
             move(forward, strafe, 0.0, HEADING_CORRECTION_POWER);
             distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         }
@@ -485,8 +484,6 @@ public class MecanumRobotController {
         telemetry.addData("Wanted Heading", wantedHeading);
         telemetry.addData("", "");
         telemetry.addData("Runtime", runtime.seconds());
-        telemetry.addData("", "");
-        telemetry.addData("Distance to dest", distance);
 
         telemetry.update();
     }
