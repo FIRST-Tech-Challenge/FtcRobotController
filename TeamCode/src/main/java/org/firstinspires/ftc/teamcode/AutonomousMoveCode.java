@@ -1,41 +1,38 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@Config
-@Autonomous(name="AutonomousMoveCode", group="Examples")
+@Autonomous(name="AutonomousMoveCode", group="org.firstinspires.ftc.teamcode")
 public class AutonomousMoveCode extends LinearOpMode {
-    private FtcDashboard dashboard;
-    private RobotHardware robot = new RobotHardware();
+    private RobotHardware       robot = new RobotHardware();
+
+    private ElapsedTime         runtime = new ElapsedTime();
 
     // Constants for distance calculations
-    private static final double COUNTS_PER_MOTOR_GOBILDA_435 = 384.5;
-    private static final double COUNTS_PER_MOTOR_GOBILDA_312 = 537.7;
-    private static final double DRIVE_GEAR_REDUCTION = 0.66; //24:16 Motor:Wheel
-    private static final double WHEEL_DIAMETER_MM = 96; // Wheel diameter mm
-    private static final double COUNTS_PER_MM_Drive = (COUNTS_PER_MOTOR_GOBILDA_435 * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_MM * Math.PI);
-    private static final double COUNTS_PER_CM_Slides = COUNTS_PER_MOTOR_GOBILDA_312 / 38.2; //Ticks Per Rotation * Pulley Circumference
+    static final double COUNTS_PER_MOTOR_GOBILDA_435    = 384.5;
+    static final double COUNTS_PER_MOTOR_GOBILDA_312    = 537.7;
+    static final double DRIVE_GEAR_REDUCTION            = 0.66; //24:16 Motor:Wheel
+    static final double WHEEL_DIAMETER_MM               = 96; // Wheel diameter mm
+    static final double COUNTS_PER_MM_Drive             = (COUNTS_PER_MOTOR_GOBILDA_435 * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * Math.PI);
+    static final double COUNTS_PER_CM_Slides = COUNTS_PER_MOTOR_GOBILDA_312 / 38.2; //Ticks Per Rotation * Pulley Circumference
 
     //Timer
-    private static ElapsedTime hook_Time = new ElapsedTime();
-    public static double intake_Wait_Time = 0.5;
-    public static double deposit_Wait_Time = 0.5;
+    static ElapsedTime hook_Time = new ElapsedTime();
+    static double intake_Wait_Time = 0.5;
+    static double deposit_Wait_Time = 0.5;
 
     //Segment 1 Distance
-    public static double first_forward = -100;
-    public static double speed = 0.2;
+    static double first_forward = -300;
+    static double speed = 0.2;
 
     //Action 1:
 
-    public static int first_strafe = 686;
+    static int first_strafe = 686;
 
     @Override
     public void runOpMode() {
@@ -44,39 +41,57 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.init(hardwareMap);
         robot.initIMU();
 
-        telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
-
+        //
         robot.frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        robot.depositClawServo.setPosition(0);
+        //
+        robot.depositClawServo.setPosition(0.1);
+        robot.intakeSlideServo.setPosition(0.3);
+        robot.depositWristServo.setPosition(0.1);
+        robot.depositLeftArmServo.setPosition(0.1);
+        robot.depositRightArmServo.setPosition(0.1);
+
+        //
+        telemetry.addData("Starting at ", "%7d:%7d",
+                robot.frontLeftMotor.getCurrentPosition(),
+                robot.frontRightMotor.getCurrentPosition());
+        telemetry.update();
 
         // Wait for the game to start
         waitForStart();
+        //
+        driveToPosition(first_forward, speed,15);
+        //
+        sleep(2000);
+        robot.intakeSlideServo.setPosition(0.5);
+        //
+        sleep(2000);
+        Slides_Move(80,0.3);
+        sleep(2000);
+        Slides_Move(80,0.3);
+        sleep(2000);
+        Slides_Move(-80,0.3);
 
-        //Segment 1: Score first Specimen
-        driveToPosition(first_forward, speed);
-        
-        //Action
-        Action_One();
+        sleep(2000);
+        robot.intakeSlideServo.setPosition(0.4);
+        sleep(2000);
+        robot.intakeSlideServo.setPosition(0.6);
 
-        // Segment 2: Move forward 24 inches
+        sleep(2000);  // pause to display final telemetry message.
+        driveToPosition(first_forward*-1, speed,15);
+        sleep(5000);
 
-        // Segment 3: Move to park step 1
-
-        // Segment 4: Move to park step 2
-
-        //Segment 5: Raise Slides
-
-        //Segment 6: Move to bar
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
     }
 
     /**
      * Moves the robot forward a specified number of inches at a given speed.
      */
-    private void driveToPosition(double dist_mm, double speed) {
+    private void driveToPosition(double dist_mm, double speed,double timeoutS) {
         int targetPosition = (int)(dist_mm * COUNTS_PER_MM_Drive);
 
         // Set target position for both motors
@@ -98,7 +113,10 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backRightMotor.setPower(speed);
 
         // Wait until the robot reaches the target position
-        while (opModeIsActive() && (robot.frontLeftMotor.isBusy() && robot.frontRightMotor.isBusy())) {
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                (robot.frontLeftMotor.isBusy() && robot.frontRightMotor.isBusy() && robot.backLeftMotor.isBusy() && robot.backRightMotor.isBusy())) {
+            // display
             telemetry.addData("Motor Position", "Left: %d, Right: %d",
                     robot.frontLeftMotor.getCurrentPosition(), robot.frontRightMotor.getCurrentPosition());
             telemetry.update();
@@ -111,11 +129,11 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backRightMotor.setPower(0);
 
         // Reset to RUN_USING_ENCODER mode
-        robot.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sleep(1000);
     }
     /**
      strafing
@@ -159,6 +177,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.frontRightMotor.setPower(0);
         robot.backLeftMotor.setPower(0);
         robot.backRightMotor.setPower(0);
+        sleep(1000);
     }
     /**
      * Turns the robot by a specific angle (in degrees) at a given speed.
@@ -188,6 +207,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
         robot.backRightMotor.setPower(0);
+        sleep(1000);
     }
 
     /**
@@ -208,18 +228,8 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.liftMotorRight.setTargetPosition(target_Position);
         robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.liftMotorRight.setPower(speed);
         robot.liftMotorLeft.setPower(speed);
+        robot.liftMotorRight.setPower(speed);
     }
 
-    private void Action_One (){
-        robot.intakeRightArmServo.setPosition(0.9);
-        robot.intakeLeftArmServo.setPosition(0.9);
-
-        robot.depositRightArmServo.setPosition(0.83);
-        robot.depositLeftArmServo.setPosition(0.83);
-        robot.depositWristServo.setPosition(0.5);
-
-        Slides_Move(15, 0.3);
-    }
 }
