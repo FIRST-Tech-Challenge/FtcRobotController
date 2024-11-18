@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@Autonomous(name="RedSideClaw Auto")
-public class RedSideClawAuto extends LinearOpMode {
+@Autonomous(name="Far Claw")
+public class FarSideClawAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -43,22 +43,32 @@ public class RedSideClawAuto extends LinearOpMode {
         arm = new Arm(hardwareMap);
         claw = new Claw(hardwareMap);
         clawPos = 0.6;
+        waitForStart();
+        //wait for other team
+        sleep(5000);
 
-
+        //set arm to middle
         claw.close(clawPos);
         armPosition = 0.7;
         arm.setPosition(armPosition);
 
         waitForStart();
+        strafe = 0.3;
+        rotate = 0;
+        forward = 0;
+        robot.drive(forward,strafe,rotate);
+        sleep(650);
 
+        //go forward
         strafe = 0;
         rotate = 0;
         forward = -0.4;
         robot.drive(forward,strafe,rotate);
 
 
-        sleep(1500);
-
+        sleep(2600);
+        robot.drive(0,0,0);
+        //turn robot around to bucket
         strafe = 0;
         rotate = 0.2;
         forward = 0;
@@ -69,97 +79,108 @@ public class RedSideClawAuto extends LinearOpMode {
         robot.drive(0,0,0);
         liftPower = -0.8;
         lift.moveLift(liftPower);
-        sleep(3000);
+        sleep(2500);
+        //lower lift
         liftPower = 0;
         lift.moveLift(liftPower);
 
+        //go forward
+//        strafe = 0;
+//        rotate = 0;
+//        forward = -0.1;
+//        robot.drive(forward,strafe,rotate);
+//
+//        sleep(500);
+
+
+
+//        strafe = 0;
+//        rotate = -0.1;
+//        forward = 0;
+//        robot.drive(forward,strafe,rotate);
+//
+//        sleep(500);
+        //rotate robot to score
+//        strafe = 0;
+//        rotate = -0.2;
+//        forward = 0;
+//        robot.drive(forward,strafe,rotate);
+//
+//        sleep(300);
+        //forward to score
         strafe = 0;
         rotate = 0;
         forward = -0.1;
         robot.drive(forward,strafe,rotate);
 
-        sleep(1000);
+        sleep(400);
 
+        robot.drive(0,0,0);
+
+        //score
+        armPosition = 0.5;
+        arm.setPosition(armPosition);
+        sleep(1000);
+        claw.release();
+
+        armPosition = 0.6;
+        arm.setPosition(armPosition);
+        sleep(300);
+
+        liftPower = 0.8;
+        lift.moveLift(liftPower);
+        sleep(2000);
+        liftPower = 0;
+        lift.moveLift(liftPower);
+        // rotate back to straight position
         strafe = 0;
-        rotate = -0.1;
+        rotate = -0.2;
         forward = 0;
         robot.drive(forward,strafe,rotate);
 
-        sleep(500);
+        sleep(1200);
 
-        strafe = 0;
-        rotate = 0.1;
-        forward = 0;
-        robot.drive(forward,strafe,rotate);
-
-        sleep(1000);
-
+        //go back after scoring high bucket
         strafe = 0;
         rotate = 0;
         forward = 0.2;
         robot.drive(forward,strafe,rotate);
 
-        sleep(1000);
+        sleep(9000);
 
         robot.drive(0,0,0);
 
-        armPosition = 0.5;
-        arm.setPosition(armPosition);
-        sleep(4000);
-        claw.release();
-
-        robot.drive(0,0,0);
-//        strafe = 0;
-//        rotate = 0;
-//        forward = -0.2;
-//        robot.drive(forward,strafe,rotate);
-//
-//
+//        armPosition = 0.3;
+//        arm.setPosition(armPosition);
 //        sleep(1000);
-
-
-//        strafe = 0;
-//        rotate = -0.5;
+//        //strafe to bars
+//        strafe = 0.5;
+//        rotate = 0;
 //        forward = 0;
 //        robot.drive(forward,strafe,rotate);
 //
-//        sleep(800);
+//        sleep(2600);
 //
-//        strafe = 0;
-//        rotate = 0;
-//        forward = 0.4;
-//        robot.drive(forward,strafe,rotate);
-//
-//
-//        sleep(1800);
-//
+//        //rotate 180 to facing bar
 //        strafe = 0;
 //        rotate = 0.5;
 //        forward = 0;
 //        robot.drive(forward,strafe,rotate);
 //
-//
-//        sleep(800);
+//        sleep(1500);
+//        //drive forward to touch the bars
 //        strafe = 0;
 //        rotate = 0;
-//        forward = -0.4;
+//        forward = -0.3;
 //        robot.drive(forward,strafe,rotate);
 //
-//
-//        sleep(2000);
-//
-//
+//        sleep(1000);
+
 //        robot.drive(0,0,0);
 //
-//        liftPower = -0.5;
-//        lift.moveLift(liftPower);
-//        sleep(1500);
-//        liftPower = 0;
-//        lift.moveLift(liftPower);
-//
-//        armPosition = 0.5;
+//        armPosition = 0.3;
 //        arm.setPosition(armPosition);
-//        sleep(10000);
+//        sleep(1000);
 
 
         while(opModeIsActive())
@@ -169,4 +190,3 @@ public class RedSideClawAuto extends LinearOpMode {
         }
     }
 }
-
