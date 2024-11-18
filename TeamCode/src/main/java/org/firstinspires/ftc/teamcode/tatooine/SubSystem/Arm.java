@@ -336,7 +336,6 @@ public class Arm {
             return !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE);
         }
     }
-
     //Sets the angle motor power through PID and F
     public class moveAngle implements Action {
 
