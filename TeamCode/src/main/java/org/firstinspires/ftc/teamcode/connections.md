@@ -31,7 +31,7 @@
 | 0          | Elbow       | Intake Elbow servo        |
 | 1          | RightIntake | CR servo for right intake |
 | 2          | LeftIntake  | CR servo for left intake  |
-| 3          | -           | -                         |
+| 3          | Stopper     | Servo for stopper         |
 | 4          | -           | -                         |
 | 5          | -           | -                         |
 
@@ -41,7 +41,7 @@
 
 | I2C Bus | Name        | Description                                |
 |---------|-------------|--------------------------------------------|
-| 0       | -           | IMU(vert. deadwheel, horizontal deadwheel) |
+| 0       | odo         | IMU(vert. deadwheel, horizontal deadwheel) |
 | 1       | ColorSensor | Intake color sensor                        |
 
 ## Digital

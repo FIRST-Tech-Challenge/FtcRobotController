@@ -145,7 +145,7 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void HoldInAuto() {
-        telemetry.addLine("Trying to outtake");
+        telemetry.addLine("Holding out/intake");
         telemetry.update();
 
         this.leftServo.setPower(0);

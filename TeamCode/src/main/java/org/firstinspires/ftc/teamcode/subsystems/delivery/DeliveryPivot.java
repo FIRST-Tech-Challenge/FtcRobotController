@@ -25,7 +25,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int StartPositionFromCalibration = 1975 - 310;
 
-    public static int DeliveryPositionFromStart = 400 + 310;
+    public static int DeliveryPositionFromStart = 425 + 310;
 
     public static int IntakePositionFromStart = -1500 + 310;
 
@@ -42,7 +42,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     SonicPIDController pidController;
 
-    private double recordedPosition;
+    public static double recordedPosition;
 
     public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
