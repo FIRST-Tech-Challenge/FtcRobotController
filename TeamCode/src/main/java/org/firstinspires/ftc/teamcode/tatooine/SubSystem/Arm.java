@@ -286,13 +286,13 @@ public class Arm {
             if (level == 0) {goal = 40;}
             else if (anglePID.atSetPoint() && level == 0){;
                 level = 1;
-                goal = 70;
+                goal = 60;
                 servoGoal =1;}
             if (anglePID.atSetPoint() && level == 1) {angleMotor.setPower(0);}
             angleMotor.setPower(anglePID.calculate(getAngle(), goal));
             extendServoLeft.setPosition(servoGoal);
             extendServoRight.setPosition(servoGoal);
-            return !anglePID.atSetPoint() && !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE) ;
+            return !anglePID.atSetPoint() && !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE) && level == 1;
         }
     }
 

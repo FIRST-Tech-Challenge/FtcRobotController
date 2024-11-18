@@ -39,6 +39,9 @@ public class arm_t extends LinearOpMode {
             {
                 runningActions.add(arm.setExtension(1));
             }
+            if(gamepad1.dpad_up){
+                runningActions.add(arm.scoreAction());
+            }
 
 
             // update running actions
