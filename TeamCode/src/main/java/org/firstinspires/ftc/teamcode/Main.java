@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.dashboard.FtcDashboard;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.HashMap;
 
@@ -36,6 +39,8 @@ public class Main extends LinearOpMode {
         //create failsafe so if joysticks are not being used then switch between joystick and dpad for checking movement
         initialize_motors();//motor setup
         initialize_servos();//servo setup
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemerty = dashboard.getTelemetry();
         //wait for start to be pressed
         waitForStart();
         //if op mode is active then we can continue
@@ -46,7 +51,7 @@ public class Main extends LinearOpMode {
                 float right_stick_x = gamepad1.right_stick_x;
                 //telemetry.addData("Test", true);
                 telemetry.addData("left_stick_x", gamepad2.left_stick_x);
-
+                dashboardTelemerty.addData("left_stick_x", gamepad2.left_stick_x);
                 initialize_direction();//sets up the direction for motors and servos
                 Arm_Motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 Hand_Rotator_Servo.setPosition(Hand_Rotator_Servo.getPosition() + gamepad2.left_stick_x*0.01);
@@ -56,6 +61,12 @@ public class Main extends LinearOpMode {
                 telemetry.addData("direction", Hand_Servo.getDirection());
                 telemetry.addData("arm position", Arm_Motor.getCurrentPosition());
                 telemetry.addData("Dist To Move", dist_to_move);
+
+                dashboardTelemerty.addData("Hand Servo Position", Hand_Servo.getPosition());
+                dashboardTelemerty.addData("Hand Servo Position incorrect", Hand_Rotator_Servo.getPosition());
+                dashboardTelemerty.addData("direction", Hand_Servo.getDirection());
+                dashboardTelemerty.addData("arm position", Arm_Motor.getCurrentPosition());
+                dashboardTelemerty.addData("Dist To Move", dist_to_move);
                 //Hand_Servo.setDirection(gamepad2.a ? Servo.Direction.REVERSE: Servo.Direction.FORWARD);
                 //Hand_Servo.setPosition(gamepad2.a ? 0.65: 0);
 
@@ -75,6 +86,8 @@ public class Main extends LinearOpMode {
                     Hand_Servo.setPosition(0);
                 }
                 telemetry.addData("Hand Servo grip", Hand_Servo.getPosition());
+
+                dashboardTelemerty.addData("Hand Servo grip", Hand_Servo.getPosition());
 
                 //dist_to_move += gamepad2.left_stick_y*0.1;
                 Arm_Motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.4 : 0.5) - (gamepad2.right_bumper ? 0.1f : 0)) *-1);
@@ -98,6 +111,7 @@ public class Main extends LinearOpMode {
                 Front_Right_Wheel.setPower(((left_stick_y - left_stick_x)*-1) - right_stick_x);
                 //update loop
                 telemetry.update();
+                dashboardTelemerty.update();
             }
             //DataUpdate.active = false;
         }
