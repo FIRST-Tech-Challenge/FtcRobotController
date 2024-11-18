@@ -32,25 +32,16 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
 
 
 
+//        robot.stopMechanisms();
+//        sleep(10000);
 
 
         // Phase 1 auto program (go forward, raise arm device, place pre-loaded sample, then strafe
         // into the ascent zone and use the arm device to touch the first bar
         // Fairly accurate but might need improvement
 
-        //robot.claw.setPower(.5);
-        //robot.liftExtender.setTargetPosition(0);
 
-        //Positive values make the lift go backwards
-        //Negative values make the lift go forwards
-//        robot.liftPitch(200, 0.05);
-//        robot.intakeToggle(1);
 
-        // Main movement of drivetrain during Auto
-        //robot.goStraight(1100, 500); // 500 is good velocity for now
-//        robot.goStraight(200, 500); // 500 is good velocity for now
-//        robot.newTurnFunction(90); // 500 is good velocity for now
-        //telemetry.addData("angle", getAngle() );
         robot.strafeR(120, 500);
         robot.goStraight(470, 500); // 500 is good velocity for now
         robot.liftExtender(2702, 800);
@@ -58,30 +49,8 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         robot.extake(1000);
         robot.clawRoll.setPosition(0.3372);
         robot.liftPitch(0, 600);
-        //sleep(100);
-        //robot.goStraight(-70, 300);
-        //sleep(100);
-// 500 is good velocity for now
+
         robot.liftExtender(0, 800);
-
-
-
-        //to score another sample
-//        robot.newTurnFunction(-90);
-//        robot.clawRoll.setPosition(0);
-//
-//        robot.strafeR(370, 500);
-//
-//        robot.goStraight(760, 500);
-//        //prev 164
-//        robot.newTurnFunction(0);
-//        robot.strafeR(30, 500);
-//        robot.liftExtender(40, 800);
-
-
-//        robot.liftPitch(1863, 120);
-//        robot.goStraight(130, 500);
-//        robot.intake(4000);
 
 
 
