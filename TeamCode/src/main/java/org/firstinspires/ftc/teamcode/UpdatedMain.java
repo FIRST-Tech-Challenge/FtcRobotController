@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp
+@Config
 public class UpdatedMain extends LinearOpMode {
     //Hand Servos
     private Servo hand_rotation_servo;
@@ -23,19 +25,19 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor back_left_wheel;
     private DcMotor front_right_wheel;
     private DcMotor back_right_wheel;
-    private final int delay = 10;
+    private static int delay = 10;
     private int point;
     private boolean claw_gripped = false;
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private Telemetry dashboardTelemerty = dashboard.getTelemetry();
     //main loop
-    private Telemetry dashboardTelemerty;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //setting up motors
         initialize_hand();
         initialize_arm();
         initialize_wheels(options.Set1);
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemerty = dashboard.getTelemetry();
         //wait for start
         waitForStart();
         if(opModeIsActive()){
