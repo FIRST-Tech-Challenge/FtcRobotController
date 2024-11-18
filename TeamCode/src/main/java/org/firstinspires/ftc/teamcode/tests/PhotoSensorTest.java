@@ -3,7 +3,7 @@
 
     Copyright (c) 2024 SparkFun Electronics
 */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.MecanumRobotController;
 
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)

@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Auto Blue Observation", group="Robot")
-public class AutoBlueObservation extends LinearOpMode {
+@Autonomous(name="Auto Red Basket", group="Robot")
+public class AutoBasket extends LinearOpMode {
     public static final double DRIVE_SPEED = 2.0;
     public static final double TURN_SPEED = 0.5;
     private MecanumRobotController robotController;
@@ -25,32 +24,8 @@ public class AutoBlueObservation extends LinearOpMode {
         // Initialize
         initialize();
         waitForStart();
-        intake.close();
-//        intake.unwhack();
-        pivot.setTargetPosition(-1170);
-        robotController.distanceDrive(25, -12.528807709151522, DRIVE_SPEED);
-        // Pivot: -1170, viper: 1280
-        viperSlide.setTargetPosition(1280);
-        robotController.sleep(1);
-        pivot.setTargetPosition(-1000);
-        robotController.sleep(1);
-        viperSlide.setTargetPosition(800);
-        robotController.sleep(1);
-        intake.open();
-        viperSlide.setTargetPosition(ViperSlide.MIN_POSITION);
-        robotController.sleep(1);
-        intake.close();
-
-        robotController.distanceDrive(27.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(24.0, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(45.0, 180.0, DRIVE_SPEED);
-        robotController.distanceDrive(45.0, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(12.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(45.0, 180.0, DRIVE_SPEED);
-        robotController.distanceDrive(45.0, -0.0, DRIVE_SPEED);
-        robotController.distanceDrive(9.0, 90.0, DRIVE_SPEED);
-        robotController.distanceDrive(45.0, 180.0, DRIVE_SPEED);
+        // robotController.turnTo(45, TURN_SPEED);
+        robotController.positionDrive(new SparkFunOTOS.Pose2D(0, 24, 0), 1.0);
     }
 
     public void initialize() {

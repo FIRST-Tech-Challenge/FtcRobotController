@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Auto Red Observation", group="Robot")
-public class AutoRedObservation extends LinearOpMode {
+public class AutoObservation extends LinearOpMode {
     public static final double DRIVE_SPEED = 2.7;
     public static final double TURN_SPEED = 0.8;
     private MecanumRobotController robotController;
