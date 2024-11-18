@@ -71,32 +71,30 @@ public class gamepad2Controls extends Thread{
                 }
 
 
+                // The code below is used for upcycling:
                 while(gamepad2.left_stick_button)
                 {
                     if (-gamepad2.right_stick_y >= 0.3) {
                         SM.setPos(675, 0.5);
                     }
-                    sleep(1000);
+                    mainFile.safeWaitSeconds(0.5);
 
                     if (-gamepad2.left_stick_y >= 0.3) {
                         SM.setPos(180, 0.5);
                     }
 
-                    sleep(1000);
+                    mainFile.safeWaitSeconds(0.5);
 
                     clawRotateServo.setServoPosition(0.05);
 
-                    sleep(1000);
+                    mainFile.safeWaitSeconds(0.5);
 
                     clawServo.setServoPosition(0.33);
                 }
 
+                // The code below is used for downcycling:
                 while(gamepad2.right_stick_button)
                 {
-                    //change motor power and speed while downcycling
-                    clawServo.setServoPosition(0.7);
-
-                    sleep(1000);
 
                     clawRotateServo.setServoPosition(0.4);
 
