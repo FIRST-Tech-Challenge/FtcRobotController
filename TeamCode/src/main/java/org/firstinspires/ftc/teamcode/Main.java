@@ -28,9 +28,7 @@ public class Main extends LinearOpMode {
     private double dist_to_move = 0;
     private double power = 0;
 
-    //private Controls_Update ControlsUpdate = new Controls_Update();
-    //private Data_Update DataUpdate = new Data_Update();
-    //private Thread dta = new Thread(DataUpdate);
+
     @Override
     public void runOpMode() throws InterruptedException {
         /*
