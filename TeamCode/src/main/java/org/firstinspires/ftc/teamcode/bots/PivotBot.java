@@ -9,7 +9,8 @@ package org.firstinspires.ftc.teamcode.bots;
 public class PivotBot extends LimelightBot {
 
     private int maximumPivot = 1300;
-    private int minumimPivot = -100;
+    private int minumimPivot = -120;
+    private int maximumSlide = 2400;
     public boolean pivotOutOfRange = false;
 
     public int slideTarget = 110;
@@ -65,7 +66,7 @@ public class PivotBot extends LimelightBot {
             pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 //            pivotPower = 0.3 + ((Math.abs(pivotTarget - pivotMotor.getCurrentPosition()) / maximumPivot) * 0.5);
-            pivotMotor.setPower(0.6);
+            pivotMotor.setPower(0.7);
 
         } else {
 
@@ -76,13 +77,13 @@ public class PivotBot extends LimelightBot {
 
         slideMotor.setTargetPosition(slideTarget);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.5);
+        slideMotor.setPower(0.7);
     }
 
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (slideMotor.getCurrentPosition() < 1950) {
-                slideTarget = slideMotor.getCurrentPosition() + ((1950 - slideMotor.getCurrentPosition()) / 10);
+            if (slideMotor.getCurrentPosition() < maximumSlide) {
+                slideTarget = slideMotor.getCurrentPosition() + ((maximumSlide - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }

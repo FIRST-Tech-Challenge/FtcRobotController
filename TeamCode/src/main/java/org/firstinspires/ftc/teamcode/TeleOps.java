@@ -58,7 +58,7 @@ public class TeleOps extends LinearOpMode {
             robot.onLoop(0, "manual drive");
 
             robot.pivotControl(gamepad1.dpad_up, gamepad1.dpad_down);
-            robot.slideControl(gamepad1.dpad_left, gamepad1.dpad_right);
+            robot.slideControl(gamepad1.right_bumper, gamepad1.left_bumper);
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 
@@ -69,6 +69,9 @@ public class TeleOps extends LinearOpMode {
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());
             telemetry.addData("rotate position", robot.rotate.getPosition());
+            telemetry.addData("vR",robot.rightFront.getCurrentPosition() );
+            telemetry.addData("vL", robot.rightRear.getCurrentPosition());
+            telemetry.addData("h", robot.leftRear.getCurrentPosition());
 
             if (robot.pivotOutOfRange) {
 

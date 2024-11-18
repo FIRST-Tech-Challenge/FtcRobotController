@@ -29,13 +29,13 @@ public class OdometryBot extends PinchBot {
     public double savedStartAngle;
 
     final int vLDirection = 1;
-    final int vRDirection = 1;
+    final int vRDirection =-1;
     final int hDirection = -1;
     final double diameter = 18719; // actually diameter: 285/609 = d/40000
     final double hDiameter = 22332; //diameter of horizontal encoder: 170*2/609 = hD/40000
-    final double leftX = -(diameter/2); //135mm
+    final double leftX = (diameter/2); //135mm
     final double rightX = (diameter/2); //170mm
-    final double hY = -(hDiameter/2); //135mm
+    final double hY = (hDiameter/2); //135mm
 
     double vLOffset, vROffset, hOffset = 0;
 
@@ -184,16 +184,16 @@ public class OdometryBot extends PinchBot {
 //    }
 
     protected void onTick(){
-//        RobotLog.d(String.format("Position, heading: %.2f, %.2f, %.2f", xBlue, yBlue, thetaDEG));
-////
-//        opMode.telemetry.addData("X:", xBlue);
-//        opMode.telemetry.addData("Y:", yBlue);
-//        opMode.telemetry.addData("Theta:", thetaDEG);
-//        opMode.telemetry.addData("vL", rightFront.getCurrentPosition());
-//        opMode.telemetry.addData("vR", intake.getCurrentPosition());
-//        opMode.telemetry.addData("h", rightRear.getCurrentPosition());
-        //opMode.telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
-//        opMode.telemetry.update();
+        RobotLog.d(String.format("Position, heading: %.2f, %.2f, %.2f", xBlue, yBlue, thetaDEG));
+
+        opMode.telemetry.addData("X:", xBlue);
+        opMode.telemetry.addData("Y:", yBlue);
+        opMode.telemetry.addData("Theta:", thetaDEG);
+        opMode.telemetry.addData("vL", leftFront.getCurrentPosition());
+        opMode.telemetry.addData("vR", rightRear.getCurrentPosition());
+        opMode.telemetry.addData("h", leftRear.getCurrentPosition());
+        opMode.telemetry.addData("h diameter", (int)((thetaDEG*360)/(leftRear.getCurrentPosition() * Math.PI)));
+        opMode.telemetry.update();
 
         //outputEncoders();
         super.onTick();

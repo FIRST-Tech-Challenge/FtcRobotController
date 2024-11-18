@@ -95,10 +95,10 @@ public class FourWheelDriveBot extends BotBot{
 //            }
 //            opMode.telemetry.update();
             //RobotLog.d("stick button pressed");
-            driveMultiplier = 0.60;
+            driveMultiplier = 0.50;
             opMode.telemetry.addData("FAST", driveMultiplier);
         } else {
-            driveMultiplier = 0.075;
+            driveMultiplier = 0.05;
             opMode.telemetry.addData("SLOW", driveMultiplier);
         }
         opMode.telemetry.update();
