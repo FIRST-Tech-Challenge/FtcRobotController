@@ -58,12 +58,9 @@ public class AutonomousMoveCode extends LinearOpMode {
 
         //Segment 1: Score first Specimen
         driveToPosition(first_forward, speed);
-        telemetry.addData("Ticks: ", robot.frontLeftMotor.getCurrentPosition()/COUNTS_PER_MM_Drive);
-        telemetry.addData("Calculated Ticks: ", first_forward);
-        telemetry.update();
-       // Action_One();
+        
         //Action
-
+        Action_One();
 
         // Segment 2: Move forward 24 inches
 
