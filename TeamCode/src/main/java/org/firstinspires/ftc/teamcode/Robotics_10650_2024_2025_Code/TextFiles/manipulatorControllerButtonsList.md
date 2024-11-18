@@ -1,10 +1,13 @@
 List of controls for the manipulator controller (gamepad2): 
 
 (Preset lift down position (all the way down)) Circle: Moves the lift forwards (until it reaches 
-the max of position 2000)
+the max of position 2090)
 
-(Preset lift up position (all the way up)) Square: Moves the lift backwards (until it reaches the 
-minimum of position of 0 (vertical))
+(lift default position) Square: Moves the lift backwards to default position and retracts the
+extender to default position
+
+(Preset high basket position) Triangle: Moves the lift pitch and extension to score in the high 
+basket
 
 (Lift pitch control) Left Control Stick Y-Axis: Makes the lift move forward or backwards based on 
 the control stick inputs (when it goes right the lift goes down and when it goes left the lift goes 
