@@ -16,31 +16,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DriveToTargetCommand extends SounderBotCommandBase {
 
     private static final String LOG_TAG = DriveToTargetCommand.class.getSimpleName();
-    double minPower = 0.3;
-    double distanceTolerance = 5;
+    double minPower = 0.15;
+
+    double distanceTolerance = 20;
 
     AutoMecanumDriveTrain driveTrain;
     GoBildaPinpointDriver odo;
     Telemetry telemetry;
-    double targetX, targetY;
+    double targetX, targetY, targetHeading;
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY) {
+    SonicPIDController xpid = new SonicPIDController(0.0015, 0, 0);
+    SonicPIDController ypid = new SonicPIDController(-0.001, 0, 0);
+    SonicPIDController hpid = new SonicPIDController(1, 0, 0);
+
+    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;
         this.targetX = targetX;
         this.targetY = targetY;
+        this.targetHeading = Math.toRadians(targetHeading);
+        this.minPower = minPower;
+
         addRequirements(driveTrain);
     }
 
     @Override
     public void execute() {
-        telemetry.addLine("Driving");
-        telemetry.update();
-
         odo.update();
+
         telemetry.addData("tx: ", targetX);
         telemetry.addData("ty: ", targetY);
+        telemetry.addData("th: ", targetHeading);
 
         telemetry.addData("x: ", odo.getPosX());
         telemetry.addData("y: ", odo.getPosY());
@@ -51,29 +58,48 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
         if(isTargetReached()) {
             // Give a 100ms to identify overshoot
-            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+            Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+            odo.update();
 
             if(isTargetReached()) {
+
+                telemetry.addLine("Done");
+                telemetry.update();
+
                 finished.set(true);
                 return;
             }
         }
 
+        odo.update();
+
         // Battery reading of 13.49 required a Kp of 0.015
-        double kp = 0.003;
-        double x = kp * (targetX - odo.getPosX());
-        double y = - kp * (targetY - odo.getPosY());
+        double x = xpid.calculatePIDAlgorithm(targetX - odo.getPosX());
+        double y = ypid.calculatePIDAlgorithm(targetY - odo.getPosY());
+        double h = hpid.calculatePIDAlgorithm(targetHeading - odo.getHeading());
 
         double botHeading = odo.getHeading();
 
         double rotY = y * Math.cos(-botHeading) - x * Math.sin(-botHeading);
         double rotX = y * Math.sin(-botHeading) + x * Math.cos(-botHeading);
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x), 1);
-        double frontLeftPower = (rotX + rotY) / denominator;
-        double backLeftPower = (rotX - rotY) / denominator;
-        double frontRightPower = (rotX - rotY) / denominator;
-        double backRightPower = (rotX + rotY) / denominator;
+
+
+        double frontLeftPower = (rotX + rotY + h);
+        double backLeftPower = (rotX - rotY + h);
+        double frontRightPower = (rotX - rotY - h);
+        double backRightPower = (rotX + rotY - h);
+
+        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        max = Math.max(max, Math.abs(backLeftPower));
+        max = Math.max(max, Math.abs(backRightPower));
+
+        if (max > 1.0) {
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
 
         if(Math.abs(frontLeftPower) < minPower) {
             frontLeftPower = minPower * Math.signum(frontLeftPower);
@@ -92,18 +118,20 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         }
 
         Log.i(LOG_TAG, String.format("Wheels power: fL: %f, fR: %f, bL: %f, bR: %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower));
-        telemetry.addData("frontLeft power", frontLeftPower);
-        telemetry.addData("frontRight power", frontRightPower);
-        telemetry.addData("backLeft power", backLeftPower);
-        telemetry.addData("backRight power", backRightPower);
-        telemetry.update();
+//        telemetry.addData("frontLeft power", frontLeftPower);
+//        telemetry.addData("frontRight power", frontRightPower);
+//        telemetry.addData("backLeft power", backLeftPower);
+//        telemetry.addData("backRight power", backRightPower);
+//        telemetry.update();
 
         driveTrain.setWheelsPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
     @Override
     protected boolean isTargetReached() {
-        return (Math.abs(targetX - odo.getPosX()) < distanceTolerance) && (Math.abs(targetY - odo.getPosY())) < distanceTolerance;
+        return (Math.abs(targetX - odo.getPosX()) < distanceTolerance)
+                && (Math.abs(targetY - odo.getPosY())) < distanceTolerance
+                && Math.abs(targetHeading - odo.getHeading()) < Math.toRadians(3);
     }
 
     @Override

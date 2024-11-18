@@ -49,12 +49,24 @@ public class CommandFactory {
         this.slider = slider;
     }
 
-    public DriveToTargetCommand driveToTarget(double targetX, double targetY) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY);
+    public TelemetryCommand WriteTelemetry() {
+        return  new TelemetryCommand(driveTrain, telemetry);
     }
 
-    public DriveToPositionCommand driveToPosition(double targetX, double targetY, double targetRotation) {
-        return new DriveToPositionCommand(driveTrain, telemetry).setTargetPosition(targetX, targetY, targetRotation);
+    public MotorTurnCommand MotorTest() {
+        return new MotorTurnCommand(driveTrain, telemetry);
+    }
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower);
+    }
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading) {
+        return driveToTarget(targetX, targetY, targetHeading, 0.1);
+    }
+
+    public DriveToPositionCommand driveToPosition(double targetX, double targetY, double targetheading) {
+        return new DriveToPositionCommand(driveTrain, telemetry).setTargetPosition(targetX, targetY, targetheading);
     }
 
     public DriveToTargetCommandAlterate driveToTargetAlternate(double targetX, double targetY, double targetHeading) {
