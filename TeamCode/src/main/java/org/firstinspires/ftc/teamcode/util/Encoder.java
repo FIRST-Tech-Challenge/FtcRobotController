@@ -1,21 +1,14 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;//package org.firstinspires.ftc.teamcode.pedroPathing.localization;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
- * This class is adapted from the Road Runner Encoder class. Later, this will be replaced with a
- * custom encoder class. According to Road Runner, this wraps a motor instance to provide corrected
- * velocity counts and allow reversing independently of the corresponding slot's motor direction.
- *
- * I'm fairly sure I didn't make any changes to this class, just copied it so I wouldn't have to have
- * import statements, so I'm not crediting myself as an author for this.
- *
- * @author Road Runner dev team
- * @version 1.0, 5/9/2024
+ * Wraps a motor instance to provide corrected velocity counts and allow reversing independently of the corresponding
+ * slot's motor direction
  */
-public class RoadRunnerEncoder {
+public class Encoder {
     private final static int CPS_STEP = 0x10000;
 
     private static double inverseOverflow(double input, double estimate) {
@@ -54,7 +47,7 @@ public class RoadRunnerEncoder {
     private double[] velocityEstimates;
     private double lastUpdateTime;
 
-    public RoadRunnerEncoder(DcMotorEx motor, NanoClock clock) {
+    public Encoder(DcMotorEx motor, NanoClock clock) {
         this.motor = motor;
         this.clock = clock;
 
@@ -65,7 +58,7 @@ public class RoadRunnerEncoder {
         this.lastUpdateTime = clock.seconds();
     }
 
-    public RoadRunnerEncoder(DcMotorEx motor) {
+    public Encoder(DcMotorEx motor) {
         this(motor, NanoClock.system());
     }
 
@@ -130,4 +123,3 @@ public class RoadRunnerEncoder {
         return inverseOverflow(getRawVelocity(), median);
     }
 }
-//

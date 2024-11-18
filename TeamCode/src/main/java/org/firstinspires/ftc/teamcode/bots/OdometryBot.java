@@ -12,6 +12,16 @@ import com.stormbots.MiniPID;
 import java.io.OutputStreamWriter;
 
 public class OdometryBot extends PinchBot {
+    // Wheel diameters in mm
+    final double VERTICAL_WHEEL_DIAMETER = 32; // Vertical wheel diameter
+    final double HORIZONTAL_WHEEL_DIAMETER = 48; // Horizontal wheel diameter
+
+    // Encoder ticks per revolution
+    final double TICKS_PER_REV = 2048;
+
+    // Conversion factors for ticks to distance (mm)
+    final double VERTICAL_TICKS_TO_MM = (Math.PI * VERTICAL_WHEEL_DIAMETER) / TICKS_PER_REV;
+    final double HORIZONTAL_TICKS_TO_MM = (Math.PI * HORIZONTAL_WHEEL_DIAMETER) / TICKS_PER_REV;
 
     public DcMotor horizontal = null;
     public DcMotor verticalRight = null;
@@ -29,13 +39,13 @@ public class OdometryBot extends PinchBot {
     public double savedStartAngle;
 
     final int vLDirection = 1;
-    final int vRDirection =-1;
-    final int hDirection = -1;
-    final double diameter = 18719; // actually diameter: 285/609 = d/40000
-    final double hDiameter = 22332; //diameter of horizontal encoder: 170*2/609 = hD/40000
-    final double leftX = (diameter/2); //135mm
+    final int vRDirection = 1;
+    final int hDirection = 1;
+    final double diameter = 15697; // actually diameter: 239/609 = d/40000
+    final double hDiameter = 10771; //diameter of horizontal encoder: 82*2/609 = hD/40000
+    final double leftX = -(diameter/2); //135mm
     final double rightX = (diameter/2); //170mm
-    final double hY = (hDiameter/2); //135mm
+    final double hY = -(hDiameter/2); //135mm
 
     double vLOffset, vROffset, hOffset = 0;
 
@@ -106,9 +116,9 @@ public class OdometryBot extends PinchBot {
      * @param h position of horizontal encoder
      */
     public void calculateCaseThree(double vL, double vR, double h) {
-        vL = vL * vLDirection;
-        vR = vR * vRDirection;
-        h = h * hDirection;
+        vL = vL * vLDirection * VERTICAL_TICKS_TO_MM;
+        vR = vR * vRDirection * VERTICAL_TICKS_TO_MM;
+        h = h * hDirection * HORIZONTAL_TICKS_TO_MM;
 
         double lC = vL - previousVL;
         double rC = vR - previousVR;
@@ -118,7 +128,7 @@ public class OdometryBot extends PinchBot {
 //        angleChange = (lC - rC)/(2 * diameter);
 //
 //        angleDEG = angleDEG + angleChange;
-        thetaRAD = thetaRAD + angleChange;
+        thetaRAD += angleChange;
         thetaDEG = Math.toDegrees(thetaRAD);
 
         //thetaDEG = getDeltaAngle();
@@ -184,21 +194,21 @@ public class OdometryBot extends PinchBot {
 //    }
 
     protected void onTick(){
-        RobotLog.d(String.format("Position, heading: %.2f, %.2f, %.2f", xBlue, yBlue, thetaDEG));
-
-        opMode.telemetry.addData("X:", xBlue);
-        opMode.telemetry.addData("Y:", yBlue);
-        opMode.telemetry.addData("Theta:", thetaDEG);
-        opMode.telemetry.addData("vL", leftFront.getCurrentPosition());
-        opMode.telemetry.addData("vR", rightRear.getCurrentPosition());
-        opMode.telemetry.addData("h", leftRear.getCurrentPosition());
-        opMode.telemetry.addData("h diameter", (int)((thetaDEG*360)/(leftRear.getCurrentPosition() * Math.PI)));
-        opMode.telemetry.update();
+//        RobotLog.d(String.format("Position, heading: %.2f, %.2f, %.2f", xBlue, yBlue, thetaDEG));
+////
+//        opMode.telemetry.addData("X:", xBlue);
+//        opMode.telemetry.addData("Y:", yBlue);
+//        opMode.telemetry.addData("Theta:", thetaDEG);
+//        opMode.telemetry.addData("vL", rightFront.getCurrentPosition());
+//        opMode.telemetry.addData("vR", intake.getCurrentPosition());
+//        opMode.telemetry.addData("h", rightRear.getCurrentPosition());
+        //opMode.telemetry.addData("h diameter", (int)((thetaDEG*360)/(horizontal.getCurrentPosition() * Math.PI)));
+//        opMode.telemetry.update();
 
         //outputEncoders();
         super.onTick();
         //thetaDEG = -getDeltaAngle();
-//        calculateCaseThree(slideMotor.getCurrentPosition() - vLOffset, leftRear.getCurrentPosition() - vROffset, pivotMotor.getCurrentPosition() - hOffset);
+        calculateCaseThree(leftFront.getCurrentPosition() - vLOffset, rightRear.getCurrentPosition() - vROffset, leftRear.getCurrentPosition() - hOffset);
                 /** must find a new motor encoders for the odometry pods */
         if (isCoordinateDriving) {
             driveToCoordinateUpdate(globalTargetX, globalTargetY, globalTargetTheta, globalTolerance, globalAngleTol, globalMagnitude);

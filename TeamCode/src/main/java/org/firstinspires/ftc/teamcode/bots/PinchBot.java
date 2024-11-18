@@ -31,7 +31,8 @@ public class PinchBot extends PivotBot{
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
 
-        pinch.setPosition(0.75);
+        pinch.setPosition(0.5);
+        rotate.setPosition(0.5);
     }
 
     protected void onTick() {
@@ -45,7 +46,7 @@ public class PinchBot extends PivotBot{
         if (open) {
 
             isOpen = true;
-            pinch.setPosition(0.695);
+            pinch.setPosition(0.5);
 
         }
         if (close) {
