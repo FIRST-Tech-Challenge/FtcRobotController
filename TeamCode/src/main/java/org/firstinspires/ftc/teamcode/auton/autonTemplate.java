@@ -23,7 +23,6 @@ public class autonTemplate extends LinearOpMode {
  //4
         telemetry.update();
         waitForStart();
-        r.setWrist(0.5);
 
 
 
