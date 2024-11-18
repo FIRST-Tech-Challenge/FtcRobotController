@@ -38,7 +38,7 @@ public class MainTeleop extends OpModeTemplate {
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
         //HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
 
-        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback);//, limeLight);
+        driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         switchToMode(PowerMode.REGULAR);
 
