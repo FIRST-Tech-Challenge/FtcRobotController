@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp
 public class UpdatedMain extends LinearOpMode {
@@ -24,13 +27,15 @@ public class UpdatedMain extends LinearOpMode {
     private int point;
     private boolean claw_gripped = false;
     //main loop
+    private Telemetry dashboardTelemerty;
     @Override
     public void runOpMode() throws InterruptedException {
         //setting up motors
         initialize_hand();
         initialize_arm();
         initialize_wheels(options.Set1);
-
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemerty = dashboard.getTelemetry();
         //wait for start
         waitForStart();
         if(opModeIsActive()){
@@ -98,6 +103,9 @@ public class UpdatedMain extends LinearOpMode {
      * displays data
      */
     public void display_data(){
+        dashboardTelemerty.addData("hand grip", hand_grip_servo.getPosition());
+        dashboardTelemerty.addData("Hand Rotation", hand_rotation_servo.getPosition());
+
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
     }
@@ -125,6 +133,7 @@ public class UpdatedMain extends LinearOpMode {
                         arm_rotator_motor.setTargetPosition(arm_rotator_motor.getCurrentPosition() + 1);
                         arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         telemetry.addData("running arm motor", true);
+                        dashboardTelemerty.addData("running arm motor", true);
                     }
                 } else if(gamepad2.left_stick_y < 0){
                     if(point == delay){
@@ -132,6 +141,7 @@ public class UpdatedMain extends LinearOpMode {
                         arm_rotator_motor.setTargetPosition(arm_rotator_motor.getCurrentPosition() - 1);
                         arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         telemetry.addData("running arm motor", true);
+                        dashboardTelemerty.addData("running arm motor", true);
                     }
                 }
                 break;
