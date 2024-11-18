@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Auto Red Basket", group="Robot")
+@Autonomous(name="Auto Basket", group="Robot")
 public class AutoBasket extends LinearOpMode {
     public static final double DRIVE_SPEED = 2.0;
     public static final double TURN_SPEED = 0.5;

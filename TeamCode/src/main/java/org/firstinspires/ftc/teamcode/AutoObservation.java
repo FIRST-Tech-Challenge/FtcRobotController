@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Auto Red Observation", group="Robot")
+@Autonomous(name="Auto Observation", group="Robot")
 public class AutoObservation extends LinearOpMode {
     public static final double DRIVE_SPEED = 2.7;
     public static final double TURN_SPEED = 0.8;
