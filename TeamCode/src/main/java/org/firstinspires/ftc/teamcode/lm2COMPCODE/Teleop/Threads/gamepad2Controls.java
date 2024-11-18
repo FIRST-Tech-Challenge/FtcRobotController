@@ -71,7 +71,7 @@ public class gamepad2Controls extends Thread{
                 }
 
 
-                while(gamepad2.left_trigger)
+                while(gamepad2.left_stick_button)
                 {
                     if (-gamepad2.right_stick_y >= 0.3) {
                         SM.setPos(675, 0.5);
@@ -91,7 +91,7 @@ public class gamepad2Controls extends Thread{
                     clawServo.setServoPosition(0.33);
                 }
 
-                while(gamepad2.right_trigger)
+                while(gamepad2.right_stick_button)
                 {
                     //change motor power and speed while downcycling
                     clawServo.setServoPosition(0.7);
