@@ -20,8 +20,6 @@ public class gamepad2Controls extends Thread{
     public servoManger clawServo = new servoManger();
     public servoManger clawRotateServo = new servoManger();
     public servoManger clawRotateServo2 = new servoManger();
-    public volatile float left_trigger;
-    public volatile  float right_trigger;
 
     public Gamepad gamepad2;
     private Teleop mainFile;
