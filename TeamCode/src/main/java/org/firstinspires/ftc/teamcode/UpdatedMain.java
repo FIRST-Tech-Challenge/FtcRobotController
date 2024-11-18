@@ -25,9 +25,6 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor back_left_wheel;
     private DcMotor front_right_wheel;
     private DcMotor back_right_wheel;
-    private final int delay = 10;
-    private int point;
-    private boolean claw_gripped = false;
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemerty = dashboard.getTelemetry();
     //main loop
