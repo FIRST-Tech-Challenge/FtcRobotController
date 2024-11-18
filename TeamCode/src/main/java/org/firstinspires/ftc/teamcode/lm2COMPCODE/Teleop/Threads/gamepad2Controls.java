@@ -71,7 +71,7 @@ public class gamepad2Controls extends Thread{
                 }
 
 
-                // The code below is used for upcycling:
+                // The code below is used for putting the sample into the basket:
                 while(gamepad2.left_stick_button)
                 {
                     if (-gamepad2.right_stick_y >= 0.3) {
@@ -92,7 +92,7 @@ public class gamepad2Controls extends Thread{
                     clawServo.setServoPosition(0.33);
                 }
 
-                // The code below is used for downcycling:
+                // The code below is used for bringing everything to it's original position:
                 while(gamepad2.right_stick_button)
                 {
 
@@ -106,6 +106,9 @@ public class gamepad2Controls extends Thread{
                         SM.setPos(0, 0.5);
                     }
                 }
+
+
+
 
 
 
