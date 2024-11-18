@@ -28,10 +28,10 @@ import java.text.DecimalFormat;
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
         //3.5 inches
-        public double par0YTicks = -1176; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 1176; // y position of the second parallel encoder (in tick units)
+        public double par0YTicks = 2100; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = -2100; // y position of the second parallel encoder (in tick units)
         //4.5 inches
-        public double perpXTicks = 1512; // x position of the perpendicular encoder (in tick units)
+        public double perpXTicks = -1512; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -52,10 +52,10 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FLM")));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BLM")));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "DW")));
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "BRM")));
 
-//        par1.setDirection(DcMotorSimple.Direction.REVERSE);
+        par0.setDirection(DcMotorSimple.Direction.REVERSE);
         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
