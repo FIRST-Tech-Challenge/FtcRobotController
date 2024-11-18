@@ -11,13 +11,8 @@
 
 // Custom definitions may go here
 
-// Include common definitions from above.
-apply from: '../build.common.gradle'
-apply from: '../build.dependencies.gradle'
-apply plugin: 'org.team11260.fast-load-plugin'
-
 buildscript {
-    repositories{
+    repositories {
         mavenCentral()
         maven {
             url = 'https://www.matthewo.tech/maven/'
@@ -27,6 +22,10 @@ buildscript {
         classpath 'org.team11260:fast-load-plugin:0.1.2'
     }
 }
+// Include common definitions from above.
+apply from: '../build.common.gradle'
+apply from: '../build.dependencies.gradle'
+apply plugin: 'org.team11260.fast-load-plugin'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -36,6 +35,14 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url = 'https://www.matthewo.tech/maven/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'org.team11260:fast-load:0.1.2'
 }
+
