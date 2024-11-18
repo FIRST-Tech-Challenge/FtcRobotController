@@ -16,7 +16,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
     double maxLifEtxtension =0;
-    int x = 0;
+    double targetPitchVert = 0;
 
     final double liftDist = 8.25;
 
@@ -115,7 +115,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                strafeVelocity = 400 * Math.signum(gamepad1.right_stick_x);
 //                turnVelocity = 400 * Math.signum(gamepad1.right_stick_x);
 //            }
-            int pitchSpeed = 25;
 
             if (gamepad1.left_trigger>0) {
                 //slow
@@ -201,8 +200,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
 
+//            if(gamepad2.left_bumper){//emergency button stops all movement (we can change that actual button later)
+//                liftPitchPosition =robot.liftPitch.getCurrentPosition();
+//                liftExtenderPosition =robot.liftPitch.getCurrentPosition();
+//
+//            }
 
-
+            //determines the speed
             if (Math.abs(robot.liftPitch.getCurrentPosition()-liftPitchPosition)>50){
                 if (robot.liftPitch.getCurrentPosition()<liftPitchPosition){
                     robot.liftPitch.setVelocity(2250);
@@ -268,28 +272,38 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            }
 
 //                robot.liftExtender(0, 0.3);
+
+//            }
+            telemetry.addData("ground mode pitch pos", Math.asin(53.78/robot.liftExtender.getCurrentPosition()));
+
+//            if (gamepad2.circle){
+//                robot.clawRoll.setPosition(0.1606);
+//                telemetry.addData("ground mode pitch pos", Math.asin(53.78/robot.liftExtender.getCurrentPosition()));
+//
+//
 //            }
             if (liftPitchPosition<=2325&&liftPitchPosition>=0||
                     (liftPitchPosition>=2325&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
                     // maximum horizontal position and further (try something less than this)
                     (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
+
                 if(liftExtenderPosition > maxLifEtxtension) {
                     liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
                 }
-                //determines where the lift pitch goes
-                if (gamepad2.left_stick_y > 0.2) {//going down
 
+                if (gamepad2.left_stick_y > 0.2) {//going down
                     liftPitchPosition = liftPitchPosition - 25;
-                    if (liftPitchPosition>1500){
+
+                    if (liftPitchPosition>1500){//if it low, go slow
                         liftPitchPosition = liftPitchPosition - 15;
                     }
 
 
                 } else if (gamepad2.left_stick_y< -0.2) {//going up
-                    liftPitchPosition = liftPitchPosition + 25;
+                    liftPitchPosition = liftPitchPosition + 45;//value used to be 25 justin case
 
 
-                    //if it is a t a really low point
+
 
 
 //                    if (robot.liftPitch.getCurrentPosition()<400) {
@@ -482,15 +496,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("hang r pos", robot.hangR.getPosition());
             telemetry.addData("hang l pos", robot.hangL.getPosition());
 
-            if (gamepad2.circle) {
-//                robot.liftPitch(726, 0.2);
-//                telemetry.addData("Pitchpos", robot.liftPitch.getCurrentPosition());
-                //before 2167
-                liftPitchPosition = 2090;
-
-                //edit this to be valid for the dual mode servo
-                robot.clawRoll.setPosition(0.1606);
-            }
+//            if (gamepad2.circle) {
+////                before 2167
+//                liftPitchPosition = 2090;
+//
+//                //edit this to be valid for the dual mode servo
+//                robot.clawRoll.setPosition(0.1606);
+//            }
 
             if (gamepad2.square) {//slaps it in
                 liftExtenderPosition = 0;

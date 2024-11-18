@@ -1,7 +1,9 @@
 List of controls for the manipulator controller (gamepad2): 
 
 (Preset lift down position (all the way down)) Circle: Moves the lift forwards (until it reaches 
-the max of position 2090)
+the max of position 2090) 
+
+**********and should be in charge of when vertical limit is in place
 
 (lift default position) Square: Moves the lift backwards to default position and retracts the
 extender to default position
