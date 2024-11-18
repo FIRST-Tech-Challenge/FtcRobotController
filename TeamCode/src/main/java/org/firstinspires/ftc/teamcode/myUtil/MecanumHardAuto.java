@@ -421,7 +421,7 @@ public class MecanumHardAuto extends Hardware {
         blm.setDirection(DcMotorSimple.Direction.FORWARD);
         brm.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void moveForward() { //hi
+    public void moveForward() {
         frm.setDirection(DcMotorSimple.Direction.FORWARD);
         flm.setDirection(DcMotorSimple.Direction.REVERSE);
         blm.setDirection(DcMotorSimple.Direction.REVERSE);
