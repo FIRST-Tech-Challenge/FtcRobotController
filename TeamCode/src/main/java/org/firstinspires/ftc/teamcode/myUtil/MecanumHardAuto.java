@@ -384,7 +384,7 @@ public class MecanumHardAuto extends Hardware {
 
         while (!getTolerance(Math.abs(linear_slide.getCurrentPosition()),  Math.abs(linear_slide.getTargetPosition()),10)) {
             linear_slide.setPower(power);
-        }
+        }//hi
 //        waiter(5000);
         linear_slide.setPower(0);
         waiter(pause);
