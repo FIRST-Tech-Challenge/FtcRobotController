@@ -48,7 +48,7 @@ public class MathUtil {
     }
 
     public static boolean inTolerance(double dp,double cp,double tolerance){
-        return Math.abs(cp) < Math.abs(dp+tolerance) && Math.abs(cp) > Math.abs(dp-tolerance);
+        return Math.abs(dp - cp) > tolerance;
     }
 }
 
