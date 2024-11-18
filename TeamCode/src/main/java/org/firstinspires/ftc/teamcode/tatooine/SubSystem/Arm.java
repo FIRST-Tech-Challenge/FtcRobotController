@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
@@ -52,6 +53,9 @@ public class Arm {
     private final double POS_RIGHT_OFFSET = 98.4;
     private final double OPEN_POSE_LEFT = 154.5;
     private final double OPEN_POSE_RIGHT = 166.5;
+
+    private int level = 0;
+    private ElapsedTime timer = new ElapsedTime();
 
 
 
@@ -251,6 +255,46 @@ public class Arm {
         return move;
     }
 
+    public Action scoreAction (){
+        ScoreAction scoreAction = new ScoreAction();
+        return scoreAction;
+    }
+
+    public class ScoreAction implements Action{
+
+        private boolean isStartedAgain;
+        private double goal = 0;
+        private double servoGoal = 0;
+
+        public ScoreAction(){
+            level = 0;
+        }
+
+        public boolean isStartedAgain() {
+            return isStartedAgain;
+        }
+
+        public void setStartedAgain(boolean startedAgain) {
+            isStartedAgain = startedAgain;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
+            positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
+            if (level == 0) {goal = 40;}
+            else if (anglePID.atSetPoint() && level == 0){;
+                level = 1;
+                goal = 70;
+                servoGoal =1;}
+            if (anglePID.atSetPoint() && level == 1) {angleMotor.setPower(0);}
+            angleMotor.setPower(anglePID.calculate(getAngle(), goal));
+            extendServoLeft.setPosition(servoGoal);
+            extendServoRight.setPosition(servoGoal);
+            return !anglePID.atSetPoint() && !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE) ;
+        }
+    }
+
     //Sets the Extension Servo position
     public class moveExtension implements Action {
         private double goal = 0;
@@ -272,6 +316,15 @@ public class Arm {
             positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
             extendServoLeft.setPosition(goal);
             extendServoRight.setPosition(goal);
+            angleMotor.setPower(anglePID.calculate(getAngle(), goal));
+            if (IS_DEBUG) {
+                telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
+                telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
+                telemetry.addData("motor (A) power", angleMotor.getPower());
+            }
+            if (anglePID.atSetPoint()){
+                angleMotor.setPower(0);
+            }
             if (IS_DEBUG) {
                 telemetry.addData("servo Left(E) Position", extendServoLeft.getPosition());
                 telemetry.addData("servo Right(E) Position", extendServoRight.getPosition());
