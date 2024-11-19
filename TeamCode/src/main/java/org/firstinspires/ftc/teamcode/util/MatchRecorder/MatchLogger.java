@@ -31,6 +31,7 @@ public class MatchLogger {
     private static String MATCH_FILE_NAME = "match_";
     public static MatchLogger matchLogger = null;
     public int matchNumber;
+    private Pose2d latestPose;
 
     public static final boolean REFLECTIONLESS = false; // turn to true if the robot is slow
 
@@ -45,7 +46,10 @@ public class MatchLogger {
         VERBOSE("verbose.txt"),
         SCORE("score_prediction.txt"),
         POSITION("position.txt"),
-        ARM("arm.txt")
+        ARM("arm.txt"),
+        FINGER("finger.txt"),
+        WRIST("wrist.txt"),
+        LAUNCHER("launcher.txt"),
         ;
 
         String filename;
@@ -137,6 +141,9 @@ public class MatchLogger {
                 format.format(position.x), format.format(position.y),
                 format.format(rotation2d.real), format.format(rotation2d.imag));
         write(message, FileType.POSITION, FileType.VERBOSE);
+
+        // Record the latest pose for teleop when auto is finished.
+        latestPose = pose2d;
     }
 
     private String arrayToString(Object[] relevantVariables) {
@@ -159,6 +166,11 @@ public class MatchLogger {
     public void logArm(ArmSubsystem subsystem, Object...relevantVariables) {
         String message = String.format("Arm: %s | %s", getCalledMethodName(), arrayToString(relevantVariables));
         write(message, FileType.ARM, FileType.VERBOSE);
+    }
+
+    public void genericLog(String header, FileType fileType, Object...relevantVariables) {
+        String message = String.format("%s: %s", getCalledMethodName(), arrayToString(relevantVariables));
+        write(message, fileType, FileType.VERBOSE);
     }
 
     private String getCalledMethodName() {

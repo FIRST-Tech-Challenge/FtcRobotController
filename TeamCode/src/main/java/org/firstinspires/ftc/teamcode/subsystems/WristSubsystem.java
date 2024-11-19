@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
+import org.opencv.core.Mat;
 
 import java.util.Locale;
 
@@ -29,12 +31,14 @@ public class WristSubsystem extends SubsystemBase {
         this.wrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.wrist.setDirection(DcMotorSimple.Direction.REVERSE);
         this.continuousMode = continuousMode;
+        MatchLogger.getInstance().genericLog("Wrist", MatchLogger.FileType.WRIST, "TicksPerRev", wrist.getMotorType().getTicksPerRev(), "Gearing", wrist.getMotorType().getGearing());
     }
 
     public void zero() {
         DcMotor.RunMode previousMode = this.wrist.getMode();
         this.wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.wrist.setMode(previousMode);
+        MatchLogger.getInstance().genericLog("Wrist", MatchLogger.FileType.WRIST, "Zeroed Wrist");
     }
 
     public void moveWrist(double frontward, double backward) {
@@ -42,6 +46,7 @@ public class WristSubsystem extends SubsystemBase {
         dbp.debug(String.format(Locale.ENGLISH, "Power: %f", power), true);
         dbp.debug("Servo position: " + getPosition(), true);
         wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        MatchLogger.getInstance().genericLog("Wrist", MatchLogger.FileType.WRIST, "Position", getPosition());
         setVelocity(power);
     }
 
@@ -55,10 +60,13 @@ public class WristSubsystem extends SubsystemBase {
         wrist.setTargetPosition(adjustedPosition);
         wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         setVelocity(speed);
+        MatchLogger.getInstance().genericLog("Wrist", MatchLogger.FileType.WRIST, "Position", position, "Target Position", adjustedPosition, "Speed", speed);
+
         System.out.println("POSITION DATA:"+adjustedPosition+", "+position+", "+wrist.getMotorType().getTicksPerRev()+", "+wrist.getMotorType().getGearing());
     }
 
     private void setVelocity(double scale) {
+        MatchLogger.getInstance().genericLog("Wrist", MatchLogger.FileType.WRIST, "Velocity", ANGLE_PER_SECOND*scale, "DEGREES");
         wrist.setVelocity(ANGLE_PER_SECOND*scale, AngleUnit.DEGREES);
     }
 
