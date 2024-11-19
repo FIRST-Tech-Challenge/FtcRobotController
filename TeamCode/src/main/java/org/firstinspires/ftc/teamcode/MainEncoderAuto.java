@@ -114,15 +114,14 @@ public class MainEncoderAuto extends LinearOpMode {
 
     }
 
- protected void driveTicks(float ticks, float speed, dir direction) {
+ protected void driveSeconds(double seconds, float speed, dir direction) {
         double lbDir = 1;
         double rbDir = 1;
         double lfDir = 1;
         double rfDir = 1;
-        double targetPos = 0;
-        double ticks = 0;
-        double deltaTime = 0;
-        double lastRuntimeSeconds = 0;
+        double currentTime = runtime.seconds();
+        double endTime = runtime.seconds() + seconds;
+        
 
         //sets some motors to negative power depending on direction
         switch(direction) {
@@ -155,9 +154,10 @@ public class MainEncoderAuto extends LinearOpMode {
             rightFront.setPower(rfDir * speed);
             targetPos = inches * ticksPerInch;
 
-            for(int i = 0; i < ticks; i++) {
+            while(currentTime < endTime) {
                 telemetry.addData("currently going", String.valueOf(direction), " for ", ticks);
                 telemetry.update();
+                endTime = runtime.seconds();
             }
             leftBack.setPower(0);
             rightBack.setPower(0);
@@ -197,14 +197,16 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }*/
 
-     protected void moveSlideTicks(float ticks, float speed, boolean up) {
+     protected void moveSlideSeconds(double seconds, float speed, boolean up) {
         int dir = 1;
         if (!up) {
             dir = -1;
         }
+        double currentTime = runtime.seconds();
+        double endTime = runtime.seconds() + seconds;
         if (opModeIsActive()) {
             linearSlide.setPower(dir * speed);
-            for(int i = 0; i < ticks; i++) {
+            while(int i = 0; i < ticks; i++) {
                 telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
                 telemetry.update();
             }
