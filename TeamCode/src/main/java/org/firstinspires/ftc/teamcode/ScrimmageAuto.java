@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous //(name="Robot: Auto Drive By Encoder", group="Robot")
-public class MainEncoderAuto extends LinearOpMode {
+public class ScrimmageAuto extends LinearOpMode {
     ///////////////////////////////pseudocode///////////////////////////////
     //(robot is 17 inches long)
     //move right 24 inches
@@ -19,12 +18,12 @@ public class MainEncoderAuto extends LinearOpMode {
     //move left a few inches (for other team's auto
 
     ///////////////////////////////code///////////////////////////////
-    private ElapsedTime runtime = new ElapsedTime();
+    final private ElapsedTime runtime = new ElapsedTime();
     //constants for inch functions
     static final double ticksPerRev = 1.043;
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
     static final double ticksPerInch  = ticksPerRev / (wheelDiameter * Math.PI);
-    static final double slideTicksPerInch = 1;
+    //static final double slideTicksPerInch = 1;
     //Motor and servo declaration
     private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
     private DcMotor linearSlide;
@@ -61,9 +60,9 @@ public class MainEncoderAuto extends LinearOpMode {
         double rbDir = 1;
         double lfDir = 1;
         double rfDir = 1;
-        double targetPos = 0;
+        double targetPos;
         double ticks = 0;
-        double deltaTime = 0;
+        double deltaTime;
         double lastRuntimeSeconds = 0;
 
         //sets some motors to negative power depending on direction
@@ -118,6 +117,7 @@ public class MainEncoderAuto extends LinearOpMode {
 
     }
 
+//moves 2ft per around 1.6s at 0.25 speed
  protected void driveSeconds(double seconds, float speed, dir direction) {
         double lbDir = 1;
         double rbDir = 1;
@@ -156,12 +156,11 @@ public class MainEncoderAuto extends LinearOpMode {
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
             rightFront.setPower(rfDir * speed);
-            targetPos = inches * ticksPerInch;
 
             while(currentTime < endTime) {
-                telemetry.addData("currently going", String.valueOf(direction), " for ", ticks);
+                telemetry.addData("currently going", String.valueOf(direction), " for ", endTime);
                 telemetry.update();
-                endTime = runtime.seconds();
+                currentTime = runtime.seconds();
             }
             leftBack.setPower(0);
             rightBack.setPower(0);
@@ -210,9 +209,10 @@ public class MainEncoderAuto extends LinearOpMode {
         double endTime = runtime.seconds() + seconds;
         if (opModeIsActive()) {
             linearSlide.setPower(dir * speed);
-            while(int i = 0; i < ticks; i++) {
-                telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
+            while(currentTime < endTime) {
+                telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", endTime);
                 telemetry.update();
+                currentTime = runtime.seconds();
             }
             linearSlide.setPower(0);
         }
