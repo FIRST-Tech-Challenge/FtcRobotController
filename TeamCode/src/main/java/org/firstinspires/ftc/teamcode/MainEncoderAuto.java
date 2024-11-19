@@ -20,16 +20,20 @@ public class MainEncoderAuto extends LinearOpMode {
 
     ///////////////////////////////code///////////////////////////////
     private ElapsedTime runtime = new ElapsedTime();
+    //constants for inch functions
     static final double ticksPerRev = 1.043;
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
     static final double ticksPerInch  = ticksPerRev / (wheelDiameter * Math.PI);
-    static final double slideTicksPerInch = 1440;
+    static final double slideTicksPerInch = 1;
+    //Motor and servo declaration
     private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
     private DcMotor linearSlide;
+    //private Servo hLinearSlide;
     private Servo clawServo;
 
     @Override
     public void runOpMode() {
+        //setting motors and servos
         leftBack    = hardwareMap.get(DcMotor.class, "bl");
         rightBack   = hardwareMap.get(DcMotor.class, "br");
         leftFront   = hardwareMap.get(DcMotor.class, "fl");
