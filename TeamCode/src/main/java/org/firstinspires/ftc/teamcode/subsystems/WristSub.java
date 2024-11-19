@@ -31,7 +31,7 @@ public class WristSub extends SubsystemBase {
     * @param position the angle of the wrist
      */
     public void setPosition(double position) {
-        telemetry.addData("Wrist position set to ", position);
+        telemetry.addData("Wrist set to", position);
         wrist.setPosition(position);
     }
 

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
 
 public class LinearSlideSub extends SubsystemBase {
 
@@ -23,7 +24,7 @@ public class LinearSlideSub extends SubsystemBase {
 
     @Override
     public void periodic() {
-        telemetry.addData("Slide Height", linearSlideMotor.getCurrentPosition());
+//        telemetry.addData("Slide Height", linearSlideMotor.getCurrentPosition());
     }
 
     public DcMotor getMotor(){
@@ -36,15 +37,18 @@ public class LinearSlideSub extends SubsystemBase {
     public void resetEncoder(){
         this.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public void move(double speed) {
-        // Stop motor if above top limit
-        if (speed > 0) { // if the arm is moving up + its all the way down
-            linearSlideMotor.setPower(speed);
-        } else { // if the arm is moving down + its all the way down
-            linearSlideMotor.setPower(0);
-        }
+//        if ((getMotor().getCurrentPosition() > Constants.LinearSlideConstants.upwardLimit) && (speed > 0)) {
+//            speed = 0;
+//        } else if ((getMotor().getCurrentPosition() < Constants.LinearSlideConstants.downwardLimit) && (speed < 0)) {
+//            speed = 0;
+//        }
+
+        linearSlideMotor.setPower(speed);
     }
 
 

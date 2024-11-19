@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
 import org.firstinspires.ftc.teamcode.commands.ArmUp;
 import org.firstinspires.ftc.teamcode.commands.MoveLinearSlide;
+import org.firstinspires.ftc.teamcode.commands.MoveWristBadlyDown;
+import org.firstinspires.ftc.teamcode.commands.MoveWristBadlyUp;
 import org.firstinspires.ftc.teamcode.commands.MoveWristLeft;
 import org.firstinspires.ftc.teamcode.commands.MoveWristRight;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
@@ -49,7 +51,8 @@ public class TeleOp25 extends CommandOpMode {
     private MoveLinearSlide linearSlideUp;
     private MoveLinearSlide linearSlideDown;
     private MoveLinearSlide linearSlideOff;
-
+    private MoveWristBadlyUp wristUp;
+    private MoveWristBadlyDown wristDown;
 
 
     @Override
@@ -85,11 +88,15 @@ public class TeleOp25 extends CommandOpMode {
 
         // Wrist
         wrist = new WristSub(hardwareMap, telemetry);
-        wristRight = new MoveWristRight(wrist);
-        wristLeft = new MoveWristLeft(wrist,telemetry);
+        wristRight = new MoveWristRight(wrist, telemetry);
+        wristLeft = new MoveWristLeft(wrist, telemetry);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristLeft);
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristRight);
+        wristUp = new MoveWristBadlyUp(wrist, telemetry);
+        wristDown = new MoveWristBadlyDown(wrist, telemetry);
+
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristUp);
+
 
 
         // Arm
@@ -97,20 +104,22 @@ public class TeleOp25 extends CommandOpMode {
         armUp = new ArmUp(armSub, toolOp, telemetry);
         armDown = new ArmDown(armSub, toolOp, telemetry);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileHeld(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(armDown);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armDown);
 
 
         // Linear Slide
-        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
-        linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
-        linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
-        linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
-
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(linearSlideUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(linearSlideDown);
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(linearSlideOff);
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(linearSlideOff);
+//        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
+//        linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
+//        linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
+//        linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
+//
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(linearSlideUp);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenReleased(linearSlideOff);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(linearSlideDown);
+//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenReleased(linearSlideOff);
     }
 
     @Override
@@ -118,6 +127,11 @@ public class TeleOp25 extends CommandOpMode {
         super.run();
 
         telemetry.addData("Field Centric?", fieldCentric);
+        telemetry.addData("Wrist Position", wrist.getPosition());
+//        telemetry.addData("Linear Slide Position", linearSlideSub.getMotor().getCurrentPosition());
+
+
+
         telemetry.update();
     }
 

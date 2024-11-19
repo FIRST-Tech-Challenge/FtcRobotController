@@ -13,12 +13,12 @@
 |3 | GoBilda 5202/3/4 series | backLeft |
 
 #### Servos
-|Port|Type|Name|
-|---:|---|---|
-|0 | Continous Rotation Servo | wrist |
+|Port| Type                     |Name|
+|---:|--------------------------|---|
+|0 | Servo                    | wrist |
 |1 | Continous Rotation Servo | intake |
-|2 | | |
-|3 | | |
+|2 |                          | |
+|3 |                          | |
 
 #### Digital Devices
 |Port|Type|Name|
@@ -46,7 +46,7 @@
 |Port| Type                           | Name        |
 |---:|--------------------------------|-------------|
 |0 | REV Robotics 40:1 HD Hex Motor | armMotor    |
-|1 | ReV Robotics 40:1 HD Hex Motor | linearSlide |
+|1 | Gobilda 5202/3/4 series        | linearSlide |
 |2 |                                |             |
 |3 |                                |             |
 

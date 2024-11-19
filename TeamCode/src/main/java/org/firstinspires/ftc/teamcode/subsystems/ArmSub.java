@@ -29,15 +29,19 @@ public class ArmSub extends SubsystemBase{
     }
 
     public void armUp() {
-        setPos(getMotor().getCurrentPosition() + 25);
+        setPos((int) (getMotor().getCurrentPosition() + ((0.0006*Math.pow(getMotor().getCurrentPosition()-640, 2))+16.5)), 1);
     }
     public void armDown() {
-        setPos(getMotor().getTargetPosition() - 25);
+        setPos((int) 10, -1);
     }
 
-    public void setPos(int pos) {
+    public void setPos(int pos, int dir) {
         armMotor.setTargetPosition(pos);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setVelocity(450);
+        if (dir == 1) {
+            armMotor.setVelocity(450);
+        } else if (dir == -1) {
+            armMotor.setVelocity(300);
+        }
     }
 }
