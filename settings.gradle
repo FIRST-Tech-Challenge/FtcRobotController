@@ -1,5 +1,6 @@
 include ':FtcRobotController'
 include ':TeamCode'
-include ':MeepMeep'
+include ':ignore'
 include ':Java'
 include ':MeepMeep:mylibrary'
+include ':MeepMeepTesting'
