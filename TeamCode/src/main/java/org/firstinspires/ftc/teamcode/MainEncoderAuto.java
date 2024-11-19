@@ -131,6 +131,10 @@ public class MainEncoderAuto extends LinearOpMode {
                 telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
                 telemetry.update();
             }
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+            leftFront.setPower(0);
+            rightFront.setPower(0);
         }
     }
 
