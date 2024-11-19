@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class DifferentialArmTest extends OpMode {
     public Servo grippers;
     public Servo left_servo;
+    public Servo left_servo_encoder;
     public Servo right_servo;
     public ElapsedTime timer = new ElapsedTime();
 
@@ -17,6 +18,9 @@ public class DifferentialArmTest extends OpMode {
         grippers = hardwareMap.get(Servo.class, "grippers");
         left_servo = hardwareMap.get(Servo.class, "left_diff");
         right_servo = hardwareMap.get(Servo.class, "right_diff");
+        left_servo_encoder = hardwareMap.get(Servo.class,"left_servo_encoder");
+        left_servo.setPosition(0);
+        right_servo.setPosition(0);
     }
 
     @Override
@@ -50,15 +54,12 @@ public class DifferentialArmTest extends OpMode {
             timer.reset();
         }
         if(gamepad1.dpad_right && timer.seconds() > 0.3){
-            if(left_servo.getPosition() <= 0.9){
-                left_servo.setPosition(left_servo.getPosition() + 0.1);
-            }
-            if(right_servo.getPosition() <= 0.9){
-                right_servo.setPosition(right_servo.getPosition() + 0.1);
-            }
+            left_servo.setPosition(left_servo.getPosition() + 0.1);
+            right_servo.setPosition(right_servo.getPosition() + 0.1);
             timer.reset();
         }
         telemetry.addData("Left Servo:", left_servo.getPosition());
         telemetry.addData("Right Servo:", right_servo.getPosition());
+        telemetry.addData("Encoder: ", left_servo_encoder.getPosition());
     }
 }
