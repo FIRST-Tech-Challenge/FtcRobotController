@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,7 +24,7 @@ public class Arm {
     //add variables
 
     //TODO change values to real ones (touch grass)
-    private final double ANGLE_TOLERANCE = 1;//deg
+    private final double ANGLE_TOLERANCE = 2;//deg
     private final double EXTEND_TOLERANCE = 0.1;
     private final double EXTEND_CPR = 0;
     private final double ANGLE_CPR = 1425.1 * 5 ;
@@ -30,8 +32,8 @@ public class Arm {
     private final double AMP_LIMIT = 0;
     private final double angle = 0;
     private final double length = 0;
-    private final double angleOffSet = -15;
-    private PIDFController anglePID = new PIDFController(0.15, 0, 0, 0);
+    private final double angleOffSet = -26;
+    private PIDFController anglePID = new PIDFController(0.09, 0, 0.002, 0);
     private DcMotorEx angleMotor;
     private  Servo extendServoLeft;
 
@@ -56,6 +58,7 @@ public class Arm {
 
     private int level = 0;
     private ElapsedTime timer = new ElapsedTime();
+    private final double F = 0.843;
 
 
 
@@ -232,9 +235,13 @@ public class Arm {
     public void setAnalogRight(AnalogInput analogRight) {
         this.analogRight = analogRight;
     }
+    public void setF(){
+        anglePID.setF(Math.cos(Math.toRadians(getAngle()))* F);
+    }
 
     //an actions that sets the angle of the arm to the desired angle
     public Action setAngle(double angle) {
+        anglePID.reset();
          moveAngle move = new moveAngle(angle);
 
 //        if (touchSensor.isPressed()) {
@@ -256,45 +263,8 @@ public class Arm {
     }
 
     public Action scoreAction (){
-        ScoreAction scoreAction = new ScoreAction();
-        return scoreAction;
-    }
+    return new SequentialAction(setAngle(60),new SleepAction(1), setExtension(0.9));}
 
-
-    public class ScoreAction implements Action{
-
-        private boolean isStartedAgain;
-        private double goal = 0;
-        private double servoGoal = 0;
-
-        public ScoreAction(){
-            level = 0;
-        }
-
-        public boolean isStartedAgain() {
-            return isStartedAgain;
-        }
-
-        public void setStartedAgain(boolean startedAgain) {
-            isStartedAgain = startedAgain;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
-            positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
-            if (level == 0) {goal = 40;}
-            else if (anglePID.atSetPoint() && level == 0){;
-                level = 1;
-                goal = 70;
-                servoGoal =1;}
-            if (anglePID.atSetPoint() && level == 1) {angleMotor.setPower(0);}
-            angleMotor.setPower(anglePID.calculate(getAngle(), goal));
-            extendServoLeft.setPosition(servoGoal);
-            extendServoRight.setPosition(servoGoal);
-            return !anglePID.atSetPoint() && !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE) ;
-        }
-    }
 
     //Sets the Extension Servo position
     public class moveExtension implements Action {
@@ -317,15 +287,6 @@ public class Arm {
             positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
             extendServoLeft.setPosition(goal);
             extendServoRight.setPosition(goal);
-            angleMotor.setPower(anglePID.calculate(getAngle(), goal));
-            if (IS_DEBUG) {
-                telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
-                telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
-                telemetry.addData("motor (A) power", angleMotor.getPower());
-            }
-            if (anglePID.atSetPoint()){
-                angleMotor.setPower(0);
-            }
             if (IS_DEBUG) {
                 telemetry.addData("servo Left(E) Position", extendServoLeft.getPosition());
                 telemetry.addData("servo Right(E) Position", extendServoRight.getPosition());
@@ -357,6 +318,7 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            setF();
             angleMotor.setPower(anglePID.calculate(getAngle(), goal));
             if (IS_DEBUG) {
                 telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());

@@ -210,7 +210,7 @@ public class PIDFController {
         totalError = totalError < minIntegral ? minIntegral : Math.min(maxIntegral, totalError);
 
         // returns u(t)
-        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint;
+        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF;
     }
 
     public void setPIDF(double kp, double ki, double kd, double kf) {
