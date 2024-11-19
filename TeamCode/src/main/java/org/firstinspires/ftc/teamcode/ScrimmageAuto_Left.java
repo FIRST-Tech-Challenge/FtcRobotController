@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="LeftEncoderAuto", group="Robot")
+@Autonomous(name="ScrimmageAuto_Left", group="Robot")
 public class ScrimmageAuto_Left extends ScrimmageAuto {
     private final double driveConst = 1;
     private final double slideConst = 1;
