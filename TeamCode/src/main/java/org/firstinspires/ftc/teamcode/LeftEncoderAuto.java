@@ -15,15 +15,12 @@ public class LeftEncoderAuto extends MainEncoderAuto {
 
         moveSlide(20, 1, true, 5);*/
         //driveInches(24, 0.25f, dir.RIGHT, 5);
-        sleep(1000);
         driveInches(1, 0.25f, dir.FORWARD, 5);
-        sleep(1000);
 
         //moveSlide(2, 1, false, 1);
      // moveClaw(false);
       //  moveSlide(2, 1, true, 1);
         driveInches(1, 0.25f, dir.BACKWARD, 5);
-        sleep(1000);
         //driveInches(30, 0.25f, dir.LEFT, 5);
         //driveInches(24, 0.25f, dir.FORWARD, 5);
      //   moveSlide(12, 1, false, 1);

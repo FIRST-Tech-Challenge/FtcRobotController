@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="MainMovement", group="Linear OpMode")
@@ -47,6 +48,10 @@ public class MainMovement extends LinearOpMode {
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
 
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+
+
         clawServo = hardwareMap.get(Servo.class, "cs"); // claw servo
         clawRotate = hardwareMap.get(CRServo.class, "cr"); // claw rotate
         linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide
@@ -82,11 +87,11 @@ public class MainMovement extends LinearOpMode {
     
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
-        leftBack.setPower(-BL * speed * 0.5);    // ATTENTION // - leftBack motor is multiplied by negative b/c left-side motors are backwards
+        leftBack.setPower(BL * speed * 0.5);    // ATTENTION // - leftBack motor is multiplied by negative b/c left-side motors are backwards
         
         rightFront.setPower(FR * speed * 0.5);     
         
-        leftFront.setPower(-FL * speed * 0.5);    // ATTENTION // - leftFront motor is multiplied by negative b/c left-side motors are backwards
+        leftFront.setPower(FL * speed * 0.5);    // ATTENTION // - leftFront motor is multiplied by negative b/c left-side motors are backwards
         
         rightBack.setPower(BR * speed * 0.5);     
     }

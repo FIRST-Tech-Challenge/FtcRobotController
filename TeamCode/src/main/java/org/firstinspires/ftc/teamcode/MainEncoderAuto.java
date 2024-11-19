@@ -20,19 +20,19 @@ public class MainEncoderAuto extends LinearOpMode {
 
     ///////////////////////////////code///////////////////////////////
     private ElapsedTime runtime = new ElapsedTime();
-    static final double countsPerRev = 1.043;
+    static final double ticksPerRev = 1.043;
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
-    static final double countsPerInch  = countsPerRev / (wheelDiameter * Math.PI);
-    static final double slideCountsPerInch = 1440;
+    static final double ticksPerInch  = ticksPerRev / (wheelDiameter * Math.PI);
+    static final double slideTicksPerInch = 1440;
     private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
     private DcMotor linearSlide;
     private Servo clawServo;
 
     @Override
     public void runOpMode() {
-        leftBack  = hardwareMap.get(DcMotor.class, "bl");
-        rightBack  = hardwareMap.get(DcMotor.class, "br");
-        leftFront  = hardwareMap.get(DcMotor.class, "fl");
+        leftBack    = hardwareMap.get(DcMotor.class, "bl");
+        rightBack   = hardwareMap.get(DcMotor.class, "br");
+        leftFront   = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
         linearSlide = hardwareMap.get(DcMotor.class, "ls");
 
@@ -91,8 +91,9 @@ public class MainEncoderAuto extends LinearOpMode {
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
             rightFront.setPower(rfDir * speed);
-            targetPos = inches * countsPerInch / speed / (24*12);
-            while(opModeIsActive() && timeoutS > runtime.seconds() && ticks < targetPos) {
+            targetPos = inches * ticksPerInch;
+
+            while(ticks < targetPos) {
                 deltaTime = runtime.seconds() - lastRuntimeSeconds;
                 lastRuntimeSeconds = runtime.seconds();
                 ticks += deltaTime * speed;
@@ -102,12 +103,11 @@ public class MainEncoderAuto extends LinearOpMode {
                 telemetry.update();
 
             }
-//            leftBack.setPower(0);
- //           rightBack.setPower(0);
-   //         leftFront.setPower(0);
-     //       rightFront.setPower(0);
-       //     sleep(100);
+
         }
+
+        sleep(500);
+
     }
 
     protected void moveClaw(boolean clawOpen) {
@@ -125,7 +125,7 @@ public class MainEncoderAuto extends LinearOpMode {
         }
         if (opModeIsActive()) {
             runtime.reset();
-            int targetPos = linearSlide.getCurrentPosition() + (int) (inches * slideCountsPerInch);
+            int targetPos = linearSlide.getCurrentPosition() + (int) (inches * slideTicksPerInch);
             linearSlide.setPower(dir * speed);
             while (opModeIsActive() && timeoutS < runtime.seconds() && linearSlide.isBusy()) {
                 telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
