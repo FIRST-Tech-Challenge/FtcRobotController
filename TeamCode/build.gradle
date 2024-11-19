@@ -10,7 +10,6 @@
 
 
 // Custom definitions may go here
-
 buildscript {
     repositories {
         mavenCentral()
@@ -22,6 +21,7 @@ buildscript {
         classpath 'org.team11260:fast-load-plugin:0.1.2'
     }
 }
+
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
@@ -45,4 +45,3 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.team11260:fast-load:0.1.2'
 }
-
