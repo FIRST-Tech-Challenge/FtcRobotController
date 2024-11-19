@@ -49,10 +49,12 @@ public class AutonomousMoveCode extends LinearOpMode {
 
         //
         robot.depositClawServo.setPosition(0.1);
-        robot.intakeSlideServo.setPosition(0.3);
         robot.depositWristServo.setPosition(0.1);
-        robot.depositLeftArmServo.setPosition(0.1);
-        robot.depositRightArmServo.setPosition(0.1);
+        //robot.depositLeftArmServo.setPosition(0.1);
+        //robot.depositRightArmServo.setPosition(0.1);
+        robot.intakeSlideServo.setPosition(0.4);// range 0.3 to 0.7
+        robot.intakeRightArmServo.setPosition(0.4); // range 0.53 - 0
+        robot.intakeLeftArmServo.setPosition(0.4); // range 0.53 - 0
 
         //
         telemetry.addData("Starting at ", "%7d:%7d",
@@ -66,8 +68,8 @@ public class AutonomousMoveCode extends LinearOpMode {
         driveToPosition(first_forward, speed,15);
         //
         sleep(2000);
-        robot.intakeSlideServo.setPosition(0.5);
-        //
+        robot.intakeSlideServo.setPosition(0.55);
+        /**
         sleep(2000);
         Slides_Move(80,0.3);
         sleep(2000);
@@ -83,7 +85,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         sleep(2000);  // pause to display final telemetry message.
         driveToPosition(first_forward*-1, speed,15);
         sleep(5000);
-
+        **/
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
@@ -107,6 +109,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set motor power
+        runtime.reset();
         robot.frontLeftMotor.setPower(speed);
         robot.frontRightMotor.setPower(speed);
         robot.backLeftMotor.setPower(speed);
