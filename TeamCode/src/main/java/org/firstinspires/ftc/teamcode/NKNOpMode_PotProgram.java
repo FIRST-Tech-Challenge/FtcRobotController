@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,7 +11,7 @@ import org.nknsd.robotics.team.programs.PotentiometerProgram;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Pot Tester", group="Tests")
+@TeleOp(name = "Pot Tester", group="Tests") @Disabled
 public class NKNOpMode_PotProgram extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 

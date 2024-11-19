@@ -48,6 +48,15 @@ public class AdvancedWheelDriver implements NKNComponent {
             imuCorrection = false;
         }
     };
+
+    Runnable resetImu = new Runnable() {
+        @Override
+        public void run() {
+            imuComponent.resetIMU();
+            imuCorrection = false;
+        }
+    };
+
     private Gamepad gamepad;
     private IMUComponent imuComponent;
 
@@ -78,6 +87,7 @@ public class AdvancedWheelDriver implements NKNComponent {
     public void start(ElapsedTime runtime, Telemetry telemetry) {
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.RIGHT_BUMPER, 1, "speedUp", true, speedUp);
         gamePadHandler.addListener(GamePadHandler.GamepadButtons.LEFT_BUMPER, 1, "speedDown", true, speedDown);
+        gamePadHandler.addListener(GamePadHandler.GamepadButtons.BACK, 1, "resetIMU", true, resetImu);
 
         gamePadHandler.removeListener(GamePadHandler.GamepadButtons.Y, 1, "disableAutonomousIMUYawCorrection", true);
     }

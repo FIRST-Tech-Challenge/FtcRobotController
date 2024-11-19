@@ -68,4 +68,8 @@ public class IMUComponent implements NKNComponent {
         telemetry.addData("Pitch", imu.getRobotYawPitchRollAngles().getPitch());
         telemetry.addData("Roll", imu.getRobotYawPitchRollAngles().getRoll());
     }
+
+    public void resetIMU() {
+        imu.resetYaw();
+    }
 }

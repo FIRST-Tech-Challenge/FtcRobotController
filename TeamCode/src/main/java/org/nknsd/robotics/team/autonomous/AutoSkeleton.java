@@ -41,7 +41,7 @@ public class AutoSkeleton {
 //        double kI = maxSpeed / (TILE_LENGTH * 2 * 4000); //I is REALLY FREAKING SMALL
 //        double kD = 5;
         double kP = 0.5;
-        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 4000); //I is REALLY FREAKING SMALL
+        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 3500); //I is REALLY FREAKING SMALL
         double kD = 5;
 
         movementPIDx = new PIDModel(kP, kI, kD);
@@ -151,6 +151,14 @@ public class AutoSkeleton {
         wheelHandler.absoluteVectorToMotion(xSpeed, ySpeed, turning, yaw, telemetry);
 
         return false;
+    }
+
+    public void runMotorsDirectly(double y, double x, double turning) {
+        wheelHandler.relativeVectorToMotion(y, x, turning);
+    }
+
+    public void freeze() {
+        wheelHandler.relativeVectorToMotion(0, 0, 0);
     }
 
     public void setServoPower(IntakeSpinnerHandler.HandStates handState) {

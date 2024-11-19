@@ -245,6 +245,11 @@ public class GamePadHandler implements NKNComponent {
             public boolean detect(Gamepad gamepad) {
                 return gamepad.y;
             }
+        }, BACK {
+            @Override
+            public boolean detect(Gamepad gamepad) {
+                return gamepad.back;
+            }
         };
 
         boolean isHeld1 = false; // Modified by the checkButtons function to store if the button was just pressed or if it has been held down
