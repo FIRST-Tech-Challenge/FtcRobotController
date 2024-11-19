@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
-import android.util.Log;
-
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +23,7 @@ public class TurnAngleRelativeCommand extends SounderBotCommandBase {
 
     double error = Double.MAX_VALUE;
 
-    SonicPIDController pidController = new SonicPIDController(0.5, 0, 0.02);
+    SonicPIDFController pidController = new SonicPIDFController(0.5, 0, 0.02);
 
     boolean isFirst = true;
 

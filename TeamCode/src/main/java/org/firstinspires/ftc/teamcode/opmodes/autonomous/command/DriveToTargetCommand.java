@@ -2,16 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import android.util.Log;
 
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DriveToTargetCommand extends SounderBotCommandBase {
 
@@ -25,9 +23,9 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDController xpid = new SonicPIDController(0.0015, 0, 0);
-    SonicPIDController ypid = new SonicPIDController(-0.001, 0, 0);
-    SonicPIDController hpid = new SonicPIDController(1, 0, 0);
+    SonicPIDFController xpid = new SonicPIDFController(0.0015, 0, 0);
+    SonicPIDFController ypid = new SonicPIDFController(-0.001, 0, 0);
+    SonicPIDFController hpid = new SonicPIDFController(1, 0, 0);
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this.driveTrain = driveTrain;

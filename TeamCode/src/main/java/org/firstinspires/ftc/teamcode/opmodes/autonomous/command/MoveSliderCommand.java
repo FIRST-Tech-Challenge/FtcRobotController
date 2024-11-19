@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class MoveSliderCommand extends SounderBotCommandBase {
 
@@ -15,7 +15,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     Motor motor;
 
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     double position;
 

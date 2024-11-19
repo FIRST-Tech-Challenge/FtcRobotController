@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class MovePivotCommand extends SounderBotCommandBase{
 
@@ -13,7 +13,7 @@ public class MovePivotCommand extends SounderBotCommandBase{
     double target;
     double position;
     Motor motor;
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target) {
         this.pivot = pivot;

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.function.Supplier;
 
@@ -30,7 +30,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private int currentTarget = 0;
 
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     private boolean isTeleop = true;
 
@@ -50,7 +50,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //MoveToTransferPosition();
 
-        pidController = new SonicPIDController(0.08, 0, 0);
+        pidController = new SonicPIDFController(0.08, 0, 0);
     }
 
     private void SetTelop() {
@@ -178,7 +178,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         return motor;
     }
 
-    public SonicPIDController getPidController() {
+    public SonicPIDFController getPidController() {
         return pidController;
     }
 }

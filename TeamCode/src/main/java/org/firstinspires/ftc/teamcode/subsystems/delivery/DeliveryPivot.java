@@ -9,9 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
-
-import java.util.Set;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class DeliveryPivot extends SonicSubsystemBase {
 
@@ -40,7 +38,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int currentTarget = 0;
 
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     public static double recordedPosition;
 
@@ -57,7 +55,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
         this.recordedPosition = 0;
 
-        pidController = new SonicPIDController(0.005, 0, 0.000);
+        pidController = new SonicPIDFController(0.005, 0, 0.000);
     }
 
     private void SetTelop() {
@@ -217,7 +215,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         return motor;
     }
 
-    public SonicPIDController getPidController() {
+    public SonicPIDFController getPidController() {
         return pidController;
     }
 }

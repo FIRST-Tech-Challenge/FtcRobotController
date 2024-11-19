@@ -1,22 +1,22 @@
 package org.firstinspires.ftc.teamcode.util;
 
-public class SonicPIDController {
-    /*
-     * PID Controller
-     * Based on https://en.wikipedia.org/wiki/PID_controller
-     */
-
-    double kp, ki, kd;
+public class SonicPIDFController {
+    double kp, ki, kd, kf;
 
     double integral = 0;
     double previousError = 0;
 
     long lastTimeMillis;
 
-    public SonicPIDController(double kp, double ki, double kd) {
+    public SonicPIDFController(double kp, double ki, double kd) {
+        this(kp, ki, kd, 0);
+    }
+
+    public SonicPIDFController(double kp, double ki, double kd, double kf) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
+        this.kf = kf;
         lastTimeMillis = System.currentTimeMillis();
     }
 
@@ -25,7 +25,7 @@ public class SonicPIDController {
         integral += error * deltaT;
         double derivative = ((error - previousError) / deltaT);
         double proportional = error;
-        double output = kp * proportional + ki * integral + kd * derivative;
+        double output = kp * proportional + ki * integral + kd * derivative + kf;
         previousError = error;
         lastTimeMillis = System.currentTimeMillis();
         return output;
@@ -36,10 +36,11 @@ public class SonicPIDController {
         lastTimeMillis = System.currentTimeMillis();
     }
 
-    public void setPIDGains(double kp, double ki, double kd) {
+    public void setPIDGains(double kp, double ki, double kd, double kf) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
+        this.kf = kf;
     }
 
     public double getKp() {
@@ -54,6 +55,10 @@ public class SonicPIDController {
         return ki;
     }
 
+    public double getKf() {
+        return kf;
+    }
+
     public void setKi(double ki) {
         this.ki = ki;
     }
@@ -64,5 +69,9 @@ public class SonicPIDController {
 
     public void setKd(double kd) {
         this.kd = kd;
+    }
+
+    public void setKf(double kf) {
+        this.kf = kf;
     }
 }
