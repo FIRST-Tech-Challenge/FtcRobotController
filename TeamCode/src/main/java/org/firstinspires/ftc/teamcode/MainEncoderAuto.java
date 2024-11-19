@@ -114,6 +114,63 @@ public class MainEncoderAuto extends LinearOpMode {
 
     }
 
+ protected void driveTicks(float ticks, float speed, dir direction, float timeoutS) {
+        double lbDir = 1;
+        double rbDir = 1;
+        double lfDir = 1;
+        double rfDir = 1;
+        double targetPos = 0;
+        double ticks = 0;
+        double deltaTime = 0;
+        double lastRuntimeSeconds = 0;
+
+        //sets some motors to negative power depending on direction
+        switch(direction) {
+            case LEFT:
+                rbDir = -1.5;
+                lfDir = -1.5;
+                lbDir = 1.5;
+                rfDir = 1.5;
+                break;
+            case RIGHT:
+                lbDir = -1.5;
+                rfDir = -1.5;
+                lfDir = 1.5;
+                rbDir = 1.5;
+                break;
+            case FORWARD:
+                break;
+            case BACKWARD:
+                lbDir = -1;
+                rbDir = -1;
+                lfDir = -1;
+                rfDir = -1;
+                break;
+        }
+        if(opModeIsActive()) {
+            runtime.reset();
+            leftBack.setPower(lbDir * speed);
+            rightBack.setPower(rbDir * speed);
+            leftFront.setPower(lfDir * speed);
+            rightFront.setPower(rfDir * speed);
+            targetPos = inches * ticksPerInch;
+
+            for(int i = 0; i < ticks; i++) {
+                telemetry.addData("currently going", String.valueOf(direction), " for ", ticks);
+                telemetry.update();
+            }
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+
+        }
+
+        sleep(500);
+
+    }
+
+
     protected void moveClaw(boolean clawOpen) {
         if(clawOpen) {
             clawServo.setPosition(1);
@@ -122,7 +179,8 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }
 
-    protected void moveSlide(float inches, float speed, boolean up, float timeoutS) {
+    //not complete
+    /*protected void moveSlide(float inches, float speed, boolean up, float timeoutS) {
         int dir = 1;
         if (!up) {
             dir = -1;
@@ -135,10 +193,22 @@ public class MainEncoderAuto extends LinearOpMode {
                 telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
                 telemetry.update();
             }
-            leftBack.setPower(0);
-            rightBack.setPower(0);
-            leftFront.setPower(0);
-            rightFront.setPower(0);
+            linearSlide.setPower(0);
+        }
+    }*/
+
+     protected void moveSlideTicks(float ticks, float speed, boolean up, float timeoutS) {
+        int dir = 1;
+        if (!up) {
+            dir = -1;
+        }
+        if (opModeIsActive()) {
+            linearSlide.setPower(dir * speed);
+            for(int i = 0; i < ticks; i++) {
+                telemetry.addData("linear slide currently going", up ? "up" : "down", " to ", targetPos);
+                telemetry.update();
+            }
+            linearSlide.setPower(0);
         }
     }
 
