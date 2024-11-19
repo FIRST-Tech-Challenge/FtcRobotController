@@ -101,12 +101,12 @@ public class FarSideClawAuto extends LinearOpMode {
 //
 //        sleep(500);
         //rotate robot to score
-//        strafe = 0;
-//        rotate = -0.2;
-//        forward = 0;
-//        robot.drive(forward,strafe,rotate);
-//
-//        sleep(300);
+        strafe = 0;
+        rotate = 0.2;
+        forward = 0;
+        robot.drive(forward,strafe,rotate);
+
+        sleep(300);
         //forward to score
         strafe = 0;
         rotate = 0;
@@ -143,7 +143,7 @@ public class FarSideClawAuto extends LinearOpMode {
         //go back after scoring high bucket
         strafe = 0;
         rotate = 0;
-        forward = 0.2;
+        forward = 0.3;
         robot.drive(forward,strafe,rotate);
 
         sleep(9000);

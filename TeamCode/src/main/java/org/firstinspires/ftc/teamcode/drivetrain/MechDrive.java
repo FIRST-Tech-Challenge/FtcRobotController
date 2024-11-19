@@ -77,6 +77,22 @@ public class MechDrive {
 
     }
 
+    public void fieldCentricDrive(double forward, double strafe, double rotate)
+    {
+        strafe *= 1;
+        rotate *= -1;
+        forward *=-1;
+        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double adjustedForward = -forward * Math.sin(heading) + strafe * Math.cos(heading);
+        double adjustedStrafe = -forward * Math.cos(heading) + strafe * Math.sin(heading);
+
+        leftFront.setPower((adjustedForward + adjustedStrafe + rotate));
+        leftBack.setPower((adjustedForward- adjustedStrafe + rotate));
+        rightFront.setPower((adjustedForward - adjustedStrafe - rotate));
+        rightBack.setPower((adjustedForward + adjustedStrafe - rotate));
+
+    }
+
 
 
 
