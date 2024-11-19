@@ -72,7 +72,7 @@ public class Mekanism {
     wrist.setPosition(0.7);
   }
 
-  // to lift arm, input from game pad 2 straight in
+  // to extend arm, input from game pad 2 straight in
   public void setSlide(double x) {
     if (slide.getCurrentPosition() >= limitSlide && x > 0) {
       x = 0;
@@ -80,7 +80,7 @@ public class Mekanism {
       x = 0;
     }
 
-    // needs adjusting
+    // TODO: Tuning is very vibes based because this value is very wrong
     double encoderCountsPerDegree = 30;
     if (x == 0)
       x =
