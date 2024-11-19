@@ -26,8 +26,7 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor front_right_wheel;
     private DcMotor back_right_wheel;
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-    private Telemetry dashboardTelemerty = dashboard.getTelemetry();
+
     //main loop
     private static double arm_less_zero = 0.3;
     private static double arm_more_zero = 0.3;
@@ -100,9 +99,7 @@ public class UpdatedMain extends LinearOpMode {
      * displays data
      */
     public void display_data(){
-        dashboardTelemerty.addData("hand grip", hand_grip_servo.getPosition());
-        dashboardTelemerty.addData("Hand Rotation", hand_rotation_servo.getPosition());
-        dashboardTelemerty.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
+        
 
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
