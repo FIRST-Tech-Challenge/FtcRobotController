@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="LeftEncoderAuto", group="Robot")
-public class LeftScrimmageAuto extends ScrimmageAuto {
+public class ScrimmageAuto_Left extends ScrimmageAuto {
     private final double driveConst = 1;
     private final double slideConst = 1;
     public void runOpMode() {
@@ -32,7 +32,7 @@ public class LeftScrimmageAuto extends ScrimmageAuto {
         moveSlideSeconds(1 * slideConst, 0.25f, true);
         driveSeconds(0.467 * driveConst, 0.25f, dir.FORWARD);
         moveSlideSeconds(1 * slideConst, 0.25f, false);
-        moveClaw(false);
+        //moveClaw(false);
         moveSlideSeconds(2 * slideConst, 0.25f, true);
         driveSeconds(0.2 * driveConst, 0.25f, dir.BACKWARD);
         driveSeconds(2 * driveConst, 0.25f, dir.RIGHT);

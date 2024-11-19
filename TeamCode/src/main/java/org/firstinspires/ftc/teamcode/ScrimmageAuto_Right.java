@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="RightEncoderAuto", group="Robot")
-public class RightScrimmageAuto extends ScrimmageAuto {
+public class ScrimmageAuto_Right extends ScrimmageAuto {
     public void runOpMode() {
         // Call the parent class method to use its setup
         super.runOpMode();

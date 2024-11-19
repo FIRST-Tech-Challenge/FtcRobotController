@@ -28,17 +28,17 @@ public class MainMovement extends LinearOpMode {
 
     boolean usingLStick; // Detect whether left stick is being used or not- for prioritizing rotation over directional movement
 
-    
-    private Servo clawServo; // servo to control claw opening and closing
-    private CRServo clawRotate; // servo to control the rotation of the claw
+    //vertical slide stuff
+    private Servo vClawServo; // servo to control claw opening and closing
+    boolean vClawOpen = false; // Is the claw open? False = closed, true = open
     private DcMotor linearSlide; // motor to control linear slide
+    private final float linearSlideSpeed = 0.75f;
 
-    // Speeds for claw and linear slide
-    private float clawSpeed = 1.0f;
-    private float linearSlideSpeed = 0.75f;
+    // horizontal slide stuff
+    private CRServo hClawRotate; // servo to control the rotation of the claw
+    private final float clawSpeed = 1.0f;
 
-    boolean clawOpen = false; // Is the claw open? False = closed, true = open 
-    
+
 
     @Override
     public void runOpMode() {
@@ -52,8 +52,8 @@ public class MainMovement extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
 
-        clawServo = hardwareMap.get(Servo.class, "cs"); // claw servo
-        clawRotate = hardwareMap.get(CRServo.class, "cr"); // claw rotate
+        vClawServo = hardwareMap.get(Servo.class, "cs"); // claw servo
+        hClawRotate = hardwareMap.get(CRServo.class, "cr"); // claw rotate
         linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide
 
         linearSlide.setPower(0); // zero the linear slide's power so it doesn't move while not active
@@ -87,11 +87,11 @@ public class MainMovement extends LinearOpMode {
     
     private void setMotorPowers(float BL, float BR, float FL, float FR, float speed) {
         // set all the motor powers to the floats defined
-        leftBack.setPower(BL * speed * 0.5);    // ATTENTION // - leftBack motor is multiplied by negative b/c left-side motors are backwards
+        leftBack.setPower(BL * speed * 0.5);
         
         rightFront.setPower(FR * speed * 0.5);     
         
-        leftFront.setPower(FL * speed * 0.5);    // ATTENTION // - leftFront motor is multiplied by negative b/c left-side motors are backwards
+        leftFront.setPower(FL * speed * 0.5);
         
         rightBack.setPower(BR * speed * 0.5);     
     }
@@ -129,7 +129,6 @@ public class MainMovement extends LinearOpMode {
         if (gamepad1.left_bumper) {    // slow mode !
             netS = speedSlow;    // Speed is set to a slow constant speed for more precise movements 
             rotationSpeed = speedSlow;
-            
         } else if (gamepad1.right_bumper) {     // fast mode !
             netS = (Math.min(maxSpeed, (float) (addSpeed - joystickDeadzone) / (1.0f - joystickDeadzone))) * speedFast; // Speed is multiplied by the speedFast variable
             rotationSpeed = speedFast;
@@ -209,19 +208,19 @@ public class MainMovement extends LinearOpMode {
 
     private void LimbMovement() {
 
-        if (clawOpen) {
-            telemetry.addData("chamber claw open, position = ", clawServo.getPosition());
+        if (vClawOpen) {
+            telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
         } else {
-            telemetry.addData("chamber claw closed, position = ", clawServo.getPosition());
+            telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
         }
 
         //open or close chamber claw
         if (gamepad2.x) {
-            clawOpen = !clawOpen; // switch claws open state
-            if (clawOpen) {
-                clawServo.setPosition(1); //claw open
+            vClawOpen = !vClawOpen; // switch claws open state
+            if (vClawOpen) {
+                vClawServo.setPosition(1); //claw open
             } else {
-                clawServo.setPosition(0); //claw closed
+                vClawServo.setPosition(0); //claw closed
             }
             sleep(250); //creates cooldown for switching claw positions
 
@@ -229,13 +228,13 @@ public class MainMovement extends LinearOpMode {
 
         //rotate chamber claw left
         if (gamepad2.left_trigger > 0) {
-            clawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
+            hClawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
             telemetry.addData("rotating chamber claw left", null);
         }
 
         //rotate chamber claw right
         if (gamepad2.right_trigger > 0) {
-            clawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
+            hClawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
             telemetry.addData("rotating chamber claw right", null);
         }
 

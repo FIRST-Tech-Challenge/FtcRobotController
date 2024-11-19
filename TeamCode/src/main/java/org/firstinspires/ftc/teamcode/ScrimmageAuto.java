@@ -41,10 +41,9 @@ public class ScrimmageAuto extends LinearOpMode {
 
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
+        linearSlide.setDirection(DcMotor.Direction.REVERSE);
 
         clawServo = hardwareMap.get(Servo.class, "cs");
-        telemetry.addData("Starting pos: ", leftBack.getCurrentPosition());
-        telemetry.update();
         waitForStart();
 
     }
@@ -180,6 +179,10 @@ public class ScrimmageAuto extends LinearOpMode {
         } else {
             clawServo.setPosition(0);
         }
+    }
+
+    protected void moveSlide(double pos) {
+
     }
 
     //not complete
