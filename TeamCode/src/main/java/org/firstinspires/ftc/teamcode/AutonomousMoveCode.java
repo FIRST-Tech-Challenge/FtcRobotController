@@ -52,7 +52,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.depositWristServo.setPosition(0.1);
         //robot.depositLeftArmServo.setPosition(0.1);
         //robot.depositRightArmServo.setPosition(0.1);
-        robot.intakeSlideServo.setPosition(0.4);// range 0.3 to 0.7
+        robot.intakeSlideServo.setPosition(0.4);// range 0.3 to 0.6
         robot.intakeRightArmServo.setPosition(0.4); // range 0.53 - 0
         robot.intakeLeftArmServo.setPosition(0.4); // range 0.53 - 0
 
@@ -69,13 +69,13 @@ public class AutonomousMoveCode extends LinearOpMode {
         //
         sleep(2000);
         robot.intakeSlideServo.setPosition(0.55);
-        /**
+        //
         sleep(2000);
         Slides_Move(80,0.3);
         sleep(2000);
-        Slides_Move(80,0.3);
+        Slides_Move(150,0.3);
         sleep(2000);
-        Slides_Move(-80,0.3);
+        Slides_Move(50,0.3);
 
         sleep(2000);
         robot.intakeSlideServo.setPosition(0.4);
@@ -85,7 +85,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         sleep(2000);  // pause to display final telemetry message.
         driveToPosition(first_forward*-1, speed,15);
         sleep(5000);
-        **/
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
@@ -235,7 +235,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.liftMotorRight.setPower(speed);
         while (opModeIsActive() && (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy())) {
             telemetry.addData("Motor Position", "Left: %d, Right: %d",
-                    robot.liftMotorLeft.getCurrentPosition(), robot.liftMotorRight.getCurrentPosition());
+                    robot.liftMotorLeft.getCurrentPosition()/COUNTS_PER_MM_Drive, robot.liftMotorRight.getCurrentPosition()/COUNTS_PER_MM_Drive);
             telemetry.update();
         }
         sleep(1000);
