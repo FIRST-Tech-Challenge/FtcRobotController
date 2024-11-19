@@ -53,8 +53,8 @@ public class AutonomousMoveCode extends LinearOpMode {
         //robot.depositLeftArmServo.setPosition(0.1);
         //robot.depositRightArmServo.setPosition(0.1);
         robot.intakeSlideServo.setPosition(0.4);// range 0.3 to 0.6
-        robot.intakeRightArmServo.setPosition(0.4); // range 0.53 - 0
-        robot.intakeLeftArmServo.setPosition(0.4); // range 0.53 - 0
+        robot.intakeRightArmServo.setPosition(0.4); // range 0.55 - 0
+        robot.intakeLeftArmServo.setPosition(0.4); // range 0.55 - 0
 
         //
         telemetry.addData("Starting at ", "%7d:%7d",
