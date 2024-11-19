@@ -13,29 +13,35 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSub;
 public class MoveWristLeft extends CommandBase {
 
     private final WristSub wristSub;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     /**
      * This command deals with the wrist in teleop.
      *
      * @param wristSubParam The wrist sub to be imported
      */
 
-    public MoveWristLeft(WristSub wristSubParam, Telemetry telemetryParam) {
+    public MoveWristLeft(WristSub wristSubParam, Telemetry telemetry) {
         this.wristSub = wristSubParam;
-        this.telemetry = telemetryParam;
+        this.telemetry = telemetry;
         addRequirements(this.wristSub);
     }
 
     @Override
    public void execute(){
-      telemetry.addData("Wrist Position",this.wristSub.getPosition());
-      double wristPosition =this.wristSub.getPosition();
+      double wristPosition = wristSub.getPosition();
+
+//        if ((wristPosition != Constants.WristConstants.wristRight) && (wristPosition != Constants.WristConstants.wristCenter) && (wristPosition != Constants.WristConstants.wristLeft)) {
+//            this.wristSub.setPosition(Constants.WristConstants.wristCenter);
+//        }
+
         if (wristPosition == Constants.WristConstants.wristRight){
-            this.wristSub.setPosition(Constants.WristConstants.wristCenter);
-            telemetry.addData("Wrist Position2",this.wristSub.getPosition());
-        } else if(wristPosition == Constants.WristConstants.wristCenter){
-           this.wristSub.setPosition(Constants.WristConstants.wristLeft);
-            telemetry.addData("Wrist Position3",this.wristSub.getPosition());
+            wristSub.setPosition(Constants.WristConstants.wristCenter);
+            telemetry.addData("Wrist moved to center", wristPosition);
+        } else if (wristPosition == Constants.WristConstants.wristCenter){
+           wristSub.setPosition(Constants.WristConstants.wristLeft);
+            telemetry.addData("Wrist moved to left", wristPosition);
+
+
         }
     }
 }
