@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.AutoTest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="AutonomousMoveCode", group="org.firstinspires.ftc.teamcode")
 public class AutonomousMoveCode extends LinearOpMode {
-    private RobotHardware       robot = new RobotHardware();
+    private RobotHardware robot = new RobotHardware();
 
     private ElapsedTime         runtime = new ElapsedTime();
 
@@ -53,8 +51,8 @@ public class AutonomousMoveCode extends LinearOpMode {
         //robot.depositLeftArmServo.setPosition(0.1);
         //robot.depositRightArmServo.setPosition(0.1);
         robot.intakeSlideServo.setPosition(0.4);// range 0.3 to 0.6
-        robot.intakeRightArmServo.setPosition(0.4); // range 0.53 - 0
-        robot.intakeLeftArmServo.setPosition(0.4); // range 0.53 - 0
+        robot.intakeRightArmServo.setPosition(0.4); // range 0.55 - 0
+        robot.intakeLeftArmServo.setPosition(0.4); // range 0.55 - 0
 
         //
         telemetry.addData("Starting at ", "%7d:%7d",
