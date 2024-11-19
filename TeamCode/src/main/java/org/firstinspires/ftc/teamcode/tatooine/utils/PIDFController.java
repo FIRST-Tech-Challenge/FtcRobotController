@@ -29,6 +29,11 @@ public class PIDFController {
     private double errorTolerance_v = Double.POSITIVE_INFINITY;
 
     private double lastTimeStamp;
+
+    private double firstTimeStep;
+    private double timeout = 2;
+
+    private double runTime;
     private double period;
 
     /**
@@ -70,6 +75,8 @@ public class PIDFController {
         totalError = 0;
         prevErrorVal = 0;
         lastTimeStamp = 0;
+        firstTimeStep = 0;
+        runTime = 0;
     }
 
     /**
@@ -110,8 +117,9 @@ public class PIDFController {
      * @return Whether the error is within the acceptable bounds.
      */
     public boolean atSetPoint() {
-        return Math.abs(errorVal_p) < errorTolerance_p
-                && Math.abs(errorVal_v) < errorTolerance_v;
+        return (Math.abs(errorVal_p) < errorTolerance_p
+                && Math.abs(errorVal_v) < errorTolerance_v)
+                || runTime >= timeout;
     }
 
     /**
@@ -185,9 +193,14 @@ public class PIDFController {
         prevErrorVal = errorVal_p;
 
         double currentTimeStamp = (double) System.nanoTime() / 1E9;
-        if (lastTimeStamp == 0) lastTimeStamp = currentTimeStamp;
+        if (lastTimeStamp == 0) {
+            lastTimeStamp = currentTimeStamp;
+            firstTimeStep = currentTimeStamp;
+        }
         period = currentTimeStamp - lastTimeStamp;
+        runTime = currentTimeStamp - firstTimeStep;
         lastTimeStamp = currentTimeStamp;
+
 
         if (measuredValue == pv) {
             errorVal_p = setPoint - measuredValue;

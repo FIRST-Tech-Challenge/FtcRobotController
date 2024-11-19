@@ -57,8 +57,11 @@ public class Arm {
     private final double OPEN_POSE_RIGHT = 166.5;
 
     private int level = 0;
-    private ElapsedTime timer = new ElapsedTime();
-    private final double F = 0.843;
+    private ElapsedTime angleTimer = new ElapsedTime();
+    private ElapsedTime extendTimer = new ElapsedTime();
+    private double angleTimeout = 0;
+    private double extendTimeout = 0;
+    private final double F = 0;
 
 
 
@@ -243,8 +246,6 @@ public class Arm {
     //an actions that sets the angle of the arm to the desired angle
     public Action setAngle(double angle) {
         anglePID.reset();
-         moveAngle move = new moveAngle(angle);
-
 //        if (touchSensor.isPressed()) {
 //            resetAngleEncoder();
 //        }
@@ -264,7 +265,12 @@ public class Arm {
     }
 
     public Action scoreAction (){
-    return new SequentialAction(setAngle(60),new SleepAction(1), setExtension(0.9));}
+    return new SequentialAction(setAngle(60),new SleepAction(1), setExtension(0.8),new SleepAction(1),setAngle(45));
+    }
+
+    public Action closeAction (){
+        return new SequentialAction(setExtension(0.1), setAngle(-15));
+    }
 
 
     //Sets the Extension Servo position
@@ -303,6 +309,7 @@ public class Arm {
 
         public moveAngle (double goal)
         {
+            anglePID.reset();
             telemetry.addData("did",true);
             this.goal = goal;
         }
@@ -319,16 +326,20 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            setF();
+
+            if (goal <  getAngle()-ANGLE_TOLERANCE) {
+                anglePID.setF(0);
+            }
+            else {
+                setF();
+            }
             angleMotor.setPower(anglePID.calculate(getAngle(), goal));
             if (IS_DEBUG) {
                 telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) power", angleMotor.getPower());
             }
-            if (anglePID.atSetPoint()){
-                angleMotor.setPower(0);
-            }
+            telemetry.update();
             return !anglePID.atSetPoint();
         }
     }

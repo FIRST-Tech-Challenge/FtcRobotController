@@ -33,7 +33,7 @@ public class Intake {
     public Intake(OpMode opMode, boolean isRed, boolean IS_DEBUG) {
         this.IS_DEBUG = IS_DEBUG;
         telemetry = opMode.telemetry;
-        colorSensorOur = new ColorSensorOur(opMode, IS_DEBUG);
+        //colorSensorOur = new ColorSensorOur(opMode, IS_DEBUG);
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
         this.isRed = isRed;
         telemetry.addData("isRed", isRed);
@@ -150,14 +150,14 @@ public class Intake {
     }
 
     //intake action that is active as long as i press a button
-    public Action intake(boolean buttonPressed) {
+    public Action intake() {
         this.buttonPressed = buttonPressed;
         power = INTAKE_SPEED;
         return new SetPowerAction();
     }
 
     //outtake action that is active as long as i press a button
-    public Action outtake(boolean buttonPressed) {
+    public Action outtake() {
         power = OUTTAKE_SPEED;
         return new SetPowerAction();
     }

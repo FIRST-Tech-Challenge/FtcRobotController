@@ -14,29 +14,31 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
+import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Intake;
+import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 @Autonomous(name = "FarFromBasket", group = "Autonomous")
 
 public class FarFromBasket extends LinearOpMode {
     Arm arm;
+    Wrist wrist;
+    Intake intake;
     @Override
     public void runOpMode() throws InterruptedException {
-        arm = new Arm(this,false);
+        arm = new Arm(this,true);
         boolean isRed = CheckAlliance.isRed();
         Action trajectoryActionChosen;
         Pose2d beginPose = new Pose2d(12.09+3.5, -59.84, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        intake = new Intake(this,isRed, false);
+        wrist = new Wrist(this, false);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(7.79, -36.70), Math.toRadians(90))
-                .stopAndAdd(new SequentialAction(arm.setAngle(70),
-                                                 arm.setExtension(0.8),
-                                                 new SleepAction(2),
-                                                 arm.setAngle(30),
-                                                 arm.setExtension(0.1),
-                                                 new SleepAction(0.3),
-                                                 arm.setAngle(5))
-                )
+                .splineTo(new Vector2d(7.79, -32.70), Math.toRadians(90))
+                .stopAndAdd(new SequentialAction(arm.scoreAction(),
+                        new InstantAction(()-> wrist.changeState()),
+                        intake.outtake(), new SleepAction(2),
+                        arm.closeAction()))
                 .strafeToSplineHeading(new Vector2d(55, -58), Math.toRadians(90))
                 .waitSeconds(1)
                 .turnTo(Math.toRadians(70))
@@ -68,9 +70,8 @@ public class FarFromBasket extends LinearOpMode {
         waitForStart();
 
         Actions.runBlocking(
-                new SequentialAction(
-                        new SleepAction(5),
-                        trajectoryActionChosen
+                new ParallelAction(
+                        trajectoryActionChosen, new InstantAction(()-> telemetry.update())
                 )
         );
 
