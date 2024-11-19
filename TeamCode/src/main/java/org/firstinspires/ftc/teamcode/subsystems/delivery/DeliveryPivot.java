@@ -117,9 +117,13 @@ public class DeliveryPivot extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        //telemetry.addData("target", currentTarget);
-        //telemetry.addData("current", position);
-        //telemetry.addData("telop", isTeleop);
+        boolean addTelemetry = true;
+
+        if(addTelemetry) {
+            telemetry.addData("target", currentTarget);
+            telemetry.addData("current", position);
+            telemetry.update();
+        }
 
         if(!isTeleop) {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
