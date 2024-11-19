@@ -35,7 +35,7 @@ public class MecanumRobotController {
     public static final double MIN_VELOCITY_TO_SMOOTH_TURN = 115;
     public static final double INCHES_LEFT_TO_SLOW_DOWN = 3;
     public static final double TURN_DRIFT_TIME = 0.15;
-    public static final double MIN_DIST_TO_STOP = 0.3;
+    public static final double MIN_DIST_TO_STOP = 0.1;
     public static double Kp = 0.1;
     public static double Kd = 0.0002;
     public static double Ki = 0.00;
@@ -93,7 +93,7 @@ public class MecanumRobotController {
         this.photoSensor.setLinearUnit(DistanceUnit.INCH);
         this.photoSensor.setAngularUnit(AngleUnit.DEGREES);
 
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 0);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 180);
         this.photoSensor.setOffset(offset);
 
         this.photoSensor.setAngularScalar(ANGULAR_SCALAR);
@@ -282,9 +282,9 @@ public class MecanumRobotController {
             robot.telemetry.addData("Distance To Target", distanceToDestination * moveCountMult);
             robot.telemetry.addData("", "");
             if (distanceToDestinationInches <= INCHES_LEFT_TO_SLOW_DOWN) {
-                move(0.01 + speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, HEADING_CORRECTION_POWER);
+                move(0.01 + speed * Math.sin(distanceToDestinationInches / INCHES_LEFT_TO_SLOW_DOWN * (Math.PI / 2)), 0.0, 0.0, -HEADING_CORRECTION_POWER);
             } else {
-                move(speed, 0.0, 0.0, HEADING_CORRECTION_POWER);
+                move(speed, 0.0, 0.0, -HEADING_CORRECTION_POWER);
             }
 
             if (distanceToDestinationInches < 1) {
@@ -326,11 +326,16 @@ public class MecanumRobotController {
             currentPosition = getPosition();
             double dy = wantedPosition.y - currentPosition.y;
             double dx = wantedPosition.x - currentPosition.x;
-            double moveDirection = Math.atan2(dy, dx);
+            double moveDirection = Math.atan2(dx, dy);
             double forward = -speed * Math.cos((moveDirection - currentPosition.h));
-            double strafe = -speed * Math.sin((moveDirection - currentPosition.h));
-            move(forward, strafe, 0.0, HEADING_CORRECTION_POWER);
-            distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+            double strafe = speed * Math.sin((moveDirection - currentPosition.h));
+            robot.telemetry.addData("Distance", distance);
+            robot.telemetry.addData("dx", dx);
+            robot.telemetry.addData("dy", dy);
+            robot.telemetry.addData("Move direction", moveDirection);
+            move(forward, 0.0, 0.0, HEADING_CORRECTION_POWER);
+//            distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+            distance = dy;
         }
         // Stop the robot
         move(0, 0, 0, 0);

@@ -25,7 +25,7 @@ public class AutoBasket extends LinearOpMode {
         initialize();
         waitForStart();
         // robotController.turnTo(45, TURN_SPEED);
-        robotController.positionDrive(new SparkFunOTOS.Pose2D(0, 24, 0), 1.0);
+        robotController.positionDrive(new SparkFunOTOS.Pose2D(0, 72, 0), 1.0);
     }
 
     public void initialize() {
