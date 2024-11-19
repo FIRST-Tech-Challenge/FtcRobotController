@@ -66,64 +66,67 @@ public class Unit_Test extends CommonUtil {
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
         setZeroPowerBehavior();
-        clawClosed();
-        wristFlat();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-//            bl.setPower(0.65);
-//            fl.setPower(-0.6);
-//            fr.setPower(0.65);
-//            br.setPower(-0.55);
-//
-//            sleep(3000);
-//            bl.setPower(0);
-//            fl.setPower(0);
-//            fr.setPower(0);
-//            br.setPower(0);
 
-//            moveForward_wDistance_wGyro(10,0.5);
+//            moveBackwards_wDistance_wGyro(25,0.3);
+//
+//
+//            moveForward_wDistance_wGyro(3,0.3);
 //            sleep(500);
 //
-//            moveBackwards_wDistance_wGyro(10,0.5);
+//            telemetry.addData("trying to move sideways","starting");
+//            telemetry.update();
+//            moveSideways_wCorrection("left",6,1);
+//            telemetry.addData("trying to move sideways","complete");
+//            telemetry.update();
 //            sleep(500);
 //
-//            moveSideways_wCorrection("right",10,0.35);
-//            sleep(500);
-//
-//            moveSideways_wCorrection("left",10,0.35);
-//            sleep(500);
 //
 //            turn("left",90);
-//            sleep(500);
+//            sleep(100);
+//
+//            moveForward_wDistance_wGyro(8,0.3);
+//            sleep(100);
+//
+//
+//
+//            moveBackwards_wDistance_wGyro(8,0.3);
+//            sleep(100);
+//
+//
 //
 //            turn("right",90);
-//            sleep(500);
+//            sleep(100);
 //
-//            intake(1000);
-//            sleep(500);
-//
-//            extend(1,2000);
-//            sleep(500);
-//            clawClosed();
-//            wristBent();
-//            sleep(500);
-//            clawOpen();
-//            sleep(500);
-//            clawClosed();
-//            wristFlat();
-//            sleep(500);
-//            retract(1,2000);
-//            sleep(500);
-//            drone_Test();
-//         encoder_test(200,0.3);
+//            moveSideways_wCorrection("right",6,1);
+//            sleep(100);
+            moveSideways_wCorrection("left",9,1.0);
+            telemetry.addData("move sideways","done");
+            telemetry.update();
+            sleep(2000);
 
-            armDown();
-            sleep(5000);
-            armUp();
-            sleep(5000);
+            moveForward_wDistance_wGyro(20,0.5);
+            telemetry.addData("move fwd","done");
+            telemetry.update();
+            sleep(2000);
+
+            moveSideways_wCorrection("left",9,1.0);
+            telemetry.addData("move sideways","done");
+            telemetry.update();
+            sleep(2000);
+
+            //sleep(2000);
+            //setMotorToZeroPower();
+            //sleep(2000);
+
+
+            //sleep(2000);
+            //setMotorToZeroPower();
 
 
          sleep(9000000);

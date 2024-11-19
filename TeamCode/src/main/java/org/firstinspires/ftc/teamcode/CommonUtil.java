@@ -33,7 +33,7 @@ public class CommonUtil extends LinearOpMode {
     Orientation myRobotOrientation;
 
     double ENC2DIST = 200/29; //2000.0/48.0; // FW/BW
-    double ENC2DIST_SIDEWAYS = 2911.0/57.0;
+    double ENC2DIST_SIDEWAYS = 291.1/34.44;
     ElapsedTime timer = new ElapsedTime();
 
     //imu init
@@ -54,6 +54,8 @@ public class CommonUtil extends LinearOpMode {
     Servo s2 = null;
     Servo s3 = null;
     Servo s5 = null;
+    Servo s6 = null;
+    Servo s12 = null;
 
     CRServo s4 = null;
 
@@ -91,6 +93,8 @@ public class CommonUtil extends LinearOpMode {
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(CRServo.class, "s4");
         s5 = hardwareMap.get(Servo.class,"s5");
+        s6 = hardwareMap.get(Servo.class,"s6");
+        s12 = hardwareMap.get(Servo.class,"s12");
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
@@ -160,17 +164,43 @@ public class CommonUtil extends LinearOpMode {
     public void intakeOff(){
         s4.setPower(0);
     }
-    public void armUp() {  }
-    public void armDown() { }
-    public void armOff() {  }
+    public void armUp() {
+        s12.setPosition(0.5);
+        s6.setPosition(0.5);
+    }
+
+    public void armReleaseP1(){
+        s6.setPosition(0);
+        s12.setPosition(0);
+    }
+
+    public void armReleaseP2(){
+        s6.setPosition(0);
+        s12.setPosition(1);
+        sleep(100);
+        armMiddle();
+    }
+
+
+
+
+    public void armDown() {
+        s12.setPosition(0.5);
+        s6.setPosition(1);
+        //skibidi sigma i am the rizzla
+    }
+    public void armMiddle() {
+        s12.setPosition(0.5);
+        s6.setPosition(0.75);
+    }
     public void clawOpen() { s5.setDirection(Servo.Direction.FORWARD);
         s5.setPosition(1); }
     public void clawClose() { s5.setDirection(Servo.Direction.REVERSE);
         s5.setPosition(1); }
     public void basketUp() { s3.setDirection(Servo.Direction.FORWARD);
-        s3.setPosition(0.5); }
-    public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
         s3.setPosition(1); }
+    public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
+        s3.setPosition(0.5); }
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
         double power = (targetAngle - currentAngle) * 0.0054; // was 0.006
@@ -185,13 +215,13 @@ public class CommonUtil extends LinearOpMode {
     public double PID_FB (double targetEC, double currentEC, double Mpower)
     {
         double power = (targetEC -currentEC)*0.003;
-        if (Mpower > 0.3){
-            Mpower = 0.3;
-        }
+        //if (Mpower > 0.3){
+        //    Mpower = 0.3;
+        //}
         if (power > Mpower) {
             power = Mpower;
-        }else if(power < -1*(Mpower)) {
-            power = -1 * (Mpower);
+        }else if(power < 0.1) {
+            power = 0; //-1 * (Mpower);
         }
         return power;
     }
@@ -269,10 +299,10 @@ public class CommonUtil extends LinearOpMode {
             sleep(movePause);
             // quick correct for angle if it is greater than 10 [Aarush]
             double absError_angle = Math.abs(currZAngle);
-            if (absError_angle > 10)
-            {
-                turnToZeroAngle();
-            }
+            //if (absError_angle > 10)
+            //{
+            //    turnToZeroAngle();
+            //}
 //            // identify if you are stuck [Aarush]
 //            double flagStuck = amIStuck_FB(encoderAbsCounts, currEncoderCount, prevEncoderCount);
 //            if (flagStuck==1)
@@ -392,9 +422,7 @@ public class CommonUtil extends LinearOpMode {
         s2.setPosition(0.147);
     }
 
-    //public void clawOpen()
-    //{
-    //    s1.setPosition(0.4);
+    //public void0.4);
     //}
 
     public void wristBent()
@@ -479,11 +507,13 @@ public class CommonUtil extends LinearOpMode {
     }
 
 
-    public int moveSideways_wCorrection(String direction, int DistanceAbsIn, double motorAbsPower)
+    public void moveSideways_wCorrection(String direction, int DistanceAbsIn, double motorAbsPower)
     {
-        turnToZeroAngle();
+        //turnToZeroAngle();
         int currEncoderCount = 0;
         double encoderAbsCounts = ENC2DIST_SIDEWAYS*DistanceAbsIn; //2000/42
+        telemetry.addData("sideways:target ", encoderAbsCounts);
+        telemetry.update();
         setMotorOrientation();
         // Resetting encoder counts
         resetMotorEncoderCounts();
@@ -534,6 +564,8 @@ public class CommonUtil extends LinearOpMode {
                 bl.setPower(blPow);
                 fr.setPower(frPow);
                 br.setPower(brPow);
+                telemetry.addData("sideways:currEncoderCount ", currEncoderCount);
+
             }
             else if (direction.equalsIgnoreCase("right")) {
                 fl.setPower(-flPow);
@@ -543,7 +575,7 @@ public class CommonUtil extends LinearOpMode {
             }
             idle();
         }
-        turnToZeroAngle();
+        //turnToZeroAngle();
 
         // apply zero power to avoid continuous power to the wheels
         setMotorToZeroPower();
@@ -554,7 +586,7 @@ public class CommonUtil extends LinearOpMode {
 
         telemetry.addData("sideways:currEncoderCount (final)", currEncoderCount);
         telemetry.update();
-        return (currEncoderCount);
+
     }
 
     public void encoder_test(double encoderAbsCounts, double power)
@@ -611,12 +643,12 @@ public class CommonUtil extends LinearOpMode {
         telemetry.update();
 
         while (m2.getCurrentPosition() > -encoderAbsCounts){
-            m2.setPower(-power);
+            m2.setPower(power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
             telemetry.update();
             idle();
         }
-        m2.setPower(0); // set power to 0 so the motor stops running
+        m2.setPower(0.05); // set power to 0 so the motor stops running
 
     }
 
@@ -628,7 +660,7 @@ public class CommonUtil extends LinearOpMode {
         telemetry.update();
 
         while (m2.getCurrentPosition() < encoderAbsCounts){
-            m2.setPower(power);
+            m2.setPower(-power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
             telemetry.update();
             idle();

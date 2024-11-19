@@ -73,59 +73,71 @@ public class Auto_Basket extends CommonUtil {
 
         while (opModeIsActive()) {
 
-            moveBackwards_wDistance_wGyro(24,0.5);
-            sleep(200);
+//            moveSideways_wCorrection("left",3,0.5);
+//            sleep(100);
 
-            slideUp(1,500);
-            sleep(200);
+            armReleaseP1();
+            moveBackwards_wDistance_wGyro(25,0.3);
+            sleep(100);
 
+//            moveSideways_wCorrection("right",3,0.5);
+//            sleep(100);
+
+
+            slideUp(1,4350);
+            armReleaseP2();
+            sleep(500);
+            basketUp();
+            sleep(3050);
             basketDown();
-            sleep(1000);
-            slideDown(0.8,500);
-            sleep(200);
+            slideDown(0.7,4000);
+            m2.setPower(-0.7);
+            sleep(500);
+            m2.setPower(0);
+            armMiddle();
+            sleep(100);
 
-            moveForward_wDistance_wGyro(2,0.3);
-            moveSideways_wCorrection("left",12,0.6);
-            sleep(200);
+            //moveForward_wDistance_wGyro(3,0.3);
+            //sleep(500);
+
+            telemetry.addData("trying to move sideways","starting");
+            telemetry.update();
+            moveSideways_wCorrection("left",6,1);
+            telemetry.addData("trying to move sideways","complete");
+            telemetry.update();
+            sleep(500);
+
 
             turn("left",90);
-            sleep(200);
+            sleep(100);
+
+            moveForward_wDistance_wGyro(8,0.3);
+            sleep(100);
 
             armDown();
+
             intakeOn();
 
-            moveBackwards_wDistance_wGyro(10,0.5);
-            sleep(200);
+            moveBackwards_wDistance_wGyro(8,0.3);
+            //sleep(100);
 
             armUp();
             intakeReverse();
-            sleep(300);
+            sleep(1000);
             intakeOff();
 
-            armDown(); //idle position
             turn("right",90);
-            sleep(200);
+            //sleep(100);
 
-            moveSideways_wCorrection("left",2,0.6);
-            sleep(200);
+            moveSideways_wCorrection("right",6,1);
+            //sleep(100);
 
-            slideUp(1,2000);
-            sleep(200);
-
-            moveBackwards_wDistance_wGyro(2,0.5);
-            sleep(200);
-
-            //then we place the sample and repeat process boi
-
-
-
-
-
-
-
-
-
-
+            armDown();
+            slideUp(1,4350);
+            basketUp();
+            sleep(3050);
+            basketDown();
+            slideDown(0.7,4350);
 
             sleep(9000000);
 
