@@ -114,7 +114,7 @@ public class MainEncoderAuto extends LinearOpMode {
 
     }
 
- protected void driveTicks(float ticks, float speed, dir direction, float timeoutS) {
+ protected void driveTicks(float ticks, float speed, dir direction) {
         double lbDir = 1;
         double rbDir = 1;
         double lfDir = 1;
@@ -197,7 +197,7 @@ public class MainEncoderAuto extends LinearOpMode {
         }
     }*/
 
-     protected void moveSlideTicks(float ticks, float speed, boolean up, float timeoutS) {
+     protected void moveSlideTicks(float ticks, float speed, boolean up) {
         int dir = 1;
         if (!up) {
             dir = -1;
