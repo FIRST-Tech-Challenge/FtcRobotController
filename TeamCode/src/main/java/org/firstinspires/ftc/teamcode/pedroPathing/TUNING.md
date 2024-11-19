@@ -1,4 +1,4 @@
-## Prerequisites
+# Prerequisites
 Obviously, you have to have a robot to use Pedro Pathing. Also, Pedro Pathing is only able to work
 with omnidirectional drives, like mecanum drive. There is currently no support for swerve drives.
 You must also have a localizer of some sort. Pedro Pathing has a drive encoder, a two tracking wheel,
