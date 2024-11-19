@@ -103,6 +103,10 @@ public class MainEncoderAuto extends LinearOpMode {
                 telemetry.update();
 
             }
+            leftBack.setPower(0);
+            rightBack.setPower(0);
+            leftFront.setPower(0);
+            rightFront.setPower(0);
 
         }
 
