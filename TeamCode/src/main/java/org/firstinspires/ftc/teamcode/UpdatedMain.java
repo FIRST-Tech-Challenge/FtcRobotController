@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +18,7 @@ public class UpdatedMain extends LinearOpMode {
     private Servo hand_grip_servo;
     //Arm Motors
     private DcMotor arm_rotator_motor;
-    private DcMotor arm_extender_motor; //not in use yet
+    private DcMotor arm_extender_motor;
     //Wheels
     private DcMotor front_left_wheel;
     private DcMotor back_left_wheel;
@@ -27,14 +26,15 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor back_right_wheel;
 
     //Road Runner Dashboard
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-    private Telemetry dashboardTelemerty = dashboard.getTelemetry();
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private final Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     // Runtime modifiable values
-    // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you dont)
-    public static double arm_less_zero = 0.5;
-    public static double arm_more_zero = 0.4;
+    // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
+    public static double arm_less_zero = 0.9;
+    public static double arm_more_zero = 0.9;
     public static double triggerModifier = 0.005;
+    public static int armUp = -316;
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
     //main loop
     @Override
@@ -50,9 +50,9 @@ public class UpdatedMain extends LinearOpMode {
                 update_driving();
                 update_grip();
                 update_arm_rotation();
-                update_hand_rotato();
+                update_hand_rotation();
                 display_data();
-                telemetry.update();
+                update_arm_extension();
             }
         }
     }
@@ -71,7 +71,7 @@ public class UpdatedMain extends LinearOpMode {
     public void initialize_arm(){
         arm_rotator_motor = hardwareMap.get(DcMotor.class, "arm_control");
         arm_extender_motor = hardwareMap.get(DcMotor.class, "arm_extender");
-        arm_rotator_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm_rotator_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     /**
@@ -106,28 +106,28 @@ public class UpdatedMain extends LinearOpMode {
      */
     public void display_data(){
         //Hand
-        dashboardTelemerty.addData("Hand Grip", hand_grip_servo.getPosition());
-        dashboardTelemerty.addData("Hand Rotation", hand_rotation_servo.getPosition());
+        dashboardTelemetry.addData("Hand Grip", hand_grip_servo.getPosition());
+        dashboardTelemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
 
         //Arm
-        dashboardTelemerty.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
-        dashboardTelemerty.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
+        dashboardTelemetry.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
+        dashboardTelemetry.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
 
         //Vars that should be changeable (please)
-        dashboardTelemerty.addData("Trigger Modifier", triggerModifier);
-        dashboardTelemerty.addData("Arm > 0 Modifier", arm_more_zero);
-        dashboardTelemerty.addData("Arm < 0 Modifier", arm_less_zero);
+        dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
+        dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
+        dashboardTelemetry.addData("Arm < 0 Modifier", arm_less_zero);
 
         //other
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
 
-        //update telemerty
-        dashboardTelemerty.update();
+        //update telemetry
+        dashboardTelemetry.update();
         telemetry.update();
     }
     public void update_driving(){
-        double left_stick_x = gamepad1.left_stick_x;
+        double left_stick_x = gamepad1.left_stick_x * -1;
         double left_stick_y = gamepad1.left_stick_y;
         double right_stick_x = gamepad1.right_stick_x;
         back_left_wheel.setPower(((left_stick_y - left_stick_x)*-1) + right_stick_x);
@@ -136,9 +136,9 @@ public class UpdatedMain extends LinearOpMode {
         front_right_wheel.setPower(((left_stick_y - left_stick_x)*-1) - right_stick_x);
     }
     public void update_arm_rotation(){
-        // What is the point of the option argument? - @GoldStar184 (this is public im not using my real name)
-        //TODO: Extend this over muliple lines
-        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? arm_less_zero : arm_more_zero)) *-1);
+        //TODO: Extend this over multiple lines
+
+        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > armUp ? arm_less_zero : arm_more_zero)) *-1);
         //TODO: When we get a encoder on this use set pos and not use power ever again
     }
     public void update_grip(){/*
@@ -159,16 +159,16 @@ public class UpdatedMain extends LinearOpMode {
             hand_grip_servo.setPosition(hand_grip_servo.getPosition() - triggerModifier);
         }
     }
-    public void update_hand_rotato(){
+    public void update_hand_rotation(){
         if (gamepad2.left_trigger ==1 || gamepad2.right_trigger == 1){
 
-            //TODO: Seperate this code to multiple lines and comment it.
+            //TODO: Separate this code to multiple lines and comment it.
             hand_rotation_servo.setPosition(hand_rotation_servo.getPosition() + (gamepad2.left_trigger + (gamepad2.right_trigger)*-1)*triggerModifier);
         }
 
     }
     public void update_arm_extension(){
-        arm_extender_motor.setPower(gamepad2.right_stick_y);
+        arm_extender_motor.setPower(gamepad2.right_stick_y * -1);
     }
     // Please Explain this code - @GoldStar184
     //lets you quickly change what set of items you want to use
