@@ -233,6 +233,12 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftMotorLeft.setPower(speed);
         robot.liftMotorRight.setPower(speed);
+        while (opModeIsActive() && (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy())) {
+            telemetry.addData("Motor Position", "Left: %d, Right: %d",
+                    robot.liftMotorLeft.getCurrentPosition(), robot.liftMotorRight.getCurrentPosition());
+            telemetry.update();
+        }
+        sleep(1000);
     }
 
 }
