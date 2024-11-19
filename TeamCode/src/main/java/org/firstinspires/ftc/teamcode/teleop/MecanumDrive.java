@@ -74,7 +74,7 @@ public class MecanumDrive extends LinearOpMode {
 
             if (controller1.b.onPress()){
                 //Reset heading angle (Through IMU or encoders)
-                robot.resetIMU();
+//                robot.resetIMU();
             }
 
             if (controller1.y.onPress()){

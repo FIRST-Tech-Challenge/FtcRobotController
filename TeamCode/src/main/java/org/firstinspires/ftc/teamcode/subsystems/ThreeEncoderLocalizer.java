@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.roadrunner.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.teamcode.utils.LimeLightWrapper;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
 /**
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 @Config
 public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements LocalizerInterface {
 
-    public static double inPerTickLocal = 0.00302;
+    public static double inPerTickLocal = 0.0029;
 
     public double weight = 0.33;
     private Pose2d position;
@@ -30,12 +31,14 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
 
     public ThreeEncoderLocalizer(HardwareMap hw, String[] names){
         super(hw, inPerTickLocal, names);
-        position = new Pose2d(0,0,0);
+        this.position = new Pose2d(0,0,0);
+        setInitialPosition(new Pose2d(0,0,0));
     }
     public ThreeEncoderLocalizer(HardwareMap hardwareMap, double inPerTick) {
         super(hardwareMap, inPerTick);
-        position = new Pose2d(0,0,0);
+        setInitialPosition(new Pose2d(0,0,0));
     }
+
 
     @Override
     public double getWeight() {
@@ -54,7 +57,16 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
 
         position = position.plus(twist.value());
 
-        return new Pose2d(position.position.x, position.position.y, Math.toRadians(position.heading.toDouble()));
+        return new Pose2d(position.position.x, position.position.y, position.heading.toDouble());
+    }
+
+
+    @Override
+    public void setColor(LimeLightWrapper.Color color){}
+
+    @Override
+    public void setInitialPosition(Pose2d pose) {
+        this.position = pose;
     }
 
     @Override
@@ -73,4 +85,5 @@ public class ThreeEncoderLocalizer extends ThreeDeadWheelLocalizer implements Lo
     public String DebugLog(){
         return debugValue;
     }
+
 }

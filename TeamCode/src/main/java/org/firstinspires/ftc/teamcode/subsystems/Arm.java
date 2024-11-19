@@ -85,9 +85,9 @@ public class Arm {
         armPositions = new HashMap<ArmState,Integer>();
         armPositions.put(ArmState.DEPOSIT_HEIGHT, -220);
         armPositions.put(ArmState.REST_HEIGHT, 200);
-        armPositions.put(ArmState.SPECIMEN_HEIGHT, 2520);
+        armPositions.put(ArmState.SPECIMEN_HEIGHT, 3400);
         armPositions.put(ArmState.BASE_HEIGHT,3170);
-        armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -60); // Adjust Once Measured
+        armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -120); // Adjust Once Measured
         armPositions.put(ArmState.DEPOSIT_HEIGHT_FORWARD, 2000);
         armPositions.put(ArmState.VERTICAL_HEIGHT,1000);
 
@@ -202,7 +202,7 @@ public class Arm {
                     "Arm current Rotation: %f\n" +
                     "Arm current position: %d\n" +
                     "Arm target position: %d\n" +
-                    "Arm State: %s",
+                    "Arm State: %s\n",
                     this.getRotation(),
                     this.getPosition(),
                     this.targetPosition,

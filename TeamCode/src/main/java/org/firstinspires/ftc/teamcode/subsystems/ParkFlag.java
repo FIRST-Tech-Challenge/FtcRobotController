@@ -7,8 +7,8 @@ public class ParkFlag {
 
     private Servo parkFlag;
 
-    private double stowPosition = 0;
-    private double raisedPosition = 0.35;
+    private double stowPosition = 0.04;
+    private double raisedPosition = 0.46;
 
     public ParkFlag(HardwareMap hw){
         this(hw, "parkFlag");

@@ -249,12 +249,12 @@ public final class MecanumDrive {
 
         LocalizerInterface[] localizerArray = new LocalizerInterface[] {
                 new SparkOdo(hardwareMap),
-                new ThreeEncoderLocalizer(hardwareMap),
-                new LimeLightWrapper(hardwareMap.get(Limelight3A.class, "limelight");)
+                new ThreeEncoderLocalizer(hardwareMap)
+//               ,new LimeLightWrapper(hardwareMap.get(Limelight3A.class, "limelight"))
         };
-//        localizer = new PrimaryLocalizer(localizerArray);
+        localizer = new PrimaryLocalizer(localizerArray, pose);
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+//        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 

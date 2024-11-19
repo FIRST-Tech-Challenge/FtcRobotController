@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SparkOdo;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 
-//@TeleOp(name="SparkTest", group = "Subsystem Tests")
+@TeleOp(name="SparkTest", group = "Subsystem Tests")
 public class SparkTest extends LinearOpMode {
 
 
@@ -74,7 +74,7 @@ public class SparkTest extends LinearOpMode {
 //            String dist = "X: " + pos.x + "  Y: " + pos.y + " R: " + pos.h;
             telemetry.addData("Total Distance",String.format("X: %f Y: %f R:%.2f", totalDist.x, totalDist.y, Math.toDegrees(totalDist.h)));
             telemetry.addData("Distance From Start", String.format("X: %f Y: %f R:%.2f", pos.x, pos.y, pos.h));
-            telemetry.addData("IMU Yaw: ", robot.getYaw());
+//            telemetry.addData("IMU Yaw: ", robot.getYaw());
             telemetry.update();
             controller1.update();
 

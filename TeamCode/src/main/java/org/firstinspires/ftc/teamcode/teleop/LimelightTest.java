@@ -74,7 +74,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
  *   below the name of the Limelight on the top level configuration screen.
  */
 @Config
-//@TeleOp(name = "LimelightTest")
+@TeleOp(name = "LimelightTest")
 public class LimelightTest extends LinearOpMode {
     private IMU imu;
     private LimeLightWrapper wrapper;
@@ -120,17 +120,17 @@ public class LimelightTest extends LinearOpMode {
         while (opModeIsActive()) {
             robot.drive(controller1.left_stick_y, controller1.left_stick_x, controller1.right_stick_x);
             //For some reason, angle direction is inverted, this may be due to the offset.
-            Pose3D pose3D = wrapper.distanceFromTag(-Math.toDegrees(sparkOdo.getPos().h));
+            Pose3D pose3D = wrapper.distanceFromTag(Math.toDegrees(sparkOdo.getPos().h));
             Pose3D pose3D_MT1 = wrapper.distanceFromTag();
             if(pose3D!=null) {
-                Pose3D pos1 = wrapper.inToMM(pose3D_MT1);
+                Pose3D pos1 = wrapper.MtoIN(pose3D_MT1);
                 telemetry.addLine("Mega Tag 1:");
                 telemetry.addData("1 - X: ",pos1.getPosition().x);
                 telemetry.addData("1 - Y: ",pos1.getPosition().y);
                 telemetry.addData("1 - Z: ",pos1.getPosition().z);
                 telemetry.addData("Calculated Rotation: ",pos1.getOrientation().getYaw(AngleUnit.DEGREES));
 
-                Pose3D pos = wrapper.inToMM(pose3D);
+                Pose3D pos = wrapper.MtoIN(pose3D);
                 telemetry.addLine("Mega Tag 2:");
                 telemetry.addData("2 - X: ",pos.getPosition().x);
                 telemetry.addData("2 - Y: ",pos.getPosition().y);

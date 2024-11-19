@@ -26,19 +26,6 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "YellowSideAuto")
 public class YellowSideAuto extends LinearOpMode {
 
-    //State Machine Variables
-    enum States {
-        DEPOSIT_SAMPLE, HANG_SPECIMIN,
-        COLLECT_SAMPLE, COLLECT_SPECIMIN,
-        START_TO_SPECIMIN_HANG,
-        SPECIMIN_HANG_TO_SPIKE,
-        SPIKE_TO_HUMAN,
-        HUMAN_TO_NEXT_SPIKE
-
-    };
-
-    States currentState;
-
     private FourEyesRobot robot;
     private MecanumDrive roadRunnerDrive;
 
@@ -85,7 +72,6 @@ public class YellowSideAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //Init robot
-        currentState = States.START_TO_SPECIMIN_HANG;
 //        Lift lift = new Lift(hardwareMap);
 //        Arm arm = new Arm(hardwareMap);
 
@@ -95,6 +81,7 @@ public class YellowSideAuto extends LinearOpMode {
 
 
         roadRunnerDrive = new MecanumDrive(hardwareMap, startPosition);
+
         waitForStart();
         //Auto Begins
         timer.reset();

@@ -21,7 +21,9 @@ public class Wrist {
         ParallelMode,
         SubHoverMode,
 
-        PerpendicularMode
+        PerpendicularMode,
+
+        SpeciminDepositMode
     }
 
     private HashMap<WristStates, Double> wristPositions;
@@ -57,6 +59,7 @@ public class Wrist {
         wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + 0.03);
         wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.015); //0.694
         wristPositions.put(WristStates.PerpendicularMode, WRIST_PARALLEL - 0.25); //Set 90 degrees off from parallel
+        wristPositions.put(WristStates.SpeciminDepositMode, WRIST_PARALLEL + 0.1);//0.32
     }
 
     //------------------------------------------------------------------------------------------
@@ -134,7 +137,7 @@ public class Wrist {
         return String.format(
                 "Wrist Position: %f\n" +
                 "Wrist State: %s\n" +
-                "Wrist current position: %f",
+                "Wrist current position: %f\n",
                 getWristPosition(),
                 currentState,
                 currentPosition

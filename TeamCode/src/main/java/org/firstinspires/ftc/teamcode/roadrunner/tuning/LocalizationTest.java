@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
+import org.firstinspires.ftc.teamcode.subsystems.PrimaryLocalizer;
+import org.firstinspires.ftc.teamcode.utils.LimeLightWrapper;
 
 public class LocalizationTest extends LinearOpMode {
     @Override
@@ -18,7 +20,10 @@ public class LocalizationTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+            //new Pose2d(8.5,-61, Math.toRadians(-90)
+            Pose2d startPosSpecimen = new Pose2d(8.5,-61, Math.toRadians(-90));
+            Pose2d startPosSample = new Pose2d(-12,-66,Math.toRadians(180));
+            MecanumDrive drive = new MecanumDrive(hardwareMap, startPosSpecimen);
 
             waitForStart();
 
@@ -32,15 +37,23 @@ public class LocalizationTest extends LinearOpMode {
                 ));
 
                 drive.updatePoseEstimate();
-
+                PrimaryLocalizer localizer = (PrimaryLocalizer) (drive.localizer);
+                localizer.setColor(LimeLightWrapper.Color.RED_SIDE);
+                Pose2d pose = localizer.getPosition();
+//                Pose2d LL = localizer.getLocalizers()[2].getPosition();
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
                 telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+                telemetry.addLine("\n"+localizer.allLocalizersToString());
                 telemetry.update();
 
                 TelemetryPacket packet = new TelemetryPacket();
                 packet.fieldOverlay().setStroke("#3F51B5");
                 Drawing.drawRobot(packet.fieldOverlay(), drive.pose);
+                packet.fieldOverlay().setStroke("#FF0000");
+                Drawing.drawRobot(packet.fieldOverlay(), pose);
+                packet.fieldOverlay().setStroke("#00FF00");
+//                Drawing.drawRobot(packet.fieldOverlay(), LL);
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {

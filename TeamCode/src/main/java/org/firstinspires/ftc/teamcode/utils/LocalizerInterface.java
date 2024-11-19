@@ -18,5 +18,9 @@ public interface LocalizerInterface {
     Pose2d getPosition();
     boolean isValid();
 
+    void setColor(LimeLightWrapper.Color c);
+
+    void setInitialPosition(Pose2d pose);
+
 
 }

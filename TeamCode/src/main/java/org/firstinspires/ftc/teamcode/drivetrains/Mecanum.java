@@ -19,7 +19,7 @@ public class Mecanum {
 
     //Motors and Sensors
     private DcMotor frontLeft, backLeft, frontRight, backRight;
-    private IMU imu;
+//    private IMU imu;
 
     //Internal Variables
     private boolean fieldCentricActive;
@@ -42,14 +42,14 @@ public class Mecanum {
         resetEncoders();
 
         //Initialize imu
-        imu = hw.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.UP
-                )
-        ));
-        resetIMU();
+//        imu = hw.get(IMU.class, "imu");
+//        imu.initialize(new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+//                )
+//        ));
+//        resetIMU();
         //Assign default variables
         fieldCentricActive = false;
     }
@@ -62,12 +62,12 @@ public class Mecanum {
      * @param rotate [double] Power to rotate
      */
     public void drive( double forward, double strafe, double rotate){
-        if(fieldCentricActive) {
-            double currentRotation = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double temp = forward * Math.cos(currentRotation) + strafe * Math.sin(currentRotation);
-            strafe = -forward * Math.sin(currentRotation) + strafe * Math.cos(currentRotation);
-            forward = temp;
-        }
+//        if(fieldCentricActive) {
+//            double currentRotation = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//            double temp = forward * Math.cos(currentRotation) + strafe * Math.sin(currentRotation);
+//            strafe = -forward * Math.sin(currentRotation) + strafe * Math.cos(currentRotation);
+//            forward = temp;
+//        }
         //Invert strafe and rotate so that all positive values can be fed into the function to drive
         strafe *= -1;
         rotate *= -0.5;
@@ -84,9 +84,9 @@ public class Mecanum {
     /**
      * Resets robot orientation
      */
-    public void resetIMU(){
-        imu.resetYaw();
-    }
+//    public void resetIMU(){
+//        imu.resetYaw();
+//    }
 
     /**
      * Resets all drive encoders
@@ -117,14 +117,14 @@ public class Mecanum {
      * Returns the current orientation of the robot in RADIANS
      * @return [double] Current Orientation of robot
      */
-    public double getYaw(){ return getYaw(AngleUnit.RADIANS);}
+//    public double getYaw(){ return getYaw(AngleUnit.RADIANS);}
 
     /**
      * Returns the current orientation of the robot in the DEGREES or RADIANS
      * @Param unit [AngleUnit] The desired angle unit type to be returned.
      * @return [double] Current Orientation of robot
      */
-    public double getYaw(AngleUnit unit){
-        return imu.getRobotYawPitchRollAngles().getYaw(unit);
-    }
+//    public double getYaw(AngleUnit unit){
+//        return imu.getRobotYawPitchRollAngles().getYaw(unit);
+//    }
 }

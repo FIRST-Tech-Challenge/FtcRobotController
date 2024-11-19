@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
 
     //Adjustable Constraints
-    public double OPEN_POS = 1, CLOSE_POS = 0.5;
+    public double OPEN_POS = 0.46, CLOSE_POS = 1;
 
     //Internal variables
     private Servo claw;
@@ -16,6 +16,7 @@ public class Claw {
      * Quick constructor for Claw Subsystem Class
      * @param hw [HardwareMap] The hardware map used to initialize servos
      */
+
     public Claw(HardwareMap hw){
         this(hw,"claw");
     }

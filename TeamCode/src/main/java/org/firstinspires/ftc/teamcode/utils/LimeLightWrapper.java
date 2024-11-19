@@ -18,7 +18,7 @@ public class LimeLightWrapper implements LocalizerInterface{
     This saves the hassle of creating new nearly identical
     sets of autos to switch between blue and red
     */
-    private enum Color {
+    public enum Color {
         RED_SIDE,
         BLUE_SIDE
     }
@@ -117,9 +117,38 @@ public class LimeLightWrapper implements LocalizerInterface{
         return new Pose2d(x,y,h);
     }
 
+    public Pose2d getPosition(double yaw) {
+        double x = 0, y = 0, h = 0;
+        LLResult result = getVaildResult();
+        limelight.updateRobotOrientation(yaw);
+        if (result != null){
+            Pose3D botpose = MtoIN(result.getBotpose_MT2());
+            if (botpose != null) {
+                x = botpose.getPosition().x;
+                y = botpose.getPosition().y;
+                h = botpose.getOrientation().getYaw(AngleUnit.RADIANS);
+            }
+            if(currentColor==Color.RED_SIDE) {
+                x *= -1;
+                y *= -1;
+                h *= -1;
+            }
+        }
+        return new Pose2d(x,y,h);
+    }
+
     @Override
     public boolean isValid() {
-        return getVaildResult()!=null;
+        LLResult result = getVaildResult();
+        return result != null && result.getBotpose() != null;
     }
+
+    public void setColor(Color color){
+        currentColor = color;
+    }
+
+    //Do Nothing
+    @Override
+    public void setInitialPosition(Pose2d pose) {}
 
 }

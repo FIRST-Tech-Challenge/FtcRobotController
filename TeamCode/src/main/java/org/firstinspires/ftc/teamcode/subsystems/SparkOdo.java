@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.LimeLightWrapper;
 import org.firstinspires.ftc.teamcode.utils.LocalizerInterface;
 
 @Config
@@ -19,10 +20,13 @@ public class SparkOdo implements LocalizerInterface {
     //Y+ Axis --> Left
 
     //Position offset of the Spark:
-    public static double X_OFFSET = -2; //Inches
-    public static double Y_OFFSET = -0.6; //Inches
+    public static double X_OFFSET = 2; //Inches
+    public static double Y_OFFSET = 0.6; //Inches
 
     public static double HEADING_OFFSET = 180; //Degrees
+
+    public static double LINEAR_MUTLI = 1.05;
+    public static double HEADING_MULTI = 1;
     public double weight = 0.33;
     private SparkFunOTOS odo;
 
@@ -134,8 +138,8 @@ public class SparkOdo implements LocalizerInterface {
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        odo.setLinearScalar(1.0);
-        odo.setAngularScalar(1.0);
+        odo.setLinearScalar(LINEAR_MUTLI);
+        odo.setAngularScalar(HEADING_MULTI);
 
         // The IMU on the OTOS includes a gyroscope and accelerometer, which could
         // have an offset. Note that as of firmware version 1.0, the calibration
@@ -187,12 +191,26 @@ public class SparkOdo implements LocalizerInterface {
     @Override
     public Pose2d getPosition() {
         SparkFunOTOS.Pose2D result = getPos();
-        return new Pose2d(-result.x, result.y, -result.h);
+        return new Pose2d(-result.x, -result.y, result.h);
     }
 
     @Override
     public boolean isValid() {
         return true;
+    }
+
+    //Doesn't do anything.
+    @Override
+    public void setColor(LimeLightWrapper.Color color) {}
+
+    @Override
+    public void setInitialPosition(Pose2d pose) {
+        SparkFunOTOS.Pose2D pos = new SparkFunOTOS.Pose2D(
+          -pose.position.x,
+          -pose.position.y,
+          pose.heading.toDouble()
+        );
+        odo.setPosition(pos);
     }
 
     public String toString(){

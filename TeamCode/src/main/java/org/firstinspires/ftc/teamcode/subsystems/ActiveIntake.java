@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,6 +23,8 @@ public class ActiveIntake {
     private AxonAbsolutePositionEncoder encoder;
 
     private boolean sampleCaptured;
+
+    private double angleVel = 0;
 
     /**
      * Quick constructor used to create an Active Intake Subsystem Class
@@ -86,7 +90,7 @@ public class ActiveIntake {
         long currentTime = System.currentTimeMillis();
 
         //Angle velocity in degrees/seconds
-        double angelVel = (currentAngle - lastAngle) / (currentTime - lastTime) * 1000;
+        angleVel = Math.abs((currentAngle - lastAngle)) * 5;
 
 
         lastAngle = currentAngle;
@@ -94,18 +98,21 @@ public class ActiveIntake {
 
         //If the servo is running
         //AND the angular velocity is less than 5 degrees/second
-        if(isRunning && angelVel < 5){
+        if(isRunning && angleVel < 2){
             return true;
         }
         return false;
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public String toString(){
         return String.format(
                 "Active intake Powered: %b\n" +
-                "Captured Sample: %b\n",
+                "Captured Sample: %b\n" +
+                "Angular Velocity: %f\n",
                 isRunning,
-                sampleCaptured);
+                sampleCaptured,
+                angleVel);
     }
 }

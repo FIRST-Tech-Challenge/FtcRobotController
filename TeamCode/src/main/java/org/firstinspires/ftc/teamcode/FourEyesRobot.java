@@ -88,9 +88,9 @@ public class FourEyesRobot extends Mecanum {
      * Preparation to intake SPECIMEN from the Human Player Wall
      */
     public void intakeSpecimenPos(){
-        lift.goToPosition(Lift.LiftStates.ZERO);//Lower lift as low as possible
+        lift.goToPosition(Lift.LiftStates.SPECIMEN_INTAKE);//Lower lift as low as possible
         arm.goToPosition(Arm.ArmState.SPECIMEN_HEIGHT);//Use arm to go to an angle to decrease extention length from center of rotation
-        wrist.goToPosition(Wrist.WristStates.ParallelMode);//Use wrist to counter act arm's rotation
+        wrist.goToPosition(Wrist.WristStates.PerpendicularMode);//Use wrist to counter act arm's rotation
         claw.closeClaw(); //Close the claw before hand so if the arm is behind, the claw won't hit the lift
         currentState = ScoringType.SPECIMEN;
     }
@@ -126,7 +126,7 @@ public class FourEyesRobot extends Mecanum {
 //        arm.goToPosition(Arm.ArmState.BASE_HEIGHT);
 //        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         arm.goToPosition(Arm.ArmState.REVERSE_SPECIMEN_HEIGHT);
-        wrist.goToPosition(Wrist.WristStates.PerpendicularMode);
+        wrist.goToPosition(Wrist.WristStates.SpeciminDepositMode);
         claw.closeClaw();
         currentState = ScoringType.SPECIMEN;
     }
@@ -204,7 +204,7 @@ public class FourEyesRobot extends Mecanum {
     public void lowerClimb(){
         arm.goToPosition(Arm.ArmState.REST_HEIGHT);
         lift.goToPosition(Lift.LiftStates.ZERO);
-        wrist.goToPosition(Wrist.WristStates.PerpendicularMode);
+        wrist.goToPosition(Wrist.WristStates.ParallelMode);
         claw.closeClaw();
     }
 
@@ -214,6 +214,7 @@ public class FourEyesRobot extends Mecanum {
         lift.update();
         arm.update();
         wrist.wristParallelToGround(arm.getRotation());
+        activeIntake.checkForSample();
     }
 
 
