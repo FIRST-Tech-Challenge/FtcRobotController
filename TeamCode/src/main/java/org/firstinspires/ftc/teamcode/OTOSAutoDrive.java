@@ -113,7 +113,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(10, 13, 45);  // Go to basket
+        driveToLoc(8, 15, 45, 1.5);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                              // Drop second block
 
@@ -127,7 +127,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(9, 14, 45, 1.5);   // Go to basket
+        driveToLoc(8, 15, 45, 1.5);   // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                               // Drop third block
 
