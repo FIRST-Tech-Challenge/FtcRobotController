@@ -12,6 +12,9 @@ import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 public class BlueBotTeleop extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
+
+    // Does this move the robot? because if so we need it to move after the waitForStart()
+    // or add the movement to the Autonomous
     var swerve = new Swerve(this);
     var arm = new Mekanism(this);
 

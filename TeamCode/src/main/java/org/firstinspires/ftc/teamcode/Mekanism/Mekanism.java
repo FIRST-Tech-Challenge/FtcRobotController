@@ -92,7 +92,7 @@ public class Mekanism {
     telemetry = opMode.telemetry;
   }
 
-  // to lift arm, input from game pad 2 straight in
+  // to extend arm, input from game pad 2 straight in
   public void setSlide(double x) {
     if (slide.getCurrentPosition() >= limitSlide && x > 0) {
       x = 0;
@@ -100,9 +100,8 @@ public class Mekanism {
       x = 0;
     }
 
-    telemetry.addData("slide current pos", slide.getCurrentPosition());
-
-    // needs adjusting
+    telemetry.addData("slide current pos", slide.getCurrentPosition());// needs adjusting
+    // TODO: Tuning is very vibes based because this value is very wrong
     double encoderCountsPerDegree = 30;
     if (x == 0)
       x =
