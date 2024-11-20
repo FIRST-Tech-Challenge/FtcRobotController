@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // TODO - adjust static variables for new mecanum drive hardware
 // TODO - We have the values from the touchpad, still need to implement it into the wrist
-// TODO - Finish adding comments
+
 @TeleOp(name = "TeleOp Skeleton")
 
 public class TeleOpTesting extends LinearOpMode {
@@ -139,8 +139,8 @@ public class TeleOpTesting extends LinearOpMode {
 
         OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
 
-        RightOuttakeV4B.setPosition(0); // Sets the outtake virtual four bar to the starting position
         LeftOuttakeV4B.setPosition(0);  // Sets the outtake virtual four bar to the starting position
+        RightOuttakeV4B.setPosition(0); // Sets the outtake virtual four bar to the starting position
 
         LeftHook.setPosition(0);    // Sets the left hook to the starting position
         RightHook.setPosition(0);   // Sets the right hook to the starting position
@@ -159,18 +159,23 @@ public class TeleOpTesting extends LinearOpMode {
                 x = gamepad1.right_stick_x * 1.1;    // Counteract imperfect strafing
                 rx = gamepad1.left_stick_x;          // Measures turning
             }
-//Extends intake
+            
+            //**************************** INTAKE SLIDES ******************************************************
+            //Extends intake
             if (gamepad2.a && !OuttakeActive){  // If the A button is pressed and the outtake is retracted
                 ExtensionTarget = HalfIntakeExtension;    // Sets the ExtensionTarget variable to the default extension length
                 RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to pickup position
                 LeftIntakeV4B.setPosition(1);   // Sets the intake virtual four bar to pickup position
-            }// Retracts intake
+            }
+            // Retracts intake
             else if (gamepad2.x && !OuttakeActive && xButtonTime.seconds() >= .3){  // If the X button is pressed, outtake is retracted and it has been more than .3 seconds sine the X button was pressed last
                 xButtonTime.reset();    // Restarts the timer since X was just pressed
                 RightIntakeV4B.setPosition(0);  // Sets the intake virtual four bar to transfer position
                 LeftIntakeV4B.setPosition(0);   // Sets the intake virtual four bar to transfer position
                 ExtensionTarget = 1;    // Return Intake To Start Position
             }
+
+            //**************************** OUTTAKE SLIDES **********************************************************
             //Extends Outtake
             if (gamepad2.y){                    // If the Y button is pressed
                 OuttakeActive = true;           // Since the outtake is moving we set it to true to keep it accurate
@@ -182,6 +187,7 @@ public class TeleOpTesting extends LinearOpMode {
                 RightOuttakeV4B.setPosition(1); // Sets the outtake virtual four bar to delivery position
                 OuttakeWrist.setPosition(1);    // Sets the outtake wrist to delivery position
             }
+            //Retracts Outtake
             if (gamepad2.x && OuttakeActive && xButtonTime.seconds() >= .3){  // If the X button was pressed, Outtake is extended and it has been more than .3 seconds since the X button was last pressed
                 xButtonTime.reset();            // Resets the timer since X was just pressed
                 OuttakeActive = false;          // Since the outtake is retracted we set it to false to keep it accurate
@@ -190,21 +196,28 @@ public class TeleOpTesting extends LinearOpMode {
                 RightOuttakeV4B.setPosition(0); // Sets the outtake virtual four bar to transfer position
                 OuttakeWrist.setPosition(0);    // Sets the outtake wrist to delivery position
             }
+
+            //**************************** CLAW CONTROLS *********************************************************8
+            // Opens the outtake claw
             if (gamepad2.b && OuttakeActive && OuttakeClawTime.seconds() >= .3){ // If the B button was pressed, Outtake is extended and it has been more than .3 seconds since the outtake claw has been used
                 OuttakeClawTime.reset();    // Reset the timer since the outtake claw was just used
                 OuttakeClaw.setPosition(0); // Opens the outtake claw
                 OuttakeClawClosed = false;  // Since the outtake claw was opened we change this to stay accurate
             }
+            // Closes the intake claw
             else if (gamepad2.b && !OuttakeActive && IntakeClawTime.seconds() >= .3 && !IntakeClawClosed){ // If the B button was pressed, Outtake is retracted, It has been more than .3 seconds since the intake claw has been used and the intake claw is open
                 IntakeClawTime.reset();     // Reset the timer since the intake claw was just used
                 IntakeClaw.setPosition(1);  // Closes the intake claw
                 IntakeClawClosed = true;    // Since the intake claw was closed we change this to stay accurate
             }
+            // Opens the intake claw
             else if (gamepad2.b && !OuttakeActive && IntakeClawTime.seconds() >= .3 && IntakeClawClosed){  // If the B button was pressed, Outtake is retracted, It has been more than .3 seconds since the intake claw has been used and the intake claw is closed
                 IntakeClawTime.reset();     // Reset the timer since the intake claw was just used
                 IntakeClaw.setPosition(0);  // Opens the intake claw
                 IntakeClawClosed = false;   // Since the intake claw was opened we change this to stay accurate
             }
+
+            //**************************** INTAKE WRIST ************************************************************
             // Intake Wrist
             if (IntakeLeft.getCurrentPosition() > 200 && gamepad1.touchpad_finger_1){   // The intake is extended past 200 ticks and a finger is on the touchpad
                     TouchPadInput = (gamepad1.touchpad_finger_1_x + 1) / 2;     // This is taking a range from -1 - 1 and converting it to a range of 0 - 1 and saving it to a variable
@@ -213,15 +226,6 @@ public class TeleOpTesting extends LinearOpMode {
                 TouchPadInput = .5;     // If the above statement is false then it defaults the value to .5
             }
 
-            // Manual Intake
-            if ( gamepad2.dpad_up && ExtensionTarget < MAX_EXTENSION_LIMIT - 20){   // Up on the dpad is pressed and the Extension target is less than the max extension limit - 20
-                ExtensionTarget = ExtensionTarget + 10; // Takes the extension target and adds 10
-            }
-            else if ( gamepad2.dpad_down && ExtensionTarget > 20){  // Down on the dpad is pressed and the Extension target is greater than 20
-                ExtensionTarget = ExtensionTarget - 10; // Takes the extension target and subtracts 10
-            }
-
-            telemetry.update();//Updates the telemetry on the driver hub
 
             denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);    // calculate motor movement math and adjust according to lift height or manual precision mode selection
 
@@ -235,14 +239,21 @@ public class TeleOpTesting extends LinearOpMode {
             }
 
             // calculate motor power
-
             denominator = denominator * precision;          // this adjusts motor speed to the desired precision level
             frontLeftPower = (y + x + rx) / denominator;    // Does math to convert stick movement to motor powers
             backLeftPower = (y - x + rx) / denominator;     // Does math to convert stick movement to motor powers
             frontRightPower = (y - x - rx) / denominator;   // Does math to convert stick movement to motor powers
             backRightPower = (y + x - rx) / denominator;    // Does math to convert stick movement to motor powers
 
-
+            //************************* MANUAL SLIDE CONTROLS *******************************************
+            // Manual Intake
+            if ( gamepad2.dpad_up && ExtensionTarget < MAX_EXTENSION_LIMIT - 20){   // Up on the dpad is pressed and the Extension target is less than the max extension limit - 20
+                ExtensionTarget = ExtensionTarget + 10; // Takes the extension target and adds 10
+            }
+            else if ( gamepad2.dpad_down && ExtensionTarget > 20){  // Down on the dpad is pressed and the Extension target is greater than 20
+                ExtensionTarget = ExtensionTarget - 10; // Takes the extension target and subtracts 10
+            }
+            // Manual lift up and down
             if (gamepad2.dpad_up && LiftTarget < MAX_LIFT_HEIGHT - 10) {// If the dpad up is pressed and the lift target is not above the max height
                 LiftTarget = LiftTarget + 10;                           // This adds lift target +10 to the current lift target having the lift move up slowly
             }
@@ -250,26 +261,22 @@ public class TeleOpTesting extends LinearOpMode {
                 LiftTarget = LiftTarget - 10;                           // This subtracts lift target -10 from the current lift target having the lift move up slowly
             }
 
-
+            //************************* MOTOR POWER ASSIGNMENTS ****************************************
+            // Intake power and movement
             if (!(ExtensionTarget > MAX_LIFT_HEIGHT)){          // Extension target < the max height
                 IntakeLeft.setTargetPosition(ExtensionTarget);  // Sets the Intake Motors to a synced position
                 IntakeRight.setTargetPosition(ExtensionTarget); // Sets the Intake Motors to a synced position
                 IntakeLeft.setPower(ExtensionPower);            // Sets the Motor Power to ExtensionPower Declared Above
                 IntakeRight.setPower(ExtensionPower);           // Sets the Motor Power to ExtensionPower Declared Above
             }
-
-
-            //Lift Power and movement
+            // Lift Power and movement
             if (!(LiftTarget > MAX_LIFT_HEIGHT)) {          // If the lift target height is < the max height
                 RightLift.setTargetPosition(LiftTarget);    // Sets the right lift motor to turn until it's ticks = lift target
                 LeftLift.setTargetPosition(LiftTarget);     // Sets the left lift motor to turn until it's ticks = lift target
                 RightLift.setPower(liftPower);              // Sets the power to the Right lift motor
                 LeftLift.setPower(liftPower);               // Sets the power to the left lift motor
             }
-
-
             // issue Drive Wheels motor power
-
             FrontLeft.setPower(frontLeftPower);    // Sets the front left wheel's power
             BackLeft.setPower(backLeftPower);     // Sets the back left wheel's power
             FrontRight.setPower(frontRightPower);  // Sets the front right wheel's power
