@@ -66,11 +66,11 @@ public class RemoteControl extends LinearOpMode {
     public void runOpMode() {
 
         initializeHardwareVariables();
-        setAscentStick(ASCENT_MIN);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
         telemetry.update();
+        setAscentStick(ASCENT_MIN);
         waitForStart();
         runtime.reset();
 
@@ -209,6 +209,7 @@ public class RemoteControl extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -221,6 +222,10 @@ public class RemoteControl extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
+
+        ascentStick = hardwareMap.get(Servo.class, "ascentStick");
+        ascentStick.setDirection(Servo.Direction.REVERSE);
+        ascentStick.setPosition(ASCENT_MIN);
     }
 
     private void setWheelPower(){
