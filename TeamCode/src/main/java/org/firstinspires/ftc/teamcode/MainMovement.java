@@ -10,33 +10,36 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="MainMovement", group="Linear OpMode")
 public class MainMovement extends LinearOpMode {
 
-    private DcMotor leftBack; //Initializes Back-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor rightBack; //Initializes Back-Right direct current motor for the driving function of our robot, gary.
-    private DcMotor leftFront; //Initializes Front-Left direct current motor for the driving function of our robot, gary.
-    private DcMotor rightFront; //Initializes Front-Right direct current motor for the driving function of our robot, gary.
+        // ROBOT MOVEMENT //
 
-    // joysticks' position variables here
-    public float LjoystickX;
-    public float LjoystickY;
-    public float RjoystickX;
-    public float RjoystickY;
-
-    final float joystickDeadzone = 0.1f; // Area where joystick will not detect input
+    private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes all the direct current motors for the driving function of our robot, gary.
     final float speedSlow = 0.5f; // Slow mode for robot chassis movement
     final float speedFast = 1.5f; // Speedy mode for robot chassis movement
     float rotationSpeed = 1f; // Robot rotation speed multiplier, 1.5 for fast mode, 0.5 for slow mode
 
+        // JOYSTICK and MOVEMENT CONTROLS //
+    public float LjoystickX, LjoystickY, RjoystickX, RjoystickY;
+    final float joystickDeadzone = 0.1f; // Area where joystick will not detect input
     boolean usingLStick; // Detect whether left stick is being used or not- for prioritizing rotation over directional movement
 
-    //vertical slide stuff
-    private Servo vClawServo; // servo to control claw opening and closing
-    boolean vClawOpen = false; // Is the claw open? False = closed, true = open
-    private DcMotor linearSlide; // motor to control linear slide
+        // ROBOT OTHER STUFF //
+
+    private final float clawSpeed = 1.0f;
+
+        // vertical slide
+    private DcMotor linearSlide; // motor to control vertical linear slide
+    private Servo vClawServo, vArmServo;  // v is slang for vertical btw
+    boolean vClawOpen = false; // is the claw open? False = closed, true = open
+    boolean vSlideArmOut = false; // mounted onto the linear slide
     private final float linearSlideSpeed = 0.75f;
 
-    // horizontal slide stuff
+        // horizontal slide
+    private Servo hClawServo, hLinearSlide; // h is slang for horizontal btw
     private CRServo hClawRotate; // servo to control the rotation of the claw
-    private final float clawSpeed = 1.0f;
+    boolean hClawOpen = false;
+
+
+
 
 
 
@@ -208,21 +211,57 @@ public class MainMovement extends LinearOpMode {
 
     private void LimbMovement() {
 
-        if (vClawOpen) {
-            telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
-        } else {
-            telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
+
+        if(Math.abs(gamepad2.right_stick_y) > joystickDeadzone) {
+            hLinearSlide.setPosition(Math.min(0, Math.max(1, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
+        }
+
+
+        //snaps horizontal linear slide to fully extended
+        if(gamepad2.dpad_up){
+            hLinearSlide.setPosition(1);
+            sleep(100);
+        }
+        //snaps horizontal linear slide to fully retracted
+        if(gamepad2.dpad_down){
+            hLinearSlide.setPosition(0);
+            sleep(100);
+        }
+
+        //open/closes horizontal linear slide claw
+        if(gamepad2.b){
+            hClawOpen = !hClawOpen;
+            if(vSlideArmOut){
+                hClawServo.setPosition(1); //Arm swings out
+            } else {
+                hClawServo.setPosition(0); //Arm swings in
+            }
+        }
+
+
+
+
+        if(gamepad2.x){
+            vSlideArmOut = !vSlideArmOut;
+            if(vSlideArmOut){
+                vArmServo.setPosition(1); //Arm swings out
+            } else {
+                vArmServo.setPosition(0); //Arm swings in
+            }
+            sleep(100);
         }
 
         //open or close chamber claw
-        if (gamepad2.x) {
+        if (gamepad2.a) {
             vClawOpen = !vClawOpen; // switch claws open state
             if (vClawOpen) {
+                telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
                 vClawServo.setPosition(1); //claw open
             } else {
+                telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
                 vClawServo.setPosition(0); //claw closed
             }
-            sleep(250); //creates cooldown for switching claw positions
+            sleep(100); //creates cooldown for switching claw positions
 
         }
 

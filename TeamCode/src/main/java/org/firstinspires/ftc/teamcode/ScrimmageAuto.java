@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -41,7 +42,7 @@ public class ScrimmageAuto extends LinearOpMode {
 
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        linearSlide.setDirection(DcMotor.Direction.REVERSE);
+        linearSlide.setDirection(DcMotor.Direction.FORWARD);
 
         clawServo = hardwareMap.get(Servo.class, "cs");
         waitForStart();
@@ -150,7 +151,7 @@ public class ScrimmageAuto extends LinearOpMode {
                 break;
         }
         if(opModeIsActive()) {
-            runtime.reset();
+
             leftBack.setPower(lbDir * speed);
             rightBack.setPower(rbDir * speed);
             leftFront.setPower(lfDir * speed);
