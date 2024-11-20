@@ -84,11 +84,11 @@ public class ViperSlide {
         }
 
         // Bucket
-        if(bucketRest) {
-            bucketRest();
+        if(bucketScore) {
+            bucketScore();
         }
-        else if(bucketScore && (getPos() > minFlipLimit)) {
-            bucketReceive();
+        else if(bucketRest && (getPos() > minFlipLimit)) {
+            bucketRest();
         }
     }
 
@@ -135,8 +135,8 @@ public class ViperSlide {
         setBucketPosition(1, 0);
     }
 
-    public void bucketReceive() {
-        setBucketPosition(.55, .45);
+    public void bucketScore() {
+        setBucketPosition(.6, .4);
     }
 
 
