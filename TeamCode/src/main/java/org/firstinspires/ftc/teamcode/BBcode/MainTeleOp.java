@@ -56,12 +56,11 @@ public class MainTeleOp extends LinearOpMode{
     }
     private void handleGamepad2(Arm arm, Viper viper, WristClaw wristClaw) {
        Gamepad gamepad = gamepad2;
-        //Extend to 9 inches
-        //Low Basket
+        //Hang
         if (gamepad.left_trigger > 0 && gamepad.dpad_left) {
-            arm.MoveToSpecimen();
+            arm.MoveToHang();
             desiredViperState = ViperState.PrepareToHang;
-            viper.ExtendHalf(0.75);
+            viper.ExtendHalf(0.5);
         }
 
         //Extend to full length, limited to 18 inches at low angles
@@ -73,16 +72,8 @@ public class MainTeleOp extends LinearOpMode{
             wristClaw.WristDump();
         }
 
-        //Extend to 3 inches and raise to clear bar. For driving
-        if (gamepad.left_trigger > 0 && gamepad.dpad_down) {
-            wristClaw.WristUp();
-            desiredViperState = ViperState.Closed;
-            viper.ExtendShort(1);
-            arm.MoveToClearance();
-        }
-
         //brings arm down to pick up samples
-        if (gamepad.left_trigger > 0 && gamepad.dpad_right) {
+        if ((gamepad.left_trigger > 0 && gamepad.dpad_down) || (desiredViperState == ViperState.Closed && arm.get_armMotor().getCurrentPosition()>1300) ) {
             wristClaw.WristUp();
             desiredViperState = ViperState.Closed;
             viper.ExtendShort(1);
@@ -143,8 +134,8 @@ public class MainTeleOp extends LinearOpMode{
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
         arm.Reset();
-        wristClaw.WristInit();
-        wristClaw.CloseClaw();
+//        wristClaw.WristInit();
+//        wristClaw.CloseClaw();
 
         //Call the function to initialize telemetry functions
 //        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
@@ -152,7 +143,7 @@ public class MainTeleOp extends LinearOpMode{
         telemetryHelper.initGamepadTelemetry(gamepad2);
         //Where the start button is clicked, put some starting commands after
         waitForStart();
-        arm.MoveToClearance();
+        arm.MoveToHome();
 
         while(opModeIsActive()){ //while loop for when program is active
             //Code repeated during teleop goes here

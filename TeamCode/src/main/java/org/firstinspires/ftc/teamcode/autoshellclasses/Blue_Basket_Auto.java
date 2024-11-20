@@ -65,7 +65,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         public class wristDown implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(.36);
+                wrist.setPosition(.4725);
                 return false;
             }
         }
@@ -76,7 +76,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         public class wristUp implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(0.755);
+                wrist.setPosition(0.855);
                 return false;
             }
         }
@@ -164,8 +164,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d drop_position = new Vector2d(54, 54);
         double drop_heading = Math.toRadians(45);
 
-        Vector2d outer_sample_pickup_position = new Vector2d(46, 45);
-        Vector2d middle_sample_pickup_position = new Vector2d(56, 45);
+        Vector2d outer_sample_pickup_position = new Vector2d(46, 46.5);
+        Vector2d middle_sample_pickup_position = new Vector2d(56, 46.5);
         double sample_pickup_heading = Math.toRadians(-90);
 
         Action trajectory, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2;
