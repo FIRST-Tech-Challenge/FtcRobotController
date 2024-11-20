@@ -29,13 +29,13 @@ public class Auto extends Robot {
     private void FrontArm() {
         if (!On) {
             SetServoPos(1, Claw);
-            SetServoPos(1, Ll , Rr);
+            SetServoPos(1, Ll , Rl);
             SetServoPos(1, LA , RA);
 
             On = true;
             return;
         }
-        SetServoPos(0, Ll, Rr);
+        SetServoPos(0, Ll, Rl);
         SetServoPos(0, LA , RA);
         On = false;
         int x =1;

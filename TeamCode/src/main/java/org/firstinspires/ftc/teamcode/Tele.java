@@ -25,7 +25,8 @@ public  class Tele extends Robot {
         Initialize(DcMotor.RunMode.RUN_WITHOUT_ENCODER, new double[]{0, 0, AL_Ang},
                 new double[]{0, 0, 0, 0});
 
-        controller = new Controller(1.3, 0.23, 0.01, 0 , 0.15, toRadian(0.75));
+        controller = new Controller(1.0, 0.05, 0.1, 0 , 0.2, toRadian(0.75));
+
 
         setpoint = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
@@ -35,8 +36,8 @@ public  class Tele extends Robot {
         double speed = 0.275;
         double lx = -gamepad1.left_stick_x;
         double ly = -gamepad1.left_stick_y;
-        double x1 = gamepad1.dpad_left ? speed : gamepad1.dpad_right ? -speed : lx;
-        double y1 = gamepad1.dpad_up ? -speed : gamepad1.dpad_down ? speed : ly;
+        double x1 = gamepad1.dpad_left ? speed : gamepad1.dpad_right ? speed : lx;
+        double y1 = gamepad1.dpad_up ? speed : gamepad1.dpad_down ? -speed : ly;
         double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double x2 = (Math.cos(yaw) * x1) - (Math.sin(yaw) * y1);
         double y2 = (Math.sin(yaw) * x1) + (Math.cos(yaw) * y1);
@@ -50,7 +51,7 @@ public  class Tele extends Robot {
         if (lx == 0 && ly == 0 && x== 0 && Math.abs(r) < 0.2)  r = 0;
         lastRXtime = x != 0 ? CurrentTime : lastRXtime;
         // Denominator for division to get no more than 1
-        double d = Math.max(Math.abs(x2) + Math.abs(y2) + Math.abs(r), 1);
+        double d = Math.max(Math.abs(x2) + Math.abs(y2) + Math.abs(r), 0.5);
         MovePower((y2 - x2 - r) / d, (y2 + x2 + r) / d,
                 (y2 + x2 - r) / d, (y2 - x2 + r) / d);
         telemetry.addData("yaw", toDegree(yaw));

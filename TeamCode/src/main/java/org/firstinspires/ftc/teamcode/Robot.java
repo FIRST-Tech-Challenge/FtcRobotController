@@ -20,7 +20,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public abstract class Robot extends LinearOpMode {
     public IMU imu;
     public VisionPortal visionPortal;
-    public Servo Ll, Rr, LA, RA, RC, Claw, LJ, RJ, Box;
+    public Servo Ll, Rl, LA, RA, RC, Claw, LJ, RJ, ADL, ADR;
     public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
@@ -122,9 +122,9 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorY", DelthaY.Error);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Vx == 0.0 && Vy == 0.1 && r == 0) {
+            if (Vx == 0.0 && Vy == 0.0 && r == 0) {
                 IS_Complete += 1;
-                if (IS_Complete > 100) break;
+                if (IS_Complete > 10) break;
                 continue;
             }
             IS_Complete = 0;
@@ -153,10 +153,12 @@ public abstract class Robot extends LinearOpMode {
         BL.setMode(moveMode);
         BR.setMode(moveMode);
     }
+
     public void LiftPower(double liftPower) {
         LL.setPower(liftPower);
         RL.setPower(liftPower);
     }
+
     public double SetServoPos(double pos, float[] minMax, Servo L_servo, Servo R_servo) {
         pos = Range.clip(pos, minMax[0], minMax[1]);
         L_servo.setPosition(pos);
@@ -188,8 +190,12 @@ public abstract class Robot extends LinearOpMode {
         BL  = hardwareMap.get(DcMotorEx.class, "Back_Left");     BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
         LL  = hardwareMap.get(DcMotorEx.class, "Left_lift");     RL  = hardwareMap.get(DcMotorEx.class, "Right_lift");
         LA  = hardwareMap.get(Servo.class, "Left_arm");          RA  = hardwareMap.get(Servo.class, "Right_arm");
+        RC  = hardwareMap.get(Servo.class, "Rotation_Claw");     RJ  = hardwareMap.get(Servo.class, "Right_joint");
+        LJ  = hardwareMap.get(Servo.class, "Left_joint");        Ll  = hardwareMap.get(Servo.class, "Left_link");
+        Rl  = hardwareMap.get(Servo.class, "Right_link");        ADL = hardwareMap.get(Servo.class, "Adjust_left");
+        ADR = hardwareMap.get(Servo.class, "Adjust_right");      Claw= hardwareMap.get(Servo.class, "Claw");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        encoder1 = FL ;
+        encoder1 = FL;
         encoder2 = FR;
         encoder3 = BL;
 
@@ -201,18 +207,20 @@ public abstract class Robot extends LinearOpMode {
         Ll.setDirection(Servo.Direction.REVERSE);
         LA.setDirection(Servo.Direction.REVERSE);
         LJ.setDirection(Servo.Direction.REVERSE);
+        ADL.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
         SetServoPos(DuoServoAng[0], LA, RA);
-        SetServoPos(DuoServoAng[1], Ll, Rr);
+        SetServoPos(DuoServoAng[1], Ll, Rl);
         SetServoPos(DuoServoAng[2], LJ, RJ);
+        SetServoPos(DuoServoAng[3], ADL, ADR);
         SetServoPos(ServoAng[0], RC);
-        SetServoPos(ServoAng[1], Claw);
-        SetServoPos(ServoAng[2], Box);
+//        SetServoPos(ServoAng[1], Claw);
 
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MoveMode(moveMode);
