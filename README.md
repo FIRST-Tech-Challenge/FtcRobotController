@@ -1,4 +1,4 @@
-Mighty Mechanics code 
-Rohan (Big Justice)
-Kevin (AJ)
-Brent (Rizzler)
+Mighty Mechanics code \n
+Rohan (Big Justice) \n
+Kevin (AJ) \n
+Brent (Rizzler) \n
