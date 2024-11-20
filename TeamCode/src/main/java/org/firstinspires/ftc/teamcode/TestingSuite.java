@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 
@@ -28,16 +27,13 @@ public class TestingSuite extends LinearOpMode {
     };
 
     private static final String[] SERVO_OPTIONS = {
+            Settings.Hardware.IDs.GECKO_LEFT,
+            Settings.Hardware.IDs.GECKO_RIGHT,
             Settings.Hardware.IDs.WRIST,
     };
 
-    private static final String[] CRSERVO_OPTIONS = {
-            Settings.Hardware.IDs.GECKO_LEFT,
-            Settings.Hardware.IDs.GECKO_RIGHT,
-    };
-
     private static final String[] LIST_OPTIONS = Stream.concat(Arrays.stream(MOTOR_OPTIONS),
-            Stream.concat(Arrays.stream(SERVO_OPTIONS), Arrays.stream(CRSERVO_OPTIONS))).toArray(String[]::new);
+            Arrays.stream(SERVO_OPTIONS)).toArray(String[]::new);
 
     @Override
     public void runOpMode() {
@@ -47,6 +43,7 @@ public class TestingSuite extends LinearOpMode {
         final String[] selectedMotor = new String[1];
         final String[] selectedServo = new String[1];
         AtomicBoolean isMotor = new AtomicBoolean(true);
+        AtomicBoolean continuousMode = new AtomicBoolean(false);
 
         while (opModeIsActive() || (!isStarted() && !isStopRequested())) {
             telemetry.addLine("=== Motor/Servo Testing Selection ===");
@@ -65,7 +62,7 @@ public class TestingSuite extends LinearOpMode {
                     if (listSelection.get() < MOTOR_OPTIONS.length) {
                         selectedMotor[0] = LIST_OPTIONS[listSelection.get()];
                         isMotor.set(true);
-                    } else if (listSelection.get() < MOTOR_OPTIONS.length + CRSERVO_OPTIONS.length) {
+                    } else {
                         selectedServo[0] = LIST_OPTIONS[listSelection.get()];
                         isMotor.set(false);
                     }
@@ -78,13 +75,9 @@ public class TestingSuite extends LinearOpMode {
             if (listSelection.get() < MOTOR_OPTIONS.length) {
                 telemetry.addData("Motor",
                         MOTOR_OPTIONS[listSelection.get()] + (listConfirmed.get() ? " (Confirmed)" : ""));
-            } else if (listSelection.get() < MOTOR_OPTIONS.length + CRSERVO_OPTIONS.length) {
-                telemetry.addData("CRServo", CRSERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]
-                        + (listConfirmed.get() ? " (Confirmed)" : ""));
             } else {
-                telemetry.addData("Servo",
-                        SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length - CRSERVO_OPTIONS.length]
-                                + (listConfirmed.get() ? " (Confirmed)" : ""));
+                telemetry.addData("Servo", SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]
+                        + (listConfirmed.get() ? " (Confirmed)" : ""));
             }
 
             telemetry.update();
@@ -114,31 +107,46 @@ public class TestingSuite extends LinearOpMode {
                         telemetry.update();
                     }
                 } else {
-                    if (listSelection.get() < MOTOR_OPTIONS.length) {
-                        Servo testServo = hardwareMap.get(Servo.class, selectedServo[0]);
-                        testServo.setDirection(Servo.Direction.FORWARD);
-                        boolean ltLastClicked = false;
-                        boolean rtLastClicked = false;
-                        boolean fineControl = false;
-                        double position = 0.5; // Start at middle position
-                        testServo.setPosition(position);
+                    Servo testServo = hardwareMap.get(Servo.class, selectedServo[0]);
+                    testServo.setDirection(Servo.Direction.FORWARD);
+                    boolean ltLastClicked = false;
+                    boolean rtLastClicked = false;
+                    boolean fineControl = false;
+                    double position = 0.5; // Start at middle position
+                    testServo.setPosition(position);
 
-                        waitForStart();
-                        while (opModeIsActive()) {
-                            if (gamepad1.y) {
-                                menuActive.set(true);
-                                break;
-                            }
-                            if (gamepad1.x) {
-                                fineControl = !fineControl;
-                            }
-                            if (gamepad1.b) {
-                                position = 0.5;
-                                testServo.setPosition(position);
-                            }
+                    waitForStart();
+                    while (opModeIsActive()) {
+                        if (gamepad1.y) {
+                            menuActive.set(true);
+                            break;
+                        }
+                        if (gamepad1.x) {
+                            fineControl = !fineControl;
+                        }
+                        if (gamepad1.b) {
+                            position = 0.5;
+                            testServo.setPosition(position);
+                        }
 
-                            double step = fineControl ? 0.05 : 0.2;
+                        if (selectedServo[0].equals(Settings.Hardware.IDs.GECKO_LEFT) ||
+                                selectedServo[0].equals(Settings.Hardware.IDs.GECKO_RIGHT)) {
+                            continuousMode.set(true);
+                        } else {
+                            continuousMode.set(false);
+                        }
 
+                        double step = fineControl ? 0.05 : 0.2;
+
+                        if (continuousMode.get()) {
+                            if (gamepad1.left_trigger > 0.5) {
+                                testServo.setPosition(1); // Full speed forward
+                            } else if (gamepad1.right_trigger > 0.5) {
+                                testServo.setPosition(0); // Full speed backward
+                            } else {
+                                testServo.setPosition(0.5); // Stop
+                            }
+                        } else {
                             if (gamepad1.left_trigger > 0.5 && !ltLastClicked && position > 0) {
                                 ltLastClicked = true;
                                 position = Math.max(0, position - step);
@@ -152,67 +160,20 @@ public class TestingSuite extends LinearOpMode {
                                 rtLastClicked = false;
                             }
                             testServo.setPosition(position);
-
-                            telemetry.addData("Testing Servo",
-                                    SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
-                            telemetry.addData("Mode", fineControl ? "Fine (0.05)" : "Coarse (0.2)");
-                            telemetry.addData("Controls", "LT/RT = move | X = toggle fine | B = center | Y = menu");
-                            telemetry.addData("Target Position", "%.3f", position);
-                            telemetry.addData("Current Position", "%.3f", testServo.getPosition());
-                            telemetry.update();
                         }
-                    } else if (listSelection.get() < MOTOR_OPTIONS.length + CRSERVO_OPTIONS.length) {
-                        CRServo testCRServo = hardwareMap.get(CRServo.class, LIST_OPTIONS[listSelection.get()]);
-                        testCRServo.setDirection(CRServo.Direction.FORWARD);
-                        boolean ltLastClicked = false;
-                        boolean rtLastClicked = false;
-                        boolean fineControl = false;
-                        double position = 0.5; // Start at middle position
-                        testCRServo.setPower(position);
 
-                        waitForStart();
-                        while (opModeIsActive()) {
-                            if (gamepad1.y) {
-                                menuActive.set(true);
-                                break;
-                            }
-                            if (gamepad1.x) {
-                                fineControl = !fineControl;
-                            }
-                            if (gamepad1.b) {
-                                position = 0.5;
-                                testCRServo.setPower(position);
-                            }
-
-                            double step = fineControl ? 0.05 : 0.2;
-
-                            if (gamepad1.left_trigger > 0.5 && !ltLastClicked && position > 0) {
-                                ltLastClicked = true;
-                                position = Math.max(0, position - step);
-                            } else if (gamepad1.left_trigger <= 0.5) {
-                                ltLastClicked = false;
-                            }
-                            if (gamepad1.right_trigger > 0.5 && !rtLastClicked && position < 1) {
-                                rtLastClicked = true;
-                                position = Math.min(1, position + step);
-                            } else if (gamepad1.right_trigger <= 0.5) {
-                                rtLastClicked = false;
-                            }
-                            testCRServo.setPower(position);
-
-                            telemetry.addData("Testing CRServo",
-                                    CRSERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
-                            telemetry.addData("Mode", fineControl ? "Fine (0.05)" : "Coarse (0.2)");
-                            telemetry.addData("Controls", "LT/RT = move | X = toggle fine | B = center | Y = menu");
-                            telemetry.addData("Target Position", "%.3f", position);
-                            telemetry.addData("Current Position", "%.3f", testCRServo.getPower());
-                            telemetry.update();
-                        }
+                        telemetry.addData("Testing Servo", SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
+                        telemetry.addData("Mode",
+                                continuousMode.get() ? "Continuous" : (fineControl ? "Fine (0.05)" : "Coarse (0.2)"));
+                        telemetry.addData("Controls", "LT/RT = move | X = toggle fine | B = center | Y = menu");
+                        telemetry.addData("Target Position", "%.3f", position);
+                        telemetry.addData("Current Position", "%.3f", testServo.getPosition());
+                        telemetry.update();
                     }
-
-                    listConfirmed.set(false);
-                    menuActive.set(true);
                 }
+
+                listConfirmed.set(false);
+                menuActive.set(true);
             }
         }
     }

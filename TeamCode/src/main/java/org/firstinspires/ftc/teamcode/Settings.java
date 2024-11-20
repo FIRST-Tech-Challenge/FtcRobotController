@@ -74,7 +74,7 @@ public class Settings {
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
             public static final String SHOULDER = "shoulder";
-            public static final String ACTUATOR = "actuator";
+            public static final String ACTUATOR = "linearActuator";
         }
 
         public static final double SHOULDER_GEAR_RATIO = 2;
