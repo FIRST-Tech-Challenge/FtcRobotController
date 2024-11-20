@@ -24,16 +24,16 @@ public class HobbesConstants {
     public static int SLIDES_OUT_TOP_SPECIMEN = 0;
     public static int SLIDES_OUT_TOP_SPECIMEN_DOWN = 0;
 
-    public static double EXTENDO_IN = 0.2;
+    public static double EXTENDO_IN = 0.1;
     public static double EXTENDO_OUT_FULL = 0.58;
-    public static double EXTENDO_OUT_SOME = 0.4;
+    public static double EXTENDO_OUT_SOME = 0.3;
 
     public static double EXTENDO_SPEED = 0;
 
-    public static double EXTENDO_ARM_TRANSFER = 0;
-    public static double EXTENDO_ARM_INTAKE = 0;
+    public static double EXTENDO_ARM_TRANSFER = 1;
+    public static double EXTENDO_ARM_INTAKE = 0.06;
 
-    public static double EXTENDO_WRIST_TRANSFER = 0;
+    public static double EXTENDO_WRIST_TRANSFER = 0.55;
     public static double EXTENDO_WRIST_INTAKE = 0;
     public static double EXTENDO_WRIST_INTAKE_FLAT = 0;
 
