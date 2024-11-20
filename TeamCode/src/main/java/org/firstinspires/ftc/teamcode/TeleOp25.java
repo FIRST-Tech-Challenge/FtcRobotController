@@ -7,6 +7,10 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.ArmDown;
+import org.firstinspires.ftc.teamcode.commands.ArmHighGoal;
+import org.firstinspires.ftc.teamcode.commands.ArmLow;
+import org.firstinspires.ftc.teamcode.commands.ArmLowGoal;
+import org.firstinspires.ftc.teamcode.commands.ArmMed;
 import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
 import org.firstinspires.ftc.teamcode.commands.ArmUp;
@@ -46,6 +50,10 @@ public class TeleOp25 extends CommandOpMode {
     private ArmSub armSub;
     private ArmUp armUp;
     private ArmDown armDown;
+    private ArmLow armLow;
+    private ArmMed armMed;
+    private ArmLowGoal armLowGoal;
+    private ArmHighGoal armHighGoal;
 
     private LinearSlideSub linearSlideSub;
     private MoveLinearSlide linearSlideUp;
@@ -95,20 +103,23 @@ public class TeleOp25 extends CommandOpMode {
         wristDown = new MoveWristBadlyDown(wrist, telemetry);
 
         toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristUp);
-
-
+        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristDown);
 
         // Arm
         armSub = new ArmSub(hardwareMap, telemetry);
         armUp = new ArmUp(armSub, toolOp, telemetry);
         armDown = new ArmDown(armSub, toolOp, telemetry);
+        armLow = new ArmLow(armSub, toolOp, telemetry);
+        armMed = new ArmMed(armSub, toolOp, telemetry);
+        armLowGoal = new ArmLowGoal(armSub, toolOp, telemetry);
+        armHighGoal = new ArmHighGoal(armSub, toolOp, telemetry);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenReleased(armDown);
-
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(armDown);
+        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(armUp);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armLow);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armMed);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(armLowGoal);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(armHighGoal);
 
         // Linear Slide
 //        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);

@@ -27,6 +27,11 @@ public class MoveWristBadlyDown extends CommandBase {
 
     @Override
     public void execute() {
-        wristSub.setPosition(wristSub.getPosition() - 0.01);
+        wristSub.setPosition(wristSub.getPosition() - 0.05);
+    }
+
+    @Override
+    public boolean isFinished(){
+        return true;
     }
 }

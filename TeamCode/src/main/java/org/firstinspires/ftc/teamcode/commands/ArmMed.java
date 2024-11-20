@@ -6,12 +6,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 
-public class ArmDown extends CommandBase {
+public class ArmMed extends CommandBase {
     private final ArmSub armSub;
     private final GamepadEx gamepad;
     private Telemetry telemetry;
 
-    public ArmDown(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
+    public ArmMed(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.armSub = armSub;
         this.gamepad = gamepad;
@@ -19,7 +19,7 @@ public class ArmDown extends CommandBase {
 
     @Override
     public void execute() {
-        armSub.armDown();
+        armSub.armMed();
     }
 
     @Override

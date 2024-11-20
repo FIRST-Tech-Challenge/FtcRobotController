@@ -19,7 +19,7 @@ public class ArmUp extends CommandBase {
 
     @Override
     public void execute() {
-        armSub.armUp(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER););
+        armSub.armUp();
     }
 
     @Override

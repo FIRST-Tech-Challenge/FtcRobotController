@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Constants.ArmConstants;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ArmSub extends SubsystemBase{
     Telemetry telemetry;
@@ -14,6 +16,8 @@ public class ArmSub extends SubsystemBase{
     public ArmSub(HardwareMap hardwareMap, Telemetry telemetry) {
         this.armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         this.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         this.telemetry = telemetry;
 
@@ -29,10 +33,27 @@ public class ArmSub extends SubsystemBase{
     }
 
     public void armUp() {
-        setPos((int) (getMotor().getCurrentPosition() + ((0.0006*Math.pow(getMotor().getCurrentPosition()-640, 2))+16.5)), 1);
+        setPos(getMotor().getCurrentPosition() + 10, 1);
     }
+
     public void armDown() {
-        setPos((int) 10, -1);
+        setPos(getMotor().getCurrentPosition() - 10, 1);
+    }
+
+    public void armLow() {
+        setPos(ArmConstants.armLow, -1);
+    }
+
+    public void armMed(){
+        setPos(ArmConstants.armMed, -1);
+    }
+
+    public void armLowGoal() {
+        setPos(ArmConstants.armLowGoal, -1);
+    }
+
+    public void armHighGoal() {
+        setPos(ArmConstants.armHighGoal, -1);
     }
 
     public void setPos(int pos, int dir) {
