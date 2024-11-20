@@ -221,7 +221,7 @@ public class CommonUtil extends LinearOpMode {
         if (power > Mpower) {
             power = Mpower;
         }else if(power < 0.1) {
-            power = 0; //-1 * (Mpower);
+            power = 0.1; //-1 * (Mpower);
         }
         return power;
     }
@@ -381,10 +381,10 @@ public class CommonUtil extends LinearOpMode {
 
             // quick correct for angle if it is greater than 10 [Aarush]
             double absError_angle = Math.abs(currZAngle);
-            if (absError_angle > 10)
-            {
-                turnToZeroAngle();
-            }
+//            if (absError_angle > 10)
+//            {
+//                turnToZeroAngle();
+//            }
 //            // identify if you are stuck [Aarush]
 //            double flagStuck = amIStuck_FB(encoderAbsCounts, currEncoderCount, prevEncoderCount);
 //            if (flagStuck==1)
@@ -397,7 +397,7 @@ public class CommonUtil extends LinearOpMode {
             idle();
         }
 
-        turnToZeroAngle();
+//        turnToZeroAngle();
         // apply zero power to avoid continuous power to the wheels
         setMotorToZeroPower();
 
@@ -649,7 +649,7 @@ public class CommonUtil extends LinearOpMode {
             idle();
         }
         m2.setPower(0.05); // set power to 0 so the motor stops running
-
+        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void slideDown(double power, int encoderAbsCounts) {
@@ -665,7 +665,8 @@ public class CommonUtil extends LinearOpMode {
             telemetry.update();
             idle();
         }
-        m2.setPower(0); // set power to 0 so the motor stops running
+        m2.setPower(0);
+        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);// set power to 0 so the motor stops running
 
     }
 

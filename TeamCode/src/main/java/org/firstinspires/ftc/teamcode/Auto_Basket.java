@@ -78,24 +78,26 @@ public class Auto_Basket extends CommonUtil {
 
             armReleaseP1();
             moveBackwards_wDistance_wGyro(25,0.3);
-            sleep(100);
-
-//            moveSideways_wCorrection("right",3,0.5);
-//            sleep(100);
-
+            sleep(500);
 
             slideUp(1,4350);
+
             armReleaseP2();
             sleep(500);
+
             basketUp();
             sleep(3050);
+
             basketDown();
-            slideDown(0.7,4000);
-            m2.setPower(-0.7);
+            slideDown(0.7,4350);
             sleep(500);
-            m2.setPower(0);
+
+//            m2.setPower(-0.7);
+//            sleep(500);
+//            m2.setPower(0);
+//
             armMiddle();
-            sleep(100);
+            sleep(500);
 
             //moveForward_wDistance_wGyro(3,0.3);
             //sleep(500);
@@ -111,33 +113,35 @@ public class Auto_Basket extends CommonUtil {
             turn("left",90);
             sleep(100);
 
-            moveForward_wDistance_wGyro(8,0.3);
+            moveForward_wDistance_wGyro(50,0.4);
             sleep(100);
 
-            armDown();
+//            armDown();
+//
+//            intakeOn();
+//
+//            moveBackwards_wDistance_wGyro(8,0.3);
+//            //sleep(100);
+//
+//            armUp();
+//            intakeReverse();
+//            sleep(1000);
+//            intakeOff();
+//
+//            turn("right",90);
+//            //sleep(100);
+//
+//            moveSideways_wCorrection("right",6,1);
+//            //sleep(100);
+//
+//            armDown();
+//            slideUp(1,4350);
+//            basketUp();
+//            sleep(3050);
+//            basketDown();
+//            slideDown(0.7,4350);
 
-            intakeOn();
-
-            moveBackwards_wDistance_wGyro(8,0.3);
-            //sleep(100);
-
-            armUp();
-            intakeReverse();
-            sleep(1000);
-            intakeOff();
-
-            turn("right",90);
-            //sleep(100);
-
-            moveSideways_wCorrection("right",6,1);
-            //sleep(100);
-
-            armDown();
-            slideUp(1,4350);
-            basketUp();
-            sleep(3050);
-            basketDown();
-            slideDown(0.7,4350);
+            moveSideways_wCorrection("right",35,0.5);
 
             sleep(9000000);
 
