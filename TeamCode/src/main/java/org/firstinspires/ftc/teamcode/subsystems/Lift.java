@@ -93,9 +93,9 @@ public class Lift {
         liftPositions.put(LiftStates.ZERO, 0);
         liftPositions.put(LiftStates.HOVER, (int) (0.0163934 * MAX_HEIGHT_POSITION));
         liftPositions.put(LiftStates.SPECIMEN_INTAKE,(int) (0.31860465 * MAX_HEIGHT_POSITION));
-        liftPositions.put(LiftStates.SPECIMEN_SCORE, (int) (0.344262 * MAX_HEIGHT_POSITION)); //1000 Old 1200
+        liftPositions.put(LiftStates.SPECIMEN_SCORE, (int) (0.54348837 * MAX_HEIGHT_POSITION)); //1000 Old 1200
         liftPositions.put(LiftStates.CLIMB, (int) (0.524590 * MAX_HEIGHT_POSITION));
-        liftPositions.put(LiftStates.HIGH_BAR, (int) (0.609302 * MAX_HEIGHT_POSITION)); //700 Old 1700
+        liftPositions.put(LiftStates.HIGH_BAR, (int) (0.546511 * MAX_HEIGHT_POSITION)); //700 Old 1700
         liftPositions.put(LiftStates.MAX_HEIGHT, MAX_HEIGHT_POSITION);
     }
 

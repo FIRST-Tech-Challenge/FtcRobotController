@@ -54,12 +54,12 @@ public class Wrist {
         currentState = WristStates.SampleIntakeMode;
 
         wristPositions = new HashMap<WristStates, Double>();
-        wristPositions.put(WristStates.ParallelMode, WRIST_PARALLEL);
+        wristPositions.put(WristStates.ParallelMode, WRIST_PARALLEL );
         wristPositions.put(WristStates.SubHoverMode, WRIST_PARALLEL + 0.12);
-        wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + 0.03);
+        wristPositions.put(WristStates.SampleDepositMode, WRIST_PARALLEL + -0.152);
         wristPositions.put(WristStates.SampleIntakeMode, WRIST_PARALLEL - 0.015); //0.694
         wristPositions.put(WristStates.PerpendicularMode, WRIST_PARALLEL - 0.25); //Set 90 degrees off from parallel
-        wristPositions.put(WristStates.SpeciminDepositMode, WRIST_PARALLEL + 0.1);//0.32
+        wristPositions.put(WristStates.SpeciminDepositMode, WRIST_PARALLEL + 0.02);//0.32
     }
 
     //------------------------------------------------------------------------------------------

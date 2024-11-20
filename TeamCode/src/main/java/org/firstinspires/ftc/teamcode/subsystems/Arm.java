@@ -87,7 +87,7 @@ public class Arm {
         armPositions.put(ArmState.REST_HEIGHT, 200);
         armPositions.put(ArmState.SPECIMEN_HEIGHT, 3400);
         armPositions.put(ArmState.BASE_HEIGHT,3170);
-        armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -120); // Adjust Once Measured
+        armPositions.put(ArmState.REVERSE_SPECIMEN_HEIGHT, -550); // Adjust Once Measured
         armPositions.put(ArmState.DEPOSIT_HEIGHT_FORWARD, 2000);
         armPositions.put(ArmState.VERTICAL_HEIGHT,1000);
 
