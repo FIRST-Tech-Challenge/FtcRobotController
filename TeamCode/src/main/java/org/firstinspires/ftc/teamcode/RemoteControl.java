@@ -55,6 +55,10 @@ public class RemoteControl extends LinearOpMode {
     final double CLAW_MAX = 0.2;        // Claw is open
     double claw_position = CLAW_MIN;
 
+    Servo ascentStick = null;
+    final double ASCENT_MIN = 0.2;          // Stick is down
+    final double ASCENT_MAX = 0.49;         // Stick is up
+
     final ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -62,6 +66,7 @@ public class RemoteControl extends LinearOpMode {
     public void runOpMode() {
 
         initializeHardwareVariables();
+        setAscentStick(ASCENT_MIN);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
@@ -234,6 +239,14 @@ public class RemoteControl extends LinearOpMode {
             rightBackPower /= max;
         }
     }
+
+    public void setAscentStick(double target) {
+        RobotLog.vv("Rockin' Robots", "Set Ascent Stick to: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+        ascentStick.setPosition(target);
+        sleep(1000);
+        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+    }
+
 
     public void setVertical(int height){
         setVertical(height, VERTICAL_DEFAULT_SPEED);
