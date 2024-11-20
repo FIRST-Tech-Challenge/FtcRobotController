@@ -25,6 +25,9 @@ public class ScrimmageAuto extends LinearOpMode {
     static final double wheelDiameter = 3.5;     // For figuring circumference (in inches)
     static final double ticksPerInch  = ticksPerRev / (wheelDiameter * Math.PI);
     //static final double slideTicksPerInch = 1;
+    //constants for second functions
+    private final double secondsPerInch = 1/15; //amount of seconds to move an inch at 0.25 speed
+    private final double slideConst = 1; //length for moveSlideSeconds
     //Motor and servo declaration
     private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
     private DcMotor linearSlide;
