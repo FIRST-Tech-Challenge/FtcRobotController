@@ -67,6 +67,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX);                                  // Raising Arm
         sleep(300);
         setViper(VIPER_MAX);                                        // Extending Viper
+        sleep(300);
         driveToLoc(2, 13, 20);               // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop the block
@@ -118,11 +119,10 @@ public class OTOSAutoDrive extends LinearOpMode {
     public void setAscentStick(double target) {
         RobotLog.vv("Rockin' Robots", "setAscentStick() target: %4.2f, current: %4.2f", target, ascentStick.getPosition());
         ascentStick.setPosition(target);
-        sleep(1000);
     }
 
     public void setViper(int length){
-        RobotLog.vv("Rockin' Robots", "setViper() length: %4.2f, current: %4.2f", length, viperSlide.getCurrentPosition());
+        RobotLog.vv("Rockin' Robots", "setViper() length: %d, current: %d", length, viperSlide.getCurrentPosition());
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(2000);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -133,7 +133,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     }
 
     public void setVertical(int height, int speed){
-        RobotLog.vv("Rockin' Robots", "setVertical() height: %4.2f, speed: %4.2f, current: %4.2f", height, speed, vertical.getCurrentPosition());
+        RobotLog.vv("Rockin' Robots", "setVertical() height: %d, speed: %d, current: %d", height, speed, vertical.getCurrentPosition());
         vertical.setTargetPosition(height);
         ((DcMotorEx) vertical).setVelocity(speed);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -146,7 +146,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     }
 
     private void moveForward(double speed, long msDuration) {
-        RobotLog.vv("Rockin' Robots", "moveForward() speed: %4.2f, msDuration:: %4.2f", speed, msDuration);
+        RobotLog.vv("Rockin' Robots", "moveForward() speed: %4.2f, msDuration:: %d", speed, msDuration);
         leftFrontDrive.setPower(speed);
         rightFrontDrive.setPower(speed);
         leftBackDrive.setPower(speed);
