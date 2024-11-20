@@ -28,7 +28,7 @@ public class HobbesConstants {
     public static double EXTENDO_OUT_FULL = 0.58;
     public static double EXTENDO_OUT_SOME = 0.3;
 
-    public static double EXTENDO_SPEED = 0;
+    public static double EXTENDO_SPEED = 0.01;
 
     public static double EXTENDO_ARM_TRANSFER = 1;
     public static double EXTENDO_ARM_INTAKE = 0.03;

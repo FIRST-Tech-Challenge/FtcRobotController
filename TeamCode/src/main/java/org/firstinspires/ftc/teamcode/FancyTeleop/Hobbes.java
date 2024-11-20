@@ -278,7 +278,9 @@ public class Hobbes extends Meccanum implements Robot {
             clawPos = position;
         }
         public void incrementExtendo(double increment) {
-            extendoPos += increment;
+            if ((extendoPos + increment) < 0.58 && (extendoPos + increment) > 0.1) {
+                extendoPos += increment;
+            }
         }
         public double extendoLeftToRight(double leftPosition) {
             return EXTENDO_OFFSET-leftPosition; // NOT SURE IF THIS IS RIGHT, TEST WITH UNLINKED SERVOS
