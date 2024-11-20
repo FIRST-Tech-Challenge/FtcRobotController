@@ -77,6 +77,9 @@ public class HobbesTele extends OpMode {
         if (gamepad2.a && !lastGamepad2.a) {
             hob.runMacro("EXTENDO_BEFORE_PICKUP");
         }
+        if (gamepad2.x && !lastGamepad2.x) {
+            hob.runMacro("SLIDES_SPECIMEN_DEPOSIT");
+        }
         // full transfer macro
         if (gamepad2.b && !lastGamepad2.b) {
             hob.runMacro("FULL_TRANSFER");
