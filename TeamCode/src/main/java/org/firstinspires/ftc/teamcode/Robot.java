@@ -214,7 +214,7 @@ public abstract class Robot extends LinearOpMode {
         SetServoPos(DuoServoAng[2], LJ, RJ);
         SetServoPos(DuoServoAng[3], ADL, ADR);
         SetServoPos(ServoAng[0], RC);
-//        SetServoPos(ServoAng[1], Claw);
+        SetServoPos(ServoAng[1], Claw);
 
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
