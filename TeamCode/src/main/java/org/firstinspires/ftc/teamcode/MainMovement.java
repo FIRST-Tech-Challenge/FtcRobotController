@@ -55,9 +55,13 @@ public class MainMovement extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
 
-        vClawServo = hardwareMap.get(Servo.class, "cs"); // claw servo
-        hClawRotate = hardwareMap.get(CRServo.class, "cr"); // claw rotate
+        vClawServo = hardwareMap.get(Servo.class, "vcs"); // claw servo
+        hClawRotate = hardwareMap.get(CRServo.class, "hcr"); // claw rotate
+        hClawServo = hardwareMap.get(Servo.class, "hcs");
+        hLinearSlide = hardwareMap.get(Servo.class, "hls");
         linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide
+
+
 
         linearSlide.setPower(0); // zero the linear slide's power so it doesn't move while not active
 
