@@ -221,8 +221,9 @@ public class Settings {
         public GamepadButton rotateLeft = GamepadButton.LEFT_BUMPER;
 
         // Claw controls
-        public final GamepadAxis clawRight = GamepadAxis.RIGHT_TRIGGER;
-        public final GamepadAxis clawLeft = GamepadAxis.LEFT_TRIGGER;
+        public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
+        public final GamepadButton intakeOut = GamepadButton.OPTIONS;
+        public final GamepadButton intakeStop = GamepadButton.LEFT_TRIGGER;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
@@ -246,6 +247,10 @@ public class Settings {
         // Shoulder controls
         public GamepadButton shoulderUp = GamepadButton.LEFT_STICK_BUTTON;
         public GamepadButton shoulderDown = GamepadButton.RIGHT_STICK_BUTTON;
+
+        // Linear Actuator controls
+        public final GamepadButton linearActuatorExtend = GamepadButton.Y;
+        public final GamepadButton linearActuatorRetract = GamepadButton.A;
     }
 
     public enum GamepadButton {
@@ -262,7 +267,9 @@ public class Settings {
         START, BACK, GUIDE,
 
         // Stick buttons
-        LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON
+        LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON,
+        OPTIONS,
+        RIGHT_TRIGGER, LEFT_TRIGGER
     }
 
     public enum GamepadAxis {
@@ -275,7 +282,7 @@ public class Settings {
     public static class Deploy {
         // Core Mechanisms
         public static final boolean ARM = true;
-        public static final boolean SHOULDER = false;
+        public static final boolean LINEAR_ACTUATOR = true;
 
         // Navigation Systems
         public static final boolean ODOMETRY = true;
