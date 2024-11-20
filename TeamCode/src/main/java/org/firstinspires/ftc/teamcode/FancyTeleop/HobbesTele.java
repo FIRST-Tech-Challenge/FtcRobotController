@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_OFF;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_ABOVE_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_DEPOSIT;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_SPECIMEN;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_TRANSFER;
@@ -45,7 +46,8 @@ public class HobbesTele extends OpMode {
     public void init() {
         macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, INTAKE_POWER, null, null, null));
 
-        macros.put("FULL_TRANSFER", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 500)));
+        macros.put("FULL_TRANSFER", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 500)));
+        macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 1000)));
         macros.put("TRANSFER_CLOSED", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_CLOSED, SLIDES_IN, null));
 
         macros.put("SLIDES_TRANSFER", new HobbesState(null, null, null, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
@@ -72,7 +74,7 @@ public class HobbesTele extends OpMode {
     public void loop() {
         // movement
         hob.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-
+        hob.slidesController.driveSlides(gamepad2.left_stick_y);
         // before pickup macro
         if (gamepad2.a && !lastGamepad2.a) {
             hob.runMacro("EXTENDO_BEFORE_PICKUP");
@@ -84,32 +86,12 @@ public class HobbesTele extends OpMode {
         if (gamepad2.b && !lastGamepad2.b) {
             hob.runMacro("FULL_TRANSFER");
         }
-        // slides transfer macro
-        if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("SLIDES_TRANSFER");
-        }
-        // extendo transfer macro
-        if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("EXTENDO_TRANSFER");
-        }
         // deposit macro (assumes in transfer mode beforehand)
         if (gamepad2.x && !lastGamepad2.x) {
             hob.runMacro("SLIDES_DEPOSIT");
         }
         if (gamepad2.y && !lastGamepad2.y) {
             hob.runMacro("OPEN_CLAW");
-        }
-        // specimen pickup setup macro
-        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
-            hob.runMacro("SLIDES_SPECIMEN_PICKUP");
-        }
-        // specimen pickup action macro
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            hob.runMacro("SPECIMEN_CLOSE_CLAW");
-        }
-        // specimen deposit action macro (assumes right after specimen pickup action macro)
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            hob.runMacro("SLIDES_SPECIMEN_DEPOSIT");
         }
 
         hob.tick();
