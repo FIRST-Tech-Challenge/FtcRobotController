@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.FancyTeleop;
 
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_OFFSET;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INFINITY;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_KP;
@@ -18,6 +19,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.lynx.commands.standard.LynxSetDebugLogLevelCommand;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -43,7 +45,9 @@ public class Hobbes extends Meccanum implements Robot {
 
     //public SampleMecanumDrive rr = null;
     DcMotor slides;
-    private Servo extendoLeft, extendoRight, extendoArm, extendoWrist, slidesArm, slidesWrist, claw, intakeRight, intakeLeft;
+    private Servo extendoLeft, extendoRight, extendoArm, extendoWrist, slidesArm, slidesWrist, claw;
+    private CRServo intakeRight, intakeLeft;
+
     // all relative to robot's reference frame with deposit as front
 
 
@@ -70,7 +74,7 @@ public class Hobbes extends Meccanum implements Robot {
 
         slides = (DcMotorEx) hardwareMap.dcMotor.get("slides"); // EH3
 
-        //LIMITED
+        // LIMITED
         claw = hardwareMap.servo.get("claw");
         extendoLeft = hardwareMap.servo.get("extendoLeft");
         extendoRight = hardwareMap.servo.get("extendoRight");
@@ -78,13 +82,13 @@ public class Hobbes extends Meccanum implements Robot {
         extendoWrist = hardwareMap.servo.get("extendoWrist");
         slidesArm = hardwareMap.servo.get("slidesArm");
         slidesWrist = hardwareMap.servo.get("slidesWrist");
-        //CONTINUOUS
-        intakeLeft = hardwareMap.servo.get("intakeLeft");
-        intakeRight = hardwareMap.servo.get("intakeRight");
+        // CONTINUOUS
+        intakeLeft = hardwareMap.crservo.get("intakeLeft");
+        intakeRight = hardwareMap.crservo.get("intakeRight");
 
 
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slides.setDirection(DcMotorSimple.Direction.REVERSE);
+        //slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -239,15 +243,18 @@ public class Hobbes extends Meccanum implements Robot {
                 extendoRight.setPosition(extendoLeftToRight(extendoPos));
             }
 
-            if (intakeLeft.getPosition() != intakeSpeed) {
-                intakeLeft.setPosition(intakeSpeed);
-                intakeRight.setPosition(-intakeSpeed);
+            if (intakeLeft.getPower() != intakeSpeed) {
+                intakeLeft.setPower(intakeSpeed);
+                intakeRight.setPower(-intakeSpeed);
             }
 
 
         }
         public void spintake(boolean on) {
             intakeSpeed = on ? INTAKE_POWER : 0;
+        }
+        public void intake(double power) {
+            intakeSpeed = power;
         }
         public void setSlidesArmWrist(double armPosition, double wristPosition) {
             slidesArmPos = armPosition;
@@ -267,11 +274,14 @@ public class Hobbes extends Meccanum implements Robot {
         public void setExtendo(double position) { // extendo positions based on left value
             extendoPos = position;
         }
+        public void setClawPrecise(double position) {
+            clawPos = position;
+        }
         public void incrementExtendo(double increment) {
             extendoPos += increment;
         }
         public double extendoLeftToRight(double leftPosition) {
-            return 1-leftPosition; // NOT SURE IF THIS IS RIGHT, TEST WITH UNLINKED SERVOS
+            return EXTENDO_OFFSET-leftPosition; // NOT SURE IF THIS IS RIGHT, TEST WITH UNLINKED SERVOS
         }
     }
     public class MotorSlideThread {

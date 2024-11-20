@@ -25,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_WRIST_TRANSFER;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.Dictionary;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+@TeleOp
 public class HobbesTele extends OpMode {
 
     Gamepad lastGamepad1 = new Gamepad(), lastGamepad2 = new Gamepad();
@@ -60,6 +62,7 @@ public class HobbesTele extends OpMode {
 
         macros.put("SLIDES_SPECIMEN_DEPOSIT", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED, SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
 
+        hob = new Hobbes();
         hob.init(hardwareMap);
         hob.setMacros(macros);
     }

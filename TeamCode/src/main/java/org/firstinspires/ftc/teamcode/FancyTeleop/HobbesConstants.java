@@ -24,9 +24,9 @@ public class HobbesConstants {
     public static int SLIDES_OUT_TOP_SPECIMEN = 0;
     public static int SLIDES_OUT_TOP_SPECIMEN_DOWN = 0;
 
-    public static double EXTENDO_IN = 0;
-    public static double EXTENDO_OUT_FULL = 0;
-    public static double EXTENDO_OUT_SOME = 0;
+    public static double EXTENDO_IN = 0.2;
+    public static double EXTENDO_OUT_FULL = 0.58;
+    public static double EXTENDO_OUT_SOME = 0.4;
 
     public static double EXTENDO_SPEED = 0;
 
@@ -55,6 +55,7 @@ public class HobbesConstants {
     public static double INTAKE_OFF = 0;
 
     public static int INFINITY =  2000000000;
+    public static double EXTENDO_OFFSET = 1;
 
 
 
