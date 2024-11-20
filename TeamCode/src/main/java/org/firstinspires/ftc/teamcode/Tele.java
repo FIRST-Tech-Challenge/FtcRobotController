@@ -90,8 +90,7 @@ public  class Tele extends Robot {
                 telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.update();
                 if(gamepad1.a){
-                    imu.resetYaw();
-                    setpoint = 0;
+                    LA.getController().pwmDisable();
                 }
 
             }
