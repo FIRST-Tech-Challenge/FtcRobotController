@@ -72,7 +72,7 @@ public class HobbesTele extends OpMode {
     public void loop() {
         // movement
         hob.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-
+        hob.slidesController.driveSlides(gamepad2.left_stick_y);
         // before pickup macro
         if (gamepad2.a && !lastGamepad2.a) {
             hob.runMacro("EXTENDO_BEFORE_PICKUP");
@@ -81,32 +81,12 @@ public class HobbesTele extends OpMode {
         if (gamepad2.b && !lastGamepad2.b) {
             hob.runMacro("FULL_TRANSFER");
         }
-        // slides transfer macro
-        if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("SLIDES_TRANSFER");
-        }
-        // extendo transfer macro
-        if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("EXTENDO_TRANSFER");
-        }
         // deposit macro (assumes in transfer mode beforehand)
         if (gamepad2.x && !lastGamepad2.x) {
             hob.runMacro("SLIDES_DEPOSIT");
         }
         if (gamepad2.y && !lastGamepad2.y) {
             hob.runMacro("OPEN_CLAW");
-        }
-        // specimen pickup setup macro
-        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
-            hob.runMacro("SLIDES_SPECIMEN_PICKUP");
-        }
-        // specimen pickup action macro
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            hob.runMacro("SPECIMEN_CLOSE_CLAW");
-        }
-        // specimen deposit action macro (assumes right after specimen pickup action macro)
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            hob.runMacro("SLIDES_SPECIMEN_DEPOSIT");
         }
 
         hob.tick();
