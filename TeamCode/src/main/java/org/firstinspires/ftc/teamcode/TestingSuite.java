@@ -82,8 +82,9 @@ public class TestingSuite extends LinearOpMode {
                 telemetry.addData("CRServo", CRSERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]
                         + (listConfirmed.get() ? " (Confirmed)" : ""));
             } else {
-                telemetry.addData("Servo", SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length - CRSERVO_OPTIONS.length]
-                        + (listConfirmed.get() ? " (Confirmed)" : ""));
+                telemetry.addData("Servo",
+                        SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length - CRSERVO_OPTIONS.length]
+                                + (listConfirmed.get() ? " (Confirmed)" : ""));
             }
 
             telemetry.update();
@@ -152,7 +153,8 @@ public class TestingSuite extends LinearOpMode {
                             }
                             testServo.setPosition(position);
 
-                            telemetry.addData("Testing Servo", SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
+                            telemetry.addData("Testing Servo",
+                                    SERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
                             telemetry.addData("Mode", fineControl ? "Fine (0.05)" : "Coarse (0.2)");
                             telemetry.addData("Controls", "LT/RT = move | X = toggle fine | B = center | Y = menu");
                             telemetry.addData("Target Position", "%.3f", position);
@@ -198,7 +200,8 @@ public class TestingSuite extends LinearOpMode {
                             }
                             testCRServo.setPower(position);
 
-                            telemetry.addData("Testing CRServo", CRSERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
+                            telemetry.addData("Testing CRServo",
+                                    CRSERVO_OPTIONS[listSelection.get() - MOTOR_OPTIONS.length]);
                             telemetry.addData("Mode", fineControl ? "Fine (0.05)" : "Coarse (0.2)");
                             telemetry.addData("Controls", "LT/RT = move | X = toggle fine | B = center | Y = menu");
                             telemetry.addData("Target Position", "%.3f", position);
@@ -207,8 +210,9 @@ public class TestingSuite extends LinearOpMode {
                         }
                     }
 
-                listConfirmed.set(false);
-                menuActive.set(true);
+                    listConfirmed.set(false);
+                    menuActive.set(true);
+                }
             }
         }
     }
