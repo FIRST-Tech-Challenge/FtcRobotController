@@ -37,6 +37,7 @@ public class HobbesConstants {
     public static double EXTENDO_WRIST_INTAKE_FLAT = 0;
 
     public static double SLIDES_ARM_TRANSFER = 1;
+    public static double SLIDES_ARM_ABOVE_TRANSFER = 0.86;
     public static double SLIDES_ARM_DEPOSIT = 0.4;
     public static double SLIDES_ARM_SPECIMEN = 0.07;
 
