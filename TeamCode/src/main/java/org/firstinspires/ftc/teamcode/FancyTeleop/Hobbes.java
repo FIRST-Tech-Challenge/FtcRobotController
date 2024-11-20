@@ -69,6 +69,8 @@ public class Hobbes extends Meccanum implements Robot {
         motorFrontRight = (DcMotorEx) hardwareMap.dcMotor.get("motorFrontRight"); // CH2
         motorBackRight = (DcMotorEx) hardwareMap.dcMotor.get("motorBackRight"); // CH0
 
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         // Reverse the left side motors and set behaviors to stop instead of coast
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -88,7 +90,7 @@ public class Hobbes extends Meccanum implements Robot {
 
 
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //slides.setDirection(DcMotorSimple.Direction.REVERSE);
+        slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -149,7 +151,7 @@ public class Hobbes extends Meccanum implements Robot {
     public void cancelMacros() {
         MACROING = false;
         macroTimeout = INFINITY;
-        slidesController.setTargeting(false);
+        //slidesController.setTargeting(false);
     }
     public void tickMacros() {
         if (macroTimer.milliseconds() > macroTimeout) {
@@ -218,23 +220,32 @@ public class Hobbes extends Meccanum implements Robot {
     }
 
     public class ServosThread {
-        public double extendoPos = 0;
-        public double intakeSpeed = 0;
-        public double slidesArmPos = 0;
-        public double slidesWristPos = 0;
-        public double extendoArmPos = 0;
-        public double extendoWristPos = 0;
-        public double clawPos = 0;
+        public volatile double extendoPos = 0;
+        public volatile double intakeSpeed = 0;
+        public volatile double slidesArmPos = 0;
+        public volatile double slidesWristPos = 0;
+        public volatile double extendoArmPos = 0;
+        public volatile double extendoWristPos = 0;
+        public volatile double clawPos = 0;
 
         public void servosTick() {
+            tele.addData("extendoPos", extendoPos);
+            tele.addData("extendoArmPos", extendoArmPos);
+            tele.addData("extendoWristPos", extendoWristPos);
+            tele.addData("intakeSpeed", intakeSpeed);
+            tele.addData("clawPos", clawPos);
+            tele.addData("slidesArmPos", slidesArmPos);
+            tele.addData("slidesWristPos", slidesWristPos);
             // use for failsafe eventually (have positions in queue and check that each works before setting)
             // check if these get position checks are redundant. (Will a servo try and set position if its already running to position or does it not matter?)
             if (slidesArm.getPosition() != slidesArmPos) slidesArm.setPosition(slidesArmPos);
             if (slidesWrist.getPosition() != slidesWristPos) slidesWrist.setPosition(slidesWristPos);
 
 
-            if (extendoArm.getPosition() != extendoArmPos) extendoArm.setPosition(extendoArmPos);
-            if (extendoWrist.getPosition() != extendoWristPos) extendoWrist.setPosition(extendoWristPos);
+            //if (extendoArm.getPosition() != extendoArmPos) extendoArm.setPosition(extendoArmPos);
+            //if (extendoWrist.getPosition() != extendoWristPos) extendoWrist.setPosition(extendoWristPos);
+            extendoArm.setPosition(extendoArmPos);
+            extendoWrist.setPosition(extendoWristPos);
 
             if (claw.getPosition() != clawPos) claw.setPosition(clawPos);
 

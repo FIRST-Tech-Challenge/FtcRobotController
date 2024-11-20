@@ -44,12 +44,13 @@ public class HobbesTele extends OpMode {
 
     @Override
     public void init() {
-        macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, new LinkedState("EXTENDO_BEFORE_PICKUP2",500)));
+        macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, new LinkedState("EXTENDO_BEFORE_PICKUP2",2000)));
         macros.put("EXTENDO_BEFORE_PICKUP2", new HobbesState(EXTENDO_OUT_SOME, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, INTAKE_POWER, null, null, null));
 
+        macros.put("FULL_IN" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
 
 
-        macros.put("FULL_TRANSFER", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 500)));
+        macros.put("FULL_TRANSFER" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 3000)));
         macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 1000)));
         macros.put("TRANSFER_CLOSED", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_CLOSED, SLIDES_IN, null));
 
@@ -74,13 +75,18 @@ public class HobbesTele extends OpMode {
         hob.init(hardwareMap);
         hob.setMacros(macros);
     }
-
+    @Override
+    public void start() {
+       hob.runMacro("FULL_IN");
+    }
 
     @Override
     public void loop() {
         // movement
-        hob.motorDriveXYVectors(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-        hob.slidesController.driveSlides(gamepad2.left_stick_y);
+        hob.motorDriveXYVectors(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        if (gamepad2.left_stick_y != 0) {
+            hob.slidesController.driveSlides(gamepad2.left_stick_y);
+        }
         hob.servosController.incrementExtendo(gamepad2.right_stick_y * EXTENDO_SPEED);
 
         // before pickup macro

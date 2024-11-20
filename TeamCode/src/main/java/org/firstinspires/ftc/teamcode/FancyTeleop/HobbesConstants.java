@@ -31,10 +31,10 @@ public class HobbesConstants {
     public static double EXTENDO_SPEED = 0.01;
 
     public static double EXTENDO_ARM_TRANSFER = 1;
-    public static double EXTENDO_ARM_INTAKE = 0.03;
+    public static double EXTENDO_ARM_INTAKE = 0.12;
 
     public static double EXTENDO_WRIST_TRANSFER = 0.5;
-    public static double EXTENDO_WRIST_INTAKE_FLAT = 0;
+    public static double EXTENDO_WRIST_INTAKE_FLAT = 0.6;
 
     public static double SLIDES_ARM_TRANSFER = 1;
     public static double SLIDES_ARM_ABOVE_TRANSFER = 0.86;
