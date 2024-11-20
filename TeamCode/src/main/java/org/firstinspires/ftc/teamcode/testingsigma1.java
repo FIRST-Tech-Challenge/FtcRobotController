@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import com.qualcomm.robotcore.hardware.ColorSensor; // TODO add to main
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @TeleOp(name = "testingtalktuah7")
 public class testingsigma1 extends LinearOpMode {
@@ -23,7 +23,7 @@ public class testingsigma1 extends LinearOpMode {
     private double intakePower = 0;
 
     // THE SENSOR
-    private ColorSensor sensor  = null; // TODO add
+    private ColorSensor sensor  = null;
 
 
     @Override
@@ -47,10 +47,7 @@ public class testingsigma1 extends LinearOpMode {
         //Takers
         leftIntake = hardwareMap.get(CRServo.class, "l_intake");
         rightIntake = hardwareMap.get(CRServo.class, "r_intake");
-        sensor = hardwareMap.get(ColorSensor.class, "sensor"); // TODO add
-
-
-
+        sensor = hardwareMap.get(ColorSensor.class, "sensor");
 
 //    MaybeIntake = hardwareMap.get(DcMotor.class, "intake");
         //Setting the direction for the motor on where to rotate
@@ -150,7 +147,6 @@ public class testingsigma1 extends LinearOpMode {
             //Telemetry
             telemetry.addData("X", x);
             telemetry.addData("Y", y);
-            // TODO add sensor data
             telemetry.addData("Alpha", sensor.alpha());
             telemetry.addData("Red  ", sensor.red());
             telemetry.addData("Green", sensor.green());
