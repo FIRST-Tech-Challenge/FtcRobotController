@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.util.Range;
@@ -22,6 +23,7 @@ public abstract class Robot extends LinearOpMode {
     public VisionPortal visionPortal;
     public Servo Ll, Rl, LA, RA, RC, Claw, LJ, RJ, ADL, ADR;
     public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
+    public TouchSensor RTS;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
     /* TETRIX Motor Encoder per revolution */
@@ -190,10 +192,11 @@ public abstract class Robot extends LinearOpMode {
         BL  = hardwareMap.get(DcMotorEx.class, "Back_Left");     BR  = hardwareMap.get(DcMotorEx.class, "Back_Right");
         LL  = hardwareMap.get(DcMotorEx.class, "Left_lift");     RL  = hardwareMap.get(DcMotorEx.class, "Right_lift");
         LA  = hardwareMap.get(Servo.class, "Left_arm");          RA  = hardwareMap.get(Servo.class, "Right_arm");
-        RC  = hardwareMap.get(Servo.class, "Rotation_Claw");     RJ  = hardwareMap.get(Servo.class, "Right_joint");
-        LJ  = hardwareMap.get(Servo.class, "Left_joint");        Ll  = hardwareMap.get(Servo.class, "Left_link");
-        Rl  = hardwareMap.get(Servo.class, "Right_link");        ADL = hardwareMap.get(Servo.class, "Adjust_left");
-        ADR = hardwareMap.get(Servo.class, "Adjust_right");      Claw= hardwareMap.get(Servo.class, "Claw");
+        RC  = hardwareMap.get(Servo.class, "Rotation_Claw");     Claw= hardwareMap.get(Servo.class, "Claw");
+        Ll  = hardwareMap.get(Servo.class, "Left_link");         Rl  = hardwareMap.get(Servo.class, "Right_link");
+        ADL = hardwareMap.get(Servo.class, "Adjust_left");       ADR = hardwareMap.get(Servo.class, "Adjust_right");
+        RJ  = hardwareMap.get(Servo.class, "Right_joint");       LJ  = hardwareMap.get(Servo.class, "Left_joint");
+        RTS = hardwareMap.get(TouchSensor.class, "Right_touch");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL;
         encoder2 = FR;
@@ -204,18 +207,18 @@ public abstract class Robot extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection .RIGHT)));
         // Reverse Servo
-        Ll.setDirection(Servo.Direction.REVERSE);
+        Rl.setDirection(Servo.Direction.REVERSE);
         LA.setDirection(Servo.Direction.REVERSE);
         LJ.setDirection(Servo.Direction.REVERSE);
-        ADL.setDirection(Servo.Direction.REVERSE);
+        ADR.setDirection(Servo.Direction.REVERSE);
+        RC.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
-        SetServoPos(DuoServoAng[0], LA, RA);
-        SetServoPos(DuoServoAng[1], Ll, Rl);
-        SetServoPos(DuoServoAng[2], LJ, RJ);
-        SetServoPos(DuoServoAng[3], ADL, ADR);
-        SetServoPos(ServoAng[0], RC);
-        SetServoPos(ServoAng[1], Claw);
-
+        SetServoPos(0.2, LA, RA);
+        SetServoPos(0, Ll, Rl);
+        SetServoPos(1, LJ, RJ);
+        SetServoPos(0.5, ADL, ADR);
+        SetServoPos(0, RC);
+        SetServoPos(0, Claw);
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -228,7 +231,7 @@ public abstract class Robot extends LinearOpMode {
         // Reverse Motors
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
-        RL.setDirection(DcMotorSimple.Direction.REVERSE);
+        LL.setDirection(DcMotorSimple.Direction.REVERSE);
         // SetBehavior Motors
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
