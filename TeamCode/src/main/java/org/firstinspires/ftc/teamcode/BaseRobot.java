@@ -107,25 +107,19 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        strafePower = -strafePower;
         double frontLeft = drivePower + strafePower + rotation;
         double frontRight = drivePower - strafePower - rotation;
         double rearLeft = drivePower - strafePower + rotation;
         double rearRight = drivePower + strafePower - rotation;
 
-        // Normalize the power values to stay within the range [-1, 1]
-        double max = Math.max(
-                Math.max(Math.abs(frontLeft), Math.abs(frontRight)),
-                Math.max(Math.abs(rearLeft), Math.abs(rearRight)));
-        if (max > 1.0) {
-            frontLeft /= max;
-            frontRight /= max;
-            rearLeft /= max;
-            rearRight /= max;
-        }
-
-        frontLeftMotor.setPower(frontLeft);
-        frontRightMotor.setPower(frontRight);
+        logger.update("FRONT LEFT", String.valueOf(frontLeft));
+        logger.update("FRONT RIGHT", String.valueOf(frontRight));
+        logger.update("REAR LEFT", String.valueOf(rearLeft));
+        logger.update("REAR RIGHT", String.valueOf(rearRight));
+        // ! TODO remove this after testing
+        double MULT = 0.9;
+        frontLeftMotor.setPower(frontLeft * MULT);
+        frontRightMotor.setPower(frontRight * MULT);
         rearLeftMotor.setPower(rearLeft);
         rearRightMotor.setPower(rearRight);
     }
@@ -145,6 +139,10 @@ public class BaseRobot {
         double rotation = directions.rotation;
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
+
+        logger.update("X", String.valueOf(directions.x));
+        logger.update("Y", String.valueOf(directions.y));
+        logger.update("strafe", String.valueOf(strafePower));
 
         /*
          * Drives the motors based on the given power/rotation

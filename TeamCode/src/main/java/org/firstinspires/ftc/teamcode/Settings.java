@@ -49,10 +49,10 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double HORIZONTAL_POSITION = 0.5;
-                public static double CHAMBER_POSITION = -0.75;
+                public static double HORIZONTAL_POSITION = 1;
+                public static double CHAMBER_POSITION = 0.5;
                 public static double BASKET_POSITION = -0.7;
-                public static double VERTICAL_POSITION = -0.5;
+                public static double VERTICAL_POSITION = 0.3;
             }
         }
 
@@ -131,7 +131,7 @@ public class Settings {
 
         @Config
         public static class Intake {
-            public static double SPEED = 0.5;
+            public static double SPEED = 1;
         }
     }
 
@@ -303,7 +303,7 @@ public class Settings {
     // Deploy flags
     public static class Deploy {
         // Core Mechanisms
-        public static final boolean ARM = false;
+        public static final boolean ARM = true;
         public static final boolean LINEAR_ACTUATOR = true;
 
         // Navigation Systems
