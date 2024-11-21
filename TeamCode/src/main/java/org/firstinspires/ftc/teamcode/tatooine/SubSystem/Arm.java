@@ -66,6 +66,8 @@ public class Arm {
     private final double KF = 0.01;
     private double F = 0;
 
+    //TODO put value here
+    private double openTimeWithPID = 8000;
 
 
 
@@ -75,8 +77,9 @@ public class Arm {
         telemetry = opMode.telemetry;
 
         this.IS_DEBUG = IS_DEBUG;
-        opMode.telemetry.addData("second constructor",true);
-
+        if (IS_DEBUG) {
+            opMode.telemetry.addData("second constructor", true);
+        }
         analogLeft = opMode.hardwareMap.get(AnalogInput.class ,"analogLeft");
         analogRight = opMode.hardwareMap.get(AnalogInput.class ,"analogRight");
 
@@ -106,12 +109,20 @@ public class Arm {
         extendServoRight.setPosition(0.1);
         angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         angleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //extendMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
+        if (IS_DEBUG){
+            telemetry.addData("position left", getPositionLeft());
+            telemetry.addData("position left", getPositionRight());
+            telemetry.addData("Motor (A) Direction", angleMotor.getDirection());
+            telemetry.addData("resetEncoderInit", true);
+        }
     }
 
     // resets all encoders
     public void resetEncoders() {
+        if (IS_DEBUG){
+            telemetry.addData("angleEncoderReset", true);
+        }
         resetAngleEncoder();
     }
 
@@ -123,6 +134,9 @@ public class Arm {
 
     //returns the angle(transforms ticks to degrees)
     public double getAngle() {
+        if (IS_DEBUG){
+            telemetry.addData("arm angle", MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()) + angleOffSet);
+        }
         return MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()) + angleOffSet;
     }
 
@@ -220,6 +234,9 @@ public class Arm {
     }
 
     public double getPositionRight() {
+        if (IS_DEBUG){
+            telemetry.addData("PositionLeft",(MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET)/ (OPEN_POSE_RIGHT));
+        }
         return (MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET)/ (OPEN_POSE_RIGHT);
     }
 
@@ -228,6 +245,9 @@ public class Arm {
     }
 
     public double getPositionLeft() {
+        if (IS_DEBUG){
+            telemetry.addData("PositionLeft",(MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET)/ (OPEN_POSE_LEFT));
+        }
         return (MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET)/ (OPEN_POSE_LEFT);
     }
 
@@ -242,20 +262,92 @@ public class Arm {
     public void setAnalogRight(AnalogInput analogRight) {
         this.analogRight = analogRight;
     }
+
+    public double getF() {
+        return F;
+    }
+
+    public void setF(double f) {
+        F = f;
+    }
+
+    public double getKF() {
+        return KF;
+    }
+
+    public double getExtendTimeout() {
+        return extendTimeout;
+    }
+
+    public void setExtendTimeout(double extendTimeout) {
+        this.extendTimeout = extendTimeout;
+    }
+
+    public double getAngleTimeout() {
+        return angleTimeout;
+    }
+
+    public void setAngleTimeout(double angleTimeout) {
+        this.angleTimeout = angleTimeout;
+    }
+
+    public ElapsedTime getExtendTimer() {
+        return extendTimer;
+    }
+
+    public void setExtendTimer(ElapsedTime extendTimer) {
+        this.extendTimer = extendTimer;
+    }
+
+    public ElapsedTime getAngleTimer() {
+        return angleTimer;
+    }
+
+    public void setAngleTimer(ElapsedTime angleTimer) {
+        this.angleTimer = angleTimer;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public double getOPEN_POSE_RIGHT() {
+        return OPEN_POSE_RIGHT;
+    }
+
+    public double getOPEN_POSE_LEFT() {
+        return OPEN_POSE_LEFT;
+    }
+
+    public double getPOS_RIGHT_OFFSET() {
+        return POS_RIGHT_OFFSET;
+    }
+
+    public double getPOS_LEFT_OFFSET() {
+        return POS_LEFT_OFFSET;
+    }
+
+
+
     public double calculateF(){
+        if (IS_DEBUG){
+            telemetry.addData("F",Math.cos(Math.toRadians(getAngle()))* KF);
+        }
         return Math.cos(Math.toRadians(getAngle()))* KF;
     }
 
     //an actions that sets the angle of the arm to the desired angle
     public Action setAngle(double angle) {
+        MoveAngle moveAngle = new MoveAngle(angle);
         anglePID.reset();
-//        if (touchSensor.isPressed()) {
-//            resetAngleEncoder();
-//        }
         if (IS_DEBUG) {
             telemetry.addData("the new ang ", angle);
         }
-        return new moveAngle(angle);
+        return moveAngle;
     }
 
     //an actions that sets the extension of the arm to the desired position
@@ -291,6 +383,9 @@ public class Arm {
             this.goal = goal;
         }
 
+
+
+
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
@@ -308,15 +403,20 @@ public class Arm {
         }
     }
     //Sets the angle motor power through PID and F
-    public class moveAngle implements Action {
+    public class MoveAngle implements Action {
 
-        public moveAngle (double goal)
+        private double goal = 0;
+
+        private final double startAngle;
+
+        private double angleDifference = 0;
+        public MoveAngle(double goal)
         {
             anglePID.reset();
             telemetry.addData("did",true);
             this.goal = goal;
+            this.startAngle = getAngle();
         }
-        private double goal = 0;
 
         public double getGoal() {
             return goal;
@@ -326,25 +426,39 @@ public class Arm {
             this.goal = goal;
         }
 
+        public double getAngleDifference() {
+            if (IS_DEBUG){
+                telemetry.addData("AngleDifference", Math.abs(goal- getStartAngle()));
+            }
+            return Math.abs(goal- getStartAngle());
+        }
+
+        public void setAngleDifference(double angleDifference) {
+            this.angleDifference = angleDifference;
+        }
+
+        public double getStartAngle() {
+            return startAngle;
+        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            //        if (touchSensor.isPressed()) {
+//            resetAngleEncoder();
+////        }
+            anglePID.setTimeout(getAngleDifference()*(openTimeWithPID/90));
             double pidPower = anglePID.calculate(getAngle(), goal);
-            anglePID.setTimeout(8000000);
             F =0;
             angleMotor.setPower(pidPower+F);
             if (IS_DEBUG) {
                 telemetry.addData("runtime", anglePID.getRunTime());
                 telemetry.addData("tiemout", anglePID.getTimeout());
-                telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
-                telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
+                telemetry.addData("startAngle", startAngle);
                 telemetry.addData("motor (A) power", angleMotor.getPower());
-                telemetry.addData("angle", getAngle());
-                telemetry.addData("power", angleMotor.getPower());
-                telemetry.update();
+                telemetry.addData("pidPower+",pidPower);
+                telemetry.addData("pidPower+F",pidPower+F);
             }
             return !anglePID.atSetPoint();
         }
     }
-
 }
