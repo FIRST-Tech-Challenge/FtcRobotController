@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 
-@Disabled
 @TeleOp(name = "basic telemetry for blue robot", group = "CompBot")
 public class basicTelemBlue extends LinearOpMode {
   /*
