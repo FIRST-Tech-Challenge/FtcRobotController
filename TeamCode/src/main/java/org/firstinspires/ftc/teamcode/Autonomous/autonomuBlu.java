@@ -14,7 +14,6 @@ public class autonomuBlu extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
         motor = new Motors(hardwareMap);
-[]
         waitForStart();
         //run once
 
