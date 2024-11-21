@@ -7,41 +7,44 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.BlinkinColour;
 
-
-/** Subsystem */
+/**
+ * The Blinkin class is a subsystem that controls the Rev Blinkin LED driver.
+ * It extends the SubsystemBase class from FTCLib.
+ */
 public class Blinkin extends SubsystemBase {
 
-    // Create wrist Servo
-
+    // Instance of the RevBlinkinLedDriver
     private RevBlinkinLedDriver blinkinLedDriver;
+    // Current pattern of the Blinkin LED driver
     private RevBlinkinLedDriver.BlinkinPattern pattern;
 
-
-
-    /** Place code here to initialize subsystem */
+    /**
+     * Constructor for the Blinkin class.
+     * Initializes the Blinkin LED driver and sets the initial pattern.
+     */
     public Blinkin() {
-
-        // Creates a Servo using the hardware map
+        // Creates a Blinkin LED driver using the hardware map
         blinkinLedDriver = RobotContainer.ActiveOpMode.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        // Sets the initial pattern to RED_ALLIANCE
         pattern = BlinkinColour.RED_ALLIANCE.getPattern();
-       blinkinLedDriver.setPattern(pattern);
+        blinkinLedDriver.setPattern(pattern);
     }
 
-    /** Method called periodically by the scheduler
-     * Place any code here you wish to have run periodically */
+    /**
+     * The periodic method is called periodically by the scheduler.
+     * This method is empty as the Blinkin subsystem does not require periodic actions.
+     */
     @Override
     public void periodic() {
-
+        // No periodic actions required
     }
 
+    /**
+     * Sets the pattern of the Blinkin LED driver.
+     *
+     * @param blinkinPattern The pattern to set on the Blinkin LED driver.
+     */
     public void setPattern(RevBlinkinLedDriver.BlinkinPattern blinkinPattern) {
         blinkinLedDriver.setPattern(blinkinPattern);
     }
-
-    // Open and close the claw using the enum ClawState
-//    public void ControlClaw(ClawState state){
-//        clawServo.setPosition(state.getValue());
-//    }
-
-
 }
