@@ -68,8 +68,7 @@ public class TestingDriveTrain {
         Point pos = odometryFuse.pointCollectData();  // current
         double curX = -pos.getX();
         double curY = -pos.getY();
-        double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("leftwq" +
-                ""));
+        double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left"));
 
         Pose2D target = new Pose2D(curX + dx, curY + dy, curH + dh);
         System.out.println(xController);
