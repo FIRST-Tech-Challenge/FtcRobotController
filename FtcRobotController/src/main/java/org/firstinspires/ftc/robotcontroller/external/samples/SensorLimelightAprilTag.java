@@ -66,7 +66,7 @@ SensorLimelightAprilTag extends LinearOpMode {
                 double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
                 telemetry.addData("Target X", tx* (3.14159 / 180.0));
-                telemetry.addData("Target Y", ty* (3.14159 / 180.0));
+                telemetry.addData("Target Y", ty* (3.14159 / 180.0));// meters
                 telemetry.addData("Target Area", ta);
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
