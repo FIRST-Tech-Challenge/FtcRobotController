@@ -6,20 +6,17 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
-import org.firstinspires.ftc.teamcode.commands.MoveBucketArmCommand;
-import org.firstinspires.ftc.teamcode.commands.MoveFingerCommand;
-import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.commands.MovePincherCommand;
+import org.firstinspires.ftc.teamcode.commands.SetUppiesCommand;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.UppiesSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
-import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
@@ -36,13 +33,11 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DoubleSupplier slowdownMultiplier, forwardBack, leftRight, rotation;
 
     private DriveSubsystem driveSubsystem;
-    private ArmSubsystem armSubsystem;
-    private WristSubsystem wristSubsystem;
     private HangSubsystem hangSubsystem;
-    private FingerSubsystem fingerSubsystem;
+    private PincherSubsystem pincherSubsystem;
+    private UppiesSubsystem uppiesSubsystem;
 
     private DefaultDrive driveCommand;
-    private MoveBucketArmCommand bucketCommand;
 
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
 
@@ -55,41 +50,42 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("Initializing drive command op mode...");
         dbp.send(false);
 
-        HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
+        try {
+            HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
+            assert driveMotors != null;
+            driveSubsystem = new DriveSubsystem(driveMotors);
+            register(driveSubsystem);
+            initializeDriveSuppliers();
+            driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
+            driveSubsystem.setDefaultCommand(driveCommand);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-        HashMap<RobotHardwareInitializer.Arm, DynamicTypeValue> armMotors = RobotHardwareInitializer.initializeArm(this);
+        try {
+            ServoEx pincher1 = RobotHardwareInitializer.ServoComponent.FINGER_1.getEx(hardwareMap, 0, 45);
+            ServoEx pincher2 = RobotHardwareInitializer.ServoComponent.FINGER_2.getEx(hardwareMap, 0, 45);
+            pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
+            register(pincherSubsystem);
 
-        ServoEx finger1 = hardwareMap.get(ServoEx.class, "finger1");
-        ServoEx finger2 = hardwareMap.get(ServoEx.class, "finger2");
+            armerController.getGamepadButton(GamepadKeys.Button.A).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED));
+            armerController.getGamepadButton(GamepadKeys.Button.B).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN));
+            // NOT NEEDED IN GAME! This is for debug purposes only and personal testing
+            armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        assert driveMotors != null;
-        driveSubsystem = new DriveSubsystem(driveMotors);
+        try {
+            DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
+            uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
+            register(uppiesSubsystem);
 
-        dbp.info("Subsystems built.");
-        dbp.send(false);
-
-        initializeDriveSuppliers();
-
-        driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
-        armSubsystem = new ArmSubsystem(armMotors);
-        fingerSubsystem = new FingerSubsystem(finger1, finger2);
-
-        bucketCommand = new MoveBucketArmCommand(armSubsystem,
-                () -> driverController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
-                () -> driverController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-
-        register(driveSubsystem);
-        register(armSubsystem);
-        register(fingerSubsystem);
-
-        driveSubsystem.setDefaultCommand(driveCommand);
-        armSubsystem.setDefaultCommand(bucketCommand);
-
-        armerController.getGamepadButton(GamepadKeys.Button.A).whenPressed(new MoveFingerCommand(fingerSubsystem, FingerSubsystem.FingerPositions.CLOSED));
-        armerController.getGamepadButton(GamepadKeys.Button.B).whenPressed(new MoveFingerCommand(fingerSubsystem, FingerSubsystem.FingerPositions.OPEN));
-        // NOT NEEDED IN GAME! This is for debug purposes only and personal testing
-        armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MoveFingerCommand(fingerSubsystem, FingerSubsystem.FingerPositions.ZERO));
-
+            uppiesSubsystem.setDefaultCommand(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         dbp.info("Subsystems registered.");
         dbp.send(false);
@@ -108,7 +104,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     public void reset() {
         super.reset();
         // Reset the finger back to the original position
-        fingerSubsystem.locomoteFinger(FingerSubsystem.FingerPositions.ZERO);
+        pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.ZERO);
     }
 
     private void initializeDriveSuppliers() {

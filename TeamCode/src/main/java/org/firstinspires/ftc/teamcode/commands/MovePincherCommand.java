@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.subsystems.FingerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
 
-public class MoveFingerCommand extends CommandBase {
+public class MovePincherCommand extends CommandBase {
 
-    FingerSubsystem subsystem;
-    FingerSubsystem.FingerPositions position;
+    PincherSubsystem subsystem;
+    PincherSubsystem.FingerPositions position;
     boolean ran = false;
 
-    public MoveFingerCommand(FingerSubsystem subsystem, FingerSubsystem.FingerPositions position) {
+    public MovePincherCommand(PincherSubsystem subsystem, PincherSubsystem.FingerPositions position) {
+        super();
         this.subsystem = subsystem;
         this.position = position;
         addRequirements(subsystem);
@@ -26,4 +27,5 @@ public class MoveFingerCommand extends CommandBase {
     public boolean isFinished() {
         return ran;
     }
+
 }

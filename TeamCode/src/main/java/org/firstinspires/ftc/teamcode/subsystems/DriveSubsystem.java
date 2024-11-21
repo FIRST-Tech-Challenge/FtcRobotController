@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.MIN_POWER;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
-import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import android.annotation.SuppressLint;
@@ -19,14 +18,14 @@ public class DriveSubsystem extends SubsystemBase {
     public final ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
-    public DriveSubsystem(HashMap<RobotHardwareInitializer.DriveMotor, DcMotor> driveMotors) {
-        this(driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_FRONT),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_FRONT),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.LEFT_BACK),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.RIGHT_BACK),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_LEFT),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_BACK),
-                driveMotors.get(RobotHardwareInitializer.DriveMotor.ENCODER_RIGHT));
+    public DriveSubsystem(HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors) {
+        this(driveMotors.get(RobotHardwareInitializer.Component.LEFT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.Component.RIGHT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.Component.LEFT_BACK),
+                driveMotors.get(RobotHardwareInitializer.Component.RIGHT_BACK),
+                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_LEFT),
+                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_BACK),
+                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_RIGHT));
     }
 
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,

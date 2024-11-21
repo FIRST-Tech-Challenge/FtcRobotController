@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.util.Other.ArrayTypeValue;
-import org.firstinspires.ftc.teamcode.util.Other.DynamicTypeValue;
-import org.firstinspires.ftc.teamcode.util.Other.MotorTypeValue;
-import org.firstinspires.ftc.teamcode.util.Other.ServoTypeValue;
 
 import java.util.HashMap;
 
@@ -32,20 +28,75 @@ public class RobotHardwareInitializer {
 
     public final static float MIN_POWER = 0;
 
-    public enum DriveMotor {
-        LEFT_FRONT,
-        RIGHT_FRONT,
-        LEFT_BACK,
-        RIGHT_BACK,
-        ENCODER_LEFT,
-        ENCODER_RIGHT,
-        ENCODER_BACK
+    public interface Component<T extends HardwareDevice> {
+        T get(HardwareMap map) throws Exception ;
+        String getComponentName();
     }
 
-    public enum Other {
-        COLOR_SENSOR,
-        WEBCAM
+    public enum MotorComponent implements Component<DcMotor> {
+        LEFT_FRONT("fl_drv"),
+        RIGHT_FRONT("fr_drv"),
+        LEFT_BACK("bl_drv"),
+        RIGHT_BACK("br_drv"),
+
+        UPPIES("uppies"), // Used to move the pincher and bucket up and down
+        EXTENDER("extender"), // Used to move in intake system forward and back
+        INTAKE("intake"), // Used to pick up blocks
+        ;
+        private final String componentName;
+        MotorComponent(String componentName) { this.componentName = componentName; }
+        @Override public String getComponentName() { return componentName; }
+        @Override public DcMotor get(HardwareMap map) { return map.get(DcMotor.class, getComponentName()); }
+        public DcMotorEx getEx(HardwareMap map) throws Exception {
+            return map.get(DcMotorEx.class, getComponentName());
+        }
     }
+
+    public enum ServoComponent implements Component<Servo> {
+        FINGER_1("finger1"),
+        FINGER_2("finger2"),
+        BUCKET_DUMPER("bucket"), // Used to dump the bucket and return to the collecting position
+        INTAKE_TILTER("intake_servo"), // Used to tilt the intake system toward the bucket at to the ground
+        ;
+        private final String componentName;
+        ServoComponent(String componentName) { this.componentName = componentName; }
+        @Override public String getComponentName() { return componentName; }
+        @Override public Servo get(HardwareMap map) { return map.get(Servo.class, getComponentName()); }
+        public ServoEx getEx(HardwareMap map, double minAngle, double maxAngle) throws Exception {
+            return new SimpleServo(map, getComponentName(), minAngle, maxAngle);
+        }
+    }
+
+    public enum EncoderComponent implements Component<DcMotor> {
+        ENCODER_LEFT("fl_drv"),
+        ENCODER_RIGHT("fr_drv"),
+        ENCODER_BACK("br_drv"),
+        ;
+        private final String componentName;
+        EncoderComponent(String componentName) { this.componentName = componentName; }
+        @Override public String getComponentName() { return componentName; }
+        @Override public DcMotor get(HardwareMap map) { return map.get(DcMotor.class, getComponentName()); }
+    }
+
+    /*public enum Component {
+        LEFT_FRONT("fl_drv", DcMotor.class),
+        RIGHT_FRONT("fr_drv", DcMotor.class),
+        LEFT_BACK("bl_drv", DcMotor.class),
+        RIGHT_BACK("br_drv", DcMotor.class),
+        ;
+
+        public final String componentName;
+        public final Class<? extends HardwareDevice> clazz;
+
+        Component(String componentName, Class<? extends HardwareDevice> clazz) {
+            this.componentName = componentName;
+            this.clazz = clazz;
+        }
+
+        public <T extends HardwareDevice> T cast(HardwareDevice device) {
+            return clazz
+        }
+    }*/
 
     public static final String FRONT_LEFT_DRIVE = "fl_drv";
     public static final String FRONT_RIGHT_DRIVE = "fr_drv";
@@ -56,21 +107,16 @@ public class RobotHardwareInitializer {
     public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
     public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
 
-    public static HashMap<DriveMotor, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
+    public static HashMap<Component, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
         DcMotor rightFrontDrive;
         DcMotor leftBackDrive;
         DcMotor rightBackDrive;
         try {
-            leftFrontDrive = hMap.get(DcMotor.class, FRONT_LEFT_DRIVE);
-            rightFrontDrive = hMap.get(DcMotor.class, FRONT_RIGHT_DRIVE);
-            leftBackDrive = hMap.get(DcMotor.class, BACK_LEFT_DRIVE);
-            rightBackDrive = hMap.get(DcMotor.class, BACK_RIGHT_DRIVE);
-
-            /*leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+            leftFrontDrive = MotorComponent.RIGHT_FRONT.get(hMap);
+            rightFrontDrive = MotorComponent.RIGHT_FRONT.get(hMap);
+            leftBackDrive = MotorComponent.LEFT_BACK.get(hMap);
+            rightBackDrive = MotorComponent.RIGHT_BACK.get(hMap);
 
             leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -86,29 +132,29 @@ public class RobotHardwareInitializer {
         DcMotor encoderBack;
 
         try {
-            encoderLeft = hMap.dcMotor.get(LEFT_ENCODER);
-            encoderRight = hMap.dcMotor.get(RIGHT_ENCODER);
-            encoderBack = hMap.dcMotor.get(BACK_ENCODER);
+            encoderLeft = hMap.dcMotor.get(EncoderComponent.ENCODER_LEFT.getComponentName());
+            encoderRight = hMap.dcMotor.get(EncoderComponent.ENCODER_RIGHT.getComponentName());
+            encoderBack = hMap.dcMotor.get(EncoderComponent.ENCODER_BACK.getComponentName());
         } catch (Exception e) {
             Error(e, opMode);
             return null;
         }
 
-        HashMap<DriveMotor, DcMotor> motorMap = new HashMap<>();
+        HashMap<Component, DcMotor> motorMap = new HashMap<>();
 
-        motorMap.put(DriveMotor.LEFT_FRONT, leftFrontDrive);
-        motorMap.put(DriveMotor.RIGHT_FRONT, rightFrontDrive);
-        motorMap.put(DriveMotor.LEFT_BACK, leftBackDrive);
-        motorMap.put(DriveMotor.RIGHT_BACK, rightBackDrive);
-        motorMap.put(DriveMotor.ENCODER_LEFT, encoderLeft);
-        motorMap.put(DriveMotor.ENCODER_RIGHT, encoderRight);
-        motorMap.put(DriveMotor.ENCODER_BACK, encoderBack);
+        motorMap.put(MotorComponent.LEFT_FRONT, leftFrontDrive);
+        motorMap.put(MotorComponent.RIGHT_FRONT, rightFrontDrive);
+        motorMap.put(MotorComponent.LEFT_BACK, leftBackDrive);
+        motorMap.put(MotorComponent.RIGHT_BACK, rightBackDrive);
+        motorMap.put(EncoderComponent.ENCODER_LEFT, encoderLeft);
+        motorMap.put(EncoderComponent.ENCODER_RIGHT, encoderRight);
+        motorMap.put(EncoderComponent.ENCODER_BACK, encoderBack);
 
         return motorMap;
     }
 
     /** @noinspection rawtypes*/
-    public static HashMap<Other, DynamicTypeValue> initializeAllOtherSystems(final OpMode opMode) {
+    /*public static HashMap<Other, DynamicTypeValue> initializeAllOtherSystems(final OpMode opMode) {
         HashMap<Other, DynamicTypeValue> out = new HashMap<>();
 
         // Init Color Sensor
@@ -120,45 +166,9 @@ public class RobotHardwareInitializer {
         out.put(Other.WEBCAM, new ArrayTypeValue<>(tmp.values().toArray()));
 
         return out;
-    }
+    }*/
 
-    public enum Arm {
-        BUCKET_ARM_MOTOR,
-        ARM2,
-        ARM3,
-        BUCKET_SERVO,
-    }
-
-    public static HashMap<Arm, DynamicTypeValue> initializeArm(final OpMode opMode) {
-        DcMotor arm = null;
-        DcMotor arm2 = null;
-        DcMotor arm3 = null;
-        Servo bucket_servo = null;
-        try {
-            arm = opMode.hardwareMap.get(DcMotor.class, "arm1");
-            arm.setDirection(DcMotorSimple.Direction.FORWARD);
-
-            arm2 = opMode.hardwareMap.get(DcMotor.class, "arm2");
-            arm2.setDirection(DcMotorSimple.Direction.FORWARD);
-
-            arm3 = opMode.hardwareMap.get(DcMotor.class, "arm3");
-            arm3.setDirection(DcMotorSimple.Direction.FORWARD);
-
-            bucket_servo = opMode.hardwareMap.get(Servo.class, "bucket_servo");
-        } catch (Exception e) {
-            Error(e, opMode);
-        }
-
-        HashMap<Arm, DynamicTypeValue> out = new HashMap<>();
-        out.put(Arm.BUCKET_ARM_MOTOR, new MotorTypeValue(arm));
-        out.put(Arm.ARM2, new MotorTypeValue(arm2));
-        out.put(Arm.ARM3, new MotorTypeValue(arm3));
-        out.put(Arm.BUCKET_SERVO, new ServoTypeValue(bucket_servo));
-
-        return out;
-    }
-
-    public static ColorSensor initializeColorSensor(final OpMode opMode) {
+    /*public static ColorSensor initializeColorSensor(final OpMode opMode) {
         try {
             return opMode.hardwareMap.get(ColorSensor.class, "color_sensor");
         } catch(Exception e) {
@@ -182,5 +192,5 @@ public class RobotHardwareInitializer {
             Error(e, opMode);
         }
         return null;
-    }
+    }*/
 }

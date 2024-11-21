@@ -1,30 +1,16 @@
 package org.firstinspires.ftc.teamcode.util.MatchRecorder;
 
-import android.annotation.SuppressLint;
 import android.os.Environment;
 
-import com.acmerobotics.dashboard.canvas.Rotation;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
-import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
-import org.opencv.core.Mat;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.Objects;
-import java.util.logging.Filter;
-import java.util.logging.Logger;
 
 public class MatchLogger {
 
@@ -163,10 +149,10 @@ public class MatchLogger {
     /**
      * Records the passed variables and logs the method that was called before this.
      */
-    public void logArm(ArmSubsystem subsystem, Object...relevantVariables) {
+    /*public void logArm(ArmSubsystem subsystem, Object...relevantVariables) {
         String message = String.format("Arm: %s | %s", getCalledMethodName(), arrayToString(relevantVariables));
         write(message, FileType.ARM, FileType.VERBOSE);
-    }
+    }*/
 
     public void genericLog(String header, FileType fileType, Object...relevantVariables) {
         String message = String.format("%s: %s", getCalledMethodName(), arrayToString(relevantVariables));
