@@ -3,9 +3,14 @@ package com.kalipsorobotics.test;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.CheckPointDone;
+import com.kalipsorobotics.actions.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.OuttakeClawAutoAction;
+import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.localization.Odometry;
 
+import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.math.Point;
+import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -30,67 +35,43 @@ public class TestTeleOpp extends LinearOpMode {
         driveTrain = new DriveTrain(opModeUtilities);
         odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
         IMUModule imu = new IMUModule(opModeUtilities);
+        Outtake outtake = new Outtake(opModeUtilities);
 
-
-        //define the actions; enter a condition (if any), target ticks, and module
-//        TurnIntakeWheelAction action1 = new TurnIntakeWheelAction(1000, intake);
-//        MoveLSAction action2 = new MoveLSAction(action1,1000, outtake);
-//        TurnIntakeWheelAction action3 = new TurnIntakeWheelAction(action2, 2000, intake);
-//        MoveLSAction action4 = new MoveLSAction(action2, 2000, outtake);
-
-//        //build a chain of actions
-//        ActionSet outer = new ActionSet();
+//        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
+//        purePursuitAction.addPoint(0,0);
+//        purePursuitAction.addPoint(400,0);
+////        purePursuitAction.addPoint(1000,0);
+////        purePursuitAction.addPoint(400,-400);
 //
-//        ActionSet actions1 = new ActionSet();
-//        actions1.scheduleParallel(new MoveLSAction(500, outtake));
-//        actions1.scheduleParallel(new TurnIntakeWheelAction(500, intake));
-//
-//        ActionSet actions2 = new ActionSet();
-//        actions2.scheduleSequential(new TurnDroneLauncherWheelAction(500, droneLauncher));
-//        actions2.scheduleSequential(new MoveTrayClampAction(0.5, outtake));
-//        actions2.scheduleSequential(new WaitAction(5));
-//        // outer.scheduleSequential(bundle);
-//
-//        MoveLSAction action3 = new MoveLSAction(actions2, 0, outtake);
-//
-//        outer.scheduleParallel(actions1);
-//        outer.scheduleParallel(actions2);
-//        outer.scheduleSequential(action3);
+//        Point checkpoint1 = new Point(100, 0);
+//        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
 
-        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
-        purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(400,0);
-//        purePursuitAction.addPoint(1000,0);
-//        purePursuitAction.addPoint(400,-400);
-
-        Point checkpoint1 = new Point(100, 0);
-        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
+        MoveLSAction moveLSToBasket = new MoveLSAction(CalculateTickInches.inchToTicksLS(58), outtake);
+        OuttakePivotAutoAction pivotOut = new OuttakePivotAutoAction(outtake, OuttakePivotAutoAction.Position.BASKET);
+        pivotOut.setDependentAction(moveLSToBasket);
+        OuttakeClawAutoAction clawOpen = new OuttakeClawAutoAction(outtake, OuttakeClawAutoAction.ClawPosition.OPEN);
+        clawOpen.setDependentAction(pivotOut);
 
         waitForStart();
 
+        outtake.outtakeClawServo.setPosition(0.5);
+
         while (opModeIsActive()) {
 
-            //update actions, run when given condition is true
-//            action1.update();
-//            action2.update();
-//            action3.update();
-//            action4.update();
+//            odometry.updatePosition();
+//            purePursuitAction.updateCheckDone();
+//            checkPointDone.updateCheckDone();
+            moveLSToBasket.updateCheckDone();
+            pivotOut.updateCheckDone();
+            clawOpen.updateCheckDone();
+//
+//            if (checkPointDone.getIsDone()) {
+//                Log.d("checkpointdone", "done");
+//            }
+//
+//            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
 
-            odometry.updatePosition();
-            purePursuitAction.updateCheckDone();
-            checkPointDone.updateCheckDone();
-
-            if (checkPointDone.getIsDone()) {
-                Log.d("checkpointdone", "done");
-            }
-
-            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
             //purePursuitAction.updateCheckDone();
-            //driveTrain.setPower(0.2,-0.2,0.2,-0.2);
-
-//            telemetry.addData("outtake ticks", outtake.lsFront.getCurrentPosition());
-//            telemetry.addData("drone launcher ticks", droneLauncher.wheel.getCurrentPosition());
-//            telemetry.update();
 
         }
     }

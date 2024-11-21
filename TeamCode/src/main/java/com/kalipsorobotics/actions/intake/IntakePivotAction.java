@@ -27,7 +27,7 @@ public class IntakePivotAction {
     }
 
     public void moveUp() {
-        setPosition(0.6);
+        setPosition(0.55);
         isDown = false;
     }
 

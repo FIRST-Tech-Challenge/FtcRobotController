@@ -40,8 +40,8 @@ public class MoveLSAction extends Action {
         refreshError();
         Log.d("movels", "error is " + error);
         if (Math.abs(error) <= ERROR_TOLERANCE) {
-            linearSlide.setPower(0.1);
-            linearSlideTwo.setPower(0.1);
+            linearSlide.setPower(Outtake.LS_STAYUP_POWER);
+            linearSlideTwo.setPower(Outtake.LS_STAYUP_POWER);
             Log.d("movels", "done");
             //outtake.getOpModeUtilities().getOpMode().sleep(100);
             return true;
