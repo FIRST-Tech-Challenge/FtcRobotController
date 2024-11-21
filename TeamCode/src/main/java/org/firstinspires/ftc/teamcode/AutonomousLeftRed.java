@@ -133,6 +133,18 @@ public class AutonomousLeftRed extends AutonomousBase {
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
+    /* Autonomous Left:                                                                           */
+    /*   1 Starting point                                                                         */
+    /*   2 Place sample in upper bucket                                                           */
+    /*   3 Collect right neutral sample                                                           */
+    /*   4 Place sample in upper bucket                                                           */
+    /*   5 Collect center neutral sample                                                          */
+    /*   6 Place sample in upper bucket                                                           */
+    /*   7 Collect left neutral sample                                                            */
+    /*   8 Place sample in upper bucket                                                           */
+    /*   9 Level one ascent                                                                       */
+    /*--------------------------------------------------------------------------------------------*/
+//  private void mainAutonomous(int scoreSamples) {
     private void mainAutonomous() {
 
         // Do we start with an initial delay?
@@ -145,7 +157,19 @@ public class AutonomousLeftRed extends AutonomousBase {
 
         // Score the preloaded specimen
          parkSafeButNoPoints();
+/*
+        // Score starting sample
+        scoreSample();
+        int samplesScored = 1;
 
+        while (samplesScored < scoreSamples) {
+            collectSample(samplesScored);
+            scoreSample();
+            samplesScored++;
+        } 
+
+         level1Ascent();
+*/
     } // mainAutonomous
 
     private void scoreSpecimenPreload() {
@@ -283,5 +307,19 @@ public class AutonomousLeftRed extends AutonomousBase {
         } // opModeIsActive
 
     } // parkSafeButNoPoints
+
+/*
+    private void scoreSample() {
+
+    } // scoreSample
+
+    private void collectSample(int samplesScored) {
+        
+    } // scoreSample
+
+    private void level1Ascent() {
+      
+    } // level1Ascent
+*/
 
 } /* AutonomousLeftRed */

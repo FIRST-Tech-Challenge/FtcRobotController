@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -75,8 +76,16 @@ public abstract class Teleop extends LinearOpMode {
     boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
-    boolean ascent2started       = false; // Do we need to monitor currents and set min holding power?
     boolean enableOdometry       = true; // Process/report odometry updates?
+
+    final int   ASCENT_STATE_IDLE   = 0;
+    final int   ASCENT_STATE_SETUP  = 1;
+    final int   ASCENT_STATE_MOVING = 2;
+    final int   ASCENT_STATE_READY  = 3;
+    final int   ASCENT_STATE_LEVEL2 = 4;
+
+    int         ascent2state = ASCENT_STATE_IDLE;
+	boolean     ascent2telem = false;
 
     int geckoWheelState = 0;
 	
@@ -748,24 +757,52 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processLevel2Ascent() {
 
-        // First instance of BOTH gamepad1 left/right bumpers initiates ascent
-        if( gamepad1_l_bumper_now && gamepad1_r_bumper_now && !ascent2started )
-        {
-            robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
-            robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
-            ascent2started = true;
-        }
+        // DRIVER 1 controls position the arm for hanging
+        // DRIVER 2 controls initiate the actual hang
 
         // Check for emergency ASCENT ABORT button
         if( gamepad1_touchpad_now && !gamepad1_touchpad_last ) {
             robot.viperMotor.setPower( 0.0 );
             robot.wormTiltMotor.setPower( 0.0 );
             robot.wormPanMotor.setPower( 0.0 );
-            ascent2started = false;
+            ascent2state = ASCENT_STATE_IDLE;
+			ascent2telem = false;
         }
 
-        // Level 2 ascent underway...
-        if( ascent2started ) {
+        switch( ascent2state ) {
+            case ASCENT_STATE_IDLE :
+                // First instance of BOTH gamepad1 left/right bumpers initiates ascent prep
+                if( gamepad1_l_bumper_now && gamepad1_r_bumper_now )
+                {
+                    robot.wristServo.setPosition(robot.WRIST_SERVO_INIT);
+                    robot.elbowServo.setPosition(robot.ELBOW_SERVO_INIT);
+                    ascent2telem = true; // start monitoring motor powers
+                    ascent2state = ASCENT_STATE_SETUP;
+                }
+                break;
+            case ASCENT_STATE_SETUP:
+                // Send TILT motor to hang position
+                robot.wormTiltMotor.setTargetPosition( robot.TILT_ANGLE_HANG1 );
+                robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+                robot.wormTiltMotor.setPower( 0.90 );
+                // Send LIFT motor to hang position
+                robot.viperMotor.setTargetPosition( robot.VIPER_EXTEND_HANG1 );
+                robot.viperMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+                robot.viperMotor.setPower( 0.90 );
+                ascent2state = ASCENT_STATE_MOVING;
+                break;
+            case ASCENT_STATE_MOVING :
+                boolean tiltReady  = (Math.abs(robot.wormTiltMotorPos - robot.TILT_ANGLE_HANG1) < 20)? true:false;
+                boolean viperReady = (Math.abs(robot.viperMotorPos - robot.VIPER_EXTEND_HANG1) < 20)? true:false;
+                break;
+            case ASCENT_STATE_READY :
+                break;
+
+            case ASCENT_STATE_LEVEL2 :
+                break;
+        } // switch()
+
+        if(ascent2telem) {
             // Monitor motor currents
             robot.updateAscendMotorAmps();
             telemetry.addData("Viper Motor", "%.1f Amp (%.1f peak)", 

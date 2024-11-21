@@ -97,6 +97,7 @@ public class AutonomousRightRed extends AutonomousBase {
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
         // Comment it out if running one of the unit tests above.
+//      mainAutonomous(5);
         mainAutonomous();
         //---------------------------------------------------------------------------------
 
@@ -133,6 +134,23 @@ public class AutonomousRightRed extends AutonomousBase {
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
+    /* Autonomous Right:                                                                          */
+    /*   1 Starting Point                                                                         */
+    /*   2 Hang pre-load specimen at submersible                                                  */
+    /*   3 Herd left team sample                                                                  */
+    /*   4 Collect specimen from observation zone (2nd preload specimen)                          */
+    /*   5 Hang specimen on high rung                                                             */
+    /*   6 Herd center team sample                                                                */
+    /*   7 Collect specimen from observation zone (from left herd)                                */
+    /*   8 Hang specimen on high rung                                                             */
+    /*   9 Herd right team sample                                                                 */
+    /*   10 Collect specimen form observaiton zone (from center herd)                             */
+    /*   11 Hang specimen on high rung                                                            */
+    /*   12 Collect specimen from observation zone (from right herd)                              */
+    /*   13 Hang specimen on high rung                                                            */
+    /*   14 Park in observation zone	                                                          */
+    /*--------------------------------------------------------------------------------------------*/
+//  private void mainAutonomous(int scoreSpecimens) {
     private void mainAutonomous() {
 
         // Do we start with an initial delay?
@@ -142,7 +160,18 @@ public class AutonomousRightRed extends AutonomousBase {
 
         // Score the preloaded specimen
         scoreSpecimenPreload();
+/*
+        // Score starting specimen
+        scoreSpecimen(specimensScored);
+        int specimensScored = 1;
 
+        while (specimensScored < scoreSpecimens) {
+            herdSample(specimensScored);
+            collectSpecimen();
+            scoreSpecimen(specimensScored);
+            specimensScored++;
+        } 
+*/
         // Score the preloaded specimen
         parkInObservation();
 
@@ -154,19 +183,20 @@ public class AutonomousRightRed extends AutonomousBase {
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-//          driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
+            driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
-//          driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
+            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
-//          driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_TO );
+            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
+//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_TO );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
-            // shift away from alliance partner
-            gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
+            // approach submersible away from alliance partner
+//          gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
+            driveToPosition( 9.0, -2.2, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
                 if( !opModeIsActive() ) break;
@@ -178,10 +208,10 @@ public class AutonomousRightRed extends AutonomousBase {
         } // opModeIsActive
 
         if( opModeIsActive() ) {
-  //        driveToPosition( 22.0, 0.0, -45.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
-            gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 23.0, 999.9, DRIVE_TO );
-            double startAngle = getAngle();
-            gyroTurn(TURN_SPEED_20, (startAngle - 45) );   // Turn CCW 45 degrees
+            driveToPosition( 32.0, -2.2, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 23.0, 999.9, DRIVE_TO );
+//          double startAngle = getAngle();
+//          gyroTurn(TURN_SPEED_20, (startAngle - 45) );   // Turn CCW 45 degrees
             robot.driveTrainMotorsZero();
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_AUTO1);
             do {
@@ -253,15 +283,30 @@ public class AutonomousRightRed extends AutonomousBase {
 
     } // scoreSpecimenPreload
 
+/*
+    private void herdSample(int specimensScored) {
+        // TODO: FILL IN IMPLEMENTATION
+    }
+
+    private void collectSpecimen() {
+        // TODO: FILL IN IMPLEMENTATION
+    }
+*/
+
     private void parkInObservation() {
         // Back up from submersible
-        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_TO );
-        double startAngle = getAngle();
-        gyroTurn(TURN_SPEED_40, (startAngle + 135) );   // Turn CW 135 degrees
+//      gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_TO );
+        driveToPosition( 16.0, 14.0, 45.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
+//        double startAngle = getAngle();
+//        gyroTurn(TURN_SPEED_40, (startAngle + 135) );   // Turn CW 135 degrees
         // Drive forward toward the wall
-        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 35.0, 999.9, DRIVE_TO );
+        driveToPosition( 12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
+        driveToPosition( 12.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
+//        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 35.0, 999.9, DRIVE_TO );
         // Strafe sideways toward the human player
-        gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
+//        gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
+        driveToPosition( 6.0, 32.0, -91.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_TO );
+
     } // parkInObservation
 
 } /* AutonomousRightRed */
