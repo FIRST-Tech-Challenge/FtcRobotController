@@ -60,8 +60,9 @@ public class FiniteMachineStateArm {
         robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.liftMotorLeft.setPower(0.1);                                          // Make sure lift motor is on
         robot.liftMotorRight.setPower(0.1);
-        robot.IntakeArmServo.setPosition(DUMP_IDLE);
-        robot.IntakeServo.setPosition(INTAKE_IDLE);
+        robot.depositWristServo.setPosition(DUMP_IDLE);
+        robot.depositRightArmServo.setPosition(INTAKE_IDLE);
+        robot.depositLeftArmServo.setPosition(INTAKE_IDLE);
     }
 
     public void VsArmLoop() {
@@ -93,8 +94,9 @@ public class FiniteMachineStateArm {
             case LIFT_EXTEND:
                 // Check if the lift has reached the high position
                 if (isLiftAtPosition(LIFT_HIGH)) {
-                    robot.IntakeArmServo.setPosition(DUMP_DEPOSIT); // Move servo to dump position
-                    robot.IntakeServo.setPosition(INTAKE_DUMP);
+                    robot.depositRightArmServo.setPosition(DUMP_DEPOSIT);
+                    robot.depositLeftArmServo.setPosition(DUMP_DEPOSIT);// Move servo to dump position
+                    robot.depositWristServo.setPosition(INTAKE_DUMP);
                     liftTimer.reset();
                     liftState = LiftState.LIFT_DUMP;
                 }
@@ -102,8 +104,9 @@ public class FiniteMachineStateArm {
             case LIFT_DUMP:
                 // Wait for the dump time to pass
                 if (liftTimer.seconds() >= DUMP_TIME) {
-                    robot.IntakeArmServo.setPosition(DUMP_IDLE); // Reset servo to idle
-                    robot.IntakeServo.setPosition(INTAKE_IDLE);
+                    robot.depositRightArmServo.setPosition(DUMP_IDLE);
+                    robot.depositLeftArmServo.setPosition(DUMP_IDLE);// Reset servo to idle
+                    robot.depositWristServo.setPosition(INTAKE_IDLE);
                     liftState = LiftState.LIFT_RETRACT;
                 }
                 break;
