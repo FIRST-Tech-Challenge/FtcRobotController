@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.kalipsorobotics.actions.CheckPointDone;
 import com.kalipsorobotics.actions.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.AutoBasketAction;
 import com.kalipsorobotics.actions.outtake.OuttakeClawAutoAction;
 import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.localization.Odometry;
@@ -46,11 +47,7 @@ public class TestTeleOpp extends LinearOpMode {
 //        Point checkpoint1 = new Point(100, 0);
 //        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
 
-        MoveLSAction moveLSToBasket = new MoveLSAction(CalculateTickInches.inchToTicksLS(58), outtake);
-        OuttakePivotAutoAction pivotOut = new OuttakePivotAutoAction(outtake, OuttakePivotAutoAction.Position.BASKET);
-        pivotOut.setDependentAction(moveLSToBasket);
-        OuttakeClawAutoAction clawOpen = new OuttakeClawAutoAction(outtake, OuttakeClawAutoAction.ClawPosition.OPEN);
-        clawOpen.setDependentAction(pivotOut);
+        AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
 
         waitForStart();
 
@@ -61,9 +58,8 @@ public class TestTeleOpp extends LinearOpMode {
 //            odometry.updatePosition();
 //            purePursuitAction.updateCheckDone();
 //            checkPointDone.updateCheckDone();
-            moveLSToBasket.updateCheckDone();
-            pivotOut.updateCheckDone();
-            clawOpen.updateCheckDone();
+            autoBasketAction.updateCheckDone();
+
 //
 //            if (checkPointDone.getIsDone()) {
 //                Log.d("checkpointdone", "done");

@@ -1,5 +1,7 @@
 package com.kalipsorobotics.actions.outtake;
 
+import android.util.Log;
+
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.actions.WaitAction;
@@ -26,7 +28,12 @@ public class OuttakePivotAutoAction extends Action {
     public boolean checkDoneCondition() {
         if (hasStarted) {
             wait.updateCheckDone();
-            return true;
+            if(wait.getIsDone()) {
+                Log.d("pivottimer", "done");
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

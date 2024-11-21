@@ -26,7 +26,11 @@ public class OuttakeClawAutoAction extends Action {
     public boolean checkDoneCondition() {
         if (hasStarted) {
             wait.updateCheckDone();
-            return true;
+            if(wait.getIsDone()) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
