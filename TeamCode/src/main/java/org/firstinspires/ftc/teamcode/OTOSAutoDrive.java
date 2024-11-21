@@ -65,15 +65,15 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // First Sample ///////////////////////////////////////////////////////////////
         setVertical(VERTICAL_MAX);                                  // Raising Arm
-        sleep(300);
+        sleep(800);
         setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(300);
-        driveToLoc(2, 13, 20);               // Go to basket
+        sleep(1000);
+        driveToLoc(9, 13, 45, 1.5);               // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop the block
 
         // Second Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(34, 2, 0, 1);
+        driveToLoc(30, 2, 0, 1);
         setViper(1900);
         setVertical(100, 1000);
         sleep(1500);
@@ -81,21 +81,21 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(8, 15, 45, 1.5);  // Go to basket
-        sleep(600);
+        driveToLoc(7, 11, 45, 1.5);  // Go to basket
+        sleep(700);
         setClaw(CLAW_MAX);                                          // Drop second block
 
         // Third Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(36, -2, 0, 1);
+        driveToLoc(30, -1, 0, 1);
         setViper(1100);
         sleep(700);
-        setVertical(0, 1500);
+        setVertical(60, 1500);
         sleep(1700);
         setClaw(CLAW_MIN);                                          // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(8, 15, 45, 1.5);  // Go to basket
+        driveToLoc(7, 11, 45, 1.5);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop third block
 
@@ -104,11 +104,10 @@ public class OTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
-        driveToLoc(55, 5, 0);
+        driveToLoc(45, 5, 0);
         RobotLog.vv("Rockin'", "Set to max");
         setAscentStick(ASCENT_MAX);
-        turnRight(0.5, 180);
-        moveForward(0.5, 1000);
+        driveToLoc(45, -5, 180);
         RobotLog.vv("Rockin'", "End program");
         claw.close();                                               // Release tension on the claw
         // End of autonomous program
@@ -182,7 +181,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     private void configureOtos() {
         myOtos.setLinearUnit(DistanceUnit.INCH);
         myOtos.setAngularUnit(AngleUnit.DEGREES);
-        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-3.5, 0.5, 90);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-3.5, 1.1, 90);
         myOtos.setOffset(offset);
         myOtos.setLinearScalar(1.0);
         myOtos.setAngularScalar(1.0);
@@ -213,19 +212,22 @@ public class OTOSAutoDrive extends LinearOpMode {
         double hDistance = hTarget - hLoc;
         if(hDistance > 180) hDistance -= 360;
         if(hDistance < -180) hDistance += 360;
+        double angleRadians = Math.toRadians(hLoc);
+        double xRotatedDistance = xDistance * Math.cos(angleRadians) + yDistance * Math.sin(angleRadians);
+        double yRotatedDistance = - xDistance * Math.sin(angleRadians) + yDistance * Math.cos(angleRadians);
 
         RobotLog.vv("Rockin' Robots", "driveToLoc() xTarget: %.2f, yTarget: %.2f, hTarget: %.2f, accuracy: %.2f",
-                        xTarget, yTarget, hTarget, accuracy);
+                xTarget, yTarget, hTarget, accuracy);
 
         while (opModeIsActive()
                 && (Math.abs(xDistance) > accuracy
                 || Math.abs(yDistance) > accuracy
                 || Math.abs(hDistance) > accuracy)) {
 
-            leftFrontPower = (yDistance + xDistance - hDistance) / 8;
-            rightFrontPower = (yDistance - xDistance + hDistance) / 8;
-            leftBackPower = (yDistance - xDistance - hDistance) / 8;
-            rightBackPower = (yDistance + xDistance + hDistance) / 8;
+            leftFrontPower = (yRotatedDistance + xRotatedDistance - hDistance) / 8;
+            rightFrontPower = (yRotatedDistance - xRotatedDistance + hDistance) / 8;
+            leftBackPower = (yRotatedDistance - xRotatedDistance - hDistance) / 8;
+            rightBackPower = (yRotatedDistance + xRotatedDistance + hDistance) / 8;
 
             // Normalize the values so no wheel power exceeds 100%
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -254,15 +256,15 @@ public class OTOSAutoDrive extends LinearOpMode {
             xDistance = xTarget - xLoc;
             yDistance = yTarget - yLoc;
             hDistance = hTarget - hLoc;
-            if(hDistance > 180) {
-                hDistance -= 360;
-            }
-            else if(hDistance < -180) {
-                hDistance += 360;
-            }
+            if(hDistance > 180) hDistance -= 360;
+            if(hDistance < -180) hDistance += 360;
+
+            angleRadians = Math.toRadians(hLoc);
+            xRotatedDistance = xDistance * Math.cos(angleRadians) + yDistance * Math.sin(angleRadians);
+            yRotatedDistance = - xDistance * Math.sin(angleRadians) + yDistance * Math.cos(angleRadians);
         }
         stopMoving();
-        RobotLog.vv("Rockin' Robots", "driveToLoc() done: xDist: %.2f, yDist: %.2f, hDist: %.2f",
+        RobotLog.vv("Rockin' Robots", "Done Moving: xDist: %.2f, yDist: %.2f, hDist: %.2f",
                 xDistance, yDistance, hDistance);
     }
 
