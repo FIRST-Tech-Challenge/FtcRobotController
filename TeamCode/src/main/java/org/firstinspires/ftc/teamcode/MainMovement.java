@@ -50,7 +50,7 @@ public class MainMovement extends LinearOpMode {
         rightBack  = hardwareMap.get(DcMotor.class, "br");
         leftFront  = hardwareMap.get(DcMotor.class, "fl");
         rightFront  = hardwareMap.get(DcMotor.class, "fr");
- 
+
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
