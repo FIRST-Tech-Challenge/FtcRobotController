@@ -13,8 +13,9 @@ public class ScrimmageAuto_Left extends ScrimmageAuto {
         driveSeconds(24 * secondsPerInch, 0.25f, dir.RIGHT);
         moveSlideSeconds(3 * slideConst, 0.25f, true);
         driveSeconds(30 * secondsPerInch, 0.25f, dir.BACKWARD);
+        moveArm(1);
         moveSlideSeconds(2 * slideConst, 0.25f, false);
-        //moveClaw(false);
+        moveClaw(false);
 
         //move backwards and park
         driveSeconds(3 * secondsPerInch, 0.25f, dir.FORWARD);

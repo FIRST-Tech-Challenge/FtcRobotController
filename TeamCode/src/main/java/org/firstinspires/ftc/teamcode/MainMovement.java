@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="MainMovement", group="Linear OpMode")
@@ -34,8 +35,9 @@ public class MainMovement extends LinearOpMode {
     private final float linearSlideSpeed = 0.75f;
 
         // horizontal slide
-    private Servo hClawServo, hLinearSlide; // h is slang for horizontal btw
-    private CRServo hClawRotate; // servo to control the rotation of the claw
+    boolean hArmUp = false;
+    private Servo hClawServo, hLinearSlide, hClawRotate; // h is slang for horizontal btw
+    private  Servo hArmOpen;
     boolean hClawOpen = false;
 
 
@@ -56,10 +58,12 @@ public class MainMovement extends LinearOpMode {
 
 
         vClawServo = hardwareMap.get(Servo.class, "vcs"); // claw servo
-        hClawRotate = hardwareMap.get(CRServo.class, "hcr"); // claw rotate
+        vArmServo = hardwareMap.get(Servo.class, "vas"); //
+        hClawRotate = hardwareMap.get(Servo.class, "hcr"); // claw rotate
         hClawServo = hardwareMap.get(Servo.class, "hcs");
-        hLinearSlide = hardwareMap.get(Servo.class, "hls");
-        linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide
+        hArmOpen = hardwareMap.get(Servo.class, "hao"); // [done]
+        hLinearSlide = hardwareMap.get(Servo.class, "hls"); // [done]
+        linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide [Done]
 
 
 
@@ -80,6 +84,7 @@ public class MainMovement extends LinearOpMode {
             epicRotationMovement(); // rotation on gary, the robot
             legendaryStrafeMovement(); // movement on gary
             LimbMovement(); // controlling linear slide and claw on gary, OUR robot
+
             telemetry.addData("Status", "Run Time: " + Runtime.getRuntime()); // tracks how long program has been running
             telemetry.update(); //update output screen
         }
@@ -218,28 +223,33 @@ public class MainMovement extends LinearOpMode {
 
         if(Math.abs(gamepad2.right_stick_y) > joystickDeadzone) {
             hLinearSlide.setPosition(Math.min(0, Math.max(1, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
+        } else {
+            hLinearSlide.setPosition(hLinearSlide.getPosition());
         }
-
 
         //snaps horizontal linear slide to fully extended
         if(gamepad2.dpad_up){
-            hLinearSlide.setPosition(1);
+            hLinearSlide.setPosition(0);
             sleep(100);
         }
         //snaps horizontal linear slide to fully retracted
         if(gamepad2.dpad_down){
-            hLinearSlide.setPosition(0);
+            hLinearSlide.setPosition(1);
             sleep(100);
         }
 
         //open/closes horizontal linear slide claw
         if(gamepad2.b){
-            hClawOpen = !hClawOpen;
-            if(vSlideArmOut){
+            if(hClawOpen){
                 hClawServo.setPosition(1); //Arm swings out
-            } else {
+                telemetry.addData("1", hClawServo.getPosition());
+                hClawOpen = !hClawOpen;
+            } else if(!hClawOpen) {
                 hClawServo.setPosition(0); //Arm swings in
+                telemetry.addData("0", hClawServo.getPosition());
+                hClawOpen = !hClawOpen;
             }
+            sleep(200);
         }
 
 
@@ -249,8 +259,10 @@ public class MainMovement extends LinearOpMode {
             vSlideArmOut = !vSlideArmOut;
             if(vSlideArmOut){
                 vArmServo.setPosition(1); //Arm swings out
+                telemetry.addData("1", null);
             } else {
                 vArmServo.setPosition(0); //Arm swings in
+                telemetry.addData("0", null);
             }
             sleep(100);
         }
@@ -270,15 +282,23 @@ public class MainMovement extends LinearOpMode {
         }
 
         //rotate chamber claw left
-        if (gamepad2.left_trigger > 0) {
-            hClawRotate.setPower(clawSpeed * (gamepad2.left_trigger - gamepad2.right_trigger));
-            telemetry.addData("rotating chamber claw left", null);
-        }
+        if (gamepad2.y) {
+            hArmUp = !hArmUp;
 
-        //rotate chamber claw right
-        if (gamepad2.right_trigger > 0) {
-            hClawRotate.setPower(clawSpeed * (gamepad2.right_trigger - gamepad2.left_trigger));
-            telemetry.addData("rotating chamber claw right", null);
+            if(hArmUp) {
+                hClawRotate.setPosition(0);
+                sleep(1000);
+                hArmOpen.setPosition(0.75);
+                sleep(1000);
+                telemetry.addData(null,hArmOpen.getPosition());
+
+            } else if(!hArmUp){
+                hArmOpen.setPosition(0.25);
+                telemetry.addData(null,hArmOpen.getPosition());
+                sleep(50);
+                hClawRotate.setPosition(1);
+
+            }
         }
 
         // moves linear slide

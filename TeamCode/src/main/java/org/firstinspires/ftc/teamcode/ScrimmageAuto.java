@@ -32,7 +32,7 @@ public class ScrimmageAuto extends LinearOpMode {
     private DcMotor leftBack, rightBack, leftFront, rightFront; //Initializes direct current main wheel motors for the driving function of our robot, gary.
     private DcMotor linearSlide;
     //private Servo hLinearSlide;
-    private Servo clawServo;
+    private Servo vClawServo, vArmServo;
 
     @Override
     public void runOpMode() {
@@ -47,7 +47,8 @@ public class ScrimmageAuto extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         linearSlide.setDirection(DcMotor.Direction.FORWARD);
 
-        clawServo = hardwareMap.get(Servo.class, "cs");
+        vClawServo = hardwareMap.get(Servo.class, "vcs");
+        vArmServo = hardwareMap.get(Servo.class, "vas");
         waitForStart();
 
     }
@@ -179,14 +180,14 @@ public class ScrimmageAuto extends LinearOpMode {
 
     protected void moveClaw(boolean clawOpen) {
         if(clawOpen) {
-            clawServo.setPosition(1);
+            vClawServo.setPosition(1);
         } else {
-            clawServo.setPosition(0);
+            vClawServo.setPosition(0);
         }
     }
 
-    protected void moveSlide(double pos) {
-
+    protected void moveArm(double pos) {
+        vArmServo.setPosition(pos);
     }
 
     //not complete
