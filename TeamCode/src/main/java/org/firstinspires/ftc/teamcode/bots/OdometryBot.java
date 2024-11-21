@@ -40,7 +40,7 @@ public class OdometryBot extends PinchBot {
 
     final int vLDirection = 1;
     final int vRDirection = 1;
-    final int hDirection = 1;
+    final int hDirection = -1;
     final double diameter = 15697; // actually diameter: 239/609 = d/40000
     final double hDiameter = 10771; //diameter of horizontal encoder: 82*2/609 = hD/40000
     final double leftX = -(diameter/2); //135mm
