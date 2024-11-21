@@ -62,8 +62,11 @@ class ProgBotInitialize {
 
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
+
+
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
 

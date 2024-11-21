@@ -45,8 +45,14 @@ public class PlayBackAuto extends LinearOpMode {
                 // Parse recorded input
                 String[] values = input.split(",");
                 long timestamp = Long.parseLong(values[0]);
-                double leftPower = Double.parseDouble(values[1]);
-                double rightPower = Double.parseDouble(values[2]);
+                double fLeftVelocity = Double.parseDouble(values[1]);
+                double fRightVelocity = Double.parseDouble(values[2]);
+                double bLeftVelocity = Double.parseDouble(values[3]);
+                double bRightVelocity = Double.parseDouble(values[4]);
+
+
+
+
 
                 // Wait for the right time to replay this input
                 while (System.currentTimeMillis() - startTime < timestamp) {
@@ -60,24 +66,24 @@ public class PlayBackAuto extends LinearOpMode {
                 }
 
                 // Set motor powers
-                robot.fLeft.setPower(leftPower);
-                robot.bLeft.setPower(leftPower);
+                robot.fLeft.setVelocity(fLeftVelocity);
+                robot.bLeft.setVelocity(bLeftVelocity);
 
-                robot.fRight.setPower(rightPower);
-                robot.bRight.setPower(rightPower);
+                robot.fRight.setVelocity(fRightVelocity);
+                robot.bRight.setVelocity(bRightVelocity);
 
 
-                telemetry.addData("Replaying", "Left Power: %.2f, Right Power: %.2f", leftPower, rightPower);
-                telemetry.update();
+                //telemetry.addData("Replaying", "fleft Velocity: %.2f, fright Velocity: %.2f, bleft Velocity: %.2f, bright Velocity %.2f,", strafeVelocity - straightMovementVelocity + turnVelocity, -strafeVelocity - straightMovementVelocity - turnVelocity, (strafeVelocity + straightMovementVelocity - turnVelocity), (-strafeVelocity + straightMovementVelocity + turnVelocity));
+               // telemetry.update();
             }
         }
 
         // Stop motors at the end
-        robot.fLeft.setPower(0);
-        robot.bLeft.setPower(0);
+        robot.fLeft.setVelocity(0);
+        robot.bLeft.setVelocity(0);
 
-        robot.fRight.setPower(0);
-        robot.bRight.setPower(0);
+        robot.fRight.setVelocity(0);
+        robot.bRight.setVelocity(0);
         telemetry.addData("Status", "Autonomous complete");
         telemetry.update();
     }

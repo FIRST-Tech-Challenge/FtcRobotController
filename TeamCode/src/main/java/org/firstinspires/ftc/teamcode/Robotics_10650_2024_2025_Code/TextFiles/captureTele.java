@@ -23,56 +23,59 @@ import java.util.ArrayList;
 
             @Override
             public void runOpMode() {
-                robot = new ProgBotInitialize(this, false);
 
-                // InitileftDrivealize hardware
+                    robot = new ProgBotInitialize(this, false);
+
+                    // InitileftDrivealize hardware
 
 
-                recordedInputs = new ArrayList<>();
+                    recordedInputs = new ArrayList<>();
 
-                telemetry.addData("Status", "Ready to record driver inputs");
-                telemetry.update();
 
-                waitForStart();
+                    telemetry.addData("Status", "Ready to record driver inputs");
+                    telemetry.update();
 
-                long startTime = System.currentTimeMillis();
+                    waitForStart();
 
-                while (opModeIsActive()) {
+                    long startTime = System.currentTimeMillis();
 
-                    // Adjust speed with Cross (X) or Circle
-                    if (gamepad1.cross) {
-                        speedMultiplier = 1.5; // Speed up
-                    } else if (gamepad1.circle) {
-                        speedMultiplier = 0.5; // Slow down
-                    } else {
-                        speedMultiplier = 1.0; // Normal speed
+                    while (opModeIsActive()&&!gamepad1.share) {
+
+                        // Adjust speed with Cross (X) or Circle
+                        if (gamepad1.cross) {
+                            speedMultiplier = 1.5; // Speed up
+                        } else if (gamepad1.circle) {
+                            speedMultiplier = 0.5; // Slow down
+                        } else {
+                            speedMultiplier = 1.0; // Normal speed
+                        }
+
+                        // Get joystick inputs for forward/backward, strafe, and turning
+                        double forwardBackward = gamepad1.right_trigger - gamepad1.left_trigger;
+                        double strafe = gamepad1.right_stick_x; // Right Stick X for strafe
+                        double turn = gamepad1.left_stick_x; // Left Stick X for turning
+
+                        // Apply speed multiplier to inputs
+                        double leftPower = (forwardBackward + strafe + turn) * speedMultiplier;
+                        double rightPower = (forwardBackward - strafe - turn) * speedMultiplier;
+
+                        // Set power to motors
+                        robot.fLeft.setPower(leftPower);
+                        robot.bLeft.setPower(leftPower);
+
+                        robot.fRight.setPower(rightPower);
+                        robot.bRight.setPower(rightPower);
+
+                        // Record inputs with timestamp
+                        recordedInputs.add((System.currentTimeMillis() - startTime) + "," + leftPower + "," + rightPower);
+
+                        telemetry.addData("Recording", "Left Power: %.2f, Right Power: %.2f, Speed Multiplier: %.2f", leftPower, rightPower, speedMultiplier);
+                        telemetry.update();
                     }
 
-                    // Get joystick inputs for forward/backward, strafe, and turning
-                    double forwardBackward = gamepad1.right_trigger - gamepad1.left_trigger;
-                    double strafe = gamepad1.right_stick_x; // Right Stick X for strafe
-                    double turn = gamepad1.left_stick_x; // Left Stick X for turning
+                    // Save recorded inputs after the session
+                    saveInputsToFile("/sdcard/FIRST/recordedInputsOnce.txt");
 
-                    // Apply speed multiplier to inputs
-                    double leftPower = (forwardBackward + strafe + turn) * speedMultiplier;
-                    double rightPower = (forwardBackward - strafe - turn) * speedMultiplier;
-
-                    // Set power to motors
-                    robot.fLeft.setPower(leftPower);
-                    robot.bLeft.setPower(leftPower);
-
-                    robot.fRight.setPower(rightPower);
-                    robot.bRight.setPower(rightPower);
-
-                    // Record inputs with timestamp
-                    recordedInputs.add((System.currentTimeMillis() - startTime) + "," + leftPower + "," + rightPower);
-
-                    telemetry.addData("Recording", "Left Power: %.2f, Right Power: %.2f, Speed Multiplier: %.2f", leftPower, rightPower, speedMultiplier);
-                    telemetry.update();
-                }
-
-                // Save recorded inputs after the session
-                saveInputsToFile("/sdcard/FIRST/recordedInputsOnce.txt");
             }
 
             private void saveInputsToFile(String filename) {
