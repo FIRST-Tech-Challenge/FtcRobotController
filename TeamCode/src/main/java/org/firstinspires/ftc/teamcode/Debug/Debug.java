@@ -2,20 +2,24 @@ package org.firstinspires.ftc.teamcode.Debug;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 public class Debug {
     public boolean debugMode = false;
-    OpMode opMode;
+    private final OpMode opMode;
+    private final Telemetry telemetry;
 
-    public Debug(OpMode opmode) {
-        this.opMode = opmode;
+    public Debug(OpMode opMode) {
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
     }
 
     public void checkDebugButtons(Gamepad gamepad) {
         if (gamepad.start && gamepad.back) {
             debugMode = !debugMode;
-            opMode.telemetry.addData("debug mode: ", debugMode);
-            opMode.telemetry.update();
+            telemetry.addData("debug mode: ", debugMode);
+            telemetry.update();
         }
     }
 
@@ -25,13 +29,12 @@ public class Debug {
 
     public void outputDebugInfo(String message) {
         if (debugMode) {
-            opMode.telemetry.addData("Debug Info: ", message);
-            opMode.telemetry.update();
+            telemetry.addData("Debug Info: ", message);
         }
         else {
-            opMode.telemetry.addData("Debug Info: ", "Debug mode is off");
-            opMode.telemetry.update();
+            telemetry.addData("Debug Info: ", "Debug mode is off");
         }
+        telemetry.update();
     }
 
 }

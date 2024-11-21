@@ -65,7 +65,6 @@ public class TeleOpMain extends LinearOpMode {
             // Emergency stop
             if (gamepad1.dpad_left && gamepad1.b) {
                 emergencyStop = true;
-                stopAllMotors();
                 telemetry.addData("Emergency Stop", "Activated");
                 telemetry.update();
                 break;
@@ -129,15 +128,6 @@ public class TeleOpMain extends LinearOpMode {
 
             telemetry.update();
         }
-    }
-
-    private void stopAllMotors() {
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
-        leftViper.setPower(0);
-        rightViper.setPower(0);
     }
 
 }

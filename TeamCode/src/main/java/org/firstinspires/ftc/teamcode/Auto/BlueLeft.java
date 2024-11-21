@@ -14,14 +14,11 @@ import org.firstinspires.ftc.teamcode.Components.MainDrive;
 import org.firstinspires.ftc.teamcode.Components.ViperSlide;
 
 // RR-specific imports
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.MinVelConstraint;
@@ -48,12 +45,16 @@ public class BlueLeft extends LinearOpMode {
         Intake intake = new Intake(this, hSlide);
         MainDrive mainDrive = new MainDrive(this);
 
+
+
         hSlide.resetEncoder();
         viperSlide.resetEncoders();
 
         // RR-specific initialization
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+        // initialize actions
 
         // Set velocity and accel constraints
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
@@ -81,6 +82,7 @@ public class BlueLeft extends LinearOpMode {
 
         //driveToFirstPickUp
         TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
+                .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(pickUpxPos1, 12), Math.toRadians(0),
                         baseVelConstraint,
                         baseAccelConstraint)
@@ -126,10 +128,12 @@ public class BlueLeft extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested() || gamepad1.b) return;
 
         Action driveToScorePre1 = traj1.build();
         Action driveToScorePre2 = traj2.build();
+
+//        public Action score =
 
 
 
@@ -152,6 +156,9 @@ public class BlueLeft extends LinearOpMode {
                         driveToScorePre1,
                         driveToScorePre2,
                         // TODO raise viper, flip bucketx2, lower vipers
+
+
+//
 
                         // First sample
                         driveToFirstPickUp1,

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,9 +21,10 @@ public class ViperSlide {
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
-    int holdPosition;
     double minFlipLimit = 650;
     public double holdPower = .2;
+
+    double lastPosition;
 
 
     public ViperSlide(OpMode opMode) {
@@ -49,23 +53,24 @@ public class ViperSlide {
     }
 
     public void setPower(double power) {
-        leftViper.setPower(power);
-        rightViper.setPower(-power);
+        leftViper.setPower(-power);
+        rightViper.setPower(power);
     }
 
-    public void checkInputs(Float retractSpeed,
-                            Float extendSpeed,
-                            Boolean resetEncoders,
-                            Boolean hold,
-                            Boolean bucketRest,
-                            Boolean bucketScore
+    public void checkInputs(
+            Float retractSpeed,
+            Float extendSpeed,
+            Boolean resetEncoders,
+            Boolean hold,
+            Boolean bucketRest,
+            Boolean bucketScore
     ) {
         // Move Viper
         if (retractSpeed != 0) {
-            setPower(retractSpeed);
+            setPower(-retractSpeed);
         }
         else if (extendSpeed != 0) {
-            setPower(-extendSpeed);
+            setPower(extendSpeed);
         }
         else {
             stop();
@@ -75,7 +80,7 @@ public class ViperSlide {
 
         // Hold Position
         if(hold) {
-            holdPosition(holdPower);
+            holdPosition(getPos());
         }
 
         // Reset Encoders
@@ -84,10 +89,10 @@ public class ViperSlide {
         }
 
         // Bucket
-        if(bucketScore) {
+        if(bucketScore && (getPos() > minFlipLimit)) {
             bucketScore();
         }
-        else if(bucketRest && (getPos() > minFlipLimit)) {
+        else if(bucketRest) {
             bucketRest();
         }
     }
@@ -109,20 +114,61 @@ public class ViperSlide {
         rightViper.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
-    public void holdPosition(double power) {
-        holdPosition = rightViper.getCurrentPosition();
+    public void holdPosition(double holdPosition) {
+        double holdPower = 0.1;
+        double holdPowerIncrement = 0.1;
+
+
+        telemetry.addData("Holding", holdPosition);
+
+        if(lastPosition < getPos()) {
+            telemetry.addData("dropped " + (getPos() - lastPosition), " since last update");
+        }
+        else if(lastPosition > getPos()) {
+            telemetry.addData("raised " + (lastPosition - getPos()), " since last update");
+        }
+        else {
+            telemetry.addData("not moving", "since last update");
+        }
+
+        lastPosition = getPos();
+
 
         if(rightViper.getCurrentPosition() > holdPosition) {
-            leftViper.setPower(-power);
-            rightViper.setPower(power);
+            holdPower = -holdPowerIncrement;
+            leftViper.setPower(-holdPower);
+            rightViper.setPower(holdPower);
+            telemetry.addData("holdPower", holdPower);
         } else if(rightViper.getCurrentPosition() < holdPosition) {
-            leftViper.setPower(power);
-            rightViper.setPower(-power);
+            holdPower = -holdPowerIncrement;
+            leftViper.setPower(holdPower);
+            rightViper.setPower(holdPower);
+            telemetry.addData("holdPower", holdPower);
         } else {
             stop();
         }
+
+        telemetry.addData("Viper Position: ", rightViper.getCurrentPosition());
+
     }
 
+//    public Action moveToPosition(int targetPosition) {
+//        return new Action() {
+//            private boolean initialized = false;
+//
+//            @Override
+//            public boolean run(TelemetryPacket packet) {
+//                if (!initialized) {
+//                    setTargetPosition(targetPosition);
+//                    setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    setPower(1.0);
+//                    initialized = true;
+//                }
+//                packet.put("ViperSlide Position", getCurrentPosition());
+//                return isBusy();
+//            }
+//        };
+//    }
     // bucket
 
 

@@ -51,7 +51,11 @@ public class HorizontalSlide {
 
     }
 
-    public void checkInputs(Boolean extend, Boolean retract, Boolean reset) {
+    public void checkInputs(
+            Boolean extend,
+            Boolean retract,
+            Boolean reset
+    ) {
         if (extend) {
             moveForward();
         } else if (retract) {

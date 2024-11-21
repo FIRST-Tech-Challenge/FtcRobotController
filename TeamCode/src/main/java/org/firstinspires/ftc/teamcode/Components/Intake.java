@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Intake {
     private Servo leftWrist;
     private Servo rightWrist;
@@ -14,16 +16,18 @@ public class Intake {
     private HorizontalSlide hSlide;
 
     private OpMode opMode;
+    private Telemetry telemetry;
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
 
-    int maxFlipPosition = 550;
-    int minFlipPosition = 125;
+    int maxFlipPosition = 525;
+    int minFlipPosition = 0;
 
 
     public Intake(OpMode opMode, HorizontalSlide hSlide) {
         this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
         this.gamepad1 = opMode.gamepad1;
         this.gamepad2 = opMode.gamepad2;
 
@@ -39,19 +43,36 @@ public class Intake {
         rightGrabber.setPosition(0.5);
     }
 
-    public void checkInputs(Boolean wristDown,
-                            Boolean wristUp,
-                            Boolean wristHalf,
-                            Boolean grabberSuck,
-                            Boolean grabberSpit
+    public void checkInputs(
+            Boolean wristDown,
+            Boolean wristUp,
+            Boolean wristHalf,
+            Boolean grabberSuck,
+            Boolean grabberSpit
     ) {
-        if (wristDown && (hSlide.getPos() < maxFlipPosition) && (hSlide.getPos() > minFlipPosition) && !gamepad1.start) {
-            wristDown();
-        } else if (wristUp && (hSlide.getPos() < maxFlipPosition) && !gamepad1.start) {
-            wristUp();
-        } else if (wristHalf && (hSlide.getPos() < maxFlipPosition)) {
-            wristHalf();
+        if((hSlide.getPos() < maxFlipPosition)) {
+            if (wristDown && (hSlide.getPos() > minFlipPosition) && !gamepad1.start) {
+                wristDown();
+            }
+            else if (wristUp && !gamepad1.start) {
+                wristUp();
+            }
+            else if (wristHalf) {
+                wristHalf();
+            }
+
         }
+        else {
+            telemetry.addData("Wrist", "Cannot move wrist down, horizontal slide is too high");
+        }
+
+
+//        else if (wristUp && (hSlide.getPos() < maxFlipPosition) && !gamepad1.start) {
+//            wristUp();
+//        }
+//        else if (wristHalf && (hSlide.getPos() < maxFlipPosition)) {
+//            wristHalf();
+//        }
 
         if (grabberSuck) {
             grabberSuck();
@@ -75,7 +96,7 @@ public class Intake {
     }
 
     public void wristDown() {
-        setWristPosition(0.9, 0.1);
+        setWristPosition(1, 0);
     }
 
     public void wristUp() {
