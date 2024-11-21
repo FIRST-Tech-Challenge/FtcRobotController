@@ -448,7 +448,12 @@ public class Arm {
 ////        }
             anglePID.setTimeout(getAngleDifference()*(openTimeWithPID/90));
             double pidPower = anglePID.calculate(getAngle(), goal);
-            F =0;
+            if (pidPower<0){
+                F = 0;
+            }
+            else {
+                F = calculateF();
+            }
             angleMotor.setPower(pidPower+F);
             if (IS_DEBUG) {
                 telemetry.addData("runtime", anglePID.getRunTime());
@@ -458,7 +463,7 @@ public class Arm {
                 telemetry.addData("pidPower+",pidPower);
                 telemetry.addData("pidPower+F",pidPower+F);
             }
-            return !anglePID.atSetPoint();
+            return !anglePID.atSetPoint() && (F == 0 || pidPower<0);
         }
     }
 }
