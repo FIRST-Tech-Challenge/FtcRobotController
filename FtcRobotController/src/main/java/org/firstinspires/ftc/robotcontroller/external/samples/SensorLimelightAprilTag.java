@@ -35,6 +35,8 @@ SensorLimelightAprilTag extends LinearOpMode {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
         limelight.updateRobotOrientation(robotYaw);
+        telemetry.addData("Yaw", "robotYaw");
+
 
         /*
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
@@ -70,7 +72,7 @@ SensorLimelightAprilTag extends LinearOpMode {
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
                 if (botpose_mt2 != null) {
                     double x = botpose_mt2.getPosition().x;
-                    double y = botpose_mt2.getPosition().y;
+                    double y = botpose_mt2.getPosition().y+37; //Inches
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
             } else {

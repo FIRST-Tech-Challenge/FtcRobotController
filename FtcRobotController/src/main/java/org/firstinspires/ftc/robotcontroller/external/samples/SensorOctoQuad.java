@@ -56,7 +56,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 @TeleOp(name = "OctoQuad Basic", group="OctoQuad")
 @Disabled
-public class SensorOctoQuad extends LinearOpMode {
+public class
+SensorOctoQuad extends LinearOpMode {
 
     // Identify which encoder OctoQuad inputs are connected to each odometry pod.
     private final int ODO_LEFT  = 0; // Facing forward direction on left side of robot (Axial motion)
