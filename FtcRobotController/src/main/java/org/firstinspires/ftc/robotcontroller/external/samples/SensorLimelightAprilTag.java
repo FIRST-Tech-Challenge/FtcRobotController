@@ -35,7 +35,7 @@ SensorLimelightAprilTag extends LinearOpMode {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
         limelight.updateRobotOrientation(robotYaw);
-        telemetry.addData("Yaw", "robotYaw");
+        telemetry.addData("Yaw", robotYaw);
 
 
         /*
@@ -65,20 +65,22 @@ SensorLimelightAprilTag extends LinearOpMode {
                 double ty = result.getTy(); // How far up or down the target is (degrees)
                 double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
-                telemetry.addData("Target X", tx);
-                telemetry.addData("Target Y", ty);
+                telemetry.addData("Target X", tx* (3.14159 / 180.0));
+                telemetry.addData("Target Y", ty* (3.14159 / 180.0));
                 telemetry.addData("Target Area", ta);
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
                 if (botpose_mt2 != null) {
-                    double x = botpose_mt2.getPosition().x;
-                    double y = botpose_mt2.getPosition().y+37; //Inches
+                    double x = (botpose_mt2.getPosition().x - 1.2)* 39.37; //inches
+                    double y = (botpose_mt2.getPosition().y - 1.2)* 39.37; //inches
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
             } else {
                 telemetry.addData("Limelight", "No Targets");
             }
             telemetry.update();
+
+
         }
         limelight.stop();
     }
