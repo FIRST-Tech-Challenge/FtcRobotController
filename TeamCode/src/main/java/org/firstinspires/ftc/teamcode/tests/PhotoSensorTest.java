@@ -42,10 +42,11 @@ public class PhotoSensorTest extends LinearOpMode {
     public static double sleepTime = 40;
     public static double moveSpeed = 0.5;
     public static double moveDistance = 50;
-    public static double fastSpeed = 1000;
-    public static double slowSpeed = 200;
-    public static double linearScalar = 1.127;
-    public static double positionMultiplier = 1.02;
+    public static double fastSpeed = 0.5;
+    public static double slowSpeed = 0.2;
+    public static double linearScalar = 1.06;
+    public static double angularScalar = 0.9954681619; //1.014
+    public static double positionMultiplier = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,7 +59,7 @@ public class PhotoSensorTest extends LinearOpMode {
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.142, 0, 180);
         myOtos.setOffset(offset);
 
-        myOtos.setAngularScalar(0.9954681619);
+        myOtos.setAngularScalar(angularScalar);
         myOtos.setLinearScalar(linearScalar);
         // Possibly multiply moveDistance by 0.9803921569
 
@@ -90,27 +91,27 @@ public class PhotoSensorTest extends LinearOpMode {
 //        robotController = new MecanumRobotController(backLeft, backRight, frontLeft, frontRight, gyro, myOtos, this);
 //
 //        telemetry.addData("Status", "Initialized");
-        positionMultiplier = (54 - (0.005 * fastSpeed)) / 50;
+//        positionMultiplier = (54 - (0.005 * fastSpeed)) / 50;
 
         // Wait for the start button to be pressed
         waitForStart();
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        backLeft.setVelocity(-fastSpeed);
-        backRight.setVelocity(-fastSpeed);
-        frontLeft.setVelocity(-fastSpeed);
-        frontRight.setVelocity(-fastSpeed);
+        backLeft.setPower(-fastSpeed);
+        backRight.setPower(-fastSpeed);
+        frontLeft.setPower(-fastSpeed);
+        frontRight.setPower(-fastSpeed);
         while (opModeIsActive()) {
             if (moveDistance - pos.y * positionMultiplier < 0.1) {
-                backLeft.setVelocity(0);
-                backRight.setVelocity(0);
-                frontLeft.setVelocity(0);
-                frontRight.setVelocity(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
                 break;
             } else if (moveDistance - pos.y * positionMultiplier < 5) {
-                backLeft.setVelocity(-slowSpeed);
-                backRight.setVelocity(-slowSpeed);
-                frontLeft.setVelocity(-slowSpeed);
-                frontRight.setVelocity(-slowSpeed);
+                backLeft.setPower(-slowSpeed);
+                backRight.setPower(-slowSpeed);
+                frontLeft.setPower(-slowSpeed);
+                frontRight.setPower(-slowSpeed);
             }
             telemetry.addData("X Position", pos.x * positionMultiplier);
             telemetry.addData("Y Position", pos.y * positionMultiplier);
@@ -121,10 +122,10 @@ public class PhotoSensorTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             double dy = moveDistance - pos.y * positionMultiplier;
-            backLeft.setVelocity(-dy * 50);
-            backRight.setVelocity(-dy * 50);
-            frontLeft.setVelocity(-dy * 50);
-            frontRight.setVelocity(-dy * 50);
+            backLeft.setPower(-dy * 0.025);
+            backRight.setPower(-dy * 0.025);
+            frontLeft.setPower(-dy * 0.025);
+            frontRight.setPower(-dy * 0.025);
             telemetry.addData("X Position", pos.x * positionMultiplier);
             telemetry.addData("Y Position", pos.y * positionMultiplier);
             telemetry.addData("Heading", pos.h);

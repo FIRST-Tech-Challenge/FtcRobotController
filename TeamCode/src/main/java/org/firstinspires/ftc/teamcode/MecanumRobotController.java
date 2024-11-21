@@ -40,7 +40,7 @@ public class MecanumRobotController {
     public static double Kd = 0.0002;
     public static double Ki = 0.00;
     public static final double ANGULAR_SCALAR = 0.9954681619;
-    public static double LINEAR_SCALAR = 1.0;
+    public static double LINEAR_SCALAR = 1.127;
 
     private final DcMotorEx backLeft;
     private final DcMotorEx backRight;
@@ -320,12 +320,14 @@ public class MecanumRobotController {
     //      - double speed: The speed at which the robot will move.
     public void positionDrive(SparkFunOTOS.Pose2D wantedPosition, double speed) {
         SparkFunOTOS.Pose2D currentPosition = getPosition();
-        double distance = Math.sqrt(Math.pow(currentPosition.x - wantedPosition.x, 2) + Math.pow(currentPosition.y - wantedPosition.y, 2));
+        double positionMultiplier = (54 - (0.005 * speed * 2000 / 3)) / 50;
+//        double positionMultiplier = 1;
+        double distance = Math.sqrt(Math.pow(currentPosition.x * positionMultiplier - wantedPosition.x, 2) + Math.pow(currentPosition.y * positionMultiplier - wantedPosition.y, 2));
         while (distance > MIN_DIST_TO_STOP && robot.opModeIsActive()) {
             wantedHeading = wantedPosition.h;
             currentPosition = getPosition();
-            double dy = wantedPosition.y - currentPosition.y;
-            double dx = wantedPosition.x - currentPosition.x;
+            double dy = wantedPosition.y - currentPosition.y * positionMultiplier;
+            double dx = wantedPosition.x - currentPosition.x * positionMultiplier;
             double moveDirection = Math.atan2(dx, dy);
             double forward = -speed * Math.cos((moveDirection - currentPosition.h));
             double strafe = speed * Math.sin((moveDirection - currentPosition.h));
@@ -339,6 +341,8 @@ public class MecanumRobotController {
         }
         // Stop the robot
         move(0, 0, 0, 0);
+//        currentPosition = getPosition();
+//        photoSensor.setPosition(new SparkFunOTOS.Pose2D(currentPosition.x * positionMultiplier, currentPosition.y * positionMultiplier, currentPosition.h));
     }
 
     // Behavior: Drives the robot continuously based on forward, strafe, and turn power.
@@ -464,8 +468,8 @@ public class MecanumRobotController {
     // Behavior: Get the current IMU heading in degrees.
     // Returns: The current robots angle in degrees on the range (-180, 180]
     private double getAngleImuDegrees() {
-        return normalize(
-                gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+        return normalize(photoSensor.getPosition().h);
+//                gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
     }
 
     // Behavior: Sends various information to the telemetry to be read. The information sent is
