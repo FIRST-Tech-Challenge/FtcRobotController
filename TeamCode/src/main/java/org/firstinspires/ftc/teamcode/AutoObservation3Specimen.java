@@ -48,7 +48,7 @@ public class AutoObservation3Specimen extends LinearOpMode {
         robotController.distanceDrive(36.0, 180.0, DRIVE_SPEED + 0.75);
 
         // prep for grabbing second specimen
-        intake.hingeToDegree(180);
+        intake.hingeToDegree(90);
         pivot.setTargetPosition(-2320);
         robotController.distanceDrive(9.486832980505126, -71.56505117707795, DRIVE_SPEED + 0.75);
         robotController.sleep(2.0);
@@ -73,7 +73,7 @@ public class AutoObservation3Specimen extends LinearOpMode {
         robotController.sleep(0.5);
 
         // prep to grab third specimen
-        intake.hingeToDegree(180);
+        intake.hingeToDegree(90);
         pivot.setTargetPosition(-2320);
         robotController.distanceDrive(37.94733192202055, 108.43494882292202, DRIVE_SPEED + 0.75);
         robotController.sleep(2.0);
