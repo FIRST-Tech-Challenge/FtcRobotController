@@ -33,14 +33,6 @@ public class basicTelemBlue extends LinearOpMode {
 
   GoBildaPinpointDriver odo;
 
-  ElapsedTime turnTime = new ElapsedTime();
-
-  // In case we need to add it later, but servos only have 180° so have to be perfectly placed
-  double FLServoOffSet = .00;
-  double FRServoOffSet = .00;
-  double BLServoOffSet = .00;
-  double BRServoOffSet = .00;
-
   double limitSlide;
   double limitPivot;
 
@@ -48,7 +40,7 @@ public class basicTelemBlue extends LinearOpMode {
 
   double pubLength = 0;
 
-  double encoderCountsPerInch = 100;
+  double encoderCountsPerInch = 85;   // needs adjusting
 
   double encoderCountsPerDegree = 30; // needs adjusting
 
@@ -60,8 +52,11 @@ public class basicTelemBlue extends LinearOpMode {
     initRobot(); // initializes the robot
 
     /**
-     * controls for game pad 1: right trigger: forwards left trigger: backwards right stick x:
-     * rotate left stick x: strafe
+     * controls for game pad 1:
+     * right trigger: forwards
+     * left trigger: backwards
+     * right stick x: rotate
+     * left stick x: strafe
      *
      * <p>controls for game pad 2: left stick y: in and out of arm right stick y: up and down of arm
      * a: constant in changed to out while button is being held while b is being held right stick x:
@@ -79,7 +74,6 @@ public class basicTelemBlue extends LinearOpMode {
     wrist.setPosition(0.7);
 
     while (opModeIsActive()) {
-
       // game pad 1
       double forBack = -gamepad1.left_stick_y;
       double rotate = gamepad1.right_stick_x;
@@ -99,12 +93,10 @@ public class basicTelemBlue extends LinearOpMode {
       }
 
       // game pad 2
-      // sets arm
       slideLimit();
       setSlide(-gamepad2.right_stick_y);
       setPivot(gamepad2.left_stick_y);
 
-      // claw intake/outtake
       if (gamepad2.right_trigger != 0) {
         intakeL.setPosition(1);
       } else if (gamepad2.left_trigger != 0) {
@@ -113,7 +105,6 @@ public class basicTelemBlue extends LinearOpMode {
         intakeL.setPosition(0.5);
       }
 
-      // wrist rotation
       if (gamepad2.b) {
         double x;
         if (wrist.getPosition() >= .1) x = 0;
@@ -129,12 +120,12 @@ public class basicTelemBlue extends LinearOpMode {
   }
 
   public void topBucketPreset() {
-    // setPivot();
-    // setSlide();
+    setPivot(90 - 5 * encoderCountsPerDegree);
+    //setSlide();
   }
 
   public void toTopSpecimenRung() {
-    // setPivot();
+    setPivot(90 - 5 * encoderCountsPerDegree);
     // setSlide();
   }
 
