@@ -54,6 +54,7 @@ public class Arm {
     private final double POS_LEFT_OFFSET = 269.7;
     private final double POS_RIGHT_OFFSET = 98.4;
     private final double OPEN_POSE_LEFT = 154.5;
+
     private final double OPEN_POSE_RIGHT = 166.5;
 
     private int level = 0;
