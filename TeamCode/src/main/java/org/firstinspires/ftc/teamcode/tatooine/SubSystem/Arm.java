@@ -51,6 +51,7 @@ public class Arm {
     private double positionLeft;
 
     private double positionRight;
+
     private final double POS_LEFT_OFFSET = 269.7;
     private final double POS_RIGHT_OFFSET = 98.4;
     private final double OPEN_POSE_LEFT = 154.5;
