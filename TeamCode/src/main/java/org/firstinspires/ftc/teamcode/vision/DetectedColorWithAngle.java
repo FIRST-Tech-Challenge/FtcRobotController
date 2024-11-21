@@ -9,8 +9,8 @@ public class DetectedColorWithAngle extends DetectedColor {
     private Point center; // Center point of the bounding box
 
     // Constructor
-    public DetectedColorWithAngle(String colorName, Rect boundingBox, double area, double angle, double[] color) {
-        super(colorName, boundingBox, area);
+    public DetectedColorWithAngle(Rect boundingBox, double area, double angle, double[] color) {
+        super(calculateColorName(color), boundingBox, area); // Infer colorName from the double[] color
         this.angle = angle;
         this.color = color;
         this.center = calculateCenter(boundingBox);
@@ -21,6 +21,11 @@ public class DetectedColorWithAngle extends DetectedColor {
         double centerX = boundingBox.x + boundingBox.width / 2.0;
         double centerY = boundingBox.y + boundingBox.height / 2.0;
         return new Point(centerX, centerY);
+    }
+
+    // Getter for colorName (from superclass DetectedColor)
+    public String getColorName() {
+        return this.colorName; // colorName is inherited from DetectedColor
     }
 
     // Getter for angle
@@ -38,6 +43,7 @@ public class DetectedColorWithAngle extends DetectedColor {
         return center;
     }
 
+    // Override toString for debugging
     @Override
     public String toString() {
         return "DetectedColorWithAngle{" +
@@ -48,5 +54,27 @@ public class DetectedColorWithAngle extends DetectedColor {
                 ", color=[Y=" + color[0] + ", B=" + color[1] + ", R=" + color[2] + "]" +
                 ", center=(" + center.x + ", " + center.y + ")" +
                 '}';
+    }
+
+    // Method to calculate the color name based on the color array [Y, B, R]
+    private static String calculateColorName(double[] color) {
+        if (color == null || color.length < 3) {
+            return "Unknown";
+        }
+
+        double y = color[0]; // Y component
+        double b = color[1]; // B component
+        double r = color[2]; // R component
+
+        // Logic to determine color name (tune thresholds as necessary)
+        if (r > b && r > y) {
+            return "Red";
+        } else if (b > r && b > y) {
+            return "Blue";
+        } else if (y > r && y > b) {
+            return "Yellow";
+        }
+
+        return "Unknown"; // Default if no dominant color is found
     }
 }
