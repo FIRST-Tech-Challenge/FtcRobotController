@@ -71,7 +71,7 @@ public class basicTelemBlue extends LinearOpMode {
     FRServo.setPosition(0.50);
     BRServo.setPosition(0.50);
 
-    wrist.setPosition(0.7);
+    wrist.setPosition(0.35);
 
     while (opModeIsActive()) {
       // game pad 1
@@ -107,8 +107,8 @@ public class basicTelemBlue extends LinearOpMode {
 
       if (gamepad2.b) {
         double x;
-        if (wrist.getPosition() >= .1) x = 0;
-        else x = .7;
+        if (wrist.getPosition() >= .5) x = .35;
+        else x = 1;
         wrist.setPosition(x);
       }
 
@@ -208,7 +208,7 @@ public class basicTelemBlue extends LinearOpMode {
     pivot.setPower(0);
     slide.setPower(0);
 
-    limitSlide = 4200;
+    limitSlide = 4500;
     limitPivot = 2750;
 
     limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
@@ -251,6 +251,8 @@ public class basicTelemBlue extends LinearOpMode {
       Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree))
         * (46 * encoderCountsPerInch);
     if (pubLength <= 2950) pubLength = 2950;
+    if(pivot.getCurrentPosition()/encoderCountsPerDegree <= 7.5 )
+      pubLength = limitSlide;
   }
 
   public void setPivot(double x) {

@@ -9,13 +9,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
 @Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
 
-  DcMotor slide, pivot;
+  DcMotor slide, slide2, pivot;
   Servo intakeL, wrist;
   int limitSlide, limitPivot;
 
@@ -34,36 +34,37 @@ public class CompBotAuto extends LinearOpMode {
 
     initRobot();
     waitForStart();
-    initSlide();
+    //initSlide();
 
-    setSlide(4180); // change to edit drop spot
-    setPivot(840); // change to edit drop spot
+    slide.setTargetPosition(4000); // change to edit drop spot
+    pivot.setTargetPosition(175); // change to edit drop spot
 
-    sleep(1000);
+    sleep(3000);
 
     intakeL.setPosition(0);
 
-    sleep(500);
+    sleep(1000);
     intakeL.setPosition(0.5);
-    setPivot(0);
-    setSlide(0);
+    pivot.setTargetPosition(0);
+    slide.setTargetPosition(0);
   }
 
   public void initRobot() {
     slide = hardwareMap.get(DcMotor.class, "slide");
+    slide2 = hardwareMap.get(DcMotor.class, "slide 2");
     pivot = hardwareMap.get(DcMotor.class, "pivot");
 
     slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    slide.setTargetPosition(0);
+    slide2.setTargetPosition(0);
+    pivot.setTargetPosition(0);
 
-    slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    slide.setPower(.00);
-    pivot.setPower(.00);
+    slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    slide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
     pivot.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -86,7 +87,7 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   public void initSlide() {
-    double i = -0.75;
+    double i = 0.75;
     while (limitSwitch.getState()) {
       pivot.setPower(i);
       slide.setPower(-.01);
@@ -102,37 +103,5 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     pivot.setPower(.00);
-  }
-
-  public void setSlide(double x) {
-    if (slide.getCurrentPosition() >= limitSlide && x > 0) {
-      x = 0;
-    } else if (slide.getCurrentPosition() <= -limitSlide && x < 0) {
-      x = 0;
-    }
-    if (x > 0 && slide.getCurrentPosition() > pubLength) {
-      x = 0;
-    }
-    slide.setPower(x);
-  }
-
-  public void slideLimit() {
-    pubLength =
-        Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree))
-            * (46 * encoderCountsPerInch);
-  }
-
-  public void setPivot(double x) {
-    test = false;
-    if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
-      x = 0;
-    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
-      x = 0;
-    }
-
-    if (x > 1) x = .5;
-    if (x < -1) x = -.5;
-    if (slide.getCurrentPosition() > pubLength) slide.setPower(-x * 2);
-    pivot.setPower(x);
   }
 }
