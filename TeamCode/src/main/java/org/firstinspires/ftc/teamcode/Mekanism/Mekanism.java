@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
@@ -105,29 +106,29 @@ public class Mekanism {
     double encoderCountsPerDegree = 30;
     if (x == 0)
       x =
-          // kG math
-          // kG is proportionally related to extension distance somehow???
-          // Prolly weird friction with the linear slide - Tada
-          MathUtil.interpolate(
-                  .00125,
-                  .005,
-                  MathUtil.inverseInterpolate(0, limitSlide, slide.getCurrentPosition()))
-              // kG needs to be scaled with the sin of angle
-              * Math.sin(
-                  Units.degreesToRadians(
-                      90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
+        // kG math
+        // kG is proportionally related to extension distance somehow???
+        // Prolly weird friction with the linear slide - Tada
+        MathUtil.interpolate(
+          .00125,
+          .005,
+          MathUtil.inverseInterpolate(0, limitSlide, slide.getCurrentPosition()))
+          // kG needs to be scaled with the sin of angle
+          * Math.sin(
+          Units.degreesToRadians(
+            90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
     // Prevent divide by 0
     double pubLength =
-        Math.min(
-            (29.5 * encoderCountsPerInch)
-                / Math.max(
-                    Math.cos(
-                        Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
-                    1e-6), // Prevent divide by 0
-            46 * encoderCountsPerInch); // Limit extension
+      Math.min(
+        (29.5 * encoderCountsPerInch)
+          / Math.max(
+          Math.cos(
+            Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
+          1e-6), // Prevent divide by 0
+        46 * encoderCountsPerInch); // Limit extension
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
