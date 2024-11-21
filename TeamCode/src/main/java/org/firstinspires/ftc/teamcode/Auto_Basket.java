@@ -76,72 +76,48 @@ public class Auto_Basket extends CommonUtil {
 //            moveSideways_wCorrection("left",3,0.5);
 //            sleep(100);
 
-            armReleaseP1();
-            moveBackwards_wDistance_wGyro(25,0.3);
+//            armReleaseP1();
+            moveBackwards_wDistance_wGyro(23,0.3,100);
             sleep(500);
+            bl.setPower(-0.2);
+            fl.setPower(-0.2);
+            fr.setPower(-0.2);
+            br.setPower(-0.2);
+            sleep(100);
+           setMotorToZeroPower();
+           turnToZeroAngle();
 
-            slideUp(1,4350);
+            slideUp(1,4350,3);
 
-            armReleaseP2();
+//            armReleaseP2();
             sleep(500);
-
-            basketUp();
-            sleep(3050);
 
             basketDown();
-            slideDown(0.7,4350);
+            sleep(3050);
+
+            basketUp();
+            slideDown(0.7,2000,3);
             sleep(500);
 
 //            m2.setPower(-0.7);
 //            sleep(500);
 //            m2.setPower(0);
 //
-            armMiddle();
-            sleep(500);
-
-            //moveForward_wDistance_wGyro(3,0.3);
-            //sleep(500);
-
-            telemetry.addData("trying to move sideways","starting");
-            telemetry.update();
-            moveSideways_wCorrection("left",6,1);
-            telemetry.addData("trying to move sideways","complete");
-            telemetry.update();
-            sleep(500);
-
-
-            turn("left",90);
-            sleep(100);
-
-            moveForward_wDistance_wGyro(50,0.4);
-            sleep(100);
-
-//            armDown();
-//
-//            intakeOn();
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            //sleep(100);
-//
+//            armMiddle();
 //            armUp();
-//            intakeReverse();
-//            sleep(1000);
-//            intakeOff();
-//
-//            turn("right",90);
-//            //sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            //sleep(100);
-//
-//            armDown();
-//            slideUp(1,4350);
-//            basketUp();
-//            sleep(3050);
-//            basketDown();
-//            slideDown(0.7,4350);
+            sleep(500);
+            moveForward_wDistance_wGyro(32.5,0.3,3);
+            sleep(500);
 
-            moveSideways_wCorrection("right",35,0.5);
+            turn("left",80.543211,3);
+            sleep(100);
+
+            moveForward_wDistance_wGyro(50,0.4,3);
+            sleep(100);
+
+            moveSideways_wCorrection("right",35,0.5,3);
+            sleep(500);
+            slideDown(0.8,650,3);
 
             sleep(9000000);
 

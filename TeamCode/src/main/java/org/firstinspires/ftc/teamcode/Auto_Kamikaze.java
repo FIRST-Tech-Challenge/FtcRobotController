@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Auto_Ozone", group="Linear Opmode2")
-public class Auto_Ozone extends CommonUtil {
+@Autonomous(name="Auto_Kamikaze", group="Linear Opmode2")
+public class Auto_Kamikaze extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,17 +65,56 @@ public class Auto_Ozone extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        clawClosed();
-        wristFlat();
+        setZeroPowerBehavior();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
 
+            moveBackwards_wDistance_wGyro(31,0.3,100);
+            sleep(500);
+            moveBackwards_wDistance_wGyro(31,0.3,3);
+            sleep(500);
+            bl.setPower(-0.2);
+            fl.setPower(-0.2);
+            fr.setPower(-0.2);
+            br.setPower(-0.2);
+            sleep(100);
+            setMotorToZeroPower();
+            turnToZeroAngle();
 
-            sleep(9000000);
+            slideUp(1,4350,3);
 
+//            armReleaseP2();
+            sleep(500);
+
+            basketDown();
+            sleep(3050);
+
+            basketUp();
+            slideDown(0.7,4000,3);
+            sleep(500);
+
+            m2.setPower(-0.7);
+            sleep(500);
+            m2.setPower(0);
+            sleep(500);
+
+            moveForward_wDistance_wGyro(25,0.8,3);
+            sleep(100);
+            moveForward_wDistance_wGyro(25,0.8,3);
+            sleep(100);
+            moveForward_wDistance_wGyro(25,0.8,3);
+            sleep(100);
+            moveForward_wDistance_wGyro(25,0.8,3);
+            sleep(100);
+            moveForward_wDistance_wGyro(20,0.8,3);
+            sleep(100);
+            moveSideways_wCorrection("right",10,0.5,3);
+
+            sleep(900000000);
         }
     }
 

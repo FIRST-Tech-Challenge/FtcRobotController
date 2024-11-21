@@ -164,8 +164,8 @@ public class Teleop_live_2controllers extends LinearOpMode {
                 m2Power = 0.05;
             }
 
-
-//            // Intake
+//
+////            // Intake
 //            if (gamepad1.x != gamepad1x_previous && gamepad1.x ) {
 //                intake_constant = !intake_constant;
 //                telemetry.addData("intake",intake_constant);
@@ -173,13 +173,13 @@ public class Teleop_live_2controllers extends LinearOpMode {
 ////                s1.setDirection(Servo.Direction.FORWARD);
 //
 //
-////                if (intake_constant) {
-////                    s1.setPosition(0);
-////                    //Extend
-////                } else {
-////                    s1.setPosition(1);
-////                    //Retract
-////                }
+//                if (intake_constant) {
+//                    s1.setPosition(0);
+//                    //Extend
+//                } else {
+//                    s1.setPosition(1);
+//                    //Retract
+//                }
 //            }
 
 

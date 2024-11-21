@@ -105,20 +105,6 @@ public class Unit_Test extends CommonUtil {
 //
 //            moveSideways_wCorrection("right",6,1);
 //            sleep(100);
-            moveSideways_wCorrection("left",9,1.0);
-            telemetry.addData("move sideways","done");
-            telemetry.update();
-            sleep(2000);
-
-            moveForward_wDistance_wGyro(20,0.5);
-            telemetry.addData("move fwd","done");
-            telemetry.update();
-            sleep(2000);
-
-            moveSideways_wCorrection("left",9,1.0);
-            telemetry.addData("move sideways","done");
-            telemetry.update();
-            sleep(2000);
 
             //sleep(2000);
             //setMotorToZeroPower();
@@ -127,6 +113,7 @@ public class Unit_Test extends CommonUtil {
 
             //sleep(2000);
             //setMotorToZeroPower();
+            moveForward_wDistance_wGyro(50,0.3,3);
 
 
          sleep(9000000);

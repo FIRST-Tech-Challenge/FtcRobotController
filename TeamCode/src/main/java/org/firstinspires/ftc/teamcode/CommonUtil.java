@@ -74,6 +74,7 @@ public class CommonUtil extends LinearOpMode {
         );
         imu.initialize(myIMUParameters);
         imu.resetYaw();
+
         // Start imu initialization
 
         telemetry.addData("initialize:Gyro Status", "Initialized");
@@ -108,6 +109,9 @@ public class CommonUtil extends LinearOpMode {
     }
 
 
+
+
+
     // Set motor directions
     public void setMotorOrientation()
     {
@@ -118,6 +122,7 @@ public class CommonUtil extends LinearOpMode {
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.FORWARD);
         br.setDirection(DcMotor.Direction.FORWARD);
+
 
     }
 
@@ -171,7 +176,7 @@ public class CommonUtil extends LinearOpMode {
 
     public void armReleaseP1(){
         s6.setPosition(0);
-        s12.setPosition(0);
+        s12.setPosition(-0.2);
     }
 
     public void armReleaseP2(){
@@ -191,23 +196,26 @@ public class CommonUtil extends LinearOpMode {
     }
     public void armMiddle() {
         s12.setPosition(0.5);
-        s6.setPosition(0.75);
+        s6.setPosition(0.8);
     }
     public void clawOpen() { s5.setDirection(Servo.Direction.FORWARD);
         s5.setPosition(1); }
     public void clawClose() { s5.setDirection(Servo.Direction.REVERSE);
         s5.setPosition(1); }
     public void basketUp() { s3.setDirection(Servo.Direction.FORWARD);
-        s3.setPosition(1); }
+        s3.setPosition(0.25); }
     public void basketDown() { s3.setDirection(Servo.Direction.FORWARD);
-        s3.setPosition(0.5); }
+        s3.setPosition(0.75); }
     public double PID_Turn (double targetAngle, double currentAngle, String minPower) {
         double sign = 1;
         double power = (targetAngle - currentAngle) * 0.0054; // was 0.006
         if (minPower.equalsIgnoreCase("on")&& (power != 0)) {
             sign = Math.signum(power);
-            power = Math.max(Math.abs(power), 0.1);
+            power = Math.max(Math.abs(power), 0.2);
             power = power*sign;
+//            if (power < 0.2){
+//                power = 0.2;
+//            }
         }
         return power;
     }
@@ -220,39 +228,19 @@ public class CommonUtil extends LinearOpMode {
         //}
         if (power > Mpower) {
             power = Mpower;
-        }else if(power < 0.1) {
-            power = 0.1; //-1 * (Mpower);
+        }else if(power < 0.2) {
+            power = 0.2; //-1 * (Mpower);
         }
         return power;
     }
 
-    public int amIStuck_FB(double encoderAbsCounts, double currEncoderCount, double prevEncoderCount)
-    {
-        double currErrEC = 0;
-        if (timer.time()> 0.5) // wait for passing of 0.5 second
-        {
-            currErrEC = Math.abs(encoderAbsCounts - Math.abs(currEncoderCount));
-            if ((currErrEC/encoderAbsCounts)<0.98) {
-                if (Math.abs(currEncoderCount) - Math.abs(prevEncoderCount) <100)
-                {
-                    telemetry.addData("fw:stuck","yes");
-                    telemetry.update();
-                    sleep(100000);
-                    timer.reset();
-                    return(1);
-                }
-                else {
-                    timer.reset();
-                    return(0);
-                }
-            }
-        }
-        return(-1);
-    }
+
 
     //move forwards with gyro
-    public int moveForward_wDistance_wGyro(double DistanceAbsIn,double Mpower)
+    public int moveForward_wDistance_wGyro(double DistanceAbsIn,double Mpower,int timeToStop)
     {
+
+        ElapsedTime runtime= new ElapsedTime();
         double currZAngle = 0;
         double prevZAngle = 0;
         int currEncoderCount = 0;
@@ -272,37 +260,40 @@ public class CommonUtil extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // move forward
-        timer.reset();
-        while (bl.getCurrentPosition() < encoderAbsCounts) {
-            myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            currZAngle = myRobotOrientation.thirdAngle;
-            double correction = PID_Turn(0,currZAngle,"off");
-            correction = 0;
-            currEncoderCount = bl.getCurrentPosition();
-            double power = PID_FB(encoderAbsCounts,Math.abs(currEncoderCount),Mpower);
-            int moveTime = (int) ((10*Mpower)*((double)50 /3));
-            int movePause = (int) ((10*Mpower)*((double)10/3));
-            telemetry.addData("moveTime", moveTime);
-            telemetry.addData("movePause",movePause);
-            telemetry.update();
 
-            bl.setPower(power-correction);
-            fl.setPower(power-correction);
-            fr.setPower(power-correction);
-            br.setPower(power-correction);
-            telemetry.addData("fw:power", power);
-            telemetry.addData("fw:correction", correction);
-            telemetry.update();
-            sleep(moveTime);
-            setMotorToZeroPower();
-            sleep(movePause);
-            // quick correct for angle if it is greater than 10 [Aarush]
-            double absError_angle = Math.abs(currZAngle);
-            //if (absError_angle > 10)
-            //{
-            //    turnToZeroAngle();
-            //}
+        // move forward
+
+        runtime.reset();
+
+            while ((bl.getCurrentPosition() < encoderAbsCounts) && (runtime.seconds() < timeToStop)) {
+                myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                currZAngle = myRobotOrientation.thirdAngle;
+                double correction = PID_Turn(0, currZAngle, "off");
+                correction = 0;
+                currEncoderCount = bl.getCurrentPosition();
+                double power = PID_FB(encoderAbsCounts, Math.abs(currEncoderCount), Mpower);
+                int moveTime = (int) ((10 * Mpower) * ((double) 50 / 3));
+                int movePause = (int) ((10 * Mpower) * ((double) 10 / 3));
+                telemetry.addData("moveTime", moveTime);
+                telemetry.addData("movePause", movePause);
+                telemetry.update();
+
+                bl.setPower(power - correction);
+                fl.setPower(power - correction);
+                fr.setPower(power - correction);
+                br.setPower(power - correction);
+                telemetry.addData("fw:power", power);
+                telemetry.addData("fw:correction", correction);
+                telemetry.update();
+                sleep(moveTime);
+                setMotorToZeroPower();
+                sleep(movePause);
+                // quick correct for angle if it is greater than 10 [Aarush]
+                double absError_angle = Math.abs(currZAngle);
+                //if (absError_angle > 10)
+                //{
+                //    turnToZeroAngle();
+                //}
 //            // identify if you are stuck [Aarush]
 //            double flagStuck = amIStuck_FB(encoderAbsCounts, currEncoderCount, prevEncoderCount);
 //            if (flagStuck==1)
@@ -313,7 +304,8 @@ public class CommonUtil extends LinearOpMode {
 //                // nothing to do
 //            idle();
 
-        }
+            }
+
 
 
         telemetry.addData("fw:currEncoderCount", currEncoderCount);
@@ -342,8 +334,9 @@ public class CommonUtil extends LinearOpMode {
     }
 
     //move backwards with gyro correction
-    public int moveBackwards_wDistance_wGyro(double DistanceAbsIn,double Mpower)
+    public int moveBackwards_wDistance_wGyro(double DistanceAbsIn,double Mpower,int timeToStop)
     {
+        ElapsedTime runtime= new ElapsedTime();
         double currZAngle = 0;
         double prevZAngle = 0;
         int currEncoderCount = 0;
@@ -364,7 +357,8 @@ public class CommonUtil extends LinearOpMode {
 
         // move backward
         timer.reset();
-        while(bl.getCurrentPosition() > -encoderAbsCounts) {
+
+        while((bl.getCurrentPosition() > -encoderAbsCounts) && (runtime.seconds() < timeToStop)) {
             myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             currZAngle = myRobotOrientation.thirdAngle;
             double correction = PID_Turn(0,currZAngle,"off");
@@ -430,15 +424,19 @@ public class CommonUtil extends LinearOpMode {
         s2.setPosition(0.427);
     }
 
-    public void turn(String direction, double targetAngle)
+    public void turn(String direction, double targetAngle,int timeToStop)
     {
+        ElapsedTime runtime= new ElapsedTime();
         imu.resetYaw();
         if (direction.equalsIgnoreCase("right")){
             myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
             telemetry.addData("turnRight:Init Angle",myRobotOrientation.thirdAngle);
             telemetry.update();
-            while (Math.abs(targetAngle-Math.abs(myRobotOrientation.thirdAngle))>0.1) {
+
+            runtime.reset();
+
+            while ((Math.abs(targetAngle-Math.abs(myRobotOrientation.thirdAngle))>0.1) && (runtime.seconds() < timeToStop)) {
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 double power = PID_Turn(targetAngle, Math.abs(myRobotOrientation.thirdAngle),"on");
                 bl.setPower(power);
@@ -457,7 +455,9 @@ public class CommonUtil extends LinearOpMode {
             telemetry.addData("turnLeft:Init Angle",myRobotOrientation.thirdAngle);
             telemetry.update();
 
-            while (Math.abs(targetAngle-Math.abs(myRobotOrientation.thirdAngle))>0.1) {
+            runtime.reset();
+
+            while ((Math.abs(targetAngle-Math.abs(myRobotOrientation.thirdAngle))>0.1) && (runtime.seconds() < timeToStop)) {
                 myRobotOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 double power = PID_Turn(targetAngle, Math.abs(myRobotOrientation.thirdAngle),"on");
                 bl.setPower(-power);
@@ -485,13 +485,13 @@ public class CommonUtil extends LinearOpMode {
         {
             telemetry.addData("turnToZeroAngle:targetAngle",targetAngle);
             telemetry.update();
-            turn("right", Math.abs(targetAngle));
+            turn("right", Math.abs(targetAngle),3);
         }
         else if (targetAngle < 0)
         {
             telemetry.addData("turnToZeroAngle:targetAngle",targetAngle);
             telemetry.update();
-            turn("left", Math.abs(targetAngle));
+            turn("left", Math.abs(targetAngle),3);
         }
         imu.resetYaw();
     }
@@ -507,8 +507,9 @@ public class CommonUtil extends LinearOpMode {
     }
 
 
-    public void moveSideways_wCorrection(String direction, int DistanceAbsIn, double motorAbsPower)
+    public void moveSideways_wCorrection(String direction, int DistanceAbsIn, double motorAbsPower,int timeToStop)
     {
+        ElapsedTime runtime= new ElapsedTime();
         //turnToZeroAngle();
         int currEncoderCount = 0;
         double encoderAbsCounts = ENC2DIST_SIDEWAYS*DistanceAbsIn; //2000/42
@@ -527,7 +528,11 @@ public class CommonUtil extends LinearOpMode {
 
         // Wait for robot to finish this movement
         double refEC = 0;
-        while (refEC < encoderAbsCounts) {
+
+
+        runtime.reset();
+
+        while ((refEC < encoderAbsCounts) && (runtime.seconds() < timeToStop)) {
 
             double frEC = fr.getCurrentPosition();
             double blEC = bl.getCurrentPosition();
@@ -635,38 +640,40 @@ public class CommonUtil extends LinearOpMode {
 
     }
 
-    public void slideUp(double power, int encoderAbsCounts) {
+    public void slideUp(double power, int encoderAbsCounts,int timeToStop) {
+        ElapsedTime runtime = new ElapsedTime();
         m2.setDirection(DcMotor.Direction.FORWARD);
         m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Start count", m2.getCurrentPosition());
         telemetry.update();
 
-        while (m2.getCurrentPosition() > -encoderAbsCounts){
+        while ((m2.getCurrentPosition() > -encoderAbsCounts) && (runtime.seconds() < timeToStop)){
             m2.setPower(power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
             telemetry.update();
             idle();
         }
         m2.setPower(0.05); // set power to 0 so the motor stops running
-        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
-    public void slideDown(double power, int encoderAbsCounts) {
+    public void slideDown(double power, int encoderAbsCounts,int timeToStop) {
+        ElapsedTime runtime = new ElapsedTime();
         m2.setDirection(DcMotor.Direction.FORWARD);
         m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Start count", m2.getCurrentPosition());
         telemetry.update();
 
-        while (m2.getCurrentPosition() < encoderAbsCounts){
+        while ((m2.getCurrentPosition() < encoderAbsCounts)&&(runtime.seconds() < timeToStop)){
             m2.setPower(-power);
             telemetry.addData("Count M2",m2.getCurrentPosition());
             telemetry.update();
             idle();
         }
         m2.setPower(0);
-        m2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);// set power to 0 so the motor stops running
+        // set power to 0 so the motor stops running
 
     }
 
