@@ -19,7 +19,8 @@ public class ServoAdjustments extends LinearOpMode {
     @Override
     //Op mode runs when the robot runs. It runs the whole time.
     public void runOpMode() {
-        // TODO: need to initialize the hardware variables
+
+        initializeHardwareVariables();
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Servo Tuner", "press PLAY");
@@ -37,7 +38,7 @@ public class ServoAdjustments extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 claw_position -= 0.01;
             }
-            claw.setPosition(0); // todo: can go back to claw_position after you initialize the hardware variables
+            claw.setPosition(claw_position);
 
             // Control the ascent stick
             if (gamepad1.dpad_up) {
@@ -47,7 +48,7 @@ public class ServoAdjustments extends LinearOpMode {
             if (gamepad1.dpad_down) {
                 ascentStick_position -= 0.01;
             }
-            ascentStick.setPosition(0); // todo: can go back to ascentStick_position after you initialize the hardware variables
+            ascentStick.setPosition(ascentStick_position);
         }
     }
 
