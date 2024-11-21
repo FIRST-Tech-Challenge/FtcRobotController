@@ -97,7 +97,8 @@ public class Swerve {
         MathUtil.interpolate(
             1,
             .5,
-            MathUtil.inverseInterpolate(0, Module.maxDriveSpeedMetersPerSec, translationalMagnitude));
+            MathUtil.inverseInterpolate(
+                0, Module.maxDriveSpeedMetersPerSec, translationalMagnitude));
 
     var scalar = Math.cos(Units.degreesToRadians(maxErrorDeg));
     speeds =
@@ -130,13 +131,20 @@ public class Swerve {
     if (translationalMagnitude > 1) {
       xInput /= translationalMagnitude;
       yInput /= translationalMagnitude;
+      translationalMagnitude = 1;
     }
+
+    var rotationalScalar = MathUtil.interpolate(1, .5, translationalMagnitude);
 
     fieldRelativeDrive(
         new ChassisSpeeds(
             xInput * Module.maxDriveSpeedMetersPerSec * speedMult,
             yInput * Module.maxDriveSpeedMetersPerSec * speedMult,
-            yawInput * (Module.maxDriveSpeedMetersPerSec * speedMult / drivebaseRadius)));
+            yawInput
+                * (Module.maxDriveSpeedMetersPerSec
+                    * speedMult
+                    * rotationalScalar
+                    / drivebaseRadius)));
   }
 
   public Pose2d getPose() {

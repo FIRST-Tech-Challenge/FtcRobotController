@@ -18,6 +18,7 @@ public class BlueBotTeleop extends LinearOpMode {
     var swerve = new Swerve(this);
     var arm = new Mekanism(this);
 
+    boolean bPressed = false;
     waitForStart();
     while (opModeIsActive()) {
       swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
@@ -25,15 +26,24 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // game pad 2
       // sets arm
-      arm.setSlide(-gamepad2.left_stick_y);
-      arm.setPivot(gamepad2.right_stick_y, gamepad2.left_bumper);
+      if (!gamepad2.a) {
+        arm.setSlide(-gamepad2.left_stick_y);
+        arm.setPivot(gamepad2.right_stick_y, gamepad2.left_bumper);
 
-      arm.moveClaw(gamepad2.right_trigger > .5, gamepad2.left_trigger > .5);
-      if(gamepad2.b)
-        arm.moveWrist();
-      boolean intake = gamepad2.left_trigger == 1;
-      boolean outtake = gamepad2.right_trigger == 1;
-      arm.moveClaw(intake, outtake);
+        arm.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
+        if (gamepad2.b && !bPressed) {
+          arm.toggleWrist();
+        }
+        bPressed = gamepad2.b;
+
+        if (gamepad2.x) {
+          arm.clamp();
+        } else if (gamepad2.y) {
+          arm.unclamp();
+        }
+      } else {
+        arm.autoClip();
+      }
 
       telemetry.update();
     }

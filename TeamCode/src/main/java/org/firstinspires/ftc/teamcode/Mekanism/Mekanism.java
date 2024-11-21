@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 
@@ -23,11 +24,16 @@ public class Mekanism {
 
   private final DigitalChannel limitSwitch;
 
-  private final Servo intakeL;
+  private final Servo intakeServo;
   private final Servo wrist;
+
+  private final Servo ramp1;
+  private final Servo ramp2;
 
   private final double limitSlide;
   private final double limitPivot;
+
+  private final Telemetry telemetry;
 
   public Mekanism(LinearOpMode opMode) {
     // Init slaw, claw, and pivot
@@ -49,8 +55,8 @@ public class Mekanism {
     pivot.setPower(0);
     slide.setPower(0);
 
-    //slide2
-    slide2 = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class,"slide 2");
+    // slide2
+    slide2 = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "slide 2");
     slide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     slide2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -63,13 +69,27 @@ public class Mekanism {
     limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limit switch");
 
     // servos for intake
-    intakeL = opMode.hardwareMap.get(Servo.class, "intake");
+    intakeServo = opMode.hardwareMap.get(Servo.class, "intake");
     wrist = opMode.hardwareMap.get(Servo.class, "wrist");
 
-    intakeL.setDirection(Servo.Direction.REVERSE);
-    wrist.setDirection(Servo.Direction.FORWARD);
+    intakeServo.setDirection(Servo.Direction.REVERSE);
+    wrist.setDirection(Servo.Direction.REVERSE);
 
     wrist.setPosition(0.7);
+
+    // servos for clipper
+    ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
+    ramp2 = opMode.hardwareMap.get(Servo.class, "ramp 2");
+
+    ramp1.setDirection(Servo.Direction.FORWARD);
+    ramp2.setDirection(Servo.Direction.FORWARD);
+
+    unclamp();
+
+    ramp1.scaleRange(0, 1);
+    ramp2.scaleRange(0, 1);
+
+    telemetry = opMode.telemetry;
   }
 
   // to extend arm, input from game pad 2 straight in
@@ -80,6 +100,7 @@ public class Mekanism {
       x = 0;
     }
 
+    telemetry.addData("slide current pos", slide.getCurrentPosition());// needs adjusting
     // TODO: Tuning is very vibes based because this value is very wrong
     double encoderCountsPerDegree = 30;
     if (x == 0)
@@ -99,13 +120,14 @@ public class Mekanism {
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
     // Prevent divide by 0
-    double pubLength = Math.min(
-        (29.5 * encoderCountsPerInch)
-            / Math.max(
-            Math.cos(
-                Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
-            1e-6), // Prevent divide by 0
-        46 * encoderCountsPerInch); // Limit extension
+    double pubLength =
+        Math.min(
+            (29.5 * encoderCountsPerInch)
+                / Math.max(
+                    Math.cos(
+                        Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
+                    1e-6), // Prevent divide by 0
+            46 * encoderCountsPerInch); // Limit extension
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
@@ -120,6 +142,7 @@ public class Mekanism {
     } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
       x = 0;
     }
+    telemetry.addData("pivot current pos", pivot.getCurrentPosition());
 
     x *= .5;
     pivot.setPower(x);
@@ -146,24 +169,61 @@ public class Mekanism {
     pivot.setPower(.00);
   }
 
-  public void moveClaw(boolean outtake, boolean intake) {
+  public void runIntake(boolean outtake, boolean intake) {
     if (outtake) {
-      intakeL.setPosition(1);
+      intakeServo.setPosition(1);
     } else if (intake) {
-      intakeL.setPosition(0);
+      intakeServo.setPosition(0);
     } else {
-      intakeL.setPosition(.5);
+      intakeServo.setPosition(.5);
     }
   }
 
-  public void moveWrist() {
-    // Philip, what the hell?
-    // Is this a terrible toggle switch??? - Tada
-    // yes new and updated for you - philip
-      if (wrist.getPosition() >= .1) {
-        wrist.setPosition(0.15);
+  public void clamp() {
+    ramp1.setPosition(0);
+    ramp2.setPosition(.15);
+  }
+
+  public void unclamp() {
+    ramp1.setPosition(.15);
+    ramp2.setPosition(0);
+  }
+
+  public void autoClip() {
+    telemetry.addData("pivot current pos", pivot.getCurrentPosition());
+    telemetry.addData("slide current pos", slide.getCurrentPosition());
+    if (slide.getCurrentPosition() > 150) {
+      unclamp();
+      slide.setPower(-1);
+      wrist.setPosition(0.1);
+    } else {
+      clamp();
+      slide.setPower(0);
+      if (pivot.getCurrentPosition() < 2200) {
+        wrist.setPosition(0.1);
+        pivot.setPower(1);
       } else {
-        wrist.setPosition(.7);
+        wrist.setPosition(0);
+        slide.setPower(-1);
+        if (pivot.getCurrentPosition() < 2500) {
+          pivot.setPower(1);
+        } else {
+          pivot.setPower(0);
+        }
       }
+    }
+    wristMoved = true;
+  }
+
+  private boolean wristMoved = false;
+
+  public void toggleWrist() {
+    if (!wristMoved) {
+      wrist.setPosition(0.1);
+      wristMoved = true;
+    } else {
+      wrist.setPosition(0.7);
+      wristMoved = false;
+    }
   }
 }
