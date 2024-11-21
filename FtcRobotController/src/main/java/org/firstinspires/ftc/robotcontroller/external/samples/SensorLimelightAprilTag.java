@@ -35,6 +35,8 @@ SensorLimelightAprilTag extends LinearOpMode {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
         limelight.updateRobotOrientation(robotYaw);
+        telemetry.addData("Yaw", "robotYaw");
+
 
         /*
          * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
