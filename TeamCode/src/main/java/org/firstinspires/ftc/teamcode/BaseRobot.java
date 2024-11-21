@@ -178,6 +178,8 @@ public class BaseRobot {
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
             DynamicInput.Actions actions = input.getActions();
+            logger.update("LA extending", String.valueOf(actions.linearActuatorExtend));
+            logger.update("LA retracting", String.valueOf(actions.linearActuatorRetract));
 
             if (actions.linearActuatorExtend) {
                 linearActuator.extend();
