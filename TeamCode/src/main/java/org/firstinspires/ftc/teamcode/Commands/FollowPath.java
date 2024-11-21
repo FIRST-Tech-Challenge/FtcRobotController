@@ -11,6 +11,8 @@ import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
 import com.arcrobotics.ftclib.trajectory.constraint.MecanumDriveKinematicsConstraint;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.Utils;
 import java.util.List;
@@ -41,6 +43,10 @@ public class FollowPath extends CommandBase {
     double endRobotAngle;       // target robot angle in rad
     double startRobotAngle;     // initial robot angle in rad
     double rotationRate;        // desired rotation rate in rad/s
+
+    // state variables for manually-implemented robot x & y position PID controllers
+    double x_ierror;
+    double y_ierror;
 
     // constructor
     // MaxSpeed - max robot travel speed (m/s)
@@ -101,14 +107,15 @@ public class FollowPath extends CommandBase {
         this.robotEndAngle = robotEndAngle;
 
         // configure PID controllers - set PID gains
-        xController = new PIDController(5.0, 0.0, 0.0);
-        yController = new PIDController(5.0, 0.0, 0.0);
-        thetaController = new PIDController(4.0, 0.0, 0.0);
+        xController = new PIDController(15.0, 2.00, 0.0);
+        yController = new PIDController(15.0, 2.00, 0.0);
+        thetaController = new PIDController(10.0, 0.05, 0.0);
 
         // configure PID controllers integration limiters - prevents excessive windup of integrated error
-        xController.setIntegrationBounds(-0.5, 0.5);
-        yController.setIntegrationBounds(-0.5, 0.5);
-        thetaController.setIntegrationBounds(-1.0, 1.0);
+        xController.setIntegrationBounds(-10.0, 10.0);
+        yController.setIntegrationBounds(-10.0, 10.0);
+        thetaController.setIntegrationBounds(-5.0, 5.0);
+
 
         // set up timer
         pathTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -140,6 +147,10 @@ public class FollowPath extends CommandBase {
         yController.reset();
         thetaController.reset();
 
+        // reset manually-implemented x and y PID controller state values
+        x_ierror=0.0;
+        y_ierror = 0.0;
+
         // reset path timer
         pathTime.reset();
 
@@ -165,19 +176,57 @@ public class FollowPath extends CommandBase {
         Pose2d currentPos = RobotContainer.odometry.getCurrentPos();
 
         // determine target robot angle
-        double targetRobotAngle = startRobotAngle + (rotationRate * pathTime.seconds());
+        double targetRobotAngle;
+        if (pathTime.seconds() < trajectory.getTotalTimeSeconds())
+            targetRobotAngle = startRobotAngle + (rotationRate * pathTime.seconds());
+        else
+            targetRobotAngle = startRobotAngle + (rotationRate * trajectory.getTotalTimeSeconds());
 
+        // commented out for now.  Will try using manual implementation of PID
         // execute PID controllers - error = reference - actual
         // each controller outputs resulting speeds to be given to drive subsystem
-        double dX = -xController.calculate(targetPathState.poseMeters.getX() -
-                currentPos.getX());
-        double dY = -yController.calculate(targetPathState.poseMeters.getY() -
-                currentPos.getY());
+        //double dX = -xController.calculate(targetPathState.poseMeters.getX() -
+        //        currentPos.getX());
+
+        // manual implementation of x-position PI controller
+        double  error = targetPathState.poseMeters.getX() - currentPos.getX();
+        x_ierror += 0.60 * error;
+        if (Math.abs(error) > 0.03)
+            x_ierror = 0.0;
+        double dX = 8.0 * error + x_ierror;
+
+        // commented out for now.  Will try using manual implementation of PID
+        // double dY = -yController.calculate(targetPathState.poseMeters.getY() -
+        //                currentPos.getY());
+
+        // manual implementation of y-position PI controller
+        double  y_error = targetPathState.poseMeters.getY() - currentPos.getY();
+        y_ierror += 0.60 * y_error;
+        if (Math.abs(y_error) > 0.03)
+            y_ierror = 0.0;
+        double dY = 8.0 * y_error + y_ierror;
+
+        // robot rotation controller
         double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
+
+        // Dashboard values - used for testing purposes. Keep for now if needed in future
+        //        RobotContainer.DBTelemetry.addData("Path Error X ",
+        //                targetPathState.poseMeters.getX() - currentPos.getX());
+        //        RobotContainer.DBTelemetry.addData("Path Error Y ",
+        //                targetPathState.poseMeters.getY() - currentPos.getY());
+        //        RobotContainer.DBTelemetry.addData("Path Error Theta ",
+        //                Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
+        //
+        //        RobotContainer.DBTelemetry.addData("X Control Out ",
+        //                dX);
+        //        RobotContainer.DBTelemetry.addData("Y Control Out ",
+        //                dY);
+        //        RobotContainer.DBTelemetry.addData("Z Control Out ",
+        //                omega);
+        //        RobotContainer.DBTelemetry.update();
 
         // go ahead and drive robot
         RobotContainer.drivesystem.FieldDrive(dX, dY, omega);
-
     }
 
     // This method to return true only when command is to finish. Otherwise return false
@@ -185,7 +234,7 @@ public class FollowPath extends CommandBase {
     public boolean isFinished() {
 
         // command is finished when time in command exceeds expected time of path
-        return ( pathTime.seconds() > trajectory.getTotalTimeSeconds() );
+        return ( pathTime.seconds() > (trajectory.getTotalTimeSeconds()+0.25));
 
     }
 

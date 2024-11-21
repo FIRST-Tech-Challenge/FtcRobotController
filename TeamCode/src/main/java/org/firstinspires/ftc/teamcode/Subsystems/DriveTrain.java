@@ -97,11 +97,11 @@ public class DriveTrain extends SubsystemBase {
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-        RobotContainer.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Left Back Speed: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
-        RobotContainer.DBTelemetry.addData("Robot Right Back Speed: ", "%.2f", GetWheelSpeeds().rearRightMetersPerSecond);
-        RobotContainer.DBTelemetry.update();
+        //.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Left Back Speed: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Right Back Speed: ", "%.2f", GetWheelSpeeds().rearRightMetersPerSecond);
+        //RobotContainer.DBTelemetry.update();
     }
 
 
@@ -152,14 +152,14 @@ public class DriveTrain extends SubsystemBase {
         double requestedRightBackDriveVelocity = WheelSpeeds.rearRightMetersPerSecond;
 
         // update telemetry to requested velocities
-        RobotContainer.DBTelemetry.addData("Vx Speed: ", "%.2f", Vx * powerFactor);
-        RobotContainer.DBTelemetry.addData("Vy Speed: ", "%.2f", Vy * powerFactor);
-        RobotContainer.DBTelemetry.addData("Omega: ", "%.2f", Omega);
-        RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", requestedLeftFrontDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", requestedRightFrontDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", requestedLeftBackDriveVelocity);
-        RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", requestedRightBackDriveVelocity);
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("Vx Speed: ", "%.2f", Vx * powerFactor);
+        //RobotContainer.DBTelemetry.addData("Vy Speed: ", "%.2f", Vy * powerFactor);
+        //RobotContainer.DBTelemetry.addData("Omega: ", "%.2f", Omega);
+        //RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", requestedLeftFrontDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", requestedRightFrontDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", requestedLeftBackDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", requestedRightBackDriveVelocity);
+        //RobotContainer.DBTelemetry.update();
 
         // set motor velocities to requested velocities
         leftFrontDrive.setVelocity(MPS_TO_TICKSPS * requestedLeftFrontDriveVelocity);
