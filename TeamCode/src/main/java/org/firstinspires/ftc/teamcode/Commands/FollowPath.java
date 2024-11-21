@@ -32,6 +32,9 @@ public class FollowPath extends CommandBase {
     Pose2d pathEndPose;
     List<Translation2d> pathWaypoints;
 
+    // ending speed
+    double endSpeed;
+
     // x,y,theta PID controllers
     PIDController xController, yController, thetaController;
 
@@ -105,6 +108,9 @@ public class FollowPath extends CommandBase {
         this.pathEndPose = pathEndPose;
         this.pathWaypoints = pathWaypoints;
         this.robotEndAngle = robotEndAngle;
+
+        // save ending speed of robot
+        this.endSpeed = endSpeed;
 
         // configure PID controllers - set PID gains
         xController = new PIDController(15.0, 2.00, 0.0);
@@ -244,6 +250,11 @@ public class FollowPath extends CommandBase {
 
         // this command is done. Remove trajectory in odometry from display on dashboard
         RobotContainer.odometry.DisplayTrajectory(null);
+
+        // if end speed is 0m/s, then stop drive
+        if (endSpeed==0.0)
+            RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0);
+
     }
 
 }
