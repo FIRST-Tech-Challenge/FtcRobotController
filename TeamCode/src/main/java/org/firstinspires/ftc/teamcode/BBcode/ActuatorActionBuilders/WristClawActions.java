@@ -43,7 +43,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveUp
+    //Generates Action for WristUp
     public class WristUpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -56,7 +56,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveFlip
+    //Generates Action for WristFlip
     public class WristFlipAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -69,7 +69,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveDown
+    //Generates Action for WristDown
     public class WristDownAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -82,7 +82,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveDump
+    //Generates Action for WristDump
     public class WristDumpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -95,7 +95,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveCenter
+    //Generates Action for WristCenter
     public class WristCenterAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -108,7 +108,7 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for MoveWristInit
+    //Generates Action for WristInit
     public class WristInitAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {

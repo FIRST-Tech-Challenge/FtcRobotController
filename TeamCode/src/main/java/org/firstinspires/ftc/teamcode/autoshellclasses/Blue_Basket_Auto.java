@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.BBcode.ActuatorActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.BBcode.WristClaw;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
@@ -30,60 +31,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 @Config
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
-    public class clawWrist {
-        private Servo wrist;
-        private Servo claw;
 
-        public clawWrist(HardwareMap hardwareMap) {
-            wrist = hardwareMap.get(Servo.class, "wrist");
-            claw = hardwareMap.get(Servo.class, "claw");
-        }
-
-
-        public class openClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.57);
-                return false;
-            }
-        }
-        public Action OpenClaw() {
-            return new openClaw();
-        }
-
-        public class closeClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.2);
-                return false;
-            }
-        }
-        public Action CloseClaw() {
-            return new closeClaw();
-        }
-
-        public class wristDown implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(.4725);
-                return false;
-            }
-        }
-        public Action WristDown() {
-            return new wristDown();
-        }
-
-        public class wristUp implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                wrist.setPosition(0.855);
-                return false;
-            }
-        }
-        public Action WristUp() {
-            return new wristUp();
-        }
-    }
     public class viperArm {
         private DcMotor arm;
         private DcMotor viper;
@@ -135,12 +83,11 @@ public class Blue_Basket_Auto extends LinearOpMode {
         public Action Floor() {
             return new floor();
         }
-
-
     }
+
     @Override
     public void runOpMode() {
-        clawWrist servos = new clawWrist(hardwareMap);
+        WristClawActions _WristClawActions = new WristClawActions(this);
         viperArm motors = new viperArm(hardwareMap);
 
         Pose2d initialPose = new Pose2d(31, 63, Math.toRadians(0));
@@ -149,7 +96,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
         Action PushSample = ActionBuilder.BlueBasket(drive::actionBuilder);
-        Actions.runBlocking(servos.CloseClaw());
+        Actions.runBlocking(_WristClawActions.CloseClaw());
         telemetry.update();
         waitForStart();
 
@@ -266,47 +213,47 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
                         driveToClearance,
                         motors.Basket(),
-                        servos.WristDown(),
+                        _WristClawActions.WristDown(),
                         testingWait,
                         driveToDrop,
-                        servos.OpenClaw(),
+                        _WristClawActions.OpenClaw(),
                         clawOpenWait,
                         driveToBackAway,
-                        servos.WristUp(),
+                        _WristClawActions.WristUp(),
                         motors.Floor(),
                         downWait,
                         driveToSample1,
-                        servos.WristDown(),
+                        _WristClawActions.WristDown(),
                         grabWait,
-                        servos.CloseClaw(),
+                        _WristClawActions.CloseClaw(),
                         closeWait,
-                        servos.WristUp(),
+                        _WristClawActions.WristUp(),
                         driveToClearance1,
                         motors.Basket(),
-                        servos.WristDown(),
+                        _WristClawActions.WristDown(),
                         testingWait1,
                         driveToDrop1,
-                        servos.OpenClaw(),
+                        _WristClawActions.OpenClaw(),
                         clawOpenWait1,
                         driveToBackAway1,
-                        servos.WristUp(),
+                        _WristClawActions.WristUp(),
                         motors.Floor(),
                         downWait1,
                         driveToSample2,
-                        servos.WristDown(),
+                        _WristClawActions.WristDown(),
                         grabWait1,
-                        servos.CloseClaw(),
+                        _WristClawActions.CloseClaw(),
                         closeWait1,
-                        servos.WristUp(),
+                        _WristClawActions.WristUp(),
                         driveToClearance2,
                         motors.Basket(),
-                        servos.WristDown(),
+                        _WristClawActions.WristDown(),
                         testingWait2,
                         driveToDrop2,
-                        servos.OpenClaw(),
+                        _WristClawActions.OpenClaw(),
                         clawOpenWait2,
                         driveToBackAway2,
-                        servos.WristUp(),
+                        _WristClawActions.WristUp(),
                         motors.Floor()
                 )
         );
