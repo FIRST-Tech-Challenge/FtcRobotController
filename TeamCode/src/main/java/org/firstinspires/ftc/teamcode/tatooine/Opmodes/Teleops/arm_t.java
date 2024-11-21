@@ -23,9 +23,9 @@ public class arm_t extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             TelemetryPacket packet = new TelemetryPacket();
-            telemetry.addData("arm ang",arm.getAngle());
-            telemetry.addData("power",arm.getAngleMotor().getPower());
-            telemetry.addData("getF",arm.getAnglePID().getF());
+//            telemetry.addData("arm ang",arm.getAngle());
+//            telemetry.addData("power",arm.getAngleMotor().getPower());
+//            telemetry.addData("getF",arm.getAnglePID().getF());
             // updated based on gamepads
             if (gamepad1.cross) {
                 runningActions.add(arm.scoreAction());
@@ -35,6 +35,9 @@ public class arm_t extends LinearOpMode {
             }
             if (gamepad1.square){
                 runningActions.add(arm.setAngle(60));
+            }
+            if(gamepad1.dpad_up){
+                runningActions.add(arm.setAngle(0));
             }
             if(gamepad1.triangle){
                 runningActions.add(arm.closeAction());
@@ -52,7 +55,7 @@ public class arm_t extends LinearOpMode {
             runningActions = newActions;
 
             dash.sendTelemetryPacket(packet);
-            telemetry.update();
+          //  telemetry.update();
 
         }
     }

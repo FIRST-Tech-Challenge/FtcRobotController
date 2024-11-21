@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
 @Autonomous(name = "FarFromBasket", group = "Autonomous")
 
+
 public class FarFromBasket extends LinearOpMode {
     Arm arm;
     Wrist wrist;

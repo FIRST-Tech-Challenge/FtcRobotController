@@ -278,4 +278,15 @@ public class PIDFController {
         return period;
     }
 
+    public double getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(double timeout) {
+        this.timeout = timeout;
+    }
+
+    public double getRunTime() {
+        return runTime;
+    }
 }

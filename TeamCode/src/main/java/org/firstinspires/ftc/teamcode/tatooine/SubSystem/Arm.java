@@ -27,13 +27,13 @@ public class Arm {
     private final double ANGLE_TOLERANCE = 2;//deg
     private final double EXTEND_TOLERANCE = 0.1;
     private final double EXTEND_CPR = 0;
-    private final double ANGLE_CPR = 1425.1 * 5 ;
+    private final double ANGLE_CPR = 1425.1 * 3 ;
     private final double SPOOL_DIM = 0;//mm
     private final double AMP_LIMIT = 0;
     private final double angle = 0;
     private final double length = 0;
     private final double angleOffSet = -26;
-    private PIDFController anglePID = new PIDFController(0.09, 0, 0.002, 0);
+    private PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
     private DcMotorEx angleMotor;
     private  Servo extendServoLeft;
 
@@ -61,7 +61,8 @@ public class Arm {
     private ElapsedTime extendTimer = new ElapsedTime();
     private double angleTimeout = 0;
     private double extendTimeout = 0;
-    private final double F = 0;
+    private final double KF = 0.01;
+    private double F = 0;
 
 
 
@@ -239,8 +240,8 @@ public class Arm {
     public void setAnalogRight(AnalogInput analogRight) {
         this.analogRight = analogRight;
     }
-    public void setF(){
-        anglePID.setF(Math.cos(Math.toRadians(getAngle()))* F);
+    public double calculateF(){
+        return Math.cos(Math.toRadians(getAngle()))* KF;
     }
 
     //an actions that sets the angle of the arm to the desired angle
@@ -265,7 +266,7 @@ public class Arm {
     }
 
     public Action scoreAction (){
-    return new SequentialAction(setAngle(60),new SleepAction(1), setExtension(0.8),new SleepAction(1),setAngle(45));
+    return new SequentialAction(setAngle(60),new SleepAction(3), setExtension(0.8),new SleepAction(3),setAngle(45));
     }
 
     public Action closeAction (){
@@ -326,20 +327,20 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-
-            if (goal <  getAngle()-ANGLE_TOLERANCE) {
-                anglePID.setF(0);
-            }
-            else {
-                setF();
-            }
-            angleMotor.setPower(anglePID.calculate(getAngle(), goal));
+            double pidPower = anglePID.calculate(getAngle(), goal);
+            anglePID.setTimeout(8000000);
+            F =0;
+            angleMotor.setPower(pidPower+F);
             if (IS_DEBUG) {
+                telemetry.addData("runtime", anglePID.getRunTime());
+                telemetry.addData("tiemout", anglePID.getTimeout());
                 telemetryPacket.put("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) pos", angleMotor.getCurrentPosition());
                 telemetry.addData("motor (A) power", angleMotor.getPower());
+                telemetry.addData("angle", getAngle());
+                telemetry.addData("power", angleMotor.getPower());
+                telemetry.update();
             }
-            telemetry.update();
             return !anglePID.atSetPoint();
         }
     }
