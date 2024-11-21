@@ -41,12 +41,12 @@ public class TeleOpTesting extends LinearOpMode {
     private double denominator = 1;        // declare motor power calculation variable
     private double liftPower = 1;          // declare lift motor power variable
     private double ExtensionPower = 1;     // declare extension power variable
-    private double TouchPadInput = .5;  // Keeps track of finger position on the touchpad
+    private double TouchPadInput = .5;     // Keeps track of finger position on the touchpad
 
     //****************************** INTEGERS ********************************************************************************
-    private int precision = 2;             // chassis motor power reduction factor 1=full 2=1/2 power 4=1/4 power
-    private int LiftTarget = 0;                    // Lift target position variable
-    private int ExtensionTarget = 0;               // Extension target position variable
+    private int precision = 2;                                  // chassis motor power reduction factor 1=full 2=1/2 power 4=1/4 power
+    private int LiftTarget = 0;                                 // Lift target position variable
+    private int ExtensionTarget = 0;                            // Extension target position variable
     private int HalfIntakeExtension = MAX_EXTENSION_LIMIT / 2;  // Sets the default for the intake extension preset to half of the full extension
 
     //****************************** BOOLEANS ********************************************************************************
@@ -118,7 +118,7 @@ public class TeleOpTesting extends LinearOpMode {
         //****************************** SET MOTORS TO BRAKE MODE *****************************************************
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);    // Sets the motor to be locked when stopped
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);   // Sets the motor to be locked when stopped
-        BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);     // Sets the motor to be locks when stopped
+        BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);     // Sets the motor to be locked when stopped
         BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);    // Sets the motor to be locked when stopped
 
         LeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);     // Sets the motor to be locked when stopped
