@@ -37,11 +37,18 @@ public class aUtOnOmOuS extends LinearOpMode {
 
             if(step == 0)
             {
-                if (yaw < 85 && yaw > 105 ) {
+                if (yaw > 85 && yaw < 94 ) {
                     input.Spin(50);
                 }
                 else {
                     step++;
+                }
+            }
+            else
+            {
+                if (step == 1)
+                {
+
                 }
             }
 
