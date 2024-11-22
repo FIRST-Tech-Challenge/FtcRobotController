@@ -26,8 +26,10 @@ public class AutoSkeleton {
     private IntakeSpinnerHandler intakeSpinnerHandler;
     private PIDModel movementPIDx;
     private PIDModel movementPIDy;
+    private PIDModel movementPIDturn;
     private boolean xDirPos = true;
     private boolean yDirPos = true;
+    private boolean turnDirPos = true;
 
 
 
@@ -36,16 +38,13 @@ public class AutoSkeleton {
         this.movementMargin = movementMargin;
         this.turnMargin = turnMargin;
 
-        // Creating PID
-//        double kP = ( maxSpeed / (TILE_LENGTH * 2) ) * 10;
-//        double kI = maxSpeed / (TILE_LENGTH * 2 * 4000); //I is REALLY FREAKING SMALL
-//        double kD = 5;
         double kP = 0.5;
-        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 4000); //I is REALLY FREAKING SMALL
-        double kD = 5;
+        double kI = maxSpeed / (TILE_LENGTH * TILE_LENGTH * 3500); //I is REALLY FREAKING SMALL
+        double kD = 6;
 
         movementPIDx = new PIDModel(kP, kI, kD);
         movementPIDy = new PIDModel(kP, kI, kD);
+        movementPIDturn = new PIDModel(maxSpeed / 20, maxSpeed / (25000), 0.5);
     }
 
     public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler intakeSpinnerHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
@@ -68,6 +67,9 @@ public class AutoSkeleton {
 
     public void setTargetRotation(double turning) {
         targetRotation = turning;
+
+        FlowSensorHandler.PoseData pos = flowSensorHandler.getOdometryData().pos;
+        turnDirPos = pos.heading < targetRotation;
     }
 
     public void setTargetArmRotation(RotationHandler.RotationPositions rotationPosition) {
@@ -99,16 +101,17 @@ public class AutoSkeleton {
 
         double xDist = (xTarg - x);
         double yDist = (yTarg - y);
+        double turnDist = targetRotation - yaw;
         double dist = Math.sqrt((xDist * xDist) + (yDist * yDist));
-        double angleDiff = Math.abs(targetRotation - yaw);
 
         telemetry.addData("Targ X", xTarg);
         telemetry.addData("Targ Y", yTarg);
 
 
         // Check if we're at our target
-        if (dist <= movementMargin && angleDiff <= turnMargin) {
+        if (dist <= movementMargin && Math.abs(turnDist) <= turnMargin) {
             wheelHandler.absoluteVectorToMotion(0, 0, 0, 0, telemetry);
+            telemetry.addData("Done?", "Done");
             return true;
         }
 
@@ -116,6 +119,7 @@ public class AutoSkeleton {
         // Calculate force to use
         double xSpeed = 0;
         double ySpeed = 0;
+        double turnSpeed = 0;
         if (Math.abs(xDist) > movementMargin) {
             if (xDist > 0 ^ xDirPos) {
                 movementPIDx.resetError();
@@ -124,7 +128,11 @@ public class AutoSkeleton {
 
             telemetry.addData("PID DATA", "x");
             xSpeed = movementPIDx.calculateWithTelemetry(x, xTarg, runtime, telemetry);
+        } else {
+            telemetry.addData("X", "Done");
         }
+
+
         if (Math.abs(yDist) > movementMargin) {
             if (yDist > 0 ^ yDirPos) {
                 movementPIDy.resetError();
@@ -133,22 +141,34 @@ public class AutoSkeleton {
 
             telemetry.addData("PID DATA", "y");
             ySpeed = movementPIDy.calculateWithTelemetry(y, yTarg, runtime, telemetry);
+        } else {
+            telemetry.addData("Y", "Done");
+        }
+
+        if (Math.abs(turnDist) > turnMargin) {
+            if (turnDist > 0 ^ turnDirPos) {
+                movementPIDturn.resetError();
+                //yDirPos = !yDirPos;
+            }
+
+            telemetry.addData("PID DATA", "turn");
+            turnSpeed = movementPIDturn.calculateWithTelemetry(yaw, targetRotation, runtime, telemetry);
+        } else {
+            telemetry.addData("Turn", "Done");
         }
 
 
-        double turning = targetRotation - yaw;
-        turning /= 90;
-
         xSpeed = Math.max(Math.min(xSpeed, maxSpeed), -maxSpeed);
         ySpeed = Math.max(Math.min(ySpeed, maxSpeed), -maxSpeed);
+        turnSpeed = Math.max(Math.min(turnSpeed, maxSpeed), -maxSpeed);
 
         telemetry.addData("Speed X", xSpeed);
         telemetry.addData("Speed Y", ySpeed);
-        telemetry.addData("Speed Turning", turning);
+        telemetry.addData("Speed Turning", turnSpeed);
 
 
         // Run motors
-        wheelHandler.absoluteVectorToMotion(xSpeed, ySpeed, turning, yaw, telemetry);
+        wheelHandler.absoluteVectorToMotion(xSpeed, ySpeed, turnSpeed, yaw, telemetry);
 
         return false;
     }

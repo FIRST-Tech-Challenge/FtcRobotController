@@ -30,7 +30,7 @@ public class BasketAuto extends NKNProgram {
 
 
         // Core mover
-        AutoSkeleton autoSkeleton = new AutoSkeleton(0.4, 0.8, 1.5);
+        AutoSkeleton autoSkeleton = new AutoSkeleton(0.7 , 0.2, 1.5);
 
         AutoHeart autoHeart = new AutoHeart(stepList);
         components.add(autoHeart);
