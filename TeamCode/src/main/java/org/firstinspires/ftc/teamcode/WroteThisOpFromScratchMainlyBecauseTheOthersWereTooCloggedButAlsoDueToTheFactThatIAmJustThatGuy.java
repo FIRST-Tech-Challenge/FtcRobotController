@@ -267,46 +267,8 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void immediatelyPlace(StartingPosition sp) {
-        TrajectoryActionBuilder placingTrajectory;
-        TrajectoryActionBuilder parkingTrajectory;
-
-        switch (sp) {
-            case RED_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
-                break;
-            case RED_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
-                break;
-            case BLUE_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
-                break;
-            case BLUE_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
-                break;
-            default:
-                placingTrajectory = roadRunner.actionBuilder(initialPose);
-                parkingTrajectory = roadRunner.actionBuilder(initialPose);
-        }
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -316,31 +278,7 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void placeNextSpecimenOnChamber(StartingPosition sp, MainAuto.ChamberHeight mode) {
-        TrajectoryActionBuilder placingTrajectory;
-        switch (sp) {
-            case RED_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
-                break;
-            case RED_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
-                break;
-            case BLUE_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
-                break;
-            case BLUE_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
-                break;
-            default:
-                placingTrajectory = roadRunner.actionBuilder(initialPose);
-        }
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -349,32 +287,7 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void gameLoopEnd(StartingPosition sp) {
-        TrajectoryActionBuilder parkingTrajectory;
-
-        switch (sp) {
-            case RED_LEFT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
-                break;
-            case RED_RIGHT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
-                break;
-            case BLUE_LEFT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
-                break;
-            case BLUE_RIGHT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
-                break;
-            default:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose);
-        }
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
 
         Actions.runBlocking(
                 new SequentialAction(
