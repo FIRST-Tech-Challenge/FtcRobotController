@@ -112,8 +112,12 @@ public class Lift {
 
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
-                double pidPower = pid.calculate(initialPos+motionProfile.getPos(t.seconds()), currentPosition);
-                motorPower = pidPower+ffPower;
+                if (reverse) {
+                    double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
+                    motorPower = pidPower + ffPower;
+                } else {
+                    motorPower = kS + ffPower;
+                }
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
                 return Math.abs(targetHeight - currentPosition) < 0.1;

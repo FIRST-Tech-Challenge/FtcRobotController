@@ -91,4 +91,7 @@ public class MotionProfile {
     public double getTime(){
         return deltaT;
     }
+    public int isReverse(){
+        return reverse;
+    }
     }
