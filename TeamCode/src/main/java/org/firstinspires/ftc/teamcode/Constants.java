@@ -13,6 +13,7 @@ public abstract class Constants {
         public static final String BACK_RIGHT_MOTOR_NAME = "rearRightMotor";
         public static final String IMU_NAME = "imu";
 
+
         public static final String LEFT_ENCODER_NAME = "leftEncoder";
         public static final String RIGHT_ENCODER_NAME = "rightEncoder";
         public static final String CENTER_ENCODER_NAME = "centerEncoder";
@@ -42,5 +43,35 @@ public abstract class Constants {
     }
 
     public static final int INCH_TO_TILE = 24;
+
+    public static final double SLIDE_PULLEY_CIRCUMFERENCE = 5.0*0.393701*Math.PI;
+
+    public static final double MOTOR_TICKS_PER_REVOLUTION = 751.8;
+
+    public static abstract class IntakeConstants{
+
+        public static final String MASTER_ANGLE_MOTOR = "masterAngleMotor";
+        public static final String SLAVE_ANGLE_MOTOR = "slaveAngleMotor";
+        public static final String ARM_EXTENSION_MOTOR = "armExtensionMotor";
+        public static final String MASTER_ANGLE_MOTOR_PORTNAME = "to be determined";
+        public static final String SLAVE_ANGLE_MOTOR_PORTNAME = "to be determined";
+        public static final String ACTIVE_INTAKE_SERVO_NAME = "activeIntakeServo";
+        public static final String INTAKE_WRIST_SERVO_NAME = "intakeWristServo";
+
+        public static final double INTAKE_WRIST_SERVO_MIN_ANGLE = 0;
+        public static final double INTAKE_WRIST_SERVO_MAX_ANGLE = 270;
+        public static final double INTAKE_WRIST_SERVO_UP_POSITION = 0;
+        public static final double INTAKE_WRIST_SERVO_DOWN_POSITION = 180;
+
+
+
+    }
+
+    public static abstract class OuttakeConstants{
+        public static final String PINCH_SERVO_NAME = "pinchServo";
+        public static final String OUTTAKE_WRIST_SERVO_NAME = "outtakeWristServo";
+    }
+
+
 
 }
