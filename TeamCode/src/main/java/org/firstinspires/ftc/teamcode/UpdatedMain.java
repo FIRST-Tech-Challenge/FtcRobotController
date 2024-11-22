@@ -31,7 +31,7 @@ public class UpdatedMain extends LinearOpMode {
 
     // Runtime modifiable values
     // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
-    public static double arm_less_zero = 0.5;//we already knew 90% speed was way to fast why did you change it in the first palce
+    public static double arm_less_zero = 0.5;//we already knew 90% speed was way to fast why did you change it in the first place
     public static double arm_more_zero = 0.5;
     public static double triggerModifier = 0.005;
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
