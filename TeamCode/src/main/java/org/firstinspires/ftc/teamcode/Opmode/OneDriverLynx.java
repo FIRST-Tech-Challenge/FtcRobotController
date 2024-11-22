@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmode;
 import android.provider.Settings;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,7 +28,7 @@ import java.util.Locale;
 
 
 @TeleOp
-
+@Config
 public class OneDriverLynx extends LinearOpMode {
     public double inchesPerSecond = 66.67;
     double oldTime = 0;
@@ -195,21 +196,33 @@ public class OneDriverLynx extends LinearOpMode {
             else if (globalStateMachine == GlobalStateMachine.HOLDINGSPECIMEN) {
                 robot.holdingSpecimen();
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE1) {
-                robot.arm.setTargetArmPosition(85);
+                robot.arm.setTargetArmPosition(79);
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.SPECIMENSCORE2;
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE2) {
                 if (timeStamp + 1000 < timer.milliseconds()) {
                     robot.slides.setTargetSlidesPosition(1);
-                    robot.arm.setTargetArmPosition(92);
+//                    robot.arm.setTargetArmPosition(anglethingy);
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE3;
                 }
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE3) {
                 if (timeStamp + 1000 < timer.milliseconds()) {
-                    robot.slides.setTargetSlidesPosition(2.5);
+                    robot.slides.setTargetSlidesPosition(9.8);
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE4;
+                }
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE4) {
+                if (timeStamp + 500 < timer.milliseconds()) {
+                    robot.wrist.setPosition(210);
+                    timeStamp = timer.milliseconds();
+                    globalStateMachine = GlobalStateMachine.SPECIMENSCORE5;
+                    robot.arm.setTargetArmPosition(45);
+                }
+            } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE5) {
+                if (timeStamp + 165 < timer.milliseconds()) {
+                    robot.claw.open();
+                    globalStateMachine = globalStateMachine.DEFAULT;
                 }
             }
 

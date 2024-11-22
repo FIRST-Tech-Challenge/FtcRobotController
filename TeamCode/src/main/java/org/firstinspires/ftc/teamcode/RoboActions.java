@@ -23,8 +23,8 @@ public class RoboActions {
     public Arm arm;
     public Slides slides;
     Drivetrain drive;
-    Claw claw;
-    Wrist wrist;
+    public Claw claw;
+    public Wrist wrist;
     Hang hang;
 
     public RoboActions(HardwareMap hardwareMap, Pose2d startPosition){
