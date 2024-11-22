@@ -66,9 +66,9 @@ public class DriveSubsystem extends SubsystemBase {
     private void driveFieldCentric(double forward, double strafe, double turn) {
         turn = -turn;
 
-        forward = Math.abs(forward) >= Constants.DriveConstants.DEADZONE ? forward : 0;
-        strafe = Math.abs(strafe) >= Constants.DriveConstants.DEADZONE ? strafe : 0;
-        turn = Math.abs(turn) >= Constants.DriveConstants.DEADZONE ? turn : 0;
+        forward = deadzoned(forward, Constants.DriveConstants.DEADZONE);
+        strafe = deadzoned(strafe, Constants.DriveConstants.DEADZONE);
+        turn = deadzoned(turn, Constants.DriveConstants.DEADZONE);
 
         double gyroRadians = Math.toRadians(-getHeading());
         double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
@@ -83,9 +83,9 @@ public class DriveSubsystem extends SubsystemBase {
     private void driveRobotCentric(double forward, double strafe, double turn) {
         turn = -turn;
 
-        forward = Math.abs(forward) >= Constants.DriveConstants.DEADZONE ? forward : 0;
-        strafe = Math.abs(strafe) >= Constants.DriveConstants.DEADZONE ? strafe : 0;
-        turn = Math.abs(turn) >= Constants.DriveConstants.DEADZONE ? turn : 0;
+        forward = deadzoned(forward, Constants.DriveConstants.DEADZONE);
+        strafe = deadzoned(strafe, Constants.DriveConstants.DEADZONE);
+        turn = deadzoned(turn, Constants.DriveConstants.DEADZONE);
 
         frontLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
         frontRightMotor.setPower(Range.clip((forward - strafe - turn), -1, 1) * speedMultiplier);
@@ -136,7 +136,8 @@ public class DriveSubsystem extends SubsystemBase {
         return fieldCentric;
     }
 
-
+    private double deadzoned(double input, double deadzone) {
+        if(Math.abs(input) >= deadzone) return input;
+        return Math.pow(input, 3) / Math.pow(deadzone, 2); //Makes input follow a cubic curve to smooth deadzone
+    }
 }
-
-
