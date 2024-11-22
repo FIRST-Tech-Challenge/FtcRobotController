@@ -127,7 +127,6 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
                 justPark(sp);
                 return;
             case JUST_PLACE:
-                // ! TODO implement
                 baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
                 immediatelyPlace(sp);
                 return;
@@ -199,7 +198,45 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void immediatelyPlace(StartingPosition sp) {
-        justPark(sp); // ! TODO
+        TrajectoryActionBuilder placingTrajectory;
+        TrajectoryActionBuilder parkingTrajectory;
+
+        switch (sp) {
+            case RED_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(-11.5, -30.7), Math.toRadians(90));
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(38.2, -58.9), Math.toRadians(90));
+                break;
+            case RED_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(10.2, -24.6), Math.toRadians(90));
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(10.2, -24.6), Math.toRadians(90));
+                break;
+            case BLUE_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(9.9, 29.0), Math.toRadians(270));
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(-40.5, 65.2), Math.toRadians(270));
+                break;
+            case BLUE_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(-11.3, 30.3), Math.toRadians(270));
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(new Vector2d(-59.9, 60.2), Math.toRadians(270));
+                break;
+            default:
+                placingTrajectory = roadRunner.actionBuilder(initialPose);
+                parkingTrajectory = roadRunner.actionBuilder(initialPose);
+
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        placingTrajectory.build(),
+                        placeChamber(),
+                        parkingTrajectory.build()));
     }
 
     public void placeNextSpecimenOnChamber(MainAuto.ChamberHeight mode) {
