@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.commands.GrabberPickupToggleCommand;
 import org.firstinspires.ftc.teamcode.commands.WormLowerCommand;
 import org.firstinspires.ftc.teamcode.commands.WormRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.WristDownCommand;
+import org.firstinspires.ftc.teamcode.commands.WristStopCommand;
 import org.firstinspires.ftc.teamcode.commands.WristUpCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
@@ -45,6 +47,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
         worm = new Worm(hardwareMap, telemetry);
         grabber = new Grabber(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
+        wrist.Goto(0);
 
         drive = new Drive(hardwareMap, telemetry);
 
@@ -52,7 +55,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
         configV2();
 
-        telemetry.update();
+
     }
 
     public void configV1() {
@@ -69,20 +72,22 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
     public void configV2() {
         driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileHeld(new ElevatorExtendCommand(elevator));
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(new ElevatorExtendCommand(elevator));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(new ElevatorRetractCommand(elevator));
 
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whileActiveContinuous(
                 new SequentialCommandGroup(
-                        new WristUpCommand(wrist),
-                        new WaitCommand(100)
-                )
+                        new WristUpCommand(wrist)
+                ), true
+        ).whenInactive(
+                new WristStopCommand(wrist)
         );
 
-        new Trigger(() -> driver.getLeftX() >  0.5).whileActiveContinuous(
+        new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >  0.5).whileActiveContinuous(
                 new SequentialCommandGroup(
-                        new WristDownCommand(wrist),
-                        new WaitCommand(100)
-                )
+                        new WristDownCommand(wrist)
+                ), true
+        ).whenInactive(
+                new WristStopCommand(wrist)
         );
 
         driver.getGamepadButton(GamepadKeys.Button.A).toggleWhenActive(new GrabberPickupToggleCommand(grabber));
@@ -93,12 +98,13 @@ public class Scrimmage_Teleop extends CommandOpMode {
     public void run() {
         super.run();
         telemetry.update();
+
         elevator.SetWormAngle(worm.getAngle()); //set this continually so elevator can know how far it can go
 
         boolean slowDown = driver.getButton(GamepadKeys.Button.Y);
 
-        drive.arcadeDrive(slowDown ? driver.getRightY() * 0.5 : driver.getRightY(), slowDown ? driver.getRightX() * 0.5 : driver.getRightX(), driver.getButton(GamepadKeys.Button.B), false);
+        drive.arcadeDrive(slowDown ? -driver.getLeftY() * 0.5 : -driver.getLeftY(), slowDown ? -driver.getLeftX() * 0.5 : -driver.getLeftX(), driver.getButton(GamepadKeys.Button.B), false);
 
-        worm.setPower(driver.getLeftY());
+        worm.setPower(driver.getRightY());
     }
 }

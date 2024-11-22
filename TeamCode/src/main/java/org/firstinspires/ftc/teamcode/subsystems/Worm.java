@@ -19,7 +19,7 @@ public class Worm extends SubsystemBase {
     private final PIDFController controller;
     private Telemetry telemetry;
     private DcMotorEx motor;
-    private double potOffset = 154.2005;
+    private double potOffset = 154.4615;
     public static PIDFCoefficients WORM_PID = new PIDFCoefficients(0.07, 0, 0,0);
     private final InterpLUT angleLookup = new InterpLUT();
     private final AnalogInput pot;
@@ -40,20 +40,21 @@ public class Worm extends SubsystemBase {
         telemetry = tm;
 
         angleLookup.add(-1,0);
-        angleLookup.add(1.168, -15);
-        angleLookup.add(1.09, -5);
-        angleLookup.add(1.051, 0);
-        angleLookup.add(0.976, 10);
-        angleLookup.add(0.92, 20);
-        angleLookup.add(0.835, 30);
-        angleLookup.add(0.76, 40);
-        angleLookup.add(0.687, 50);
-        angleLookup.add(0.61, 60);
-        angleLookup.add(0.537, 70);
-        angleLookup.add(0.454, 80);
-        angleLookup.add(0.373, 90);
-        angleLookup.add(0.284, 100);
         angleLookup.add(0.186, 110);
+        angleLookup.add(0.284, 100);
+        angleLookup.add(0.373, 90);
+        angleLookup.add(0.454, 80);
+        angleLookup.add(0.537, 70);
+        angleLookup.add(0.61, 60);
+        angleLookup.add(0.687, 50);
+        angleLookup.add(0.76, 40);
+        angleLookup.add(0.835, 30);
+        angleLookup.add(0.92, 20);
+        angleLookup.add(0.976, 10);
+        angleLookup.add(1.051, 0);
+        angleLookup.add(1.09, -5);
+        angleLookup.add(1.168, -15);
+        angleLookup.add(1.239, -25);
 
         angleLookup.createLUT();
 
@@ -74,7 +75,7 @@ public class Worm extends SubsystemBase {
     public void raise(double whatPower) {
         telemetry.addData("WormState", "raise");
         CurrentState = State.Raising;
-        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setPower(whatPower);
     }
 
@@ -95,6 +96,7 @@ public class Worm extends SubsystemBase {
     }
 
     public void setPower(double whatPower) {
+        telemetry.addData("Worm Power", whatPower);
         if (whatPower > 0) {
             raise(whatPower);
         } else {

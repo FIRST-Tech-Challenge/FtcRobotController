@@ -16,7 +16,14 @@ public class WristUpCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        wrist.servo.rotateBy(1);
+        wrist.Active = true;
+    }
+
+
+
+    @Override
+    public void execute() {
+        wrist.AddDegree();
     }
 
     @Override
