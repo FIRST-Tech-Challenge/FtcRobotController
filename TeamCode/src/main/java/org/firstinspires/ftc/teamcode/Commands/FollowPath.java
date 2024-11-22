@@ -11,8 +11,6 @@ import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
 import com.arcrobotics.ftclib.trajectory.constraint.MecanumDriveKinematicsConstraint;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.Utils;
 import java.util.List;
@@ -140,10 +138,17 @@ public class FollowPath extends CommandBase {
                 pathStartAngle);
 
         // create trajectory
-        trajectory = TrajectoryGenerator.generateTrajectory(pathStartPose,
-                pathWaypoints,
-                pathEndPose,
-                config);
+        // use try-catch block in case trajectory cannot be formed using given points
+        // if trajectory cannot formed then set to null. Command will detect and exit
+        try {
+            trajectory = TrajectoryGenerator.generateTrajectory(pathStartPose,
+                    pathWaypoints,
+                    pathEndPose,
+                    config);
+        }
+        catch (Exception e) {
+            trajectory = null;
+        }
 
         // set trajectory in odometry for display on dashboard
         RobotContainer.odometry.DisplayTrajectory(trajectory);
@@ -165,82 +170,89 @@ public class FollowPath extends CommandBase {
 
         // determine rotation rate along path (in rads/s)
         // turn robot by smallest angle (either in +ve or -ve rotation)
-        rotationRate = Math.toRadians(Utils.AngleDifference(Math.toDegrees(startRobotAngle),
-                robotEndAngle.getDegrees())
-        ) / trajectory.getTotalTimeSeconds();
-
+        if (trajectory!=null&& trajectory.getTotalTimeSeconds() !=0.0)
+            rotationRate = Math.toRadians(Utils.AngleDifference(Math.toDegrees(startRobotAngle),
+                robotEndAngle.getDegrees())) / trajectory.getTotalTimeSeconds();
+        else
+            rotationRate = 0.0;
     }
 
     // This method is called periodically while command is active
     @Override
     public void execute() {
 
-        // get next reference state from trajectory path
-        State targetPathState = trajectory.sample(pathTime.seconds());
+        // if we have valid path then execute. Otherwise do nothing.
+        if (trajectory!=null) {
 
-        // get current robot position from odometry
-        Pose2d currentPos = RobotContainer.odometry.getCurrentPos();
+            // get next reference state from trajectory path
+            State targetPathState = trajectory.sample(pathTime.seconds());
 
-        // determine target robot angle
-        double targetRobotAngle;
-        if (pathTime.seconds() < trajectory.getTotalTimeSeconds())
-            targetRobotAngle = startRobotAngle + (rotationRate * pathTime.seconds());
-        else
-            targetRobotAngle = startRobotAngle + (rotationRate * trajectory.getTotalTimeSeconds());
+            // get current robot position from odometry
+            Pose2d currentPos = RobotContainer.odometry.getCurrentPos();
 
-        // commented out for now.  Will try using manual implementation of PID
-        // execute PID controllers - error = reference - actual
-        // each controller outputs resulting speeds to be given to drive subsystem
-        //double dX = -xController.calculate(targetPathState.poseMeters.getX() -
-        //        currentPos.getX());
+            // determine target robot angle
+            double targetRobotAngle;
+            if (pathTime.seconds() < trajectory.getTotalTimeSeconds())
+                targetRobotAngle = startRobotAngle + (rotationRate * pathTime.seconds());
+            else
+                targetRobotAngle = startRobotAngle + (rotationRate * trajectory.getTotalTimeSeconds());
 
-        // manual implementation of x-position PI controller
-        double  error = targetPathState.poseMeters.getX() - currentPos.getX();
-        x_ierror += 0.60 * error;
-        if (Math.abs(error) > 0.03)
-            x_ierror = 0.0;
-        double dX = 8.0 * error + x_ierror;
+            // commented out for now.  Will try using manual implementation of PID
+            // execute PID controllers - error = reference - actual
+            // each controller outputs resulting speeds to be given to drive subsystem
+            //double dX = -xController.calculate(targetPathState.poseMeters.getX() -
+            //        currentPos.getX());
 
-        // commented out for now.  Will try using manual implementation of PID
-        // double dY = -yController.calculate(targetPathState.poseMeters.getY() -
-        //                currentPos.getY());
+            // manual implementation of x-position PI controller
+            double error = targetPathState.poseMeters.getX() - currentPos.getX();
+            x_ierror += 0.60 * error;
+            if (Math.abs(error) > 0.03)
+                x_ierror = 0.0;
+            double dX = 8.0 * error + x_ierror;
 
-        // manual implementation of y-position PI controller
-        double  y_error = targetPathState.poseMeters.getY() - currentPos.getY();
-        y_ierror += 0.60 * y_error;
-        if (Math.abs(y_error) > 0.03)
-            y_ierror = 0.0;
-        double dY = 8.0 * y_error + y_ierror;
+            // commented out for now.  Will try using manual implementation of PID
+            // double dY = -yController.calculate(targetPathState.poseMeters.getY() -
+            //                currentPos.getY());
 
-        // robot rotation controller
-        double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
+            // manual implementation of y-position PI controller
+            double y_error = targetPathState.poseMeters.getY() - currentPos.getY();
+            y_ierror += 0.60 * y_error;
+            if (Math.abs(y_error) > 0.03)
+                y_ierror = 0.0;
+            double dY = 8.0 * y_error + y_ierror;
 
-        // Dashboard values - used for testing purposes. Keep for now if needed in future
-        //        RobotContainer.DBTelemetry.addData("Path Error X ",
-        //                targetPathState.poseMeters.getX() - currentPos.getX());
-        //        RobotContainer.DBTelemetry.addData("Path Error Y ",
-        //                targetPathState.poseMeters.getY() - currentPos.getY());
-        //        RobotContainer.DBTelemetry.addData("Path Error Theta ",
-        //                Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
-        //
-        //        RobotContainer.DBTelemetry.addData("X Control Out ",
-        //                dX);
-        //        RobotContainer.DBTelemetry.addData("Y Control Out ",
-        //                dY);
-        //        RobotContainer.DBTelemetry.addData("Z Control Out ",
-        //                omega);
-        //        RobotContainer.DBTelemetry.update();
+            // robot rotation controller
+            double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(), targetRobotAngle));
 
-        // go ahead and drive robot
-        RobotContainer.drivesystem.FieldDrive(dX, dY, omega);
+            // Dashboard values - used for testing purposes. Keep for now if needed in future
+            //        RobotContainer.DBTelemetry.addData("Path Error X ",
+            //                targetPathState.poseMeters.getX() - currentPos.getX());
+            //        RobotContainer.DBTelemetry.addData("Path Error Y ",
+            //                targetPathState.poseMeters.getY() - currentPos.getY());
+            //        RobotContainer.DBTelemetry.addData("Path Error Theta ",
+            //                Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
+            //
+            //        RobotContainer.DBTelemetry.addData("X Control Out ",
+            //                dX);
+            //        RobotContainer.DBTelemetry.addData("Y Control Out ",
+            //                dY);
+            //        RobotContainer.DBTelemetry.addData("Z Control Out ",
+            //                omega);
+            //        RobotContainer.DBTelemetry.update();
+
+            // go ahead and drive robot
+            RobotContainer.drivesystem.FieldDrive(dX, dY, omega);
+
+        }   // end if we have valid trajectory to follow
     }
 
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
 
-        // command is finished when time in command exceeds expected time of path
-        return ( pathTime.seconds() > (trajectory.getTotalTimeSeconds()+0.25));
+        // command is finished if no valid path or when time in command exceeds expected time of path
+        return ( trajectory==null ||
+                (pathTime.seconds() > (trajectory.getTotalTimeSeconds()+0.25)) );
 
     }
 
@@ -251,7 +263,7 @@ public class FollowPath extends CommandBase {
         // this command is done. Remove trajectory in odometry from display on dashboard
         RobotContainer.odometry.DisplayTrajectory(null);
 
-        // if end speed is 0m/s, then stop drive
+        // if end speed is 0m/s, then stop drive to ensure robot drive is not left 'creeping'
         if (endSpeed==0.0)
             RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0);
 
