@@ -27,7 +27,7 @@ public class SpecimenPlacePos extends SequentialCommandGroup {
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(255)),
 
                 // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(30)),
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(15)),
 
                 // powers the wrist and moves it to straight position
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))

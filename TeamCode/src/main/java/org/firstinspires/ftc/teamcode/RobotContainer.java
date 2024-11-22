@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.CommandGroups.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.LeftSideAuto87Pts;
+import org.firstinspires.ftc.teamcode.CommandGroups.SpecimenPlacePos;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
@@ -133,6 +134,7 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
@@ -141,12 +143,11 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SpecimenPlacePos());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new HuntingPos());
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new DropToGrab());
-
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new BackDepositePose());
+        //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new DropToGrab());
 
         if (isRedAlliance){
             odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));

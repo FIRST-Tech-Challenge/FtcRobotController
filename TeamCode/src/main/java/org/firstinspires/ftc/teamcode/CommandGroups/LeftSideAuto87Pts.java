@@ -28,7 +28,11 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
     public LeftSideAuto87Pts() {
         // start pos (0.25, 1.6, -90) on field
         addCommands (
+                // sets the starting position
                 new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(0.25, 1.6, new Rotation2d(Math.toRadians(-90))))),
+                //makes sure the claw is closed
+                new CloseClaw(),
+                // drives forwards
                 new FollowPath(
                         1.0,
                         1.0,
@@ -38,12 +42,14 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         new ArrayList<Translation2d>() {{ }},
                         new Pose2d(0.25, 1.0, new Rotation2d(Math.toRadians(-90.0))),
                         new Rotation2d(Math.toRadians(-90))),
-
+                //sets arm to specimen place position
                 new SpecimenPlacePos(),
-
+                //sets the slides to low
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
                 new Pause(2),
+
+               // new SpecimenPlacePos(),
 
                 new FollowPath(
                         1.0,
@@ -52,14 +58,14 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 0.85, new Rotation2d(Math.toRadians(-90.0))),
+                        new Pose2d(0.25, 0.805, new Rotation2d(Math.toRadians(-90.0))),
                         new Rotation2d(Math.toRadians(-90))),
 
                 new Pause(2),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
 
-                new Pause(3),
+                new Pause(1),
 
                 new OpenClaw(),
 
@@ -67,11 +73,7 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
-                new Pause(3),
-
-                new CloseClaw(),
-
-                new Pause(1),
+                new Pause(2),
 
                 new FollowPath(
                         1.0,
@@ -84,8 +86,6 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         new Rotation2d(Math.toRadians(-90))),
 
                 new HuntingPos(),
-
-                new OpenClaw(),
 
                 new FollowPath(
                         1.0,
@@ -101,11 +101,11 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                 // claw will close using touch sensor when it touches a sample
                 new DropToGrab(),
 
-                new Pause(2),
+                new Pause(1.5),
 
                 new CloseClaw(),
 
-                new Pause(2),
+                new Pause(1),
 
                 new HuntingPos(),
 
@@ -114,12 +114,10 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
+                        new Rotation2d(Math.toRadians(90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(-90.0))),
+                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90))),
-
-                new Pause(2),
 
                 new ArmStowHigh(),
 
@@ -132,26 +130,57 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.38, 1.38, new Rotation2d(Math.toRadians(-135))),
+                        new Pose2d(1.53, 1.43, new Rotation2d(Math.toRadians(-135))),
                         new Rotation2d(Math.toRadians(-135))),
 
                 new Pause(2),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
-                new Pause(2),
+                new Pause(1),
 
                 new BackDepositePose(),
 
-                new Pause(5),
-                //new OpenClaw(),
+                new Pause(1),
+
+                new OpenClaw(),
+
+                new Pause(1),
 
                 new ArmStowHigh(),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
+                new Pause(1),
+// place and moving to start cycling
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-135)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Rotation2d(Math.toRadians(-90.0))),
+
                 new Pause(2),
-//Finish Later
+
+                new HuntingPos(),
+
+                new Pause(1),
+
+                new DropToGrab(),
+
+                new Pause(1),
+
+                new CloseClaw(),
+
+                new Pause(1),
+
+                new ArmStowHigh(),
+
+                // placing in high bucket
+
                 new FollowPath(
                         1.0,
                         1.0,
@@ -159,8 +188,29 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.38, 1.38, new Rotation2d(Math.toRadians(-135))),
-                        new Rotation2d(Math.toRadians(-135)))
+                        new Pose2d(1.53, 1.43, new Rotation2d(Math.toRadians(-135))),
+                        new Rotation2d(Math.toRadians(-135))),
+
+                new Pause(2),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+
+                new Pause(1),
+
+                new BackDepositePose(),
+
+                new Pause(1),
+
+                new OpenClaw(),
+
+                new Pause(1),
+
+                new ArmStowHigh(),
+
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO))
+
+
+
 
 
         );

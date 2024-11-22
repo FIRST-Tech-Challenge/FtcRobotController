@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowLow;
 import org.firstinspires.ftc.teamcode.CommandGroups.StartingArmStowHigh;
+import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
+import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
@@ -31,6 +33,7 @@ public class BlueTeleop extends CommandOpMode {
 
         // add autonomous command to scheduler and run it
         new StartingArmStowHigh().schedule();
+        new CloseClaw().schedule();
     }
 
     // Run Op Mode. Is called after user presses play button
