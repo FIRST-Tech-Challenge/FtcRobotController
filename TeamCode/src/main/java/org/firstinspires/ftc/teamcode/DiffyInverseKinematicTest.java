@@ -12,8 +12,8 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
 
     private double TouchPadInput = .5;
 
-    private double LeftServo = .5;
-    private double RightServo = .5;
+    public double LeftServo = .5;
+    public double RightServo = .5;
     private double V4Bpos = 1;
     private double Flex = .5;
     private double Yaw = .5;
@@ -54,38 +54,40 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
                 IntakeClawClosed = false;   // Since the intake claw was opened we change this to stay accurate
             }*/
             if (gamepad1.a){    // Intake Position
-                V4Bpos = .5;
+                V4Bpos = .3;
                 Flex = .5;
             }
             else if (gamepad1.x){  //Transfer position
                 V4Bpos = 1;
-                Flex = .75;
+                Flex = .25;
             }
             else if (gamepad1.right_trigger > 0){
                 V4Bpos = 0.5 - 0.5 * gamepad1.right_trigger;
                 Flex = .5;
             }
 
-            if (RightIntakeV4B.getPosition() > .5){
-                Yaw = .5;
+            if (gamepad1.touchpad_finger_1){   // Allows manual yaw control if a finger is on the touchpad
+                Yaw = gamepad1.touchpad_finger_1_x;     // Taking value from touchpad and saving as our desired yaw value
             }
-            else if (gamepad1.touchpad_finger_1){   // The intake is extended past 200 ticks and a finger is on the touchpad
-                Yaw = (gamepad1.touchpad_finger_1_x + 1) / 2;     // This is taking a range from -1 to 1 and converting it to a range of 0 to 1 and saving it to a variable
+            else {
+                Yaw = 0; //Sets yaw to 0 if no finger is detected on the touchpad
             }
 
-            LeftServo = Flex + (1/2)*Yaw;
-            RightServo = Flex - (1/2)*Yaw;
+            LeftServo = Flex - (.5*Yaw); //Calculates required servo angles for combined flex and yaw motion
+            RightServo = Flex + (.5*Yaw);//^
 
-            LeftIntakeWrist.setPosition(LeftServo);
-            RightIntakeWrist.setPosition(RightServo);
+            LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
+            RightIntakeWrist.setPosition(RightServo); //^
 
             LeftIntakeV4B.setPosition(V4Bpos);
             RightIntakeV4B.setPosition(V4Bpos);
 
             telemetry.addData("Touch Pad Yaw Input", Yaw)
                     .addData("Flex Input", Flex)
-                    .addData("Left Wrist Position", LeftIntakeWrist.getPosition())
-                    .addData("Right Wrist Position", RightIntakeWrist.getPosition())
+                    .addData("Left Wrist Target", LeftServo)
+                    .addData("Right Wrist Target", RightServo)
+                    .addData("Left Wrist Actual", LeftIntakeWrist.getPosition())
+                    .addData("Right Wrist Actual", RightIntakeWrist.getPosition())
                     .addData("Claw Closed?", IntakeClawClosed);
             telemetry.update();
         }
