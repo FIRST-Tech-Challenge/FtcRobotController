@@ -22,11 +22,15 @@ import org.firstinspires.ftc.teamcode.CommandGroups.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.CommandGroups.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.LeftSideAuto87Pts;
+import org.firstinspires.ftc.teamcode.CommandGroups.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.SpecimenPlacePos;
+import org.firstinspires.ftc.teamcode.CommandGroups.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Commands.NextSpecimenX;
 import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
@@ -87,13 +91,19 @@ public class RobotContainer {
 
     public static PivotingWrist wristRotateServo;
 
-    /**0° is in*/
+    /**
+     * 0° is in
+     */
     public static FlappyFlappyWrist flappyFlappyWrist;
 
-    /**0° is up*/
+    /**
+     * 0° is up
+     */
     public static ShoulderJoint shoulderJoint;
 
-    /**0° is down*/
+    /**
+     * 0° is down
+     */
     public static ElbowJoint elbowJoint;
 
     public static Claw claw;
@@ -103,6 +113,7 @@ public class RobotContainer {
     //Angle of the robot at the start of auto
     public static double RedStartAngle = 90;
     public static double BlueStartAngle = -90;
+
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
@@ -124,7 +135,9 @@ public class RobotContainer {
         // instead of creating a full command, just to run one line of java code.
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new SweepAlliancePieces());
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
 
@@ -143,7 +156,10 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SpecimenPlacePos());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SpecimenPlacePos());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new PlaceSpecimenAddOffset());
+
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
@@ -151,8 +167,8 @@ public class RobotContainer {
 
         if (isRedAlliance){
             odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
-        } else {//if (!isRedAlliance) {
-            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(BlueStartAngle))));
+        } else {
+            odometry.setCurrentPos(new Pose2d(0.8, 1.6, new Rotation2d(Math.toRadians(BlueStartAngle))));
         }
 
         // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
@@ -165,7 +181,7 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
+
 
 
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
@@ -243,9 +259,11 @@ public class RobotContainer {
         elbowJoint = new ElbowJoint();
         claw = new Claw();
         clawTouch = new ClawTouchSensor();
+
         // insert other subsystems here
         // claw = new Claw();
-
+        NextSpecimenX.initialize();
+        GoToNextDropOff.initializeDestinationDecrement();
     }
 
 
@@ -268,6 +286,7 @@ public class RobotContainer {
             CommandScheduler.getInstance().run();
 
             // report time interval on robot controller
+            RCTelemetry.addData("nextX: ", NextSpecimenX.dispNextX);
             RCTelemetry.addData("interval time(ms)", intervaltime);
             RCTelemetry.addData("execute time(ms)", exectimer.milliseconds());
             RCTelemetry.update();

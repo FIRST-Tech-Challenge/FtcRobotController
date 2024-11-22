@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 
 import java.util.ArrayList;
@@ -22,102 +21,106 @@ import java.util.ArrayList;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class LeftSideAuto87Pts extends SequentialCommandGroup {
+public class GroundCyclingAuto extends SequentialCommandGroup {
 
     // constructor
-    public LeftSideAuto87Pts() {
-        // start pos (0.25, 1.6, -90) on field
-        addCommands (
-                // sets the starting position
-                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(0.25, 1.6, new Rotation2d(Math.toRadians(-90))))),
-                //makes sure the claw is closed
-                new CloseClaw(),
+    public GroundCyclingAuto() {
 
+        addCommands (
+                // pick up middle
                 new FollowPath(
                         1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
+                        new Rotation2d(Math.toRadians(-135)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 1.0, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
-                //Place specimen
-                new PlaceSpecimenAddOffset(),
-                // pickup from submersibule
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
+                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Rotation2d(Math.toRadians(-90.0))),
+
+                new Pause(2),
 
                 new HuntingPos(),
 
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 0.8, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
+                new Pause(1),
 
-                // use camera to orient to specimen
-                // claw will close using touch sensor when it touches a sample
-                // pickup from submersibule
                 new DropToGrab(),
 
-                new Pause(1.5),
+                new Pause(1),
 
                 new CloseClaw(),
 
                 new Pause(1),
 
-                new HuntingPos(),
+                new ArmStowHigh(),
 
+                new BlueSideHighBucketDeposit(),
+
+                //pick up left
                 new FollowPath(
                         1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        new Rotation2d(Math.toRadians(-135)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
+                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Rotation2d(Math.toRadians(-90.0))),
+
+                new Pause(2),
+
+                new HuntingPos(),
+
+                new Pause(1),
+
+                new DropToGrab(),
+
+                new Pause(1),
+
+                new CloseClaw(),
+
+                new Pause(1),
 
                 new ArmStowHigh(),
 
-                new Pause(2),
-                //  place in high bucket
                 new BlueSideHighBucketDeposit(),
 
-                // pickup all three and cycling in high bucket
-                new GroundCyclingAuto()
+                // pick up right
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-135)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Rotation2d(Math.toRadians(-90.0))),
+
+                new Pause(2),
+
+                new HuntingPos(),
+
+                new Pause(1),
+
+                new DropToGrab(),
+
+                new Pause(1),
+
+                new CloseClaw(),
+
+                new Pause(1),
+
+                new ArmStowHigh(),
+
+                new BlueSideHighBucketDeposit()
+
 
 
 
         );
-
-
     }
 
 }
-
-//                Example
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(1.45, 1.45, new Rotation2d(Math.toRadians(45.0))),
-//                        new Rotation2d(Math.toRadians(-135.0))
 
 // Example #1: Lily's 2023 FRC super cube auto
 /*          // enable arm, and lift to stow position
