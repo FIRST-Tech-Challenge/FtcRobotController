@@ -1,18 +1,9 @@
-package org.firstinspires.ftc.teamcode.CommandGroups;
+package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
-import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
-import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
-
-import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -20,39 +11,26 @@ import java.util.ArrayList;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class BlueSideHighBucketDeposit extends SequentialCommandGroup {
+public class BackDepositePose extends SequentialCommandGroup {
 
     // constructor
-    public BlueSideHighBucketDeposit() {
+    public BackDepositePose() {
 
         addCommands (
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.53, 1.43, new Rotation2d(Math.toRadians(-135))),
-                        new Rotation2d(Math.toRadians(-135))),
 
-                new Pause(1),
+                // lifts the shoulder up 45 degrees
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
 
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+                // folds the elbow in 60 degrees
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(195)),
 
-                new Pause(1),
+                // folds the wrist in 135 degrees
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(170)),
 
-                new BackDepositePose(),
+                // folds the wrist in 135 degrees
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
-                new Pause(1),
 
-                new OpenClaw(),
-
-                new Pause(1),
-
-                new ArmStowHigh(),
-
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO))
         );
     }
 

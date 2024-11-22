@@ -1,17 +1,9 @@
-package org.firstinspires.ftc.teamcode.CommandGroups;
+package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
-import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
-
-import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -19,31 +11,31 @@ import java.util.ArrayList;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class HuntingPos extends SequentialCommandGroup {
+public class ArmStowHigh extends SequentialCommandGroup {
 
     // constructor
-    public HuntingPos() {
-        addCommands(
+    public ArmStowHigh() {
+
+        addCommands (
+        // What this position should do is give the camera a good vantage point as well as keep the arm out of the way
 
 
-                // sets the elbow to a straight position at 135 degrees
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(130)),
 
-                // sets elbow to a straight position at 145 degrees,
-                // 145 is becouse gravity and leverage bend the elbow down so the extera 10 degrees stops the drooping
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(145)),
+                // lifts the shoulder up 90+-60 degrees
+                // lifts the shoulder up to 135 degrees
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(135)),
 
-                // sets wrist to a straight position
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+                // folds the elbow in 270
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
-                // powers and sets wrist to a straight position
+                // folds the wrist in 0
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
+
+                // powers the wrist and moves it to straight position
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 
-
         );
-
-
     }
 
 }

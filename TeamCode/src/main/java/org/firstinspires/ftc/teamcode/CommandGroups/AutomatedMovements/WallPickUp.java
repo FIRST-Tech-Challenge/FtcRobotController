@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandGroups;
+package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;

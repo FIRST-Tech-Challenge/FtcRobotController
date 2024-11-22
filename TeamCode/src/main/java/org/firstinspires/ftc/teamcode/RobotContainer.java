@@ -9,30 +9,18 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowLow;
-import org.firstinspires.ftc.teamcode.CommandGroups.BackDepositePose;
-import org.firstinspires.ftc.teamcode.CommandGroups.DepositePos;
-import org.firstinspires.ftc.teamcode.CommandGroups.DropToGrab;
-import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
-import org.firstinspires.ftc.teamcode.CommandGroups.HuntingPos;
-import org.firstinspires.ftc.teamcode.CommandGroups.LeftSideAuto87Pts;
-import org.firstinspires.ftc.teamcode.CommandGroups.PlaceSpecimenAddOffset;
-import org.firstinspires.ftc.teamcode.CommandGroups.SpecimenPlacePos;
-import org.firstinspires.ftc.teamcode.CommandGroups.SweepAlliancePieces;
-import org.firstinspires.ftc.teamcode.CommandGroups.WallPickUp;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-import org.firstinspires.ftc.teamcode.Commands.NextSpecimenX;
-import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
@@ -44,16 +32,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OctQuad;
-import org.firstinspires.ftc.teamcode.Subsystems.OdometryPod;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
-import org.firstinspires.ftc.teamcode.Subsystems.ShoulderPosition;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
-import org.firstinspires.ftc.teamcode.Subsystems.VirtualDriveTrain;
-import org.firstinspires.ftc.teamcode.Subsystems.VirtualOdometry;
-
-import java.util.ArrayList;
 //import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
@@ -263,7 +245,7 @@ public class RobotContainer {
 
         // insert other subsystems here
         // claw = new Claw();
-        NextSpecimenX.initialize();
+
         GoToNextDropOff.initializeDestinationDecrement();
     }
 
@@ -287,7 +269,7 @@ public class RobotContainer {
             CommandScheduler.getInstance().run();
 
             // report time interval on robot controller
-            RCTelemetry.addData("nextX: ", NextSpecimenX.dispNextX);
+
             RCTelemetry.addData("interval time(ms)", intervaltime);
             RCTelemetry.addData("execute time(ms)", exectimer.milliseconds());
             RCTelemetry.update();

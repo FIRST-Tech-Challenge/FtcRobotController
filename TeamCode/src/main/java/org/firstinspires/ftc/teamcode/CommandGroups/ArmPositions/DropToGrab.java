@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandGroups;
+package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -12,30 +12,37 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class ArmStowLow extends SequentialCommandGroup {
+public class DropToGrab extends SequentialCommandGroup {
 
     // constructor
-    public ArmStowLow() {
+    public DropToGrab() {
+        addCommands(
 
-        addCommands (
-        // What position should do is provide a starting pos safley no mater where we start the arm at the begining of a match
 
-                // lifts the shoulder up 60 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
 
-                // folds elbow in 135 degrees
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
+                // drops the elbow to 175 degrees for pick up
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
 
-                // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
+                // moves elbow to 165 degrees so slightly down from hunting pos
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(165)),
 
-                //wait for 2 seconds
-                 new Pause(2),
+                new Pause(1),
 
-                // folds the elbow in 0
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(0))
+                // same as in hunting pos moving wrist 45 degrees
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+
+                // same as in hunting pos going to 135 degrees straight
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
+
+
 
         );
+
+
+        // new command1
+        // new command2
+        // new command3
+
     }
 
 }

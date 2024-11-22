@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
