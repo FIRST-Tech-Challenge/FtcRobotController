@@ -6,6 +6,14 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.arcrobotics.ftclib.command.RunCommand;
+// RR-specific imports
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 
 import org.firstinspires.ftc.teamcode.opmodes.*;
 import org.firstinspires.ftc.teamcode.subsystems.*;
@@ -47,9 +55,9 @@ public class Robot {
 
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
-        Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)));
-        speedVariationTrigger.whileActiveContinuous(() -> driveSubsystem.setSpeedMultiplier(Math.abs(driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - 1) * 0.4 + 0.2));
-        speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
+        Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());//feedback from driver: changed the speed multiplier to left trigger and changed by toggle
+        //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
         resetGyro.whenActive(() -> driveSubsystem.resetGyro());
@@ -58,9 +66,18 @@ public class Robot {
         setFieldCentric.whenActive(() -> driveSubsystem.setFieldCentricOnOff());
     }
 
+    public void configureAutoSetting(){
+        CommandScheduler.getInstance().reset();
+        CommandScheduler.getInstance().cancelAll();
+
+
+    }
+
     public void run() {
         CommandScheduler.getInstance().run();
+        opMode.telemetry.addData("Speed Multiplier",driveSubsystem.speedMultiplier);
         opMode.telemetry.addData("Y axis:", driverGamepad.getLeftY());
+        opMode.telemetry.addData("Is fieldcentric?",driveSubsystem.fieldCentric);
         opMode.telemetry.update();
     }
 
