@@ -50,7 +50,7 @@ public class RightAuto extends LinearOpMode {
         robot.encoderTurn(1, 180);
         robot.setArmPos(1070);
         robot.setExtendPos(12.501);
-        robot.encoderDrive(1,11.0);
+        robot.encoderDrive(1,9.5);
         robot.setArmPos(0);
         robot.setArmPos(250);
         robot.setExtendPos(0.25);

@@ -32,23 +32,21 @@ public class LeftAuto extends LinearOpMode {
         //drives to the samples
         robot.encoderStrafe(1, 33);
         robot.encoderTurn(1,180);
-        robot.encoderDrive(1,-34);
+        robot.encoderDrive(1,-32.5);
         sleep(250);
-        robot.encoderStrafe(1, -17.35);
+        robot.encoderStrafe(1, -15.5);
         sleep(500);
         //sample 1
-        robot.encoderDrive(1, 6.2);
+        robot.encoderDrive(1, 5.5);
         robot.autoIntake(2.0);
         robot.encoderStrafe(1,5.5);
         robot.encoderDrive(1, 29.5);
         robot.setExtendPos(0.25);
         robot.setArmPos(1150);
         robot.encoderTurn(1,53);
-
-        robot.encoderDrive(1,14.5);
-
         robot.setArmPos(1175);
         robot.setExtendPos(10.0);
+        robot.encoderDrive(1,15);
         robot.runIntakeForTime(1.25, -1);
         robot.setArmPos(1024);
         robot.setExtendPos(0.25);
