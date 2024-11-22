@@ -3,17 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commands.DriveWithGamepadCommand;
 import org.firstinspires.ftc.teamcode.commands.ElevatorExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.ElevatorRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.GrabberDropCommand;
@@ -24,7 +21,6 @@ import org.firstinspires.ftc.teamcode.commands.WormLowerCommand;
 import org.firstinspires.ftc.teamcode.commands.WormRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.WristDownCommand;
 import org.firstinspires.ftc.teamcode.commands.WristUpCommand;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Grabber;
@@ -51,9 +47,6 @@ public class Scrimmage_Teleop extends CommandOpMode {
         wrist = new Wrist(hardwareMap, telemetry);
 
         drive = new Drive(hardwareMap, telemetry);
-        drive.setDefaultCommand(
-                new DriveWithGamepadCommand(gamepad1, drive)
-        );
 
         driver = new GamepadEx(gamepad1);
 
