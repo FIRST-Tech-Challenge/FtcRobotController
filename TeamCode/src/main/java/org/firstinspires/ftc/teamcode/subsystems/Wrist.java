@@ -13,9 +13,10 @@ public class Wrist extends SubsystemBase {
     public ServoEx servo;
     private Telemetry tm;
     public boolean Active = false;
-    public int CurrentAngle;
-    public int MinimumAngle = -50;
-    public int MaximumAngle = 50;
+    private int CurrentAngle;
+    private int MinimumAngle = -50;
+    private int MaximumAngle = 50;
+    private int Speed = 1; //default speed is 1
 
 
     public Wrist(HardwareMap hardwareMap, Telemetry telemetry){
@@ -33,20 +34,23 @@ public class Wrist extends SubsystemBase {
         setAngle(40);
     }
 
+    public void SetSpeed(int speed) {
+        Speed = speed;
+    }
     public void Goto(int angle) {
         CurrentAngle = angle;
         setAngle(angle);
     }
     public void AddDegree() {
         if (Active && CurrentAngle < MaximumAngle) {
-            CurrentAngle++;
+            CurrentAngle += Speed;
             setAngle(CurrentAngle);
         }
     }
 
     public void RemoveDegree() {
         if (Active && CurrentAngle > MinimumAngle) {
-            CurrentAngle--;
+            CurrentAngle -= Speed;
             setAngle(CurrentAngle);
         }
     }
