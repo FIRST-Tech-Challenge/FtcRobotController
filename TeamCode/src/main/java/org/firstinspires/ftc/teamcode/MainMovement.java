@@ -222,32 +222,34 @@ public class MainMovement extends LinearOpMode {
 
 
         if(Math.abs(gamepad2.right_stick_y) > joystickDeadzone) {
-            hLinearSlide.setPosition(Math.min(0, Math.max(1, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
+            // moves the horizontal linear slide 
+            hLinearSlide.setPosition(Math.min(0.925, Math.max(0, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
         } else {
+            // keep the movement of the slide as is when not changing its position (to prevent it from swinging back and forth while robot drives)
             hLinearSlide.setPosition(hLinearSlide.getPosition());
         }
 
         //snaps horizontal linear slide to fully extended
         if(gamepad2.dpad_up){
             hLinearSlide.setPosition(0);
-            sleep(100);
+            sleep(100); // wait for teh motion to finish
         }
         //snaps horizontal linear slide to fully retracted
         if(gamepad2.dpad_down){
             hLinearSlide.setPosition(1);
-            sleep(100);
+            sleep(100); // wait for the motion to finish
         }
 
         //open/closes horizontal linear slide claw
         if(gamepad2.b){
             if(hClawOpen){
-                hClawServo.setPosition(1); //Arm swings out
+                hClawServo.setPosition(1); //arm with claw swings out 
                 telemetry.addData("1", hClawServo.getPosition());
-                hClawOpen = !hClawOpen;
+                hClawOpen = !hClawOpen; // toggle claw state to open it 
             } else if(!hClawOpen) {
-                hClawServo.setPosition(0); //Arm swings in
+                hClawServo.setPosition(0); //arm with claw swings in 
                 telemetry.addData("0", hClawServo.getPosition());
-                hClawOpen = !hClawOpen;
+                hClawOpen = !hClawOpen; // toggle claw state to close it
             }
             sleep(200);
         }
@@ -256,7 +258,7 @@ public class MainMovement extends LinearOpMode {
 
 
         if(gamepad2.x){
-            vSlideArmOut = !vSlideArmOut;
+            vSlideArmOut = !vSlideArmOut; // toggle between arm positions
             if(vSlideArmOut){
                 vArmServo.setPosition(1); //Arm swings out
                 telemetry.addData("1", null);
@@ -272,10 +274,10 @@ public class MainMovement extends LinearOpMode {
             vClawOpen = !vClawOpen; // switch claws open state
             if (vClawOpen) {
                 telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
-                vClawServo.setPosition(1); //claw open
+                vClawServo.setPosition(1); //open vertical claw
             } else {
                 telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
-                vClawServo.setPosition(0); //claw closed
+                vClawServo.setPosition(0); //close vertical claw
             }
             sleep(100); //creates cooldown for switching claw positions
 
@@ -283,9 +285,9 @@ public class MainMovement extends LinearOpMode {
 
         //rotate chamber claw left
         if (gamepad2.y) {
-            hArmUp = !hArmUp;
+            hArmUp = !hArmUp; // toggle arm rotation 
 
-            if(hArmUp) {
+            if(hArmUp) { 
                 hClawRotate.setPosition(0);
                 sleep(1000);
                 hArmOpen.setPosition(0.75);
@@ -303,10 +305,11 @@ public class MainMovement extends LinearOpMode {
 
         // moves linear slide
         if (Math.abs(gamepad2.left_stick_y) > joystickDeadzone) {
+            // control vertical linear slide movement og direction 
             linearSlide.setPower(linearSlideSpeed * gamepad2.left_stick_y / -2);
             telemetry.addData("linear slide speed:", linearSlideSpeed * -gamepad2.left_stick_y /2);
         } else {
-            linearSlide.setPower(0);
+            linearSlide.setPower(0); // stop the linear slide from moving when joystick is centered 
         }
 
     }
