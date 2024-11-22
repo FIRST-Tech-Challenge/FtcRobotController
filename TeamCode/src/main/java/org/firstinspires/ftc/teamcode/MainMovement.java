@@ -242,14 +242,13 @@ public class MainMovement extends LinearOpMode {
 
         //open/closes horizontal linear slide claw
         if(gamepad2.b){
+            hClawOpen = !hClawOpen; // toggle claw state to open it
             if(hClawOpen){
                 hClawServo.setPosition(1); //arm with claw swings out 
                 telemetry.addData("1", hClawServo.getPosition());
-                hClawOpen = !hClawOpen; // toggle claw state to open it 
             } else if(!hClawOpen) {
                 hClawServo.setPosition(0); //arm with claw swings in 
                 telemetry.addData("0", hClawServo.getPosition());
-                hClawOpen = !hClawOpen; // toggle claw state to close it
             }
             sleep(200);
         }
@@ -292,13 +291,13 @@ public class MainMovement extends LinearOpMode {
                 sleep(1000);
                 hArmOpen.setPosition(0.75);
                 sleep(1000);
-                telemetry.addData(null,hArmOpen.getPosition());
+                telemetry.addData(null,hClawRotate.getPosition());
 
             } else if(!hArmUp){
                 hArmOpen.setPosition(0.25);
-                telemetry.addData(null,hArmOpen.getPosition());
                 sleep(50);
-                hClawRotate.setPosition(1);
+                hClawRotate.setPosition(0);
+                telemetry.addData(null,hClawRotate.getPosition());
 
             }
         }
