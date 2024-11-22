@@ -136,35 +136,8 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
                 gameLoopEnd(sp);
-                baseRobot.logger.update("Autonomous phase", "VICTORY!!!");
-                if (Settings.Deploy.VICTORY) {
-                    victory();
-                }
+                baseRobot.logger.update("Autonomous phase", "Victory is ours");
                 break;
-        }
-    }
-
-    private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp) {
-        // Helper method to get placing trajectory based on starting position
-        switch (sp) {
-            case RED_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
-            case RED_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
-            case BLUE_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
-            case BLUE_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
-            default:
-                return roadRunner.actionBuilder(initialPose);
         }
     }
 
@@ -183,6 +156,80 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         getNextSpecimen(sp);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
         placeNextSpecimenOnChamber(sp, MainAuto.ChamberHeight.HIGH);
+    }
+
+    public void gameLoopEnd(StartingPosition sp) {
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        parkingTrajectory.build()));
+    }
+
+    public class PlaceChamber implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
+            sleep(500);
+            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            sleep(200);
+            baseRobot.arm.intake.outtake();
+            sleep(50);
+            return false;
+        }
+    }
+
+    public Action placeChamber() {
+        return new PlaceChamber();
+    }
+
+    public class GrabSpecimenFromHumanPlayer implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            sleep(200);
+            baseRobot.arm.intake.intake();
+            sleep(50);
+            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
+            return false;
+        }
+    }
+
+    public Action grabSpecimenFromHP() {
+        return new GrabSpecimenFromHumanPlayer();
+    }
+
+    public void placeNextSpecimenOnChamber(StartingPosition sp, MainAuto.ChamberHeight mode) {
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        placingTrajectory.build(),
+                        placeChamber()));
+    }
+
+    public void getNextSpecimen(StartingPosition sp) {
+        Actions.runBlocking(
+                new SequentialAction(
+                        getHPTrajectory(sp).build(),
+                        grabSpecimenFromHP()));
+    }
+
+    public void immediatelyPlace(StartingPosition sp) {
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        placingTrajectory.build(),
+                        placeChamber(),
+                        parkingTrajectory.build()));
+    }
+
+    public void justPark(StartingPosition sp) {
+        Actions.runBlocking(
+                new SequentialAction(
+                        getParkingTrajectory(sp).build()));
     }
 
     private TrajectoryActionBuilder getParkingTrajectory(StartingPosition sp) {
@@ -227,82 +274,28 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         }
     }
 
-    public void justPark(StartingPosition sp) {
-        Actions.runBlocking(
-                new SequentialAction(
-                        getParkingTrajectory(sp).build()));
-    }
-
-    public class PlaceChamber implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-            sleep(500);
-            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            sleep(200);
-            baseRobot.arm.intake.outtake();
-            sleep(50);
-            return false;
+    private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp) {
+        // Helper method to get placing trajectory based on starting position
+        switch (sp) {
+            case RED_LEFT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
+            case RED_RIGHT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
+            case BLUE_LEFT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
+            case BLUE_RIGHT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
+            default:
+                return roadRunner.actionBuilder(initialPose);
         }
-    }
-
-    public Action placeChamber() {
-        return new PlaceChamber();
-    }
-
-    public class GrabSpecimenFromHumanPlayer implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            sleep(200);
-            baseRobot.arm.intake.intake();
-            sleep(50);
-            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-            return false;
-        }
-    }
-
-    public Action grabSpecimenFromHP() {
-        return new GrabSpecimenFromHumanPlayer();
-    }
-
-    public void immediatelyPlace(StartingPosition sp) {
-        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        placingTrajectory.build(),
-                        placeChamber(),
-                        parkingTrajectory.build()));
-    }
-
-    public void placeNextSpecimenOnChamber(StartingPosition sp, MainAuto.ChamberHeight mode) {
-        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        placingTrajectory.build(),
-                        placeChamber()));
-    }
-
-    public void gameLoopEnd(StartingPosition sp) {
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        parkingTrajectory.build()));
-    }
-
-    public void victory() {
-        return; // ! TODO
-    }
-
-    public void getNextSpecimen(StartingPosition sp) {
-        Actions.runBlocking(
-                new SequentialAction(
-                        getHPTrajectory(sp).build(),
-                        grabSpecimenFromHP()));
     }
 
     // Define an enum for starting positions
