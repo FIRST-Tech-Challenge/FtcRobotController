@@ -28,7 +28,7 @@ public class DepositePos extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(70)),
 
                 // folds the wrist in 10
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 
         );

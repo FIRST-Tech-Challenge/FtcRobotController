@@ -32,27 +32,27 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-0.75, 1.1, new Rotation2d(Math.toRadians(-90.0))),
+                        new Pose2d(-0.85, 1.1, new Rotation2d(Math.toRadians(-90.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
 
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(-90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-0.85, 0.3, new Rotation2d(Math.toRadians(-90.0))),
-//                        new Rotation2d(Math.toRadians(-90.0))
-//                ),
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-0.85, 0.3, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                ),
                 new FollowPath(
                         1.0,
                         1.0,
                         0.0,
                         0.0,
                         new Rotation2d(Math.toRadians(180.0)),
-                        new ArrayList<Translation2d>() {{new Translation2d(-0.75,0.3);}},
+                        new ArrayList<Translation2d>() {{ }},
                         new Pose2d(-1.15, 0.3, new Rotation2d(Math.toRadians(180.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
@@ -117,7 +117,7 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(180.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.58, 0.3, new Rotation2d(Math.toRadians(180.0))),
+                        new Pose2d(-1.59, 0.3, new Rotation2d(Math.toRadians(180.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
                 new FollowPath(
@@ -127,9 +127,11 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.58, 1.35, new Rotation2d(Math.toRadians(90.0))),
+                        new Pose2d(-1.59, 1.35, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 )
+
+
 
 
 

@@ -36,7 +36,7 @@ public class BlueSideHighBucketDeposit extends SequentialCommandGroup {
                         new Pose2d(1.53, 1.43, new Rotation2d(Math.toRadians(-135))),
                         new Rotation2d(Math.toRadians(-135))),
 
-                new Pause(2),
+                new Pause(1),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 

@@ -33,7 +33,7 @@ public class ArmStowHigh extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
                 // powers the wrist and moves it to straight position
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 
         );

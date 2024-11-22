@@ -32,7 +32,7 @@ public class DropToGrab extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
 
                 // same as in hunting pos going to 135 degrees straight
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 
 

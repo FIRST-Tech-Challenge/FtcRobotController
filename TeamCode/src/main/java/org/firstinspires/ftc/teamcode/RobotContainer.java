@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.LeftSideAuto87Pts;
 import org.firstinspires.ftc.teamcode.CommandGroups.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.SpecimenPlacePos;
 import org.firstinspires.ftc.teamcode.CommandGroups.SweepAlliancePieces;
+import org.firstinspires.ftc.teamcode.CommandGroups.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
@@ -149,14 +150,13 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)));
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->wristRotateServo.RotateTo(125)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new BackDepositePose());
 
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new BackDepositePose());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new WallPickUp());
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SpecimenPlacePos());
 
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new PlaceSpecimenAddOffset());
 
@@ -178,6 +178,7 @@ public class RobotContainer {
         // Controls the claw using bumpers
         // left = close
         // right = open
+
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 

@@ -28,7 +28,7 @@ public class BackDepositePose extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(170)),
 
                 // folds the wrist in 135 degrees
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(135))
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 
         );

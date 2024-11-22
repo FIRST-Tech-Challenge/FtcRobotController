@@ -22,6 +22,7 @@ public class CloseClaw extends CommandBase {
     public void initialize() {
 
       RobotContainer.claw.ControlClaw(ClawState.CLOSE);
+
     }
 
     // This method is called periodically while command is active

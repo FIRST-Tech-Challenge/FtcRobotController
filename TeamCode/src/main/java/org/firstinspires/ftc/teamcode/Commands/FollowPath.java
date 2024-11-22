@@ -252,7 +252,7 @@ public class FollowPath extends CommandBase {
 
         // command is finished if no valid path or when time in command exceeds expected time of path
         return ( trajectory==null ||
-                (pathTime.seconds() > (trajectory.getTotalTimeSeconds()+0.25)) );
+                (pathTime.seconds() > (trajectory.getTotalTimeSeconds()+0.10)) );
 
     }
 

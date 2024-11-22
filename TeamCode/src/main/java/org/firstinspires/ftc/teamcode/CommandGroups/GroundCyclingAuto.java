@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 
 import java.util.ArrayList;
@@ -29,57 +30,28 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
         addCommands (
                 // pick up middle
                 new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-135)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
-                        new Rotation2d(Math.toRadians(-90.0))),
-
-                new Pause(2),
-
-                new HuntingPos(),
-
-                new Pause(1),
-
-                new DropToGrab(),
-
-                new Pause(1),
-
-                new CloseClaw(),
-
-                new Pause(1),
-
-                new ArmStowHigh(),
-
-                new BlueSideHighBucketDeposit(),
-
-                //pick up left
-                new FollowPath(
-                        1.0,
+                        2.0,
                         1.0,
                         0.0,
                         0.0,
                         new Rotation2d(Math.toRadians(-135)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Pose2d(1.56, 1.05, new Rotation2d(Math.toRadians(-90))),
                         new Rotation2d(Math.toRadians(-90.0))),
 
-                new Pause(2),
+                new Pause(0.5),
 
                 new HuntingPos(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new DropToGrab(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new CloseClaw(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new ArmStowHigh(),
 
@@ -87,34 +59,67 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 // pick up right
                 new FollowPath(
-                        1.0,
+                        2.0,
                         1.0,
                         0.0,
                         0.0,
                         new Rotation2d(Math.toRadians(-135)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.55, 1.05, new Rotation2d(Math.toRadians(-90))),
+                        new Pose2d(1.31, 1.05, new Rotation2d(Math.toRadians(-90))),
                         new Rotation2d(Math.toRadians(-90.0))),
 
-                new Pause(2),
+                new Pause(0.5),
 
                 new HuntingPos(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new DropToGrab(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new CloseClaw(),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new ArmStowHigh(),
 
                 new BlueSideHighBucketDeposit()
 
+//                //pick up left
+//                new FollowPath(
+//                        1.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        new Rotation2d(Math.toRadians(-135)),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        new Pose2d(1.51, 0.97, new Rotation2d(Math.toRadians(-45))),
+//                        new Rotation2d(Math.toRadians(-45))),
+//
+//                new Pause(2),
+//
+//                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
+//
+//                new HuntingPos(),
+//
+//                new Pause(1),
+//
+//                new DropToGrab(),
+//
+//                new Pause(1),
+//
+//                new CloseClaw(),
+//
+//                new Pause(1),
+//
+//                new ArmStowHigh(),
+//
+//                new BlueSideHighBucketDeposit()
 
+                // x - 1.209
+                // y - 1.3655
+                //
 
 
         );

@@ -34,11 +34,11 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets the slides to low
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
-                new Pause(2),
-
+                new Pause(1),
+                //max speed = 1
                 new GoToNextDropOff(
-                        1.0,
-                        1.0,
+                        2.0,
+                        1.2,
                         0.0,
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
@@ -46,7 +46,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         new Pose2d(0.25, 0.805, new Rotation2d(Math.toRadians(-90.0))),
                         new Rotation2d(Math.toRadians(-90))),
 
-                new Pause(2),
+                new Pause(1),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
 
@@ -54,11 +54,11 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 new OpenClaw(),
 
-                new Pause(1),
+                new Pause(0.25),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
-                new Pause(2)
+                new Pause(1)
         );
 
 
