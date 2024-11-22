@@ -33,22 +33,23 @@ public class ServoAdjustments extends LinearOpMode {
 
             // Control the claw
             if (gamepad1.right_bumper) {
-                claw_position += 0.01;
+                claw_position += 0.001;
             }
             if (gamepad1.left_bumper) {
-                claw_position -= 0.01;
+                claw_position -= 0.001;
             }
             claw.setPosition(claw_position);
 
             // Control the ascent stick
             if (gamepad1.dpad_up) {
-                ascentStick_position += 0.01;
+                ascentStick_position += 0.001;
             }
 
             if (gamepad1.dpad_down) {
-                ascentStick_position -= 0.01;
+                ascentStick_position -= 0.001;
             }
             ascentStick.setPosition(ascentStick_position);
+            printDataOnScreen();
         }
     }
 

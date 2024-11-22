@@ -42,9 +42,10 @@ public class OTOSAutoDrive extends LinearOpMode {
     final int VIPER_MAX = 3100;
 
     // This chunk controls our claw
+    //Callie
     Servo claw = null;
     final double CLAW_MIN = 0.00;           // Claw is closed
-    final double CLAW_MAX = 0.16;           // Claw is open
+    final double CLAW_MAX = 0.21;           // Claw is open
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.2;          // Stick is down
@@ -68,20 +69,20 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(800);
         setViper(VIPER_MAX);                                        // Extending Viper
         sleep(1000);
-        driveToLoc(7, 13, 45, 1.5);  // Go to basket
+        driveToLoc(9, 13, 45, 1.5);               // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop the block
 
         // Second Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(30, 0, 0, 1);
-        setViper(2000);
-        setVertical(70, 1000);
-        sleep(2500);
+        driveToLoc(30, 2, 0, 1);
+        setViper(1900);
+        setVertical(100, 1000);
+        sleep(1500);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(7, 13, 45, 1.5);  // Go to basket
+        driveToLoc(7, 11, 45, 1.5);  // Go to basket
         sleep(700);
         setClaw(CLAW_MAX);                                          // Drop second block
 
@@ -89,13 +90,13 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(30, -1, 0, 1);
         setViper(1100);
         sleep(700);
-        setVertical(10, 1200);
+        setVertical(60, 1500);
         sleep(1700);
         setClaw(CLAW_MIN);                                          // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX);
         setViper(VIPER_MAX);
-        driveToLoc(7, 13, 45, 1.5);  // Go to basket
+        driveToLoc(7, 11, 45, 1.5);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop third block
 
@@ -107,10 +108,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(45, 5, 0);
         RobotLog.vv("Rockin'", "Set to max");
         setAscentStick(ASCENT_MAX);
-        driveToLoc(45, -7, 180);             // Move forward to park
-        sleep(200);
+        driveToLoc(45, -5, 180);
         RobotLog.vv("Rockin'", "End program");
-        ascentStick.close();                                        // Release tension on the ascent stick
         claw.close();                                               // Release tension on the claw
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
