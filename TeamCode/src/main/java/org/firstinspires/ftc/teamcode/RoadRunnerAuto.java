@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -41,6 +42,9 @@ public class RoadRunnerAuto extends LinearOpMode {
 
     private Pose2d initialPose;
 
+    // Add this line to declare the dashboard variable
+    private FtcDashboard dashboard; // Assuming you have a Dashboard class
+
     /**
      * Main autonomous execution flow:
      * 1. Displays configuration menu
@@ -64,6 +68,9 @@ public class RoadRunnerAuto extends LinearOpMode {
 
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger(0);
+
+        // Initialize the dashboard
+        dashboard = FtcDashboard.getInstance(); // Initialize the dashboard object
 
         // Menu loop
         while (!isStarted() && !isStopRequested() && menuActive.get()) {
@@ -144,6 +151,22 @@ public class RoadRunnerAuto extends LinearOpMode {
         } catch (RuntimeException e) {
             // Shutdown handled by ShutdownManager
         }
+
+        // Update the field overlay after starting
+        updateFieldOverlay();
+    }
+
+    // New method to update the field overlay
+    private void updateFieldOverlay() {
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay()
+                .setFill("blue") // Set the color for the robot
+                .setStroke("black") // Set the outline color
+                .fillCircle(initialPose.position.x, initialPose.position.y, 5); // Draw the robot's position
+        // Add more details as needed, like orientation
+        packet.put("Robot Orientation", initialPose.heading);
+        // Send the packet to the dashboard
+        dashboard.sendTelemetryPacket(packet);
     }
 
     public void run(StartingPosition sp) {
