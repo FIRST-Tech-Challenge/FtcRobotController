@@ -51,7 +51,6 @@ public class BadServoFunctions {
             // Send telemetry data to the driver station
             double clawPosition = claw.getPosition();
             telemetry.addData("Claw Position", clawPosition);
-            telemetry.update();
         }
 
     }
