@@ -31,17 +31,18 @@ public class MainAuto {
      */
     public void run(String mode) {
 
-        if (Settings.Deploy.JUST_PARK) {
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PARK) {
             baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
             immediatelyPark(mode);
             return;
         }
 
-        if (Settings.Deploy.JUST_PLACE) {
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PLACE) {
             baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
             immediatelyPlace(mode);
             return;
         }
+
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         placeOnChamber(mode, ChamberHeight.HIGH);
         while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import java.lang.reflect.Field;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.Pose2d;
 
 @Config
 /** @noinspection unused */
@@ -140,23 +141,11 @@ public class Settings {
     public static class Autonomous {
         @Config
         public static class FieldPositions {
-            // Starting positions
-            public static Vector2d RED_RIGHT_START = new Vector2d(36, -60);
-            public static Vector2d RED_LEFT_START = new Vector2d(-36, -60);
-            public static Vector2d BLUE_RIGHT_START = new Vector2d(36, 60);
-            public static Vector2d BLUE_LEFT_START = new Vector2d(-36, 60);
-
-            // Scoring positions
-            public static Vector2d RED_SCORING_POSITION = new Vector2d(24, -36);
-            public static Vector2d BLUE_SCORING_POSITION = new Vector2d(24, 36);
-
-            // Human player positions
-            public static Vector2d RED_HUMAN_PLAYER = new Vector2d(-36, -60);
-            public static Vector2d BLUE_HUMAN_PLAYER = new Vector2d(-36, 60);
-
-            // Parking positions
-            public static Vector2d RED_PARKING = new Vector2d(-60, -60);
-            public static Vector2d BLUE_PARKING = new Vector2d(-60, 60);
+            // poses for initial robot positions
+            public static Pose2d RED_LEFT_POSE = new Pose2d(12, 36, 0);
+            public static Pose2d RED_RIGHT_POSE = new Pose2d(12, 12, Math.PI);
+            public static Pose2d BLUE_LEFT_POSE = new Pose2d(0, 36, Math.PI / 2);
+            public static Pose2d BLUE_RIGHT_POSE = new Pose2d(-36, 60, Math.toRadians(270));
         }
 
         @Config
@@ -311,11 +300,15 @@ public class Settings {
 
         // Development Features
         public static final boolean DEBUG = true;
-        public static final boolean JUST_PARK = true;
-        public static final boolean JUST_PLACE = false;
 
         // Special Features
         public static final boolean VICTORY = false;
+
+        public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PARK;
+
+        public static enum AutonomousMode {
+            JUST_PARK, JUST_PLACE, FULL
+        }
     }
 
     public static String getDisabledFlags() {

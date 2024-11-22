@@ -171,13 +171,13 @@ public class RoadRunnerAuto extends LinearOpMode {
 
     public void run(StartingPosition sp) {
         baseRobot.logger.add("yea man we out here", Logger.LogType.PERMANENT);
-        if (Settings.Deploy.JUST_PARK) {
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PARK) {
             baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
             immediatelyPark(sp);
             return;
         }
 
-        if (Settings.Deploy.JUST_PLACE) {
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PLACE) {
             baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
             immediatelyPlace(sp);
             return;
