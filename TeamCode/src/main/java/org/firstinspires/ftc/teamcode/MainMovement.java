@@ -57,13 +57,14 @@ public class MainMovement extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
-
         vClawServo = hardwareMap.get(Servo.class, "vcs"); //    CH3
         vArmServo = hardwareMap.get(Servo.class, "vas"); //     CH2
         hClawRotate = hardwareMap.get(Servo.class, "hcr"); //   EH4
         hClawServo = hardwareMap.get(Servo.class, "hcs"); //    EH5
         hArmOpen = hardwareMap.get(Servo.class, "hao"); //      EH3
         hLinearSlide = hardwareMap.get(Servo.class, "hls"); //  EH1
+
+        hArmOpen.setDirection(Servo.Direction.REVERSE);
 
 
 
@@ -231,7 +232,7 @@ public class MainMovement extends LinearOpMode {
 
         //snaps horizontal linear slide to fully extended
         if(gamepad2.dpad_up){
-            hLinearSlide.setPosition(0);
+            hLinearSlide.setPosition(1);
             sleep(100); // wait for teh motion to finish
         }
         //snaps horizontal linear slide to fully retracted
@@ -272,13 +273,14 @@ public class MainMovement extends LinearOpMode {
         if (gamepad2.a) {
             vClawOpen = !vClawOpen; // switch claws open state
             if (vClawOpen) {
+                vClawServo.setPosition(0); //open vertical claw
                 telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
-                vClawServo.setPosition(1); //open vertical claw
             } else {
+                vClawServo.setPosition(0.5); //close vertical claw
                 telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
-                vClawServo.setPosition(0); //close vertical claw
+                sleep(250);
             }
-            sleep(100); //creates cooldown for switching claw positions
+            //sleep(100); //creates cooldown for switching claw positions
 
         }
 
@@ -287,7 +289,7 @@ public class MainMovement extends LinearOpMode {
             hArmUp = !hArmUp; // toggle arm rotation 
 
             if(hArmUp) { 
-                hClawRotate.setPosition(0);
+                hClawRotate.setPosition(0.25);
                 sleep(1000);
                 hArmOpen.setPosition(0.75);
                 sleep(1000);
@@ -296,7 +298,7 @@ public class MainMovement extends LinearOpMode {
             } else if(!hArmUp){
                 hArmOpen.setPosition(0.25);
                 sleep(50);
-                hClawRotate.setPosition(0);
+                hClawRotate.setPosition(0.75);
                 telemetry.addData(null,hClawRotate.getPosition());
 
             }
