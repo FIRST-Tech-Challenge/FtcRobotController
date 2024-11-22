@@ -144,33 +144,33 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         }
     }
 
-    public void gameLoopSetup(StartingPosition sp, MainAuto.ChamberHeight chamberHeight) {
-        baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-        TrajectoryActionBuilder placingTrajectory;
+    private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp) {
+        // Helper method to get placing trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                return roadRunner.actionBuilder(initialPose)
                         .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
-                break;
             case RED_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                return roadRunner.actionBuilder(initialPose)
                         .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
-                break;
             case BLUE_LEFT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                return roadRunner.actionBuilder(initialPose)
                         .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
-                break;
             case BLUE_RIGHT:
-                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                return roadRunner.actionBuilder(initialPose)
                         .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
-                break;
             default:
-                placingTrajectory = roadRunner.actionBuilder(initialPose);
+                return roadRunner.actionBuilder(initialPose);
         }
+    }
+
+    public void gameLoopSetup(StartingPosition sp, MainAuto.ChamberHeight chamberHeight) {
+        baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
         Actions.runBlocking(
                 new SequentialAction(
