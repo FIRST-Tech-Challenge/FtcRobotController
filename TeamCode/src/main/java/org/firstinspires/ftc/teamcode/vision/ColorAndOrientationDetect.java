@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.vision;
 
 import android.graphics.Canvas;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
@@ -40,13 +39,6 @@ public class ColorAndOrientationDetect implements VisionProcessor {
     private final Object lock = new Object(); // Synchronization lock for thread-safety
     private final AtomicLong lastUpdatedTime = new AtomicLong(0); // Thread-safe timestamp
 
-    // Telemetry instance
-    private Telemetry telemetry;
-
-    // Constructor to pass Telemetry
-//    public ColorAndOrientationDetect(Telemetry telemetry) {
-//        this.telemetry = telemetry;
-//    }
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -71,8 +63,6 @@ public class ColorAndOrientationDetect implements VisionProcessor {
             processMask(ycrcb, input, lowerRed, upperRed, "Red", new Scalar(0, 0, 255));
             processMask(ycrcb, input, lowerYellow, upperYellow, "Yellow", new Scalar(0, 255, 255));
 
-            // Update telemetry with detection data
-//            updateTelemetry();
 
             // Release resources
             ycrcb.release();
@@ -193,29 +183,6 @@ public class ColorAndOrientationDetect implements VisionProcessor {
             return false;
         }
     }
-
-    // Update telemetry with current detections (refactored to use getDetectedColorAndAng)
-//    private void updateTelemetry() {
-//        // Fetch detected objects using getDetectedColorAndAng (thread-safe)
-//        List<DetectedAngle> detectedObjects = getDetectedColorAndAng();
-//
-//        telemetry.clear(); // Clear old telemetry data
-//        telemetry.addLine("Detected Objects:");
-//
-//        // Iterate over the detected objects and add them to telemetry
-//        for (DetectedAngle detected : detectedObjects) {
-//            telemetry.addData(
-//                    detected.getColorName(),
-//                    "Angle: %.1f, Center: (%.1f, %.1f)",
-//                    detected.getAngle(),
-//                    detected.getCenter().x,
-//                    detected.getCenter().y
-//            );
-//        }
-//
-//        telemetry.update(); // Push telemetry to the driver station
-//    }
-//
 
     // Thread-safe public method to get all detected objects (colors, angles, and centers)
     public List<DetectedAngle> getDetectedColorAndAng() {
