@@ -19,8 +19,11 @@ public class LeftAuto extends LinearOpMode {
         //0=horizontal
         //extend pos is in inches(2 digits)
 
-        //drives forward and plants a C4 on the referee's back
-        robot.encoderDrive(1,19.45);
+        //drive less for sample
+        //turn more drive less
+
+        //drives forward and gets a 5.0 gpa
+        robot.encoderDrive(1,19.43);
         robot.setArmPos(1045);
         robot.setExtendPos(13.948);
         robot.setArmPos(450);
@@ -30,22 +33,23 @@ public class LeftAuto extends LinearOpMode {
         robot.encoderStrafe(1, 33);
         robot.encoderTurn(1,180);
         robot.encoderDrive(1,-34);
-        robot.encoderStrafe(1, -17.25);
+        sleep(250);
+        robot.encoderStrafe(1, -17.35);
+        sleep(500);
         //sample 1
-        robot.encoderDrive(1, 8.25);
-//        robot.encoderStrafe(1,-1.5);
-        robot.autoIntake(2.25);
+        robot.encoderDrive(1, 6.2);
+        robot.autoIntake(2.0);
         robot.encoderStrafe(1,5.5);
-        robot.encoderDrive(1, 27.5);
+        robot.encoderDrive(1, 29.5);
         robot.setExtendPos(0.25);
         robot.setArmPos(1150);
-        robot.encoderTurn(1,45);
+        robot.encoderTurn(1,53);
 
-        robot.encoderDrive(1,10.5);
+        robot.encoderDrive(1,14.5);
 
-        robot.setArmPos(1100);
-        robot.setExtendPos(-1550);
-        robot.runIntakeForTime(2.25, -1);
+        robot.setArmPos(1175);
+        robot.setExtendPos(10.0);
+        robot.runIntakeForTime(1.25, -1);
         robot.setArmPos(1024);
         robot.setExtendPos(0.25);
         robot.setArmPos(25);
