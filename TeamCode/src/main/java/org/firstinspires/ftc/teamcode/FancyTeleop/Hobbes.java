@@ -2,13 +2,18 @@ package org.firstinspires.ftc.teamcode.FancyTeleop;
 
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_TRANSFER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_IN;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_OFFSET;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INFINITY;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_ABOVE_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_KP;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_MAX;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_MIN;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_SIGMOID_SCALER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_WRIST_TRANSFER;
 import static java.lang.Math.E;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
@@ -104,28 +109,6 @@ public class Hobbes extends Meccanum implements Robot {
 
         runtime.reset();
     }
-    public void motorDriveXYVectors(double xvec, double yvec, double spinvec){
-        // this class drives the robot in the direction of vectors from a joystick and a spin value
-        // used for teleop mode driving wheels with joysticks
-
-
-        double y = pow(yvec,1); // Remember, this is reversed!
-        double x = pow(xvec * 1.1,1); // Counteract imperfect strafing
-        double rx = pow(spinvec,1);
-
-
-        //denominator is the largest motor power (absolute value) or 1
-        //this ensures all the powers maintain the same ratio, but only when
-        //at least one is out of the range [-1, 1]
-        double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
-
-        motorDrive(frontLeftPower,backLeftPower, frontRightPower, backRightPower);
-
-    }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         motorBackLeft.setZeroPowerBehavior(zeroPowerBehavior);
@@ -218,15 +201,24 @@ public class Hobbes extends Meccanum implements Robot {
     public void resetSlides() {
         slidesController.resetSlideBasePos();
     }
-
+    public boolean HARD_TICK = true;
+    public void hardTick() {
+        claw.setPosition(CLAW_OPEN);
+        extendoLeft.setPosition(EXTENDO_IN);
+        extendoRight.setPosition(servosController.extendoLeftToRight(EXTENDO_IN));
+        extendoArm.setPosition(EXTENDO_ARM_TRANSFER);
+        extendoWrist.setPosition(EXTENDO_WRIST_TRANSFER);
+        slidesArm.setPosition(SLIDES_ARM_ABOVE_TRANSFER);
+        slidesWrist.setPosition(SLIDES_WRIST_TRANSFER);
+    }
     public class ServosThread {
-        public volatile double extendoPos = 0;
-        public volatile double intakeSpeed = 0;
-        public volatile double slidesArmPos = 0;
-        public volatile double slidesWristPos = 0;
-        public volatile double extendoArmPos = 0;
-        public volatile double extendoWristPos = 0;
-        public volatile double clawPos = 0;
+        public double extendoPos = 0;
+        public double intakeSpeed = 0;
+        public double slidesArmPos = 0;
+        public double slidesWristPos = 0;
+        public double extendoArmPos = 0;
+        public double extendoWristPos = 0;
+        public double clawPos = 0;
 
         public void servosTick() {
             tele.addData("extendoPos", extendoPos);
@@ -238,26 +230,27 @@ public class Hobbes extends Meccanum implements Robot {
             tele.addData("slidesWristPos", slidesWristPos);
             // use for failsafe eventually (have positions in queue and check that each works before setting)
             // check if these get position checks are redundant. (Will a servo try and set position if its already running to position or does it not matter?)
-            if (slidesArm.getPosition() != slidesArmPos) slidesArm.setPosition(slidesArmPos);
-            if (slidesWrist.getPosition() != slidesWristPos) slidesWrist.setPosition(slidesWristPos);
+            if (slidesArm.getPosition() != slidesArmPos || HARD_TICK) slidesArm.setPosition(slidesArmPos);
+            if (slidesWrist.getPosition() != slidesWristPos || HARD_TICK) slidesWrist.setPosition(slidesWristPos);
 
 
-            //if (extendoArm.getPosition() != extendoArmPos) extendoArm.setPosition(extendoArmPos);
-            //if (extendoWrist.getPosition() != extendoWristPos) extendoWrist.setPosition(extendoWristPos);
-            extendoArm.setPosition(extendoArmPos);
-            extendoWrist.setPosition(extendoWristPos);
+            if (extendoArm.getPosition() != extendoArmPos || HARD_TICK) extendoArm.setPosition(extendoArmPos);
+            if (extendoWrist.getPosition() != extendoWristPos || HARD_TICK) extendoWrist.setPosition(extendoWristPos);
+            //extendoArm.setPosition(extendoArmPos);
+            //extendoWrist.setPosition(extendoWristPos);
 
-            if (claw.getPosition() != clawPos) claw.setPosition(clawPos);
+            if (claw.getPosition() != clawPos || HARD_TICK) claw.setPosition(clawPos);
 
-            if (extendoLeft.getPosition() != extendoPos) {
+            if (extendoLeft.getPosition() != extendoPos || HARD_TICK) {
                 extendoLeft.setPosition(extendoPos);
                 extendoRight.setPosition(extendoLeftToRight(extendoPos));
             }
 
-            if (intakeLeft.getPower() != intakeSpeed) {
+            if (intakeLeft.getPower() != intakeSpeed || HARD_TICK) {
                 intakeLeft.setPower(intakeSpeed);
                 intakeRight.setPower(-intakeSpeed);
             }
+            //HARD_TICK = false;
 
 
         }
@@ -279,8 +272,8 @@ public class Hobbes extends Meccanum implements Robot {
             extendoWristPos = wristPosition;
         }
         public void incrementArmWrist(double incrementArm, double incrementWrist) {
-            extendoArmPos += incrementArm;
-            extendoWristPos += incrementWrist;
+            if ((extendoArmPos + incrementArm) > 0 && (extendoArmPos + incrementArm) < 1) extendoArmPos += incrementArm;
+            if ((extendoWristPos + incrementWrist) > 0 && (extendoWristPos + incrementWrist) < 1) extendoWristPos += incrementWrist;
         }
         public void setExtendo(double position) { // extendo positions based on left value
             extendoPos = position;

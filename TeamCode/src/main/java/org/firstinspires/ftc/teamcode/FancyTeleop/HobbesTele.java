@@ -3,15 +3,22 @@ package org.firstinspires.ftc.teamcode.FancyTeleop;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_INTAKE;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_INTAKE_ANGLED;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_SPEED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_TRANSFER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_ARM_UP;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_IN;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_OUT_FULL;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_OUT_SOME;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_SPEED;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_INTAKE_ANGLED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_INTAKE_FLAT;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_SPEED;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_TRANSFER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_UP;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_OFF;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_REVERSE;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_ABOVE_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_DEPOSIT;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_SPECIMEN;
@@ -44,14 +51,17 @@ public class HobbesTele extends OpMode {
 
     @Override
     public void init() {
-        macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, new LinkedState("EXTENDO_BEFORE_PICKUP2",2000)));
-        macros.put("EXTENDO_BEFORE_PICKUP2", new HobbesState(EXTENDO_OUT_SOME, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, INTAKE_POWER, null, null, null));
+        macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, null));
+        macros.put("EXTENDO_ARM_WRIST_FLAT", new HobbesState(null, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, null, null, null, null));
+        macros.put("EXTENDO_ARM_WRIST_UP", new HobbesState(null, EXTENDO_ARM_UP, EXTENDO_WRIST_UP, null, null, INTAKE_OFF, null, null, null));
+        macros.put("EXTENDO_ARM_WRIST_ANGLED", new HobbesState(null, EXTENDO_ARM_INTAKE_ANGLED, EXTENDO_WRIST_INTAKE_ANGLED, null, null, null, null, null, null));
 
         macros.put("FULL_IN" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
 
 
-        macros.put("FULL_TRANSFER" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 3000)));
-        macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 1000)));
+        macros.put("FULL_TRANSFER" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_UP, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_WRIST_UP", 600)));
+        macros.put("TRANSFER_WRIST_UP" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 200)));
+        macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 250)));
         macros.put("TRANSFER_CLOSED", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_CLOSED, SLIDES_IN, null));
 
         macros.put("SLIDES_DOWN", new HobbesState(null, null, null, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, null, CLAW_OPEN, SLIDES_IN, null));
@@ -78,30 +88,56 @@ public class HobbesTele extends OpMode {
     @Override
     public void start() {
        hob.runMacro("FULL_IN");
+       hob.hardTick();
     }
 
     @Override
     public void loop() {
         // movement
-        hob.motorDriveXYVectors(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-        if (gamepad2.left_stick_y != 0) {
-            hob.slidesController.driveSlides(gamepad2.left_stick_y);
+        if (gamepad2.start || gamepad1.start) return;
+        if (!gamepad1.right_bumper && !gamepad1.left_bumper) hob.motorDriveXYVectors(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        else hob.motorDriveXYVectors(0.3 * -gamepad1.left_stick_x, 0.3 * -gamepad1.left_stick_y, 0.3 * gamepad1.right_stick_x);
+
+        if (gamepad1.a) hob.servosController.intake(INTAKE_POWER);
+        else if (gamepad1.b) hob.servosController.intake(INTAKE_REVERSE);
+        else if (gamepad1.right_trigger > 0) hob.servosController.intake(INTAKE_POWER * gamepad1.right_trigger);
+        else if (gamepad1.left_trigger > 0) hob.servosController.intake(INTAKE_REVERSE *gamepad1.left_trigger);
+        else hob.servosController.intake(INTAKE_OFF);
+
+        if (gamepad2.right_stick_y != 0) {
+            hob.slidesController.driveSlides(-gamepad2.right_stick_y);
         }
-        hob.servosController.incrementExtendo(gamepad2.right_stick_y * EXTENDO_SPEED);
+        hob.servosController.incrementExtendo(-gamepad2.left_stick_y * EXTENDO_SPEED);
 
         // before pickup macro
-
-
         if (gamepad2.left_stick_button || gamepad2.right_stick_button) {
             hob.cancelMacros();
         }
 
         if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("EXTENDO_BEFORE_PICKUP");
+            hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
+        }
+        if (gamepad2.a && !lastGamepad2.a) {
+            hob.runMacro("EXTENDO_ARM_WRIST_UP");
+        }
+        if (gamepad2.x && !lastGamepad2.x) {
+            hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
+        }
+        if (gamepad2.left_trigger > 0) {
+            hob.servosController.incrementArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
+        }
+        if (gamepad2.right_trigger > 0) {
+            hob.servosController.incrementArmWrist(gamepad2.right_trigger * -EXTENDO_ARM_SPEED, 0);
         }
 
+        if (gamepad2.right_bumper) {
+            hob.servosController.incrementArmWrist(0, EXTENDO_WRIST_SPEED);
+        }
+        if (gamepad2.left_bumper) {
+            hob.servosController.incrementArmWrist(0, -EXTENDO_WRIST_SPEED);
+        }
         // full transfer macro
-        if (gamepad2.right_bumper && !lastGamepad2.right_bumper) {
+        if (gamepad2.y && !lastGamepad2.y) {
             hob.runMacro("FULL_TRANSFER");
         }
 
@@ -110,7 +146,7 @@ public class HobbesTele extends OpMode {
             hob.runMacro("SLIDES_DEPOSIT");
         }
 
-        if (gamepad2.left_bumper && !lastGamepad2.left_bumper) {
+        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) {
             hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
         }
 
