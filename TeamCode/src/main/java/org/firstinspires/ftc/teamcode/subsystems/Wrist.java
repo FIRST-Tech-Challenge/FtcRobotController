@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Wrist extends SubsystemBase {
 
-    private ServoEx servo;
+    public ServoEx servo;
     private Telemetry tm;
 
 
@@ -18,7 +18,7 @@ public class Wrist extends SubsystemBase {
         //TODO: fix this name from config
         servo = new SimpleServo(hardwareMap, "wrist", -100, 100);
         servo.setInverted(false);
-        //setAngle(0);
+        setAngle(0);
     }
 
     public void addFifteen() {

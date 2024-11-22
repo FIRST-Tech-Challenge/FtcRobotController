@@ -94,6 +94,14 @@ public class Worm extends SubsystemBase {
         motor.setPower(0);
     }
 
+    public void setPower(double whatPower) {
+        if (whatPower > 0) {
+            raise(whatPower);
+        } else {
+            lower(whatPower);
+        }
+    }
+
     public double getDistance(){
         return motor.getCurrentPosition();
     }
