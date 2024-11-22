@@ -24,6 +24,7 @@ Color_Sensor I2C 1
  */
 
 public class RobotHardware {
+    //Drive chassis motor
     public DcMotorEx frontLeftMotor;
     public DcMotorEx backLeftMotor;
     public DcMotorEx frontRightMotor;
@@ -32,11 +33,14 @@ public class RobotHardware {
     public DcMotorEx liftMotorLeft;// Vertical Slide Motor
     public DcMotorEx liftMotorRight;// Vertical Slide Motor
 
+    //Intake servos
     public Servo intakeSlideServo;
     public Servo intakeLeftArmServo;
     public Servo intakeRightArmServo;
     public Servo intakeRotationServo;
     public Servo intakeClawServo;
+
+    //Deposit servos
     public Servo depositLeftArmServo;
     public Servo depositRightArmServo;
     public Servo depositWristServo;
@@ -82,7 +86,7 @@ public class RobotHardware {
         intakeRightArmServo.setDirection(Servo.Direction.REVERSE);
         depositRightArmServo.setDirection(Servo.Direction.REVERSE);
 
-        //set to RUN_TO_POSITION for vertical slide motor
+        //set slide motors to RUN_TO_POSITION for vertical slide motor
         liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
