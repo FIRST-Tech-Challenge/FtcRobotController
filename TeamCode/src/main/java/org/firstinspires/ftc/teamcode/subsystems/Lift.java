@@ -6,12 +6,14 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift{
     public int Lift_SPEED = 20;
 
-    private DcMotor lift;
+    private DcMotor leftLift;
+    private DcMotor rightLift;
     private Encoder encoder;
 
 //    public Lift(HardwareMap hw){
@@ -24,24 +26,36 @@ public class Lift{
      * @param nameLift [String] Name of the lift motor assigned in the configuration.
      * @param nameEncoder [String] Name of the encoder assigned in the configuration.
      */
-    public Lift(HardwareMap hw, String nameLift, String nameEncoder){
-        lift = hw.get(DcMotor.class, nameLift);
-        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, "lift")));
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setPower(0);
+    public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String nameEncoder){
+        leftLift = hw.get(DcMotor.class, leftLiftName);
+        rightLift = hw.get(DcMotor.class, rightLiftName);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+//        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
+//
+//        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftLift.setPower(0);
+//
+//        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightLift.setPower(0);
 //        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        lift.setPower(1);
     }
     public void moveLift(double power){
-        lift.setPower(power);
+        leftLift.setPower(power);
+        rightLift.setPower(power);
     }
     public double getPosition(){
         return encoder.getPositionAndVelocity().position;
     }
     public void setPosition(int targetPosition){
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setTargetPosition(targetPosition);
-        lift.setPower(1.0);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setTargetPosition(targetPosition);
+        leftLift.setPower(1.0);
+
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setTargetPosition(targetPosition);
+        rightLift.setPower(1.0);
     }
 }

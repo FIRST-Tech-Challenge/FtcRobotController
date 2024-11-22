@@ -5,17 +5,29 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Arm {
-    private Servo servo;
-    public Arm(HardwareMap hw){
+    private Servo armLeft;
+    private Servo armRight;
+    public Arm(HardwareMap hw, String armLeftName, String armRightName){
 
-        servo = hw.get(Servo.class, "arm");
+        armLeft = hw.get(Servo.class, armLeftName);
+        armRight = hw.get(Servo.class, armRightName);
+        armRight.setDirection(Servo.Direction.FORWARD);
+        armLeft.setDirection(Servo.Direction.REVERSE);
+
     }
     public void setPosition(double armPower){
-        servo.setPosition(armPower);
+        double offset = 0.6;
+        armLeft.setPosition(armPower + offset);
+        armRight.setPosition(armPower + offset);
 
     }
-    public double getPosition(){
-        return servo.getPosition();
+    public double getLeftPosition(){
+        return armLeft.getPosition();
+    }
+
+    public double getRightPosition()
+    {
+        return armRight.getPosition();
     }
 
 

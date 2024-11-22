@@ -11,7 +11,7 @@ public class ArmTester extends LinearOpMode {
     private GamepadEvents controller;
     private double armPos;
     boolean reverseArm;
-    private double[] armPositions = {0, 0.1, 0.3, 0.5};
+    private double[] armPositions = {0, 0.3, 0.5};
 //    private double[] armPositions = {.25, -.25, 0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
@@ -19,7 +19,7 @@ public class ArmTester extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        arm = new Arm(hardwareMap);
+        arm = new Arm(hardwareMap, "armRight", "armLeft");
         controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status", "Initialized");
 
@@ -27,7 +27,7 @@ public class ArmTester extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addLine("OpMode Active");
 
-
+//            arm.setPosition(Math.pow(controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue(), 3));
 
 
 
@@ -68,7 +68,8 @@ public class ArmTester extends LinearOpMode {
                 }
 
             }
-                telemetry.addData("Arm Position", armPos);
+                telemetry.addData("Left Arm Position", arm.getLeftPosition());
+                telemetry.addData("Right Arm Position", arm.getRightPosition());
                 telemetry.update();
                 controller.update();
             }
