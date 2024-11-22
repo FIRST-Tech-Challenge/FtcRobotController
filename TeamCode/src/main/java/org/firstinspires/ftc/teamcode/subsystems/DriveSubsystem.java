@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.lang.Math;
 
 import org.firstinspires.ftc.teamcode.*;
-import org.firstinspires.ftc.utils.GamepadUtils;
+import org.firstinspires.ftc.teamcode.utils.GamepadUtils;
 
 //TODO: Modify drive functions to make use of new odometry logic rather than IMU (check if it is actually more accurate first)
 
