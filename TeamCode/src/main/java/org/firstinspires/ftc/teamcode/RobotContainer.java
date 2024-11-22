@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
@@ -200,7 +201,7 @@ public class RobotContainer {
 
     // call this function periodically to operate scheduler
     public static void Periodic() {
-
+        new ConvertAngleForWristRotate().schedule();
         // actual interval time
         double intervaltime = timer.milliseconds();
 
