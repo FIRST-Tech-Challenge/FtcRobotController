@@ -14,7 +14,7 @@ public class MainAuto {
 
     /**
      * Creates a new autonomous controller instance
-     * 
+     *
      * @param base  Base robot instance to control
      * @param color Selected alliance color
      */
@@ -26,17 +26,22 @@ public class MainAuto {
 
     /**
      * Executes the main autonomous routine
-     * 
+     *
      * @param mode Selected autonomous mode (e.g., "red left", "blue right")
      */
     public void run(String mode) {
 
-        if (Settings.Deploy.SKIP_AUTONOMOUS) {
-            baseRobot.logger.update("Autonomous phase", "Skipping due to deploy flag");
+        if (Settings.Deploy.JUST_PARK) {
+            baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
             immediatelyPark(mode);
             return;
         }
 
+        if (Settings.Deploy.JUST_PLACE) {
+            baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
+            immediatelyPlace(mode);
+            return;
+        }
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         placeOnChamber(mode, ChamberHeight.HIGH);
         while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
@@ -87,7 +92,7 @@ public class MainAuto {
 
     /**
      * Places specimen on the scoring chamber
-     * 
+     *
      * @param mode          Current autonomous mode
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
@@ -112,7 +117,7 @@ public class MainAuto {
 
     /**
      * Places a specimen on the chamber during cycling sequence
-     * 
+     *
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeNextSpecimenOnChamber(ChamberHeight chamberHeight) {
@@ -125,7 +130,7 @@ public class MainAuto {
 
     /**
      * Executes the specimen placement sequence
-     * 
+     *
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     private void placeSpecimen(ChamberHeight chamberHeight) {
@@ -147,7 +152,7 @@ public class MainAuto {
 
     /**
      * Moves robot to parking position based on selected mode
-     * 
+     *
      * @param mode Current autonomous mode
      */
     public void park(String mode) {
@@ -157,7 +162,7 @@ public class MainAuto {
 
     /**
      * Emergency parking routine - moves directly to parking position
-     * 
+     *
      * @param mode Current autonomous mode
      */
     public void immediatelyPark(String mode) {
@@ -180,6 +185,23 @@ public class MainAuto {
     }
 
     /**
+     * Moves directly to parking position after placing
+     *
+     * @param mode Current autonomous mode
+     */
+    public void immediatelyPlace(String mode) {
+        // TODO Go to place center, place, then park
+        switch (mode.toLowerCase()) {
+            case "red right":
+            case "blue right":
+                return;
+            case "red left":
+            case "blue left":
+                return;
+        }
+    }
+
+    /**
      * Executes victory celebration sequence if enabled
      * Performs a series of movements and claw operations
      */
@@ -196,7 +218,7 @@ public class MainAuto {
 
     /**
      * Utility method to pause execution
-     * 
+     *
      * @param ms Milliseconds to pause
      */
     private void pause(long ms) {

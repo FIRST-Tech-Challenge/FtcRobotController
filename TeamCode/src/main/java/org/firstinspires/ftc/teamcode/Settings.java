@@ -311,8 +311,8 @@ public class Settings {
 
         // Development Features
         public static final boolean DEBUG = true;
-        public static final boolean SKIP_AUTONOMOUS = false;
-        public static final boolean USE_ROADRUNNER = true;
+        public static final boolean JUST_PARK = true;
+        public static final boolean JUST_PLACE = false;
 
         // Special Features
         public static final boolean VICTORY = false;

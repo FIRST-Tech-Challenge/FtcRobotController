@@ -56,21 +56,20 @@ import java.util.List;
 public final class MecanumDrive {
     public static class Params {
         // IMU orientation
-        // ! tuned 11/16, see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        // ! tuned 11/21, see
+        // https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
-        // ! all below tuned 11/16
-        public double inPerTick = 0.0225428314;
-        public double lateralInPerTick = 0.0231053604;
-        public double trackWidthTicks = 16 / lateralInPerTick;
+        // ! all below tuned 11/21
+        public double inPerTick = 0.0225509652;
+        public double lateralInPerTick = 0.0233213306;
+        public double trackWidthTicks = 1337.159661277221;
 
         // feedforward parameters (in tick units)
-        public double kS = 2.7698108213692985;
-        public double kV = 0.0039987941893507165;
-        public double kA = 0.000001;
+        public double kS = 0.8007259952059025;
+        public double kV = 0.004238392941167217;
+        public double kA = 0.0000000001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -82,9 +81,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.8;
-        public double lateralGain = 1;
-        public double headingGain = 0.5; // shared with turn
+        public double axialGain = 0.0;
+        public double lateralGain = 0.0;
+        public double headingGain = 0.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -98,13 +97,11 @@ public final class MecanumDrive {
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
             PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
-    public final VelConstraint defaultVelConstraint =
-            new MinVelConstraint(Arrays.asList(
-                    kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
-                    new AngularVelConstraint(PARAMS.maxAngVel)
-            ));
-    public final AccelConstraint defaultAccelConstraint =
-            new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+    public final VelConstraint defaultVelConstraint = new MinVelConstraint(Arrays.asList(
+            kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
+            new AngularVelConstraint(PARAMS.maxAngVel)));
+    public final AccelConstraint defaultAccelConstraint = new ProfileAccelConstraint(PARAMS.minProfileAccel,
+            PARAMS.maxProfileAccel);
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
 
@@ -169,29 +166,27 @@ public final class MecanumDrive {
 
                 return new Twist2dDual<>(
                         Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
-                        DualNum.constant(0.0, 2)
-                );
+                        DualNum.constant(0.0, 2));
             }
 
             double headingDelta = heading.minus(lastHeading);
             Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<Time>(new double[]{
+                    new DualNum<Time>(new double[] {
                             (leftFrontPosVel.position - lastLeftFrontPos),
                             leftFrontPosVel.velocity,
                     }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
+                    new DualNum<Time>(new double[] {
                             (leftBackPosVel.position - lastLeftBackPos),
                             leftBackPosVel.velocity,
                     }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
+                    new DualNum<Time>(new double[] {
                             (rightBackPosVel.position - lastRightBackPos),
                             rightBackPosVel.velocity,
                     }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
+                    new DualNum<Time>(new double[] {
                             (rightFrontPosVel.position - lastRightFrontPos),
                             rightFrontPosVel.velocity,
-                    }).times(PARAMS.inPerTick)
-            ));
+                    }).times(PARAMS.inPerTick)));
 
             lastLeftFrontPos = leftFrontPosVel.position;
             lastLeftBackPos = leftBackPosVel.position;
@@ -202,8 +197,7 @@ public final class MecanumDrive {
 
             return new Twist2dDual<>(
                     twist.line,
-                    DualNum.cons(headingDelta, twist.angle.drop(1))
-            );
+                    DualNum.cons(headingDelta, twist.angle.drop(1)));
         }
     }
 
@@ -216,11 +210,12 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // auto-tuned 11/16 per settings; see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        // auto-tuned 11/16 per settings; see
+        // https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         leftFront = hardwareMap.get(DcMotorEx.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
-        leftBack = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.REAR_LEFT_MOTOR);
-        rightBack = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.REAR_RIGHT_MOTOR);
-        rightFront = hardwareMap.get(DcMotorEx.class,  Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
+        leftBack = hardwareMap.get(DcMotorEx.class, Settings.Hardware.IDs.REAR_LEFT_MOTOR);
+        rightBack = hardwareMap.get(DcMotorEx.class, Settings.Hardware.IDs.REAR_RIGHT_MOTOR);
+        rightFront = hardwareMap.get(DcMotorEx.class, Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -232,7 +227,8 @@ public final class MecanumDrive {
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        // see
+        // https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
@@ -305,8 +301,7 @@ public final class MecanumDrive {
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
-                    PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
-            )
+                    PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain)
                     .compute(txWorldTarget, pose, robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
@@ -320,8 +315,7 @@ public final class MecanumDrive {
             double rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             double rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
             mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
+                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower));
 
             leftFront.setPower(leftFrontPower);
             leftBack.setPower(leftBackPower);
@@ -397,8 +391,7 @@ public final class MecanumDrive {
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
-                    PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
-            )
+                    PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain)
                     .compute(txWorldTarget, pose, robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
@@ -411,8 +404,7 @@ public final class MecanumDrive {
             double rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             double rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
             mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
+                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower));
 
             leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
             leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
@@ -479,12 +471,9 @@ public final class MecanumDrive {
                 new TrajectoryBuilderParams(
                         1e-6,
                         new ProfileParams(
-                                0.25, 0.1, 1e-2
-                        )
-                ),
+                                0.25, 0.1, 1e-2)),
                 beginPose, 0.0,
                 defaultTurnConstraints,
-                defaultVelConstraint, defaultAccelConstraint
-        );
+                defaultVelConstraint, defaultAccelConstraint);
     }
 }
