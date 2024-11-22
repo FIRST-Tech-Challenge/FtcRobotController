@@ -11,10 +11,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Elevator extends SubsystemBase {
-
     private Telemetry telemetry;
     private DcMotorEx motor;
-    //private DcMotorEx pivot;
     private TouchSensor bottomLimit;
     private boolean extending;
     private boolean isHomed;
@@ -22,35 +20,29 @@ public class Elevator extends SubsystemBase {
     private boolean retracting;
     private int retractingPosition;
 
-    private static final double DEGREE_TO_TICK_MULTIPLIER = 537.6 / 360;
+    private double wormAngle;
+
 
     public Elevator(HardwareMap hm, Telemetry tm){
+        wormAngle = 0; //the value of the worm angle so we can calculate max distance
         motor = hm.get(DcMotorEx.class, "Extend");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        pivot = hm.get(DcMotorEx.class, "Tilt");
-//        pivot.setDirection(DcMotorSimple.Direction.REVERSE);
-//        pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomLimit = hm.get(TouchSensor.class, "Touch");
         telemetry = tm;
+    }
 
-//        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motor.setPower(0.1);
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {}
-//        retract();
+    public void SetWormAngle(double angle) {
+        wormAngle = angle;
     }
 
     public void extend(){
         extend(0.5);
     }
 
+
     public void extend(double whatPower) {
         telemetry.addData("ElevatorState", "extend");
-
-        extending = true;
-
 //        if (isExtended()){
 //            brake();
 //        } else {
@@ -97,7 +89,6 @@ public class Elevator extends SubsystemBase {
 
     public void brake(){
         telemetry.addData("ElevatorState", "stop");
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setPower(0);
     }
 
@@ -109,7 +100,12 @@ public class Elevator extends SubsystemBase {
         return bottomLimit.isPressed();
     }
 
+    //this method returns true if we are maxed out on distance
     public boolean isExtended(){
+        //TODO: calculate maximum distance based on angle
+
+
+
         return getDistance() >= 3300 || getDistance() == extendingPosition;
     }
 

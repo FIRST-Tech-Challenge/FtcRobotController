@@ -42,7 +42,6 @@ public class Scrimmage_Teleop extends CommandOpMode {
         worm = new Worm(hardwareMap, telemetry);
         grabber = new Grabber(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
-        drive = new Drive(hardwareMap, telemetry);
 
         drive = new Drive(hardwareMap, telemetry);
         drive.setDefaultCommand(
@@ -66,9 +65,10 @@ public class Scrimmage_Teleop extends CommandOpMode {
         telemetry.update();
     }
 
-//    @Override
-//    public void run() {
-//        super.run();
-//        drive.arcadeDrive(driver.getLeftY(), driver.getRightX(), driver.getLeftX(), true);
-//    }
+    @Override
+    public void run() {
+        super.run();
+        telemetry.update();
+        elevator.SetWormAngle(worm.getAngle()); //set this continually so elevator can know how far it can go
+    }
 }
