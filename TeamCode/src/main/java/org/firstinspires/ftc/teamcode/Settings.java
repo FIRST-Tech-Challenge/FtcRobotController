@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 import java.lang.reflect.Field;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Pose2d;
 
@@ -142,10 +146,10 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // poses for initial robot positions
-            public static Pose2d RED_LEFT_POSE = new Pose2d(12, 36, 0);
-            public static Pose2d RED_RIGHT_POSE = new Pose2d(12, 12, Math.PI);
-            public static Pose2d BLUE_LEFT_POSE = new Pose2d(0, 36, Math.PI / 2);
-            public static Pose2d BLUE_RIGHT_POSE = new Pose2d(-36, 60, Math.toRadians(270));
+            public static Pose2d RED_LEFT_POSE = new Pose2d(-35.6, -67.6, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_POSE = new Pose2d(36.1, -60.3, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_POSE = new Pose2d(-36.5, 60.0, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_POSE = new Pose2d(36.1, 59.9, Math.toRadians(270));
         }
 
         @Config
@@ -306,7 +310,7 @@ public class Settings {
 
         public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PARK;
 
-        public static enum AutonomousMode {
+        public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, FULL
         }
     }
