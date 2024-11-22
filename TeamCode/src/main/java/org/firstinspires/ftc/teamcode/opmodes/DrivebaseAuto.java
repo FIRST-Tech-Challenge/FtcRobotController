@@ -19,7 +19,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 import org.firstinspires.ftc.teamcode.*;
-import org.firstinspires.ftc.teamcode.Constants;
 
 @Autonomous(name="Drive-Base-Auto", group = "Real")
 public class DrivebaseAuto extends LinearOpMode {
@@ -30,11 +29,12 @@ public class DrivebaseAuto extends LinearOpMode {
         Robot robot = new Robot(this);
         robot.configureAutoSetting();
 
-        int allianceNumber = 1;//blue = 1, red = -1  //to change, not possible.
+        int INCH_TO_TILE = org.firstinspires.ftc.teamcode.Constants.INCH_TO_TILE;
+        int allianceNumber = 1;//blue = 1, red = -1
 
 
         //tell the bot where it starts
-        Pose2d initialPose = new Pose2d(-3 * Constants.INCH_TO_TILE * allianceNumber, 1.5 * Constants.INCH_TO_TILE*allianceNumber, Math.toRadians(90 * allianceNumber));
+        Pose2d initialPose = new Pose2d(-3*INCH_TO_TILE*allianceNumber, 1.5*INCH_TO_TILE*allianceNumber, Math.toRadians(90*allianceNumber));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         //decide where we should park
@@ -45,15 +45,15 @@ public class DrivebaseAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder getNeutral = drive.actionBuilder(initialPose)
-                .splineToConstantHeading(new Vector2d(-1 * Constants.INCH_TO_TILE * allianceNumber,2 * Constants.INCH_TO_TILE * allianceNumber),Math.toRadians(270 * allianceNumber))
-                .strafeTo(new Vector2d(-2.8 * Constants.INCH_TO_TILE * allianceNumber,2.8 * Constants.INCH_TO_TILE * allianceNumber));
+                .splineToConstantHeading(new Vector2d(-1*INCH_TO_TILE*allianceNumber,2*INCH_TO_TILE*allianceNumber),Math.toRadians(270*allianceNumber))
+                .strafeTo(new Vector2d(-2.8*INCH_TO_TILE*allianceNumber,2.8*INCH_TO_TILE*allianceNumber));
 
         TrajectoryActionBuilder touchLowRung = drive.actionBuilder(updatedPose)
-                .strafeTo(new Vector2d(-0.5 * Constants.INCH_TO_TILE * allianceNumber,1.5 * Constants.INCH_TO_TILE * allianceNumber))
-                .strafeTo(new Vector2d(-0.5 * Constants.INCH_TO_TILE * allianceNumber,0.5 * Constants.INCH_TO_TILE * allianceNumber));//trying to touch the low rung
+                .strafeTo(new Vector2d(-0.5*INCH_TO_TILE*allianceNumber,1.5*INCH_TO_TILE*allianceNumber))
+                .strafeTo(new Vector2d(-0.5*INCH_TO_TILE*allianceNumber,0.5*INCH_TO_TILE*allianceNumber));//trying to touch the low rung
 
         TrajectoryActionBuilder parkObzone = drive.actionBuilder(updatedPose)
-                .strafeTo(new Vector2d(-2.5 * Constants.INCH_TO_TILE * allianceNumber,-2.5 * Constants.INCH_TO_TILE * allianceNumber));//drive straight into ob zone
+                .strafeTo(new Vector2d(-2.5*INCH_TO_TILE*allianceNumber,-2.5*INCH_TO_TILE*allianceNumber));//drive straight into ob zone
 
 
 

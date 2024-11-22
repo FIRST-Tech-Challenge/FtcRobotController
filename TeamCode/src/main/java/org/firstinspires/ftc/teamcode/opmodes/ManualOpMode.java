@@ -15,7 +15,6 @@ public class ManualOpMode extends LinearOpMode {
         robot.configureTeleOpBindings();
 
 
-
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
