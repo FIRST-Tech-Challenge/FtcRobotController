@@ -5,16 +5,19 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
+import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 
 public class ArmMed extends CommandBase {
     private final ArmSub armSub;
-    private final GamepadEx gamepad;
-    private Telemetry telemetry;
 
     public ArmMed(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
-        this.telemetry = telemetry;
         this.armSub = armSub;
-        this.gamepad = gamepad;
+        addRequirements(armSub);
+    }
+
+    public ArmMed(ArmSub armSub, DrivetrainSub drivetrain){
+        this.armSub = armSub;
+        addRequirements(armSub, drivetrain);
     }
 
     @Override

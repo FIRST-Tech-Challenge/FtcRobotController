@@ -20,4 +20,10 @@ public class MoveLinearSlide extends CommandBase {
     public void execute() {
         linearSlideSub.move(speed);
     }
+
+
+    @Override
+    public boolean isFinished(){
+        return true;
+    }
 }

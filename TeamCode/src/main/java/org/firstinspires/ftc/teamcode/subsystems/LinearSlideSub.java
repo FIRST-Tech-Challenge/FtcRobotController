@@ -11,9 +11,7 @@ public class LinearSlideSub extends SubsystemBase {
 
     Telemetry telemetry;
 
-    public DcMotor linearSlideMotor;
-
-    Boolean previouslyDown; // whether the arm was down last time move was ran.
+    private DcMotor linearSlideMotor;
 
     public LinearSlideSub(HardwareMap hardwareMap, Telemetry tm) {
         linearSlideMotor = hardwareMap.get(DcMotor.class, "linearSlideMotor");
@@ -24,7 +22,7 @@ public class LinearSlideSub extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        telemetry.addData("Slide Height", linearSlideMotor.getCurrentPosition());
+        telemetry.addData("Slide Position", linearSlideMotor.getCurrentPosition());
     }
 
     public DcMotor getMotor(){
@@ -42,17 +40,18 @@ public class LinearSlideSub extends SubsystemBase {
     }
 
     public void move(double speed) {
-//        if ((getMotor().getCurrentPosition() > Constants.LinearSlideConstants.upwardLimit) && (speed > 0)) {
-//            speed = 0;
-//        } else if ((getMotor().getCurrentPosition() < Constants.LinearSlideConstants.downwardLimit) && (speed < 0)) {
-//            speed = 0;
-//        }
+        if ((getMotor().getCurrentPosition() > Constants.LinearSlideConstants.upwardLimit) && (speed > 0)) {
+            speed = 0;
+        } else if ((getMotor().getCurrentPosition() < Constants.LinearSlideConstants.downwardLimit) && (speed < 0)) {
+            speed = 0;
+        }
 
         linearSlideMotor.setPower(speed);
     }
 
 
     //special move command that doesn't adhere to limits
+    //TODO: Maybe should replace final line of move? They're the same.
     public void moveNoLimit(double speed) {
         linearSlideMotor.setPower(speed);
     }

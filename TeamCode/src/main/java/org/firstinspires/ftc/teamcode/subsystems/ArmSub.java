@@ -17,6 +17,7 @@ public class ArmSub extends SubsystemBase{
         this.armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         this.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.armMotor.setTargetPosition(19);
         this.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         this.telemetry = telemetry;
@@ -33,11 +34,11 @@ public class ArmSub extends SubsystemBase{
     }
 
     public void armUp() {
-        setPos(getMotor().getCurrentPosition() + 10, 1);
+        setPos(getMotor().getCurrentPosition() + 20, 1);
     }
 
     public void armDown() {
-        setPos(getMotor().getCurrentPosition() - 10, 1);
+        setPos(getMotor().getCurrentPosition() - 20, 1);
     }
 
     public void armLow() {

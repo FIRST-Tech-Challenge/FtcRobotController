@@ -122,15 +122,15 @@ public class TeleOp25 extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(armHighGoal);
 
         // Linear Slide
-//        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
-//        linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
-//        linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
-//        linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
-//
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(linearSlideUp);
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenReleased(linearSlideOff);
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(linearSlideDown);
-//        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenReleased(linearSlideOff);
+       linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
+       linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
+       linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
+       linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
+
+       toolOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(linearSlideUp);
+       toolOp.getGamepadButton(GamepadKeys.Button.START).whenReleased(linearSlideOff);
+       toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(linearSlideDown);
+       toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenReleased(linearSlideOff);
     }
 
     @Override

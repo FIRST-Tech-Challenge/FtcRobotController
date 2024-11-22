@@ -4,8 +4,10 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 
 import org.firstinspires.ftc.teamcode.commands.DriveDistanceCmd;
 import org.firstinspires.ftc.teamcode.commands.TurnCmd;
+import org.firstinspires.ftc.teamcode.commands.ArmMed;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 
 public class AutoCommandOpMode extends CommandOpMode
 {
@@ -23,7 +25,8 @@ public class AutoCommandOpMode extends CommandOpMode
 
     //private VisionPortal teamPropVisionPortal;
 
-    //private ArmSub arm;
+    public ArmSub arm;
+    public ArmMed armMed;
 
     private boolean fieldCentric = true;
     @Override
@@ -33,7 +36,9 @@ public class AutoCommandOpMode extends CommandOpMode
         imu = new ImuSub(hardwareMap, telemetry);
         //webcam = new WebcamSub(hardwareMap, telemetry);
         //intake = new IntakeSub(hardwareMap, telemetry);
-//        arm = new ArmSub(hardwareMap, telemetry);
+        arm = new ArmSub(hardwareMap, telemetry);
+        armMed = new ArmMed(arm, drive);
+
 //        arm.resetEncoder();
 //
 //        armDown = new ArmDistanceCmd(arm,telemetry,-0.5,1000);
