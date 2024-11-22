@@ -1,4 +1,3 @@
-
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,13 +14,10 @@ public class ManualTestingOpmode extends LinearOpMode {
         Robot robot = new Robot(this);
         robot.configureSubsystemTestingTeleOpBindings();
 
-
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             robot.run();
         }
     }
-
 }
-

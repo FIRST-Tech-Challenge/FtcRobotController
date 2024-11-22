@@ -14,12 +14,10 @@ public class ManualOpMode extends LinearOpMode {
         Robot robot = new Robot(this);
         robot.configureTeleOpBindings();
 
-
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             robot.run();
         }
     }
-
 }

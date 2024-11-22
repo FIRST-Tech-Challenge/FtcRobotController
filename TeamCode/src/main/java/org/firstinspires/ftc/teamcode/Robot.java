@@ -9,7 +9,6 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 public class Robot {
-
     private final OpMode opMode;
 
     private final GamepadEx driverGamepad;
@@ -29,7 +28,6 @@ public class Robot {
     }
 
     public void configureTeleOpBindings() {
-        
         /* Driver controls:
         *   Forward -> left y axis
         *   Strafe -> left x axis
@@ -58,7 +56,7 @@ public class Robot {
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
         Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
-        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());//feedback from driver: changed the speed multiplier to left trigger and changed by toggle
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier()); //feedback from driver: changed the speed multiplier to left trigger and changed by toggle
         //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
@@ -74,12 +72,9 @@ public class Robot {
         Trigger activeIntakeOut = new Trigger(()-> operatorGamepad.getButton(GamepadKeys.Button.X));
         activeIntakeOut.whileActiveContinuous(()->intakeSubsystem.ActiveIntakeServoOut());
         activeIntakeOut.whenInactive(()-> intakeSubsystem.stopActiveIntakeServo());
-
-
     }
 
     public void configureSubsystemTestingTeleOpBindings() {
-
         /* Controls:
          * Driver:
          *   Forward -> left y axis
@@ -95,7 +90,6 @@ public class Robot {
          *      Put intake wrist down -> right trigger(continuously)
          *      Active intake in -> B(cont.)
          *      Active intake out -> A(cont.)
-         *
          */
 
         CommandScheduler.getInstance().reset();
@@ -107,7 +101,7 @@ public class Robot {
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
         Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
-        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());//feedback from driver: changed the speed multiplier to left trigger and changed by toggle
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier()); //feedback from driver: changed the speed multiplier to left trigger and changed by toggle
         //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
@@ -130,6 +124,7 @@ public class Robot {
         active intake in/stop -> right bumper(toggle)
         active intake out -> right trigger(continuous)
          */
+
         Trigger resetLinearSlideEncoder = new Trigger(()-> operatorGamepad.getButton(GamepadKeys.Button.BACK));
         resetLinearSlideEncoder.whenActive(()->intakeSubsystem.resetLinearSlideEncoders());
 
@@ -172,11 +167,9 @@ public class Robot {
         activeIntakeOut.whenActive(() -> intakeSubsystem.ActiveIntakeServoOut());
 
         intakeSubsystem.setDefaultCommand(defaultFloorScanningCursorCommand);
-
     }
 
     public void configureIntakeTestingTeleOpBindings() {
-
         /* Driver controls:
          *   Forward -> left y axis
          *   Strafe -> left x axis
@@ -196,7 +189,7 @@ public class Robot {
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
         Trigger speedVariationTrigger = new Trigger(() -> isPressed(driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
-        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier());//feedback from driver: changed the speed multiplier to left trigger and changed by toggle
+        speedVariationTrigger.whenActive(() -> driveSubsystem.changeSpeedMultiplier()); //feedback from driver: changed the speed multiplier to left trigger and changed by toggle
         //speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
 
         Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
@@ -218,6 +211,7 @@ public class Robot {
         active intake in/stop -> right bumper(toggle)
         active intake out -> right trigger(continuous)
          */
+
         Trigger resetLinearSlideEncoder = new Trigger(()-> operatorGamepad.getButton(GamepadKeys.Button.BACK));
         resetLinearSlideEncoder.whenActive(()->intakeSubsystem.resetLinearSlideEncoders());
 
@@ -248,16 +242,13 @@ public class Robot {
         activeIntakeOut.whileActiveContinuous(() -> intakeSubsystem.ActiveIntakeServoOut());
     }
 
-    public void configureAutoSetting(){
+    public void configureAutoSetting() {
         CommandScheduler.getInstance().reset();
         CommandScheduler.getInstance().cancelAll();
-
-
     }
 
     public void run() {
         CommandScheduler.getInstance().run();
-        
 
         opMode.telemetry.addData("Speed Multiplier",driveSubsystem.getSpeedMultiplier());
         opMode.telemetry.addData("Y axis:", operatorGamepad.getLeftY());

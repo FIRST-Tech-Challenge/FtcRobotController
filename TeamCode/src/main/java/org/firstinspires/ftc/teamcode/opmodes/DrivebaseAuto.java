@@ -22,9 +22,7 @@ public class DrivebaseAuto extends LinearOpMode {
         Robot robot = new Robot(this);
         robot.configureAutoSetting();
 
-
-        int allianceNumber = 1;//blue = 1, red = -1
-
+        int allianceNumber = 1; //blue = 1, red = -1
 
         //tell the bot where it starts
         Pose2d initialPose = new Pose2d(-3 * Constants.INCH_TO_TILE * allianceNumber, 1.5 * Constants.INCH_TO_TILE * allianceNumber, Math.toRadians(90 * allianceNumber));
@@ -35,7 +33,6 @@ public class DrivebaseAuto extends LinearOpMode {
         boolean isTouchingLowRung = false;
 
         Pose2d updatedPose = new Pose2d(drive.pose.position.x,drive.pose.position.y,drive.pose.heading.toDouble());
-
 
         TrajectoryActionBuilder getNeutral = drive.actionBuilder(initialPose)
                 .splineToConstantHeading(new Vector2d(-1 * Constants.INCH_TO_TILE * allianceNumber,2 * Constants.INCH_TO_TILE * allianceNumber),Math.toRadians(270 * allianceNumber))
@@ -48,16 +45,11 @@ public class DrivebaseAuto extends LinearOpMode {
         TrajectoryActionBuilder parkObzone = drive.actionBuilder(updatedPose)
                 .strafeTo(new Vector2d(-2.5 * Constants.INCH_TO_TILE * allianceNumber,-2.5 * Constants.INCH_TO_TILE * allianceNumber));//drive straight into ob zone
 
-
-
-
         waitForStart();
 
         //to be tested
         while (opModeIsActive() && !isStopRequested()) {
             robot.run();
-
-
 
             drive.updatePoseEstimate();//show where the bot think itself at
 
@@ -69,9 +61,9 @@ public class DrivebaseAuto extends LinearOpMode {
 
         Action chosenGettingBlockAction;
 
-        if(isGettingNeutral){
+        if(isGettingNeutral) {
             chosenGettingBlockAction = getNeutral.build();
-        }else{
+        } else {
             chosenGettingBlockAction = parkObzone.build();
         };
 
@@ -83,17 +75,11 @@ public class DrivebaseAuto extends LinearOpMode {
             chosenParkingAction = parkObzone.build();
         }
 
-
-
         Actions.runBlocking(
                 new SequentialAction(
                         chosenGettingBlockAction,
                         chosenParkingAction
 
-                ));//execute the planned action
-
-
-
+                )); //execute the planned action
     }
-
 }

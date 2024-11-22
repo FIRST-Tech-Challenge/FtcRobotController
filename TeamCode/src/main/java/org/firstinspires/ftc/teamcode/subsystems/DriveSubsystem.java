@@ -15,10 +15,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.lang.Math;
 
 import org.firstinspires.ftc.teamcode.*;
+import org.firstinspires.ftc.utils.GamepadUtils;
 
-//TODO: Modify drive functions to make use of new odometry logic rather than IMU
-
-//TODO: Fix deadzone logic to use quadratic equation
+//TODO: Modify drive functions to make use of new odometry logic rather than IMU (check if it is actually more accurate first)
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -66,9 +65,9 @@ public class DriveSubsystem extends SubsystemBase {
     private void driveFieldCentric(double forward, double strafe, double turn) {
         turn = -turn;
 
-        forward = deadzoned(forward, Constants.DriveConstants.DEADZONE);
-        strafe = deadzoned(strafe, Constants.DriveConstants.DEADZONE);
-        turn = deadzoned(turn, Constants.DriveConstants.DEADZONE);
+        forward = GamepadUtils.deadzone(forward, Constants.DriveConstants.DEADZONE);
+        strafe = GamepadUtils.deadzone(strafe, Constants.DriveConstants.DEADZONE);
+        turn = GamepadUtils.deadzone(turn, Constants.DriveConstants.DEADZONE);
 
         double gyroRadians = Math.toRadians(-getHeading());
         double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
@@ -83,9 +82,9 @@ public class DriveSubsystem extends SubsystemBase {
     private void driveRobotCentric(double forward, double strafe, double turn) {
         turn = -turn;
 
-        forward = deadzoned(forward, Constants.DriveConstants.DEADZONE);
-        strafe = deadzoned(strafe, Constants.DriveConstants.DEADZONE);
-        turn = deadzoned(turn, Constants.DriveConstants.DEADZONE);
+        forward = GamepadUtils.deadzone(forward, Constants.DriveConstants.DEADZONE);
+        strafe = GamepadUtils.deadzone(strafe, Constants.DriveConstants.DEADZONE);
+        turn = GamepadUtils.deadzone(turn, Constants.DriveConstants.DEADZONE);
 
         frontLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
         frontRightMotor.setPower(Range.clip((forward - strafe - turn), -1, 1) * speedMultiplier);
@@ -121,23 +120,17 @@ public class DriveSubsystem extends SubsystemBase {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
-    public void changeSpeedMultiplier(){
-        if (speedMultiplier ==1){
+    public void changeSpeedMultiplier() {
+        if (speedMultiplier == 1) {
             speedMultiplier = 0.5;
-        }else{speedMultiplier=1;
-        }
+        } else speedMultiplier = 1;        
     }
 
-    public double getSpeedMultiplier(){
+    public double getSpeedMultiplier() {
         return speedMultiplier;
     }
 
-    public boolean getIsFieldCentric(){
+    public boolean getIsFieldCentric() {
         return fieldCentric;
-    }
-
-    private double deadzoned(double input, double deadzone) {
-        if(Math.abs(input) >= deadzone) return input;
-        return Math.pow(input, 3) / Math.pow(deadzone, 2); //Makes input follow a cubic curve to smooth deadzone
     }
 }
