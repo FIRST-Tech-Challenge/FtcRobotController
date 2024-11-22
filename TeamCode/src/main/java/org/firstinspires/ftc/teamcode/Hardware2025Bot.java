@@ -99,6 +99,11 @@ public class Hardware2025Bot
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
+    protected AnalogInput turretEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
+    public double       turretAngle        = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
+    public double       turretAngleOffset  = 129.0;     // allows us to adjust the 0-360 deg range
+    public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
+
     public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public int          TILT_ANGLE_BASKET   =  3675;  // encoder at rotation back to the basket for scoring
     public int          TILT_ANGLE_RAISED   =  2000;  // encoder at rotation back to the basket for scoring
@@ -212,7 +217,9 @@ public class Hardware2025Bot
         odom.setOffsets(0.0, -48.0);    // odometry pod locations relative center of robot
         odom.setEncoderResolution( GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD ); // 4bar pods
         odom.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odom.resetPosAndIMU();
+        if( isAutonomous ) {
+            odom.resetPosAndIMU();
+        }
 
         // Define and Initialize drivetrain motors
         frontLeftMotor  = hwMap.get(DcMotorEx.class,"FrontLeft");  // Expansion Hub port 1 (REVERSE)
@@ -248,6 +255,7 @@ public class Hardware2025Bot
         // Define and Initialize pan and tilt motors
         wormPanMotor   = hwMap.get(DcMotorEx.class,"WormPan");   // Control Hub port 0
         wormTiltMotor  = hwMap.get(DcMotorEx.class,"WormTilt");  // Control Hub port 1
+        turretEncoder  = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
 
         wormPanMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -303,6 +311,8 @@ public class Hardware2025Bot
         wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        odom.resetPosAndIMU();
     } // resetEncoders
 
     /*--------------------------------------------------------------------------------------------*/
@@ -358,9 +368,10 @@ public class Hardware2025Bot
     {
         final double DEGREES_PER_ROTATION = 360.0;  // One full rotation measures 360 degrees
         final double MAX_MA3_ANALOG_VOLTAGE = 3.3;  // 3.3V maximum analog output
+        // NOTE: when vertical the angle is 38.1deg, when horizontal 129.0
         double measuredAngle = (measuredVoltage / MAX_MA3_ANALOG_VOLTAGE) * DEGREES_PER_ROTATION;
         // Correct for the offset angle (see note above)
-        double correctedAngle = measuredAngle - zeroAngleOffset;
+        double correctedAngle = zeroAngleOffset - measuredAngle;
         // Enforce that any wrap-around remains in the range of -180 to +180 degrees
         while( correctedAngle < -180.0 ) correctedAngle += 360.0;
         while( correctedAngle > +180.0 ) correctedAngle -= 360.0;
@@ -395,6 +406,7 @@ public class Hardware2025Bot
         wormTiltMotorPos    = wormTiltMotor.getCurrentPosition();
         wormTiltMotorVel    = wormTiltMotor.getVelocity();
         wormTiltMotorPwr    = wormTiltMotor.getPower();
+        turretAngle         = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         // NOTE: motor mA data is NOT part of the bulk-read, so increases cycle time!
 //      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);

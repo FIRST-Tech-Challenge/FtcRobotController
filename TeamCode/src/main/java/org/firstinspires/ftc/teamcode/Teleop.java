@@ -78,6 +78,9 @@ public abstract class Teleop extends LinearOpMode {
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
     boolean enableOdometry       = true; // Process/report odometry updates?
 
+    double   curX, curY, curAngle;
+    double   minX=0.0, maxX=0.0, minY=0.0, maxY=0.0;
+
     final int   ASCENT_STATE_IDLE   = 0;
     final int   ASCENT_STATE_SETUP  = 1;
     final int   ASCENT_STATE_MOVING = 2;
@@ -152,9 +155,12 @@ public abstract class Teleop extends LinearOpMode {
             if( enableOdometry ) {
                 robot.odom.update();
                 Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
-                String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}",
-                      pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), pos.getHeading(AngleUnit.DEGREES));
+                curX     = pos.getX(DistanceUnit.INCH);  if(curX<minX){minX=curX;} if(curX>maxX){maxX=curX;}
+                curY     = pos.getY(DistanceUnit.INCH);  if(curY<minY){minY=curY;} if(curY>maxY){maxY=curY;}
+                curAngle = pos.getHeading(AngleUnit.DEGREES);
+                String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}", curX, curY, curAngle);
                 telemetry.addData("Position", posStr);
+                telemetry.addData("Odo Circle", "x=%.1f, y=%.1f inches", (maxX-minX), (maxY-minY) );
                 Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
                      vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.DEGREES));
@@ -232,7 +238,7 @@ public abstract class Teleop extends LinearOpMode {
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
-            telemetry.addData("Tilt", "%d counts", robot.wormTiltMotorPos );
+            telemetry.addData("Tilt", "%d counts %.1f deg", robot.wormTiltMotorPos, robot.turretAngle);
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.1f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.1f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );

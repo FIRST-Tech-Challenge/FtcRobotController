@@ -125,7 +125,7 @@ public class AutonomousRightBlue extends AutonomousBase {
         // Strafe right 12"
         driveToPosition( 12.0, 12.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         // Turn 180 deg
-//      driveToPosition( 12.0, 12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
+        driveToPosition( 12.0, 12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         // Report the final odometry position/orientation
         telemetry.addData("Final", "x=%.1f, y=%.1f, %.1f deg",
                 robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
@@ -172,7 +172,7 @@ public class AutonomousRightBlue extends AutonomousBase {
             specimensScored++;
         } 
 */
-        // Score the preloaded specimen
+        // Park for 3pts (observation zone)
         parkInObservation();
 
     } // mainAutonomous
@@ -184,18 +184,14 @@ public class AutonomousRightBlue extends AutonomousBase {
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
             driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
-//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
             driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
-//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
             driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
-//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 3.0, 999.9, DRIVE_TO );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // approach submersible away from alliance partner
-//          gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
             driveToPosition( 9.0, -2.2, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
@@ -209,9 +205,6 @@ public class AutonomousRightBlue extends AutonomousBase {
 
         if( opModeIsActive() ) {
             driveToPosition( 32.0, -2.2, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
-//          gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 23.0, 999.9, DRIVE_TO );
-//          double startAngle = getAngle();
-//          gyroTurn(TURN_SPEED_20, (startAngle - 45) );   // Turn CCW 45 degrees
             robot.driveTrainMotorsZero();
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_AUTO1);
             do {
@@ -290,22 +283,16 @@ public class AutonomousRightBlue extends AutonomousBase {
 
     private void collectSpecimen() {
         // TODO: FILL IN IMPLEMENTATION
-    }
+    } // collectSpecimen
 */
 
     private void parkInObservation() {
         // Back up from submersible
-//      gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_TO );
         driveToPosition( 16.0, 14.0, 45.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
-//        double startAngle = getAngle();
-//        gyroTurn(TURN_SPEED_40, (startAngle + 135) );   // Turn CW 135 degrees
-        // Drive forward toward the wall
+        // Rotate 90deg to face wall (protect collector from alliance partner damage)
         driveToPosition( 12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
-        driveToPosition( 12.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
-//        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 35.0, 999.9, DRIVE_TO );
-        // Strafe sideways toward the human player
-//        gyroDrive(DRIVE_SPEED_20, DRIVE_X, 6.0, 999.9, DRIVE_TO );
-        driveToPosition( 6.0, 32.0, -91.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_TO );
+        // Park in far corner of observation zone
+        driveToPosition( 6.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );
 
     } // parkInObservation
 
