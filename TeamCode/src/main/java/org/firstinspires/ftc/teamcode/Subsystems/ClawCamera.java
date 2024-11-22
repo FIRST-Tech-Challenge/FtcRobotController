@@ -37,12 +37,23 @@ public class ClawCamera extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (!dashboardInitialized) {
-//            initializeDashboard();
-//            dashboardInitialized = true;
-//        }
-//        updateDashboard();
+        long lastUpdate = myColorAndOrienDetProcessor.getLastUpdatedTime();
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastUpdate > 100) { // Data is older than 100ms
+            System.out.println("Warning: Vision data is outdated!");
+            return; // Skip using outdated data
+        }
+
+        double ang = myColorAndOrienDetProcessor.calAngle("Blue");
+        if (ang > 0) {
+            System.out.println("Detected Blue Angle: " + ang);
+            RobotContainer.wristRotateServo.RotateTo((int) Math.round(ang));
+        } else {
+            System.out.println("Blue not detected!");
+        }
     }
+
 
     // Method to initialize dashboard with default (null) values
     private void initializeDashboard() {
