@@ -37,14 +37,14 @@ public class ZeroServos extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            servoArmLeft.setPosition(0);
-            servoArmRight.setPosition(0);
-            servoWrist.setPosition(0);
-            pivotRight.setPosition(0);
-            pivotLeft.setPosition(0);
-            clawServo.setPosition(0);
-            servoExtendLeft.setPosition(0);
-            servoExtendRight.setPosition(0);
+            servoArmLeft.setPosition(0.5);
+            servoArmRight.setPosition(0.5);
+            servoWrist.setPosition(0.5);
+            pivotRight.setPosition(0.5);
+            pivotLeft.setPosition(0.5);
+            clawServo.setPosition(0.5);
+            servoExtendLeft.setPosition(0.5);
+            servoExtendRight.setPosition(0.5);
         }
     }
 }
