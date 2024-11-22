@@ -28,7 +28,6 @@ public class ClawCamera extends SubsystemBase {
         CameraPortal = new VisionPortal.Builder()
                 .setCamera(RobotContainer.ActiveOpMode.hardwareMap.get(WebcamName.class, cameraName))
                 .addProcessors(myColorAndOrienDetProcessor) // add all the processors here
-                //.setCameraResolution(new Size(640, 480))
                 .setCameraResolution(new Size(640,480))
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
