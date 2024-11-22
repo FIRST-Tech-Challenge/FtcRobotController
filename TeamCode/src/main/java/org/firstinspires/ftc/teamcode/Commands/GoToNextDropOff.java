@@ -11,13 +11,15 @@ import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrajectoryGenerator;
 import com.arcrobotics.ftclib.trajectory.constraint.MecanumDriveKinematicsConstraint;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.Utils;
+
 import java.util.List;
 
 
 // command to follow a path generated from input parameters
-public class FollowPath extends CommandBase {
+public class GoToNextDropOff extends CommandBase {
 
     // Trajectory Configuration
     TrajectoryConfig config;
@@ -49,6 +51,9 @@ public class FollowPath extends CommandBase {
     double x_ierror;
     double y_ierror;
 
+    // destination decrement value
+    static double x_dest_decrement;
+
     // constructor
     // MaxSpeed - max robot travel speed (m/s)
     // MaxAccel - max robot travel accel (m/s2)
@@ -78,14 +83,14 @@ public class FollowPath extends CommandBase {
    } */
 
 
-    public FollowPath(double maxSpeed,
-                      double maxAccel,
-                      double StartSpeed,
-                      double endSpeed,
-                      Rotation2d pathStartAngle,
-                      List<Translation2d> pathWaypoints,
-                      Pose2d pathEndPose,
-                      Rotation2d robotEndAngle) {
+    public GoToNextDropOff(double maxSpeed,
+                           double maxAccel,
+                           double StartSpeed,
+                           double endSpeed,
+                           Rotation2d pathStartAngle,
+                           List<Translation2d> pathWaypoints,
+                           Pose2d pathEndPose,
+                           Rotation2d robotEndAngle) {
 
         // add subsystem requirements (if any) - for example:
         addRequirements(RobotContainer.drivesystem);
@@ -120,9 +125,13 @@ public class FollowPath extends CommandBase {
         yController.setIntegrationBounds(-10.0, 10.0);
         thetaController.setIntegrationBounds(-5.0, 5.0);
 
-
         // set up timer
         pathTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    }
+
+    // initialize destination position decrement
+    public static void initializeDestinationDecrement() {
+        x_dest_decrement = 0.0;
     }
 
     // This method is called once when command is started
@@ -137,13 +146,18 @@ public class FollowPath extends CommandBase {
         Pose2d pathStartPose = new Pose2d(currentPos.getTranslation(),
                 pathStartAngle);
 
+        // determine new destination
+        Pose2d NewDestination = new Pose2d(pathEndPose.getX()+x_dest_decrement,
+                                pathEndPose.getY(),
+                                pathEndPose.getRotation());
+
         // create trajectory
         // use try-catch block in case trajectory cannot be formed using given points
         // if trajectory cannot formed then set to null. Command will detect and exit
         try {
             trajectory = TrajectoryGenerator.generateTrajectory(pathStartPose,
                     pathWaypoints,
-                    pathEndPose,
+                    NewDestination,
                     config);
         }
         catch (Exception e) {
@@ -175,6 +189,9 @@ public class FollowPath extends CommandBase {
                 robotEndAngle.getDegrees())) / trajectory.getTotalTimeSeconds();
         else
             rotationRate = 0.0;
+
+        // decrement destination for next time
+        x_dest_decrement -=0.1;
     }
 
     // This method is called periodically while command is active
