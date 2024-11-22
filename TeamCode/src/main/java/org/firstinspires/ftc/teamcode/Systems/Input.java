@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
+
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Input {
 
     Motors motors;
 
-    public Input(HardwareMap hardwareMap)
-    {
+    public Input(HardwareMap hardwareMap){
         motors = new Motors(hardwareMap);
     }
 
     public void Move(double power)
     {
+        for (int i = 0; i < (motors.motors.length - 1) ; i++) {
 
-        for (int i = 0; i < motors.driveTrainMotors.length; i++) {
-
-            motors.MoveMotor(i, power); // loop over every motor and move them by gamepad input
+            motors.MoveMotor(i, -power); // loop over every motor and move them by gamepad input
         }
     }
 
@@ -39,8 +39,14 @@ public class Input {
         motors.MoveMotor(3, -power); // right back
     }
 
-    public void Arm(double power)
+    public void Intake(double power)
     {
-        motors.MoveMotor(4,power);
+        motors.MoveMotor(4,power / 2);
+
+        if(motors.GetArmDistance() <= 0 && power <= 0)
+        {
+            motors.setArmPosition(motors.getArmPosition());
+        }
+
     }
 }

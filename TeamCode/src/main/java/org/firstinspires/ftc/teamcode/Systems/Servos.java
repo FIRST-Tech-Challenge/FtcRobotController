@@ -11,10 +11,9 @@ public class Servos {
 
     public Servos(HardwareMap hardwareMap) //constructor to init servos
     {
-        servos = new Servo[2];
+        servos = new Servo[1];
 
-        servos[0] = hardwareMap.get(Servo.class, "L");
-        servos[1] = hardwareMap.get(Servo.class, "H");
+        servos[0] = hardwareMap.get(Servo.class, "claw");
     }
     public void moveServo(int servoNum, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
     {
