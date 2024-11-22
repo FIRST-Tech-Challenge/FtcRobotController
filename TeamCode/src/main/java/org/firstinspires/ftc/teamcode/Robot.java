@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.util.Range;
@@ -22,6 +23,7 @@ public abstract class Robot extends LinearOpMode {
     public VisionPortal visionPortal;
     public Servo Ll, Rl, LA, RA, RC, Claw, LJ, RJ, ADL, ADR;
     public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
+    public TouchSensor Lift;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
     /* TETRIX Motor Encoder per revolution */
@@ -48,6 +50,10 @@ public abstract class Robot extends LinearOpMode {
     private double Current_Time = System.nanoTime() * 1E-9;
     private double Last_Time = Current_Time;
     private double Last_yaw;
+
+    public final int Low_Chamber  = 1000;
+    public final int High_Chamber = 850;
+    public final int High_Basket  = 3000;
 
 
 
@@ -86,7 +92,7 @@ public abstract class Robot extends LinearOpMode {
     }
 
     public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
-                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time) {
+                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
         Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
         Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1);
@@ -98,7 +104,6 @@ public abstract class Robot extends LinearOpMode {
         while (opModeIsActive()) {
             this.Current_Time = System.nanoTime() * 1E-9;
             Odomentry();
-//            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             double Vx = DelthaX.Calculate((targetx - Posx)*-1);
             double Vy = DelthaY.Calculate(targety - Posy);
 
@@ -110,21 +115,26 @@ public abstract class Robot extends LinearOpMode {
             double Move_Factor = Range.clip(this.Current_Time - this.Last_Time, 0, 1);
             MovePower((y2 - x2 - r) / d * Move_Factor, (y2 + x2 + r) / d * Move_Factor,
                     (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
-//            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            telemetry.addData("Move_Factor", Move_Factor);
-            telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
-            telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
-            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
-            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
-            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
-            telemetry.addData("ErrorR", pidR.Error);
-            telemetry.addData("ErrorX", DelthaX.Error);
-            telemetry.addData("ErrorY", DelthaY.Error);
-            telemetry.addData("Complete", IS_Complete);
-            telemetry.update();
-            if (Vx == 0.0 && Vy == 0.0 && r == 0) {
+            double  curPos     = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
+            double  Lift_Power = AtTargetRange(curPos, height, 10) ?  0 :
+                    (curPos > height ? -0.2    :  1);
+            LiftPower(Lift_Power);
+//            telemetry.addData("Move_Factor", Move_Factor);
+//            telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
+//            telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
+//            telemetry.addData("R", "%6f cm/s %6f cm" , r,  pidR.ErrorTolerance);
+//            telemetry.addData("X", "%6f cm/s %6f cm" , Vx, DelthaX.ErrorTolerance);
+//            telemetry.addData("Y", "%6f cm/s %6f cm" , Vy, DelthaY.ErrorTolerance);
+//            telemetry.addData("ErrorR", pidR.Error);
+//            telemetry.addData("ErrorX", DelthaX.Error);
+//            telemetry.addData("ErrorY", DelthaY.Error);
+//            telemetry.addData("Complete", IS_Complete);
+//            telemetry.update();
+
+
+            if (Vx == 0.0 && Vy == 0.0 && r == 0 && AtTargetRange(curPos, height, 10) ) {
                 IS_Complete += 1;
-                if (IS_Complete > 10) break;
+                if (IS_Complete > 1 ) break;
                 continue;
             }
             IS_Complete = 0;
@@ -194,6 +204,7 @@ public abstract class Robot extends LinearOpMode {
         LJ  = hardwareMap.get(Servo.class, "Left_joint");        Ll  = hardwareMap.get(Servo.class, "Left_link");
         Rl  = hardwareMap.get(Servo.class, "Right_link");        ADL = hardwareMap.get(Servo.class, "Adjust_left");
         ADR = hardwareMap.get(Servo.class, "Adjust_right");      Claw= hardwareMap.get(Servo.class, "Claw");
+        Lift = hardwareMap.get(TouchSensor.class, "TouchLift");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL;
         encoder2 = FR;
