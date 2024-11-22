@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.annotation.NonNull;
-
 import java.lang.reflect.Field;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Pose2d;
 
 @Config
@@ -146,10 +142,25 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // poses for initial robot positions
-            public static Pose2d RED_LEFT_POSE = new Pose2d(-35.6, -67.6, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_POSE = new Pose2d(36.1, -60.3, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_POSE = new Pose2d(-36.5, 60.0, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_POSE = new Pose2d(36.1, 59.9, Math.toRadians(270));
+            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-35.6, -67.6, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36.1, -60.3, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(-36.5, 60.0, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(36.1, 59.9, Math.toRadians(270));
+
+            // Parked positions for each starting position
+            public static final Pose2d RED_LEFT_PARK_POSE = new Pose2d(38.2, -58.9, Math.toRadians(90));
+            public static final Pose2d RED_RIGHT_PARK_POSE = new Pose2d(10.2, -24.6, Math.toRadians(90));
+            public static final Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(-40.5, 65.2, Math.toRadians(270));
+            public static final Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(-59.9, 60.2, Math.toRadians(270));
+
+            // Place positions for each starting position
+            public static final Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-11.5, -30.7, Math.toRadians(90));
+            public static final Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(10.2, -24.6, Math.toRadians(90));
+            public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(9.9, 29.0, Math.toRadians(270));
+            public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-11.3, 30.3, Math.toRadians(270));
+
+            public static final Pose2d RED_HP_POSE = new Pose2d(35.3, -57.0, Math.toRadians(225));
+            public static final Pose2d BLUE_HP_POSE = new Pose2d(-36.3, 62.2, Math.toRadians(45));
         }
 
         @Config
@@ -349,8 +360,7 @@ public class Settings {
             new DefaultGamepadSettings(),
             new DefaultGamepadSettings());
 
-    public static final ControllerProfile BBOONSTRA_PROFILE = new ControllerProfile(
-            "bboonstra",
+    public static final ControllerProfile BBOONSTRA_PROFILE = new ControllerProfile("bboonstra",
             new DefaultGamepadSettings() {
                 {
                     // Customize main gamepad settings
@@ -362,8 +372,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.smooth(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     buttonMapping.extendExtensor = GamepadButton.Y;
@@ -372,8 +381,7 @@ public class Settings {
                 }
             });
 
-    public static final ControllerProfile CISRAEL_PROFILE = new ControllerProfile(
-            "cisrael",
+    public static final ControllerProfile CISRAEL_PROFILE = new ControllerProfile("cisrael",
             new DefaultGamepadSettings() {
                 {
                     dpad_movement_speed = 0.6;
@@ -384,8 +392,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.quadratic(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
@@ -394,8 +401,7 @@ public class Settings {
                 }
             });
 
-    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile(
-            "rsharma",
+    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile("rsharma",
             new DefaultGamepadSettings() {
                 {
                     dpad_movement_speed = 0.5;
@@ -406,8 +412,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.linear(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     trigger_threshold = 0.1;

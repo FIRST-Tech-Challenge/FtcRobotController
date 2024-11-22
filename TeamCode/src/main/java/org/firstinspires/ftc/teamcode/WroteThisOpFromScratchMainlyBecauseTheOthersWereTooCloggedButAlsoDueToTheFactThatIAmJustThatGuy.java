@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -94,16 +93,16 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         // Initialize the roadRunner's pose based on the starting position
         switch (startingPosition) {
             case RED_LEFT:
-                initialPose = Settings.Autonomous.FieldPositions.RED_LEFT_POSE;
+                initialPose = Settings.Autonomous.FieldPositions.RED_LEFT_INITIAL_POSE;
                 break;
             case RED_RIGHT:
-                initialPose = Settings.Autonomous.FieldPositions.RED_RIGHT_POSE;
+                initialPose = Settings.Autonomous.FieldPositions.RED_RIGHT_INITIAL_POSE;
                 break;
             case BLUE_LEFT:
-                initialPose = Settings.Autonomous.FieldPositions.BLUE_LEFT_POSE;
+                initialPose = Settings.Autonomous.FieldPositions.BLUE_LEFT_INITIAL_POSE;
                 break;
             case BLUE_RIGHT:
-                initialPose = Settings.Autonomous.FieldPositions.BLUE_RIGHT_POSE;
+                initialPose = Settings.Autonomous.FieldPositions.BLUE_RIGHT_INITIAL_POSE;
                 break;
             default:
                 initialPose = new Pose2d(0, 0, 0); // Fallback
@@ -131,23 +130,59 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
                 immediatelyPlace(sp);
                 return;
             case FULL:
-                // ! TODO redo from scratch
-                baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-                placeOnChamber(sp, MainAuto.ChamberHeight.HIGH);
+                gameLoopSetup(sp, MainAuto.ChamberHeight.LOW);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
-                    baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
-                    getNextSpecimen();
-                    baseRobot.logger.update("Autonomous phase", "Placing next specimen");
-                    placeNextSpecimenOnChamber(MainAuto.ChamberHeight.HIGH);
+                    gameLoop(sp, MainAuto.ChamberHeight.LOW);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
-                park(sp);
+                gameLoopEnd(sp);
                 baseRobot.logger.update("Autonomous phase", "VICTORY!!!");
                 if (Settings.Deploy.VICTORY) {
                     victory();
                 }
                 break;
         }
+    }
+
+    public void gameLoopSetup(StartingPosition sp, MainAuto.ChamberHeight chamberHeight) {
+        baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
+        TrajectoryActionBuilder placingTrajectory;
+        switch (sp) {
+            case RED_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
+                break;
+            case RED_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
+                break;
+            case BLUE_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
+                break;
+            case BLUE_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
+                break;
+            default:
+                placingTrajectory = roadRunner.actionBuilder(initialPose);
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        placingTrajectory.build(),
+                        placeChamber()));
+    }
+
+    public void gameLoop(StartingPosition sp, MainAuto.ChamberHeight chamberHeight) {
+        baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
+        getNextSpecimen(sp);
+        baseRobot.logger.update("Autonomous phase", "Placing next specimen");
+        placeNextSpecimenOnChamber(sp, MainAuto.ChamberHeight.HIGH);
     }
 
     public void justPark(StartingPosition sp) {
@@ -197,6 +232,22 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         return new PlaceChamber();
     }
 
+    public class GrabSpecimenFromDaouda implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            sleep(200);
+            baseRobot.arm.intake.intake();
+            sleep(50);
+            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
+            return false;
+        }
+    }
+
+    public Action grabSpecimenFromDaouda() {
+        return new GrabSpecimenFromDaouda();
+    }
+
     public void immediatelyPlace(StartingPosition sp) {
         TrajectoryActionBuilder placingTrajectory;
         TrajectoryActionBuilder parkingTrajectory;
@@ -204,32 +255,39 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         switch (sp) {
             case RED_LEFT:
                 placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(-11.5, -30.7), Math.toRadians(90));
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
                 parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(38.2, -58.9), Math.toRadians(90));
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
                 break;
             case RED_RIGHT:
                 placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(10.2, -24.6), Math.toRadians(90));
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
                 parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(10.2, -24.6), Math.toRadians(90));
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
                 break;
             case BLUE_LEFT:
                 placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(9.9, 29.0), Math.toRadians(270));
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
                 parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(-40.5, 65.2), Math.toRadians(270));
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
                 break;
             case BLUE_RIGHT:
                 placingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(-11.3, 30.3), Math.toRadians(270));
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
                 parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(new Vector2d(-59.9, 60.2), Math.toRadians(270));
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
                 break;
             default:
                 placingTrajectory = roadRunner.actionBuilder(initialPose);
                 parkingTrajectory = roadRunner.actionBuilder(initialPose);
-
         }
 
         Actions.runBlocking(
@@ -239,24 +297,100 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
                         parkingTrajectory.build()));
     }
 
-    public void placeNextSpecimenOnChamber(MainAuto.ChamberHeight mode) {
-        return; // ! TODO
+    public void placeNextSpecimenOnChamber(StartingPosition sp, MainAuto.ChamberHeight mode) {
+        TrajectoryActionBuilder placingTrajectory;
+        switch (sp) {
+            case RED_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
+                break;
+            case RED_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
+                break;
+            case BLUE_LEFT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
+                break;
+            case BLUE_RIGHT:
+                placingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
+                break;
+            default:
+                placingTrajectory = roadRunner.actionBuilder(initialPose);
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        placingTrajectory.build(),
+                        placeChamber()));
     }
 
-    public void placeOnChamber(StartingPosition mode, MainAuto.ChamberHeight high) {
-        return; // ! TODO
-    }
+    public void gameLoopEnd(StartingPosition sp) {
+        TrajectoryActionBuilder parkingTrajectory;
 
-    public void park(StartingPosition mode) {
-        return; // ! TODO
+        switch (sp) {
+            case RED_LEFT:
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
+                break;
+            case RED_RIGHT:
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
+                break;
+            case BLUE_LEFT:
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
+                break;
+            case BLUE_RIGHT:
+                parkingTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
+                break;
+            default:
+                parkingTrajectory = roadRunner.actionBuilder(initialPose);
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        parkingTrajectory.build()));
     }
 
     public void victory() {
         return; // ! TODO
     }
 
-    public void getNextSpecimen() {
-        return; // ! TODO
+    public void getNextSpecimen(StartingPosition sp) {
+        TrajectoryActionBuilder grabTrajectory;
+        switch (sp) {
+            case RED_LEFT:
+            case RED_RIGHT:
+                grabTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
+                break;
+            case BLUE_RIGHT:
+            case BLUE_LEFT:
+                grabTrajectory = roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
+                break;
+            default:
+                grabTrajectory = roadRunner.actionBuilder(initialPose);
+
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        grabTrajectory.build(),
+                        grabSpecimenFromDaouda()));
     }
 
     // Define an enum for starting positions
