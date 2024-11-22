@@ -48,22 +48,22 @@ public class MainMovement extends LinearOpMode {
     @Override
     public void runOpMode() {
         // initializing the motors (pseudocode) (:skull:, :fire:, :splash:, :articulated-lorry:, :flushed:, :weary:, :sob:);
-        leftBack  = hardwareMap.get(DcMotor.class, "bl");
-        rightBack  = hardwareMap.get(DcMotor.class, "br");
-        leftFront  = hardwareMap.get(DcMotor.class, "fl");
-        rightFront  = hardwareMap.get(DcMotor.class, "fr");
+        leftBack  = hardwareMap.get(DcMotor.class, "bl"); //    CH0
+        rightBack  = hardwareMap.get(DcMotor.class, "br"); //   EH0
+        leftFront  = hardwareMap.get(DcMotor.class, "fl"); //   CH1
+        rightFront  = hardwareMap.get(DcMotor.class, "fr"); //  EH1
+        linearSlide = hardwareMap.get(DcMotor.class, "ls"); //  EH2
 
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
 
-        vClawServo = hardwareMap.get(Servo.class, "vcs"); // claw servo
-        vArmServo = hardwareMap.get(Servo.class, "vas"); //
-        hClawRotate = hardwareMap.get(Servo.class, "hcr"); // claw rotate
-        hClawServo = hardwareMap.get(Servo.class, "hcs");
-        hArmOpen = hardwareMap.get(Servo.class, "hao"); // [done]
-        hLinearSlide = hardwareMap.get(Servo.class, "hls"); // [done]
-        linearSlide = hardwareMap.get(DcMotor.class, "ls"); // linear slide [Done]
+        vClawServo = hardwareMap.get(Servo.class, "vcs"); //    CH3
+        vArmServo = hardwareMap.get(Servo.class, "vas"); //     CH2
+        hClawRotate = hardwareMap.get(Servo.class, "hcr"); //   EH4
+        hClawServo = hardwareMap.get(Servo.class, "hcs"); //    EH5
+        hArmOpen = hardwareMap.get(Servo.class, "hao"); //      EH3
+        hLinearSlide = hardwareMap.get(Servo.class, "hls"); //  EH1
 
 
 
@@ -223,7 +223,7 @@ public class MainMovement extends LinearOpMode {
 
         if(Math.abs(gamepad2.right_stick_y) > joystickDeadzone) {
             // moves the horizontal linear slide 
-            hLinearSlide.setPosition(Math.min(0.925, Math.max(0, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
+            hLinearSlide.setPosition(Math.min(1, Math.max(0, hLinearSlide.getPosition() + gamepad2.right_stick_y / 20)));
         } else {
             // keep the movement of the slide as is when not changing its position (to prevent it from swinging back and forth while robot drives)
             hLinearSlide.setPosition(hLinearSlide.getPosition());
