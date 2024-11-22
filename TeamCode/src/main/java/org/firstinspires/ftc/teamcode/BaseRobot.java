@@ -116,10 +116,9 @@ public class BaseRobot {
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
         logger.update("REAR LEFT", String.valueOf(rearLeft));
         logger.update("REAR RIGHT", String.valueOf(rearRight));
-        // ! TODO remove this after testing
-        double MULT = 0.9;
-        frontLeftMotor.setPower(frontLeft * MULT);
-        frontRightMotor.setPower(frontRight * MULT);
+
+        frontLeftMotor.setPower(frontLeft);
+        frontRightMotor.setPower(frontRight);
         rearLeftMotor.setPower(rearLeft);
         rearRightMotor.setPower(rearRight);
     }
