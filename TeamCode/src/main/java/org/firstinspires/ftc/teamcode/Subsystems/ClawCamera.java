@@ -40,7 +40,7 @@ public class ClawCamera extends SubsystemBase {
         long lastUpdate = myColorAndOrienDetProcessor.getLastUpdatedTime();
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime - lastUpdate > 100) { // Data is older than 100ms
+        if (currentTime - lastUpdate > 500) { // Data is older than 100ms
             System.out.println("Warning: Vision data is outdated!");
             return; // Skip using outdated data
         }
@@ -52,6 +52,26 @@ public class ClawCamera extends SubsystemBase {
         } else {
             System.out.println("Blue not detected!");
         }
+
+        // Get all detected objects (thread-safe method)
+        List<DetectedAngle> detectedObjects = myColorAndOrienDetProcessor.getDetectedColorAndAng();
+        // Check if there are any detections
+        if (detectedObjects.isEmpty()) {
+            System.out.println("No objects detected!");
+        } else {
+            System.out.println("Detected Objects:");
+
+            // Print details of each detected object
+            for (DetectedAngle detected : detectedObjects) {
+                System.out.println(
+                        "Color: " + detected.getColorName() +
+                                ", Angle: " + String.format("%.1f", detected.getAngle()) +
+                                ", Center: (" + String.format("%.1f", detected.getCenter().x) +
+                                ", " + String.format("%.1f", detected.getCenter().y) + ")"
+                );
+            }
+        }
+
     }
 
 
