@@ -37,14 +37,6 @@ public class ClawCamera extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        double ang = myColorAndOrienDetProcessor.calAngle("Blue");
-//        if(Math.abs(ang + 999.99)<1e-3 ){
-//            System.out.println(" ang1 " + ang  );
-//        }
-//        else
-//        {
-//            System.out.println(" ang2 " + ang  );
-//        }
 //        if (!dashboardInitialized) {
 //            initializeDashboard();
 //            dashboardInitialized = true;
