@@ -38,6 +38,7 @@ public class DetectedColorWithAngle extends DetectedColor {
         return center;
     }
 
+
     @Override
     public String toString() {
         return "DetectedColorWithAngle{" +
