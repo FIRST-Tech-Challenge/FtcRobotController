@@ -185,34 +185,52 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         placeNextSpecimenOnChamber(sp, MainAuto.ChamberHeight.HIGH);
     }
 
-    public void justPark(StartingPosition sp) {
-        TrajectoryActionBuilder parkingTrajectory;
-
+    private TrajectoryActionBuilder getParkingTrajectory(StartingPosition sp) {
+        // Helper method to get parking trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .lineToX(40);
-                break;
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
             case RED_RIGHT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .lineToX(60);
-                break;
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
             case BLUE_LEFT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .lineToX(-40);
-                break;
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
             case BLUE_RIGHT:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose)
-                        .lineToX(-60);
-                break;
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
             default:
-                parkingTrajectory = roadRunner.actionBuilder(initialPose);
-
+                return roadRunner.actionBuilder(initialPose);
         }
+    }
 
+    private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp) {
+        // Helper method to get human player trajectory based on starting position
+        switch (sp) {
+            case RED_LEFT:
+            case RED_RIGHT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
+            case BLUE_LEFT:
+            case BLUE_RIGHT:
+                return roadRunner.actionBuilder(initialPose)
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
+            default:
+                return roadRunner.actionBuilder(initialPose);
+        }
+    }
+
+    public void justPark(StartingPosition sp) {
         Actions.runBlocking(
                 new SequentialAction(
-                        parkingTrajectory.build()));
+                        getParkingTrajectory(sp).build()));
     }
 
     public class PlaceChamber implements Action {
@@ -232,7 +250,7 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         return new PlaceChamber();
     }
 
-    public class GrabSpecimenFromDaouda implements Action {
+    public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
@@ -244,8 +262,8 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
         }
     }
 
-    public Action grabSpecimenFromDaouda() {
-        return new GrabSpecimenFromDaouda();
+    public Action grabSpecimenFromHP() {
+        return new GrabSpecimenFromHumanPlayer();
     }
 
     public void immediatelyPlace(StartingPosition sp) {
@@ -368,29 +386,10 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void getNextSpecimen(StartingPosition sp) {
-        TrajectoryActionBuilder grabTrajectory;
-        switch (sp) {
-            case RED_LEFT:
-            case RED_RIGHT:
-                grabTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
-                break;
-            case BLUE_RIGHT:
-            case BLUE_LEFT:
-                grabTrajectory = roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
-                break;
-            default:
-                grabTrajectory = roadRunner.actionBuilder(initialPose);
-
-        }
-
         Actions.runBlocking(
                 new SequentialAction(
-                        grabTrajectory.build(),
-                        grabSpecimenFromDaouda()));
+                        getHPTrajectory(sp).build(),
+                        grabSpecimenFromHP()));
     }
 
     // Define an enum for starting positions
