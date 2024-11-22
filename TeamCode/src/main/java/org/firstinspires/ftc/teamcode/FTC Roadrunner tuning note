@@ -1,8 +1,0 @@
-ftc dashboard
-http://192.168.43.1:8080/dash (for manual feed forward tuner, manual feedback tuner)(cancel /dash can go to On bot)
-Forward ramp logger
-http://192.168.43.1:8080/tuning/forward-ramp.html
-Angular ramp logger
-http://192.168.43.1:8080/tuning/dead-wheel-angular-ramp.html
-
-finally spline test
