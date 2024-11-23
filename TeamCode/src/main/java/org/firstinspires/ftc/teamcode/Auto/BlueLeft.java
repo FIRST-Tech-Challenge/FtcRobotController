@@ -59,6 +59,12 @@ public class BlueLeft extends LinearOpMode {
         ));
         AccelConstraint baseAccelConstraint = new ProfileAccelConstraint(-25.0, 40);
 
+        VelConstraint slowVelConstraint = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(10),
+                new AngularVelConstraint(Math.PI / 2)
+        ));
+        AccelConstraint slowAccelConstraint = new ProfileAccelConstraint(-10, 20);
+
         double scorexPos = 10.5;
         double scoreyPos = 18.0;
         double pickUpxPos1 = 18;
@@ -83,6 +89,8 @@ public class BlueLeft extends LinearOpMode {
                         baseVelConstraint,
                         baseAccelConstraint)
                 .waitSeconds(.25);
+
+        //driveToScoreFirst
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(pickUpxPos2, 12), Math.toRadians(0),
                         baseVelConstraint,
@@ -94,6 +102,7 @@ public class BlueLeft extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
                         baseVelConstraint,
                         baseAccelConstraint)
+//                .splineToLinearHeading(new Pose2d(10, -80, Math.toRadians(0)), Math.PI / 2)
                 .waitSeconds(.25);
 
         //driveToSecondPickUp
@@ -155,7 +164,7 @@ public class BlueLeft extends LinearOpMode {
                 )
         );
 
-        viperSlide.goToPosition();
+        viperSlide.goToPosition(4250);
         viperSlide.bucketScore();
         sleep(1250);
         viperSlide.bucketRest();
@@ -166,8 +175,31 @@ public class BlueLeft extends LinearOpMode {
 
         // First sample
         Actions.runBlocking(driveToFirstPickUp1);
+        hSlide.goToPosition(80);
+        intake.wristDown();
+        sleep(300);
+        hSlide.goToPosition(150);
 
-        hSlide.moveForward();
+        intake.grabberSuck();
+        sleep(2500);
+        intake.grabberOff();
+
+        intake.wristUp();
+        hSlide.goToRest();
+        intake.grabberSpit();
+        sleep(1500);
+        intake.grabberOff();
+
+        Actions.runBlocking(driveToScoreFirst);
+
+        viperSlide.goToPosition(4250);
+        viperSlide.bucketScore();
+        sleep(1250);
+        viperSlide.bucketRest();
+        viperSlide.goToRest();
+
+        hSlide.resetEncoder();
+        viperSlide.resetEncoders();
 
         Actions.runBlocking(
                 new SequentialAction(

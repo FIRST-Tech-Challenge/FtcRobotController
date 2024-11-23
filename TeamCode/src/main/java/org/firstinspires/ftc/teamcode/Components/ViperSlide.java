@@ -154,15 +154,15 @@ public class ViperSlide {
 
     }
 
-    public void goToPosition() {
-        while (rightViper.getCurrentPosition() < 4200) {
+    public void goToPosition(int position) {
+        while (rightViper.getCurrentPosition() < position) {
             setPower(1);
         }
         stop();
     }
 
     public void goToRest() {
-        while (rightViper.getCurrentPosition() > 200) {
+        while ((rightViper.getCurrentPosition() > 200) && (rightViper.getCurrent(CurrentUnit.AMPS) < 6)) {
             setPower(-1);
         }
         stop();

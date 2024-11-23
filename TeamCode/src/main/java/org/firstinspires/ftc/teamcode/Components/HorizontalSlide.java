@@ -50,8 +50,8 @@ public class HorizontalSlide {
         }
     }
 
-    public void goToPosition() {
-        while (slideMotor.getCurrentPosition() < 100) {
+    public void goToPosition(int position) {
+        while (slideMotor.getCurrentPosition() < position) {
             slideMotor.setPower(1);
         }
         stopMotor();
