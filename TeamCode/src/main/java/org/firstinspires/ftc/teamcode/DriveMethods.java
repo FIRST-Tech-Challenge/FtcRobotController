@@ -37,7 +37,7 @@ public abstract class DriveMethods extends OpMode {
         robot.rightBackDrive.setPower(rightBackPower);
     }
     public void omniOp(double wormrote) {
-        robot.motorTest.setPower(wormrote);
+        robot.wormGear.setPower(wormrote);
     }
     //wormrote variable controls vertical movement of the worm gear.
 }

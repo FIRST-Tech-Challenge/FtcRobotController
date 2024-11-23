@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Devices {
-        DcMotorEx motorTest;
+        DcMotorEx wormGear;
         DcMotorEx leftFrontDrive;
         DcMotorEx rightFrontDrive;
         DcMotorEx rightBackDrive;
@@ -13,17 +13,17 @@ public class Devices {
 
     public void init(HardwareMap hwmap) {
 
-        motorTest = hwmap.get(DcMotorEx.class, "motorTest");
+        wormGear = hwmap.get(DcMotorEx.class, "wormGear");
 
-        leftFrontDrive = hwmap.get(DcMotorEx.class, "left_front");
-        rightFrontDrive = hwmap.get(DcMotorEx.class, "right_front");
-        leftBackDrive = hwmap.get(DcMotorEx.class, "left_back");
-        rightBackDrive = hwmap.get(DcMotorEx.class, "right_back");
+        leftFrontDrive = hwmap.get(DcMotorEx.class, "leftFront");
+        rightFrontDrive = hwmap.get(DcMotorEx.class, "rightFront");
+        leftBackDrive = hwmap.get(DcMotorEx.class, "leftBack");
+        rightBackDrive = hwmap.get(DcMotorEx.class, "rightBack");
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 }

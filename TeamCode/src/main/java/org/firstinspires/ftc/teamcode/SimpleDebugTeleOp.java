@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class SimpleDebugTeleOp extends DriveMethods {
@@ -39,13 +37,13 @@ public class SimpleDebugTeleOp extends DriveMethods {
         if (gamepad1.a) {
             power = inputSpeed;
         }
-        robot.motorTest.setPower(power);
+        robot.wormGear.setPower(power);
 
         telemetry.addData("power","%.1f", power);
         // "%.1f" is a percentage of a float, truncating after more than the tenths place.
-        telemetry.addData("position", "%7d", robot.motorTest.getCurrentPosition());
+        telemetry.addData("position", "%7d", robot.wormGear.getCurrentPosition());
         // "%7d" is a percentage of an integer, truncating after more than seven digits.
-        double degrees = robot.motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
+        double degrees = robot.wormGear.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
 
         telemetry.addData("tickAngles", "%.1f", degrees);
     }
