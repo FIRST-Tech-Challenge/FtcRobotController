@@ -159,7 +159,7 @@ public class Settings {
             public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(8.6, 29.0, Math.toRadians(270)); // Updated
             public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-7.2, 29.2, Math.toRadians(270)); // Updated
 
-            public static final Pose2d RED_HP_POSE = new Pose2d(34.4, -58.0, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_HP_POSE = new Pose2d(-35.8, 58.0, Math.toRadians(90)); // Updated
             public static final Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45)); // Updated
         }
 
