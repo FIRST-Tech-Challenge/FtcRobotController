@@ -26,8 +26,13 @@ public class TeleOp2024 extends DriveMethods {
         double opRightStickX = operator.right_stick_x;
 
         omniDrive(driveLeftStickY, driveLeftStickX, driveRightStickX);
+        telemetry.addData("Axial","%.1f", driveLeftStickY);
+        telemetry.addData("Lateral","%.1f", driveLeftStickX);
+        telemetry.addData("Yaw","%.1f", driveRightStickX);
 
         omniOp(opLeftStickY);
+        telemetry.addData("Lift","%.1f", opLeftStickY);
+//Lift means wormrote variable, which refers to the rotation of the worm gear
 
     }
 }
