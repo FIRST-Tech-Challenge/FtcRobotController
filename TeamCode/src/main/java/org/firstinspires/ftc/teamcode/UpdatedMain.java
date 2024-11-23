@@ -34,6 +34,10 @@ public class UpdatedMain extends LinearOpMode {
     public static double arm_less_zero = 0.5;//we already knew 90% speed was way to fast why did you change it in the first place
     public static double arm_more_zero = 0.5;
     public static double triggerModifier = 0.005;
+    private final int swap  = -329;
+
+    private double up_speed = 0.7;
+    private double down_speed = 0.7;
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
     //main loop
     @Override
@@ -71,6 +75,8 @@ public class UpdatedMain extends LinearOpMode {
         arm_rotator_motor = hardwareMap.get(DcMotor.class, "arm_control");
         arm_extender_motor = hardwareMap.get(DcMotor.class, "arm_extender");
         arm_rotator_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        arm_rotator_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm_rotator_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -107,11 +113,11 @@ public class UpdatedMain extends LinearOpMode {
         //Hand
         dashboardTelemetry.addData("Hand Grip", hand_grip_servo.getPosition());
         dashboardTelemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
-
+        telemetry.addData("Hand Grip", hand_grip_servo.getPosition());
         //Arm
         dashboardTelemetry.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
         dashboardTelemetry.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
-
+        telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
         //Vars that should be changeable (please)
         dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
         dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
@@ -129,20 +135,42 @@ public class UpdatedMain extends LinearOpMode {
         double left_stick_x = gamepad1.left_stick_x * -1;
         double left_stick_y = gamepad1.left_stick_y;
         double right_stick_x = gamepad1.right_stick_x;
-        back_left_wheel.setPower(((left_stick_y - left_stick_x)*-1) + right_stick_x);
-        back_right_wheel.setPower(((left_stick_y + left_stick_x)*-1) - right_stick_x);
-        front_left_wheel.setPower(((left_stick_y + left_stick_x)*-1) + right_stick_x);
-        front_right_wheel.setPower(((left_stick_y - left_stick_x)*-1) - right_stick_x);
+        back_left_wheel.setPower((((left_stick_y - left_stick_x)*-1) + right_stick_x)*0.5);
+        back_right_wheel.setPower((((left_stick_y + left_stick_x)*-1) - right_stick_x)*0.5);
+        front_left_wheel.setPower((((left_stick_y + left_stick_x)*-1) + right_stick_x)*0.5);
+        front_right_wheel.setPower((((left_stick_y - left_stick_x)*-1) - right_stick_x)*0.5);
     }
     public void update_arm_rotation(){
-        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.4 : 0.5)) *-1);
+        //arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.6)) *-1);
+        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
+
+        /*if(arm_rotator_motor.getCurrentPosition() >= swap){
+            if (gamepad2.left_stick_y > 0){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*0.5 *-1);
+            }else if (gamepad2.left_stick_y < 0){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*0.7 *-1);
+            }
+        } else if (arm_rotator_motor.getCurrentPosition() < swap){
+            if (gamepad2.left_stick_y > 0){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*0.7 *-1);
+            }else if (gamepad2.left_stick_y < 0){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*0.5 *-1);
+            }
+        }*/
+
     }
     public void update_grip(){
-        if (gamepad2.left_bumper){
+        /*if (gamepad2.left_bumper){
             hand_grip_servo.setPosition(hand_grip_servo.getPosition() + triggerModifier);
 
         } else if (gamepad2.right_bumper){
             hand_grip_servo.setPosition(hand_grip_servo.getPosition() - triggerModifier);
+        }*/
+        //0 open 0.75 closed
+        if(gamepad2.a){
+            hand_grip_servo.setPosition(hand_grip_servo.getPosition() - 0.01);
+        }else if (gamepad2.b){
+            hand_grip_servo.setPosition(hand_grip_servo.getPosition() + 0.01);
         }
     }
     public void update_hand_rotation(){
