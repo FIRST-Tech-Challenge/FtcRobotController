@@ -68,7 +68,7 @@ public class Swerve {
 
     this.telemetry = opMode.telemetry;
 
-    speedMult = .6;
+    speedMult = .5;
     double timeToFull = .5;
 
     xLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
@@ -249,7 +249,7 @@ public class Swerve {
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      drivePID = new PIDController(0 / maxDriveSpeedMetersPerSec, 0, 0);
+      drivePID = new PIDController(2 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID.enableContinuousInput(-Math.PI, Math.PI);

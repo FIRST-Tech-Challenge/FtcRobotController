@@ -11,20 +11,21 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
 import org.firstinspires.ftc.teamcode.Utils;
 
 @Autonomous(preselectTeleOp = "Blue Bot Teleop")
-public class Park extends LinearOpMode {
+public class ParkFromLeft extends LinearOpMode {
   private Swerve drivebase;
 
   @Override
   public void runOpMode() throws InterruptedException {
     drivebase = new Swerve(this);
     drivebase.initGyro();
-    drivebase.setGyro(Rotation2d.kCCW_Pi_2);
+    drivebase.setGyro(Rotation2d.fromDegrees(120));
 
     waitForStart();
-    drivebase.alignWheels(this::opModeIsActive);
-    driveForTime(new ChassisSpeeds(0, -.75, 0), 1);
-    driveForTime(new ChassisSpeeds(-drivebase.getTopSpeed() / 2, 0, 0), 2);
-    driveForTime(new ChassisSpeeds(0, .75, 0), 1);
+    driveForTime(new ChassisSpeeds(0, -.75, 0),.5);
+    driveForTime(new ChassisSpeeds(0, 0, -1), 1.5);
+    driveForTime(new ChassisSpeeds(0, -0.75, 0), 1.25);
+    driveForTime(new ChassisSpeeds(-.75, 0, 0), 7);
+    driveForTime(new ChassisSpeeds(0, 0.75, 0), 2);
   }
 
   private void driveForTime(ChassisSpeeds speeds, double time) {

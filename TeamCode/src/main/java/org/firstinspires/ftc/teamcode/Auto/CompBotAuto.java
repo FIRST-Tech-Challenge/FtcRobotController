@@ -115,7 +115,7 @@ public class CompBotAuto extends LinearOpMode {
     } catch (final InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
-    odo.resetHeading(Rotation2d.fromDegrees(130));
+    odo.resetHeading(Rotation2d.fromDegrees(120));
   }
 
   public void initSlide() {
