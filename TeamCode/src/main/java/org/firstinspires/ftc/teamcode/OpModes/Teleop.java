@@ -51,10 +51,12 @@ public class Teleop extends LinearOpMode {
                     }
             );
             drivetrain.setPower(drivePowers);
-            packet.fieldOverlay()
-                    .setFill("white")
-                    .fillRect(0,0,10, 10);
-            dashboard.sendTelemetryPacket(packet);
+//            packet.fieldOverlay()
+//                    .setFill("white")
+//                    .fillRect(0,0,10, 10);
+//            dashboard.sendTelemetryPacket(packet);
+            telemetry.addData("Battery ", drivetrain.battery.getVoltage());
+            telemetry.update();
 
         }
     }

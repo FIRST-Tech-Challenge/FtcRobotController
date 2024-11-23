@@ -43,6 +43,10 @@ public class Drivetrain {
     public DcMotorAdvanced motorLeftBack = null;
     public DcMotorAdvanced motorRightBack = null;
     public DcMotorAdvanced motorRightFront = null;
+//    public DcMotorEx motorLeftFront = null;
+//    public DcMotorEx motorLeftBack = null;
+//    public DcMotorEx motorRightBack = null;
+//    public DcMotorEx motorRightFront = null;
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
@@ -76,12 +80,16 @@ public class Drivetrain {
         this.motorLeftBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "lbm"), battery, maxVoltage);
         this.motorRightBack = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rbm"), battery, maxVoltage);
         this.motorRightFront = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "rfm"), battery, maxVoltage);
-        //casting
+
+//        this.motorLeftFront = hardwareMap.get(DcMotorEx.class, "lfm");
+//        this.motorLeftBack = hardwareMap.get(DcMotorEx.class, "lbm");
+//        this.motorRightBack = hardwareMap.get(DcMotorEx.class, "rbm");
+//        this.motorRightFront = hardwareMap.get(DcMotorEx.class, "rfm");
 
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.motorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         this.motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /**
          * Establish that motors will not be using their native encoders:
