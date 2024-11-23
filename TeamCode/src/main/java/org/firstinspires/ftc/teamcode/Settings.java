@@ -50,9 +50,9 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double HORIZONTAL_POSITION = 1;
+                public static double HORIZONTAL_POSITION = 0.7;
                 public static double CHAMBER_POSITION = 0.3;
-                public static double VERTICAL_POSITION = 0;
+                public static double VERTICAL_POSITION = 0.1;
             }
         }
 
@@ -240,8 +240,8 @@ public class Settings {
 
         // Claw controls
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
-        public final GamepadButton intakeOut = GamepadButton.OPTIONS;
-        public final GamepadButton intakeStop = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeStop = GamepadButton.OPTIONS;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;

@@ -116,16 +116,18 @@ public class MeetTwoStableAuto extends LinearOpMode {
     }
 
     public void run(StartingPosition sp) {
+        baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
         switch (Settings.Deploy.AUTONOMOUS_MODE) {
             case JUST_PARK:
                 baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
-
                 justPark(sp);
                 return;
+
             case JUST_PLACE:
                 baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
                 immediatelyPlace(sp);
                 return;
+
             case FULL:
                 gameLoopSetup(sp, MainAuto.ChamberHeight.LOW);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
@@ -224,15 +226,14 @@ public class MeetTwoStableAuto extends LinearOpMode {
             case RED_LEFT:
             case BLUE_LEFT:
                 trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .strafeTo(new Vector2d(-15, 0)).strafeTo(new Vector2d(0, 0)) // push the block to the holding zone by strafing left
-                        .strafeTo(new Vector2d(0, 60)).strafeTo(new Vector2d(20, 60)); // park
+                        .strafeTo(new Vector2d(-25, 0)).strafeTo(new Vector2d(0, 0)) // push the block to the holding zone by strafing left
+                        .strafeTo(new Vector2d(77, 0)); // park on the right side
                 break;
             case RED_RIGHT:
             case BLUE_RIGHT:
             default:
                 trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .lineToY(18).strafeTo(new Vector2d(-75, 18)).strafeTo(new Vector2d(-75, 40))
-                        .strafeTo(new Vector2d(-55, 40));
+                        .strafeTo(new Vector2d(50, 0));
                 break;
         }
         Actions.runBlocking(

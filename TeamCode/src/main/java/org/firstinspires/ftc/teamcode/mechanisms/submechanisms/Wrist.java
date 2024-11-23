@@ -22,7 +22,6 @@ public class Wrist {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
         wristServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST);
-        setPosition(Position.HORIZONTAL);
     }
 
     public void setPosition(Position newPosition) {
@@ -61,13 +60,13 @@ public class Wrist {
 
         switch (currentPosition) {
             case HORIZONTAL:
-                nextPosition = Position.VERTICAL;
-                break;
-            case VERTICAL:
                 nextPosition = Position.CHAMBER;
                 break;
-            case CHAMBER:
+            case VERTICAL:
                 nextPosition = Position.HORIZONTAL;
+                break;
+            case CHAMBER:
+                nextPosition = Position.VERTICAL;
                 break;
             default:
                 nextPosition = Position.HORIZONTAL; // Fallback to HORIZONTAL if unknown
