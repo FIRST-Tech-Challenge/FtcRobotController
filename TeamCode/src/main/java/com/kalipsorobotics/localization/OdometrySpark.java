@@ -2,9 +2,7 @@ package com.kalipsorobotics.localization;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 
-import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,19 +13,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class OdometryFuse {
+public class OdometrySpark {
     OpModeUtilities opModeUtilities;
     private final SparkFunOTOS myOtos;
     private final DcMotor rightEncoder;
     private final DcMotor backEncoder;
 
-    public OdometryFuse(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor backEncoder) {
+    public OdometrySpark(SparkFunOTOS myOtos, DcMotor rightEncoder, DcMotor backEncoder) {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
         this.backEncoder = backEncoder;

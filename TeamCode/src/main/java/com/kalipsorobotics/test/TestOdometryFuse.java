@@ -3,7 +3,8 @@ package com.kalipsorobotics.test;
 import android.content.Context;
 import android.os.Environment;
 
-import com.kalipsorobotics.localization.OdometryFuse;
+import com.kalipsorobotics.localization.OdometrySpark;
+import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -33,16 +34,16 @@ public class TestOdometryFuse  extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "bRight");
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightFront, rightBack);
-        telemetry.addData("" + odometryFuse.configureOtos(myOtos), "");
+        OdometrySpark odometrySpark = new OdometrySpark(myOtos, rightFront, rightBack);
+        telemetry.addData("" + odometrySpark.configureOtos(myOtos), "");
         telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
             driveTrain.setPower(-gamepad1.right_stick_y);
-            telemetry.addData("x: ", odometryFuse.pointCollectData().getX());
-            telemetry.addData("y: ", odometryFuse.pointCollectData().getY());
-            telemetry.addData("H: ", odometryFuse.headingUpdateData("right"));
+            telemetry.addData("x: ", odometrySpark.pointCollectData().getX());
+            telemetry.addData("y: ", odometrySpark.pointCollectData().getY());
+            telemetry.addData("H: ", odometrySpark.headingUpdateData("right"));
             telemetry.update();
         }
     }

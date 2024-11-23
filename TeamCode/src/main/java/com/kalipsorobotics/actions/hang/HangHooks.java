@@ -6,11 +6,15 @@ import com.qualcomm.robotcore.hardware.ServoImpl;
 
 public class HangHooks {
     OpModeUtilities opModeUtilities;
-    private final Servo hangLeft;
+    private Servo hangLeft;
    //private final Servo hangRight;
 
-    public HangHooks() {
-        this.hangLeft = opModeUtilities.getHardwareMap().servo.get("hang1");
+    public HangHooks(OpModeUtilities opModeUtilities) {
+        this.opModeUtilities = opModeUtilities;
+        setUp();
+    }
+    public void setUp() {
+        hangLeft = opModeUtilities.getHardwareMap().servo.get("hang1");
         //this.hangRight = opModeUtilities.getHardwareMap().get(Servo.class, "hang2");
     }
 
