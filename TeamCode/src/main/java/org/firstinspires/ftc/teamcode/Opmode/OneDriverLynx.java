@@ -220,7 +220,7 @@ public class OneDriverLynx extends LinearOpMode {
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE5) {
                 if (timeStamp + 165 < timer.milliseconds()) {
                     robot.claw.open();
-                    globalStateMachine = globalStateMachine.DEFAULT;
+                    globalStateMachine = GlobalStateMachine.DEFAULT;
                 }
             }
 
