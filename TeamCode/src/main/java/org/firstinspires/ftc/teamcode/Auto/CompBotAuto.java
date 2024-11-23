@@ -3,12 +3,17 @@
 
 package org.firstinspires.ftc.teamcode.Auto;
 
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.EncoderDirection.FORWARD;
+import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 
 @Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
@@ -31,7 +36,7 @@ public class CompBotAuto extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     initRobot();
     waitForStart();
-    //initSlide();
+    // initSlide();
 
     slide.setPower(.5);
     slide2.setPower(.5);
@@ -99,6 +104,18 @@ public class CompBotAuto extends LinearOpMode {
 
     // limit switch and brings pivot back
     limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
+
+    var odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+    odo.setOffsets(110, 30);
+    odo.setEncoderResolution(goBILDA_4_BAR_POD);
+    odo.setEncoderDirections(FORWARD, FORWARD);
+    odo.resetPosAndIMU();
+    try {
+      Thread.sleep((long) (.25 * 1e3));
+    } catch (final InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
+    odo.resetHeading(Rotation2d.fromDegrees(130));
   }
 
   public void initSlide() {
