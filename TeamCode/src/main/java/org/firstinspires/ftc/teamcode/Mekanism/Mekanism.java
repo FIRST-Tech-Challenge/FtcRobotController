@@ -76,7 +76,7 @@ public class Mekanism {
     intakeServo.setDirection(Servo.Direction.REVERSE);
     wrist.setDirection(Servo.Direction.REVERSE);
 
-    wrist.setPosition(0.7);
+    wrist.setPosition(0.65);
 
     // servos for clipper
     ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
@@ -223,7 +223,7 @@ public class Mekanism {
       wrist.setPosition(0.1);
       wristMoved = true;
     } else {
-      wrist.setPosition(0.7);
+      wrist.setPosition(0.65);
       wristMoved = false;
     }
   }

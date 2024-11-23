@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import java.util.function.BooleanSupplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
@@ -62,19 +63,13 @@ public class Swerve {
       modules[i] = new Module(opMode, i);
     }
 
-    odometry.resetPosAndIMU();
-    try {
-      Thread.sleep((long) (.25 * 1e3));
-    } catch (final InterruptedException ex) {
-      Thread.currentThread().interrupt();
-    }
     odometry.update();
     odometryStatus = odometry.getDeviceStatus();
 
     this.telemetry = opMode.telemetry;
 
-    speedMult = .75;
-    double timeToFull = .25;
+    speedMult = .6;
+    double timeToFull = .5;
 
     xLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
     yLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
@@ -151,6 +146,35 @@ public class Swerve {
     return odometry.getPose();
   }
 
+  public void initGyro() {
+    odometry.resetPosAndIMU();
+    try {
+      Thread.sleep((long) (.25 * 1e3));
+    } catch (final InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
+  }
+
+  public void alignWheels(BooleanSupplier opModeActiveSupplier) {
+    var state = new SwerveModuleState();
+    while (opModeActiveSupplier.getAsBoolean()) {
+      double maxErrorDeg = 0;
+      for (var module : modules) {
+        module.run(state);
+
+        maxErrorDeg =
+            Math.max(
+                maxErrorDeg,
+                Math.min(
+                    Rotation2d.kZero.minus(module.getServoPos()).getDegrees(),
+                    Rotation2d.kPi.minus(module.getServoPos()).getDegrees()));
+      }
+      if (maxErrorDeg < 5) {
+        return;
+      }
+    }
+  }
+
   public void periodic() {
     odometry.update();
     odometryStatus = odometry.getDeviceStatus();
@@ -217,7 +241,7 @@ public class Swerve {
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
 
-      drivePID = new PIDController(.5 / maxDriveSpeedMetersPerSec, 0, 0);
+      drivePID = new PIDController(0 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID.enableContinuousInput(-Math.PI, Math.PI);
