@@ -212,7 +212,7 @@ public class OneDriverLynx extends LinearOpMode {
                 }
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE4) {
                 if (timeStamp + 500 < timer.milliseconds()) {
-                    robot.wrist.setPosition(210);
+                    robot.wrist.setPosition(200); // need to fix  this shi
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE5;
                     robot.arm.setTargetArmPosition(45);
