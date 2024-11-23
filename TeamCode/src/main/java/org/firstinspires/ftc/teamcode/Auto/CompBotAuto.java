@@ -40,9 +40,9 @@ public class CompBotAuto extends LinearOpMode {
 
     slide.setPower(.5);
     slide2.setPower(.5);
-    slide.setTargetPosition(4200); // change to edit drop spot
+    slide.setTargetPosition(4200);
     slide2.setTargetPosition(4200);
-    pivot.setTargetPosition(600); // change to edit drop spot
+    pivot.setTargetPosition(600);
     wrist.setPosition(.35);
     telem();
 
