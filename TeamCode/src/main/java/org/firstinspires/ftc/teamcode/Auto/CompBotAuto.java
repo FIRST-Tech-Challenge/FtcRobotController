@@ -66,6 +66,10 @@ public class CompBotAuto extends LinearOpMode {
     slide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+    slide.setPower(1);
+    slide2.setPower(1);
+    pivot.setPower(.5);
+
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
     pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
