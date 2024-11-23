@@ -23,8 +23,8 @@ public class ParkFromLeft extends LinearOpMode {
     waitForStart();
     driveForTime(new ChassisSpeeds(0, -.75, 0),.5);
     driveForTime(new ChassisSpeeds(0, 0, -1), 1.5);
-    driveForTime(new ChassisSpeeds(0, -0.75, 0), 1.25);
-    driveForTime(new ChassisSpeeds(-.75, 0, 0), 7);
+    driveForTime(new ChassisSpeeds(0, -0.75, 0), .75);
+    driveForTime(new ChassisSpeeds(-.75, 0.125, 0), 7);
     driveForTime(new ChassisSpeeds(0, 0.75, 0), 2);
   }
 
