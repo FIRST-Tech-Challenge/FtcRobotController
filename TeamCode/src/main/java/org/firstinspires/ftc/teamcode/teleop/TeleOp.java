@@ -98,7 +98,7 @@ public class TeleOp extends LinearOpMode {
             if(fieldCentric)
             {
                 telemetry.addData("Field Centric: ", fieldCentric);
-                double forward = controller.left_stick_y;
+                double forward = -controller.left_stick_y;
                 double strafe = controller.left_stick_x;
                 double rotate = -controller.right_stick_x;
                 clawPos = 0.6;

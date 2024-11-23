@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@Autonomous(name="Far Claw")
+//@Autonomous(name="Far Claw")
 public class FarSideClawAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
