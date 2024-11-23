@@ -232,12 +232,12 @@ public class MainMovement extends LinearOpMode {
 
         //snaps horizontal linear slide to fully extended
         if(gamepad2.dpad_up){
-            hLinearSlide.setPosition(1);
+            hLinearSlide.setPosition(0.8);
             sleep(100); // wait for teh motion to finish
         }
         //snaps horizontal linear slide to fully retracted
         if(gamepad2.dpad_down){
-            hLinearSlide.setPosition(1);
+            hLinearSlide.setPosition(0);
             sleep(100); // wait for the motion to finish
         }
 
@@ -296,7 +296,7 @@ public class MainMovement extends LinearOpMode {
                 telemetry.addData(null,hClawRotate.getPosition());
 
             } else if(!hArmUp){
-                hArmOpen.setPosition(0.25);
+                hArmOpen.setPosition(0);
                 sleep(50);
                 hClawRotate.setPosition(0.75);
                 telemetry.addData(null,hClawRotate.getPosition());
