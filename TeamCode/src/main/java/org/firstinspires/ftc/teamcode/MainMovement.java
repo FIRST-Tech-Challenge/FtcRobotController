@@ -263,7 +263,7 @@ public class MainMovement extends LinearOpMode {
                 vArmServo.setPosition(0); //Arm swings out
                 telemetry.addData("1", null);
             } else {
-                vArmServo.setPosition(0); //Arm swings in
+                vArmServo.setPosition(0.75); //Arm swings in
                 telemetry.addData("0", null);
             }
             sleep(100);
@@ -271,16 +271,16 @@ public class MainMovement extends LinearOpMode {
 
         //open or close chamber claw
         if (gamepad2.a) {
-            vClawOpen = !vClawOpen; // switch claws open state
             if (vClawOpen) {
                 vClawServo.setPosition(0); //open vertical claw
-                telemetry.addData("chamber claw open, position = ", vClawServo.getPosition());
+                telemetry.addData("Opening ", vClawServo.getPosition());
+                vClawOpen = false; // switch claws open state
             } else {
-                vClawServo.setPosition(0.5); //close vertical claw
-                telemetry.addData("chamber claw closed, position = ", vClawServo.getPosition());
-                sleep(250);
+                vClawServo.setPosition(1); //close vertical claw
+                telemetry.addData("Closing  ", vClawServo.getPosition());
+                vClawOpen = true; // switch claws open state
             }
-            //sleep(100); //creates cooldown for switching claw positions
+            sleep(100); //creates cooldown for switching claw positions
 
         }
 
@@ -289,16 +289,16 @@ public class MainMovement extends LinearOpMode {
             hArmUp = !hArmUp; // toggle arm rotation 
 
             if(hArmUp) { 
-                hClawRotate.setPosition(0);
+                hClawRotate.setPosition(0.3);
                 sleep(500);
                 hArmOpen.setPosition(0.75);
                 sleep(1000);
                 telemetry.addData(null,hClawRotate.getPosition());
 
             } else if(!hArmUp){
-                hArmOpen.setPosition(0);
+                hArmOpen.setPosition(0.25);
                 sleep(500);
-                hClawRotate.setPosition(0);
+                hClawRotate.setPosition(0.9);
                 sleep(1000);
                 telemetry.addData(null,hClawRotate.getPosition());
 
