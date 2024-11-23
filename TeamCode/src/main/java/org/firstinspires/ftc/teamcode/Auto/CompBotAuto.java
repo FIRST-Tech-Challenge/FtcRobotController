@@ -33,19 +33,20 @@ public class CompBotAuto extends LinearOpMode {
     initRobot();
     waitForStart();
     // initSlide();
+
+    while(limitSwitch.getState()){
+      pivot.setTargetPosition(pivot.getTargetPosition()-10);
+    }
     pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    slide.setTargetPosition(4100);
-    slide2.setTargetPosition(4100);
-    pivot.setTargetPosition(-1100);   //change
+    slide.setTargetPosition(4200);
+    slide2.setTargetPosition(4200);
+    pivot.setTargetPosition(650);   //change
     wrist.setPosition(.35);
     //telem();
 
-    sleep(4000);
+    sleep(3500);
 
     intake.setPosition(0);
 
@@ -55,7 +56,13 @@ public class CompBotAuto extends LinearOpMode {
     slide.setTargetPosition(0);
     slide2.setTargetPosition(0);
     //telem();
-    sleep(4500);
+    sleep(3500);
+
+    var odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+    odometry.setOffsets(110, 30);
+    odometry.setEncoderResolution(goBILDA_4_BAR_POD);
+    odometry.setEncoderDirections(FORWARD, FORWARD);
+    odometry.resetHeading(Rotation2d.fromDegrees(120));
   }
 
   public void telem(){
@@ -84,8 +91,8 @@ public class CompBotAuto extends LinearOpMode {
     slide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    slide.setPower(.90);
-    slide2.setPower(.90);
+    slide.setPower(1);
+    slide2.setPower(1);
     pivot.setPower(.5);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
