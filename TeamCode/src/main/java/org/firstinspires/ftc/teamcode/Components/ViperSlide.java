@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -116,7 +118,7 @@ public class ViperSlide {
 
     public void holdPosition(double holdPosition) {
         double holdPower = 0.1;
-        double holdPowerIncrement = 0.1;
+        double holdPowerIncrement = 0.2;
 
 
         telemetry.addData("Holding", holdPosition);
@@ -166,23 +168,28 @@ public class ViperSlide {
         stop();
     }
 
-//    public Action moveToPosition(int targetPosition) {
-//        return new Action() {
-//            private boolean initialized = false;
-//
-//            @Override
-//            public boolean run(TelemetryPacket packet) {
-//                if (!initialized) {
-//                    setTargetPosition(targetPosition);
-//                    setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                    setPower(1.0);
-//                    initialized = true;
-//                }
-//                packet.put("ViperSlide Position", getCurrentPosition());
-//                return isBusy();
-//            }
-//        };
-//    }
+    public Action goToPositionAction(int position) {
+        int error = 50;
+        return new Action() {
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (getPos() < position) {
+                    setPower(1);
+                }
+                else if(getPos() > position) {
+                    setPower(-1);
+                }
+                else {
+                    stop();
+                }
+
+                packet.put("Viper Position", getPos());
+
+                return getPos() >= (position - error) && getPos() <= (position + error);
+            }
+        };
+    }
+
+
     // bucket
 
 
