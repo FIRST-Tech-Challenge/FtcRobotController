@@ -12,7 +12,6 @@ public class Wrist {
     public final Servo wristServo;
     public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
     public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
-    public final double basketPos = Settings.Hardware.Servo.Wrist.BASKET_POSITION;
     public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
 
     private final BaseRobot baseRobot;
@@ -35,9 +34,6 @@ public class Wrist {
             case CHAMBER:
                 position = chamberPos;
                 break;
-            case BASKET:
-                position = basketPos;
-                break;
             default:
                 position = horizPos;
                 break;
@@ -52,8 +48,6 @@ public class Wrist {
             return Position.VERTICAL;
         } else if (position == chamberPos) {
             return Position.CHAMBER;
-        } else if (position == basketPos) {
-            return Position.BASKET;
         } else if (position == horizPos) {
             return Position.HORIZONTAL;
         } else {
@@ -73,9 +67,6 @@ public class Wrist {
                 nextPosition = Position.CHAMBER;
                 break;
             case CHAMBER:
-                nextPosition = Position.BASKET;
-                break;
-            case BASKET:
                 nextPosition = Position.HORIZONTAL;
                 break;
             default:
@@ -90,7 +81,6 @@ public class Wrist {
         HORIZONTAL,
         VERTICAL,
         CHAMBER,
-        BASKET,
         UNKNOWN,
     }
 

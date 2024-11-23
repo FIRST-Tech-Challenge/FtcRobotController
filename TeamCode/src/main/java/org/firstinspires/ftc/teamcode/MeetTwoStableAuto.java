@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -111,17 +112,14 @@ public class MeetTwoStableAuto extends LinearOpMode {
         roadRunner = new MecanumDrive(hardwareMap, initialPose);
         waitForStart();
 
-        try {
-            run(startingPosition);
-        } catch (RuntimeException e) {
-            // Shutdown handled by ShutdownManager
-        }
+        run(startingPosition);
     }
 
     public void run(StartingPosition sp) {
         switch (Settings.Deploy.AUTONOMOUS_MODE) {
             case JUST_PARK:
                 baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
+
                 justPark(sp);
                 return;
             case JUST_PLACE:
@@ -169,11 +167,8 @@ public class MeetTwoStableAuto extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-            sleep(500);
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            sleep(200);
             baseRobot.arm.intake.outtake();
-            sleep(50);
             return false;
         }
     }
@@ -186,9 +181,7 @@ public class MeetTwoStableAuto extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            sleep(200);
             baseRobot.arm.intake.intake();
-            sleep(50);
             baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
             return false;
         }
@@ -226,21 +219,23 @@ public class MeetTwoStableAuto extends LinearOpMode {
     }
 
     public void justPark(StartingPosition sp) {
-        TrajectoryActionBuilder t = roadRunner.actionBuilder(initialPose)
-                .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
-                        Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
-
-        telemetry.addData("position", "Headed to " + Settings.Autonomous.FieldPositions.RED_HP_POSE.position
-                + " from " + initialPose.position);
-        telemetry.addData("heading", "Heading to " + Settings.Autonomous.FieldPositions.RED_HP_POSE.heading
-                + " from " + initialPose.heading);
-
-        telemetry.update();
-
-        sleep(3000);
+        TrajectoryActionBuilder trajectory;
+        switch (sp) {
+            case RED_LEFT:
+            case BLUE_LEFT:
+                trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                        .lineToY(60).strafeTo(new Vector2d(20, 60));
+                break;
+            case RED_RIGHT:
+            case BLUE_RIGHT:
+            default:
+                trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                        .lineToY(20).strafeTo(new Vector2d(-70, 20)).strafeTo(new Vector2d(-70, 40)).strafeTo(new Vector2d(-50, 40));
+                break;
+        }
         Actions.runBlocking(
                 new SequentialAction(
-                        t.build()));
+                        trajectory.build()));
     }
 
     private TrajectoryActionBuilder getParkingTrajectory(StartingPosition sp) {
@@ -312,6 +307,14 @@ public class MeetTwoStableAuto extends LinearOpMode {
     // Define an enum for starting positions
     public enum StartingPosition {
         RED_LEFT, RED_RIGHT, BLUE_LEFT, BLUE_RIGHT
+    }
+
+    private void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 }

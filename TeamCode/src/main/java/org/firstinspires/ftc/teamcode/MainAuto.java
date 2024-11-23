@@ -167,6 +167,8 @@ public class MainAuto {
      * @param mode Current autonomous mode
      */
     public void immediatelyPark(String mode) {
+        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
+        baseRobot.telemetry.update();
         switch (mode.toLowerCase()) {
             case "red right":
             case "blue right":
@@ -182,7 +184,6 @@ public class MainAuto {
                 baseRobot.odometry.moveCounts("right", 20);
                 break;
         }
-        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
     }
 
     /**

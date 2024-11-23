@@ -51,9 +51,8 @@ public class Settings {
             @Config
             public static class Wrist {
                 public static double HORIZONTAL_POSITION = 1;
-                public static double CHAMBER_POSITION = 0.5;
-                public static double BASKET_POSITION = -0.7;
-                public static double VERTICAL_POSITION = 0.3;
+                public static double CHAMBER_POSITION = 0.3;
+                public static double VERTICAL_POSITION = 0;
             }
         }
 
@@ -142,7 +141,7 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-35.8, -59.5, Math.toRadians(90)); // Updated
+            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-59.5, -35.8, Math.toRadians(90)); // Updated
             public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36, -60, Math.toRadians(90)); // Updated
             public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270)); // Updated
             public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-36, 60, Math.toRadians(270)); // Updated
@@ -159,7 +158,7 @@ public class Settings {
             public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(8.6, 29.0, Math.toRadians(270)); // Updated
             public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-7.2, 29.2, Math.toRadians(270)); // Updated
 
-            public static final Pose2d RED_HP_POSE = new Pose2d(-35.8, 58.0, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_HP_POSE = new Pose2d(-59.5, -25.8, Math.toRadians(90)); // Updated
             public static final Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45)); // Updated
         }
 
@@ -199,10 +198,10 @@ public class Settings {
         public double stick_deadzone = 0.05;
 
         /** Sensitivity multiplier for right stick input */
-        public double right_stick_sensitivity = 1.0;
+        public double right_stick_sensitivity = 0.5;
 
         /** Bumper rotation speed */
-        public double bumper_rotation_speed = 0.4;
+        public double bumper_rotation_speed = 0.8;
 
         /** Whether to invert Y axis controls */
         public boolean invert_y_axis = false;
