@@ -27,8 +27,8 @@ public class PigeonHead {
 
     public void positionUpdate() {
         //might have to be fixed
-        OdometryFuse odometryFuse = new OdometryFuse(myOtos, rightEncoder, backEncoder);
-        double heading = odometryFuse.headingUpdateData("right");
+        OdometrySpark odometrySpark = new OdometrySpark(myOtos, rightEncoder, backEncoder);
+        double heading = odometrySpark.headingUpdateData("right", 0, 0);
         servo.setPosition(-heading);
     }
 

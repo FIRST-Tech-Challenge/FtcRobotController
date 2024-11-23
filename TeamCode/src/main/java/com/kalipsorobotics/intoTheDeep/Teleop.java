@@ -36,6 +36,7 @@ public class Teleop extends LinearOpMode {
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
 
+        boolean prevGamePadY = false;
         boolean prevGamePadX = false;
         boolean prevGamePadB = false;
         boolean prevGamePadA = false;
@@ -87,7 +88,13 @@ public class Teleop extends LinearOpMode {
             }
             prevGamePadA = gamepad2.a;
 
-
+            //LinearSlide toggle
+            if (gamepad2.y && !prevGamePadY) {
+                while (!outtakeSlideAction.toggle()) {
+                    outtakeSlideAction.toggle();
+                }
+            }
+            prevGamePadY = gamepad2.y;
             //OUTTAKE
             //LinearSlide
             if (-gamepad2.right_stick_y > 0.1) {

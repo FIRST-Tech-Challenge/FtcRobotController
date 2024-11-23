@@ -36,5 +36,27 @@ public class OuttakeSlideAction {
     public void moveToPosition() {
 
     }
-
+    public boolean toggle() {
+        if (getPosition() < 920) {
+            while (true) {
+                setPower(0.9);
+                if (getPosition() > 920) {
+                    setPower(0);
+                    return true;
+                }
+            }
+        }
+        else {
+            while (true) {
+                setPower(-0.9);
+                if (getPosition() < 5) {
+                    setPower(0);
+                    return true;
+                }
+            }
+        }
+    }
+    public int getPosition() {
+        return linearSlideMotor1.getCurrentPosition();
+    }
 }
