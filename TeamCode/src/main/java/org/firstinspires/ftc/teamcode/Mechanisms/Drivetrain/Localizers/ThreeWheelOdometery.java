@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.Drivetrain.Utils.Utils;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 
 @Config
 public class ThreeWheelOdometery {
