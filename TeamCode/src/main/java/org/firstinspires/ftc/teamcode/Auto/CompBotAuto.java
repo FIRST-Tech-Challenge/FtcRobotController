@@ -37,25 +37,11 @@ public class CompBotAuto extends LinearOpMode {
     initRobot();
     waitForStart();
     // initSlide();
-    // Home arm
-    while (limitSwitch.getState()) {
-      pivot.setPower(-.75);
-      slide.setPower(-0.5);
-    }
-
-    pivot.setPower(.00);
-    slide.setPower(.00);
-    try {
-      Thread.sleep(250);
-    } catch (final InterruptedException ex) {
-      Thread.currentThread().interrupt();
-    }
     pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    pivot.setPower(.00);
 
     slide.setPower(.5);
     slide2.setPower(.5);
@@ -63,7 +49,7 @@ public class CompBotAuto extends LinearOpMode {
     slide2.setTargetPosition(4200);
     pivot.setTargetPosition(600);
     wrist.setPosition(.35);
-    telem();
+    //telem();
 
     sleep(4500);
 
@@ -74,7 +60,7 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setTargetPosition(0);
     slide.setTargetPosition(0);
     slide2.setTargetPosition(0);
-    telem();
+    //telem();
     sleep(4500);
   }
 
@@ -104,8 +90,8 @@ public class CompBotAuto extends LinearOpMode {
     slide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    slide.setPower(1);
-    slide2.setPower(1);
+    slide.setPower(.75);
+    slide2.setPower(.75);
     pivot.setPower(.5);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);

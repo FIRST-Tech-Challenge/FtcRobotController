@@ -228,19 +228,19 @@ public class Swerve {
       switch (id) {
         case 0 -> {
           pos = "FL";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(6, 0.125, 0.1);
         }
         case 1 -> {
           pos = "FR";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(6, 0.125, 0.1);
         }
         case 2 -> {
           pos = "BL";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(6, 0.125, 0.1);
         }
         case 3 -> {
           pos = "BR";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(6, 0.125, 0.1);
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
