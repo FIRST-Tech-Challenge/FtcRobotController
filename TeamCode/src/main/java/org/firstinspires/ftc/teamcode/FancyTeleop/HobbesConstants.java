@@ -30,7 +30,7 @@ public class HobbesConstants {
 
     public static double EXTENDO_SPEED = 0.01;
 
-    public static double EXTENDO_ARM_TRANSFER = 1;
+    public static double EXTENDO_ARM_TRANSFER = 0.96;
     public static double EXTENDO_ARM_UP = 1;
     public static double EXTENDO_ARM_INTAKE = 0.04272546508163348;
     public static double EXTENDO_ARM_INTAKE_ANGLED = 0.21845096746086934;
@@ -53,7 +53,7 @@ public class HobbesConstants {
     public static double SLIDES_WRIST_DEPOSIT = 0.2;
     public static double SLIDES_WRIST_SPECIMEN = 0.07;
 
-    public static double CLAW_OPEN = 0.4;
+    public static double CLAW_OPEN = 0.2;
     public static double CLAW_CLOSED = 0.8;
 
     public static double INTAKE_POWER = 1;

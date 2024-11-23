@@ -143,7 +143,7 @@ public class HobbesTele extends OpMode {
 
         // P2: WRIST RE-ZEROER
         if (gamepad2.back) hob.extendoWristRezeroOffset = hob.servosController.extendoWristPos - EXTENDO_WRIST_INTAKE_FLAT;
-        if (gamepad2.back && gamepad2.left_stick_button) hob.extendoWristRezeroOffset = 0;
+        if (gamepad2.left_stick_button) hob.extendoWristRezeroOffset = 0;
 
         // P2: SLIDES DOWN, ARM ABOVE SAMPLE
         if (gamepad2.dpad_down && !lastGamepad2.dpad_down) hob.runMacro("SLIDES_DOWN");

@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_OFFSET;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.EXTENDO_WRIST_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INFINITY;
+import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_OFF;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_ARM_ABOVE_TRANSFER;
 import static org.firstinspires.ftc.teamcode.FancyTeleop.HobbesConstants.SLIDES_KP;
@@ -213,13 +214,13 @@ public class Hobbes extends Meccanum implements Robot {
         slidesWrist.setPosition(SLIDES_WRIST_TRANSFER);
     }
     public class ServosThread {
-        public double extendoPos = 0;
-        public double intakeSpeed = 0;
-        public double slidesArmPos = 0;
-        public double slidesWristPos = 0;
-        public double extendoArmPos = 0;
-        public double extendoWristPos = 0;
-        public double clawPos = 0;
+        public double extendoPos = EXTENDO_IN;
+        public double intakeSpeed = INTAKE_OFF;
+        public double slidesArmPos = SLIDES_ARM_ABOVE_TRANSFER;
+        public double slidesWristPos = SLIDES_WRIST_TRANSFER;
+        public double extendoArmPos = EXTENDO_ARM_TRANSFER;
+        public double extendoWristPos = EXTENDO_WRIST_TRANSFER;
+        public double clawPos = CLAW_OPEN;
 
         public void servosTick() {
             tele.addData("extendoPos", extendoPos);
