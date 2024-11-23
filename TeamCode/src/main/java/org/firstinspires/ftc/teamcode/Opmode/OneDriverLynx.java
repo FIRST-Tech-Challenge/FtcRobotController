@@ -118,8 +118,10 @@ public class OneDriverLynx extends LinearOpMode {
                 globalStateMachine = GlobalStateMachine.BEGIN_SUBMERSIBLE;
             } else if (gp.a && (globalStateMachine == GlobalStateMachine.BEGIN_SUBMERSIBLE || globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER)) { // switch back from submersible
                 globalStateMachine = GlobalStateMachine.DEFAULT;
-            } else if (gp.b) {
+            } else if (gp.b && (globalStateMachine == GlobalStateMachine.DEFAULT || globalStateMachine == GlobalStateMachine.INTAKE_READY)) {
                 globalStateMachine = GlobalStateMachine.SPECIMENINTAKE;
+            } else if (gp.b && (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE)) {
+                globalStateMachine = GlobalStateMachine.DEFAULT;
             }
 
 
