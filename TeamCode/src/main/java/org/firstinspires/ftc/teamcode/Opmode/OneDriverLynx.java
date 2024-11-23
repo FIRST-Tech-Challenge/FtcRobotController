@@ -37,7 +37,7 @@ public class OneDriverLynx extends LinearOpMode {
         DEFAULT, INTAKE_READY, CLOSE_INTAKE, FINISHED_INTAKE, READY_DEPOSIT, SLIDES_BEGIN_SCORE,
         WRIST_SCORE, FINISH_SCORE, POST_SCORE, RETURN_TO_DEFAULT,
         BEGIN_SUBMERSIBLE, SUBMERSIBLE_SLIDER, SUBMERSIBLE_INTAKE_OPEN, SUBMERSIBLE_INTAKE_CLOSE,
-        SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN, SPECIMENINTAKE, SPECIMENINTAKE2, HOLDINGSPECIMEN,
+        SUBMERSIBLE_FINISH_1, SUBMERSIBLE_FINISH_2, RETURN_TO_MAIN, SPECIMENINTAKE, SPECIMENINTAKE2,
         SPECIMENINTAKE3, SPECIMENSCORE1, SPECIMENSCORE2, SPECIMENSCORE3, SPECIMENSCORE4, SPECIMENSCORE5, SPECIMENSCORE6, SPECIMENSCORE7
     }
 
@@ -99,8 +99,6 @@ public class OneDriverLynx extends LinearOpMode {
                 } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE2) {
                     globalStateMachine = GlobalStateMachine.SPECIMENINTAKE3;
                 } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE3) {
-                    globalStateMachine = GlobalStateMachine.HOLDINGSPECIMEN;
-                } else if (globalStateMachine == GlobalStateMachine.HOLDINGSPECIMEN) {
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE1;
                 }
             }
@@ -194,22 +192,20 @@ public class OneDriverLynx extends LinearOpMode {
                 robot.dropSpecimenIntake();
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENINTAKE3) {
                 robot.finishSpecimenIntake();
-            }
-            else if (globalStateMachine == GlobalStateMachine.HOLDINGSPECIMEN) {
-                robot.holdingSpecimen();
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE1) {
+                robot.slides.setTargetSlidesPosition(0.5);
+                robot.wrist.holdSpecimen();
                 robot.arm.setTargetArmPosition(79);
                 timeStamp = timer.milliseconds();
                 globalStateMachine = GlobalStateMachine.SPECIMENSCORE2;
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE2) {
-                if (timeStamp + 1000 < timer.milliseconds()) {
+                if (timeStamp + 500 < timer.milliseconds()) {
                     robot.slides.setTargetSlidesPosition(1);
-//                    robot.arm.setTargetArmPosition(anglethingy);
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE3;
                 }
             } else if (globalStateMachine == GlobalStateMachine.SPECIMENSCORE3) {
-                if (timeStamp + 1000 < timer.milliseconds()) {
+                if (timeStamp + 500 < timer.milliseconds()) {
                     robot.slides.setTargetSlidesPosition(9.8);
                     timeStamp = timer.milliseconds();
                     globalStateMachine = GlobalStateMachine.SPECIMENSCORE4;
