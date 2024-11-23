@@ -37,6 +37,25 @@ public class CompBotAuto extends LinearOpMode {
     initRobot();
     waitForStart();
     // initSlide();
+    // Home arm
+    while (limitSwitch.getState()) {
+      pivot.setPower(-.75);
+      slide.setPower(-0.5);
+    }
+
+    pivot.setPower(.00);
+    slide.setPower(.00);
+    try {
+      Thread.sleep(250);
+    } catch (final InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
+    pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    pivot.setPower(.00);
 
     slide.setPower(.5);
     slide2.setPower(.5);
