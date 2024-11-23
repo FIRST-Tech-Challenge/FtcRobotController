@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@Autonomous(name="AutoDrive")
+//@Autonomous(name="AutoDrive")
 public class AutoDrive extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
