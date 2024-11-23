@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 
 @Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
@@ -30,18 +29,19 @@ public class CompBotAuto extends LinearOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {
-    var arm = new Mekanism(this);
     initRobot();
     waitForStart();
     //initSlide();
-    arm.homeArm();
 
-    slide.setTargetPosition(4000); // change to edit drop spot
-    slide2.setTargetPosition(4000);
-    pivot.setTargetPosition(300); // change to edit drop spot
-    wrist.setPosition(.65);
+    slide.setPower(.5);
+    slide2.setPower(.5);
+    slide.setTargetPosition(4200); // change to edit drop spot
+    slide2.setTargetPosition(4200);
+    pivot.setTargetPosition(600); // change to edit drop spot
+    wrist.setPosition(.35);
+    telem();
 
-    sleep(3000);
+    sleep(4500);
 
     intake.setPosition(0);
 
@@ -50,6 +50,17 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setTargetPosition(0);
     slide.setTargetPosition(0);
     slide2.setTargetPosition(0);
+    telem();
+    sleep(4500);
+  }
+
+  public void telem(){
+    telemetry.addData("slide current: ",slide.getCurrentPosition());
+    telemetry.addData("slide goal: ",slide.getTargetPosition());
+    telemetry.addData("pivot current: ",pivot.getCurrentPosition());
+    telemetry.addData("pivot goal: ",pivot.getTargetPosition());
+    telemetry.addData("wrist current: ",wrist.getPosition());
+    telemetry.update();
   }
 
   public void initRobot() {
@@ -86,10 +97,7 @@ public class CompBotAuto extends LinearOpMode {
     intake.setDirection(Servo.Direction.REVERSE);
     wrist.setDirection(Servo.Direction.FORWARD);
 
-    wrist.setPosition(0.7);
-
     // limit switch and brings pivot back
-
     limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
   }
 
