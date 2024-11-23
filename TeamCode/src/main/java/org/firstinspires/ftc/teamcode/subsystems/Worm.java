@@ -40,6 +40,8 @@ public class Worm extends SubsystemBase {
         telemetry = tm;
 
         angleLookup.add(-1,0);
+        angleLookup.add(0.1073, 130);
+        angleLookup.add(0.148, 120);
         angleLookup.add(0.186, 110);
         angleLookup.add(0.284, 100);
         angleLookup.add(0.373, 90);
@@ -55,6 +57,8 @@ public class Worm extends SubsystemBase {
         angleLookup.add(1.09, -5);
         angleLookup.add(1.168, -15);
         angleLookup.add(1.239, -25);
+        angleLookup.add(1.314, -35);
+        angleLookup.add(1.389, -45);
 
         angleLookup.createLUT();
 
