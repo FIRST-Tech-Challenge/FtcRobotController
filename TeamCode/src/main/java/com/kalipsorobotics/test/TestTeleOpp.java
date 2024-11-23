@@ -47,25 +47,25 @@ public class TestTeleOpp extends LinearOpMode {
 //        Point checkpoint1 = new Point(100, 0);
 //        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
 
-        AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
+        //AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
 
         waitForStart();
 
-        outtake.outtakeClawServo.setPosition(0.5);
+        //outtake.outtakeClawServo.setPosition(0.5);
 
         while (opModeIsActive()) {
 
-//            odometry.updatePosition();
+            odometry.updatePosition();
 //            purePursuitAction.updateCheckDone();
 //            checkPointDone.updateCheckDone();
-            autoBasketAction.updateCheckDone();
+            //autoBasketAction.updateCheckDone();
 
 //
 //            if (checkPointDone.getIsDone()) {
 //                Log.d("checkpointdone", "done");
 //            }
 //
-//            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
+            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
 
             //purePursuitAction.updateCheckDone();
 

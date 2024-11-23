@@ -3,6 +3,7 @@ package com.kalipsorobotics.localization;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.math.MathFunctions;
@@ -16,22 +17,27 @@ public class Odometry {
     OpModeUtilities opModeUtilities;
     final static private double TRACK_WIDTH = 273.05;
     static private final double BACK_DISTANCE_TO_MID = 69.85;
-    private final DcMotor rightEncoder;
-    private final DcMotor leftEncoder;
-    private final DcMotor backEncoder;
+//    private final DcMotor rightEncoder;
+//    private final DcMotor leftEncoder;
+//    private final DcMotor backEncoder;
+    private final SparkFunOTOS otos;
     volatile private Position currentPosition;
     volatile private Velocity currentVelocity;
-    private volatile double prevRightTicks = 0;
-    private volatile double prevLeftTicks = 0;
-    volatile private double prevBackTicks = 0;
+//    private volatile double prevRightTicks = 0;
+//    private volatile double prevLeftTicks = 0;
+//    volatile private double prevBackTicks = 0;
+    private volatile double prevX;
+    private volatile double prevY;
+    private volatile double prevTheta;
     private volatile long prevTime;
 
     public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
-        this.rightEncoder = driveTrain.getRightEncoder();
-        this.leftEncoder = driveTrain.getLeftEncoder();
-        this.backEncoder = driveTrain.getBackEncoder();
+        this.otos = driveTrain.getOtos();
+//        this.rightEncoder = driveTrain.getRightEncoder();
+//        this.leftEncoder = driveTrain.getLeftEncoder();
+//        this.backEncoder = driveTrain.getBackEncoder();
 
     }
 
@@ -44,24 +50,38 @@ public class Odometry {
         return ticks / TICKS_TO_MM;
     }
 
-    public double countRight() {
-        return rightEncoder.getCurrentPosition();
-    }
-    public double countLeft() {
-        return leftEncoder.getCurrentPosition();
-    }
-    public double countBack() {
-        return -backEncoder.getCurrentPosition();
+//    public double countRight() {
+//        return rightEncoder.getCurrentPosition();
+//    }
+//    public double countLeft() {
+//        return leftEncoder.getCurrentPosition();
+//    }
+//    public double countBack() {
+//        return -backEncoder.getCurrentPosition();
+//    }
+    public double countY() {
+        return -otos.getPosition().x;
     }
 
-    private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
-        double deltaRightDistance = ticksToMM(rightTicks - prevRightTicks);
-        double deltaLeftDistance = ticksToMM(leftTicks - prevLeftTicks);
-        double deltaMecanumDistance = ticksToMM(backTicks - prevBackTicks);
+    public double countX() {
+        return -otos.getPosition().y;
+    }
 
-        double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
-        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID * deltaTheta);
+    public double countTheta() {
+        return -otos.getPosition().h;
+    }
+
+    private Velocity calculateRelativeDelta(double x, double y, double theta) {
+//        double deltaRightDistance = ticksToMM(rightTicks - prevRightTicks);
+//        double deltaLeftDistance = ticksToMM(leftTicks - prevLeftTicks);
+        double deltaX = ticksToMM(x - prevX);
+        double deltaY = ticksToMM(y - prevY);
+        double deltaTheta = theta - prevTheta;
+
+//        double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
+//        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / TRACK_WIDTH;
+//        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID * deltaTheta);
+
         return new Velocity(
                 deltaX,
                 deltaY,
@@ -121,16 +141,20 @@ public class Odometry {
     }
 
     public Position updatePosition() {
-        double rightTicks = countRight();
-        double leftTicks = countLeft();
-        double backTicks = countBack();
+//        double rightTicks = countRight();
+//        double leftTicks = countLeft();
+//        double backTicks = countBack();
 
-        Log.d("updatepos", rightTicks + " " + leftTicks + " " + backTicks);
+        double x = countX();
+        double y = countY();
+        double theta = countTheta();
+
+        //Log.d("updatepos", rightTicks + " " + leftTicks + " " + backTicks);
 
         long currentTime = SystemClock.elapsedRealtime();
         double timeElapsed = (currentTime - prevTime) / 1000.;
 
-        Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
+        Velocity relativeDelta = calculateRelativeDelta(x, y, theta);
         relativeDelta = linearToArcDelta(relativeDelta);
 
         currentVelocity = relativeDelta.divide(timeElapsed);
@@ -139,9 +163,9 @@ public class Odometry {
         currentPosition = updateGlobal(relativeDelta, currentPosition);
         Log.d("currentpos", "current pos " + currentPosition.getTheta());
 
-        prevRightTicks = rightTicks;
-        prevLeftTicks = leftTicks;
-        prevBackTicks = backTicks;
+        prevX = x;
+        prevY = y;
+        prevTheta = theta;
 
         //opModeUtilities.getTelemetry().addData("global", currentPosition.toString());
         return currentPosition;
