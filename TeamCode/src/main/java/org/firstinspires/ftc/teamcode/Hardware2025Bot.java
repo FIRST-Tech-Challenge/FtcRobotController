@@ -384,7 +384,7 @@ public class Hardware2025Bot
     {
         final double DEGREES_PER_ROTATION = 360.0;  // One full rotation measures 360 degrees
         final double MAX_MA3_ANALOG_VOLTAGE = 3.3;  // 3.3V maximum analog output
-        // NOTE: when vertical the angle is 38.1deg, when horizontal 129.0
+        // NOTE: when vertical the angle is 38.1deg, when horizontal 129.0 (prior to offset below)
         double measuredAngle = (measuredVoltage / MAX_MA3_ANALOG_VOLTAGE) * DEGREES_PER_ROTATION;
         // Correct for the offset angle (see note above)
         double correctedAngle = zeroAngleOffset - measuredAngle;

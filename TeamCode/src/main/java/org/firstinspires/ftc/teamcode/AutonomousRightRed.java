@@ -159,7 +159,14 @@ public class AutonomousRightRed extends AutonomousBase {
         }
 
         // Score the preloaded specimen
-        scoreSpecimenPreload();
+        if (!onlyPark && scorePreloadSpecimen) {
+            scoreSpecimenPreload();
+        }
+
+
+        if (!onlyPark) {
+            herdSample(spikeSamples);
+        }
 /*
         // Score starting specimen
         scoreSpecimen(specimensScored);
@@ -185,14 +192,14 @@ public class AutonomousRightRed extends AutonomousBase {
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
             driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
-            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
-            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // approach submersible away from alliance partner
-            driveToPosition( 9.0, -2.2, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 20.0, -2.2, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
                 if( !opModeIsActive() ) break;
@@ -272,28 +279,50 @@ public class AutonomousRightRed extends AutonomousBase {
                 // update all our status
                 performEveryLoop();
             } while( autoTiltMotorMoving() );
+            // Back up from submersible
+            driveToPosition( 30.0, 14.0, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
         } // opModeIsActive
 
     } // scoreSpecimenPreload
 
-/*
     private void herdSample(int specimensScored) {
-        // TODO: FILL IN IMPLEMENTATION
-    }
+        // Do we herd the first specimen?
+        if (specimensScored > 0) {
+            driveToPosition( 30.0, 20.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 48.0, 20.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 48.0, 30.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 10.0, 30.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+        }
+        if (specimensScored > 1) {
+            driveToPosition( 48.0, 34.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 48.0, 40.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            driveToPosition( 10.0, 40.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+        }
+        if (specimensScored > 2) {
+            driveToPosition( 45.0, 44.0, 0.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+            timeDriveStrafe(-DRIVE_SPEED_20,1500);
+            driveToPosition( 40.0, 50.0, -5.0, DRIVE_SPEED_60, TURN_SPEED_40, DRIVE_THRU );
+            driveToPosition( 10.0, 45.0, -5.0, DRIVE_SPEED_90, TURN_SPEED_50, DRIVE_THRU );
+        }
+        // If we did any herding, turn off the motors
+        if (specimensScored > 0) {
+            robot.driveTrainMotorsZero();
+        }
 
+    } //herdSample
+/*
     private void collectSpecimen() {
         // TODO: FILL IN IMPLEMENTATION
     } // collectSpecimen
 */
 
     private void parkInObservation() {
-        // Back up from submersible
-        driveToPosition( 16.0, 14.0, 45.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
-        // Rotate 90deg to face wall (protect collector from alliance partner damage)
-        driveToPosition( 12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
-        // Park in far corner of observation zone
-        driveToPosition( 6.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );
-
+        if (spikeSamples < 1) {
+            // Rotate 90deg to face wall (protect collector from alliance partner damage)
+            driveToPosition(12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO);
+            // Park in far corner of observation zone
+            driveToPosition(6.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO);
+        }
     } // parkInObservation
 
 } /* AutonomousRightRed */

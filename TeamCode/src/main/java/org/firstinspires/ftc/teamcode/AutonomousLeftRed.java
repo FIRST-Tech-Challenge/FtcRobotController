@@ -284,19 +284,20 @@ public class AutonomousLeftRed extends AutonomousBase {
             // Back up from submersible
             driveToPosition( 32.0, 6.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO );
             // Drive forward toward the wall
-            driveToPosition( 34.0, -27.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );
+            driveToPosition( 38.0, -27.0, 90.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );
         } // opModeIsActive
 
         if( opModeIsActive() ) {
             // Strafe towards submersible
             driveToPosition( 64.0, -27.0, 90.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
             // Drive backward
-            driveToPosition( 64.0, -12.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 64.0, -15.0, 90.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         } // opModeIsActive
 
         if( opModeIsActive() ) {
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_GRAB);
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_BASKET);
+            timeDriveStraight(-DRIVE_SPEED_20,3000);
             do {
                 if( !opModeIsActive() ) break;
                 // wait for lift/tilt to finish...

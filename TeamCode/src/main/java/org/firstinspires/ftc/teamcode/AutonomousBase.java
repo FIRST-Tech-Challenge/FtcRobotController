@@ -11,24 +11,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -101,10 +92,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both left/rigth starting positions
     int         parkDelaySec     = 0;     // 2: wait [seconds] before parking in observation zone -- applies to that parking zone
 
-    boolean     audienceYellow   = false;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
-    boolean     yellowOnLeft     = true;   // 4: drop yellow pixel in backdrop on left? (true=LEFT; false=RIGHT)
+    boolean scorePreloadSpecimen = true;  // 3: score preloaded specimen (true=yes; false=no)
+    boolean onlyPark = false;   // 4: only park no scoring (true=yes; false=no)
 
     int         parkLocation    = 0;      // 5: park 0=NONE, 1=LEFT, 2=RIGHT
+    int         spikeSamples = 3;
     final int   PARK_NONE = 0;
     final int   PARK_LEFT = 1;
     final int   PARK_RIGHT = 2;
@@ -234,14 +226,14 @@ public abstract class AutonomousBase extends LinearOpMode {
                     }
                 } // prev
                 break;
-            case 3 : // SCORE YELLOW PIXEL FROM AUDIENCE SIDE?
+            case 3 : // SCORE PRELOADED SPECIMEN?
                 if( nextValue || prevValue) {
-                    audienceYellow   = !audienceYellow;
+                    scorePreloadSpecimen = !scorePreloadSpecimen;
                 } // next
                 break;
-            case 4 : // WHERE ON BACKDROP DO WE PLACE THE YELLOW PIXEL? (LEFT/RIGHT)
+            case 4 : // immediately park
                 if( nextValue || prevValue) {
-                    yellowOnLeft   = !yellowOnLeft;
+                    onlyPark = !onlyPark;
                 } // next
                 break;
 
@@ -261,15 +253,15 @@ public abstract class AutonomousBase extends LinearOpMode {
 
             case 6 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
                 if( nextValue ) {
-//                    if (fiveStackCycles < 1) {
-//                        fiveStackCycles++;
-//                    }
+                   if (spikeSamples < 3) {
+                       spikeSamples++;
+                   }
                 } // next
 
                 if( prevValue ) {
-//                    if (fiveStackCycles > 0) {
-//                        fiveStackCycles--;
-//                    }
+                    if (spikeSamples > 0) {
+                        spikeSamples--;
+                    }
                 } // prev
                 break;
             default : // recover from bad state
@@ -280,10 +272,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Update our telemetry
         telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
         telemetry.addData("Park Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
+        telemetry.addData("Specimen Preload", "%s %s",((scorePreloadSpecimen)? "yes":"no"), ((initMenuSelected==3)? "<-":"  ") );
+        telemetry.addData("Only Park", "%s %s",((onlyPark)? "yes":"no"), ((initMenuSelected==4)? "<-":"  ") );
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
-
-//      telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
+      telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
         telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu
