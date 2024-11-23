@@ -152,6 +152,20 @@ public class ViperSlide {
 
     }
 
+    public void goToPosition() {
+        while (rightViper.getCurrentPosition() < 4200) {
+            setPower(1);
+        }
+        stop();
+    }
+
+    public void goToRest() {
+        while (rightViper.getCurrentPosition() > 200) {
+            setPower(-1);
+        }
+        stop();
+    }
+
 //    public Action moveToPosition(int targetPosition) {
 //        return new Action() {
 //            private boolean initialized = false;
@@ -182,7 +196,7 @@ public class ViperSlide {
     }
 
     public void bucketScore() {
-        setBucketPosition(.6, .4);
+        setBucketPosition(.49, .51);
     }
 
 

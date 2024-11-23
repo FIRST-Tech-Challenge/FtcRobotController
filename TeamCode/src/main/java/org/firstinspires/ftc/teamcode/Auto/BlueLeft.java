@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-
-
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -28,7 +25,6 @@ import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 
 import java.util.Arrays;
-
 
 @Autonomous(name="BlueLeft", group="Auto")
 public class BlueLeft extends LinearOpMode {
@@ -73,51 +69,51 @@ public class BlueLeft extends LinearOpMode {
                 .strafeTo(new Vector2d(scorexPos, 0),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
 
         //driveToFirstPickUp
         TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
-                .waitSeconds(1)
+                .waitSeconds(.25)
                 .strafeToLinearHeading(new Vector2d(pickUpxPos1, 12), Math.toRadians(0),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
         TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(pickUpxPos2, 12), Math.toRadians(0),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
 
         //driveToScoreFirst
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
 
         //driveToSecondPickUp
         TrajectoryActionBuilder traj6 = traj5.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(pickUpxPos1, 23), Math.toRadians(0),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
         TrajectoryActionBuilder traj7 = traj6.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(pickUpxPos2, 23), Math.toRadians(0),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
 
         //driveToScoreSecond
         TrajectoryActionBuilder traj8 = traj7.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
                         baseVelConstraint,
                         baseAccelConstraint)
-                .waitSeconds(.5);
+                .waitSeconds(.25);
 
         // Between initialization and start
         while (!isStopRequested() && !opModeIsActive()) {
@@ -154,28 +150,44 @@ public class BlueLeft extends LinearOpMode {
                 new SequentialAction(
                         // Preload
                         driveToScorePre1,
-                        driveToScorePre2,
-                        // TODO raise viper, flip bucketx2, lower vipers
+                        driveToScorePre2
+                        // TODO 1 - raise viper, flip bucketx2, lower vipers
+                )
+        );
 
+        viperSlide.goToPosition();
+        viperSlide.bucketScore();
+        sleep(1250);
+        viperSlide.bucketRest();
+        viperSlide.goToRest();
 
-//
+        hSlide.resetEncoder();
+        viperSlide.resetEncoders();
 
-                        // First sample
-                        driveToFirstPickUp1,
-                        // TODO extend hSlide, flip wrist
+        // First sample
+        Actions.runBlocking(driveToFirstPickUp1);
+
+        hSlide.moveForward();
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        // TODO 2 - extend hSlide, flip wrist
                         driveToFirstPickUp2,
-                        // TODO retract all pickup stuff and put in bucket
-                        driveToScoreFirst,
-                        // TODO *same
+                        // TODO 3 - retract all pickup stuff and put in bucket
+                        driveToScoreFirst
+                        // TODO 1
+                )
+        );
 
+        Actions.runBlocking(
+                new SequentialAction(
                         // Second sample
                         driveToSecondPickUp1,
-                        // TODO *same
+                        // TODO 2
                         driveToSecondPickUp2,
-                        // TODO *same
+                        // TODO 3
                         driveToScoreSecond
-                        // TODO *same
-
+                        // TODO 1
                 )
         );
 

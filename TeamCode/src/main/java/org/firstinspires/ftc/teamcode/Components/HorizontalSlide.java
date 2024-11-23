@@ -48,7 +48,20 @@ public class HorizontalSlide {
         } else {
             stopMotor();
         }
+    }
 
+    public void goToPosition() {
+        while (slideMotor.getCurrentPosition() < 100) {
+            slideMotor.setPower(1);
+        }
+        stopMotor();
+    }
+
+    public void goToRest() {
+        while (slideMotor.getCurrentPosition() > 5) {
+            slideMotor.setPower(-1);
+        }
+        stopMotor();
     }
 
     public void checkInputs(
