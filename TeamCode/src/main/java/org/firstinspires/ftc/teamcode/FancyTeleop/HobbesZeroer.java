@@ -2,15 +2,10 @@ package org.firstinspires.ftc.teamcode.FancyTeleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Config
 @TeleOp
@@ -40,7 +35,7 @@ public class HobbesZeroer extends OpMode {
         if (extendoArmWristON) hob.servosController.setExtendoArmWrist(extendoArm, extendoWrist);
         if (slidesArmWristON) hob.servosController.setSlidesArmWrist(slidesArm, slidesWrist);
         if (slidesON) hob.slidesController.setTarget(slides);
-        if (intakeON) hob.servosController.intake(intake);
+        if (intakeON) hob.servosController.spintake(intake);
         if (clawON) hob.servosController.setClawPrecise(clawPos);
         hob.tick();
     }
