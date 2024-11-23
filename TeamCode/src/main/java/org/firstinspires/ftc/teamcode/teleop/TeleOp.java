@@ -39,7 +39,7 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {0.9, 0.3, 0.1};
+    private double[] armPositions = {0.9, 1.0,  0.3, 0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
     private Climb climb;

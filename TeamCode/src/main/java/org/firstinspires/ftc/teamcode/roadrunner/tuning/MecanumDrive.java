@@ -239,7 +239,7 @@ public class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap);
+        localizer = new PinpointOdometrySystem(hardwareMap, "odo");
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
