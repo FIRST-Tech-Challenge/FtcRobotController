@@ -227,4 +227,9 @@ public class Mekanism {
       wristMoved = false;
     }
   }
+
+  public void topSpecimenRung(){
+    //setPivot();
+    //setSlide();
+  }
 }
