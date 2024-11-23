@@ -115,6 +115,19 @@ public class Hardware2025Bot
     public int          TILT_ANGLE_AUTO2    =  1780;  // tilted up for autonomous specimen scoring (clipped)
     public int          TILT_ANGLE_HW_MIN   = -2000;  // encoder at maximum rotation DOWN/FWD
 
+    public double startingTurretAngle = 97.0;
+    public final static double ENCODER_COUNTS_PER_DEG  = 5675.0 / 90.9;
+    public final static double TILT_ANGLE_HW_MAX_DEG   =   38.1;  // encoder at maximum rotation UP/BACK (horizontal = -200)
+    public final static double TILT_ANGLE_BASKET_DEG   =   38.1;  // encoder at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_RAISED_DEG   =   64.9;  // encoder at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_HANG1_DEG    =   74.5;  // encoder when preparing for level 2 ascent
+    public final static double TILT_ANGLE_HANG2_DEG    =   90.6; // encoder at the end of level 2 ascent
+    public final static double TILT_ANGLE_ZERO_DEG     =   97.0; // encoder for parking fullyh reset in auto
+    public final static double TILT_ANGLE_DRIVE_DEG    =   93.8; // encoder for parking in auto or driving around
+    public final static double TILT_ANGLE_AUTO1_DEG    =   64.9; // tilted up for autonomous specimen scoring (above bar)
+    public final static double TILT_ANGLE_AUTO2_DEG    =   68.5; // tilted up for autonomous specimen scoring (clipped)
+    public final static double TILT_ANGLE_HW_MIN_DEG   =  129.0; // encoder at maximum rotation DOWN/FWD
+
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
     public int          viperMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
@@ -256,6 +269,7 @@ public class Hardware2025Bot
         wormPanMotor   = hwMap.get(DcMotorEx.class,"WormPan");   // Control Hub port 0
         wormTiltMotor  = hwMap.get(DcMotorEx.class,"WormTilt");  // Control Hub port 1
         turretEncoder  = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
+        startingTurretAngle = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
 
         wormPanMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -265,11 +279,13 @@ public class Hardware2025Bot
 
         if( isAutonomous ) {
             wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } // not for teleop
+
+        // Reset tilt encoder so we can base everything off the absolute position encoder
+        wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         wormPanMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wormTiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -377,6 +393,17 @@ public class Hardware2025Bot
         while( correctedAngle > +180.0 ) correctedAngle -= 360.0;
         return correctedAngle;
     } // computeAbsoluteAngle
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* NOTE: The absolute magnetic encoders may not be installed with 0deg rotated to the "right" */
+    /* rotational angle to put ZERO DEGREES where we want it.  By defining a starting offset, and */
+    /* using this function to account for that offset, we can place zero where we want it in s/w. */
+    /* Having DEGREES_PER_ROTATION as a variable lets us adjust for the 3.3V vs. 5.0V difference. */
+    /*--------------------------------------------------------------------------------------------*/
+    public int computeEncoderCountsFromAngle( double angle )
+    {
+        return (int)((startingTurretAngle - angle) * ENCODER_COUNTS_PER_DEG);
+    } // computeEncoderCountsFromAngle
 
     /*--------------------------------------------------------------------------------------------*/
     public void readBulkData() {
