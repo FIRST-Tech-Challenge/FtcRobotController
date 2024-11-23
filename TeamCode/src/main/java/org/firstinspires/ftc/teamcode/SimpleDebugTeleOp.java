@@ -5,16 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class SimpleDebugTeleOp extends OpMode {
+public class SimpleDebugTeleOp extends DriveMethods {
 
     final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
-    DcMotor motorTest;
     boolean useRightStick = false;
 
     @Override
     public void init() {
-      motorTest = hardwareMap.get(DcMotor.class, "motorTest");
+      robot.init(hardwareMap);
     }
 
     @Override
@@ -40,13 +39,13 @@ public class SimpleDebugTeleOp extends OpMode {
         if (gamepad1.a) {
             power = inputSpeed;
         }
-        motorTest.setPower(power);
+        robot.motorTest.setPower(power);
 
         telemetry.addData("power","%.1f", power);
         // "%.1f" is a percentage of a float, truncating after more than the tenths place.
-        telemetry.addData("position", "%7d", motorTest.getCurrentPosition());
+        telemetry.addData("position", "%7d", robot.motorTest.getCurrentPosition());
         // "%7d" is a percentage of an integer, truncating after more than seven digits.
-        double degrees = motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
+        double degrees = robot.motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
 
         telemetry.addData("tickAngles", "%.1f", degrees);
     }
