@@ -230,7 +230,8 @@ public class MeetTwoStableAuto extends LinearOpMode {
             case BLUE_RIGHT:
             default:
                 trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .lineToY(20).strafeTo(new Vector2d(-70, 20)).strafeTo(new Vector2d(-70, 40)).strafeTo(new Vector2d(-50, 40));
+                        .lineToY(15).strafeTo(new Vector2d(-60, 15)).strafeTo(new Vector2d(-60, 40))
+                        .strafeTo(new Vector2d(-50, 40));
                 break;
         }
         Actions.runBlocking(
