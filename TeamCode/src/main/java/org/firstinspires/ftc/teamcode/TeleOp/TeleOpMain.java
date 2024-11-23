@@ -63,12 +63,12 @@ public class TeleOpMain extends LinearOpMode {
 
         while (opModeIsActive() && !emergencyStop) {
             // Emergency stop
-            if (gamepad1.dpad_left && gamepad1.b) {
-                emergencyStop = true;
-                telemetry.addData("Emergency Stop", "Activated");
-                telemetry.update();
-                break;
-            }
+//            if (gamepad1.dpad_left && gamepad1.b) {
+//                emergencyStop = true;
+//                telemetry.addData("Emergency Stop", "Activated");
+//                telemetry.update();
+//                break;
+//            }
 
             // Gamepad 1 controls
 
@@ -90,36 +90,38 @@ public class TeleOpMain extends LinearOpMode {
 
 
             mainDrive.checkInputs(
-                    -gamepad1.left_stick_y,     // y
-                    gamepad1.left_stick_x,      // x
-                    gamepad1.right_stick_x,     // rx
-                    gamepad1.y,                 // forward
-                    gamepad1.b,                 // reverse
-                    gamepad1.right_trigger,      // 1/2 speed
-                    gamepad1.left_trigger        // 1/4 speed
+                    -gamepad1.left_stick_y,       // y
+                    gamepad1.left_stick_x,        // x
+                    gamepad1.right_stick_x,       // rx
+                    gamepad1.y,                   // forward
+                    gamepad1.b,                   // reverse
+                    gamepad1.right_trigger,       // 1/2 speed
+                    gamepad1.left_trigger         // 1/4 speed
             );
 
             viperSlide.checkInputs(
-                    gamepad2.left_trigger,   // retract
-                    gamepad2.right_trigger,  // extend
-                    gamepad2.guide,          // reset encoders
-                    gamepad2.a,              // hold viper position
-                    gamepad2.y,              // bucket rest
-                    gamepad2.x               // bucket score
+                    gamepad2.left_trigger,        // retract
+                    gamepad2.right_trigger,       // extend
+                    gamepad2.guide,               // reset encoders
+                    gamepad2.a,                   // hold viper position
+                    gamepad2.y,                   // bucket rest
+                    gamepad2.x                    // bucket score
             );
 
             hSlide.checkInputs(
-                    gamepad1.right_bumper,  // extend
-                    gamepad1.left_bumper,   // retract
-                    gamepad1.guide          // reset encoders
+                    gamepad1.right_bumper,        // extend
+                    gamepad1.left_bumper,         // retract
+                    gamepad1.guide                // reset encoders
             );
 
             intake.checkInputs(
-                    gamepad1.a,                                     // wrist down
-                    gamepad1.x,                                     // wrist up
+                    gamepad1.a,                                     // wrist down position
+                    gamepad1.x,                                     // wrist up position
                     gamepad1.back,                                  // wrist half
+                    (gamepad1.dpad_left),                           // wrist modifier
                     (gamepad1.dpad_up || gamepad2.dpad_up),         // intake on
                     (gamepad1.dpad_down || gamepad2.dpad_down)      // intake reverse
+
             );
 
 

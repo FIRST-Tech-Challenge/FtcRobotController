@@ -26,8 +26,8 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 
 import java.util.Arrays;
 
-@Autonomous(name="BlueLeft", group="Auto")
-public class BlueLeft extends LinearOpMode {
+@Autonomous(name="BlueLeftPark", group="Auto")
+public class BlueLeftPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -123,6 +123,13 @@ public class BlueLeft extends LinearOpMode {
                         baseAccelConstraint)
                 .waitSeconds(.25);
 
+        //park
+        TrajectoryActionBuilder traj9 = traj5.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(5, -77), Math.toRadians(0),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .waitSeconds(.25);
+
         // Between initialization and start
         while (!isStopRequested() && !opModeIsActive()) {
             int position = visionOutputPosition;
@@ -147,6 +154,7 @@ public class BlueLeft extends LinearOpMode {
         Action driveToSecondPickUp1 = traj6.build();
         Action driveToSecondPickUp2 = traj7.build();
         Action driveToScoreSecond = traj8.build();
+        Action park1 = traj9.build();
 
 
         // Start
@@ -199,6 +207,8 @@ public class BlueLeft extends LinearOpMode {
 
         hSlide.resetEncoder();
         viperSlide.resetEncoders();
+
+        Actions.runBlocking(park1);
 
 
 //        if (opModeIsActive()) {

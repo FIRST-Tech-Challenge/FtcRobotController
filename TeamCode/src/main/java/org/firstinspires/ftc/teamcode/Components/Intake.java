@@ -47,32 +47,38 @@ public class Intake {
             Boolean wristDown,
             Boolean wristUp,
             Boolean wristHalf,
+            Boolean wristModifier,
             Boolean grabberSuck,
             Boolean grabberSpit
     ) {
+        double wristIncrement = .015;
+
         if((hSlide.getPos() < maxFlipPosition)) {
-            if (wristDown && (hSlide.getPos() > minFlipPosition) && !gamepad1.start) {
+            if (wristDown && (hSlide.getPos() > minFlipPosition) && !gamepad1.start && !wristModifier) {
                 wristDown();
             }
-            else if (wristUp && !gamepad1.start) {
+            else if (wristUp && !gamepad1.start && !wristModifier) {
                 wristUp();
             }
             else if (wristHalf) {
                 wristHalf();
             }
 
+            if(wristModifier && wristUp) {
+                setWristPosition(leftWrist.getPosition() - wristIncrement, rightWrist.getPosition() + wristIncrement);
+
+            }
+            else if(wristModifier && wristDown) {
+                setWristPosition(leftWrist.getPosition() + wristIncrement, rightWrist.getPosition() - wristIncrement);
+            }
+
+            telemetry.addData("left wrist pos", leftWrist.getPosition());
+            telemetry.addData("right wrist pos",  rightWrist.getPosition());
         }
         else {
             telemetry.addData("Wrist", "Cannot move wrist down, horizontal slide is too high");
         }
 
-
-//        else if (wristUp && (hSlide.getPos() < maxFlipPosition) && !gamepad1.start) {
-//            wristUp();
-//        }
-//        else if (wristHalf && (hSlide.getPos() < maxFlipPosition)) {
-//            wristHalf();
-//        }
 
         if (grabberSuck) {
             grabberSuck();
