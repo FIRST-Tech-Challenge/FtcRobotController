@@ -293,7 +293,24 @@ public class TeleOp extends LinearOpMode {
             telemetry.update();
             controller.update();
 
+            //Climb
+            if(controller.x.onPress()) {
+                liftPower = -1;
+                lift.moveLift(liftPower);
+                sleep(1000);
+                liftPower = 0;
+                lift.moveLift(liftPower);
 
+                strafe = 0;
+                rotate = 0;
+                forward = 0.4;
+                robot.drive(forward, strafe, rotate);
+                sleep(100);
+
+                liftPower = 1;
+                lift.moveLift(liftPower);
+                sleep(1000);
+            }
         }
 
 
