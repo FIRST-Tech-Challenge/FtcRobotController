@@ -43,9 +43,9 @@ public class SimpleDebugTeleOp extends OpMode {
         motorTest.setPower(power);
 
         telemetry.addData("power","%.1f", power);
-
+        // "%.1f" is a percentage of a float, truncating after more than the tenths place.
         telemetry.addData("position", "%7d", motorTest.getCurrentPosition());
-
+        // "%7d" is a percentage of an integer, truncating after more than seven digits.
         double degrees = motorTest.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
 
         telemetry.addData("tickAngles", "%.1f", degrees);
