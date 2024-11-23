@@ -19,6 +19,7 @@ public class HangHookTest extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("right hook", hangHooks.getHookPosition("r"));
             telemetry.addData("left hook", hangHooks.getHookPosition("l"));
+            telemetry.addData("", "data has been updated");
             telemetry.update();
         }
     }

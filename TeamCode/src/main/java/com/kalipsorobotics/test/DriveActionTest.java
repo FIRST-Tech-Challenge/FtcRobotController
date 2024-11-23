@@ -4,7 +4,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.DriveAction;
-import com.kalipsorobotics.localization.OdometryFuse;
+import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 @TeleOp
 public class DriveActionTest extends LinearOpMode {
     private LinearOpMode opMode;
-    public OdometryFuse odometryFuse;
+    public OdometrySpark odometryFuse;
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap,opMode,telemetry);
@@ -25,7 +25,7 @@ public class DriveActionTest extends LinearOpMode {
         DriveAction driveAction = new DriveAction(driveTrain);
 
         SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        odometryFuse = new OdometryFuse(otos, driveTrain.getfRight(), driveTrain.getbRight());
+        odometryFuse = new OdometrySpark(otos, driveTrain.getfRight(), driveTrain.getbRight());
         odometryFuse.configureOtos(otos);
 
 //        double[] lastMotorPowers;

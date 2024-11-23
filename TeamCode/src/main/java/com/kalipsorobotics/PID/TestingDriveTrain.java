@@ -3,7 +3,7 @@ package com.kalipsorobotics.PID;
 import android.annotation.SuppressLint;
 import android.os.SystemClock;
 
-import com.kalipsorobotics.localization.OdometryFuse;
+import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -21,7 +21,7 @@ public class TestingDriveTrain {
     public final PIDController xController;
     public final PIDController yController;
     public final PIDController headingController;
-    public final OdometryFuse odometryFuse;
+    public final OdometrySpark odometryFuse;
 
     public TestingDriveTrain(HardwareMap hardwareMap) {
         fLeft = hardwareMap.get(DcMotor.class, "fLeft");
@@ -42,7 +42,7 @@ public class TestingDriveTrain {
         }
 
         otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        odometryFuse = new OdometryFuse(otos, fRight, bRight);
+        odometryFuse = new OdometrySpark(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
         // tuned w/ lightweight testing drivetrain
