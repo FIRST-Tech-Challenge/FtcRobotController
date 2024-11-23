@@ -4,7 +4,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Position;
@@ -12,6 +11,9 @@ import com.kalipsorobotics.math.Velocity;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.modules.DriveTrain;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Odometry {
     OpModeUtilities opModeUtilities;
@@ -31,18 +33,17 @@ public class Odometry {
     private volatile double prevTheta;
     private volatile long prevTime;
 
-    private final double ODO_TO_INCH = 24/1.94;
-
     public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         this.otos = driveTrain.getOtos();
+        otos.setLinearUnit(DistanceUnit.INCH);
+        otos.setAngularUnit(AngleUnit.RADIANS);
 
-        sparkResetData(true, 0);
+        sparkResetData(true, Math.toRadians(0));
 //        this.rightEncoder = driveTrain.getRightEncoder();
 //        this.leftEncoder = driveTrain.getLeftEncoder();
 //        this.backEncoder = driveTrain.getBackEncoder();
-
     }
 
     private double ticksToMM(double ticks) {
@@ -63,23 +64,27 @@ public class Odometry {
 //    public double countBack() {
 //        return -backEncoder.getCurrentPosition();
 //    }
+
     public void sparkResetData(Boolean reCalibrate, double heading) {
         otos.resetTracking();
         if (reCalibrate) { otos.calibrateImu(); }
-        otos.setOffset(new SparkFunOTOS.Pose2D(countX(), countY(), heading));
+        otos.setOffset(new SparkFunOTOS.Pose2D(-0.75, 0.5, heading));
+        //7, 8
+        //7, 8 1/2
     }
+
 
     //1.94
     public double countY() {
-        return -otos.getPosition().x * ODO_TO_INCH;
+        return -otos.getPosition().x;
     }
 
     public double countX() {
-        return -otos.getPosition().y * ODO_TO_INCH;
+        return -otos.getPosition().y;
     }
 
     public double countTheta() {
-        double theta = Math.toRadians(-otos.getPosition().h);
+        double theta = -otos.getPosition().h;
         theta = Math.round(theta * 100.0) / 100.0;
 
         Log.d("odometry", "h is " + theta);
@@ -90,8 +95,8 @@ public class Odometry {
     private Velocity calculateRelativeDelta(double x, double y, double theta) {
 //        double deltaRightDistance = ticksToMM(rightTicks - prevRightTicks);
 //        double deltaLeftDistance = ticksToMM(leftTicks - prevLeftTicks);
-        double deltaX = ticksToMM(x - prevX);
-        double deltaY = ticksToMM(y - prevY);
+        double deltaX = x - prevX;
+        double deltaY = y - prevY;
         double deltaTheta = theta - prevTheta;
 
 //        double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;

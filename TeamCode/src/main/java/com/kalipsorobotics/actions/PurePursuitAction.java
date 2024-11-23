@@ -43,13 +43,13 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(1. / 300, 0, 0);
-        this.pidY = new PidNav(1. / 300, 0, 0);
-        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
+        this.pidX = new PidNav(0.1, 0, 0);
+        this.pidY = new PidNav(0.1, 0, 0);
+        this.pidAngle = new PidNav(0.2, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
         //0.001, 0.001, 0.4 behavior: turns and then does not move
-        //0.001, 0.001, 0.5 behavior: turns and then does not move
+    //0.001, 0.001, 0.5 behavior: turns and then does not move
         //0.001, 0.001, 0.6 behavior: turns and then does not move
         //0.001, 0.001, 0.7 behavior: fast turn then does not move
         //0.001, 0.001, 0.8 behavior: fast turn then does not move
@@ -82,8 +82,8 @@ public class PurePursuitAction extends Action {
             targetAngle = preferredAngle;
         } else {
             targetAngle = currentToTarget.getHeadingDirection();
-            Log.d("purepursaction", "target angle is " + targetAngle);
         }
+        Log.d("purepursaction", "target angle is " + targetAngle);
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
         double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
