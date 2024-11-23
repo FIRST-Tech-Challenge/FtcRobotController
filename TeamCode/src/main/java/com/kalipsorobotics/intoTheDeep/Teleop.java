@@ -89,7 +89,9 @@ public class Teleop extends LinearOpMode {
 
             //LinearSlide toggle
             if (gamepad2.y) {
-                outtakeSlideAction.moveToPosition();
+                outtakeSlideAction.setPower(1);
+                wait(100);
+                outtakeSlideAction.setPower(0);
             }
             //OUTTAKE
             //LinearSlide

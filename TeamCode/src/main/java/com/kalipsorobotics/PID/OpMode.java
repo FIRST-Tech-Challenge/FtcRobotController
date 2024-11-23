@@ -83,7 +83,7 @@ public class OpMode extends LinearOpMode {
 
 
             Point pos = driveTrain.odometryFuse.pointCollectData();
-            double heading = driveTrain.odometryFuse.headingUpdateData("right");
+            double heading = driveTrain.odometryFuse.headingUpdateData("right", 0, 0);
             telemetry.addLine(String.format("x | currently at %f", pos.getX()));
             telemetry.addLine(String.format("y | currently at %f", pos.getY()));
             telemetry.addLine(String.format("h | currently at %f", heading));

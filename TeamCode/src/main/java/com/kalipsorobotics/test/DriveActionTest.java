@@ -73,7 +73,7 @@ public class DriveActionTest extends LinearOpMode {
         return new double[]{
             odometryFuse.pointCollectData().getX(),
             odometryFuse.pointCollectData().getY(),
-            odometryFuse.headingUpdateData("right")
+            odometryFuse.headingUpdateData("right", 0, 0)
         };
     }
 

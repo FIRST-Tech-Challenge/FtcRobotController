@@ -80,10 +80,10 @@ public class OdometrySpark {
         return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
     }
 
-    public double headingUpdateData(String direction, double yOffSet, double xOffset) {
+    public double headingUpdateData(String direction, double xOffSet, double yOffset) {
         if (direction.equals("right")) {
-            new SparkFunOTOS.Pose2D(0, 2, 0);
-            myOtos.setOffset();
+            SparkFunOTOS.Pose2D offsets = new SparkFunOTOS.Pose2D(xOffSet, yOffset, 0);
+            myOtos.setOffset(offsets);
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
             return(-pos.h); }
         else if (direction.equals("left")) {
