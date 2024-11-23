@@ -36,16 +36,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 @TeleOp
 public class HobbesTele extends OpMode {
 
     Gamepad lastGamepad1 = new Gamepad(), lastGamepad2 = new Gamepad();
+    //List<Gamepad> gamepadHistory1 = new ArrayList<>(), gamepadHistory2 = new ArrayList<>();
     Hobbes hob = null;
     Map<String, HobbesState> macros = new HashMap<>();
 
@@ -58,7 +61,6 @@ public class HobbesTele extends OpMode {
 
         macros.put("FULL_IN" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
 
-
         macros.put("FULL_TRANSFER" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_UP, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_WRIST_UP", 600)));
         macros.put("TRANSFER_WRIST_UP" ,new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 200)));
         macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 250)));
@@ -66,98 +68,91 @@ public class HobbesTele extends OpMode {
 
         macros.put("SLIDES_DOWN", new HobbesState(null, null, null, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, null, CLAW_OPEN, SLIDES_IN, null));
 
-
         macros.put("SLIDES_DEPOSIT", new HobbesState(null, null, null, null, null, null, null, SLIDES_OUT_TOP_SAMPLE, new LinkedState("SLIDES_DEPOSIT2", 1200)));
         macros.put("SLIDES_DEPOSIT2", new HobbesState(null, null, null, SLIDES_ARM_DEPOSIT, SLIDES_WRIST_DEPOSIT, null, null, null, null));
-
 
         macros.put("OPEN_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_OPEN, null, null));
         macros.put("CLOSE_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_CLOSED, null, null));
 
-      //  macros.put("SLIDES_SPECIMEN_PICKUP", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_OPEN, SLIDES_SPECIMEN_PICKUP, null));
-   //     macros.put("SPECIMEN_CLOSE_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_CLOSED, null, new LinkedState("SLIDES_SPECIMEN_ABOVE_DEPOSIT", 200)));
+  //  macros.put("SLIDES_SPECIMEN_PICKUP", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_OPEN, SLIDES_SPECIMEN_PICKUP, null));
+//     macros.put("SPECIMEN_CLOSE_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_CLOSED, null, new LinkedState("SLIDES_SPECIMEN_ABOVE_DEPOSIT", 200)));
 
-     //   macros.put("SLIDES_SPECIMEN_ABOVE_DEPOSIT", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED, SLIDES_OUT_TOP_SPECIMEN, null));
+ //   macros.put("SLIDES_SPECIMEN_ABOVE_DEPOSIT", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED, SLIDES_OUT_TOP_SPECIMEN, null));
 
-     //   macros.put("SLIDES_SPECIMEN_DEPOSIT", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED, SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
+ //   macros.put("SLIDES_SPECIMEN_DEPOSIT", new HobbesState(null, null, null, SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED, SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
 
+        // DEFINE AND INIT ROBOT
         hob = new Hobbes();
         hob.init(hardwareMap);
+        // SET MACROS TO TELEOP MACROS
         hob.setMacros(macros);
     }
     @Override
     public void start() {
-       hob.runMacro("FULL_IN");
-       hob.hardTick();
+        // RUN EVERYTHING TO START POSITIONS
+        hob.setup();
     }
 
     @Override
     public void loop() {
-        // movement
+        // P1: MOTION
         if (gamepad2.start || gamepad1.start) return;
         if (!gamepad1.right_bumper && !gamepad1.left_bumper) hob.motorDriveXYVectors(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
         else hob.motorDriveXYVectors(0.3 * -gamepad1.left_stick_x, 0.3 * -gamepad1.left_stick_y, 0.3 * gamepad1.right_stick_x);
 
+        // P1: INTAKE
         if (gamepad1.a) hob.servosController.intake(INTAKE_POWER);
         else if (gamepad1.b) hob.servosController.intake(INTAKE_REVERSE);
         else if (gamepad1.right_trigger > 0) hob.servosController.intake(INTAKE_POWER * gamepad1.right_trigger);
         else if (gamepad1.left_trigger > 0) hob.servosController.intake(INTAKE_REVERSE *gamepad1.left_trigger);
         else hob.servosController.intake(INTAKE_OFF);
 
-        if (gamepad2.right_stick_y != 0) {
-            hob.slidesController.driveSlides(-gamepad2.right_stick_y);
-        }
+        // P2: SLIDES MOTION
+        if (gamepad2.right_stick_y != 0) hob.slidesController.driveSlides(-gamepad2.right_stick_y);
+
+        // P2: EXTENDO MOTION
         hob.servosController.incrementExtendo(-gamepad2.left_stick_y * EXTENDO_SPEED);
 
-        // before pickup macro
-        if (gamepad2.left_stick_button || gamepad2.right_stick_button) {
-            hob.cancelMacros();
-        }
+        // P2: FLAT ON GROUND
+        if (gamepad2.b && !lastGamepad2.b) hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
 
-        if (gamepad2.b && !lastGamepad2.b) {
-            hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
-        }
-        if (gamepad2.a && !lastGamepad2.a) {
-            hob.runMacro("EXTENDO_ARM_WRIST_UP");
-        }
-        if (gamepad2.x && !lastGamepad2.x) {
-            hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
-        }
-        if (gamepad2.left_trigger > 0) {
-            hob.servosController.incrementArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
-        }
-        if (gamepad2.right_trigger > 0) {
-            hob.servosController.incrementArmWrist(gamepad2.right_trigger * -EXTENDO_ARM_SPEED, 0);
-        }
+        // P2: UP BUT LOW
+        if (gamepad2.a && !lastGamepad2.a) hob.runMacro("EXTENDO_ARM_WRIST_UP");
 
-        if (gamepad2.right_bumper) {
-            hob.servosController.incrementArmWrist(0, EXTENDO_WRIST_SPEED);
-        }
-        if (gamepad2.left_bumper) {
-            hob.servosController.incrementArmWrist(0, -EXTENDO_WRIST_SPEED);
-        }
-        // full transfer macro
-        if (gamepad2.y && !lastGamepad2.y) {
-            hob.runMacro("FULL_TRANSFER");
-        }
+        // P2: ANGLED ON GROUND
+        if (gamepad2.x && !lastGamepad2.x) hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
 
-        // deposit macro (assumes in transfer mode beforehand)
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) {
-            hob.runMacro("SLIDES_DEPOSIT");
-        }
+        // P2: MANUAL EXTENDO ARM ARTICULATION
+        if (gamepad2.left_trigger > 0) hob.servosController.incrementArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
 
-        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) {
-            hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
-        }
+        if (gamepad2.right_trigger > 0) hob.servosController.incrementArmWrist(gamepad2.right_trigger * -EXTENDO_ARM_SPEED, 0);
 
-        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) {
-            hob.runMacro("SLIDES_DOWN");
+        // P2: MANUAL EXTENDO WRIST ARTICULATION
+        if (gamepad2.right_bumper) hob.servosController.incrementArmWrist(0, EXTENDO_WRIST_SPEED);
+        if (gamepad2.left_bumper) hob.servosController.incrementArmWrist(0, -EXTENDO_WRIST_SPEED);
 
-        }
+        // P2: TRANSFER MACRO
+        if (gamepad2.y && !lastGamepad2.y) hob.runMacro("FULL_TRANSFER");
 
 
+        // P2: RUN TO DEPOSIT
+        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) hob.runMacro("SLIDES_DEPOSIT");
 
+        // P2: TOGGLE CLAW
+        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
+
+        // P2: WRIST RE-ZEROER
+        if (gamepad2.back) hob.extendoWristRezeroOffset = hob.servosController.extendoWristPos - EXTENDO_WRIST_INTAKE_FLAT;
+        if (gamepad2.back && gamepad2.left_stick_button) hob.extendoWristRezeroOffset = 0;
+
+        // P2: SLIDES DOWN, ARM ABOVE SAMPLE
+        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) hob.runMacro("SLIDES_DOWN");
+
+
+        // TICK ROBOT
         hob.tick();
+
+        // REFRESH LAST GAMEPAD STATE
         lastGamepad1.copy(gamepad1);
         lastGamepad2.copy(gamepad2);
     }

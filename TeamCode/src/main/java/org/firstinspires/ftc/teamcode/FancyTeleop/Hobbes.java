@@ -202,12 +202,13 @@ public class Hobbes extends Meccanum implements Robot {
         slidesController.resetSlideBasePos();
     }
     public boolean HARD_TICK = true;
-    public void hardTick() {
+    public double extendoWristRezeroOffset = 0;
+    public void setup() {
         claw.setPosition(CLAW_OPEN);
         extendoLeft.setPosition(EXTENDO_IN);
         extendoRight.setPosition(servosController.extendoLeftToRight(EXTENDO_IN));
         extendoArm.setPosition(EXTENDO_ARM_TRANSFER);
-        extendoWrist.setPosition(EXTENDO_WRIST_TRANSFER);
+        extendoWrist.setPosition(EXTENDO_WRIST_TRANSFER + extendoWristRezeroOffset);
         slidesArm.setPosition(SLIDES_ARM_ABOVE_TRANSFER);
         slidesWrist.setPosition(SLIDES_WRIST_TRANSFER);
     }
@@ -230,26 +231,25 @@ public class Hobbes extends Meccanum implements Robot {
             tele.addData("slidesWristPos", slidesWristPos);
             // use for failsafe eventually (have positions in queue and check that each works before setting)
             // check if these get position checks are redundant. (Will a servo try and set position if its already running to position or does it not matter?)
-            if (slidesArm.getPosition() != slidesArmPos || HARD_TICK) slidesArm.setPosition(slidesArmPos);
-            if (slidesWrist.getPosition() != slidesWristPos || HARD_TICK) slidesWrist.setPosition(slidesWristPos);
+            slidesArm.setPosition(slidesArmPos);
+            slidesWrist.setPosition(slidesWristPos);
 
 
-            if (extendoArm.getPosition() != extendoArmPos || HARD_TICK) extendoArm.setPosition(extendoArmPos);
-            if (extendoWrist.getPosition() != extendoWristPos || HARD_TICK) extendoWrist.setPosition(extendoWristPos);
+            extendoArm.setPosition(extendoArmPos);
+            extendoWrist.setPosition(extendoWristPos + extendoWristRezeroOffset);
             //extendoArm.setPosition(extendoArmPos);
             //extendoWrist.setPosition(extendoWristPos);
 
-            if (claw.getPosition() != clawPos || HARD_TICK) claw.setPosition(clawPos);
+            claw.setPosition(clawPos);
 
-            if (extendoLeft.getPosition() != extendoPos || HARD_TICK) {
-                extendoLeft.setPosition(extendoPos);
-                extendoRight.setPosition(extendoLeftToRight(extendoPos));
-            }
+            extendoLeft.setPosition(extendoPos);
+            extendoRight.setPosition(extendoLeftToRight(extendoPos));
 
-            if (intakeLeft.getPower() != intakeSpeed || HARD_TICK) {
-                intakeLeft.setPower(intakeSpeed);
-                intakeRight.setPower(-intakeSpeed);
-            }
+
+
+            intakeLeft.setPower(intakeSpeed);
+            intakeRight.setPower(-intakeSpeed);
+
             //HARD_TICK = false;
 
 
