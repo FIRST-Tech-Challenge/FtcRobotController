@@ -11,7 +11,7 @@ public class teleCorrectLift extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new RobotInitialize(this);
+        robot = new RobotInitialize(this, false);
         //robot.clawRoll.setPosition(0.1867);
         waitForStart();
         // int i = 0;

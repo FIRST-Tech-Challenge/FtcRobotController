@@ -1,14 +1,8 @@
-// Program created by: Danny and William
-// Purpose: FTC Robot Software
-
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
-
-// Imports all of the necessary FTC libraries and code
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,32 +18,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
-// How to connect to robot procedure (see file called
-// controlHubConnectionInstructions.md)
-
-public class RobotInitialize {
-
-    // Initialization Phase
-
-    // Create servo variables
-    CRServo intake; // This is a special continuous rotation servo which allows it to act
-    // like a motor
-    Servo hangR;
-    Servo hangL;
-
-    Servo pitch;
-    Servo clawRoll;
+class ProgBotInitialize {
 
 
     // Create the empty normal motor variables
-    public DcMotorEx fLeft;
-    public DcMotorEx bRight;
-    public DcMotorEx fRight;
-    public DcMotorEx bLeft;
+    DcMotorEx fLeft;
+    DcMotorEx bRight;
+    DcMotorEx fRight;
+    DcMotorEx bLeft;
 
     // Create the empty lift control variables
-    DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
-    DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
+
 
     // Create empty gyroscope variable and its settings
     BHI260IMU gyroScope;
@@ -65,7 +44,7 @@ public class RobotInitialize {
 
     // Enables the class to be referenced in other classes such as the Autonomous Code
     // and the TeleOpCode_RobotCentric
-    public RobotInitialize(LinearOpMode opMode, boolean isAuto) {
+    public ProgBotInitialize(LinearOpMode opMode, boolean isAuto) {
         this.opMode = opMode;
         initialize(isAuto);
     }
@@ -83,8 +62,11 @@ public class RobotInitialize {
 
         // The front left and back right motors are reversed so all wheels go in the same direction
         // When a positive or negative value is used
+
+
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
 
@@ -97,80 +79,23 @@ public class RobotInitialize {
 
         fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: fleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //without odom: bright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Manipulator mechanisms
 
-            //Lift motors
-
-        liftExtender = opMode.hardwareMap.get(DcMotorEx.class, "liftExtender");
-
-            //Initial conditions of the liftExtender MOTOR
-        liftExtender.setVelocityPIDFCoefficients(2.67,2.05,0, 3.3);
-
-        liftExtender.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        if (isAuto) {
-            liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
-            liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
-        }
-            liftExtender.setZeroPowerBehavior(BRAKE);
+        //Lift motors
 
 
 
-        liftPitch = opMode.hardwareMap.get(DcMotorEx.class, "liftPitch");
 
-            //Initial conditions of the liftPitch MOTOR
-            //PIDFCoefficients pid = new PIDFCoefficients(1, 1, 1, 1); (This does nothing)
-            //PIDF Coefficients for the liftPitch MOTOR
-            liftPitch.setVelocityPIDFCoefficients(1,1,-2.5, 3);
-            liftPitch.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        if (isAuto) {
-            liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
-            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
-        }
-            liftPitch.setZeroPowerBehavior(BRAKE);
-
-        //Manipulator Servos
-
-            // Hang on submersible servos
-        hangL = opMode.hardwareMap.get(Servo.class, "hang l");
-        hangL.setPosition(0);
-
-
-        hangR = opMode.hardwareMap.get(Servo.class, "hang r");
-        //hangR.setDirection(Servo.Direction.REVERSE);
-        hangR.setPosition(1);
-
-        //Continuous rotation Servo
-        intake = opMode.hardwareMap.get(CRServo.class, "intake");
-        //Initial conditions of the intake SERVO
-        intake.setPower(0); // Off by default
-        intake.setDirection(CRServo.Direction.REVERSE);
-        //Regular Servos
-        clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
-        clawRoll.setPosition(0);
-        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        pitch.setPosition(0.0481);
-
-//        roll.setDirection(Servo.Direction.FORWARD);
-//        roll.setPosition(0);
-
-//        pitch.setDirection(Servo.)
-        { //This was causing problems
-            //claw.setPosition(0);
-            //roll.setPosition(0);
-            //pitch.setPosition(0);
-        }
 
 
 
@@ -306,70 +231,9 @@ public class RobotInitialize {
         //stopMechanisms();
     }
     // Parameter of time that it is run in milliseconds
-    public void extake(double time){
-        double intakeRunTime = time;
-        long x = System.currentTimeMillis();
 
-        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
-            intake.setPower(-1);
-
-            // opMode.telemetry.addData(System.currentTimeMillis());
-//            if (intakeRunTime == 0){
-//                break;
-//            }
-//            intakeRunTime = intakeRunTime + 1000;
-        }
-        intake.setPower(0);
-    }
-    public void intake(double time){
-        double intakeRunTime = time;
-        long x = System.currentTimeMillis();
-
-        while (System.currentTimeMillis()-x <time && opMode.opModeIsActive()) { //Check this
-            intake.setPower(1);
-
-            // opMode.telemetry.addData(System.currentTimeMillis());
-//            if (intakeRunTime == 0){
-//                break;
-//            }
-//            intakeRunTime = intakeRunTime + 1000;
-        }
-        intake.setPower(0);
-    }
 
     //needs to move counterclockwise to move up
-    public void liftPitch(int position, double velocity){
-        liftPitch.setTargetPosition(position);
-        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (Math.abs(liftPitch.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
-            opMode.telemetry.addData("needs to be >10", Math.abs(liftPitch.getCurrentPosition()-position));
-            opMode.telemetry.addData("position", liftPitch.getCurrentPosition());
-            opMode.telemetry.update();
-            if (liftPitch.getCurrentPosition()<position) {
-                liftPitch.setPower(velocity);
-
-            } else if (liftPitch.getCurrentPosition()>= position){
-                liftPitch.setPower(-velocity);
-            }
-        }
-    }
-
-    // Extends the lift outwards and retracts it inwards
-    public void liftExtender(int position, double velocity){
-        liftExtender.setTargetPosition(position);
-        liftExtender.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while (Math.abs(liftExtender.getCurrentPosition()-position)>10 && opMode.opModeIsActive()) {
-            opMode.telemetry.addData("needs to be >10", Math.abs(liftExtender.getCurrentPosition()-position));
-            opMode.telemetry.addData("position", liftExtender.getCurrentPosition());
-            opMode.telemetry.update();
-            if (liftExtender.getCurrentPosition()<position) {
-                liftExtender.setPower(velocity);
-
-            } else if (liftExtender.getCurrentPosition()>=position){
-                liftExtender.setPower(-velocity);
-            }
-        }
-    }
 
     // Makes the robot strafe left by determining where the robot is currently
     // located and where it is trying to go it does not return anything and
@@ -490,8 +354,7 @@ public class RobotInitialize {
         bRight.setVelocity(-velocity);
 
         // Lift motors
-        liftExtender.setVelocity(velocity);
-        liftPitch.setVelocity(velocity);
+
 
 
         // Regular servos
@@ -504,5 +367,8 @@ public class RobotInitialize {
         setMechanismVelocity(0);
     }
 }
+
+
+
 
 
