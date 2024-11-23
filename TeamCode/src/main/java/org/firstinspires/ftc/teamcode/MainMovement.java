@@ -260,7 +260,7 @@ public class MainMovement extends LinearOpMode {
         if(gamepad2.x){
             vSlideArmOut = !vSlideArmOut; // toggle between arm positions
             if(vSlideArmOut){
-                vArmServo.setPosition(1); //Arm swings out
+                vArmServo.setPosition(0); //Arm swings out
                 telemetry.addData("1", null);
             } else {
                 vArmServo.setPosition(0); //Arm swings in
@@ -289,16 +289,17 @@ public class MainMovement extends LinearOpMode {
             hArmUp = !hArmUp; // toggle arm rotation 
 
             if(hArmUp) { 
-                hClawRotate.setPosition(0.25);
-                sleep(1000);
+                hClawRotate.setPosition(0);
+                sleep(500);
                 hArmOpen.setPosition(0.75);
                 sleep(1000);
                 telemetry.addData(null,hClawRotate.getPosition());
 
             } else if(!hArmUp){
                 hArmOpen.setPosition(0);
-                sleep(50);
-                hClawRotate.setPosition(0.75);
+                sleep(500);
+                hClawRotate.setPosition(0);
+                sleep(1000);
                 telemetry.addData(null,hClawRotate.getPosition());
 
             }
