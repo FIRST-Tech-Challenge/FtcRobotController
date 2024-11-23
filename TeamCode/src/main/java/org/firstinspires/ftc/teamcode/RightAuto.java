@@ -28,13 +28,16 @@ public class RightAuto extends LinearOpMode {
         robot.encoderDrive(1,-36);
         robot.encoderStrafe(1, 9.8);
         robot.encoderDrive(1,47.5);
+        sleep(100);
         robot.encoderDrive(1,-47.5);
-        robot.encoderStrafe(1, 15);
+        sleep(100);
+        robot.encoderStrafe(1, 13.75);
         robot.encoderDrive(1,46);
         robot.encoderDrive(1,-46);
-        robot.encoderStrafe(1, 13.25);
+        robot.encoderStrafe(1, 12);
+        sleep(100);
         robot.encoderDrive(1,46.1);
-        robot.encoderDrive(1,-15);
+        robot.encoderDrive(1,-13.5);
         sleep(800);
         robot.runIntakeForTime(1.0, -1);
 
