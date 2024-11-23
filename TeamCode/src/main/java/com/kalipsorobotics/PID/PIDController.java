@@ -71,7 +71,6 @@ public class PIDController {
     }
 
     @NonNull
-    @SuppressLint("DefaultLocale")
     @Override
     public String toString() {
         return String.format("%s with Kp %f, Ki %f, Kd %f", name, Kp, Ki, Kd);
