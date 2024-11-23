@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.RobotInitialize;
+
 import java.io.FileWriter;
 import java.util.ArrayList;
 
 @TeleOp(name = "COPYRecordDriverInputs", group = "Linear Opmode")
 public class captureTeleCopy extends LinearOpMode {
-    ProgBotInitialize robot;
+    RobotInitialize robot;
 
 
         private ArrayList<String> recordedInputs;
@@ -19,9 +21,11 @@ public class captureTeleCopy extends LinearOpMode {
         @Override
         public void runOpMode() {
 
-                robot = new ProgBotInitialize(this, false);
+//                robot = new ProgBotInitialize(this, false);
+            robot = new RobotInitialize(this, false);
 
-                // InitileftDrivealize hardware
+
+            // InitileftDrivealize hardware
 
 
                 recordedInputs = new ArrayList<>();
@@ -42,6 +46,13 @@ public class captureTeleCopy extends LinearOpMode {
                     double strafeVelocity;
                     double straightMovementVelocity;
                     double turnVelocity;
+
+                    double fleftVel = 0;
+                    double bleftVel = 0;
+                    double frightVel= 0 ;
+                    double brightVel = 0;
+
+
                     {
                         int speed = 2700;
 
@@ -120,24 +131,27 @@ public class captureTeleCopy extends LinearOpMode {
                                 turnVelocity = -6969 * Math.signum(gamepad1.left_stick_x);
                             }
                         }
-
+                        fleftVel = (strafeVelocity - straightMovementVelocity + turnVelocity);
+                        frightVel = (-strafeVelocity - straightMovementVelocity - turnVelocity);
+                        bleftVel = (strafeVelocity + straightMovementVelocity - turnVelocity);
+                        brightVel = (-strafeVelocity + straightMovementVelocity + turnVelocity);
 
                         {
-                            robot.fLeft.setVelocity(strafeVelocity - straightMovementVelocity + turnVelocity); // Overall
+                            robot.fLeft.setVelocity(fleftVel); // Overall
                             // negative value
-                            robot.fRight.setVelocity(-strafeVelocity - straightMovementVelocity - turnVelocity); // Overall
+                            robot.fRight.setVelocity(frightVel); // Overall
                             // positive value
-                            robot.bLeft.setVelocity(strafeVelocity + straightMovementVelocity - turnVelocity); // Overall
+                            robot.bLeft.setVelocity(bleftVel); // Overall
                             // positive value
-                            robot.bRight.setVelocity(-strafeVelocity + straightMovementVelocity + turnVelocity); // Overall
+                            robot.bRight.setVelocity(brightVel); // Overall
                             // negative value
                         }
                     }
 
                     // Record inputs with timestamp
-                    recordedInputs.add((System.currentTimeMillis() - startTime) + "," + (strafeVelocity - straightMovementVelocity + turnVelocity) + "," + (-strafeVelocity - straightMovementVelocity - turnVelocity) + "," + (strafeVelocity + straightMovementVelocity - turnVelocity) + "," + (-strafeVelocity + straightMovementVelocity + turnVelocity));
+                    recordedInputs.add((System.currentTimeMillis() - startTime) + "," + (fleftVel) + "," + (frightVel) + "," + (bleftVel) + "," + (brightVel));
 
-                    telemetry.addData("Recording", "fleft Velocity: %.2f, fright Velocity: %.2f, bleft Velocity: %.2f, bright Velocity %.2f,", strafeVelocity - straightMovementVelocity + turnVelocity, -strafeVelocity - straightMovementVelocity - turnVelocity, (strafeVelocity + straightMovementVelocity - turnVelocity), (-strafeVelocity + straightMovementVelocity + turnVelocity));
+//                    telemetry.addData("Recording", "fleft Velocity: %.2f, fright Velocity: %.2f, bleft Velocity: %.2f, bright Velocity %.2f,", (startTime),(fleftVel),(frightVel),(bleftVel), (brightVel));
                     telemetry.update();
                 }
 

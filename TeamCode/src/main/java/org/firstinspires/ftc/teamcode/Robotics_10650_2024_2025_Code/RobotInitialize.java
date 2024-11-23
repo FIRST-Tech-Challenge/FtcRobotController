@@ -42,10 +42,10 @@ public class RobotInitialize {
 
 
     // Create the empty normal motor variables
-    DcMotorEx fLeft;
-    DcMotorEx bRight;
-    DcMotorEx fRight;
-    DcMotorEx bLeft;
+    public DcMotorEx fLeft;
+    public DcMotorEx bRight;
+    public DcMotorEx fRight;
+    public DcMotorEx bLeft;
 
     // Create the empty lift control variables
     DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards

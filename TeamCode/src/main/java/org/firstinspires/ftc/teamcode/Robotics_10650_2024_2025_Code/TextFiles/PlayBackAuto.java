@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.RobotInitialize;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 
 @Autonomous(name="PlayBackAuto")
 public class PlayBackAuto extends LinearOpMode {
-    ProgBotInitialize robot;
+    RobotInitialize robot;
 
     public void runOpMode() {
 
@@ -21,7 +23,7 @@ public class PlayBackAuto extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        robot = new ProgBotInitialize(this, true);
+        robot = new RobotInitialize(this, true);
 
         // Replaying the stored input sequence
         if (recordedInputs != null) {
