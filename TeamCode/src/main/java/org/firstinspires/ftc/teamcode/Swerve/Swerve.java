@@ -146,6 +146,10 @@ public class Swerve {
     return odometry.getPose();
   }
 
+  public void setGyro(Rotation2d newYaw) {
+    odometry.resetHeading(newYaw);
+  }
+
   public void initGyro() {
     odometry.resetPosAndIMU();
     try {
@@ -181,6 +185,10 @@ public class Swerve {
     telemetry.addData(
         "Swerve/Pinpoint status",
         odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY ? "OK" : odometryStatus.name());
+  }
+
+  public double getTopSpeed() {
+    return Module.maxDriveSpeedMetersPerSec;
   }
 
   private static final class Module {
