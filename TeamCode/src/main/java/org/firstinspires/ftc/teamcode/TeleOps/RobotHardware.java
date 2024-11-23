@@ -46,7 +46,6 @@ public class RobotHardware {
     public Servo depositWristServo;
     public Servo depositClawServo;
 
-
     public ColorSensor Color_Sensor;// Color Sensor
 
     public IMU imu; //IMU

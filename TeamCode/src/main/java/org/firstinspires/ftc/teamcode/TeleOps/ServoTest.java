@@ -19,9 +19,6 @@ public class ServoTest{
     private final GamepadEx gamepad;
     private final RobotHardware robot;
 
-    //Telemetry Manager
-    private final TelemetryManager telemetryManager;
-
     //declear deposit servo position
     public static double depositLeftArm = 0.5;
     public static double depositRighttArm = 0.5;
@@ -35,11 +32,11 @@ public class ServoTest{
     private final ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
     private static final double DEBOUNCE_THRESHOLD = 0.25;
 
-    public ServoTest(RobotHardware robot, GamepadEx gamepad, TelemetryManager telemetryManager){
+    public ServoTest(RobotHardware robot, GamepadEx gamepad) {
         this.robot = robot;
         this.gamepad= gamepad;
-        this.telemetryManager = telemetryManager;
     }
+
     public void ServoTestInit(){
         robot.depositLeftArmServo.setPosition(0.0);
         robot.depositRightArmServo.setPosition(0.0);
@@ -122,9 +119,6 @@ public class ServoTest{
             robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.liftMotorLeft.setPower(speed);
             robot.liftMotorRight.setPower(speed);
-            while (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy()) {
-                //telemetryManager.update("Target Position");
-            }
         }
         if (gamepad.getButton(Y) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
 
@@ -136,9 +130,6 @@ public class ServoTest{
             robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.liftMotorLeft.setPower(speed);
             robot.liftMotorRight.setPower(speed);
-            while (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy()) {
-                //telemetryManager.update("Target Position", current_Position - delta_Position);
-            }
         }
     }
 
