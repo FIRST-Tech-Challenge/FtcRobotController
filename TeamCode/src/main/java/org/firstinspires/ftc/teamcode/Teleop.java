@@ -30,6 +30,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *      Y Button - Raise Arm
  *      A Button - Lower Arm
  *      X Button - reset encoder for arms
+ *      B Button - Angled Intake
+ *      Down Pad - Extend Override IN
+ *      Up Pad - Home Arm and Ext
+ *      Left Pad - Middle Cage Intake
+ *      Right Pad - Short Cage Intake
+ *
  *
  *
  *  NOTE: Low lift must be completed before high lift is engaged. This is due to rules and the sequencing of getting to
@@ -80,6 +86,10 @@ public class Teleop extends LinearOpMode {
 
             boolean extendSaveControl = gamepad2.dpad_down;
 
+            boolean homeArmControl = gamepad2.dpad_up;
+            boolean subIntakeLongControl = gamepad2.dpad_left;
+            boolean subIntakeShortControl = gamepad2.dpad_right;
+
             // =====================
 
 
@@ -95,7 +105,30 @@ public class Teleop extends LinearOpMode {
             }
             // ground intake control
             if(groundIntakeControl){
-                bot.autoIntake(2.0);
+                while(groundIntakeControl){
+                    bot.setIntakePosition(1);
+                    bot.setArmPos(-380);
+                    bot.setExtendPos(8.50);
+                    groundIntakeControl = gamepad2.b;
+                    }
+            }
+
+            if(subIntakeLongControl){
+                while(subIntakeLongControl){
+                    bot.setIntakePosition(1);
+                    bot.setExtendPos(18.0);
+                    bot.setArmPos(-170);
+                    subIntakeLongControl = gamepad2.dpad_left;
+                }
+            }
+
+            if(subIntakeShortControl){
+                while(subIntakeShortControl){
+                    bot.setIntakePosition(1);
+                    bot.setArmPos(-250);
+                    bot.setExtendPos(11.5);
+                    subIntakeShortControl = gamepad2.dpad_right;
+                }
             }
 
             // === DRIVE ===
@@ -148,6 +181,12 @@ public class Teleop extends LinearOpMode {
                 bot.setPivotPower(-0.65);
             } else {
                 bot.setPivotPower(0.0);
+            }
+
+            // === HOME ===
+            if(homeArmControl){
+                bot.setArmPos(0);
+                bot.setExtendPos(0.35);
             }
 
             // === PUSHOFF ===
