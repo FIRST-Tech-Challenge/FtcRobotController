@@ -99,4 +99,5 @@ public class OctQuad extends SubsystemBase {
     public double getFrontEncoderDistance() {
         return DistancePerPulse * OdometryFrontEncoder;
     }
+
 }

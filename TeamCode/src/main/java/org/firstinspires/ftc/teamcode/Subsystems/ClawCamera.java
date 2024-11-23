@@ -5,13 +5,14 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
-import org.firstinspires.ftc.teamcode.vision.DetectedColorWithAngle;
+import org.firstinspires.ftc.teamcode.vision.DetectedAngle;
 import org.firstinspires.ftc.vision.VisionPortal;
 import java.util.List;
 
 /** Subsystem */
 public class ClawCamera extends SubsystemBase {
 
+    // Used for managing the color detection process.
     private ColorAndOrientationDetect myColorAndOrienDetProcessor;
     // Local objects and variables here
     private final VisionPortal CameraPortal;
@@ -22,22 +23,54 @@ public class ClawCamera extends SubsystemBase {
     public ClawCamera(String cameraName) {
         myColorAndOrienDetProcessor = new ColorAndOrientationDetect();
         myColorAndOrienDetProcessor.setMinBoundingBoxArea(0.05);
+
         CameraPortal = new VisionPortal.Builder()
                 .setCamera(RobotContainer.ActiveOpMode.hardwareMap.get(WebcamName.class, cameraName))
-                .addProcessors(myColorAndOrienDetProcessor)
+                .addProcessors(myColorAndOrienDetProcessor) // add all the processors here
                 .setCameraResolution(new Size(640,480))
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
         RobotContainer.DashBoard.startCameraStream(CameraPortal, 0);
     }
+
     @Override
     public void periodic() {
-//        if (!dashboardInitialized) {
-//            initializeDashboard();
-//            dashboardInitialized = true;
-//        }
-//        updateDashboard();
+        long lastUpdate = myColorAndOrienDetProcessor.getLastUpdatedTime();
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastUpdate > 500) { // Data is older than 100ms
+            System.out.println("Warning: Vision data is outdated!");
+            return; // Skip using outdated data
+        }
+
+        double ang = myColorAndOrienDetProcessor.calAngle("Blue");
+        if (ang > 0) {
+            System.out.println("Detected Blue Angle: " + ang);
+            RobotContainer.wristRotateServo.RotateTo((int) Math.round(ang));
+        } else {
+            System.out.println("Blue not detected!");
+        }
+
+        // Get all detected objects (thread-safe method)
+        List<DetectedAngle> detectedObjects = myColorAndOrienDetProcessor.getDetectedColorAndAng();
+        // Check if there are any detections
+        if (detectedObjects.isEmpty()) {
+            System.out.println("No objects detected!");
+        } else {
+            System.out.println("Detected Objects:");
+
+            // Print details of each detected object
+            for (DetectedAngle detected : detectedObjects) {
+                System.out.println(
+                        "Color: " + detected.getColorName() +
+                                ", Angle: " + String.format("%.1f", detected.getAngle()) +
+                                ", Center: (" + String.format("%.1f", detected.getCenter().x) +
+                                ", " + String.format("%.1f", detected.getCenter().y) + ")"
+                );
+            }
+        }
+
     }
 
     // Method to initialize dashboard with default (null) values
@@ -99,11 +132,9 @@ public class ClawCamera extends SubsystemBase {
     // Returns {Double.NaN, Double.NaN} if the color is not detected
     public double[] getCenter(String colorName) {
         return myColorAndOrienDetProcessor.getCenter(colorName);
-    }
 
-    // use to turn on/off color and angle detect processing
-    public void EnableDetectProcessing (boolean enable) {
+    // use to turn on/off AprilTag processing
+    public void EnableColorDetectProcessing (boolean enable) {
         CameraPortal.setProcessorEnabled(myColorAndOrienDetProcessor, enable);
     }
-
 }

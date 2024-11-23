@@ -18,6 +18,10 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpec
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
@@ -166,7 +170,6 @@ public class RobotContainer {
 
 
 
-
         // driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).toggleWhenPressed(new ToggleClaw());
 
         // example sequential command
@@ -182,9 +185,6 @@ public class RobotContainer {
         // whileHeld - runs command while button held, but will restart command if it ends
         // whenReleased - runs once when button is released
         // togglewhenPressed - turns command on and off at each button press
-
-        //CommandScheduler.getInstance().schedule(new ArmStowLow());
-        //odometry.setCurrentPos(new Pose2d(1.1,1.7,new Rotation2d(-90*Math.PI/180.0)));
 
     }
 
@@ -252,7 +252,7 @@ public class RobotContainer {
 
     // call this function periodically to operate scheduler
     public static void Periodic() {
-
+        new ConvertAngleForWristRotate().schedule();
         // actual interval time
         double intervaltime = timer.milliseconds();
 
@@ -269,7 +269,6 @@ public class RobotContainer {
             CommandScheduler.getInstance().run();
 
             // report time interval on robot controller
-
             RCTelemetry.addData("interval time(ms)", intervaltime);
             RCTelemetry.addData("execute time(ms)", exectimer.milliseconds());
             RCTelemetry.update();

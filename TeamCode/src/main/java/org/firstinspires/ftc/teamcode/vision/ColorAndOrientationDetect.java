@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import android.graphics.Canvas;
+
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Core;
@@ -9,190 +12,191 @@ import org.opencv.core.Rect;
 import org.opencv.core.Point;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ColorAndOrientationDetect implements VisionProcessor {
 
-    // Set the YCrCb color ranges for blue based on the slider data
-    private final Scalar lowerBlue = new Scalar(55.3, 90.7, 141.7);  // Adjusted blue lower bound
-    private final Scalar upperBlue = new Scalar(181.3, 182.8, 255.0); // Adjusted blue upper bound
+    // Color ranges
+    private final Scalar lowerBlue = new Scalar(55.3, 90.7, 141.7);  // Blue lower bound
+    private final Scalar upperBlue = new Scalar(181.3, 182.8, 255.0); // Blue upper bound
 
-    // Set the YCrCb color ranges for red based on the slider data
-    private final Scalar lowerRed = new Scalar(19.8, 164.0, 68.0);   // Adjusted red lower bound
-    private final Scalar upperRed = new Scalar(171.4, 200.0, 120.0); // Adjusted red upper bound
+    private final Scalar lowerRed = new Scalar(19.8, 164.0, 68.0);   // Red lower bound
+    private final Scalar upperRed = new Scalar(171.4, 200.0, 120.0); // Red upper bound
 
-    // Set the YCrCb color ranges for yellow based on the slider data
-    private final Scalar lowerYellow = new Scalar(79.3, 140.0, 20.0);  // Adjusted yellow lower bound
-    private final Scalar upperYellow = new Scalar(204.0, 225.0, 75.0); // Adjusted yellow upper bound
+    private final Scalar lowerYellow = new Scalar(79.3, 140.0, 20.0);  // Yellow lower bound
+    private final Scalar upperYellow = new Scalar(204.0, 225.0, 75.0); // Yellow upper bound
 
-    // Define a minimum bounding box area (1% of total frame area for 640x480)
-    private double MIN_BOUNDING_BOX_AREA = 0.08 * 640 * 480;  // 3072 pixels
+    // Minimum bounding box area (filter out small objects)
+    private double MIN_BOUNDING_BOX_AREA = 0.05 * 640 * 480; // 5% of frame size (640x480)
 
-    // List to store detected colors with angles
-    private final List<DetectedColorWithAngle> detectedColors = new ArrayList<>();
+    // Shared list for detected results
+    private final List<DetectedAngle> detections = new ArrayList<>();
+    private final Object lock = new Object(); // Synchronization lock for thread-safety
+    private final AtomicLong lastUpdatedTime = new AtomicLong(0); // Thread-safe timestamp
+
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
-        // Initialize any necessary variables or settings here
+        // Initialize variables or settings if needed
     }
 
     @Override
     public Mat processFrame(Mat input, long captureTimeNanos) {
-        detectedColors.clear();  // Clear previous detections
+        // Clear the detections list for the current frame
+        synchronized (lock) {
+            detections.clear();
+            lastUpdatedTime.set(System.currentTimeMillis()); // Update timestamp
+        }
 
-        // Convert the input image from RGB to YCrCb color space for color detection
-        Mat ycrcb = new Mat();
-        Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
+        try {
+            // Convert the input frame to the YCrCb color space
+            Mat ycrcb = new Mat();
+            Imgproc.cvtColor(input, ycrcb, Imgproc.COLOR_RGB2YCrCb);
 
-        // Convert the input image to HSV color space for saturation detection
-        Mat hsvMat = new Mat();
-        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+            // Process masks for blue, red, and yellow
+            processMask(ycrcb, input, lowerBlue, upperBlue, "Blue", new Scalar(255, 0, 0));
+            processMask(ycrcb, input, lowerRed, upperRed, "Red", new Scalar(0, 0, 255));
+            processMask(ycrcb, input, lowerYellow, upperYellow, "Yellow", new Scalar(0, 255, 255));
 
-        // Step 1: Detect Blue and mask it out
-        Mat maskBlue = new Mat();
-        Core.inRange(ycrcb, lowerBlue, upperBlue, maskBlue);
-        processColorWithOrientation(maskBlue, hsvMat, input, new Scalar(255, 0, 0), 500);
-        Core.bitwise_not(maskBlue, maskBlue);
-        Core.bitwise_and(ycrcb, ycrcb, ycrcb, maskBlue);  // Mask out blue region
 
-        // Step 2: Detect Red on the remaining image
-        Mat maskRed = new Mat();
-        Core.inRange(ycrcb, lowerRed, upperRed, maskRed);
-        processColorWithOrientation(maskRed, hsvMat, input, new Scalar(0, 255, 0), 500);
-        Core.bitwise_not(maskRed, maskRed);
-        Core.bitwise_and(ycrcb, ycrcb, ycrcb, maskRed);  // Mask out red region
+            // Release resources
+            ycrcb.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        // Step 3: Detect Yellow on the remaining image
-        Mat maskYellow = new Mat();
-        Core.inRange(ycrcb, lowerYellow, upperYellow, maskYellow);
-        processColorWithOrientation(maskYellow, hsvMat, input, new Scalar(0, 255, 255), 500);
-        Core.bitwise_not(maskYellow, maskYellow);
-        Core.bitwise_and(ycrcb, ycrcb, ycrcb, maskYellow);  // Mask out yellow region
-
-        // Release Mat objects to prevent memory leaks
-        ycrcb.release();
-        hsvMat.release();
-        maskBlue.release();
-        maskRed.release();
-        maskYellow.release();
-
-        return null;
+        return input; // Return the frame with annotations
     }
 
-    private void processColorWithOrientation(Mat mask, Mat hsvMat, Mat frame, Scalar boxColor, int minArea) {
-        // Find contours on the mask
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(mask.clone(), contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+    public long getLastUpdatedTime() {
+        return lastUpdatedTime.get();
+    }
 
-        for (MatOfPoint contour : contours) {
-            // Get bounding box for the contour
-            Rect rect = Imgproc.boundingRect(contour);
+    private void processMask(Mat ycrcb, Mat frame, Scalar lower, Scalar upper, String colorName, Scalar boxColor) {
+        Mat mask = new Mat();
+        Core.inRange(ycrcb, lower, upper, mask);
 
-            // Calculate bounding box area
-            double boundingBoxArea = rect.width * rect.height;
+        try {
+            List<MatOfPoint> contours = new ArrayList<>();
+            Mat hierarchy = new Mat();
 
-            // Filter out small contours by bounding box area
-            if (boundingBoxArea > MIN_BOUNDING_BOX_AREA) {
-                // Get the average saturation of this region
-                double avgSaturation = getAvgSaturation(hsvMat, rect);
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-                // Get the orientation of this object
-                double angle = getAngle(contour);
+            for (MatOfPoint contour : contours) {
+                Rect rect = Imgproc.boundingRect(contour);
+                double area = rect.width * rect.height;
 
-                // Define the color array (e.g., from HSV or YCrCb values)
-                double[] detectedColor = {avgSaturation, 0, 0}; // Replace with actual logic for [Y, B, R]
+                // Skip small contours
+                if (area > MIN_BOUNDING_BOX_AREA) {
+                    double angle = calculateAngle(contour);
+                    DetectedAngle detected = new DetectedAngle(rect, area, angle, colorName);
 
-                // Create a new DetectedColorWithAngle and add it to the list
-                DetectedColorWithAngle detectedColorWithAngle = new DetectedColorWithAngle(
-                        rect, boundingBoxArea, angle, detectedColor
-                );
-                detectedColors.add(detectedColorWithAngle);
+                    // Add the detected result to the shared list
+                    synchronized (lock) {
+                        detections.add(detected);
+                    }
 
-                // Draw the bounding box around the region
-                Imgproc.rectangle(frame, rect, boxColor, 2);
+                    // Draw bounding box and annotations on the frame
+                    Imgproc.rectangle(frame, rect, boxColor, 2);
+                    Imgproc.putText(frame, colorName, new Point(rect.x, rect.y - 10),
+                            Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
+                    Imgproc.putText(frame, "Angle: " + String.format("%.1f", angle),
+                            new Point(rect.x, rect.y + rect.height + 20),
+                            Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 1);
+                    // Draw the center coordinates below the angle
+                    Point center = new Point(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
+                    Imgproc.putText(frame, "Center: (" + String.format("%.1f", center.x) + ", " + String.format("%.1f", center.y) + ")",
+                            new Point(rect.x, rect.y + rect.height + 40), // Position below the angle
+                            Imgproc.FONT_HERSHEY_SIMPLEX,
+                            0.5,
+                            new Scalar(0, 255, 0),
+                            1);
+                }
             }
-        }
 
-        // Release resources
-        hierarchy.release();
-        for (MatOfPoint contour : contours) {
-            contour.release();
+            mask.release();
+            hierarchy.release();
+        } finally {
+            mask.release();
         }
     }
 
-    protected double getAvgSaturation(Mat hsvInput, Rect rect) {
-        Mat submat = hsvInput.submat(rect);
-        Scalar meanVal = Core.mean(submat);
-        submat.release();
-        return meanVal.val[1]; // Return the saturation channel value
+    private double calculateAngle(MatOfPoint contour) {
+        MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
+        try {
+            RotatedRect rotatedRect = Imgproc.minAreaRect(contour2f);
+            double angle = rotatedRect.angle;
+            if (rotatedRect.size.width < rotatedRect.size.height) {
+                angle += 90;
+            }
+            return angle;
+        } finally {
+            contour2f.release();
+        }
     }
 
-    // Add a setter method for updating the bounding box area dynamically
     public void setMinBoundingBoxArea(double ratio) {
         if (ratio <= 0 || ratio > 1) {
             throw new IllegalArgumentException("Ratio must be between 0 and 1.");
         }
-        this.MIN_BOUNDING_BOX_AREA = ratio * 640 * 480; // Calculate new area based on ratio
+        this.MIN_BOUNDING_BOX_AREA = ratio * 640 * 480; // Adjust minimum bounding box area
     }
 
-    private double getAngle(MatOfPoint contour) {
-        MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
-        RotatedRect rotatedRect = Imgproc.minAreaRect(contour2f);
-        contour2f.release();
-
-        double angle = rotatedRect.angle;
-        if (rotatedRect.size.width < rotatedRect.size.height) {
-            angle += 90;  // Adjust for consistent upright angle
-        }
-        return angle;
-    }
-
-    public List<DetectedColorWithAngle> getDetectedColorsAndAng() {
-        return detectedColors;
-    }
-
-    public boolean isColorExist(String colorName) {
-        return detectedColors.stream().anyMatch(color -> color.getColorName().equalsIgnoreCase(colorName));
-    }
-
-    public double getAngle(String colorName) {
-        DetectedColorWithAngle mostCenteredColor = getMostCenteredBoundingBox(colorName);
-        return mostCenteredColor != null ? mostCenteredColor.getAngle() : Double.NaN;
-    }
-
-    public double[] getCenter(String colorName) {
-        DetectedColorWithAngle mostCenteredColor = getMostCenteredBoundingBox(colorName);
-        if (mostCenteredColor != null) {
-            Point center = mostCenteredColor.getCenter();
-            return new double[]{center.x, center.y};
-        }
-        return new double[]{Double.NaN, Double.NaN};
-    }
-
-    private DetectedColorWithAngle getMostCenteredBoundingBox(String colorName) {
-        DetectedColorWithAngle mostCentered = null;
-        double minCenterDistance = Double.MAX_VALUE;
-
-        for (DetectedColorWithAngle color : detectedColors) {
-            if (color.getColorName().equalsIgnoreCase(colorName)) {
-                Point center = color.getCenter();
-                double centerDistance = Math.hypot(center.x - 320, center.y - 240); // Distance to center of 640x480
-                if (centerDistance < minCenterDistance) {
-                    minCenterDistance = centerDistance;
-                    mostCentered = color;
+    // Thread-safe public method to get angle for a specific color
+    public double calAngle(String colorName) {
+        synchronized (lock) {
+            for (DetectedAngle detected : detections) {
+                if (detected.getColorName().equalsIgnoreCase(colorName)) {
+                    return detected.getAngle();
                 }
             }
+            return -1.0; // Not found
         }
-        return mostCentered;
+    }
+
+    // Thread-safe public method to get center for a specific color
+    public double[] calCenter(String colorName) {
+        synchronized (lock) {
+            for (DetectedAngle detected : detections) {
+                if (detected.getColorName().equalsIgnoreCase(colorName)) {
+                    Point center = detected.getCenter();
+                    return new double[]{center.x, center.y};
+                }
+            }
+            return new double[0]; // Not found
+        }
+    }
+
+    // Thread-safe public method to check if a specific color exists
+    public boolean isColorExist(String colorName) {
+        synchronized (lock) {
+            for (DetectedAngle detected : detections) {
+                if (detected.getColorName().equalsIgnoreCase(colorName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    // Thread-safe public method to get all detected objects (colors, angles, and centers)
+    public List<DetectedAngle> getDetectedColorAndAng() {
+        synchronized (lock) {
+            return Collections.unmodifiableList(new ArrayList<>(detections)); // Return an immutable copy
+        }
     }
 
     @Override
-    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx , float scaleCanvasDensity, Object userContext) {
-        // Optional: Implement drawing logic on canvas
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+        // Optional: Implement if drawing on a Canvas is needed
     }
 }

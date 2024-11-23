@@ -41,4 +41,14 @@ public class PivotingWrist extends SubsystemBase {
 
     }
 
+    public void RotateTo(int degrees, int adjustment){
+
+        // Converts degrees into 0-1 float
+        double servoPos = (degrees + adjustment/270.0);
+
+        // Set the Servo to ServoPos
+        wristServo.setPosition(servoPos);
+
+    }
+
 }

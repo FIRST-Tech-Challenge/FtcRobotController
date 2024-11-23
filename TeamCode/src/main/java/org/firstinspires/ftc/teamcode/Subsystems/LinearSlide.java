@@ -23,8 +23,11 @@ public class LinearSlide extends SubsystemBase {
     public LinearSlide() {
 
         // Creates the motors using the hardware map
-        leftMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftLinearSlide");
-        rightMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightLinearSlide");
+//        leftMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftLinearSlide");
+//        rightMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightLinearSlide");
+        // TODO
+        leftMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
+        rightMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
 
         // Resets the encoders for both motors
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
