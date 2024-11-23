@@ -9,12 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.openftc.easyopencv.OpenCvCamera;
-
 /*
 Hardware config:
 Motor:
@@ -30,34 +24,36 @@ Color_Sensor I2C 1
  */
 
 public class RobotHardware {
+    //Drive chassis motor
     public DcMotorEx frontLeftMotor;
     public DcMotorEx backLeftMotor;
     public DcMotorEx frontRightMotor;
     public DcMotorEx backRightMotor;
-    //public MotorEx leftodometry; //FTClib declear
-    //public MotorEx rightodometry;
-    //public MotorEx centerodometry;
 
     public DcMotorEx liftMotorLeft;// Vertical Slide Motor
     public DcMotorEx liftMotorRight;// Vertical Slide Motor
-    public Servo IntakeServo;// Vertical Slide Intake Servo
-    public Servo IntakeArmServo;// Vertical Slide Arm Servo
+
+    //Intake servos
+    public Servo intakeSlideServo;
+    public Servo intakeLeftArmServo;
+    public Servo intakeRightArmServo;
+    public Servo intakeRotationServo;
+    public Servo intakeClawServo;
+
+    //Deposit servos
+    public Servo depositLeftArmServo;
+    public Servo depositRightArmServo;
+    public Servo depositWristServo;
+    public Servo depositClawServo;
 
     public ColorSensor Color_Sensor;// Color Sensor
-    
-    public IMU imu; //IUM
+
+    public IMU imu; //IMU
     public HardwareMap hardwareMap;
-
-    //Open CV
-    private OpenCvCamera camera;//
-    //private RectangleDetectionPipeline detectionPipeline;//
-
-
-
 
     public void init(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap; // store the hardwareMap reference
-    //set Motors
+        //set Motors
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, "FL_Motor");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "BL_Motor");
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "FR_Motor");
@@ -65,24 +61,19 @@ public class RobotHardware {
         liftMotorLeft = hardwareMap.get(DcMotorEx.class,"VS_Left_Motor");
         liftMotorRight = hardwareMap.get(DcMotorEx.class, "VS_Right_Motor");
 
-    //set intake gribber servo
-        //intakeServo = new SimpleServo(hardwareMap, "IntakeArm_Servo",90,180, AngleUnit.DEGREES);// FTClib type map
-        //IntakeServo = hardwareMap.get(Servo.class, "Intake_Servo");
-        //IntakeArmServo = hardwareMap.get(Servo.class, "IntakeArm_Servo");
+        //set servos
+        intakeSlideServo = hardwareMap.get(Servo.class, "Intake_Slide_Servo");
+        intakeLeftArmServo = hardwareMap.get(Servo.class, "Intake_Arm_Left_Servo");
+        intakeRightArmServo = hardwareMap.get(Servo.class, "Intake_Arm_Right_Servo");
+        intakeRotationServo = hardwareMap.get(Servo.class, "Intake_Rotation_Servo");
+        intakeClawServo = hardwareMap.get(Servo.class, "Intake_Claw_Servo");
+        depositLeftArmServo = hardwareMap.get(Servo.class, "Deposit_Arm_Left_Servo");
+        depositRightArmServo = hardwareMap.get(Servo.class, "Deposit_Arm_Right_Servo");
+        depositWristServo = hardwareMap.get(Servo.class, "Deposit_Wrist_Servo");
+        depositClawServo = hardwareMap.get(Servo.class, "Deposit_Claw_Servo");
 
-    //set color sensor
-        //Color_Sensor = hardwareMap.get(ColorSensor.class,"Color_Sensor");
 
-    // set odometry
-        //leftodometry = new MotorEx(hardwareMap, "FL_Motor");// set odometry
-        //rightodometry = new MotorEx(hardwareMap, "BL_Motor");// set odometry
-        //centerodometry = new MotorEx(hardwareMap, "FR_Motor");// set odometry
-        // reset encoder
-        //leftodometry.resetEncoder();
-        //rightodometry.resetEncoder();
-        //centerodometry.resetEncoder();
-
-    //set motor mode and motor direction
+        //set motor mode and motor direction
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);  // Reverse the left motor if needed
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);  // Reverse the left motor if needed
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // set motor mode
@@ -90,75 +81,34 @@ public class RobotHardware {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // set motor mode
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // set motor mode
 
-    //set to RUN_TO_POSITION for vertical slide motor
+        //set servo direction - intake and deposit
+        intakeRightArmServo.setDirection(Servo.Direction.REVERSE);
+        depositRightArmServo.setDirection(Servo.Direction.REVERSE);
+
+        //set slide motors to RUN_TO_POSITION for vertical slide motor
         liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    // set robot motor power 0
+        // set robot motor power 0
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
     }// End of init
-    
+
     // Initialize IMU
     public void initIMU() {
-        /* get imu from hardwareMap for external IMU
-        imu = hardwareMap.get(BNO055IMU.class, "Adafruit_IMU");
-        Initialize IMU parameter setup
-        BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
-        imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        // initialize IMU
-        imu.initialize(imuParameters);
-        */
-    // set up REVimu
+        // set up REVimu
         imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(
-                new IMU.Parameters(
-                        new RevHubOrientationOnRobot(
-                                new Orientation(
-                                        AxesReference.INTRINSIC,
-                                        AxesOrder.ZYX,
-                                        AngleUnit.DEGREES,
-                                        -90,
-                                        0,
-                                        0,
-                                        0  // acquisitionTime, not used
-                                )
-                        )));
+        IMU.Parameters myIMUparameters;
+        myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+                ));
+        imu.initialize(myIMUparameters);
     }
-    //initial OpenCV
-    /**
-    public void initCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-
-        detectionPipeline = new RectangleDetectionPipeline();
-        camera.setPipeline(detectionPipeline);
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                // Handle camera error
-            }
-        });
-    }
-
-        // reset encoders when stop
-    public void resetDriveEncoders() {
-        leftodometry.stopAndResetEncoder();
-        rightodometry.stopAndResetEncoder();
-        centerodometry.stopAndResetEncoder();
-    }
-    **/
 }
