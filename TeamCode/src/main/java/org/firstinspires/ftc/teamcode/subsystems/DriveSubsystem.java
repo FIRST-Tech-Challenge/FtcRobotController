@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -20,7 +21,9 @@ import org.firstinspires.ftc.teamcode.utils.GamepadUtils;
 //TODO: Modify drive functions to make use of new odometry logic rather than IMU (check if it is actually more accurate first)
 
 public class DriveSubsystem extends SubsystemBase {
-    private HardwareMap hardwareMap;
+    private final HardwareMap hardwareMap;
+    private final OpMode opMode;
+    private final Telemetry telemetry;
 
     private final DcMotorEx frontLeftMotor;
     private final DcMotorEx frontRightMotor;
@@ -32,8 +35,10 @@ public class DriveSubsystem extends SubsystemBase {
     private double speedMultiplier = 1.0;
     private boolean fieldCentric = true;
 
-    public DriveSubsystem(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
+    public DriveSubsystem(OpMode opMode) {
+        this.opMode = opMode;
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
         
         imu = hardwareMap.get(BHI260IMU.class, Constants.DriveConstants.IMU_NAME);
         imu.initialize(Constants.DriveConstants.IMU_PARAMETERS);
@@ -58,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
     
     public void drive(double forward, double strafe, double turn) {
-        if(fieldCentric) driveFieldCentric(forward, strafe, turn); 
+        if(fieldCentric) driveFieldCentric(forward, strafe, turn);
         else driveRobotCentric(forward, strafe, turn);
     }
 

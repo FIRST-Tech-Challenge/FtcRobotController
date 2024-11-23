@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode; 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -27,10 +28,10 @@ public abstract class Constants {
         public static final String RIGHT_ENCODER_NAME = "rightEncoder";
         public static final String CENTER_ENCODER_NAME = "centerEncoder";
 
-        public static final DcMotorSimple.Direction FRONT_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
-        public static final DcMotorSimple.Direction FRONT_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-        public static final DcMotorSimple.Direction BACK_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
-        public static final DcMotorSimple.Direction BACK_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction FRONT_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction FRONT_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static final DcMotorSimple.Direction BACK_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction BACK_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
 
         public static final DcMotorSimple.Direction LEFT_ENCODER_DIRECTION = DcMotorSimple.Direction.FORWARD;
         public static final DcMotorSimple.Direction RIGHT_ENCODER_DIRECTION = DcMotorSimple.Direction.REVERSE;
@@ -51,6 +52,7 @@ public abstract class Constants {
         public static final double DEADZONE = 0.1;
     }
 
+    @Config
     public static abstract class IntakeConstants {
         public static final String LEFT_ARM_MOTOR_NAME = "leftArmJointMotor";
         public static final String RIGHT_ARM_MOTOR_NAME = "rightArmJointMotor";
@@ -61,18 +63,18 @@ public abstract class Constants {
         public static final double ARM_JOINT_MAXIMUM_ANGLE_ROTATED = 120; //degrees
         public static final double ARM_JOINT_MINIMUM_ANGLE_ROTATED = -30; //Defined as the horizontal line form the floor that meets the arm joist axis
 
-        public static final double ARM_JOINT_P = 1;
-        public static final double ARM_JOINT_I = 1;
-        public static final double ARM_JOINT_D = 1;
+        public static final double ARM_JOINT_P = 0.0088;
+        public static final double ARM_JOINT_I = 0;
+        public static final double ARM_JOINT_D = 0.00017;
         public static final double ARM_JOINT_PID_POWER_TOLERANCE = 0.01; //inches
 
         public static final String LINEAR_SLIDE_MOTOR_NAME = "linearSlideMotor";
         public static final DcMotorSimple.Direction LINEAR_SLIDE_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
         public static final double LINEAR_SLIDE_PULLEY_CIRCUMFERENCE = 1 * Math.PI; //inches
 
-        public static final double LINEAR_SLIDE_P = 1;
-        public static final double LINEAR_SLIDE_I = 1;
-        public static final double LINEAR_SLIDE_D = 1;
+        public static final double LINEAR_SLIDE_P = 0.005;
+        public static final double LINEAR_SLIDE_I = 0;
+        public static final double LINEAR_SLIDE_D = 0;
         public static final double LINEAR_SLIDE_PID_POWER_TOLERANCE = 0.01; //inches
 
         public static final double MAXIMUM_FORWARD_EXTENSION = 42-5; //INCHES
@@ -85,6 +87,20 @@ public abstract class Constants {
         public static final double INTAKE_WRIST_SERVO_MAX_ANGLE = 180;
         public static final double INTAKE_WRIST_SERVO_UP_POSITION = 0;
         public static final double INTAKE_WRIST_SERVO_DOWN_POSITION = 180;
+
+        public static int MANUAL_CONTROL_RATE = 2; //add final later
+
+        public static final int MAXIMUM_SLIDE_POS = 2800;
+        public static final int MINIMUM_SLIDE_POS = 0;
+
+        public static final int MAXIMUM_ELBOW_POS = 770;
+        public static final int MINIMUM_ELBOW_POS = 0;
+
+        public static final int ELBOW_STARTING_POS = 115;
+        public static final int LINEAR_STARTING_POS = 0;
+
+        public static final double WRIST_OUTTAKE_POS = 0;
+        public static final double WRIST_INTAKE_POS = 0.35;
 
         public static class FloorScanningMode {
             public static final double MINIMUM_FLOOR_SCANNING_REGRESSION_ANGLE = -1; //DEGREES

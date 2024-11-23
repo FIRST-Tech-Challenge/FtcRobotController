@@ -1,19 +1,25 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class IntakeSubsystem extends SubsystemBase {
-    private CRServo intakeServo;    
-    private Servo wristServo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
 
-    private HardwareMap hardwareMap;
+public class IntakeSubsystem extends SubsystemBase {
+    private final CRServo intakeServo;
+    private final Servo wristServo;
+
+    private final HardwareMap hardwareMap;
+    private final Telemetry telemetry;
+    private final OpMode opMode;
 
     public static enum WristPositions {
-        INTAKE_POSITION(0.35), //Check this value!!!
-        OUTTAKE_POSITION(0); //Check this value!!!
+        INTAKE_POSITION(Constants.IntakeConstants.WRIST_INTAKE_POS), //Check this value!!!
+        OUTTAKE_POSITION(Constants.IntakeConstants.WRIST_OUTTAKE_POS); //Check this value!!!
 
         public double value;
 
@@ -22,8 +28,10 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
-    public IntakeSubsystem(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
+    public IntakeSubsystem(OpMode opMode) {
+        this.opMode = opMode;
+        this.hardwareMap = opMode.hardwareMap;
+        this.telemetry = opMode.telemetry;
 
         intakeServo = hardwareMap.get(CRServo.class, Constants.IntakeConstants.ACTIVE_INTAKE_SERVO_NAME);
         wristServo = hardwareMap.get(Servo.class, Constants.IntakeConstants.INTAKE_WRIST_SERVO_NAME);
@@ -42,6 +50,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void rotateToPosition(WristPositions position) {
-        wristServo.rotateBy(position.value);
+        wristServo.setPosition(position.value);
+    }
+
+    public double getCurrentPosition() {
+        return wristServo.getPosition();
     }
 }
