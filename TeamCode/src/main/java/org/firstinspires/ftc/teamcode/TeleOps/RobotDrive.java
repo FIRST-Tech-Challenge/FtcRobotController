@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.BACK;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
 
 import android.annotation.SuppressLint;
@@ -9,36 +11,32 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class RobotDrive {
 
     private final GamepadEx gamepad;
     private final RobotHardware robot;
-    private final double powerFactor;
-    private ControlMode controlMode = ControlMode.FIELD_CENTRIC;
+    private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
+
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
-    private final TelemetryManager telemetryManager;
 
 
     private boolean startPressed = false;
     private boolean backPressed = false;
 
-    public RobotDrive(RobotHardware robot, GamepadEx gamepad, TelemetryManager telemetryManager, double powerFactor) {
+    private double powerFactor;
+
+    public RobotDrive(RobotHardware robot, GamepadEx gamepad) {
         this.robot = robot;
         this.gamepad = gamepad;
-        this.telemetryManager = telemetryManager;
-        this.powerFactor = powerFactor;
+
     }
 
     public void Init() {
         // Initialize IMU from RobotHardware
         robot.initIMU();
-        telemetryManager.update("Status", "Initializing...");
-
-        // Initialize telemetry items for dynamic updates
-        telemetryManager.update("IMU Angle", "Initializing...");
-        telemetryManager.update("Control Mode", controlMode.toString());
     }
 
     @SuppressLint("DefaultLocale")
@@ -62,6 +60,13 @@ public class RobotDrive {
             backPressed = false;
         }
 
+        if(gamepad.getButton(RIGHT_BUMPER)){
+            powerFactor = RobotActionConfig.powerFactor / 2;
+        }
+        else {
+            powerFactor = RobotActionConfig.powerFactor;
+        }
+
         // Set gamepad joystick power
         double drive = -gamepad.getRightY();
         double strafe = gamepad.getRightX();
@@ -71,7 +76,7 @@ public class RobotDrive {
         double currentHeading = getRobotHeading();
 
         // Mecanum drive calculations
-        setMecanumDrivePower(drive, strafe, rotate, currentHeading);
+        setMecanumDrivePower(drive, strafe, rotate, currentHeading, powerFactor);
 
         // Update telemetry with the latest data
         // empty
@@ -99,7 +104,7 @@ public class RobotDrive {
         }
     }
 
-    private void setMecanumDrivePower(double drive, double strafe, double rotate, double currentHeading) {
+    private void setMecanumDrivePower(double drive, double strafe, double rotate, double currentHeading, double powerFactor) {
         // Determine the drive mode
         if (controlMode == ControlMode.FIELD_CENTRIC) {
             // Adjust for field-centric control using the gyro angle
@@ -127,6 +132,8 @@ public class RobotDrive {
             backRightPower /= maxPower;
             backLeftPower /= maxPower;
         }
+
+
 
         // Set motor powers
         robot.frontLeftMotor.setPower(Range.clip(frontLeftPower * powerFactor, -1.0, 1.0));
@@ -158,5 +165,8 @@ public class RobotDrive {
     public enum ControlMode {
         FIELD_CENTRIC,
         ROBOT_CENTRIC
+    }
+    public ControlMode getControlMode() {
+        return controlMode;
     }
 }

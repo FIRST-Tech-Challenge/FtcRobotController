@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
 
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 import java.util.List;
 
 /** config
@@ -32,6 +34,7 @@ public class BasicTeleOps extends OpMode {
 
     //Robot Intake & Deposit
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
+    public FiniteMachineStateIntake intakeArmDrive;
 
     //public Color_sensor colorSensor;
 
@@ -45,44 +48,41 @@ public class BasicTeleOps extends OpMode {
     private List<LynxModule> allHubs;
 
     //Drive power factor
-    public static double powerFactor = 0.5;
+    //public static double powerFactor = 0.5;
 
-    //Intake Parameter Configure
-    public static double intake_Idle = 0.3;
-    public static double intake_Dump = 0.0;
+    //Intake Configure
+    public static double intake_slide_Extension = 0.6;// range(0.3 - 0.65)
+    public static double intake_slide_Retract   = 0.3;
 
-    public static double intake_Slide_Initial   = 0.4;
-    public static double intake_slide_Extension = 0.65;
-    public static double intake_slide_Retract   = 0.4;
+    public static double intake_Rotation        = 0.49;
 
-    public static double intake_Rotation        = 0.4;
+    public static double intake_Arm_initial     = 0.1;//0-0.56
+    public static double intake_Arm_down        = 0.05;
+    public static double intake_Arm_retract     = 0.53;
 
-    public static double intake_Arm_initial     = 0.4;
-    public static double intake_Arm_down        = 0.1;
-    public static double intake_Arm_retract     = 0.55;
-
-    public static double intake_Claw_Open       = 0.1;
-    public static double intake_Claw_Close      = 0.2;
+    public static double intake_Claw_Open       = 0.55;
+    public static double intake_Claw_Close      = 0.3;
 
     //Deposit Config
-    public static double deposit_Slide_down_Pos         = 50;   //slides Position Configure
-    public static double deposit_Slide_Highbar_Pos      = 795;  //slides Position Configure
-    public static double deposit_Slide_Highbasket_Pos   = 3000; //slides Position Configure
+    public static int deposit_Slide_down_Pos         = 50;   //slides Position Configure
+    public static int deposit_Slide_Highbar_Pos      = 795;  //slides Position Configure
+    public static int deposit_Slide_Highbasket_Pos   = 2800; //slides Position Configure
 
     public static double deposit_Wrist_dump_Pos         = 0.3;
-    public static double deposit_Wrist_retract_Pos      = 0;
+    public static double deposit_Wrist_retract_Pos      = 0.1;
 
     public static double deposit_Arm_dump_Pos           = 0.8;
-    public static double deposit_Arm_retract_Pos        = 0.05;
+    public static double deposit_Arm_retract_Pos        = 0.0;
 
     public static double deposit_Arm_hook_Pos           = 0.8;
-    public static double deposit_Wrist_hook_Pos         = 0.3;
+    public static double deposit_Claw_Open              = 0.11;
+    public static double deposit_Claw_Close             = 0.0;
 
-    public static double dumpTime                       = 1.5;
-    public static double retractTime                    = 2.8;
+    public static double dumpTime                       = 1.8;
+    public static double retractTime                    = 3.2;
 
-    public static double deposit_Slide_UpLiftPower      = 0.7;  //slides power
-    public static double downLiftPower                  = 0.5;  //slides power
+    public static double deposit_Slide_UpLiftPower      = 0.9;  //slides power
+    public static double downLiftPower                  = 0.3;  //slides power
 
     
     @Override
@@ -91,68 +91,94 @@ public class BasicTeleOps extends OpMode {
         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
         telemetryManager = new TelemetryManager(telemetry);
 
+        // Initialize hardware in RobotHardware
         robot = new RobotHardware();
-        robot.init(hardwareMap);                                                        // Initialize hardware in RobotHardware
+        robot.init(hardwareMap);
 
+        //robot configuration
+
+        //gamepad
         gamepadCo1 = new GamepadEx(gamepad2);
 
-        robotDrive = new RobotDrive(robot, gamepadCo1, telemetryManager,powerFactor);   // Pass robot instance to RobotDrive
+        //robotDrive
+        robotDrive = new RobotDrive(robot, gamepadCo1);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
-        /**
-        //vertical slide arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1, telemetryManager, dump_Idle, dump_Deposit, dropTime, retractTime, intake_Idle, intake_Dump, downLiftpos, upLiftmid,upLiftpos, upLiftPower, downLiftPower); // Pass parameters as needed);
+
+        //Deposit Arm control
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,
+                                                    deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
+                                                    dumpTime, retractTime,
+                                                    deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open,deposit_Claw_Close,
+                                                    deposit_Slide_down_Pos,deposit_Slide_Highbasket_Pos,
+                                                    deposit_Slide_UpLiftPower,downLiftPower); // Pass parameters as needed);
         depositArmDrive.Init();
-        **/
 
-        //
-        depositServoTest = new ServoTest(robot,gamepadCo1,telemetryManager);
-        depositServoTest.ServoTestInit();
+        //Intake Arm Control
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,
+                intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
+                intake_slide_Retract, intake_slide_Extension, intake_Rotation,
+                intake_Claw_Open, intake_Claw_Close);
 
-        //colorSensor = new Color_sensor(robot);                                          // Initialize color sensor
+        intakeArmDrive.Init();
+
+        /**
+         //Servo Test
+         depositServoTest = new ServoTest(robot,gamepadCo1);
+         depositServoTest.ServoTestInit();
+         */
+
+        //colorSensor = new Color_sensor(robot);// Initialize color sensor
 
         // get bulk reading
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+        //Robot Control State
+        RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
 
         //
         telemetry.addLine("-------------------");
-        telemetryManager.update("Status"," initialized Motors and Encoder and IMU and Arm Control");
+        telemetry.addData("Status"," initialized Motors and Encoder and IMU and Arm Control");
+        telemetry.addData("Control Mode", currentMode.name());
         telemetry.addLine("-------------------");
     }
 
     @Override
     public void loop() {
-        /**
+
         for (LynxModule hub : allHubs) {
             BulkData bulkData = hub.getBulkData();
             if (bulkData != null) {
                 // Example: Reading motor position for each hub
                 if (hub.equals(allHubs.get(0))) { // Assuming the first hub is Control Hub
-                    int frontLeftMotor = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
-                    int frontRightMotor = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
+                    int frontLeftMotor = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
+                    int frontRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
 
-                    telemetryManager.update("Deposit Left Motor Position", frontLeftMotor);
-                    telemetryManager.update("Deposit right Motor Position", frontRightMotor);
+                    telemetry.addData("Deposit Left Motor Position (Expansion Hub)", frontLeftMotor);
+                    telemetry.addData("Deposit right Motor Position", frontRightMotor);
                 } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
-                    int liftMotorLeft = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
-                    int liftMotorRight = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
-
-                    telemetryManager.update("Motor (Expansion Hub) Position", liftMotorLeft);
-                    telemetryManager.update("Analog Sensor (Expansion Hub)", liftMotorRight);
+                    int liftMotorLeft = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
+                    int liftMotorRight = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
+                    telemetry.addData("Drive Motor FL Motor (Control Hub) Position", liftMotorLeft);
+                    telemetry.addData("Drive Motor FR Motor (Control Hub) Position", liftMotorRight);
                 }
             }
 
         }
-         **/
 
         robotDrive.DriveLoop(); // Use RobotDrive methods
-        //depositArmDrive.VsArmLoop();
+        RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
+
+        depositArmDrive.DepositArmLoop();
+        FiniteMachineStateArm.LiftState liftState = depositArmDrive.State();
+
+        intakeArmDrive.IntakeArmLoop();
+        FiniteMachineStateIntake.INTAKESTATE intakestate = intakeArmDrive.intakeState();
 
         //depositArmTest
-        depositServoTest.ServoTestLoop();
+        //depositServoTest.ServoTestLoop();
 
 
         // Real-time telemetry data to Driver Station
@@ -172,8 +198,10 @@ public class BasicTeleOps extends OpMode {
         telemetry.addData("deposit Left Arm Position", robot.depositLeftArmServo.getPosition());
         telemetry.addData("deposit Right Arm Position", robot.depositRightArmServo.getPosition());
         telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
-        telemetry.addData("lift slide motor position", robot.liftMotorLeft.getCurrentPosition());
-        telemetry.addData("right slide motor position", robot.liftMotorRight.getCurrentPosition());
+        telemetry.addData("Control Mode", currentMode.name());
+        telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles());
+        telemetry.addData("Lift Mode", liftState.name());
+        telemetry.addData("Intake State", intakestate.name());
         telemetry.update();
     }
 
