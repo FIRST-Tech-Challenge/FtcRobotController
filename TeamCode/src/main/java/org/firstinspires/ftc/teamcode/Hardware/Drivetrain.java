@@ -18,8 +18,8 @@ public class Drivetrain {
     public final double xOffset = 135;
 
     public static double zeroMoveAngle = 45;
-    public final double P = 0.15, D = 4.5;
-    public final double rP = 2.2, rD = 27;
+    public static double P = 0.15, D = 4.5;
+    public static double rP = 2.2, rD = 27;
     private boolean auto = false;
 
     private final DcMotorEx rightRear;
@@ -48,6 +48,7 @@ public class Drivetrain {
     private double lastBlPower = 0;
     private double lastBrPower = 0;
     private double lastFrPower = 0;
+    public static double maxPower=1;
 
     public Drivetrain(HardwareMap hardwareMap, Pose2d startPose) {
         leftFront = hardwareMap.get(DcMotorEx.class, "bl");
@@ -117,19 +118,19 @@ public class Drivetrain {
         // Only set power if the change is greater than 0.05
         if (Math.abs(flPower - lastFlPower) > 0.05) {
             leftFront.setPower(flPower);
-            lastFlPower = flPower;
+            lastFlPower = flPower*maxPower;
         }
         if (Math.abs(blPower - lastBlPower) > 0.05) {
             leftRear.setPower(blPower);
-            lastBlPower = blPower;
+            lastBlPower = blPower*maxPower;
         }
         if (Math.abs(brPower - lastBrPower) > 0.05) {
             rightRear.setPower(brPower);
-            lastBrPower = brPower;
+            lastBrPower = brPower*maxPower;
         }
         if (Math.abs(frPower - lastFrPower) > 0.05) {
             rightFront.setPower(frPower);
-            lastFrPower = frPower;
+            lastFrPower = frPower*maxPower;
         }
     }
 
@@ -234,5 +235,8 @@ public class Drivetrain {
 
     public void setStartPostion(Pose2d startpose){
         odo.setPosition(startpose);
+    }
+    public void setMaxPower(double power){
+        maxPower = power;
     }
 }

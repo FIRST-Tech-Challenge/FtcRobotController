@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Slides;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 import org.firstinspires.ftc.teamcode.RoboActions;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
+import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import java.util.List;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
@@ -59,6 +61,7 @@ public class OneDriverLynx extends LinearOpMode {
         double loopTime = 0;
         modules = hardwareMap.getAll(LynxModule.class);
         robot = new RoboActions(hardwareMap, startPosition);
+        Drivetrain drive = new Drivetrain(hardwareMap, new Pose2d(0, 0, 0));
 
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -245,17 +248,17 @@ public class OneDriverLynx extends LinearOpMode {
             oldTime = newTime;
 
 
-//            drive.update();
+            drive.update();
             robot.drivePowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             robot.slidesUpdate();
             robot.armUpdate();
             gp.update();
 
 
-//            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
-//            telemetry.addData("Position", data);
-//            telemetry.addData("Heading Velocity: ", drive.getHeadingVelocity());
-//            telemetry.addData("Status", drive.getStatus());
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", drive.getPose().getX(), drive.getPose().getY(), M.toDegrees(drive.getPose().getHeading()));
+            telemetry.addData("Position", data);
+            telemetry.addData("Heading Velocity: ", drive.getHeadingVelocity());
+            telemetry.addData("Status", drive.getStatus());
             telemetry.addData("Hub loop Time: ", frequency);
             telemetry.addData("slides inches: ", robot.slides.getCurrentSlidesPosition());
             telemetry.addData("arm degrees:", robot.arm.getCurrentArmPosition());
