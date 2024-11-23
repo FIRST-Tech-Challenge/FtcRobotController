@@ -2,44 +2,42 @@ package com.kalipsorobotics.actions;
 
 import android.util.Log;
 
+import com.kalipsorobotics.PID.PIDController;
+import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.PID.PIDController2023;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MecanumRobotAction extends Action {
 
+    private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;
-    double targetTicks;
-    double currentTicks;
+    Odometry odometry;
+    PIDController controller;
+    double targetInches;
+    double currentInches;
     double error;
     double power;
-    CalculateTickInches calculateTickInches = new CalculateTickInches();
-    PIDController2023 fLeftMecanumController;
-    PIDController2023 bRightMecanumController;
 
-    double ERROR_TOLERANCE_IN_TICKS = 10;
-    int counter = 0;
-
-    public MecanumRobotAction(double inches, DriveTrain driveTrain) {
+    public MecanumRobotAction(double targetInches, DriveTrain driveTrain, Odometry odometry) {
         this.dependentAction = new DoneStateAction();
         this.driveTrain = driveTrain;
-        fLeftMecanumController = new PIDController2023("fl mecanum", 0.005, 0.0000005, 0.4, true);
-        bRightMecanumController = new PIDController2023("br mecanum", 0.005, 0.0000005, 0.4, true);
-        this.targetTicks = fLeftMecanumController.convertInchesToTicks(inches);
+        controller = new PIDController(0.005, 0.0000005, 0.4, "mecanum");
+        this.odometry = odometry;
+        this.targetInches = targetInches;
     }
 
     private void refreshError() {
-        error = targetTicks - currentTicks;
-        Log.d("mecanum", "error is " + error);
+        error = targetInches - currentInches;
     }
 
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        if(Math.abs(error) <= ERROR_TOLERANCE_IN_TICKS) {
+        if(Math.abs(error) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0); // stop, to be safe
-            Log.d("mecanum", "done");
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
+            Log.d("mecanum", "done");
             return true;
         } else {
             return false;
@@ -48,34 +46,17 @@ public class MecanumRobotAction extends Action {
 
     @Override
     public void update() {
-
-        this.currentTicks = driveTrain.getfLeftTicks();
+        this.currentInches = odometry.countX();
+        refreshError();
 
         if (!hasStarted) {
-            fLeftMecanumController.state.integral = 0;
-            fLeftMecanumController.state.lastError = 0;
-            fLeftMecanumController.state.lastTime = 0;
-
-            this.targetTicks += currentTicks;
-            Log.d("mecanum", "target ticks " + targetTicks);
+            this.targetInches += currentInches;
+            Log.d("mecanum", "target ticks " + targetInches);
             hasStarted = true;
         }
 
-        if (counter < 3) {
-            if ((Math.abs(fLeftMecanumController.state.lastError) < ERROR_TOLERANCE_IN_TICKS)) {
-                counter++;
-            } else { //todo: test this
-                counter = 0;
-            }
-
-            currentTicks = driveTrain.getfLeftTicks();
-            Log.d("mecanum", "current ticks is " + currentTicks);
-            power = fLeftMecanumController.calculatePID(currentTicks, targetTicks);
-            Log.d("mecanum", "power is " + power);
-
-            if(!isDone){
-                driveTrain.setPower(power, -1 * power, -1 * power, power);
-            }
+        if(!isDone){
+            driveTrain.setPower(power, -power, -power, power);
         }
     }
 }

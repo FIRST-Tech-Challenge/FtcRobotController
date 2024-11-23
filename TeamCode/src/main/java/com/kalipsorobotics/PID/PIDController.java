@@ -35,10 +35,13 @@ public class PIDController {
     }
 
     public double calculate(double current, double target) {
+        double error = target - current;
+        return calculate(error);
+    }
+
+    public double calculate(double error) {
         double currentTime = SystemClock.elapsedRealtimeNanos();
         double timeDelta = (currentTime - lastTime) / 1e9;
-
-        double error = target - current;
         integralError += error * timeDelta;
 
         double proportional = Kp * error;
@@ -61,6 +64,18 @@ public class PIDController {
 
     public double chKd(double delta) {
         return Kd += delta;
+    }
+
+    public void setKp(double p) {
+        Kp = p;
+    }
+
+    public void setKi(double i) {
+        Ki = i;
+    }
+
+    public void setKd(double d) {
+        Kd = d;
     }
 
     @NonNull

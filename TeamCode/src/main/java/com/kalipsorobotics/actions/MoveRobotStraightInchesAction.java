@@ -3,29 +3,28 @@ package com.kalipsorobotics.actions;
 import android.util.Log;
 
 import com.kalipsorobotics.localization.Odometry;
-import com.kalipsorobotics.math.CalculateTickInches;
-import com.kalipsorobotics.PID.PIDController2023;
+import com.kalipsorobotics.PID.PIDController;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MoveRobotStraightInchesAction extends Action {
-    private static final double ERROR_TOLERANCE = 20;
+    private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;
     Odometry odometry;
-    PIDController2023 straightController;
-    double targetTicks;
-    double currentTicks;
+    PIDController controller;
+    double targetInches;
+    double currentInches;
     double error;
 
-    public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain) {
+    public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, Odometry odometry) {
         this.dependentAction = new DoneStateAction();
-        straightController = new PIDController2023("straight", 0.0005, 0.0000015, 0.8, false);
-        this.targetTicks = CalculateTickInches.inchToTicksDriveTrain(targetInches);
+        this.controller = new PIDController(0.0005, 0.0000015, 0.8, "straight");
         this.driveTrain = driveTrain;
         this.odometry = odometry;
+        this.targetInches = targetInches;
     }
 
     private void refreshError() {
-        error = targetTicks - currentTicks;
+        error = targetInches - currentInches;
     }
 
     @Override
@@ -45,19 +44,17 @@ public class MoveRobotStraightInchesAction extends Action {
 
     @Override
     public void update() {
-
-        this.currentTicks = odometry.countX();
-        Log.d("moverobot", "current ticks is " + currentTicks);
-        Log.d("moverobot", "target inches is " + CalculateTickInches.ticksToInchesDriveTrain(targetTicks));
+        this.currentInches = odometry.countY();
+        refreshError();
 
         if(!hasStarted) {
-            this.targetTicks += currentTicks;
-            Log.d("moverobot","target ticks is" + this.targetTicks);
+            this.targetInches += currentInches;
+            Log.d("moverobot","target ticks is" + this.targetInches);
             hasStarted = true;
         }
 
         if(!isDone){
-            driveTrain.setPower(straightController.calculatePID(currentTicks, targetTicks));
+            driveTrain.setPower(controller.calculate(error));
         }
     }
 }
