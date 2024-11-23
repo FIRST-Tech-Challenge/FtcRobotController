@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.RobotHardware;
 
 @TeleOp (name = "Robot Deposit", group =  "FTC_24135_Testing")
 public class RobotDepositCode {
@@ -22,7 +20,8 @@ public class RobotDepositCode {
     }
 
     public static int depositSlideMotorExtendPosition = 3222;
-    public static int depositSlideMotorRetractPosition = 0;
+    public static int leftDepositSlideMotorRetractPosition = 40;
+    public static int rightDepositSlideMotorRetractPosition = 60;
     public double depositMotorPower = 0.5;
     public double leftDepositArmServoExtendedPosition = 0.83;
     public double leftDepositArmServoInitialPosition = 0;
@@ -50,8 +49,8 @@ public class RobotDepositCode {
     public void init() {
 
         robot.depositLeftArmServo.setPosition(0);
-        robot.depositRightArmServo.setDirection(Servo.Direction.FORWARD);
-        robot.depositLeftArmServo.setPosition(0);
+        robot.depositLeftArmServo.setDirection(Servo.Direction.FORWARD);
+        robot.depositRightArmServo.setPosition(0);
         robot.depositRightArmServo.setDirection(Servo.Direction.REVERSE);
         robot.depositWristServo.setPosition(0);
         robot.depositWristServo.setDirection(Servo.Direction.FORWARD);
@@ -119,8 +118,8 @@ public class RobotDepositCode {
                 if (SERVO_IsAtPosition(depositServoOpenPosition) && retractTime.seconds() > RETRACTTIME_THRESHOLD) {
                     robot.liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     robot.liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                    robot.liftMotorRight.setTargetPosition(DepositSlideMotorRetractPosition);
-                    robot.liftMotorLeft.setTargetPosition(DepositSlideMotorRetractPosition);
+                    robot.liftMotorRight.setTargetPosition(rightDepositSlideMotorRetractPosition);
+                    robot.liftMotorLeft.setTargetPosition(leftDepositSlideMotorRetractPosition);
                     robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.liftMotorRight.setPower(DepositMotorPower);
@@ -130,7 +129,8 @@ public class RobotDepositCode {
                     robot.depositClawServo.setPosition(DepositServoOpenPosition);
                     robot.depositWristServo.setPosition(DepositWristServoInitialPosition);
                 }
-                if (DE_IsAtPosition(DepositSlideMotorRetractPosition)) {
+                if (DE_IsAtPosition(leftDepositSlideMotorRetractPosition) && DF_IsAtPosition(rightDepositSlideMotorRetractPosition)) {
+                    if (DE_IsAtPosition(rightDepositSlideMotorRetractPosition))
                     currentState = DepositSlideState.START_POSITION;
                 }
                 break;
@@ -152,8 +152,13 @@ public class RobotDepositCode {
         }
     }
     private boolean DE_IsAtPosition(int targetPosition) {
-        return (Math.abs(robot.liftMotorLeft.getCurrentPosition() - targetPosition) <= 5) &&
-                (Math.abs(robot.liftMotorRight.getCurrentPosition() - targetPosition) <= 5);
+        return (Math.abs(robot.liftMotorLeft.getCurrentPosition() - targetPosition) <= 5);
+    }
+
+
+
+    private boolean DF_IsAtPosition(int targetPosition){
+        return (Math.abs(robot.liftMotorRight.getCurrentPosition() - targetPosition) <= 5);
     }
     private boolean SERVO_IsAtPosition(double targetPosition) {
         return (Math.abs(robot.depositClawServo.getPosition() - targetPosition) <= 0.01);
