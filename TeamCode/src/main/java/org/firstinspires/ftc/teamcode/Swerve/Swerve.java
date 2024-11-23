@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.util.function.BooleanSupplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -241,6 +242,10 @@ public class Swerve {
       driveMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get(pos + "Motor");
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
       steerEncoder = opMode.hardwareMap.analogInput.get(pos + "Encoder");
+
+      if (pos.equals("BL") || pos.equals("BR")) {
+        driveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+      }
 
       drivePID = new PIDController(0 / maxDriveSpeedMetersPerSec, 0, 0);
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);

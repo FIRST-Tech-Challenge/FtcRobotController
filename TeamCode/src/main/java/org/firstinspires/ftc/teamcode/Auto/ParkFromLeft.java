@@ -18,7 +18,7 @@ public class ParkFromLeft extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     drivebase = new Swerve(this);
     drivebase.initGyro();
-    drivebase.setGyro(Rotation2d.fromDegrees(120));
+    //drivebase.setGyro(Rotation2d.fromDegrees(120));
 
     waitForStart();
     driveForTime(new ChassisSpeeds(0, -.75, 0),.5);
