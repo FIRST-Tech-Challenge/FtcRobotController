@@ -10,7 +10,7 @@ public class HangHooks {
    //private final Servo hangRight;
 
     public HangHooks() {
-        hangLeft = opModeUtilities.getHardwareMap().servo.get("hang1");
+        this.hangLeft = opModeUtilities.getHardwareMap().servo.get("hang1");
         //this.hangRight = opModeUtilities.getHardwareMap().get(Servo.class, "hang2");
     }
 
