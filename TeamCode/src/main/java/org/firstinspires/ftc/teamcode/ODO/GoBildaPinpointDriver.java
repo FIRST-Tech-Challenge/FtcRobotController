@@ -436,14 +436,14 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
    * @return the estimated X (forward) position of the robot in m
    */
   public double getPosX() {
-    return xPosition * 1000.0;
+    return xPosition / 1000.0;
   }
 
   /**
    * @return the estimated Y (Strafe) position of the robot in m
    */
   public double getPosY() {
-    return yPosition * 1000.0;
+    return yPosition / 1000.0;
   }
 
   /**
@@ -457,14 +457,14 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
    * @return the estimated X (forward) velocity of the robot in m/sec
    */
   public double getVelX() {
-    return xVelocity * 1000.0;
+    return xVelocity / 1000.0;
   }
 
   /**
    * @return the estimated Y (strafe) velocity of the robot in m/sec
    */
   public double getVelY() {
-    return yVelocity * 1000.0;
+    return yVelocity / 1000.0;
   }
 
   /**

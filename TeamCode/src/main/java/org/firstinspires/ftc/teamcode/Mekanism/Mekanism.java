@@ -180,6 +180,12 @@ public class Mekanism {
     }
   }
 
+  public void intake() {
+    intakeServo.setPosition(1);
+  }
+
+  public void outtake() {}
+
   public void clamp() {
     ramp1.setPosition(0);
     ramp2.setPosition(.15);

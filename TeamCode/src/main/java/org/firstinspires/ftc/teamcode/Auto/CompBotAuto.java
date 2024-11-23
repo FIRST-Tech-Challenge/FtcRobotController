@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Disabled
 @Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
 
