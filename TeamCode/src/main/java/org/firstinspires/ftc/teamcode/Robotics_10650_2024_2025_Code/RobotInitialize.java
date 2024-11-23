@@ -31,12 +31,12 @@ public class RobotInitialize {
     // Initialization Phase
 
     // Create servo variables
-    CRServo intake; // This is a special continuous rotation servo which allows it to act
+    public CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
     Servo parkingServo;
 
     Servo pitch;
-    Servo clawRoll;
+    public Servo clawRoll;
 
 
     // Create the empty normal motor variables
@@ -46,8 +46,8 @@ public class RobotInitialize {
     public DcMotorEx bLeft;
 
     // Create the empty lift control variables
-    DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
-    DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
+    public DcMotorEx liftExtender; //Extends the lift outwards and pulls it inwards
+    public DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
     // Create empty gyroscope variable and its settings
     BHI260IMU gyroScope;

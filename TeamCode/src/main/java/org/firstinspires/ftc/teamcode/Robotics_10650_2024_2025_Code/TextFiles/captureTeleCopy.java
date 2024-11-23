@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.RobotInitialize;
 
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 @TeleOp(name = "COPYRecordDriverInputs", group = "Linear Opmode")
 public class captureTeleCopy extends LinearOpMode {
     RobotInitialize robot;
+    int liftPitchPosition = 0;
+    int liftExtenderPosition = 0;
+    double maxLifEtxtension =0;
 
 
         private ArrayList<String> recordedInputs;
@@ -37,20 +41,29 @@ public class captureTeleCopy extends LinearOpMode {
                 waitForStart();
 
                 long startTime = System.currentTimeMillis();
+                double strafeVelocity;
+                double straightMovementVelocity;
+                double turnVelocity;
+
+                double fleftVel = 0;
+                double bleftVel = 0;
+                double frightVel= 0 ;
+                double brightVel = 0;
+
+                double pitchVel = 0;
+                double extenderVel = 0;
+
+                double intakeVel = 0;
+                double clawPitchPos = 0;
+
+                double hangRPos = 1;
 
 
                 while (opModeIsActive()&&!gamepad1.share) {
 
                     // Adjust speed with Cross (X) or Circle
 
-                    double strafeVelocity;
-                    double straightMovementVelocity;
-                    double turnVelocity;
 
-                    double fleftVel = 0;
-                    double bleftVel = 0;
-                    double frightVel= 0 ;
-                    double brightVel = 0;
 
 
                     {
@@ -147,9 +160,197 @@ public class captureTeleCopy extends LinearOpMode {
                             // negative value
                         }
                     }
+                    if (Math.abs(robot.liftPitch.getCurrentPosition()-liftPitchPosition)>50){
+                        if (robot.liftPitch.getCurrentPosition()<liftPitchPosition){
+                            pitchVel = 2250;
+                            robot.liftPitch.setVelocity(2250);
+                        } else if (robot.liftPitch.getCurrentPosition()>= liftPitchPosition) {
+                            pitchVel = -2250;
+                            robot.liftPitch.setVelocity(-2250);
+                            if (liftPitchPosition>1500){
+                                pitchVel = -2450;
+                                robot.liftPitch.setVelocity(-2450);
+                            }
+                        }
+                    } else {
+                        robot.liftPitch.setVelocity(0);
+                        pitchVel = 0;
+
+                    }
+                    telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
+                    telemetry.addData("extender target pos", liftExtenderPosition);
+
+                    telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
+
+
+                    telemetry.addData("is right stick pressed?", gamepad2.right_stick_button);
+                    telemetry.addData("is left stick pressed?", gamepad2.left_stick_button);
+
+
+
+
+//
+                    telemetry.addData("ground mode pitch pos", Math.asin(53.78/robot.liftExtender.getCurrentPosition()));
+
+//
+                    if (liftPitchPosition<=2325&&liftPitchPosition>=0||
+                            (liftPitchPosition>=2325&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
+                            // maximum horizontal position and further (try something less than this)
+                            (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
+
+                        if(liftExtenderPosition > maxLifEtxtension) {
+                            liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
+                        }
+
+                        if (gamepad2.left_stick_y > 0.2) {//going down
+                            liftPitchPosition = liftPitchPosition - 25;
+
+                            if (liftPitchPosition>1500){//if it low, go slow
+                                liftPitchPosition = liftPitchPosition - 15;
+                            }
+
+                        } else if (gamepad2.left_stick_y< -0.2) {//going up
+                            liftPitchPosition = liftPitchPosition + 45;//value used to be 25 justin case
+                        }
+
+                        if(liftPitchPosition < 0) {
+                            liftPitchPosition = 0;
+                        } else if(liftPitchPosition > 2300) {liftPitchPosition = 2300;  //change to max lift xtension
+                        }
+
+                    }
+
+
+                    telemetry.addData("lift extender pos", robot.liftExtender.getCurrentPosition());
+                    telemetry.addData("lift pitch pos", robot.liftPitch.getCurrentPosition());
+
+
+
+                    //Bounds on the liftExtender motor
+                    //Lift PIDF might be able to be tuned more to improve but it does reasonably well currently
+                    double pitchAngle = robot.liftPitch.getCurrentPosition()*(90)/2595;
+
+
+
+
+                    if (pitchAngle>=31.25){
+                        maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+                    } else{
+                        maxLifEtxtension = 2780;
+                    }
+
+                    if (gamepad2.left_stick_button){ //when this button is pressed
+                        robot.liftExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        //press this button to set the zero point after adjusting with right stick button
+                    } else{
+                        robot.liftExtender.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                    }
+                    telemetry.addData("max lift etension", 1567/(Math.sin(Math.toRadians(pitchAngle))));
+                    telemetry.addData("cos", (Math.sin(Math.toRadians(pitchAngle))));
+                    telemetry.addData("pitch angle", (robot.liftPitch.getCurrentPosition()*90)/2595);
+                    telemetry.addData("pitch angle", pitchAngle);
+
+                    if (pitchAngle>=31.25){
+                        maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+                    } else{
+                        maxLifEtxtension = 2780;
+
+                    }
+
+
+
+
+                    //if in bounnds, set new target pos
+
+
+                    if ((Math.abs(gamepad2.right_stick_y)>0.2)&&(liftExtenderPosition<=maxLifEtxtension)
+                            &&(liftExtenderPosition>=0)||(robot.liftExtender.getCurrentPosition()<0&&
+                            gamepad2.right_stick_y<0)||(robot.liftExtender.getCurrentPosition()>
+                            maxLifEtxtension&&gamepad2.right_stick_y>0)) {
+
+                        liftExtenderPosition = liftExtenderPosition - (int)(30*gamepad2.right_stick_y);
+
+
+                        if(liftExtenderPosition < 0) {
+                            liftExtenderPosition = 0;
+                        } else if(liftExtenderPosition > maxLifEtxtension) {
+                            liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
+                        }
+
+
+                    }
+
+
+                    //Determines if the liftExtender should go up or down based on the controller inputs
+                    if (liftExtenderPosition<=(5)&&robot.liftExtender.getCurrentPosition()<=(5)) {
+                        //when down, save power
+                        extenderVel = 0;
+                        robot.liftExtender.setVelocity(0);
+                    }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
+                        //if far from target position
+
+                        //next if own or up
+                        if (robot.liftExtender.getCurrentPosition() < liftExtenderPosition) {
+                            extenderVel = 1500;
+
+                            robot.liftExtender.setVelocity(1500);
+                        } else if (robot.liftExtender.getCurrentPosition() >= liftExtenderPosition) {
+                            extenderVel = -1500;
+
+                            robot.liftExtender.setVelocity(-1500);
+                        }
+                        //If no input, make sure the liftExtender motor does not move
+                    }else {
+                        extenderVel = 1;
+
+                        robot.liftExtender.setVelocity(1);
+                    }
+                    if (gamepad2.left_trigger != 0) {
+                        intakeVel = -1;
+                        robot.intake.setPower(-1.0);
+                        telemetry.addData("intake power", robot.intake.getPower());
+                    }
+                    else if (gamepad2.right_trigger != 0) {
+                        intakeVel = 1;
+                        robot.intake.setPower(1.0);
+                        telemetry.addData("intake power", robot.intake.getPower());
+
+                    } else {
+                        intakeVel = 0;
+                        robot.intake.setPower(0.0);
+                        telemetry.addData("intake power", robot.intake.getPower());
+                    }
+                    if(gamepad2.dpad_down){
+
+                        clawPitchPos = 0;
+                        robot.clawRoll.setPosition(0);
+
+                    }
+                    if(gamepad2.dpad_up){
+
+                        clawPitchPos = 0.1606;
+                        robot.clawRoll.setPosition(0.1606);
+                    }
+                    if (gamepad1.dpad_left) {
+                        robot.hangR.setPosition(robot.hangR.getPosition()+0.002);
+                        hangRPos = robot.hangR.getPosition();
+
+
+
+//                robot.hangR.setPosition(0.9611);
+//                robot.hangL.setPosition(0.0439);
+                    }
+                    if (gamepad1.dpad_right) {
+                        robot.hangR.setPosition(robot.hangR.getPosition()-0.002);
+                        hangRPos = robot.hangR.getPosition();
+
+//                robot.hangR.setPosition(0.9611);
+//                robot.hangL.setPosition(0.0439);
+                    }
 
                     // Record inputs with timestamp
-                    recordedInputs.add((System.currentTimeMillis() - startTime) + "," + (fleftVel) + "," + (frightVel) + "," + (bleftVel) + "," + (brightVel));
+                    recordedInputs.add((System.currentTimeMillis() - startTime) + "," + (fleftVel) + "," + (frightVel) + "," + (bleftVel) + "," + (brightVel)+","+ (extenderVel)+","+(pitchVel)+","+(intakeVel)+","+(clawPitchPos)+","+(hangRPos));
 
 //                    telemetry.addData("Recording", "fleft Velocity: %.2f, fright Velocity: %.2f, bleft Velocity: %.2f, bright Velocity %.2f,", (startTime),(fleftVel),(frightVel),(bleftVel), (brightVel));
                     telemetry.update();
