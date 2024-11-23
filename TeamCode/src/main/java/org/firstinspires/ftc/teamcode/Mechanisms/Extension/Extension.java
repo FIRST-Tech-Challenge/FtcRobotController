@@ -28,7 +28,7 @@ public class Extension {
             public boolean run(@NonNull TelemetryPacket Packet) {
                 if (extensionPos == extensionState.RETRACT) {
                     servoExtendLeft.setPosition(0.5);
-                    servoExtendRight.setPosition(-0.5);
+                    servoExtendRight.setPosition(0.5);
 
                 }
                 if (extensionPos == extensionState.EXTEND) {
