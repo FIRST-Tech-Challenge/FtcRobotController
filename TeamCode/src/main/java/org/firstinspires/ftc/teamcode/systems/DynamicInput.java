@@ -66,18 +66,16 @@ public class DynamicInput {
             double rotationRight = 0;
             double rotationLeft = 0;
 
-            if (mainSettings.use_right_stick_rotation) {
-                double rotation = rightStickX * mainSettings.right_stick_sensitivity;
-                rotationRight = rotation > 0 ? rotation : 0;
-                rotationLeft = rotation < 0 ? -rotation : 0;
-            } else {
-                rotationRight = getButtonState(mainCtrl, mainSettings.buttonMapping.rotateRight)
-                        ? mainSettings.bumper_rotation_speed
-                        : 0;
-                rotationLeft = getButtonState(mainCtrl, mainSettings.buttonMapping.rotateLeft)
-                        ? mainSettings.bumper_rotation_speed
-                        : 0;
-            }
+            double rotation = rightStickX * mainSettings.right_stick_sensitivity;
+            rotationRight = rotation > 0 ? rotation : 0;
+            rotationLeft = rotation < 0 ? -rotation : 0;
+
+            rotationRight += getButtonState(mainCtrl, mainSettings.buttonMapping.rotateRight)
+                    ? mainSettings.bumper_rotation_speed
+                    : 0;
+            rotationLeft += getButtonState(mainCtrl, mainSettings.buttonMapping.rotateLeft)
+                    ? mainSettings.bumper_rotation_speed
+                    : 0;
 
             // Set final values
             this.up = upPower;

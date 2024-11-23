@@ -61,6 +61,31 @@ public class Wrist {
         }
     }
 
+    public void cyclePosition() {
+        Position currentPosition = position();
+        Position nextPosition;
+
+        switch (currentPosition) {
+            case HORIZONTAL:
+                nextPosition = Position.VERTICAL;
+                break;
+            case VERTICAL:
+                nextPosition = Position.CHAMBER;
+                break;
+            case CHAMBER:
+                nextPosition = Position.BASKET;
+                break;
+            case BASKET:
+                nextPosition = Position.HORIZONTAL;
+                break;
+            default:
+                nextPosition = Position.HORIZONTAL; // Fallback to HORIZONTAL if unknown
+                break;
+        }
+
+        setPosition(nextPosition);
+    }
+
     public enum Position {
         HORIZONTAL,
         VERTICAL,

@@ -65,14 +65,14 @@ public class Logger {
         telemetry.log().add("-- Permanent --");
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduledTask = scheduler.scheduleWithFixedDelay(this::periodic, 0, 800, TimeUnit.MILLISECONDS);
+        scheduledTask = scheduler.scheduleWithFixedDelay(this::periodic, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
         scheduledTask.cancel(true);
     }
 
-    private void periodic() {
+    public void periodic() {
         // Only run if the OpMode is active
         if (!baseRobot.parentOp.opModeIsActive()) {
             return;

@@ -132,7 +132,7 @@ public class Settings {
 
         @Config
         public static class Intake {
-            public static double SPEED = 1;
+            public static double SPEED = -1;
         }
     }
 
@@ -141,26 +141,26 @@ public class Settings {
     public static class Autonomous {
         @Config
         public static class FieldPositions {
-            // poses for initial robot positions
-            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-35.6, -67.6, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36.1, -60.3, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(-36.5, 60.0, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(36.1, 59.9, Math.toRadians(270));
+            // Updated poses for initial robot positions based on IdealLoop
+            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-35.8, -59.5, Math.toRadians(90)); // Updated
+            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36, -60, Math.toRadians(90)); // Updated
+            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270)); // Updated
+            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-36, 60, Math.toRadians(270)); // Updated
 
-            // Parked positions for each starting position
-            public static final Pose2d RED_LEFT_PARK_POSE = new Pose2d(38.2, -58.9, Math.toRadians(90));
-            public static final Pose2d RED_RIGHT_PARK_POSE = new Pose2d(10.2, -24.6, Math.toRadians(90));
-            public static final Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(-40.5, 65.2, Math.toRadians(270));
-            public static final Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(-59.9, 60.2, Math.toRadians(270));
+            // Updated parked positions for each starting position
+            public static final Pose2d RED_LEFT_PARK_POSE = new Pose2d(-8.3, -29.8, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-23.1, 11.9, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(23.4, -12.2, Math.toRadians(135)); // Updated
+            public static final Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(23.8, 10.0, Math.toRadians(180)); // Updated
 
-            // Place positions for each starting position
-            public static final Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-11.5, -30.7, Math.toRadians(90));
-            public static final Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(10.2, -24.6, Math.toRadians(90));
-            public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(9.9, 29.0, Math.toRadians(270));
-            public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-11.3, 30.3, Math.toRadians(270));
+            // Updated place positions for each starting position
+            public static final Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-8.1, -29.5, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(8.5, -30.0, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(8.6, 29.0, Math.toRadians(270)); // Updated
+            public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-7.2, 29.2, Math.toRadians(270)); // Updated
 
-            public static final Pose2d RED_HP_POSE = new Pose2d(35.3, -57.0, Math.toRadians(225));
-            public static final Pose2d BLUE_HP_POSE = new Pose2d(-36.3, 62.2, Math.toRadians(45));
+            public static final Pose2d RED_HP_POSE = new Pose2d(34.4, -58.0, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45)); // Updated
         }
 
         @Config
@@ -202,7 +202,7 @@ public class Settings {
         public double right_stick_sensitivity = 1.0;
 
         /** Bumper rotation speed */
-        public double bumper_rotation_speed = 0.8;
+        public double bumper_rotation_speed = 0.4;
 
         /** Whether to invert Y axis controls */
         public boolean invert_y_axis = false;

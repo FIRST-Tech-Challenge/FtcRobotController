@@ -167,7 +167,7 @@ public class BaseRobot {
                 arm.intake.stop();
             }
             if (actions.wristUp) {
-                arm.wrist.setPosition(Wrist.Position.VERTICAL);
+                arm.wrist.cyclePosition();
             } else if (actions.wristDown) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }

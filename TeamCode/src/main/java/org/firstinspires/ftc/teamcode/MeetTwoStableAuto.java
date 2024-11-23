@@ -21,9 +21,8 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "Ben's Secret Sauce", group = "Autonomous")
-public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDueToTheFactThatIAmJustThatGuy
-        extends LinearOpMode {
+@Autonomous(name = "Meet 2 Auto", group = "Autonomous")
+public class MeetTwoStableAuto extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RED_LEFT;
 
     private static final String[] MENU_OPTIONS = {
@@ -227,9 +226,21 @@ public class WroteThisOpFromScratchMainlyBecauseTheOthersWereTooCloggedButAlsoDu
     }
 
     public void justPark(StartingPosition sp) {
+        TrajectoryActionBuilder t = roadRunner.actionBuilder(initialPose)
+                .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
+                        Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
+
+        telemetry.addData("position", "Headed to " + Settings.Autonomous.FieldPositions.RED_HP_POSE.position
+                + " from " + initialPose.position);
+        telemetry.addData("heading", "Heading to " + Settings.Autonomous.FieldPositions.RED_HP_POSE.heading
+                + " from " + initialPose.heading);
+
+        telemetry.update();
+
+        sleep(3000);
         Actions.runBlocking(
                 new SequentialAction(
-                        getParkingTrajectory(sp).build()));
+                        t.build()));
     }
 
     private TrajectoryActionBuilder getParkingTrajectory(StartingPosition sp) {
