@@ -165,6 +165,7 @@ public class Swerve {
     static final double maxSteerSpeedRadPerSec;
 
     static {
+      // TODO figure this shit out
       double countsPerRevolution = 537.7;
       double gearRatio = 1.7;
       double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
