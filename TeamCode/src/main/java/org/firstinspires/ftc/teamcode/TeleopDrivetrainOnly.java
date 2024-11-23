@@ -38,7 +38,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
+    HardwareMinibot robot = new HardwareMinibot();
     @Override
     public void runOpMode() throws InterruptedException {
 

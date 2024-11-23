@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 import android.os.Environment;
@@ -14,6 +15,9 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -28,8 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-//  HardwarePixelbot robot = new HardwarePixelbot(telemetry);
-    HardwareMinibot robot = new HardwareMinibot();
+    Hardware2025Bot robot = new Hardware2025Bot();
 
     static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
     static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
@@ -64,25 +67,18 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double MIN_DRIVE_POW      = 0.05;    // Minimum speed to move the robot
     static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
 
-    //Files to access the algorithm constants
-    File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
-
-    double robotEncoderWheelDistance            = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * robot.COUNTS_PER_INCH2;
-    double horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
-
     // NOTE: Initializing the odometry global X-Y and ANGLE to 0-0 and 0deg means the frame of reference for all movements is
     // the starting positiong/orientation of the robot.  An alternative is to make the bottom-left corner of the field the 0-0
     // point, with 0deg pointing forward.  That allows all absolute driveToPosition() commands to be an absolute x-y location
     // on the field.
-    double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
-    double robotGlobalYCoordinatePosition       = 0.0;
-    double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
+    double robotGlobalXCoordinatePosition       = 0.0;   // inches
+    double robotGlobalYCoordinatePosition       = 0.0;   // inches
+    double robotOrientationRadians              = 0.0;   // radians 0deg (straight forward)
 
     // Odometry values corrected by external source, IE AprilTags
-    FieldCoordinate robotGlobalCoordinateCorrectedPosition = new FieldCoordinate(0.0, 0.0, 0.0);
+//  FieldCoordinate robotGlobalCoordinateCorrectedPosition = new FieldCoordinate(0.0, 0.0, 0.0);
 
-    double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands. 
+    double autoXpos                             = 0.0;   // Keeps track of our Autonomous X-Y position and Angle commands.
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
@@ -102,8 +98,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         initMenuMax      = 6;    // we have 6 total entries
 //  String[]    initMenuStr  = new String[initMenuMax];
 
-    int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both Backdrop & Audience sides
-    int         trussDelaySec    = 0;     // 2: wait [seconds] under the truss -- applies only to Audience side
+    int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both left/rigth starting positions
+    int         parkDelaySec     = 0;     // 2: wait [seconds] before parking in observation zone -- applies to that parking zone
 
     boolean     audienceYellow   = false;  // 3: score yellow pixel on audience side (true=yes; false=just park?)
     boolean     yellowOnLeft     = true;   // 4: drop yellow pixel in backdrop on left? (true=LEFT; false=RIGHT)
@@ -115,37 +111,11 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     String[]    parkLocationStr = {"NONE", "LEFT", "RIGHT"};
 
-    int         fiveStackCycles = 0;      // 6: number of white pixels to score from 5-stack (only Audience side for now)
-    int         fiveStackHeight = 5;      // Remaining pixels on 5-stack (always starts at 5); Dictates collector height
-
-    ElapsedTime autonomousTimer = new ElapsedTime();
-    ElapsedTime motionTimer = new ElapsedTime();
-
-    // Instrumentation for optimizing ABORT times
-    double   timeNow;
-    int      timeIndex = 0;
-    double[] timePoleDrive    = {0,0,0,0,0,0};  // Time to drive to pole
-    double[] timePoleScore    = {0,0,0,0,0,0};  // Time to alignToPole() and scoreCone()
-    double[] timeStackDrive   = {0,0,0,0,0,0};  // Time we arrive at 5-stack using moveToConeStack()
-    double[] timeStackCollect = {0,0,0,0,0,0};  // Time to collect the next cone off the 5-stack
-
-    // Instrumentation for optimizing drive-to positions
-    double[] anglePole0       = {0,0,0,0,0,0};  // Turret angle when we ARRIVE at pole
-    double[] anglePole1       = {0,0,0,0,0,0};  //                      DEPART
-
-    double[] odomPoleX0       = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at pole
-    double[] odomPoleX1       = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomPoleY0       = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at pole
-    double[] odomPoleY1       = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomPoleAng0     = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at pole
-    double[] odomPoleAng1     = {0,0,0,0,0,0};  //                        DEPART
-
-    double[] odomStackX0      = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at 5-stack
-    double[] odomStackX1      = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomStackY0      = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at 5-stack
-    double[] odomStackY1      = {0,0,0,0,0,0};  //                             DEPART
-    double[] odomStackAng0    = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at 5-stack
-    double[] odomStackAng1    = {0,0,0,0,0,0};  //                        DEPART
+    ElapsedTime autonomousTimer     = new ElapsedTime();  // overall
+    ElapsedTime motionTimer         = new ElapsedTime();  // for driving
+    ElapsedTime autoViperMotorTimer = new ElapsedTime();
+    ElapsedTime autoTiltMotorTimer  = new ElapsedTime();
+    ElapsedTime autoPanMotorTimer   = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -157,31 +127,23 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_dpad_left_last, gamepad1_dpad_left_now = false;
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
-    // Vision stuff
+    // Vision stuff (CHANGE) limelight
     boolean leftCameraInitialized = false;
     boolean backCameraInitialized = false;
     boolean rightCameraInitialized = false;
 
-    protected VisionPortal visionPortalBack;
-    protected CenterstageSuperPipeline pipelineBack;
-
-    // AprilTag variables
-    protected AprilTagProcessor aprilTag;
-    protected AprilTagProcessorImplCallback aprilTagCallback;
-    protected AprilTagDetection detectionData = null;     // Used to hold the data for a detected AprilTag
-    
     protected boolean atBackdropLeftDetected   = false;
     protected int     atBackdropLeftTag        = 0;
     protected double  atBackdropLeftDistance   = 0.0;   // inches
     protected double  atBackdropLeftStrafe     = 0.0;   // inches
     protected double  atBackdropLeftAngle      = 0.0;   // degrees
-    
+
     protected boolean atBackdropCenterDetected = false;
     protected int     atBackdropCenterTag      = 0;
     protected double  atBackdropCenterDistance = 0.0;   // inches
     protected double  atBackdropCenterStrafe   = 0.0;   // inches
     protected double  atBackdropCenterAngle    = 0.0;   // degrees
-    
+
     protected boolean atBackdropRightDetected  = false;
     protected int     atBackdropRightTag       = 0;
     protected double  atBackdropRightDistance  = 0.0;   // inches
@@ -221,23 +183,13 @@ public abstract class AutonomousBase extends LinearOpMode {
             forceAlliance = true;
         }
         // If we've not FORCED a red/blue alliance, report real-time detection
-        if( !forceAlliance ) {
-            redAlliance = pipelineBack.redAlliance;
-        }
-        telemetry.addData("STARTING", "%s", (pipelineBack.leftSide)? "LEFT" : "RIGHT");
+//        if( !forceAlliance ) {
+//            redAlliance = pipelineBack.redAlliance;
+//        }
+//        telemetry.addData("STARTING", "%s", (pipelineBack.leftSide)? "LEFT" : "RIGHT");
 
         telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
                 ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
-
-        // If vision pipeline disagrees with forced alliance setting, report it
-        if( forceAlliance && (redAlliance != pipelineBack.redAlliance) )
-            telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineBack.redAlliance)? "RED":"BLUE");
-
-        telemetry.addData("TeamProp", " Hue("  + pipelineBack.targetHue +
-                ") L:"   + pipelineBack.avg1   +
-                " C:"    + pipelineBack.avg2   +
-                " R:"    + pipelineBack.avg3   +
-                " Zone:" + pipelineBack.spikeMark );
 
         // Shift DOWN one menu entry?
         if( nextEntry ) {
@@ -271,14 +223,14 @@ public abstract class AutonomousBase extends LinearOpMode {
                 break;
             case 2 : // TRUSS DELAY [sec]
                 if( nextValue ) {
-                    if (trussDelaySec < 9) {
-                        trussDelaySec++;
+                    if (parkDelaySec < 9) {
+                        parkDelaySec++;
                     }
                 } // next
 
                 if( prevValue ) {
-                    if (trussDelaySec > 0) {
-                        trussDelaySec--;
+                    if (parkDelaySec > 0) {
+                        parkDelaySec--;
                     }
                 } // prev
                 break;
@@ -309,15 +261,15 @@ public abstract class AutonomousBase extends LinearOpMode {
 
             case 6 : // HOW MANY PIXELS DO WE SCORE FROM 5-STACK?
                 if( nextValue ) {
-                    if (fiveStackCycles < 1) {
-                        fiveStackCycles++;
-                    }
+//                    if (fiveStackCycles < 1) {
+//                        fiveStackCycles++;
+//                    }
                 } // next
 
                 if( prevValue ) {
-                    if (fiveStackCycles > 0) {
-                        fiveStackCycles--;
-                    }
+//                    if (fiveStackCycles > 0) {
+//                        fiveStackCycles--;
+//                    }
                 } // prev
                 break;
             default : // recover from bad state
@@ -327,262 +279,36 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Update our telemetry
         telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
-        telemetry.addData("Truss Delay", "%d sec %s", trussDelaySec, ((initMenuSelected==2)? "<-":"  ") );
-        telemetry.addData("Audience Yellow", "%s %s", (audienceYellow)? "Yes" : "No",
-                ((initMenuSelected==3)? "<-":"  "));
-        telemetry.addData("Place Yellow","%s %s", (yellowOnLeft)? "LEFT" : "RIGHT",
-                ((initMenuSelected==4)? "<-":"  "));
+        telemetry.addData("Park Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
 
-        telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 124" );
+//      telemetry.addData("5-stack cycles", "%d cycles %s",fiveStackCycles,((initMenuSelected==6)? "<-":"  ") );
+        telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu
+
+    /*--------------------------------------------------------------------------------------------*/
+    // Resets odometry starting position and angle to zero accumulated encoder counts
+    public void resetGlobalCoordinatePosition(){
+//      robot.odom.resetPosAndIMU();
+        robotGlobalXCoordinatePosition = 0.0;
+        robotGlobalYCoordinatePosition = 0.0;
+        robotOrientationRadians        = 0.0;
+    } // resetGlobalCoordinatePosition
 
     /*---------------------------------------------------------------------------------*/
     public void performEveryLoop() {
         robot.readBulkData();
-        globalCoordinatePositionUpdate();
+        robot.odom.update();
+        Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
+        robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
+        robotGlobalYCoordinatePosition = pos.getY(DistanceUnit.INCH);
+        robotOrientationRadians        = pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward), +90deg CCW
     } // performEveryLoop
 
-    protected void setWebcamManualExposure(int exposureMS, int gain) {
-        // Wait for the camera to be open, then use the controls
-
-        if (visionPortalBack == null) {
-            return;
-        }
-
-        // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while (!isStopRequested() && (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        // Set camera controls unless we are stopping.
-        if (!isStopRequested())
-        {
-            ExposureControl exposureControl = visionPortalBack.getCameraControl(ExposureControl.class);
-            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-                exposureControl.setMode(ExposureControl.Mode.Manual);
-                sleep(50);
-            }
-            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-            sleep(20);
-            GainControl gainControl = visionPortalBack.getCameraControl(GainControl.class);
-            gainControl.setGain(gain);
-            sleep(20);
-        }
-    } // setWebcamManualExposure
-
-    protected void setWebcamAutoExposure() {
-        // Wait for the camera to be open, then use the controls
-        if (visionPortalBack == null) {
-            return;
-        }
-
-        // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while (!isStopRequested() && (visionPortalBack.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        // Set camera controls to auto unless we are stopping.
-        if (!isStopRequested())
-        {
-            ExposureControl exposureControl = visionPortalBack.getCameraControl(ExposureControl.class);
-            if (exposureControl.getMode() != ExposureControl.Mode.Auto) {
-                exposureControl.setMode(ExposureControl.Mode.Auto);
-                sleep(50);
-            }
-        }
-    } // setWebcamAutoExposure
-
     /*---------------------------------------------------------------------------------*/
-    protected boolean updateBackdropAprilTags() {
-        // Allow robot to settle and april tag processor to see april tag
-        sleep(900);
-        // discard any prior detection data
-        atBackdropLeftDetected   = false;
-        atBackdropCenterDetected = false;
-        atBackdropRightDetected  = false;
-        // Step through the list of detected tags and look for a matching tag
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            // Verify that we have size info for this tag in our tag library
-            if (detection.metadata != null) {
-                //  Assess whether this is an AprilTag we care about for CENTERSTAGE Backdrop
-                if ((detection.id == 1) || (detection.id == 4)) {
-                    atBackdropLeftDetected = true;
-                    atBackdropLeftTag      = detection.id;
-                    atBackdropLeftDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropLeftStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropLeftAngle    = detection.ftcPose.yaw;
-                }    // LEFT (blue=1, red=4)
-                else if ((detection.id == 2) || (detection.id == 5)) {
-                    atBackdropCenterDetected = true;
-                    atBackdropCenterTag      = detection.id;
-                    atBackdropCenterDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropCenterStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropCenterAngle    = detection.ftcPose.yaw;
-                }    // CENTER (blue=2, red=5)
-                else if ((detection.id == 3) || (detection.id == 6)) {
-                    atBackdropRightDetected = true;
-                    atBackdropRightTag      = detection.id;
-                    atBackdropRightDistance = detection.ftcPose.range * Math.cos( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropRightStrafe   = detection.ftcPose.range * Math.sin( Math.toRadians(detection.ftcPose.bearing) );
-                    atBackdropRightAngle    = detection.ftcPose.yaw;
-                }    // RIGHT (blue=3, red=6)
-            } // in library
-        } // for()
-        // Do we want to display what we found?  (COMMENT-OUT unless debugging)
-//      displayBackdropAprilTags();
-        // Did we find anything?
-        return (atBackdropLeftDetected || atBackdropCenterDetected || atBackdropRightDetected);
-    } // updateBackdropAprilTags
-
-    /*---------------------------------------------------------------------------------*/
-    protected void displayBackdropAprilTags() {
-       telemetry.addLine("BACKDROP:");
-       telemetry.addLine("AprilTag  X[in]  Y[in]  ANGLE");
-       telemetry.addLine("--------  -----  -----  -----");
-       // Did we detect LEFT?
-       if( atBackdropLeftDetected ) {
-          telemetry.addData(" ","%d LEFT    %5.1f  %5.1f  %5.1f", atBackdropLeftTag,
-             atBackdropLeftDistance, atBackdropLeftStrafe, atBackdropLeftAngle );
-       } else {
-          telemetry.addLine("LEFT NOT DETECTED");
-       }
-       // Did we detect CENTER?
-       if( atBackdropCenterDetected ) {
-          telemetry.addData(" ","%d CENTER  %5.1f  %5.1f  %5.1f", atBackdropCenterTag,
-             atBackdropCenterDistance, atBackdropCenterStrafe, atBackdropCenterAngle );
-       } else {
-          telemetry.addLine("CENTER NOT DETECTED");
-       }
-       // Did we detect RIGHT?
-       if( atBackdropRightDetected ) {
-          telemetry.addData(" ","%d RIGHT   %5.1f  %5.1f  %5.1f", atBackdropRightTag,
-             atBackdropRightDistance, atBackdropRightStrafe, atBackdropRightAngle );
-       } else {
-          telemetry.addLine("RIGHT NOT DETECTED");
-       }
-       telemetry.update();
-       sleep(2000);
-    } // displayBackdropAprilTags
-
-    /*------------------------------------------------------------------------------------------*/
-    /* What odometry x/y/angle puts us at the desired offset from the backdrop?                 */
-    protected void computeBackdropLocation( double desiredXoffset, double desiredYoffset ) {
-        double  errorInchesX, errorInchesY, errorDegreesAngle;
-        // Where does our odometry say we are now? (x/y/angle)
-        double curYpos    = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;
-        double curXpos    = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;
-        double curDegrees = Math.toDegrees( robotOrientationRadians );
-        // What do our AprilTag readings says the backdrop is
-        if( atBackdropCenterDetected ) {
-           errorInchesX      = atBackdropCenterDistance; 
-           errorInchesY      = atBackdropCenterStrafe;
-           errorDegreesAngle = atBackdropCenterAngle;
-        } else if( atBackdropLeftDetected ) {
-           errorInchesX      = atBackdropLeftDistance;
-           errorInchesY      = atBackdropLeftStrafe - 6.0;
-           errorDegreesAngle = atBackdropLeftAngle;
-        } else if( atBackdropRightDetected ) {
-           errorInchesX      = atBackdropRightDistance;
-           errorInchesY      = atBackdropRightStrafe + 6.0;
-           errorDegreesAngle = atBackdropRightAngle;
-        } else {
-           errorInchesX      = 0.0;
-           errorInchesY      = 0.0;
-           errorDegreesAngle = 0.0;
-        }
-        // Adjust for desired offset to the center apriltag
-        errorInchesX -= desiredXoffset;
-        errorInchesY -= desiredYoffset;
-        //telemetry.addData("ODOM","X=%5.1f Y=%5.1f Angle=%5.1f", curXpos, curYpos, curDegrees);
-        //telemetry.addData("ERROR","X=%5.1f Y=%5.1f Angle=%5.1f", errorInchesX, errorInchesY, errorDegreesAngle);
-        //telemetry.update();
-        //sleep(2000);
-        // Compute the new odometry location
-        autoXpos  = curXpos - errorInchesX;
-        autoYpos  = curYpos - errorInchesY;
-        autoAngle = curDegrees - errorDegreesAngle;
-    } // computeBackdropLocation
-
-    /*---------------------------------------------------------------------------------*/
-    protected boolean processAprilTagDetections( int desiredAprilTagID ) {
-        boolean successfulDetection = false;
-        // Allow robot to settle and april tag processor to see april tag
-        sleep(500);
-        // discard any prior detection data
-        detectionData  = null;
-        // Step through the list of detected tags and look for a matching tag
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            // Look to see if we have size info on this tag.
-            if (detection.metadata != null) {
-                //  Check to see if we want to track towards this tag.
-                if ((desiredAprilTagID < 0) || (detection.id == desiredAprilTagID)) {
-                    // Yes, we want to use this tag.
-                    successfulDetection = true;
-                    detectionData = detection;
-                    break;  // don't look any further.
-                } else {
-                    // This tag is in the library, but we do not want to track it right now.
-                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                }
-            } else {
-                // This tag is NOT in the library, so we don't have enough information to track to it.
-                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-            }
-        } // for()
-        return successfulDetection;
-    } // processAprilTagDetections
-
-    /*------------------------------------------------------------------------------------------*/
-    /* Where do we need to move to achieve the desired offset distance (zero yaw/heading error) */
-    protected void computeAprilTagCorrections( double desiredDistance ) {
-        // Where does our odometry say we are now? (x/y/angle)
-        double curXpos    = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;
-        double curYpos    = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;
-        double curDegrees = Math.toDegrees( robotOrientationRadians );
-        // What does our AprilTag reading says our error to the backdrop is? (inches/degrees/degrees)
-        int     aprilTagId          =  detectionData.id;
-        double  errorInchesRange    = (detectionData.ftcPose.range - desiredDistance);
-        double  errorDegreesYaw     = detectionData.ftcPose.yaw;
-        double  errorDegreesHeading = detectionData.ftcPose.bearing;
-        // Convert those error angles into inches
-        double  errorInchesX      = errorInchesRange * Math.cos( Math.toRadians(errorDegreesHeading) );
-        double  errorInchesY      = errorInchesRange * Math.sin( Math.toRadians(errorDegreesHeading) );
-        double  errorDegreesAngle = errorDegreesYaw;
-        // Compute the new desired x/y/angle to zero-out that error
-        autoXpos  = curXpos - errorInchesX;
-        autoYpos  = curYpos - errorInchesY;
-        autoAngle = curDegrees + errorDegreesAngle;
-        // Display results (DEBUGGING ONLY)
-        // telemetry.addData("Tag","%d Drive %.1f in, Strafe %.1f deg, Turn %.1f deg",
-        //       aprilTagId, errorInchesRange, errorDegreesYaw, errorDegreesHeading);
-        //telemetry.addData("Offsets","X %.1f in, Y %.1f in, Turn %.1f deg",
-        //        errorInchesX, errorInchesY, errorDegreesAngle);
-        //telemetry.addData("New Pos","X %.1f in, Y %.1f in, Turn %.1f deg",
-        //        autoXpos, autoYpos, autoAngle);
-        //telemetry.update();
-        //sleep(30000);
-    } // computeAprilTagCorrections
-
-
-    // Create a time stamped folder in
+    // Create a time stamped folder in the Robot Control flash file storage
     public void createAutoStorageFolder( boolean isRed, boolean isLeft ) {
         // Create a subdirectory based on DATE
 //      String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
@@ -611,72 +337,99 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /*---------------------------------------------------------------------------------*/
-    void autoGrabPixelsInBin() {
-//        robot.startPixelGrab();
-//        while(opModeIsActive() && (robot.pixelGrabState != HardwarePixelbot.PixelGrabActivity.IDLE)) {
-//            performEveryLoop();
-//            robot.processPixelGrab();
-//      }
-    } // autoGrabPixelsInBin
+    void autoViperMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.viperMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.viperMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Are we raising or lowering the lift?
+        boolean directionUpward = (targetEncoderCount > robot.viperMotorPos)? true : false;
+        // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
+        // power setting, no matter which way the motor must rotate to achieve that target.
+        double motorPower = (directionUpward)? 1.0 : 0.5;
+        // Begin our timer and start the movement
+        autoViperMotorTimer.reset();
+        robot.viperMotor.setPower( motorPower );
+    } // autoViperMotorMoveToTarget
+
+    boolean autoViperMotorMoving() {
+        boolean viperMoving = true;
+        // Did the movement finish?
+        if( !robot.viperMotor.isBusy() ) {
+            viperMoving = false;
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        // Did we timeout?
+        else if( autoViperMotorTimer.milliseconds() > 3000 ) {
+            viperMoving = false;
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        else {
+            // wait a little longer
+        }
+        return viperMoving;
+    } // autoViperMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
-    void autoReleaseBothPixels() {
-//        robot.startPixelScoreAuto();
-//        while(opModeIsActive() && (robot.pixelScoreAutoState != HardwarePixelbot.PixelScoreAutoActivity.IDLE)) {
-//            performEveryLoop();
-//            robot.processPixelScoreAuto();
-//        }
-    } // autoReleaseBothPixels
+    void autoTiltMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.wormTiltMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Begin our timer and start the movement
+        autoTiltMotorTimer.reset();
+        robot.wormTiltMotor.setPower( 0.80 );
+    } // autoTiltMotorMoveToTarget
+
+    boolean autoTiltMotorMoving() {
+        boolean tiltMoving = true;
+        // Did the movement finish?
+        if( !robot.wormTiltMotor.isBusy() ) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoTiltMotorTimer.milliseconds() > 3000 ) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return tiltMoving;
+    } // autoTiltMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
-    void autoRaiseViperSlide( int targetEncoderCount ) {   // Ex: robot.VIPER_EXTEND_LOW
-        // Initiate the automatic movement to the desired lift height
-//        robot.startViperSlideExtension( targetEncoderCount );
-//        while(opModeIsActive() && (robot.viperMotorBusy == true)) {
-//            performEveryLoop();
-//            robot.processViperSlideExtension();
-//        }
-    } // autoRaiseViperSlide
+    void autoPanMotorMoveToTarget(int targetEncoderCount )
+    {
+        // Configure target encoder count
+        robot.wormPanMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        robot.wormPanMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        // Begin our timer and start the movement
+        autoPanMotorTimer.reset();
+        robot.wormPanMotor.setPower( 0.80 );
+    } // autoPanMotorMoveToTarget
 
-    void scoreYellowPixel() {
-//        autoGrabPixelsInBin();
-//        autoRaiseViperSlide(robot.VIPER_EXTEND_AUTO);
-//        autoReleaseBothPixels();
-//        autoRaiseViperSlide(robot.VIPER_EXTEND_ZERO);
-    }
-    /*---------------------------------------------------------------------------------*/
-    void distanceFromFront( int desiredDistance, int distanceTolerance ) {   // centimeters
-        // We're in position, so trigger the first ultrasonic ping
-        // NOTE: sonar ranges only update every 50 msec (no matter how much faster we loop
-        // than that.  That implies fast control loops will have multiple cycles that use
-        // the same range value before a new/different "most recent" ultrasonic range occurs.
-//      robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING );
-        // Wait 50 msec (DEFAULT_SONAR_PROPAGATION_DELAY_MS)
-        sleep( 50 );
-        // Begin the control loop.  We use a for() loop to avoid looping forever.  Be
-        // sure the desired distances can be achieved in 100 loops, or increase this counter.
-        for( int loops=0; loops<100; loops++ ) {
-            // Has autonomous ended or been aborted?
-            if( opModeIsActive() == false ) break;
-            // Handle background tasks
-            performEveryLoop();
-            // Query the current distance
-            int currDistance = 0; // robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT );
-            // Compute the range error
-            int rangeErr = currDistance - desiredDistance;
-            telemetry.addData("Sonar Range (F)", "Set: %d  Range: %d Err: %d", desiredDistance, currDistance, rangeErr);
-            telemetry.update();
-            // Are we done?
-            if( Math.abs(rangeErr) <= distanceTolerance ) break;
-            // Initiate robot movement closer/further to achieve desired range
-            robot.driveTrainFwdRev((rangeErr > 0.0) ? +0.10 : -0.10);
-            // Don't loop too fast (there's no point) but don't wait too long in case
-            // we "just missed" the most recent ultrasonic range measurement update
-            sleep( 10 );
-        } // for()
-        robot.stopMotion();
-    } // distanceFromFront
-
+    boolean autoPanMotorMoving() {
+        boolean panMoving = true;
+        // Did the movement finish?
+        if( !robot.wormPanMotor.isBusy() ) {
+            panMoving = false;
+            robot.wormPanMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoPanMotorTimer.milliseconds() > 5000 ) {
+            panMoving = false;
+            robot.wormPanMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return panMoving;
+    } // autoPanMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
@@ -974,7 +727,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
- //           sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
+ //         sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
             sensorDistance = 10;
 
             distanceError = sensorDistance - distanceFromWall;
@@ -1169,13 +922,16 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     //============================ ODOMETRY-BASED NAVIGATION FUNCTIONS ============================
     public void driveToPosition(double yTarget, double xTarget, double angleTarget,
-                                   double speedMax, double turnMax, int driveType) {
+                                double speedMax, double turnMax, int driveType) {
         // Loop until we get to destination.
         performEveryLoop();
         while(!driveToXY(yTarget, xTarget, angleTarget,
                 speedMax, driveType)
                 && opModeIsActive()) {
             performEveryLoop();
+            telemetry.addData("Drive", "x=%.1f, y=%.1f, %.1f deg",
+                    robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
+            telemetry.update();
         }
 
         // Fix the angle if we didn't reach angle in the drive
@@ -1189,7 +945,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param turnMax - Highest value to use for turn speed.
      */
     public void rotateToAngle(double angleTarget,
-                                 double turnMax) {
+                              double turnMax) {
         // Move the robot away from the wall.
         performEveryLoop();
         rotateToAngle(angleTarget, true);
@@ -1273,16 +1029,15 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @return - Boolean true we have reached destination, false we have not
      */
     protected boolean driveToXY(double yTarget, double xTarget, double angleTarget, double speedMin,
-                             double speedMax, double errorMultiplier, double errorAllowed,
-                             int driveType) {
+                                double speedMax, double errorMultiplier, double errorAllowed,
+                                int driveType) {
         boolean reachedDestination = false;
+        double xWorld = robotGlobalXCoordinatePosition;  // inches
+        double yWorld = robotGlobalYCoordinatePosition;  // inches
+        double xMovement = 0.0, yMovement = 0.0, turnMovement = 0.0;
         // Not sure why, but the x and y are backwards
-        double xWorld = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (backward! see notes)
-        double yWorld = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
-        double xMovement, yMovement, turnMovement;
-        // Not sure why, but the x and y are backwards
-        double deltaX = yTarget - xWorld;
-        double deltaY = xTarget - yWorld;
+        double deltaX = xTarget - xWorld;
+        double deltaY = yTarget - yWorld;
         double driveAngle = Math.atan2(deltaY, deltaX);
         double deltaAngle = AngleWrapRadians(toRadians(angleTarget) - robotOrientationRadians);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -1325,6 +1080,26 @@ public abstract class AutonomousBase extends LinearOpMode {
             ApplyMovement(yMovement, xMovement, turnMovement);
         }
 
+        boolean ODOMETRY_DEBUG = false;
+        if( ODOMETRY_DEBUG ) {
+            sleep(250);       // allow 0.25 seconds of progress (from prior loop)...
+            robot.driveTrainMotorsZero(); // then stop and observe
+            telemetry.addData("World X (inches)", "%.2f in", xWorld );
+            telemetry.addData("World Y (inches)", "%.2f in", yWorld );
+            telemetry.addData("Orientation (deg)","%.2f deg", Math.toDegrees(robotOrientationRadians) );
+            telemetry.addData("distanceToPoint", "%.2f in", magnitude);
+            telemetry.addData("angleToPoint", "%.4f deg", Math.toDegrees(driveAngle));
+            telemetry.addData("deltaAngleToPoint", "%.4f deg", Math.toDegrees(deltaAngle));
+            telemetry.addData("relative_x_to_point", "%.2f in", deltaX);
+            telemetry.addData("relative_y_to_point", "%.2f in", deltaY);
+            //telemetry.addData("robot_radian_err", "%.4f deg", Math.toDegrees(robot_radian_err));
+            telemetry.addData("movement_x_power", "%.2f", xMovement);
+            telemetry.addData("movement_y_power", "%.2f", yMovement);
+            telemetry.addData("rotation_power", "%.2f", turnMovement);
+            telemetry.update();
+            sleep(5000);  // so we can read the output above
+        } // ODOMETRY_DEBUG
+
         return reachedDestination;
     }
     /**
@@ -1336,12 +1111,12 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @return - Boolean true we have reached destination, false we have not
      */
     protected boolean driveToXY(double yTarget, double xTarget, double angleTarget,
-                             double speedMax, int driveType) {
+                                double speedMax, int driveType) {
 
         // Convert from cm to inches
         double errorMultiplier = 0.033;
         double speedMin = MIN_DRIVE_MAGNITUDE;
-        double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.5;
+        double allowedError = (driveType == DRIVE_THRU) ? 2.50 : 0.5;
 
         return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,
                 allowedError, driveType));
@@ -1363,10 +1138,10 @@ public abstract class AutonomousBase extends LinearOpMode {
 //        double backLeft = movement_y-movement_turn-movement_x*1.5;
 //        double backRight = movement_y+movement_turn+movement_x*1.5;
 //        double frontRight = movement_y+movement_turn-movement_x*1.5;
-        double frontRight = xMovement - yMovement - turnMovement;
-        double frontLeft  = xMovement + yMovement + turnMovement;
-        double backRight  = xMovement + yMovement - turnMovement;
-        double backLeft   = xMovement - yMovement + turnMovement;
+        double frontRight = yMovement - xMovement + turnMovement;
+        double frontLeft  = yMovement + xMovement - turnMovement;
+        double backRight  = yMovement + xMovement + turnMovement;
+        double backLeft   = yMovement - xMovement - turnMovement;
 
         //find the maximum of the powers
         double maxRawPower = Math.abs(frontLeft);
@@ -1433,12 +1208,12 @@ public abstract class AutonomousBase extends LinearOpMode {
      * @param driveType (DRIVE_TO or DRIVE_THRU)
      * @return boolean true/false for DONE?
      */
-    public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
+/*  public boolean moveToPosition( double xTarget, double yTarget, double angleTarget,
                                     double speedMax, double turnMax, int driveType ) {
         // Convert current robot X,Y position from encoder-counts to inches
-        double x_world = robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches (X/Y backward! see notes)
-        double y_world = robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2;  // inches
-        double angle_world = robotOrientationRadians;                              // radians
+        double x_world = robotGlobalYCoordinatePosition;  // inches (X/Y backward! see notes)
+        double y_world = robotGlobalXCoordinatePosition;  // inches
+        double angle_world = robotOrientationRadians;     // radians
         // Compute distance and angle-offset to the target point
         double distanceToPoint   = Math.sqrt( Math.pow((xTarget - x_world),2.0) + Math.pow((yTarget - y_world),2.0) );
         double distToPointAbs    = Math.abs( distanceToPoint );
@@ -1546,7 +1321,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.driveTrainMotors( frontLeft, frontRight, backLeft, backRight );
         return false;
     } // moveToPosition
-
+*/
     /**
      * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)
      * @param angleRadians
@@ -1576,53 +1351,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
         return angleDegrees;
     } // AngleWrapDegrees
-    
-    /**
-     * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
-     */
-    private void globalCoordinatePositionUpdate(){
-        //Get Current Positions
-        int leftChange  = robot.leftOdometerCount  - robot.leftOdometerPrev;
-        int rightChange = robot.rightOdometerCount - robot.rightOdometerPrev;
-        //Calculate Angle
-        double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians += changeInRobotOrientation;
-        robotOrientationRadians = AngleWrapRadians( robotOrientationRadians );   // Keep between -PI and +PI
-        //Get the components of the motion
-        int rawHorizontalChange = robot.strafeOdometerCount - robot.strafeOdometerPrev;
-        double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
-        double p = ((rightChange + leftChange) / 2.0);
-        double n = horizontalChange;
-        //Calculate and update the position values
-        robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
 
-        synchronized(AprilTagProcessorImplCallback.positionLock) {
-            robotGlobalCoordinateCorrectedPosition.setAngleDegrees(Math.toDegrees(robotGlobalCoordinateCorrectedPosition.getAngleRadians() + changeInRobotOrientation));
-            robotGlobalCoordinateCorrectedPosition.setAngleDegrees(AngleWrapDegrees(robotGlobalCoordinateCorrectedPosition.getAngleDegrees()));   // Keep between -PI and +PI
-            robotGlobalCoordinateCorrectedPosition.setX(robotGlobalCoordinateCorrectedPosition.getX() + (p * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) + n * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
-            robotGlobalCoordinateCorrectedPosition.setY(robotGlobalCoordinateCorrectedPosition.getY() + (p * Math.cos(robotGlobalCoordinateCorrectedPosition.getAngleRadians()) - n * Math.sin(robotGlobalCoordinateCorrectedPosition.getAngleRadians())));
-        }
-    } // globalCoordinatePositionUpdate
 
-    /*--------------------------------------------------------------------------------------------*/
-    // Sets odometry starting position and ensures zero accumulated encoder counts
-    public void setGlobalCoordinatePosition(double robotRadians,
-                                            double robotGlobalX, double robotGlobalY){
-        // Read starting odomentry counts (so "prev" becomes "this" on next cycle)
-        robot.readBulkData();
-        // Set our starting position (x/y & angle)
-        robotOrientationRadians        = robotRadians;   // 0deg (straight forward)
-        robotGlobalXCoordinatePosition = robotGlobalX;   // in odometer counts
-        robotGlobalYCoordinatePosition = robotGlobalY;
-    } // setGlobalCoordinatePosition
-
-    /*--------------------------------------------------------------------------------------------*/
-    // Sets odometry corrected position values
-    public void setCorrectedGlobalCoordinatePosition(double robotRadians,
-                                            double robotGlobalX, double robotGlobalY){
-        synchronized(AprilTagProcessorImplCallback.positionLock) {
-            robotGlobalCoordinateCorrectedPosition.setLocation(robotGlobalX, robotGlobalY, robotRadians);
-        }
-    } // setCorrectedGlobalCoordinatePosition
 } // AutonomousBase

@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.0 (11/11/2023)
+/* FTC Team 7572 - Version 1.0 (11/07/2024)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -15,16 +15,14 @@ public class TeleopRed extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
-        // CENTERSTAGE has different AprilTags for Red vs. Blue.
-        // CENTERSTAGE has no differnces for Left vs. Right during Teleop
-        //leftAlliance = true;
+        // INTO THE DEEP has different AprilTags for Red vs. Blue.
+        // INTO THE DEEP has no differnces for Left vs. Right during Teleop
+      //leftAlliance = true;
         blueAlliance = false;
 
-        // CENTERSTAGE AprilTag assignments:
-        aprilTagLeft   = 4;  // Red Alliance LEFT   Backdrop
-        aprilTagCenter = 5;  // Red Alliance CENTER Backdrop
-        aprilTagRight  = 6;  // Red Alliance RIGHT  Backdrop
-        aprilTagSmall  = 8;  // Red Alliance SMALL Audience  5-stack 2"/50mm
-        aprilTagLarge  = 7;  // Red Alliance LARGE Audience  5-stack 5"/127mm
+        // INTO THE DEEP AprilTag assignments:
+        aprilTagHuman  = 14;  // Red Alliance Audience / Human Player
+        aprilTagStart  = 15;  // Red Alliance Starting Wall
+        aprilTagBasket = 16;  // Red Alliance Basket
     }
 } // TeleopRed

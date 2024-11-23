@@ -1,35 +1,9 @@
-/* FTC Team 7572 - Version 1.0 (12/29/2023)
- */
+/* FTC Team 7572 - Version 1.0 (11/01/2024) */
 package org.firstinspires.ftc.teamcode;
 
-import android.os.Environment;
-import android.util.Size;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ReadWriteFile;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TeleOp Servo Test Program
@@ -51,14 +25,16 @@ public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
-    int    selectedServo = 0;  // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2
-    double collPos, pushPos, wristPos, finger1Pos, finger2Pos, dronePos;
-    double stepSize = 0.01;
-    long      nanoTimeCurr=0, nanoTimePrev=0;
-    double    elapsedTime, elapsedHz;
+    int     selectedServo = 0;  // 0=push, 1=wrist, 2=gecko
+    double  elbowPos, wristPos;
+    boolean geckoOn = false;
+    double  stepSize = 0.01;
+    long    nanoTimeCurr=0, nanoTimePrev=0;
+    double  elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwarePixelbot robot = new HardwarePixelbot(telemetry);
+//  Hardware2025Bot robot = new Hardware2025Bot(telemetry);
+    Hardware2025Bot robot = new Hardware2025Bot();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,12 +46,9 @@ public class TeleopServoTest extends LinearOpMode {
         robot.init(hardwareMap,false);
 
         // Start each value at the initialization position
-        collPos = robot.COLLECTOR_SERVO_STORED;
-        pushPos = robot.PUSH_SERVO_INIT;
+        elbowPos = robot.ELBOW_SERVO_INIT;
         wristPos = robot.WRIST_SERVO_INIT;
-        finger1Pos = robot.FINGER1_SERVO_DROP;
-        finger2Pos = robot.FINGER2_SERVO_DROP;
-        dronePos   = 0.5;
+        geckoOn = false;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -95,88 +68,59 @@ public class TeleopServoTest extends LinearOpMode {
 
             //================ Update telemetry with current state ================
             telemetry.addData("Use CROSS to toggle between servos", " " );
-            switch( selectedServo ) { // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2 5=drone
+            telemetry.addData("Use left/right BUMPERS to index servos", " " );
+            switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                 case 0 :
-                    telemetry.addData("SELECTED:", "CollectorServo" );
-                    telemetry.addData("value", "%.3f", collPos);
+                    telemetry.addData("SELECTED:", "ElbowServo" );
+                    telemetry.addData("Elbow Servo Position", "%.3f", robot.getElbowServoPos() );
+                    telemetry.addData("Elbow Servo Angle", "%.1f", robot.getElbowServoAngle());
                     break;
                 case 1 :
-                    telemetry.addData("SELECTED:", "PushServo" );
-                    telemetry.addData("value", "%.3f", pushPos );
-                    telemetry.addData("Push Servo Angle", "%.1f", robot.getPushServoAngle());
-                    break;
-                case 2 :
                     telemetry.addData("SELECTED:", "WristServo" );
-                    telemetry.addData("value", "%.3f", wristPos );
+                    telemetry.addData("Wrist Servo Position", "%.3f", robot.getWristServoPos() );
                     telemetry.addData("Wrist Servo Angle", "%.1f",robot.getWristServoAngle());
                     break;
-                case 3 :
-                    telemetry.addData("SELECTED:", "Finger1Servo" );
-                    telemetry.addData("value", "%.3f", finger1Pos );
-                    telemetry.addData("Finger Servo1 Angle", "%.1f",robot.getFingerServo1Angle());
-                    break;
-                case 4 :
-                    telemetry.addData("SELECTED:", "Finger2Servo" );
-                    telemetry.addData("value", "%.3f", finger2Pos );
-                    telemetry.addData("Finger Servo2 Angle", "%.1f",robot.getFingerServo2Angle());
-                    break;
-                case 5 :
-                    telemetry.addData("SELECTED:", "DroneServo" );
-                    telemetry.addData("value", "%.3f", dronePos );
- //                 telemetry.addData("Drone Servo Pos", "%.1f",robot.droneServo.getPosition() );
+                case 2 :
+                    telemetry.addData("SELECTED:", "IntakeServo" );
+                    telemetry.addData("Intake Servo power", "%.1f", robot.geckoServo.getPower() );
                     break;
                 default :
                     selectedServo = 0;
                     break;
             } // switch()
 
-
             //================ CROSS SWITCHES WHICH SERVO WE'RE CONTROLLING ================
             if( gamepad1_cross_now && !gamepad1_cross_last)
             {
                 selectedServo += 1;
-                if( selectedServo > 5 ) selectedServo = 0;
+                if( selectedServo > 2 ) selectedServo = 0;
             } // cross
 
             //================ LEFT BUMPER DECREASES SERVO POSITION ================
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
             {
-                switch( selectedServo ) { // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2
+                switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                     case 0 :
-                        collPos -= stepSize;
-                        if( collPos < 0.0 ) collPos = 0.0;
-                        if( collPos > 1.0 ) collPos = 1.0;
-                        robot.collectorServo.setPosition(collPos);
+                        elbowPos -= stepSize;
+                        if( elbowPos < 0.0 ) elbowPos = 0.0;
+                        if( elbowPos > 1.0 ) elbowPos = 1.0;
+                        robot.elbowServo.setPosition(elbowPos);
                         break;
                     case 1 :
-                        pushPos -= stepSize;
-                        if( pushPos < 0.0 ) pushPos = 0.0;
-                        if( pushPos > 1.0 ) pushPos = 1.0;
-                        robot.pushServo.setPosition(pushPos);
-                        break;
-                    case 2 :
                         wristPos -= stepSize;
                         if( wristPos < 0.0 ) wristPos = 0.0;
                         if( wristPos > 1.0 ) wristPos = 1.0;
                         robot.wristServo.setPosition(wristPos);
                         break;
-                    case 3 :
-                        finger1Pos -= stepSize;
-                        if( finger1Pos < 0.0 ) finger1Pos = 0.0;
-                        if( finger1Pos > 1.0 ) finger1Pos = 1.0;
-                        robot.fingerServo1.setPosition(finger1Pos);
-                        break;
-                    case 4 :
-                        finger2Pos -= stepSize;
-                        if( finger2Pos < 0.0 ) finger2Pos = 0.0;
-                        if( finger2Pos > 1.0 ) finger2Pos = 1.0;
-                        robot.fingerServo2.setPosition(finger2Pos);
-                        break;
-                    case 5 :
-                        dronePos -= stepSize;
-                        if( dronePos < 0.0 ) dronePos = 0.0;
-                        if( dronePos > 1.0 ) dronePos = 1.0;
-//                      robot.droneServo.setPosition(dronePos);
+                    case 2 :
+                        if(geckoOn){
+                            robot.geckoServo.setPower(0.0);
+                            geckoOn = false;
+                        }
+                        else{
+                            robot.geckoServo.setPower(-1.0);
+                            geckoOn = true;
+                        }
                         break;
                     default :
                         break;
@@ -186,42 +130,28 @@ public class TeleopServoTest extends LinearOpMode {
             //================ RIGHT BUMPER INCREASES SERVO POSITION ================
             else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
             {
-                switch( selectedServo ) { // 0=col, 1=push, 2=wrist, 3=finger1, 4=finger2
+                switch( selectedServo ) { // 0=push, 1=wrist, 2=gecko
                     case 0 :
-                        collPos += stepSize;
-                        if( collPos < 0.0 ) collPos = 0.0;
-                        if( collPos > 1.0 ) collPos = 1.0;
-                        robot.collectorServo.setPosition(collPos);
+                        elbowPos += stepSize;
+                        if( elbowPos < 0.0 ) elbowPos = 0.0;
+                        if( elbowPos > 1.0 ) elbowPos = 1.0;
+                        robot.elbowServo.setPosition(elbowPos);
                         break;
                     case 1 :
-                        pushPos += stepSize;
-                        if( pushPos < 0.0 ) pushPos = 0.0;
-                        if( pushPos > 1.0 ) pushPos = 1.0;
-                        robot.pushServo.setPosition(pushPos);
-                        break;
-                    case 2 :
                         wristPos += stepSize;
                         if( wristPos < 0.0 ) wristPos = 0.0;
                         if( wristPos > 1.0 ) wristPos = 1.0;
                         robot.wristServo.setPosition(wristPos);
                         break;
-                    case 3 :
-                        finger1Pos += stepSize;
-                        if( finger1Pos < 0.0 ) finger1Pos = 0.0;
-                        if( finger1Pos > 1.0 ) finger1Pos = 1.0;
-                        robot.fingerServo1.setPosition(finger1Pos);
-                        break;
-                    case 4 :
-                        finger2Pos += stepSize;
-                        if( finger2Pos < 0.0 ) finger2Pos = 0.0;
-                        if( finger2Pos > 1.0 ) finger2Pos = 1.0;
-                        robot.fingerServo2.setPosition(finger2Pos);
-                        break;
-                    case 5 :
-                        dronePos += stepSize;
-                        if( dronePos < 0.0 ) dronePos = 0.0;
-                        if( dronePos > 1.0 ) dronePos = 1.0;
-//                      robot.droneServo.setPosition(dronePos);
+                    case 2 :
+                        if(geckoOn){
+                            robot.geckoServo.setPower(0.0);
+                            geckoOn = false;
+                        }
+                        else{
+                            robot.geckoServo.setPower(1.0);
+                            geckoOn = true;
+                        }
                         break;
                     default :
                         break;
