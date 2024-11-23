@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp
 public class DiffyInverseKinematicTest extends LinearOpMode {
     private ElapsedTime IntakeClawTime = new ElapsedTime();
-    private double TouchPadInput = .5;
-    public double LeftServo = .5;
-    public double RightServo = .5;
+    private double TouchPadInput = 0;
+    public double LeftServo;
+    public double RightServo;
     private double V4Bpos = 1;
-    private double Flex = .5;
-    private double Yaw = .5;
+    private double Flex = .1;
+    private double Yaw = 0;
     private enum V4Bstate{
         START,
         INTAKE,
@@ -52,22 +52,28 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
                 case START:
                     if (gamepad1.a){    // Transfer Position
                         V4Bpos = 1;
-                        Flex = .25;
+                        Flex = 0;
                         state = V4Bstate.INTAKE;
                     }
                     break;
                 case INTAKE:
                     V4Bpos = .3;
-                    Flex = gamepad1.left_stick_x;
+                    Flex = .6;
                     if (gamepad1.touchpad_finger_1){   // Allows manual yaw control if a finger is on the touchpad
                         Yaw = gamepad1.touchpad_finger_1_x;     // Taking value from touchpad and saving as our desired yaw value
                     }
                     else {
                         Yaw = 0; //Sets yaw to 0 if no finger is detected on the touchpad
                     }
+                    if (gamepad1.right_trigger > 0){
+                        V4Bpos = 0.3*(1-(gamepad1.right_trigger)); //Control for variable virtual four bar height when in INTAKE state
+                    }
+                    else {
+                        V4Bpos = .3;
+                    }
                     if (gamepad1.x){  //Transfer position
                         V4Bpos = 1;
-                        Flex = .25;
+                        Flex = 0;
                         state = V4Bstate.TRANSFER;
                     }
                     break;
@@ -75,16 +81,12 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
                     state = V4Bstate.START;
                     break;
             }
-            if (gamepad1.right_trigger > 0){
-                V4Bpos = 0.5 - 0.5 * gamepad1.right_trigger;
-                Flex = .7;
-            }
+            LeftIntakeV4B.setPosition(V4Bpos);
+            RightIntakeV4B.setPosition(V4Bpos);
             LeftServo = Flex - (.5*Yaw); //Calculates required servo angles for combined flex and yaw motion
             RightServo = Flex + (.5*Yaw);//^
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
             RightIntakeWrist.setPosition(RightServo); //^
-            LeftIntakeV4B.setPosition(V4Bpos);
-            RightIntakeV4B.setPosition(V4Bpos);
             telemetry.addData("Touch Pad Yaw Input", Yaw)
                     .addData("Flex Input", Flex)
                     .addData("Left Wrist Target", LeftServo)
