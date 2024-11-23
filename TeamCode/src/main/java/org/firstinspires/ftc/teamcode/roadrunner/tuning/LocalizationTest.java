@@ -64,9 +64,9 @@ public class LocalizationTest extends LinearOpMode {
                 drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
 
-
+                                //strafe
                                 -gamepad1.left_stick_y,
-                                -gamepad1.left_stick_x
+                                gamepad1.left_stick_x
                         ),
                         gamepad1.right_stick_x
                 ));
@@ -76,7 +76,7 @@ public class LocalizationTest extends LinearOpMode {
                 //I want x to be parallel to the alliance areas and y to be
                 // perpendicular to the side of the field
                 telemetry.addData("x", drive.pose.position.y);
-                telemetry.addData("y", -drive.pose.position.x);
+                telemetry.addData("y", drive.pose.position.x);
                 telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
 
