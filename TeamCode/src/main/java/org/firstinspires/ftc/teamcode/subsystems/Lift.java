@@ -15,6 +15,7 @@ public class Lift{
     private DcMotor leftLift;
     private DcMotor rightLift;
     private Encoder encoder;
+//    private final PIDController pid;
 
 //    public Lift(HardwareMap hw){
 //        this(hw, "lift", "lift");
@@ -23,13 +24,15 @@ public class Lift{
     /**
      * Primary constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
-     * @param nameLift [String] Name of the lift motor assigned in the configuration.
+     * @param leftLiftName [String] Name of the left lift motor assigned in the configuration.
+     * @param rightLiftName [String] Name of the right lift motor assigned in the configuration.
      * @param nameEncoder [String] Name of the encoder assigned in the configuration.
      */
     public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String nameEncoder){
         leftLift = hw.get(DcMotor.class, leftLiftName);
         rightLift = hw.get(DcMotor.class, rightLiftName);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+//        pid = new PIDController
 //        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
 //
 //        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
