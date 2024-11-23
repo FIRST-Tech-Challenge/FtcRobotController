@@ -87,7 +87,10 @@ public class Teleop extends LinearOpMode {
             }
             prevGamePadA = gamepad2.a;
 
-
+            //LinearSlide toggle
+            if (gamepad2.y) {
+                outtakeSlideAction.moveToPosition();
+            }
             //OUTTAKE
             //LinearSlide
             if (-gamepad2.right_stick_y > 0.1) {
