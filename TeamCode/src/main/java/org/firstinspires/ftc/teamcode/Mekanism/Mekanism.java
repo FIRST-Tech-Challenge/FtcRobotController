@@ -128,7 +128,7 @@ public class Mekanism {
           Math.cos(
             Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
           1e-6), // Prevent divide by 0
-        46 * encoderCountsPerInch); // Limit extension
+        48 * encoderCountsPerInch); // Limit extension
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
