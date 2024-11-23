@@ -15,12 +15,19 @@ public class TeleOp2024 extends DriveMethods {
         Gamepad driver = gamepad1;
         Gamepad operator = gamepad2;
 
-        double leftStickY = -driver.left_stick_y;
-        double rightStickY = driver.right_stick_y;
-        double leftStickX = driver.left_stick_x;
-        double rightStickX = driver.right_stick_x;
+        double driveLeftStickY = -driver.left_stick_y;
+        double driveRightStickY = driver.right_stick_y;
+        double driveLeftStickX = driver.left_stick_x;
+        double driveRightStickX = driver.right_stick_x;
 
-        omniDrive(leftStickY, leftStickX, rightStickX);
+        double opLeftStickY = -operator.left_stick_y;
+        double opRightStickY = operator.right_stick_y;
+        double opLeftStickX = operator.left_stick_x;
+        double opRightStickX = operator.right_stick_x;
+
+        omniDrive(driveLeftStickY, driveLeftStickX, driveRightStickX);
+
+        omniOp(opLeftStickY);
 
     }
 }
