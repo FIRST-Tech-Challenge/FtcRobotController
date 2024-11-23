@@ -24,12 +24,14 @@ public class LocalizationTest extends LinearOpMode {
     //Will delete limelight initlization code away from LocalizationTest
     private Limelight3A limelight;
     public IMU imu;
+//    GoBildaPinpointDriver odo;
 
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         imu = hardwareMap.get(IMU.class,"imu");
+//        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
