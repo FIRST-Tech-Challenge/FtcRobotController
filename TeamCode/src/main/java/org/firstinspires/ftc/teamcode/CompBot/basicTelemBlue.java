@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
 
+@Disabled
 @TeleOp(name = "basic telemetry for blue robot", group = "CompBot")
 public class basicTelemBlue extends LinearOpMode {
   /*
@@ -28,7 +29,7 @@ public class basicTelemBlue extends LinearOpMode {
   date last updated and tested:
   */
 
-  DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide;
+  DcMotor FLMotor, BLMotor, BRMotor, FRMotor, pivot, slide, slide2;
   Servo FLServo, BLServo, BRServo, FRServo, intakeL, wrist;
 
   GoBildaPinpointDriver odo;
@@ -192,21 +193,27 @@ public class basicTelemBlue extends LinearOpMode {
     // Init slaw, claw, and pivot
     pivot = hardwareMap.dcMotor.get("pivot");
     slide = hardwareMap.dcMotor.get("slide");
+    slide2 = hardwareMap.dcMotor.get("slide 2");
 
     pivot.setMode(STOP_AND_RESET_ENCODER);
     slide.setMode(STOP_AND_RESET_ENCODER);
+    slide2.setMode(STOP_AND_RESET_ENCODER);
 
     pivot.setMode(RUN_USING_ENCODER);
     slide.setMode(RUN_USING_ENCODER);
+    slide2.setMode(RUN_USING_ENCODER);
 
     pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    slide2.setZeroPowerBehavior(BRAKE);
 
     pivot.setDirection(FORWARD);
     slide.setDirection(FORWARD);
+    slide2.setDirection(FORWARD);
 
     pivot.setPower(0);
     slide.setPower(0);
+    slide2.setPower(0);
 
     limitSlide = 4500;
     limitPivot = 2750;
@@ -244,6 +251,7 @@ public class basicTelemBlue extends LinearOpMode {
     }
 
     slide.setPower(x);
+    slide2.setPower(x);
   }
 
   public void slideLimit() {
