@@ -160,7 +160,7 @@ public class BaseRobot {
             if (actions.intakeIn) {
                 arm.intake.intake();
             }
-            if (actions.intakeOut) {
+            if (actions.intakeOut && arm.wrist.position() != Wrist.Position.VERTICAL) {
                 arm.intake.outtake();
             }
             if (actions.intakeStop) {
