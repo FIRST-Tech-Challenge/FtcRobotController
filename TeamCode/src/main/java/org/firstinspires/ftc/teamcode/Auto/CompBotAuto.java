@@ -22,13 +22,9 @@ public class CompBotAuto extends LinearOpMode {
   Servo intake, wrist;
   int limitSlide, limitPivot;
 
-  double pubLength = 0;
-
   double encoderCountsPerInch = 100; // needs adjusting
 
   double encoderCountsPerDegree = 30;
-
-  boolean test = false;
 
   DigitalChannel limitSwitch;
 
@@ -43,8 +39,6 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    slide.setPower(.5);
-    slide2.setPower(.5);
     slide.setTargetPosition(4200);
     slide2.setTargetPosition(4200);
     pivot.setTargetPosition(600);
@@ -97,7 +91,7 @@ public class CompBotAuto extends LinearOpMode {
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
     pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
-    limitSlide = 4750;
+    limitSlide = 4400;
     limitPivot = 3200;
 
     // servos
@@ -107,20 +101,8 @@ public class CompBotAuto extends LinearOpMode {
     intake.setDirection(Servo.Direction.REVERSE);
     wrist.setDirection(Servo.Direction.FORWARD);
 
-    // limit switch and brings pivot back
+    // limit switch and brings pivot back                 // currently not used
     limitSwitch = hardwareMap.get(DigitalChannel.class, "limit switch");
-
-    var odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-    odo.setOffsets(110, 30);
-    odo.setEncoderResolution(goBILDA_4_BAR_POD);
-    odo.setEncoderDirections(FORWARD, FORWARD);
-    odo.resetPosAndIMU();
-    try {
-      Thread.sleep((long) (.25 * 1e3));
-    } catch (final InterruptedException ex) {
-      Thread.currentThread().interrupt();
-    }
-    odo.resetHeading(Rotation2d.fromDegrees(120));
   }
 
   public void initSlide() {
