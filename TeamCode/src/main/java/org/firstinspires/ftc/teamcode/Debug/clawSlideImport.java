@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Disabled
 @TeleOp
 public class clawSlideImport extends LinearOpMode {
 
@@ -116,7 +115,7 @@ public class clawSlideImport extends LinearOpMode {
     telemetry.addData("set pivot x 1", x);
     if (pivot.getCurrentPosition() >= limitPivot && x > 0) {
       x = 0;
-    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
+    } else if (pivot.getCurrentPosition() <= -limitPivot && x < 0) {
       x = 0;
     }
     pivot.setPower(x);

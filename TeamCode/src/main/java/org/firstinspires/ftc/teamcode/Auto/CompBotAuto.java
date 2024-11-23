@@ -39,13 +39,13 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    slide.setTargetPosition(4200);
-    slide2.setTargetPosition(4200);
-    pivot.setTargetPosition(600);
+    slide.setTargetPosition(4100);
+    slide2.setTargetPosition(4100);
+    pivot.setTargetPosition(-1100);   //change
     wrist.setPosition(.35);
     //telem();
 
-    sleep(4500);
+    sleep(4000);
 
     intake.setPosition(0);
 
@@ -84,11 +84,12 @@ public class CompBotAuto extends LinearOpMode {
     slide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    slide.setPower(.75);
-    slide2.setPower(.75);
+    slide.setPower(.90);
+    slide2.setPower(.90);
     pivot.setPower(.5);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
+    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
     pivot.setDirection(DcMotorSimple.Direction.FORWARD);
 
     limitSlide = 4400;
