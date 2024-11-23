@@ -33,6 +33,7 @@ public class Odometry {
     private volatile double prevTheta;
     private volatile long prevTime;
 
+
     public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
@@ -76,11 +77,15 @@ public class Odometry {
 
     //1.94
     public double countY() {
-        return -otos.getPosition().x;
+        double y = -otos.getPosition().x;
+        y = Math.round(y * 100.0) / 100.0;
+        return y;
     }
 
     public double countX() {
-        return -otos.getPosition().y;
+        double x = -otos.getPosition().y;
+        x = Math.round(x * 100.0) / 100.0;
+        return x;
     }
 
     public double countTheta() {
