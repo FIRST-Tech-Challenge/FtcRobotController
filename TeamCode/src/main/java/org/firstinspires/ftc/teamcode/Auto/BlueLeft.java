@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.roadrunner.HolonomicController;
+import com.acmerobotics.roadrunner.PoseVelocity2dDual;
+import com.acmerobotics.roadrunner.Time;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -59,10 +62,16 @@ public class BlueLeft extends LinearOpMode {
         ));
         AccelConstraint baseAccelConstraint = new ProfileAccelConstraint(-25.0, 40);
 
+        VelConstraint slowVelConstraint = new MinVelConstraint(Arrays.asList(
+                new TranslationalVelConstraint(10),
+                new AngularVelConstraint(Math.PI / 2)
+        ));
+        AccelConstraint slowAccelConstraint = new ProfileAccelConstraint(-10, 20);
+
         double scorexPos = 10.5;
         double scoreyPos = 18.0;
         double pickUpxPos1 = 18;
-        double pickUpxPos2 = 20;
+//        double pickUpxPos2 = 21;
 
         //driveToScorePre
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
@@ -83,37 +92,22 @@ public class BlueLeft extends LinearOpMode {
                         baseVelConstraint,
                         baseAccelConstraint)
                 .waitSeconds(.25);
-        TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(pickUpxPos2, 12), Math.toRadians(0),
-                        baseVelConstraint,
-                        baseAccelConstraint)
-                .waitSeconds(.25);
 
         //driveToScoreFirst
+        TrajectoryActionBuilder traj4 = traj3.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .waitSeconds(.25);
+
+        //parking
         TrajectoryActionBuilder traj5 = traj4.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
+                .strafeToLinearHeading(new Vector2d(25, -40), Math.toRadians(-90),
                         baseVelConstraint,
                         baseAccelConstraint)
+//                .splineToLinearHeading(new Pose2d(10, -80, Math.toRadians(0)), Math.PI / 2)
                 .waitSeconds(.25);
 
-        //driveToSecondPickUp
-        TrajectoryActionBuilder traj6 = traj5.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(pickUpxPos1, 23), Math.toRadians(0),
-                        baseVelConstraint,
-                        baseAccelConstraint)
-                .waitSeconds(.25);
-        TrajectoryActionBuilder traj7 = traj6.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(pickUpxPos2, 23), Math.toRadians(0),
-                        baseVelConstraint,
-                        baseAccelConstraint)
-                .waitSeconds(.25);
-
-        //driveToScoreSecond
-        TrajectoryActionBuilder traj8 = traj7.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(scorexPos, scoreyPos), Math.toRadians(-45),
-                        baseVelConstraint,
-                        baseAccelConstraint)
-                .waitSeconds(.25);
 
         // Between initialization and start
         while (!isStopRequested() && !opModeIsActive()) {
@@ -128,17 +122,10 @@ public class BlueLeft extends LinearOpMode {
 
         Action driveToScorePre1 = traj1.build();
         Action driveToScorePre2 = traj2.build();
-
-//        public Action score =
-
-
-
         Action driveToFirstPickUp1 = traj3.build();
-        Action driveToFirstPickUp2 = traj4.build();
-        Action driveToScoreFirst = traj5.build();
-        Action driveToSecondPickUp1 = traj6.build();
-        Action driveToSecondPickUp2 = traj7.build();
-        Action driveToScoreSecond = traj8.build();
+        Action driveToScoreFirst = traj4.build();
+        Action park = traj5.build();
+
 
 
         // Start
@@ -151,11 +138,10 @@ public class BlueLeft extends LinearOpMode {
                         // Preload
                         driveToScorePre1,
                         driveToScorePre2
-                        // TODO 1 - raise viper, flip bucketx2, lower vipers
                 )
         );
 
-        viperSlide.goToPosition();
+        viperSlide.goToPosition(4250);
         viperSlide.bucketScore();
         sleep(1250);
         viperSlide.bucketRest();
@@ -166,38 +152,40 @@ public class BlueLeft extends LinearOpMode {
 
         // First sample
         Actions.runBlocking(driveToFirstPickUp1);
+        hSlide.goToPosition(80);
+        intake.wristDown();
+        sleep(300);
+        hSlide.goToPosition(150);
 
-        hSlide.moveForward();
+        intake.grabberSuck();
+        sleep(2500);
+        intake.grabberOff();
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        // TODO 2 - extend hSlide, flip wrist
-                        driveToFirstPickUp2,
-                        // TODO 3 - retract all pickup stuff and put in bucket
-                        driveToScoreFirst
-                        // TODO 1
-                )
-        );
+        intake.wristUp();
+        hSlide.goToRest();
+        intake.grabberSpit();
+        sleep(1500);
+        intake.grabberOff();
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        // Second sample
-                        driveToSecondPickUp1,
-                        // TODO 2
-                        driveToSecondPickUp2,
-                        // TODO 3
-                        driveToScoreSecond
-                        // TODO 1
-                )
-        );
+        Actions.runBlocking(driveToScoreFirst);
+
+        viperSlide.goToPosition(4250);
+        viperSlide.bucketScore();
+        sleep(1250);
+        viperSlide.bucketRest();
+        viperSlide.goToRest();
+
+        hSlide.resetEncoder();
+        viperSlide.resetEncoders();
+
+        Actions.runBlocking(park);
+
+
 
 //        if (opModeIsActive()) {
 //
 //        }
 
-
-
     }
 
 }
-// viper max limit4300

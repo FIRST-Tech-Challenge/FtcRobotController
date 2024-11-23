@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -154,15 +155,15 @@ public class ViperSlide {
 
     }
 
-    public void goToPosition() {
-        while (rightViper.getCurrentPosition() < 4200) {
+    public void goToPosition(int position) {
+        while (rightViper.getCurrentPosition() < position) {
             setPower(1);
         }
         stop();
     }
 
     public void goToRest() {
-        while (rightViper.getCurrentPosition() > 200) {
+        while ((rightViper.getCurrentPosition() > 200) && (rightViper.getCurrent(CurrentUnit.AMPS) < 6)) {
             setPower(-1);
         }
         stop();
