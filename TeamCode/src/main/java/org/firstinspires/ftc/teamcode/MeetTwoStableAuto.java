@@ -224,14 +224,15 @@ public class MeetTwoStableAuto extends LinearOpMode {
             case RED_LEFT:
             case BLUE_LEFT:
                 trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .lineToY(60).strafeTo(new Vector2d(20, 60));
+                        .strafeTo(new Vector2d(-15, 0)).strafeTo(new Vector2d(0, 0)) // push the block to the holding zone by strafing left
+                        .strafeTo(new Vector2d(0, 60)).strafeTo(new Vector2d(20, 60)); // park
                 break;
             case RED_RIGHT:
             case BLUE_RIGHT:
             default:
                 trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .lineToY(15).strafeTo(new Vector2d(-60, 15)).strafeTo(new Vector2d(-60, 40))
-                        .strafeTo(new Vector2d(-50, 40));
+                        .lineToY(18).strafeTo(new Vector2d(-75, 18)).strafeTo(new Vector2d(-75, 40))
+                        .strafeTo(new Vector2d(-55, 40));
                 break;
         }
         Actions.runBlocking(

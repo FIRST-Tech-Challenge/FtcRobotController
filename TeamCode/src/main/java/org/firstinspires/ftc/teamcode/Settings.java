@@ -73,24 +73,17 @@ public class Settings {
             public static final String WRIST = "wrist";
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
-            public static final String SHOULDER = "shoulder";
             public static final String ACTUATOR = "linearActuator";
         }
 
-        public static final double SHOULDER_GEAR_RATIO = 2;
-        public static final double SHOULDER_TICKS_PER_DEGREE = Hardware.COUNTS_PER_REVOLUTION * SHOULDER_GEAR_RATIO
-                / 360.0;
-        public static double SHOULDER_POWER = 0.5; // Adjust based on your needs
 
         @Config
         public static class Extensor {
-            // Positions in encoder ticks
             public static int PICKUP = 0;
             public static int HOVER = -20;
             public static int LOW_RUNG = -500;
             public static int HIGH_RUNG = -1000;
 
-            // Motor power settings
             public static double MOVEMENT_POWER = 0.5;
         }
 
