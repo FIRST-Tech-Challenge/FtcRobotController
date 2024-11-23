@@ -11,7 +11,7 @@ public class MoveLSAction extends Action {
     Outtake outtake;
     DcMotor linearSlide, linearSlideTwo;
     final double ERROR_TOLERANCE = 30;
-    final double P_CONSTANT = 0.008;
+    double P_CONSTANT = 0.008;
     double targetTicks;
     double currentTicks;
     double error;
@@ -23,6 +23,16 @@ public class MoveLSAction extends Action {
         this.targetTicks = targetTicks;
         Log.d("movels", "target ticks set to " + targetTicks);
         this.dependentAction = new DoneStateAction();
+    }
+
+    public MoveLSAction(double targetTicks, Outtake outtake, double P_CONSTANT) {
+        this.outtake = outtake;
+        linearSlide = outtake.linearSlideMotor1;
+        linearSlideTwo = outtake.linearSlideMotor2;
+        this.targetTicks = targetTicks;
+        Log.d("movels", "target ticks set to " + targetTicks);
+        this.dependentAction = new DoneStateAction();
+        this.P_CONSTANT = P_CONSTANT;
     }
 
     private double calculatePower() {

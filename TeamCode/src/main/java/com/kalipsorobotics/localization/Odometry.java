@@ -33,13 +33,13 @@ public class Odometry {
     private volatile double prevTheta;
     private volatile long prevTime;
 
+    private final double ODO_TO_INCH = 24/1.94;
+
 
     public Odometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         this.otos = driveTrain.getOtos();
-        otos.setLinearUnit(DistanceUnit.INCH);
-        otos.setAngularUnit(AngleUnit.RADIANS);
 
         sparkResetData(true, Math.toRadians(0));
 //        this.rightEncoder = driveTrain.getRightEncoder();
@@ -70,6 +70,10 @@ public class Odometry {
         otos.resetTracking();
         if (reCalibrate) { otos.calibrateImu(); }
         otos.setOffset(new SparkFunOTOS.Pose2D(-0.75, 0.5, heading));
+
+        otos.setAngularUnit(AngleUnit.RADIANS);
+
+        Log.d("sparkfun", "reset data");
         //7, 8
         //7, 8 1/2
     }
@@ -77,15 +81,13 @@ public class Odometry {
 
     //1.94
     public double countY() {
-        double y = -otos.getPosition().x;
-        y = Math.round(y * 100.0) / 100.0;
-        return y;
+        Log.d("odometry", "y is " + -otos.getPosition().x * ODO_TO_INCH);
+        return -otos.getPosition().x * ODO_TO_INCH;
     }
 
     public double countX() {
-        double x = -otos.getPosition().y;
-        x = Math.round(x * 100.0) / 100.0;
-        return x;
+        Log.d("odometry", "x is " + -otos.getPosition().y * ODO_TO_INCH);
+        return -otos.getPosition().y * ODO_TO_INCH;
     }
 
     public double countTheta() {

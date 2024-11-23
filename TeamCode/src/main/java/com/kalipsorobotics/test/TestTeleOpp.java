@@ -39,7 +39,7 @@ public class TestTeleOpp extends LinearOpMode {
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
         purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(24,0);
+        purePursuitAction.addPoint(0,24);
 //        purePursuitAction.addPoint(1000,0);
 //        purePursuitAction.addPoint(400,-400);
 //
