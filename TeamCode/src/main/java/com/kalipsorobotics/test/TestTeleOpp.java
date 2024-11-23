@@ -35,8 +35,7 @@ public class TestTeleOpp extends LinearOpMode {
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         driveTrain = new DriveTrain(opModeUtilities);
         odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        IMUModule imu = new IMUModule(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
+        //Outtake outtake = new Outtake(opModeUtilities);
 
 //        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
 //        purePursuitAction.addPoint(0,0);
@@ -65,7 +64,7 @@ public class TestTeleOpp extends LinearOpMode {
 //                Log.d("checkpointdone", "done");
 //            }
 //
-            Log.d("purepursactionlog", odometry.getCurrentPosition().toString());
+            Log.d("odometry", "pos " +  odometry.getCurrentPosition().toString());
 
             //purePursuitAction.updateCheckDone();
 
