@@ -166,21 +166,22 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
 //
 ////            // Intake
-//            if (gamepad1.x != gamepad1x_previous && gamepad1.x ) {
-//                intake_constant = !intake_constant;
-//                telemetry.addData("intake",intake_constant);
-//                telemetry.update();
-////                s1.setDirection(Servo.Direction.FORWARD);
-//
-//
-//                if (intake_constant) {
-//                    s1.setPosition(0);
-//                    //Extend
-//                } else {
-//                    s1.setPosition(1);
-//                    //Retract
-//                }
-//            }
+            if (gamepad1.x != gamepad1x_previous && gamepad1.x ) {
+                intake_constant = !intake_constant;
+                telemetry.addData("intake",intake_constant);
+                telemetry.update();
+//                s1.setDirection(Servo.Direction.FORWARD);
+
+
+                if (intake_constant) {
+                    s1.setPosition(0);
+                    //Extend
+                } else {
+                    s1.setPosition(1);
+                    //Retract
+                }
+            }
+            gamepad1x_previous = gamepad1.x;
 
 
             //Intake arm motor
@@ -213,9 +214,14 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
 
                 if (gamepad1.dpad_down != gamepad1dpadDown_previous && gamepad1.dpad_down) {
+                    s12.setPosition(1);
+                    sleep(100);
                     s12.setPosition(0.5);
                     s6.setPosition(0.75);
-
+                    s12.setPosition(1);
+                    sleep(100);
+                    s12.setPosition(0.5);
+                    s6.setPosition(0.75);
                 }
                 gamepad1dpadDown_previous = gamepad1.dpad_down;
 
@@ -228,7 +234,11 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
                 if (gamepad1.dpad_left != gamepad1dpadLeft_previous && gamepad1.dpad_left) {
                     s12.setPosition(1);
-                    sleep(200);
+                    sleep(100);
+                    s12.setPosition(0.5);
+                    s6.setPosition(0.5);
+                    s12.setPosition(1);
+                    sleep(100);
                     s12.setPosition(0.5);
                     s6.setPosition(0.5);
                 }

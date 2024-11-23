@@ -65,56 +65,54 @@ public class Auto_Kamikaze extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        setZeroPowerBehavior();
-
+        resetMotorEncoderCounts();
+        imu.resetYaw();
+        armReleaseP1();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-
-            moveBackwards_wDistance_wGyro(31,0.3,100);
+            moveSideways_wCorrection("left",3,0.6,3);
+            sleep(200);
+            moveBackwards_wDistance_wGyro(20,0.3,100);
             sleep(500);
-            moveBackwards_wDistance_wGyro(31,0.3,3);
+            moveBackwards_wDistance_wGyro(20,0.3,3);
             sleep(500);
-            bl.setPower(-0.2);
-            fl.setPower(-0.2);
-            fr.setPower(-0.2);
-            br.setPower(-0.2);
-            sleep(100);
-            setMotorToZeroPower();
-            turnToZeroAngle();
-
+            moveBackwards_wDistance_wGyro(16,0.3,3);
+            sleep(500);
+            turn("left",45,2);
+            sleep(200);
+            moveBackwards_wDistance_wGyro(20,0.3,2);
+            sleep(200);
             slideUp(1,4350,3);
-
-//            armReleaseP2();
-            sleep(500);
-
+            basketUp();
+            sleep(200);
             basketDown();
-            sleep(3050);
+            sleep(2550);
 
             basketUp();
-            slideDown(0.7,4000,3);
-            sleep(500);
+            slideDown(0.8,4200,3);
 
-            m2.setPower(-0.7);
-            sleep(500);
-            m2.setPower(0);
-            sleep(500);
+            moveForward_wDistance_wGyro(10,0.5,3);
+            turn("right",39,3);
+            sleep(200);
 
-            moveForward_wDistance_wGyro(25,0.8,3);
-            sleep(100);
-            moveForward_wDistance_wGyro(25,0.8,3);
-            sleep(100);
-            moveForward_wDistance_wGyro(25,0.8,3);
-            sleep(100);
-            moveForward_wDistance_wGyro(25,0.8,3);
-            sleep(100);
-            moveForward_wDistance_wGyro(20,0.8,3);
-            sleep(100);
-            moveSideways_wCorrection("right",10,0.5,3);
+            moveForward_wDistance_wGyro(38,0.5,3);
+            sleep(200);
+            turn("right",20,3);
+            moveForward_wDistance_wGyro(38,0.5,3);
+            sleep(200);
+            moveForward_wDistance_wGyro(50,0.5,3);
+            sleep(200);
 
-            sleep(900000000);
+
+            moveSideways_wCorrection("right",35,0.7,3);
+
+
+            sleep(9000000);
+            //hell yeah
+
         }
     }
 

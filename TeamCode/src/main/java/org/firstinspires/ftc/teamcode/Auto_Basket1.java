@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Auto_Ozone", group="Linear Opmode2")
-public class Auto_Ozone extends CommonUtil {
+@Autonomous(name="Auto_Basket1", group="Linear Opmode2")
+public class Auto_Basket1 extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,15 +65,47 @@ public class Auto_Ozone extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        clawClosed();
-        wristFlat();
+        resetMotorEncoderCounts();
+        imu.resetYaw();
+        armReleaseP1();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
+            moveSideways_wCorrection("left",3,0.6,3);
+            sleep(100);
+            moveBackwards_wDistance_wGyro(20.5,0.3,100);
+            sleep(500);
+            turn("left",39,2);
+            sleep(500);
+            moveBackwards_wDistance_wGyro(20,0.3,1);
+            sleep(200);
+            sleep(500);
+            slideUp(1,4350,3);
+            basketUp();
+            sleep(500);
 
-            moveForward_wDistance_wGyro(50,0.3,6);
+            basketDown();
+            sleep(2550);
+
+            basketUp();
+            slideDown(0.8,4200,3);
+            sleep(500);
+
+//            turn("right",39,3);
+
+            moveForward_wDistance_wGyro(38,0.3,3);
+            turn("left",58,5);
+            sleep(100);
+
+            moveForward_wDistance_wGyro(38,0.3,3);
+            sleep(100);
+
+            moveSideways_wCorrection("right",35,0.5,3);
+            sleep(500);
+            slideUp(1,2500,3);
+
             sleep(9000000);
 
         }

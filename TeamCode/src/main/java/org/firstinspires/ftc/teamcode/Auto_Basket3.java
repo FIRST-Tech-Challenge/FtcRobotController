@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Auto_Basket", group="Linear Opmode2")
-public class Auto_Basket extends CommonUtil {
+@Autonomous(name="Auto_Basket3", group="Linear Opmode2")
+public class Auto_Basket3 extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,61 +65,48 @@ public class Auto_Basket extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        clawClosed();
-        wristFlat();
+        resetMotorEncoderCounts();
+        imu.resetYaw();
+        armReleaseP1();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-
-//            moveSideways_wCorrection("left",3,0.5);
-//            sleep(100);
-
-//            armReleaseP1();
-            moveBackwards_wDistance_wGyro(23,0.3,100);
-            sleep(500);
-            bl.setPower(-0.2);
-            fl.setPower(-0.2);
-            fr.setPower(-0.2);
-            br.setPower(-0.2);
-            sleep(100);
-           setMotorToZeroPower();
-           turnToZeroAngle();
-
+            moveSideways_wCorrection("left",3,0.6,3);
+            sleep(200);
+            moveBackwards_wDistance_wGyro(20.5,0.3,100);
+            sleep(200);
+            turn("left",39,2);
+            sleep(200);
+            moveBackwards_wDistance_wGyro(20,0.3,2);
+            sleep(200);
+            moveSideways_wCorrection("left",6,0.6,2);
+            sleep(200);
+            moveBackwards_wDistance_wGyro(20,0.3,1);
+            sleep(200);
             slideUp(1,4350,3);
-
-//            armReleaseP2();
-            sleep(500);
-
+            basketUp();
+            sleep(200);
             basketDown();
-            sleep(3050);
+            sleep(2550);
 
             basketUp();
-            slideDown(0.7,2000,3);
-            sleep(500);
+            slideDown(0.8,4200,3);
 
-//            m2.setPower(-0.7);
-//            sleep(500);
-//            m2.setPower(0);
-//
-//            armMiddle();
-//            armUp();
-            sleep(500);
-            moveForward_wDistance_wGyro(32.5,0.3,3);
-            sleep(500);
+            moveForward_wDistance_wGyro(38,0.3,3);
+            turn("left",58,5);
+            sleep(200);
 
-            turn("left",80.543211,3);
-            sleep(100);
+            moveForward_wDistance_wGyro(38,0.3,3);
+            sleep(200);
 
-            moveForward_wDistance_wGyro(50,0.4,3);
-            sleep(100);
-
-            moveSideways_wCorrection("right",35,0.5,3);
-            sleep(500);
-            slideDown(0.8,650,3);
+            moveSideways_wCorrection("right",35,0.67,3);
+            sleep(200);
+            slideUp(1,2500,3);
 
             sleep(9000000);
+            //hell yeah
 
         }
     }

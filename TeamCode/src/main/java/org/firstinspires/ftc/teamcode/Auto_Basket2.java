@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Auto_Ozone", group="Linear Opmode2")
-public class Auto_Ozone extends CommonUtil {
+@Autonomous(name="Auto_Basket2", group="Linear Opmode2")
+public class Auto_Basket2 extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,15 +65,56 @@ public class Auto_Ozone extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        clawClosed();
-        wristFlat();
+        armReleaseP1();
+        resetMotorEncoderCounts();
+        imu.resetYaw();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
 
-            moveForward_wDistance_wGyro(50,0.3,6);
+//            moveSideways_wCorrection("left",3,0.6,3);
+
+//         armReleaseP1();
+
+            moveBackwards_wDistance_wGyro(35,0.3,10);
+            sleep(500);
+//            bl.setPower(-0.2);
+//            fl.setPower(-0.2);
+//            fr.setPower(-0.2);
+//            br.setPower(-0.2);
+//            sleep(100);
+//           setMotorToZeroPower();
+
+            turn("left",39,2);
+            sleep(500);
+            moveBackwards_wDistance_wGyro(20,0.3,1);
+            sleep(200);
+            slideUp(1,4350,3);
+            basketUp();
+            sleep(500);
+
+            basketDown();
+            sleep(2550);
+
+            basketUp();
+            slideDown(0.8,4200,3);
+            //sleep(500);
+
+//            turn("right",39,3);
+
+            moveForward_wDistance_wGyro(4,1,3); // was 4
+            turn("left",24,5);
+            sleep(100);
+
+            moveForward_wDistance_wGyro(51.5,0.4,3);
+            sleep(100);
+
+            moveSideways_wCorrection("right",35,0.5,3);
+            sleep(500);
+            slideUp(1,2500,3);
+
             sleep(9000000);
 
         }
