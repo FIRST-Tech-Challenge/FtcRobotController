@@ -146,7 +146,7 @@ public Twist2dDual<Time> update() {
 
     public Pose2d getPosition()
     {
-        return new Pose2d(getXPosition(), -getYPosition(), getHeading());
+        return new Pose2d(getXPosition(), getYPosition(), getHeading());
     }
 
     public void setOffsets(double xOffsetMM, double yOffsetMM, double headingOffsetDeg) {
