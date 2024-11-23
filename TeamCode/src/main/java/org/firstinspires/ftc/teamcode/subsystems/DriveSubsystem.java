@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.utils.GamepadUtils;
 //TODO: Modify drive functions to make use of new odometry logic rather than IMU (check if it is actually more accurate first)
 
 public class DriveSubsystem extends SubsystemBase {
-
     private HardwareMap hardwareMap;
 
     private final DcMotorEx frontLeftMotor;
@@ -59,12 +58,11 @@ public class DriveSubsystem extends SubsystemBase {
     }
     
     public void drive(double forward, double strafe, double turn) {
-        if(fieldCentric) driveFieldCentric(forward, strafe, turn); else driveRobotCentric(forward, strafe, turn);
+        if(fieldCentric) driveFieldCentric(forward, strafe, turn); 
+        else driveRobotCentric(forward, strafe, turn);
     }
 
     private void driveFieldCentric(double forward, double strafe, double turn) {
-        turn = -turn;
-
         forward = GamepadUtils.deadzone(forward, Constants.DriveConstants.DEADZONE);
         strafe = GamepadUtils.deadzone(strafe, Constants.DriveConstants.DEADZONE);
         turn = GamepadUtils.deadzone(turn, Constants.DriveConstants.DEADZONE);
@@ -80,8 +78,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     private void driveRobotCentric(double forward, double strafe, double turn) {
-        turn = -turn;
-
         forward = GamepadUtils.deadzone(forward, Constants.DriveConstants.DEADZONE);
         strafe = GamepadUtils.deadzone(strafe, Constants.DriveConstants.DEADZONE);
         turn = GamepadUtils.deadzone(turn, Constants.DriveConstants.DEADZONE);
@@ -92,10 +88,10 @@ public class DriveSubsystem extends SubsystemBase {
         backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
     }
 
-    //public void setSpeedMultiplier(double multiplier) {
-    //    speedMultiplier = Range.clip(multiplier, 0, 1);
-    //}
-    //it is useless after changing the speed multiplier :( keep it anyways
+    public void setSpeedMultiplier(double multiplier) {
+        speedMultiplier = Range.clip(multiplier, 0, 1);
+    }
+
     public void resetGyro() {
         imu.resetYaw();
     }
@@ -110,20 +106,14 @@ public class DriveSubsystem extends SubsystemBase {
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_WIHTOUT_ENCODER);
+   }
 
     private double getHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
-
-    public void changeSpeedMultiplier() {
-        if (speedMultiplier == 1) {
-            speedMultiplier = 0.5;
-        } else speedMultiplier = 1;        
     }
 
     public double getSpeedMultiplier() {

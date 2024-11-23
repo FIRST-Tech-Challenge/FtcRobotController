@@ -52,11 +52,11 @@ public abstract class Constants {
     }
 
     public static abstract class IntakeConstants {
-        public static final String HORIZONTAL_SLIDE_LEFT_MOTOR_NAME = "horizontalSlideLeftMotor";
-        public static final String HORIZONTAL_SLIDE_RIGHT_MOTOR_NAME = "horizontalSlideRightMotor";
+        public static final String LEFT_ARM_MOTOR_NAME = "horizontalSlideLeftMotor";
+        public static final String RIGHT_ARM_MOTOR_NAME = "horizontalSlideRightMotor";
 
-        public static final DcMotorSimple.Direction HORIZONTAL_SLIDE_LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-        public static final DcMotorSimple.Direction HORIZONTAL_SLIDE_RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static final DcMotorSimple.Direction LEFT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction RIGHT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
 
         public static final double ARM_JOINT_MAXIMUM_ANGLE_ROTATED = 120; //degrees
         public static final double ARM_JOINT_MINIMUM_ANGLE_ROTATED = -30; //Defined as the horizontal line form the floor that meets the arm joist axis

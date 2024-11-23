@@ -23,13 +23,13 @@ import java.lang.Math;
 public class IntakeSubsystem extends SubsystemBase {
     private HardwareMap hardwareMap;
 
-    private final DcMotorEx leftArmJointMotor;
-    private final DcMotorEx rightArmJointMotor;
+    private DcMotorEx leftArmJointMotor;
+    private DcMotorEx rightArmJointMotor;
 
-    private final DcMotorEx linearSlideMotor;
+    private DcMotorEx linearSlideMotor;
 
-    private final ServoEx wristServo;
-    private final CRServo activeIntakeServo;
+    private ServoEx wristServo;
+    private CRServo activeIntakeServo;
 
     private double speedMultiplier = 1.0;
 
@@ -41,7 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double linearSlideMotorTicks;
     private double linearSlideDistanceTraveled;
 
-    private final PIDController armJointController;
+    private PIDController armJointController;
     private double armJointTarget = 0;
     private double armJointLastPower;
 
@@ -49,7 +49,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double armJointTimeout;
     private PIDSubsystemState armJointState;
 
-    private final PIDController linearSlideController;
+    private PIDController linearSlideController;
     /** The state the arm/linear slide is in: (manual, moving-to-target, or at-target) */
     private double linearSlideTarget = 0;
     private double linearSlideLastPower;
@@ -64,39 +64,35 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private boolean isFloorScanningMode;
 
+    private OpMode opMode;
 
-
-
-    private final OpMode opMode;
-
-
-    public IntakeSubsystem(HardwareMap hardwareMap,OpMode opMode) {
+    public IntakeSubsystem(HardwareMap hardwareMap, OpMode opMode) {
         this.opMode = opMode; //a little fix so that the subsystem itself can add things into telemetry
 
         // intake arms motor creation
-        leftArmJointMotor = hardwareMap.get(DcMotorEx.class,IntakeConstants.HORIZONTAL_SLIDE_LEFT_MOTOR_NAME);
-        rightArmJointMotor = hardwareMap.get(DcMotorEx.class,IntakeConstants.HORIZONTAL_SLIDE_RIGHT_MOTOR_NAME);
+        leftArmJointMotor = hardwareMap.get(DcMotorEx.class, Constants.IntakeConstants.LEFT_ARM_MOTOR_NAME);
+        rightArmJointMotor = hardwareMap.get(DcMotorEx.class, Constants.IntakeConstants.RIGHT_ARM_MOTOR_NAME);
 
         // intake arms direction
-        leftArmJointMotor.setDirection(Constants.IntakeConstants.HORIZONTAL_SLIDE_LEFT_MOTOR_DIRECTION);
-        rightArmJointMotor.setDirection(Constants.IntakeConstants.HORIZONTAL_SLIDE_RIGHT_MOTOR_DIRECTION);
+        leftArmJointMotor.setDirection(Constants.IntakeConstants.LEFT_ARM_MOTOR_DIRECTION);
+        rightArmJointMotor.setDirection(Constants.IntakeConstants.RIGHT_ARM_MOTOR_DIRECTION);
 
         // brake checker if nothing is pressed
         leftArmJointMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightArmJointMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlideMotor = hardwareMap.get(DcMotorEx.class,IntakeConstants.LINEAR_SLIDE_MOTOR_NAME);
+        linearSlideMotor = hardwareMap.get(DcMotorEx.class, Constants.IntakeConstants.LINEAR_SLIDE_MOTOR_NAME);
         linearSlideMotor.setDirection(Constants.IntakeConstants.LINEAR_SLIDE_MOTOR_DIRECTION);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlideController = new PIDController(Constants.IntakeConstants.LINEAR_SLIDE_P, IntakeConstants.LINEAR_SLIDE_I, IntakeConstants.LINEAR_SLIDE_D);
+        linearSlideController = new PIDController(Constants.IntakeConstants.LINEAR_SLIDE_P, Constants.IntakeConstants.LINEAR_SLIDE_I, Constants.IntakeConstants.LINEAR_SLIDE_D);
         linearSlideState = PIDSubsystemState.MANUAL;
 
         // wrist servo creation
-        this.wristServo = new SimpleServo(hardwareMap,IntakeConstants.INTAKE_WRIST_SERVO_NAME, IntakeConstants.INTAKE_WRIST_SERVO_MIN_ANGLE,IntakeConstants.INTAKE_WRIST_SERVO_MAX_ANGLE);
-        this.activeIntakeServo = hardwareMap.get(CRServo.class, IntakeConstants.ACTIVE_INTAKE_SERVO_NAME);
+        this.wristServo = new SimpleServo(hardwareMap, Constants.IntakeConstants.INTAKE_WRIST_SERVO_NAME, Constants.IntakeConstants.INTAKE_WRIST_SERVO_MIN_ANGLE, Constants.IntakeConstants.INTAKE_WRIST_SERVO_MAX_ANGLE);
+        this.activeIntakeServo = hardwareMap.get(CRServo.class, Constants.IntakeConstants.ACTIVE_INTAKE_SERVO_NAME);
 
-        armJointController = new PIDController(IntakeConstants.ARM_JOINT_P, IntakeConstants.ARM_JOINT_I, IntakeConstants.ARM_JOINT_D);
+        armJointController = new PIDController(Constants.IntakeConstants.ARM_JOINT_P, Constants.IntakeConstants.ARM_JOINT_I, Constants.IntakeConstants.ARM_JOINT_D);
 
         floorScanningCursor = 0;
         isFloorScanningMode = false;
@@ -105,131 +101,38 @@ public class IntakeSubsystem extends SubsystemBase {
         resetArmJointEncoders();
     }
 
-    public void updateIntakeSubsystemDistance() {
-        leftArmJointMotorTicks = leftArmJointMotor.getCurrentPosition();
-        rightArmJointMotorTicks = rightArmJointMotor.getCurrentPosition();
-
-        linearSlideMotorTicks = linearSlideMotor.getCurrentPosition();
-    }
-
-    public void resetLinearSlideEncoders() {
-        // reset and stop arm motors
-        linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void resetArmJointEncoders() {
-        leftArmJointMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightArmJointMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // start arm motors
-        leftArmJointMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightArmJointMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void changeIntakeSubsystemMotorSpeedMultiplier() {
-        if(speedMultiplier == 1) speedMultiplier = 0.1;
-        else speedMultiplier = 1;
-    }
-
-    public double getArmJointDegreeRotated() {
-        if(leftArmJointMotorTicks >= rightArmJointMotorTicks) {
-            armJointMaximumAngleRotated = (leftArmJointMotorTicks / Constants.MOTOR_TICKS_PER_REVOLUTION) * 360;
-            armJointMinimumAngleRotated = (rightArmJointMotorTicks / Constants.MOTOR_TICKS_PER_REVOLUTION) * 360;
-        } else {
-            armJointMaximumAngleRotated = (rightArmJointMotorTicks / Constants.MOTOR_TICKS_PER_REVOLUTION) * 360;
-            armJointMinimumAngleRotated = (leftArmJointMotorTicks / Constants.MOTOR_TICKS_PER_REVOLUTION) * 360;
-        }
-
-        return (armJointMaximumAngleRotated + armJointMinimumAngleRotated) / 2;
-    }
-
     public void runArmJointWithPID(double targetPosition, double timeout) {
         //set target and linearSlideTimeout for pid system
-        this.armJointTarget = targetPosition;
         double initialDegreeRotated = getArmJointDegreeRotated();
         armJointState = PIDSubsystemState.MOVING_TO_TARGET;
-        if (armJointTimer == null) armJointTimer = new ElapsedTime();
-        else armJointTimer.reset();
-        armJointTimeout = timeout;
         // If we aren't at the target
-            while(armJointState == PIDSubsystemState.MOVING_TO_TARGET) {
-                // If we meet the position(exceed or under)
-                // stop and reset the encoders
-                if(armJointTarget > initialDegreeRotated){
-                    if (this.armJointTarget <= armJointMinimumAngleRotated) {
-                        leftArmJointMotor.setPower(0.0);
-                        rightArmJointMotor.setPower(0.0);
-                        armJointState = PIDSubsystemState.AT_TARGET;
-                        return;
-                    }
-                }
-                else {
-                    if (this.armJointTarget >= armJointMaximumAngleRotated) {
-                        leftArmJointMotor.setPower(0.0);
-                        rightArmJointMotor.setPower(0.0);
-                        armJointState = PIDSubsystemState.AT_TARGET;
-                        return;
-                    }
-                }
-                // Calculate how much we need to move the motor by
-                armJointController.setPID(IntakeConstants.ARM_JOINT_P, IntakeConstants.ARM_JOINT_I, IntakeConstants.ARM_JOINT_D);
-                double armJointPosition = getArmJointDegreeRotated();
-                double power = linearSlideController.calculate(armJointPosition, this.armJointTarget);
-                armJointLastPower = power;
-                leftArmJointMotor.setPower(power);
-                rightArmJointMotor.setPower(power);
-                // If the power we are setting is basically none, we are close enough to the target
-                if(Math.abs(power) <= Constants.IntakeConstants.ARM_JOINT_PID_POWER_TOLERANCE || isArmJointTimeoutPassed(armJointTimeout,armJointTimer)) {
-                    armJointState = PIDSubsystemState.AT_TARGET;
-                    leftArmJointMotor.setPower(0.0);
-                    rightArmJointMotor.setPower(0.0);
-                if(armJointMaximumAngleRotated > IntakeConstants.ARM_JOINT_MAXIMUM_ANGLE_ROTATED || armJointMinimumAngleRotated < IntakeConstants.ARM_JOINT_MINIMUM_ANGLE_ROTATED) {
-                    armJointState = PIDSubsystemState.AT_TARGET;
-                    leftArmJointMotor.setPower(0.0);
-                    rightArmJointMotor.setPower(0.0);
-                }
+        if(armJointTarget > initialDegreeRotated){
+            if (this.armJointTarget <= armJointMinimumAngleRotated) {
+                armJointState = PIDSubsystemState.AT_TARGET;
+                return;
+            }
+        } else {
+            if(this.armJointTarget >= armJointMaximumAngleRotated) {
+                armJointState = PIDSubsystemState.AT_TARGET;
+                return;
             }
         }
-    }
-
-
-    /**
-     * Check if the timeout has passed, if is has, reset the timeout and return true.
-     *
-     * @return True if the timeout has elapsed, false otherwise
-     */
-    private boolean isArmJointTimeoutPassed(double timeout,ElapsedTime armJointTimer) {
-        if (timeout > 0 && armJointTimer.seconds() >= timeout) {
-            this.armJointTimeout = 0;
-            return true;
+                // Calculate how much we need to move the motor by
+        armJointController.setPID(IntakeConstants.ARM_JOINT_P, IntakeConstants.ARM_JOINT_I, IntakeConstants.ARM_JOINT_D);
+        double armJointPosition = getArmJointDegreeRotated();
+        double power = linearSlideController.calculate(armJointPosition, this.armJointTarget);
+        armJointLastPower = power;
+        leftArmJointMotor.setPower(power);
+        rightArmJointMotor.setPower(power);
+        // If the power we are setting is basically none, we are close enough to the target
+        if(Math.abs(power) <= Constants.IntakeConstants.ARM_JOINT_PID_POWER_TOLERANCE || isArmJointTimeoutPassed(armJointTimeout, armJointTimer)) {
+            armJointState = PIDSubsystemState.AT_TARGET;
+            if(armJointMaximumAngleRotated > IntakeConstants.ARM_JOINT_MAXIMUM_ANGLE_ROTATED || armJointMinimumAngleRotated < IntakeConstants.ARM_JOINT_MINIMUM_ANGLE_ROTATED) {
+                armJointState = PIDSubsystemState.AT_TARGET;
+                leftArmJointMotor.setPower(0.0);
+                rightArmJointMotor.setPower(0.0);
+            }
         }
-        return false;
-    }
-
-    /** Gets input from controllers and retracts/extends the arms.
-     *  
-     * @param input to control arm rotation
-     */
-    public void runArmJointsManually(double input) {
-        input = GamepadUtils.deadzone(input, Constants.DriveConstants.DEADZONE);
-
-        leftArmJointMotor.setPower(Range.clip(input, -1, 1) * speedMultiplier);
-        rightArmJointMotor.setPower(Range.clip(input, -1, 1) * speedMultiplier);
-    }
-
-    //run by manual input
-    public void runLinearSlideManually(double input) {
-        input = GamepadUtils.deadzone(input, Constants.DriveConstants.DEADZONE);
-
-        linearSlideMotor.setPower(Range.clip(input, -1, 1) * speedMultiplier);
-    }
-
-    public double getLinearSlideDistanceTraveled() {
-        linearSlideDistanceTraveled = (linearSlideMotorTicks / Constants.MOTOR_TICKS_PER_REVOLUTION) * IntakeConstants.LINEAR_SLIDE_PULLEY_CIRCUMFERENCE;
-
-        return linearSlideDistanceTraveled;
     }
 
     /**
@@ -306,11 +209,11 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.linearSlideTarget;
     }
 
-    public void ActiveIntakeServoIn() {
+    public void activeIntakeServoIn() {
         this.activeIntakeServo.setPower(1.0);
     }
 
-    public void ActiveIntakeServoOut() {
+    public void activeIntakeServoOut() {
         this.activeIntakeServo.setPower(-1.0);
     }
 
@@ -332,14 +235,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void manualFloorScanningMode(double input) {
         if(isFloorScanningMode){
-            input =Math.abs(input) >= Constants.DriveConstants.DEADZONE ? input : 0;
+            input = GamepadUtils.deadzone(input, Constants.DriveConstants.DEADZONE);
             this.floorScanningCursor = Range.clip(floorScanningCursor + input, IntakeConstants.FloorScanningMode.FLOOR_SCANNING_CURSOR_MINIMUM_LIMIT , IntakeConstants.FloorScanningMode.FLOOR_SCANNING_CURSOR_MAXIMUM_LIMIT);
             floorScanningMode();
         }
     }
 
     public void floorScanningMode() {
-        double angleOfDepression = Math.toDegrees(Math.atan(IntakeConstants.FloorScanningMode.ARM_JOINT_AXIS_HEIGHT_FROM_FLOOR/floorScanningCursor));
+        double angleOfDepression = Math.toDegrees(Math.atan(Constants.IntakeConstants.FloorScanningMode.ARM_JOINT_AXIS_HEIGHT_FROM_FLOOR / floorScanningCursor));
         wristServo.turnToAngle(angleOfDepression);
         runArmJointWithPID(-angleOfDepression,3);
         runLinearSlideWithPID(IntakeConstants.FloorScanningMode.ARM_JOINT_AXIS_HEIGHT_FROM_FLOOR / Math.sin(Math.toRadians(angleOfDepression)), 5);
