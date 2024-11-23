@@ -4,20 +4,18 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 
-@Disabled
 @Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
 
   DcMotor slide, slide2, pivot;
-  Servo intakeL, wrist;
+  Servo intake, wrist;
   int limitSlide, limitPivot;
 
   double pubLength = 0;
@@ -32,22 +30,26 @@ public class CompBotAuto extends LinearOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {
-
+    var arm = new Mekanism(this);
     initRobot();
     waitForStart();
     //initSlide();
+    arm.homeArm();
 
     slide.setTargetPosition(4000); // change to edit drop spot
-    pivot.setTargetPosition(175); // change to edit drop spot
+    slide2.setTargetPosition(4000);
+    pivot.setTargetPosition(300); // change to edit drop spot
+    wrist.setPosition(.65);
 
     sleep(3000);
 
-    intakeL.setPosition(0);
+    intake.setPosition(0);
 
     sleep(1000);
-    intakeL.setPosition(0.5);
+    intake.setPosition(0.5);
     pivot.setTargetPosition(0);
     slide.setTargetPosition(0);
+    slide2.setTargetPosition(0);
   }
 
   public void initRobot() {
@@ -78,10 +80,10 @@ public class CompBotAuto extends LinearOpMode {
     limitPivot = 3200;
 
     // servos
-    intakeL = hardwareMap.get(Servo.class, "intake");
+    intake = hardwareMap.get(Servo.class, "intake");
     wrist = hardwareMap.get(Servo.class, "wrist");
 
-    intakeL.setDirection(Servo.Direction.REVERSE);
+    intake.setDirection(Servo.Direction.REVERSE);
     wrist.setDirection(Servo.Direction.FORWARD);
 
     wrist.setPosition(0.7);
