@@ -123,14 +123,14 @@ public class Mekanism {
     // Prevent divide by 0
     double pubLength =
       Math.min(
-        (25 * encoderCountsPerInch)
+        (27.5 * encoderCountsPerInch)
           / Math.max(
           Math.cos(
             Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
           1e-6), // Prevent divide by 0
         48 * encoderCountsPerInch); // Limit extension
     if (slide.getCurrentPosition() > pubLength) {
-      x = -.75;
+      x = -1;
     }
 
     slide.setPower(x);
