@@ -52,11 +52,11 @@ public abstract class Constants {
     }
 
     public static abstract class IntakeConstants {
-        public static final String LEFT_ARM_MOTOR_NAME = "horizontalSlideLeftMotor";
-        public static final String RIGHT_ARM_MOTOR_NAME = "horizontalSlideRightMotor";
+        public static final String LEFT_ARM_MOTOR_NAME = "leftArmJointMotor";
+        public static final String RIGHT_ARM_MOTOR_NAME = "rightArmJointMotor";
 
-        public static final DcMotorSimple.Direction LEFT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
-        public static final DcMotorSimple.Direction RIGHT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static final DcMotorSimple.Direction LEFT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+        public static final DcMotorSimple.Direction RIGHT_ARM_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
         public static final double ARM_JOINT_MAXIMUM_ANGLE_ROTATED = 120; //degrees
         public static final double ARM_JOINT_MINIMUM_ANGLE_ROTATED = -30; //Defined as the horizontal line form the floor that meets the arm joist axis
@@ -67,7 +67,7 @@ public abstract class Constants {
         public static final double ARM_JOINT_PID_POWER_TOLERANCE = 0.01; //inches
 
         public static final String LINEAR_SLIDE_MOTOR_NAME = "linearSlideMotor";
-        public static final DcMotorSimple.Direction LINEAR_SLIDE_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction LINEAR_SLIDE_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
         public static final double LINEAR_SLIDE_PULLEY_CIRCUMFERENCE = 1 * Math.PI; //inches
 
         public static final double LINEAR_SLIDE_P = 1;
