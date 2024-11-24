@@ -20,12 +20,12 @@ public class OuttakeClawAction {
     }
 
     public void close() {
-        setPosition(0.5);
+        setPosition(0.45);
         isClosed = true;
     }
 
     public void open() {
-        setPosition(0.4);
+        setPosition(0.65);
         isClosed = false;
     }
 
