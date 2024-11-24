@@ -1,14 +1,14 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.drivetrain;
 
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
-import com.kalipsorobotics.math.CalculateTickInches;
-import com.kalipsorobotics.PID.PIDController2023;
 import com.kalipsorobotics.modules.DriveTrain;
 
-public class MecanumRobotAction extends Action {
+public class MecanumRobotAction extends DriveTrainAction {
 
     private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;
@@ -25,6 +25,14 @@ public class MecanumRobotAction extends Action {
         controller = new PIDController(0.005, 0.0000005, 0.4, "mecanum");
         this.odometry = odometry;
         this.targetInches = targetInches;
+    }
+
+    public PIDController getController() {
+        return controller;
+    }
+
+    public double getError() {
+        return error;
     }
 
     private void refreshError() {
@@ -55,7 +63,7 @@ public class MecanumRobotAction extends Action {
             hasStarted = true;
         }
 
-        if(!isDone){
+        if(!getIsDone()){
             driveTrain.setPower(power, -power, -power, power);
         }
     }

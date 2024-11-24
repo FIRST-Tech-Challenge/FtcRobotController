@@ -17,6 +17,10 @@ public class ActionSet extends Action {
         this.dependentAction = new DoneStateAction();
     }
 
+    public ArrayList<Action> getActions() {
+        return actions;
+    }
+
     public void scheduleSequential(Action action) {
         if (actions.isEmpty()) {
             action.setDependentAction(new DoneStateAction());

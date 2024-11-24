@@ -66,16 +66,8 @@ public class PIDController {
         return Kd += delta;
     }
 
-    public void setKp(double p) {
-        Kp = p;
-    }
-
-    public void setKi(double i) {
-        Ki = i;
-    }
-
-    public void setKd(double d) {
-        Kd = d;
+    public String getName() {
+        return name;
     }
 
     @NonNull

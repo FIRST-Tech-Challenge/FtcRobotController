@@ -64,9 +64,6 @@ public class Odometry {
 //        return -backEncoder.getCurrentPosition();
 //    }
 
-
-
-
     //1.94
     public double countY() {
         return otos.getPosition().x;
@@ -194,5 +191,9 @@ public class Odometry {
 
     public Position getCurrentPosition() {
         return currentPosition;
+    }
+
+    public double deltaTime() {
+        return SystemClock.elapsedRealtime() - prevTime;
     }
 }

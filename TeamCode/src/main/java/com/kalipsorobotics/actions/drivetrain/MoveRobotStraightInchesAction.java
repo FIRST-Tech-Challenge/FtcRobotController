@@ -1,12 +1,14 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.drivetrain;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.PID.PIDController;
 import com.kalipsorobotics.modules.DriveTrain;
 
-public class MoveRobotStraightInchesAction extends Action {
+public class MoveRobotStraightInchesAction extends DriveTrainAction {
     private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;
     Odometry odometry;
@@ -23,6 +25,14 @@ public class MoveRobotStraightInchesAction extends Action {
         this.targetInches = targetInches;
     }
 
+    public PIDController getController() {
+        return controller;
+    }
+
+    public double getError() {
+        return error;
+    }
+
     private void refreshError() {
         error = targetInches - currentInches;
     }
@@ -30,14 +40,13 @@ public class MoveRobotStraightInchesAction extends Action {
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        Log.d("moverobot", "current error is " + error);
+        Log.d("straight", "current error is " + error);
         if (Math.abs(error) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
-            Log.d("moverobot","isdone true");
+            Log.d("straight","isdone true");
             return true;
         } else {
-            Log.d("moverobot","isdone false");
             return false;
         }
     }
@@ -49,11 +58,11 @@ public class MoveRobotStraightInchesAction extends Action {
 
         if(!hasStarted) {
             this.targetInches += currentInches;
-            Log.d("moverobot","target ticks is" + this.targetInches);
+            Log.d("straight","target inches is " + this.targetInches);
             hasStarted = true;
         }
 
-        if(!isDone){
+        if(!getIsDone()){
             driveTrain.setPower(controller.calculate(error));
         }
     }

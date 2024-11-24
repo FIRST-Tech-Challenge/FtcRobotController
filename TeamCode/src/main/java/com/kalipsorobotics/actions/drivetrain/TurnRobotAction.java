@@ -1,20 +1,17 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.drivetrain;
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.math.MathFunctions;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.kalipsorobotics.modules.DriveTrain;
-import com.kalipsorobotics.modules.IMUModule;
 
-public class TurnRobotAction extends Action {
+public class TurnRobotAction extends DriveTrainAction {
 
     DriveTrain driveTrain;
     PIDController controller;
@@ -30,6 +27,14 @@ public class TurnRobotAction extends Action {
         this.driveTrain = driveTrain;
         this.odometry = odometry;
         this.controller = new PIDController(0.2, 0.01, 0.01, "turn");  // placeholder values
+    }
+
+    public PIDController getController() {
+        return controller;
+    }
+
+    public double getError() {
+        return error;
     }
 
     public double getCurrentHeading() {
@@ -48,7 +53,7 @@ public class TurnRobotAction extends Action {
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             currentHeading = getCurrentHeading();
             targetDegrees = 0;
-            Log.d("pid", "setHeading: final heading is " + currentHeading);
+            Log.d("turn", "setHeading: final heading is " + currentHeading);
             return true;
         } else {
             return false;
@@ -67,7 +72,7 @@ public class TurnRobotAction extends Action {
         if (power > 0 && power < minPower) {
             power = minPower;
         } else if (power < 0 && power > -1 * minPower) {
-            power = minPower * -1;
+            power = -minPower;
         }
 
         driveTrain.setPower(-power, power, -power, power);
