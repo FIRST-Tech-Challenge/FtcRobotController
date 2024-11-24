@@ -8,14 +8,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Input {
 
     Motors motors;
+    Servos servos;
 
     public Input(HardwareMap hardwareMap){
         motors = new Motors(hardwareMap);
+        servos = new Servos(hardwareMap);
     }
 
     public void Move(double power)
     {
-        for (int i = 0; i < (motors.motors.length - 1) ; i++) {
+        for (int i = 0; i < (motors.motors.length - 2) ; i++) {
 
             motors.MoveMotor(i, -power); // loop over every motor and move them by gamepad input
         }
@@ -41,12 +43,29 @@ public class Input {
 
     public void Intake(double power)
     {
-        motors.MoveMotor(4,power / 2);
+        motors.moveArm(power);
+    }
 
-        if(motors.GetArmDistance() <= 0 && power <= 0)
-        {
-            motors.setArmPosition(motors.getArmPosition());
+    public void Pickup(boolean button)
+    {
+        if(button) {
+            servos.moveServo(0, 0.25);
         }
+        else {
+            servos.moveServo(0, 0.7);
+        }
+    }
 
+    public void armMove(double power)
+    {
+            motors.MoveMotor(5, power);
+    }
+
+    public void drop(boolean dropButton)
+    {
+        if(!dropButton)
+            servos.moveServo(1,0.5);
+        else
+            servos.moveServo(1,0);
     }
 }

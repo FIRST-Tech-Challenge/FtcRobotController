@@ -23,8 +23,6 @@ public class aUtOnOmOuS extends LinearOpMode {
 
         imu.SetYaw();
 
-
-
         int step = 0;
 
         waitForStart();
@@ -34,10 +32,9 @@ public class aUtOnOmOuS extends LinearOpMode {
         {
             double yaw = imu.getAngle('y');
 
-
             if(step == 0)
             {
-                if (yaw > 85 && yaw < 94 ) {
+                if (yaw > 88 && yaw < 92 ) {
                     input.Spin(50);
                 }
                 else {
@@ -52,8 +49,9 @@ public class aUtOnOmOuS extends LinearOpMode {
                 }
             }
 
-
+            telemetry.addData("Step:", "step (%.2f),", step);
             telemetry.addData("IMU YAW:", "yaw (%.2f),", yaw);
+
             telemetry.update(); // telemtryy
         }
     }
