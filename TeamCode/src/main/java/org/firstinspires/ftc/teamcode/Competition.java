@@ -19,30 +19,31 @@ import java.util.Locale;
 public class Competition extends LinearOpMode {
 
     private Limelight3A limelight;
-    GoBildaPinpointDriver imu; // Declare OpMode member for the Odometry Computer
+    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     double oldTime = 0;
 
     @Override
     public void runOpMode() {
-
+        /*
         //Limelight Setup
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
+         */
 
         //GoBilda Odometry Pod Setup
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "imu");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", imu.getXOffset());
-        telemetry.addData("Y offset", imu.getYOffset());
-        telemetry.addData("Device Version Number:", imu.getDeviceVersion());
-        telemetry.addData("Device Scalar", imu.getYawScalar());
+        telemetry.addData("X offset", odo.getXOffset());
+        telemetry.addData("Y offset", odo.getYOffset());
+        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
+        telemetry.addData("Device Scalar", odo.getYawScalar());
         telemetry.update();
 
         // Initialize the motors
@@ -53,14 +54,15 @@ public class Competition extends LinearOpMode {
         DcMotor rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         // Set motor directions (reverse left side if needed)
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
 
         waitForStart();
         resetRuntime();
 
         while (opModeIsActive()) {
 
+            /*
             //Limelight Data
             LLResult result = limelight.getLatestResult();
             if (result != null) {
@@ -70,23 +72,24 @@ public class Competition extends LinearOpMode {
                     telemetry.addData("ty", result.getTy());
                     telemetry.addData("Botpose", botpose.toString());
                 }
+             */
 
-                //Odometry
-                odo.update(); //Update odometry
-                double newTime = getRuntime();
-                double loopTime = newTime - oldTime;
-                double frequency = 1 / loopTime;
-                oldTime = newTime;
-                Pose2D pos = imu.getPosition();
-                String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-                telemetry.addData("Position", data);
-                Pose2D vel = imu.getVelocity();
-                String velocity = String.format(Locale.US, "{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
-                telemetry.addData("Velocity", velocity);
-                telemetry.addData("Status", imu.getDeviceStatus());
-                telemetry.addData("Pinpoint Frequency", imu.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
-                telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
-            }
+            //Odometry
+            odo.update(); //Update odometry
+            double newTime = getRuntime();
+            double loopTime = newTime - oldTime;
+            double frequency = 1 / loopTime;
+            oldTime = newTime;
+            Pose2D pos = odo.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Position", data);
+            Pose2D vel = odo.getVelocity();
+            String velocity = String.format(Locale.US, "{XVel: %.3f, YVel: %.3f, HVel: %.3f}", vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Velocity", velocity);
+            telemetry.addData("Status", odo.getDeviceStatus());
+            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
+            telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
+
             // Get joystick inputs
             double y = -gamepad1.left_stick_y; // Forward/backward
             double x = gamepad1.left_stick_x;  // Strafe
