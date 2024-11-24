@@ -63,7 +63,7 @@ public class Teleop extends LinearOpMode {
 
             //INTAKE
             //Noodles
-            if (gamepad2.left_trigger > 0.5) {
+            if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 intakeNoodleAction.run();
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
@@ -101,10 +101,15 @@ public class Teleop extends LinearOpMode {
             //save for later
             //Linkage
             if (gamepad2.a && !prevGamePadA) {
-                intakeLinkageAction.togglePosition();
-                intakePivotAction.moveDown();
-                telemetry.addData("", intakeLinkageAction.getPosition());
-                telemetry.update();
+                if (retracted) {
+                    intakeLinkageAction.extend();
+                    intakePivotAction.moveDown();
+                    retracted = false;
+                } else {
+                    intakeLinkageAction.retract();
+                    intakePivotAction.togglePosition();
+                    retracted = true;
+                }
             }
             prevGamePadA = gamepad2.a;
 

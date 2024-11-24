@@ -65,7 +65,7 @@ public class OuttakeSlideAction {
         }
     }
     public void Toggle() {
-        if (stage == 0) { moveToPosition(990); outtakePivotAction.moveOut(); stage = 1; }
+        if (stage == 0) { moveToPosition(992); outtakePivotAction.moveOut(); stage = 1; }
         else if (stage == 1) { moveToPosition(2035); stage = 2; }
         else { moveToPosition(0); outtakePivotAction.setPosition(83); stage = 0; }
     }
