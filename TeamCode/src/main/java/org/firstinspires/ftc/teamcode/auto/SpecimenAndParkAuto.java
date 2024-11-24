@@ -1,20 +1,24 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
+//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
-//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-//@Autonomous(name="Near Net")
-public class nearSideNetAuto extends LinearOpMode {
+
+@Autonomous(name="Specimen and Park Auto")
+public class SpecimenAndParkAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
@@ -28,6 +32,9 @@ public class nearSideNetAuto extends LinearOpMode {
     private double liftPower;
     private Arm arm;
     private double armPosition;
+
+    private Claw claw;
+    private double clawPos;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
@@ -35,76 +42,43 @@ public class nearSideNetAuto extends LinearOpMode {
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
 //        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
+        claw = new Claw(hardwareMap);
+        clawPos = 1;
+
+        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(12,-60,1.5708));
 
         waitForStart();
-
-        strafe = 0;
-        rotate = 0;
-        forward = 0.4;
-        robot.drive(forward,strafe,rotate);
-
-        sleep(2400);
-
-        strafe = 0;
-        rotate = 0;
-        forward = -0.2;
-        robot.drive(forward,strafe,rotate);
-
-
+        claw.close(clawPos);
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(-6,-60,1.5708))
+                .lineToY(-24)
+                        .strafeTo(new Vector2d(0,-24))
+//                .strafeTo(new Vector2d(-12,-36))
+//                .turn(Math.toRadians(180))
+                .build());
+        lift.setPosition(-870);
         sleep(1000);
+        arm.setPosition(0.5);
+        sleep(500);
+        arm.setPosition(0.9);
+        sleep(1000);
+        claw.release();
+        arm.setPosition(0.1);
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(12,-60,1.5708))
+                        .strafeTo(new Vector2d(-6,-24))
+                        .lineToY(-60)
+                        .strafeTo(new Vector2d(-18, -24))
+                        .build());
 
-
-        strafe = 0;
-        rotate = -0.5;
-        forward = 0;
-        robot.drive(forward,strafe,rotate);
-
-        sleep(800);
-
-        strafe = 0;
-        rotate = 0;
-        forward = 0.4;
-        robot.drive(forward,strafe,rotate);
-
-
-        sleep(1800);
-
-        strafe = 0;
-        rotate = 0.5;
-        forward = 0;
-        robot.drive(forward,strafe,rotate);
-
-
-        sleep(800);
-        strafe = 0;
-        rotate = 0;
-        forward = -0.4;
-        robot.drive(forward,strafe,rotate);
-
-
-        sleep(2000);
-
-
-        robot.drive(0,0,0);
-
-        liftPower = -0.5;
-        lift.moveLift(liftPower);
-        sleep(1500);
-        liftPower = 0;
-        lift.moveLift(liftPower);
-
-        armPosition = 0.5;
-        arm.setPosition(armPosition);
-        sleep(10000);
 
 
         while(opModeIsActive())
         {
 
-
         }
+
     }
 }

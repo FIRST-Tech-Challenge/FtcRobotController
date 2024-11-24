@@ -60,7 +60,7 @@ public class TeleOp extends LinearOpMode {
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft");
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
         reverseArm = false;
         odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 //        climb = new Climb(hardwareMap,"climb");
