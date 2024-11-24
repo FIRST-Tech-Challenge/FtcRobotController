@@ -30,9 +30,9 @@ public class PurePursuitAction extends Action {
 
     Path path;
     Segment lastLine;
-    double preferredAngle;
     double radius = 1;
     Optional<Position> follow;
+    Optional<Position> prevFollow;
 
     public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
         this.driveTrain = driveTrain;
@@ -69,14 +69,14 @@ public class PurePursuitAction extends Action {
         Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
-    private void targetPosition(Position target, double preferredAngle) {
+    private void targetPosition(Position target) {
         Position currentPos = odometry.getCurrentPosition();
         Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
         double targetDirection = currentToTarget.getHeadingDirection();
 
-        double targetAngle = preferredAngle;
+        double targetAngle = target.getTheta();
 //        if (distanceToTarget <= 100) {
 //            targetAngle = preferredAngle;
 //        } else {
@@ -139,10 +139,15 @@ public class PurePursuitAction extends Action {
     public boolean checkDoneCondition() {
 
         lastLine = path.getSegment(path.numSegments() - 1);
+        boolean distanceToEndWithinThreshold = odometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1;
+        boolean velocityWithinThreshold = odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5));
+        boolean angleWithinRange = Math.abs(odometry.getCurrentPosition().getTheta() - lastLine.getFinish().getTheta()) < Math.toRadians(4);
 
-        if (odometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1 //30, 30, 30, 1, 10
-                && odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5))
-                && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(4)) {
+        Log.d("purepursaction_done", distanceToEndWithinThreshold + " " + velocityWithinThreshold + " " + angleWithinRange);
+
+        if (distanceToEndWithinThreshold //30, 30, 30, 1, 10
+                /*&& velocityWithinThreshold
+                && angleWithinRange*/) {
             //opModeUtilities.getTelemetry().addLine("breake");
             //opModeUtilities.getTelemetry().update();
             driveTrain.setPower(0, 0, 0, 0);
@@ -168,22 +173,24 @@ public class PurePursuitAction extends Action {
         if (!follow.isPresent()) {
             Log.d("purepursaction", "follow is not present");
             follow = path.searchFrom(odometry.getCurrentPosition(), radius);
-            radius += 0.1;
+            radius += 0.5;
+            targetPosition(prevFollow.get());
         }
 
         if (follow.isPresent()) {
-            Log.d("purepursaction", "follow present " + follow.get().getX() + " " + follow.get().getY());
-            lastLine = path.getSegment(path.numSegments() - 1);
-            preferredAngle = lastLine.getHeadingDirection();
-            Log.d("purepursaction", "preferred angle " + preferredAngle);
+            Log.d("purepursaction_debug_follow", follow.get().getX() + " " + follow.get().getY() + " " + follow.get().getTheta());
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
-            targetPosition(follow.get(), pathPoints.get(pathPoints.size()-1).getTheta());
+            targetPosition(follow.get());
             //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 
             radius = 2; //50
+
+            prevFollow = follow;
         }
+
+
 
         //if (Thread.interrupted()) throw new InterruptedException();
 

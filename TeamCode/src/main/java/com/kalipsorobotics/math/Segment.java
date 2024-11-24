@@ -18,6 +18,7 @@ public class Segment {
 
         return shiftedFollow.map(this.getStart()::addPosition);
     }
+
     private static Optional<Vector> lineCircleIntersection(Vector vector, Position shiftedCurrent, double radius) {
         Vector projection = shiftedCurrent.projectOnto(vector);
         double distance = Math.hypot(shiftedCurrent.getX() - projection.getX(), shiftedCurrent.getY() - projection.getY());

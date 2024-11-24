@@ -55,11 +55,9 @@ public class Position {
 
     @Override
     public String toString() {
-        return "{" +
-                "x=" + x +
-                ", y=" + y +
-                ", theta=" + theta +
-                '}';
+        return  x +
+                " " + y +
+                " " + theta;
     }
 
     public String getPoint() {
