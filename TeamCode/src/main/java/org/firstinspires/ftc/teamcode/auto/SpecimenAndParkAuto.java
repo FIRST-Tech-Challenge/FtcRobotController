@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-
 @Autonomous(name="Specimen and Park Auto")
 public class SpecimenAndParkAuto extends LinearOpMode {
     private GamepadEvents controller;
@@ -53,31 +52,25 @@ public class SpecimenAndParkAuto extends LinearOpMode {
         waitForStart();
         claw.close(clawPos);
         Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(12,-60,1.5708))
-                .lineToY(-26)
-                        .strafeTo(new Vector2d(6,-24))
+                drive.actionBuilder(new Pose2d(-6,-60,1.5708))
+                .lineToY(-24)
+                        .strafeTo(new Vector2d(0,-24))
 //                .strafeTo(new Vector2d(-12,-36))
 //                .turn(Math.toRadians(180))
                 .build());
-        lift.setPosition(-1000);
-        sleep(750);
-        arm.setPosition(0.7);
-//        sleep(1000);
-//        arm.setPosition(0.9);
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(6,-24,1.5708))
-                        .strafeTo(new Vector2d(18,-24))
-                        .lineToY(-20)
-
-                                .build());
+        lift.setPosition(-870);
+        sleep(1000);
+        arm.setPosition(0.5);
+        sleep(500);
+        arm.setPosition(0.9);
         sleep(1000);
         claw.release();
         arm.setPosition(0.1);
         Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(6,-24,1.5708))
-                        .strafeTo(new Vector2d(18,-24))
-//                        .lineToY(-60)
-//                        .strafeTo(new Vector2d(60,-60))
+                drive.actionBuilder(new Pose2d(12,-60,1.5708))
+                        .strafeTo(new Vector2d(-6,-24))
+                        .lineToY(-60)
+                        .strafeTo(new Vector2d(-18, -24))
                         .build());
 
 

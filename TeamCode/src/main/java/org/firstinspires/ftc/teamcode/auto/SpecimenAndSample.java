@@ -46,38 +46,32 @@ public class SpecimenAndSample extends LinearOpMode {
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 1;
-        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-6,-60,1.5708));
+//        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-6,-60,1.5708));
+//
+//        waitForStart();
+//        claw.close(clawPos);
+//        Actions.runBlocking(
+//                drive.actionBuilder(new Pose2d(-6,-60,1.5708))
+//                        .lineToY(-24)
+//                        .strafeTo(new Vector2d(0,-24))
+////                .strafeTo(new Vector2d(-12,-36))
+////                .turn(Math.toRadians(180))
+//                        .build());
+//        lift.setPosition(-870);
+//        sleep(1000);
+//        arm.setPosition(0.5);
+//        sleep(500);
+//        arm.setPosition(0.9);
+//        sleep(1000);
+//        claw.release();
+//        arm.setPosition(0.1);
+//        Actions.runBlocking(
+//                drive.actionBuilder(new Pose2d(12,-60,1.5708))
+//                        .strafeTo(new Vector2d(-6,-24))
+//                        .lineToY(-60)
+//                        .strafeTo(new Vector2d(-18,-60))
+//                        .build());
 
-        waitForStart();
-        claw.close(clawPos);
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(-6,-60,1.5708))
-                        .lineToY(-24)
-                        .strafeTo(new Vector2d(0,-24))
-//                .strafeTo(new Vector2d(-12,-36))
-//                .turn(Math.toRadians(180))
-                        .build());
-        lift.setPosition(-870);
-        sleep(1000);
-        arm.setPosition(0.5);
-        sleep(500);
-        arm.setPosition(0.9);
-        sleep(1000);
-        claw.release();
-        arm.setPosition(0.1);
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(12,-60,1.5708))
-                        .strafeTo(new Vector2d(-6,-24))
-                        .lineToY(-60)
-                        .strafeTo(new Vector2d(-18,-60))
-                        .build());
-
-
-
-        while(opModeIsActive())
-        {
-
-        }
 
 
     }
