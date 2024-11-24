@@ -3,8 +3,8 @@ package com.kalipsorobotics.actions.outtake;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.Servo;
 
-//0.3 in
-//0.65 out
+//0.925 in
+//0.0 out
 public class OuttakePivotAction {
 
     final private Outtake outtake;
@@ -22,12 +22,12 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
-        setPosition(0.256);
+        setPosition(0.925);
         isIn = true;
     }
 
     public void moveOut() {
-        setPosition(0.675);
+        setPosition(0.05);
         isIn = false;
     }
 
