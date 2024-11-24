@@ -39,7 +39,7 @@ public class FarSideClawAuto extends LinearOpMode {
         screen = new DriverHubHelp();
 //        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "lift");
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 0.6;

@@ -18,7 +18,7 @@ public class LiftTester extends LinearOpMode {
     private GamepadEvents controller;
     private double liftPower;
     public void runOpMode(){
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "lift");
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
         controller = new GamepadEvents(gamepad1);
         telemetry.addData("Status","Initialized");
         telemetry.update();
