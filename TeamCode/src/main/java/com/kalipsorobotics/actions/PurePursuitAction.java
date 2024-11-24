@@ -109,10 +109,10 @@ public class PurePursuitAction extends Action {
 
 //        opModeUtilities.getTelemetry().addData("power angle", powerAngle);
 
-        double fLeftPower = powerX - powerY + powerAngle;
-        double fRightPower = powerX + powerY - powerAngle;
-        double bLeftPower = powerX + powerY + powerAngle;
-        double bRightPower = powerX - powerY - powerAngle;
+        double fLeftPower = powerX + powerY + powerAngle;
+        double fRightPower = powerX - powerY - powerAngle;
+        double bLeftPower = powerX - powerY + powerAngle;
+        double bRightPower = powerX + powerY - powerAngle;
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
@@ -140,7 +140,7 @@ public class PurePursuitAction extends Action {
 
         lastLine = path.getSegment(path.numSegments() - 1);
 
-        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 0.5 //30, 30, 30, 1, 10
+        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 1 //30, 30, 30, 1, 10
                 && odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5))
                 && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(4)) {
             //opModeUtilities.getTelemetry().addLine("breake");
@@ -182,7 +182,7 @@ public class PurePursuitAction extends Action {
             //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 
-            radius = 1; //50
+            radius = 2; //50
         }
 
         //if (Thread.interrupted()) throw new InterruptedException();

@@ -1,5 +1,6 @@
 package com.kalipsorobotics.actions;
 
+import com.kalipsorobotics.actions.hang.HangHookAction;
 import com.kalipsorobotics.actions.outtake.AutoBasketAction;
 import com.kalipsorobotics.actions.outtake.AutoSpecimenHangAction;
 import com.kalipsorobotics.math.CalculateTickInches;
@@ -11,8 +12,11 @@ public class AutoHangAction extends Action {
     MoveLSAction moveLSDown;
     WaitAction waitActionTwo;
     MoveLSAction pullUp;
+    HangHookAction hangHookAction;
 
     public AutoHangAction(Outtake outtake) {
+        this.dependentAction = new DoneStateAction();
+
         moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(28), outtake);
 
         waitAction = new WaitAction(4);
@@ -24,8 +28,11 @@ public class AutoHangAction extends Action {
         waitActionTwo = new WaitAction(3);
         waitActionTwo.setDependentAction(moveLSDown);
 
-        pullUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(-10), outtake, 0.5);
+        pullUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(-20), outtake, 1);
         pullUp.setDependentAction(waitActionTwo);
+
+        hangHookAction = new HangHookAction(outtake);
+        hangHookAction.setDependentAction(waitActionTwo);
     }
 
     @Override
@@ -40,5 +47,6 @@ public class AutoHangAction extends Action {
         moveLSDown.updateCheckDone();
         waitActionTwo.updateCheckDone();
         pullUp.updateCheckDone();
+        hangHookAction.updateCheckDone();
     }
 }

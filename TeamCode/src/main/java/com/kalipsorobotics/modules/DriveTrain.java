@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class DriveTrain {
     private final OpModeUtilities opModeUtilities;
     //private final DcMotor testMotorDeleteLater;
@@ -35,6 +38,7 @@ public class DriveTrain {
         bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         otos = opModeUtilities.getHardwareMap().get(SparkFunOTOS.class, "sprk sensor OTOS");
+        sparkResetData(true, Math.toRadians(180));
 
         rightEncoder = bRight;
         leftEncoder = bLeft;
@@ -108,6 +112,24 @@ public class DriveTrain {
 
     public SparkFunOTOS getOtos() {
         return otos;
+    }
+
+    private void sparkResetData(Boolean reCalibrate, double heading) {
+        otos.resetTracking();
+        if (reCalibrate) { otos.calibrateImu(); }
+        otos.setLinearUnit(DistanceUnit.INCH);
+        otos.setAngularUnit(AngleUnit.RADIANS);
+        otos.setOffset(new SparkFunOTOS.Pose2D(0, 0.5, heading));
+        otos.setLinearScalar(24/(0.5 * (22.1072219488189 + 21.374319482037404)));
+
+        Log.d("sparkfun", "reset data");
+        //7, 8
+        //7, 8 1/2
+
+        //7 1/2, 7 1/2
+
+        //22.1072219488189  21.374319482037404 0.0022
+        //24 24
     }
 
     /*public DcMotor getTestMotorDeleteLater() {

@@ -1,8 +1,10 @@
 package com.kalipsorobotics.test;
 
+import com.kalipsorobotics.actions.AutoHangAction;
 import com.kalipsorobotics.actions.MoveLSAction;
 import com.kalipsorobotics.actions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.hang.HangHookAction;
 import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -19,19 +21,26 @@ public class TestHanging extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
 
-        MoveLSAction moveLSUp = new MoveLSAction(30, outtake);
+//        MoveLSAction moveLSUp = new MoveLSAction(30, outtake);
+//
+//        WaitAction waitAction = new WaitAction(2);
+//        waitAction.setDependentAction(moveLSUp);
+//
+//        MoveLSAction moveDown = new MoveLSAction(-12, outtake, 0.01);
+//        moveDown.setDependentAction(waitAction);
 
-        WaitAction waitAction = new WaitAction(2);
-        waitAction.setDependentAction(moveLSUp);
+        AutoHangAction autoHangAction = new AutoHangAction(outtake);
 
-        MoveLSAction moveDown = new MoveLSAction(-12, outtake, 0.01);
-        moveDown.setDependentAction(waitAction);
+        //HangHookAction hangHookAction = new HangHookAction(outtake);
 
         waitForStart();
         while (opModeIsActive()) {
-            moveLSUp.updateCheckDone();
-            waitAction.updateCheckDone();
-            moveDown.updateCheckDone();
+//            moveLSUp.updateCheckDone();
+//            waitAction.updateCheckDone();
+//            moveDown.updateCheckDone();
+
+            autoHangAction.updateCheckDone();
+            //hangHookAction.updateCheckDone();
         }
     }
 }

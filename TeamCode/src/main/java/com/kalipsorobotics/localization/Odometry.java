@@ -17,8 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Odometry {
     OpModeUtilities opModeUtilities;
-    final static private double TRACK_WIDTH = 273.05;
-    static private final double BACK_DISTANCE_TO_MID = 69.85;
+//    final static private double TRACK_WIDTH = 273.05;
+//    static private final double BACK_DISTANCE_TO_MID = 69.85;
 //    private final DcMotor rightEncoder;
 //    private final DcMotor leftEncoder;
 //    private final DcMotor backEncoder;
@@ -40,8 +40,6 @@ public class Odometry {
         this.opModeUtilities = opModeUtilities;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         this.otos = driveTrain.getOtos();
-
-        sparkResetData(true, Math.toRadians(0));
 //        this.rightEncoder = driveTrain.getRightEncoder();
 //        this.leftEncoder = driveTrain.getLeftEncoder();
 //        this.backEncoder = driveTrain.getBackEncoder();
@@ -66,37 +64,28 @@ public class Odometry {
 //        return -backEncoder.getCurrentPosition();
 //    }
 
-    public void sparkResetData(Boolean reCalibrate, double heading) {
-        otos.resetTracking();
-        if (reCalibrate) { otos.calibrateImu(); }
-        otos.setOffset(new SparkFunOTOS.Pose2D(-0.75, 0.5, heading));
 
-        otos.setAngularUnit(AngleUnit.RADIANS);
-
-        Log.d("sparkfun", "reset data");
-        //7, 8
-        //7, 8 1/2
-    }
 
 
     //1.94
     public double countY() {
-        Log.d("odometry", "y is " + -otos.getPosition().x * ODO_TO_INCH);
-        return -otos.getPosition().x * ODO_TO_INCH;
+        return otos.getPosition().x;
+        //right -> positive Y
     }
 
     public double countX() {
-        Log.d("odometry", "x is " + -otos.getPosition().y * ODO_TO_INCH);
-        return -otos.getPosition().y * ODO_TO_INCH;
+        return otos.getPosition().y;
+        //forward -> positive X
     }
 
     public double countTheta() {
-        double theta = -otos.getPosition().h;
-        theta = Math.round(theta * 100.0) / 100.0;
+//        double theta = Math.toRadians(-otos.getPosition().h);
+//        theta = Math.round(theta * 100.0) / 100.0;
 
-        Log.d("odometry", "h is " + theta);
+        Log.d("sparkfun", otos.getPosition().y + " " + " " + otos.getPosition().x + " " + String.format("%.4f", -otos.getPosition().h));
 
-        return theta;
+        return -otos.getPosition().h;
+        //clockwise -> positive theta
     }
 
     private Velocity calculateRelativeDelta(double x, double y, double theta) {
