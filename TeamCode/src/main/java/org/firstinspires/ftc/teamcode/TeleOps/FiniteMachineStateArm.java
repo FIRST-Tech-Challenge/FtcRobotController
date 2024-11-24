@@ -161,7 +161,7 @@ public class FiniteMachineStateArm {
         }
 
         // Claw control - Button Back
-        if(gamepad.getButton(GamepadKeys.Button.BACK)) {
+        if(gamepad.getTrigger(LEFT_TRIGGER)> 0.5) {
             ToggleDeposit();
             if (depositState == DEPOSITSTATE.OPEN) {
                 robot.depositClawServo.setPosition(CLAW_CLOSE);

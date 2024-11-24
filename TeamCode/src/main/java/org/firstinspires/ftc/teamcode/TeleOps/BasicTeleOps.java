@@ -49,7 +49,7 @@ public class BasicTeleOps extends OpMode {
 
     public static double intake_Rotation        = 0.49;
 
-    public static double intake_Arm_initial     = 0.1;//0-0.56
+    public static double intake_Arm_initial     = 0.35;//0-0.56
     public static double intake_Arm_down        = 0.05;
     public static double intake_Arm_retract     = 0.53;
 
@@ -74,8 +74,8 @@ public class BasicTeleOps extends OpMode {
     public static double dumpTime                       = 1.8;
     public static double retractTime                    = 3.2;
 
-    public static double deposit_Slide_UpLiftPower      = 0.9;  //slides power
-    public static double downLiftPower                  = 0.3;  //slides power
+    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
+    public static double downLiftPower                  = 0.7;  //slides power
 
     
     @Override

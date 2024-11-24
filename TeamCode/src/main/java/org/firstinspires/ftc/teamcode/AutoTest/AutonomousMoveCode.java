@@ -27,7 +27,7 @@ public class AutonomousMoveCode extends LinearOpMode {
 
     public static double intake_Rotation        = 0.49;
 
-    public static double intake_Arm_initial     = 0.1;//0-0.56
+    public static double intake_Arm_initial     = 0.35;//0-0.56
     public static double intake_Arm_down        = 0.05;
     public static double intake_Arm_retract     = 0.53;
 
@@ -67,7 +67,12 @@ public class AutonomousMoveCode extends LinearOpMode {
 
     //Action 1:
 
-    static int first_strafe = 686;
+
+    //Segment 2 Distance
+    static  double second_forward = -150;
+
+    //Segment 3 Distance -  strafe distance
+    static int first_strafe = 1280;
 
     @Override
     public void runOpMode() {
@@ -102,57 +107,58 @@ public class AutonomousMoveCode extends LinearOpMode {
         // Wait for the game to start
         waitForStart();
 
+        //Segment 1 movement
         driveToPosition(first_forward, speed,15);
-        //
-
         sleep(500);
-        //robot.intakeSlideServo.setPosition(0.55);
-        robot.intakeLeftArmServo.setPosition(0.2);
-        robot.intakeRightArmServo.setPosition(0.2);
 
+        // Action 1 - move the intake away
+        robot.intakeSlideServo.setPosition(0.5);
+        robot.intakeLeftArmServo.setPosition(0.35);
+        robot.intakeRightArmServo.setPosition(0.35);
         sleep(500);
-        Slides_Move(56.5,0.5);
 
-
+        //Action 2.1 - rise up the verticla slide
+        sleep(500);
+        Slides_Move(56.5,0.5); //Ris up the vertical slide
+        //Action 2.2 - set the position for deposit arm for hung
         sleep(500);
         robot.depositLeftArmServo.setPosition(0.8);
         robot.depositRightArmServo.setPosition(0.8);
         robot.depositWristServo.setPosition(0.3);
+        sleep(500);
 
-        sleep(2000);
+        //Segment 2 movement
         driveToPosition(-158,0.2,15);
+        sleep(2000);
 
-        sleep(1000);
+        //Action 3 + Segment 3 - release the deposit and backward and reset the depsoit.
         robot.depositClawServo.setPosition(0.11);
         driveToPosition(300,0.2, 10);
         robot.depositLeftArmServo.setPosition(0);
         robot.depositRightArmServo.setPosition(0);
         robot.depositWristServo.setPosition(0);
+        sleep(500);
+
+        //Retract deposit slides
         Slides_Move(4,0.5);
 
-        //sleep(1000);
-        //strafeToPosition(1260,0.3);
-
-
-        sleep(1000);
+        //Segment 4: Move to yellow sample
         turnToAngle(90,0.1);
+        driveToPosition(1000,0.2,20);
+        turnToAngle(90,0.1);
+        sleep(1000);
 
-        /**
-        sleep(2000);
-        Slides_Move(80,0.3);
-        sleep(2000);
-        Slides_Move(150,0.3);
-        sleep(2000);
-        Slides_Move(50,0.3);
-
-        sleep(2000);
-        robot.intakeSlideServo.setPosition(0.4);
-        sleep(2000);
-        robot.intakeSlideServo.setPosition(0.6);
-
-        sleep(2000);  // pause to display final telemetry message.
-        driveToPosition(first_forward*-1, speed,15);
-         **/
+        //Action 4: Grab Yellow Sample
+        robot.intakeSlideServo.setPosition(0.45);
+        robot.intakeClawServo.setPosition(intake_Claw_Open);
+        robot.intakeLeftArmServo.setPosition(intake_Arm_down);
+        robot.intakeRightArmServo.setPosition(intake_Arm_down);
+        sleep(500);
+        robot.intakeClawServo.setPosition(intake_Claw_Close);//Close the claw and grab sample
+        sleep(500);
+        robot.intakeLeftArmServo.setPosition(intake_Arm_retract);
+        robot.intakeRightArmServo.setPosition(intake_Arm_retract);
+        robot.intakeSlideServo.setPosition(intake_slide_Retract);
         sleep(5000);
 
         telemetry.addData("Path", "Complete");
