@@ -30,7 +30,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
 
     public static Params PARAMS = new Params();
 
-    public final Encoder par0, par1, perp;
+    public final Encoder par0, par1,  perp;
 
     public final double ticksPerInch = 336.8779629; // Known ticks per inch
     public final double inPerTick = 0.0029; // Calculated inches per tick
@@ -128,68 +128,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     }
 }
 
-//    public Twist2dDual<Time> update() {
-//        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
-//        PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
-//        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
-//
-//        FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
-//
-//        if (!initialized) {
-//            initialized = true;
-//
-//            lastPar0Pos = par0PosVel.position;
-//            lastPar1Pos = par1PosVel.position;
-//            lastPerpPos = perpPosVel.position;
-//
-//            return new Twist2dDual<>(
-//                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
-//                    DualNum.constant(0.0, 2)
-//            );
-//        }
-//
-//        int par0PosDelta = par0PosVel.position - lastPar0Pos;
-//        int par1PosDelta = par1PosVel.position - lastPar1Pos;
-//        int perpPosDelta = perpPosVel.position - lastPerpPos;
-//
-//
-//        double dx = ((par0Delta + par1Delta) / 2.0) * inPerTick; // Forward movement (in inches)
-//        double dy = perpDelta * inPerTick;                       // Lateral movement (in inches)
-//        double dHeading = (par0Delta - par1Delta) / (PARAMS.par0YTicks - PARAMS.par1YTicks); // Change in heading (radians)
-//
-//        xPos += dx * Math.cos(heading) - dy * Math.sin(heading);
-//        yPos += dx * Math.sin(heading) + dy * Math.cos(heading);
-//        heading += dHeading;
-//
-//        heading = (heading + Math.PI) % (2 * Math.PI) - Math.PI;
-//
-//        lastPar0Pos = par0PosVel.position;
-//        lastPar1Pos = par1PosVel.position;
-//        lastPerpPos = perpPosVel.position;
-//
-//        Twist2dDual<Time> twist = new Twist2dDual<>(
-//                new Vector2dDual<>(
-//                        new DualNum<Time>(new double[] {
-//                                (PARAMS.par0YTicks * par1PosDelta - PARAMS.par1YTicks * par0PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-//                                (PARAMS.par0YTicks * par1PosVel.velocity - PARAMS.par1YTicks * par0PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-//                        }).times(inPerTick),
-//                        new DualNum<Time>(new double[] {
-//                                (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosDelta - par0PosDelta) + perpPosDelta),
-//                                (PARAMS.perpXTicks / (PARAMS.par0YTicks - PARAMS.par1YTicks) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
-//                        }).times(inPerTick)
-//                ),
-//                new DualNum<>(new double[] {
-//                        (par0PosDelta - par1PosDelta) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-//                        (par0PosVel.velocity - par1PosVel.velocity) / (PARAMS.par0YTicks - PARAMS.par1YTicks),
-//                })
-//        );
-//
-//        lastPar0Pos = par0PosVel.position;
-//        lastPar1Pos = par1PosVel.position;
-//        lastPerpPos = perpPosVel.position;
-//
-//        return twist;
-//    }
+
 
 
 
