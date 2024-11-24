@@ -11,15 +11,18 @@ public class Servos {
 
     public Servos(HardwareMap hardwareMap) //constructor to init servos
     {
-        servos = new Servo[1];
+        servos = new Servo[2];
 
         servos[0] = hardwareMap.get(Servo.class, "claw");
+        servos[1] = hardwareMap.get(Servo.class, "drop");
+
     }
     public void moveServo(int servoNum, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
     {
-        double actualPosition = position / 270;
+        //double actualPosition = position / 270;
 
-        servos[servoNum].setPosition(actualPosition);
+        //servos[servoNum].setPosition(actualPosition);
+        servos[servoNum].setPosition(position);
     }
 
     public double getServoPosition(int servoNum)

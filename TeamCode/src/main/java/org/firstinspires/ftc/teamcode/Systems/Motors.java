@@ -10,7 +10,7 @@ public class Motors {
 
     public DcMotor[] motors;
 
-    private final double wheelDiameter = 104.0;
+    private final double wheelDiameter = 1.0;
     private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens pulse per rotation
 
 //    double leftFrontPower;
