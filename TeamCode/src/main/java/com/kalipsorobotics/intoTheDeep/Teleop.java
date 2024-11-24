@@ -31,8 +31,8 @@ public class Teleop extends LinearOpMode {
         IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
         IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
-        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
+        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake, outtakePivotAction);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
 
@@ -110,18 +110,24 @@ public class Teleop extends LinearOpMode {
 
 
             //Claw
+            if (gamepad2.right_bumper) {
+                outtakeClawAction.open();
+            } else outtakeClawAction.close();
+
+            //dpad left for door toggle
             if (gamepad2.dpad_left && !prevDpadLeft) {
-                outtakeClawAction.togglePosition();
+                intakeDoorAction.togglePosition();
             }
             prevDpadLeft = gamepad2.dpad_left;
 
 
             //Pivot
             if (gamepad2.dpad_up && !prevDpadUp) {
-                outtakePivotAction.togglePosition();
+                outtakeSlideAction.Toggle();
+
             }
             prevDpadUp = gamepad2.dpad_up;
-
+            telemetry.addData("", outtakePivotAction.);
         }
     }
 }

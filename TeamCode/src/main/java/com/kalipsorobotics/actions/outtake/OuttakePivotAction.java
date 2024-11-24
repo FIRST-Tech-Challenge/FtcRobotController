@@ -29,6 +29,9 @@ public class OuttakePivotAction {
         setPosition(0.256);
         isIn = true;
     }
+    public double getPosition() {
+        return outtakePivotServo.getPosition();
+    }
 
     public void moveOut() {
         setPosition(0.0);

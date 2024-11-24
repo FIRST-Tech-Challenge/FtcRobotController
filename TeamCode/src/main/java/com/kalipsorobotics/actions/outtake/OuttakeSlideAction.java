@@ -6,10 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class OuttakeSlideAction {
 
     Outtake outtake;
+    OuttakePivotAction outtakePivotAction;
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;
+    int stage = 0;
 
-    public OuttakeSlideAction(Outtake outtake) {
+    public OuttakeSlideAction(Outtake outtake, OuttakePivotAction outtakePivotAction) {
+        this.outtakePivotAction = outtakePivotAction;
         this.outtake = outtake;
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
@@ -17,6 +20,8 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
     }
@@ -33,30 +38,34 @@ public class OuttakeSlideAction {
         setPower(0.1);
     }
 
-    public void moveToPosition() {
-
+    public void moveToPosition(int target) {
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor2.setTargetPosition(target);
+        linearSlideMotor1.setTargetPosition(target);
     }
-    public boolean toggle() {
-        if (getPosition() < 920) {
-            while (true) {
-                setPower(0.9);
-                if (getPosition() > 920) {
-                    setPower(0);
-                    return true;
-                }
-            }
+    public void up(double distance) {
+        if (getPosition() < distance) {
+            setPower(1);
         }
         else {
-            while (true) {
-                setPower(-0.9);
-                if (getPosition() < 5) {
-                    setPower(0);
-                    return true;
-                }
-            }
+            setPower(0);
         }
     }
     public int getPosition() {
         return linearSlideMotor1.getCurrentPosition();
+    }
+    public void down() {
+        if (getPosition() > 0.2) {
+            setPower(-1);
+        }
+        else {
+            setPower(0.0);
+        }
+    }
+    public void Toggle() {
+        if (stage == 0) { moveToPosition(990); stage = 1; }
+        else if (stage == 1) { moveToPosition(2035); stage = 2; }
+        else { moveToPosition(0); outtakePivotAction.moveIn(); stage = 0; }
     }
 }

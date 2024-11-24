@@ -17,8 +17,8 @@ public class OuttakeTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
-        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
+        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake, outtakePivotAction);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
 
