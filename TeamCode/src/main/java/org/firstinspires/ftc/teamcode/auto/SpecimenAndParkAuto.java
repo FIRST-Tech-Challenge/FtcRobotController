@@ -67,7 +67,7 @@ public class SpecimenAndParkAuto extends LinearOpMode {
                 drive.actionBuilder(new Pose2d(6,-24,1.5708))
                         .strafeTo(new Vector2d(18,-24))
                         .lineToY(-20)
-                        .lineToY(-26)
+
                                 .build());
         sleep(1000);
         claw.release();
