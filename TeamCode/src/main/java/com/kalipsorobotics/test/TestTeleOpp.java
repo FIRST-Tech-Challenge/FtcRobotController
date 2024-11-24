@@ -39,13 +39,12 @@ public class TestTeleOpp extends LinearOpMode {
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
         purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(0,24);
+        purePursuitAction.addPoint(0,48);
 //        purePursuitAction.addPoint(1000,0);
 //        purePursuitAction.addPoint(400,-400);
 //
 //        Point checkpoint1 = new Point(100, 0);
 //        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
-
         //AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
 
         waitForStart();
@@ -55,7 +54,7 @@ public class TestTeleOpp extends LinearOpMode {
         while (opModeIsActive()) {
 
             odometry.updatePosition();
-            //purePursuitAction.updateCheckDone();
+            purePursuitAction.updateCheckDone();
             //driveTrain.setPower(0.2,-0.2,0.2,-0.2);
 //            checkPointDone.updateCheckDone();
             //autoBasketAction.updateCheckDone();

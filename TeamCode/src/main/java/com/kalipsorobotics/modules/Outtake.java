@@ -15,6 +15,8 @@ public class Outtake {
     public Servo outtakePivotServo;
     public Servo outtakeClawServo;
     public Servo outtakePigeonServo;
+    public Servo hangHook1;
+    public Servo hangHook2;
 
     public Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
@@ -27,6 +29,7 @@ public class Outtake {
         outtakePivotServo = opModeUtilities.getHardwareMap().servo.get("outtakePivotServo");
         outtakeClawServo = opModeUtilities.getHardwareMap().servo.get("clawServo");
         outtakePigeonServo = opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo");
+        hangHook1 = opModeUtilities.getHardwareMap().servo.get("hang1");
 
         linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -55,6 +58,7 @@ public class Outtake {
     public Servo getOuttakePigeonServo() {
         return outtakePigeonServo;
     }
+    public Servo getHangHook1() {return hangHook1;}
 
     public OpModeUtilities getOpModeUtilities() {
         return opModeUtilities;
