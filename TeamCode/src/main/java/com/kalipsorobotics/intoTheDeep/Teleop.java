@@ -71,6 +71,10 @@ public class Teleop extends LinearOpMode {
                 intakeNoodleAction.stop();
             }
 
+            if (gamepad2.left_stick_x > 0.1) {
+                // control for manuel intake
+            }
+
             //Pivot TODO make generic toggle
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
@@ -113,13 +117,15 @@ public class Teleop extends LinearOpMode {
        //     prevGamePadY = gamepad2.y;
             //OUTTAKE
             //LinearSlide
-            if (-gamepad2.right_stick_y > 0.1) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-            } else if (-gamepad2.right_stick_y < -0.1) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-            } else {
-                outtakeSlideAction.idle();
-            }
+
+
+//            if (-gamepad2.right_stick_y > 0.1) {
+//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+//            } else if (-gamepad2.right_stick_y < -0.1) {
+//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+//            } else {
+//                outtakeSlideAction.idle();
+//            }
 
 
             //Claw

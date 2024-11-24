@@ -20,8 +20,6 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
     }
@@ -39,10 +37,13 @@ public class OuttakeSlideAction {
     }
 
     public void moveToPosition(int target) {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setPower(1);
         linearSlideMotor2.setTargetPosition(target);
         linearSlideMotor1.setTargetPosition(target);
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void up(double distance) {
         if (getPosition() < distance) {
@@ -64,10 +65,8 @@ public class OuttakeSlideAction {
         }
     }
     public void Toggle() {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (stage == 0) { moveToPosition(990); stage = 1; }
+        if (stage == 0) { moveToPosition(990); outtakePivotAction.moveOut(); stage = 1; }
         else if (stage == 1) { moveToPosition(2035); stage = 2; }
-        else { moveToPosition(0); stage = 0; }
+        else { moveToPosition(0); outtakePivotAction.setPosition(83); stage = 0; }
     }
 }
