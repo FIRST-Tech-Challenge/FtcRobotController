@@ -14,8 +14,8 @@ public class Lift{
 
     private DcMotor leftLift;
     private DcMotor rightLift;
-    private Encoder encoder;
-//    private final PIDController pid;
+    private Encoder leftEncoder;
+    private Encoder rightEncoder;
 
 //    public Lift(HardwareMap hw){
 //        this(hw, "lift", "lift");
@@ -24,41 +24,45 @@ public class Lift{
     /**
      * Primary constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
-     * @param leftLiftName [String] Name of the left lift motor assigned in the configuration.
-     * @param rightLiftName [String] Name of the right lift motor assigned in the configuration.
-     * @param nameEncoder [String] Name of the encoder assigned in the configuration.
+     * @param nameLift [String] Name of the lift motor assigned in the configuration.
+     * @param nameEncoder [String] Name of the leftEncoder assigned in the configuration.
      */
-    public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String nameEncoder){
+    public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String leftEncoderName, String rightEncoderName){
         leftLift = hw.get(DcMotor.class, leftLiftName);
         rightLift = hw.get(DcMotor.class, rightLiftName);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-//        pid = new PIDController
-//        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
-//
-//        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        leftLift.setPower(0);
-//
-//        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rightLift.setPower(0);
-//        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        lift.setPower(1);
+        leftEncoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, leftEncoderName)));
+        rightEncoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, rightEncoderName)));
+
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftLift.setTargetPosition(0);
+        rightLift.setTargetPosition(0);
+
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightLift.setPower(1);
+        leftLift.setPower(1);
+
     }
     public void moveLift(double power){
         leftLift.setPower(power);
         rightLift.setPower(power);
     }
     public double getPosition(){
-        return encoder.getPositionAndVelocity().position;
+        return leftEncoder.getPositionAndVelocity().position;
     }
     public void setPosition(int targetPosition){
-        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLift.setTargetPosition(targetPosition);
-        leftLift.setPower(1.0);
 
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLift.setTargetPosition(targetPosition);
         rightLift.setTargetPosition(targetPosition);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftLift.setPower(1.0);
         rightLift.setPower(1.0);
     }
 }
