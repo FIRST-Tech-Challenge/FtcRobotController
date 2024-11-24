@@ -2,6 +2,7 @@ package com.kalipsorobotics.modules;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -11,6 +12,7 @@ public class DriveTrain {
     private final OpModeUtilities opModeUtilities;
     //private final DcMotor testMotorDeleteLater;
     private final DcMotor fLeft, fRight, bLeft, bRight;
+    private final SparkFunOTOS otos;
     private final DcMotor backEncoder;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
@@ -31,6 +33,8 @@ public class DriveTrain {
         bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        otos = opModeUtilities.getHardwareMap().get(SparkFunOTOS.class, "sprk sensor OTOS");
 
         rightEncoder = bRight;
         leftEncoder = bLeft;
@@ -57,10 +61,10 @@ public class DriveTrain {
     public void setBRightPower(double power) { bRight.setPower(power); }
 
     public void setPower (double fLeftPower, double fRightPower, double bLeftPower, double bRightPower){
-//        setFLeftPower(fLeftPower);
-//        setFRightPower(fRightPower);
-//        setBLeftPower(bLeftPower);
-//        setBRightPower(bRightPower);
+        setFLeftPower(fLeftPower);
+        setFRightPower(fRightPower);
+        setBLeftPower(bLeftPower);
+        setBRightPower(bRightPower);
         Log.d("purepursaction_power", "power " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
     }
 
@@ -100,6 +104,10 @@ public class DriveTrain {
 
     public DcMotor getbRight() {
         return bRight;
+    }
+
+    public SparkFunOTOS getOtos() {
+        return otos;
     }
 
     /*public DcMotor getTestMotorDeleteLater() {

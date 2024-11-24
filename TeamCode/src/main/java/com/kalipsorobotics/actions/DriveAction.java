@@ -30,9 +30,9 @@ public class DriveAction {
     }
 
     public double[] calculatePower(Gamepad gamepad) {
-        double forward = -gamepad.left_stick_x;
+        double forward = gamepad.left_stick_x;
         double turn = gamepad.right_stick_x;
-        double strafe = gamepad.left_stick_y;
+        double strafe = -gamepad.left_stick_y;
         double fLeftPower = forward + turn - strafe;
         double fRightPower = forward - turn + strafe;
         double bLeftPower = forward + turn + strafe;

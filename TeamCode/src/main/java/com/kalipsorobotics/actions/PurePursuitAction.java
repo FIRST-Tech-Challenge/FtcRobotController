@@ -32,7 +32,7 @@ public class PurePursuitAction extends Action {
     Path path;
     Segment lastLine;
     double preferredAngle;
-    double radius;
+    double radius = 1;
     Optional<Point> follow;
 
     public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
@@ -43,13 +43,13 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(1. / 300, 0, 0);
-        this.pidY = new PidNav(1. / 300, 0, 0);
-        this.pidAngle = new PidNav(3 / 3.14, 0, 0);
+        this.pidX = new PidNav(0.2, 0, 0);
+        this.pidY = new PidNav(0.2, 0, 0);
+        this.pidAngle = new PidNav(0.2, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
         //0.001, 0.001, 0.4 behavior: turns and then does not move
-        //0.001, 0.001, 0.5 behavior: turns and then does not move
+    //0.001, 0.001, 0.5 behavior: turns and then does not move
         //0.001, 0.001, 0.6 behavior: turns and then does not move
         //0.001, 0.001, 0.7 behavior: fast turn then does not move
         //0.001, 0.001, 0.8 behavior: fast turn then does not move
@@ -82,8 +82,8 @@ public class PurePursuitAction extends Action {
             targetAngle = preferredAngle;
         } else {
             targetAngle = currentToTarget.getHeadingDirection();
-            Log.d("purepursaction", "target angle is " + targetAngle);
         }
+        Log.d("purepursaction", "target angle is " + targetAngle);
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
         double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
@@ -140,8 +140,8 @@ public class PurePursuitAction extends Action {
 
         lastLine = path.getSegment(path.numSegments() - 1);
 
-        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 80 //30, 30, 30, 1, 10
-                && odometry.getCurrentVelocity().isWithinThreshhold(80, 80, Math.toRadians(5))
+        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 0.5 //30, 30, 30, 1, 10
+                && odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5))
                 && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(4)) {
             //opModeUtilities.getTelemetry().addLine("breake");
             //opModeUtilities.getTelemetry().update();
@@ -168,7 +168,7 @@ public class PurePursuitAction extends Action {
         if (!follow.isPresent()) {
             Log.d("purepursaction", "follow is not present");
             follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
-            radius += 25;
+            radius += 0.1;
         }
 
         if (follow.isPresent()) {
@@ -182,7 +182,7 @@ public class PurePursuitAction extends Action {
             //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 
-            radius = 50;
+            radius = 1; //50
         }
 
         //if (Thread.interrupted()) throw new InterruptedException();

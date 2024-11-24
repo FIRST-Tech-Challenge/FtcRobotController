@@ -3,7 +3,7 @@ package com.kalipsorobotics.PID;
 import android.annotation.SuppressLint;
 import android.os.SystemClock;
 
-import com.kalipsorobotics.localization.OdometryFuse;
+import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Point;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -21,8 +21,7 @@ public class TestingDriveTrain {
     public final PIDController xController;
     public final PIDController yController;
     public final PIDController headingController;
-    public final OdometryFuse odometryFuse;
-
+    public final OdometrySpark odometryFuse;
 
     public TestingDriveTrain(HardwareMap hardwareMap) {
         fLeft = hardwareMap.get(DcMotor.class, "fLeft");
@@ -43,7 +42,7 @@ public class TestingDriveTrain {
         }
 
         otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        odometryFuse = new OdometryFuse(otos, fRight, bRight);
+        odometryFuse = new OdometrySpark(otos, fRight, bRight);
         odometryFuse.configureOtos(otos);
 
         // tuned w/ lightweight testing drivetrain
@@ -69,8 +68,7 @@ public class TestingDriveTrain {
         Point pos = odometryFuse.pointCollectData();  // current
         double curX = -pos.getX();
         double curY = -pos.getY();
-        double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("leftwq" +
-                ""));
+        double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left", 0, 0));
 
         Pose2D target = new Pose2D(curX + dx, curY + dy, curH + dh);
         System.out.println(xController);
@@ -84,7 +82,7 @@ public class TestingDriveTrain {
             pos = odometryFuse.pointCollectData();
             curX = -pos.getX();  // odometryfuse returns negative
             curY = -pos.getY();
-            curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left"));
+            curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left", 0, 0));
 
             double x = Range.clip(xController.calculate(curX, target.x), -1., 1.);
             double y = Range.clip(yController.calculate(curY, target.y), -1., 1.);

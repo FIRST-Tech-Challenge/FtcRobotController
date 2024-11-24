@@ -19,17 +19,19 @@ public class TestHanging extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
 
-        MoveLSAction moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(30), outtake);
-        WaitAction waitAction = new WaitAction(5);
+        MoveLSAction moveLSUp = new MoveLSAction(30, outtake);
+
+        WaitAction waitAction = new WaitAction(2);
         waitAction.setDependentAction(moveLSUp);
-        MoveLSAction moveLSDown = new MoveLSAction(CalculateTickInches.inchToTicksLS(26), outtake);
-        moveLSDown.setDependentAction(waitAction);
+
+        MoveLSAction moveDown = new MoveLSAction(-12, outtake, 0.01);
+        moveDown.setDependentAction(waitAction);
 
         waitForStart();
         while (opModeIsActive()) {
             moveLSUp.updateCheckDone();
             waitAction.updateCheckDone();
-            moveLSDown.updateCheckDone();
+            moveDown.updateCheckDone();
         }
     }
 }

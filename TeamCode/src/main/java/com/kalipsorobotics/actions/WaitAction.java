@@ -19,7 +19,7 @@ public class WaitAction extends Action {
         if (hasStarted) {
 //            boolean done = elapsedTime.seconds() >= waitTimeSeconds;
             Log.d("waitaction", "elapsed time " + elapsedTime.seconds());
-            if(elapsedTime.seconds() >= waitTimeSeconds) {
+            if(elapsedTime.milliseconds()/1000 >= waitTimeSeconds) {
                 return true;
             } else {
                 return false;

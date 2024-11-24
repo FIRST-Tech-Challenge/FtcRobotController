@@ -46,7 +46,7 @@ public class MoveRobotStraightInchesAction extends Action {
     @Override
     public void update() {
 
-        this.currentTicks = odometry.countRight();
+        this.currentTicks = odometry.countX();
         Log.d("moverobot", "current ticks is " + currentTicks);
         Log.d("moverobot", "target inches is " + CalculateTickInches.ticksToInchesDriveTrain(targetTicks));
 
