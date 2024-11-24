@@ -42,6 +42,7 @@ public class Teleop extends LinearOpMode {
         boolean prevGamePadA = false;
         boolean prevDpadLeft = false;
         boolean prevDpadUp = false;
+        boolean retracted = true;
 
 
         intakeLinkageAction.retract();
@@ -78,7 +79,19 @@ public class Teleop extends LinearOpMode {
 
             //Door
             if (gamepad2.b && !prevGamePadB) {
-                intakeDoorAction.togglePosition();
+                if (!retracted) {
+                    intakeNoodleAction.stop();
+                    intakePivotAction.moveUp();
+                    intakeLinkageAction.retract();
+                    intakeDoorAction.open();
+                    intakeNoodleAction.run();
+                } else {
+                    intakeNoodleAction.stop();
+                    intakeDoorAction.close();
+                    intakeLinkageAction.extend();
+                    intakePivotAction.moveDown();
+                    intakeNoodleAction.stop();
+                }
             }
             prevGamePadB = gamepad2.b;
             //save for later
@@ -127,8 +140,6 @@ public class Teleop extends LinearOpMode {
 
             }
             prevDpadUp = gamepad2.dpad_up;
-            telemetry.addData("", outtakePivotAction.getPosition());
-            telemetry.update();
         }
     }
 }

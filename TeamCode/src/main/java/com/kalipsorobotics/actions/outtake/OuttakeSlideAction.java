@@ -64,8 +64,10 @@ public class OuttakeSlideAction {
         }
     }
     public void Toggle() {
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (stage == 0) { moveToPosition(990); stage = 1; }
         else if (stage == 1) { moveToPosition(2035); stage = 2; }
-        else { moveToPosition(0); outtakePivotAction.moveIn(); stage = 0; }
+        else { moveToPosition(0); stage = 0; }
     }
 }
