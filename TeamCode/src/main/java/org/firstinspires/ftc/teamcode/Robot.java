@@ -50,6 +50,7 @@ public abstract class Robot extends LinearOpMode {
     private double Current_Time = System.nanoTime() * 1E-9;
     private double Last_Time = Current_Time;
     private double Last_yaw;
+    boolean On = false;
 
     public final int Low_Chamber  = 1000;
     public final int High_Chamber = 850;
@@ -121,20 +122,20 @@ public abstract class Robot extends LinearOpMode {
 
             LiftPower(Lift_Power);
 
-            if (curPos > 50) {
+            if (curPos > 50 && On) {
                 SetServoPos(0.08, LA, RA);
                 SetServoPos(0.68, LJ, RJ);
                 SetServoPos(0, Claw);
-                continue;
             }
 
-            if (curPos < 50) {
+            if (curPos < 50 && On) {
                 SetServoPos(0, LA, RA);
                 SetServoPos(1, LJ, RJ);
-                continue;
             }
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            telemetry.addData("Lift", Lift_Power);
+            telemetry.addData("Pos", curPos);
             telemetry.addData("Move_Factor", Move_Factor);
             telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
             telemetry.addData("tagetXtargetY", "%6f cm %6f cm" , targetx, targety);
@@ -144,10 +145,10 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorR", pidR.Error);
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
-            telemetry.addData("Complete", IS_Complete);
+            //telemetry.addData("Complete", IS_Complete);
             telemetry.addData("lift", curPos);
             telemetry.update();
-            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0 && AtTargetRange(curPos, height, 10)) {
+            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && AtTargetRange(curPos, height, 10)) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
