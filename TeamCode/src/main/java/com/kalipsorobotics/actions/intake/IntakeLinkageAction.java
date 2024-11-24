@@ -23,9 +23,12 @@ public class IntakeLinkageAction {
         linkageServo1.setPosition(position);
         linkageServo2.setPosition(position);
     }
+    public double getPosition() {
+        return linkageServo1.getPosition();
+    }
 
     public void extend() {
-        moveIntakeSlide(0.245);
+        moveIntakeSlide(-1.9);
         isRetracted = false;
     }
 

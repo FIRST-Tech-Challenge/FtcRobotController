@@ -22,7 +22,14 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
+<<<<<<< HEAD
         setPosition(0.925);
+=======
+        setPosition(0.5);
+        setPosition(0.4);
+        setPosition(0.3);
+        setPosition(0.256);
+>>>>>>> 31277e8 (fixed extending for intake)
         isIn = true;
     }
 

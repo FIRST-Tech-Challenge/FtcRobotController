@@ -81,20 +81,23 @@ public class Teleop extends LinearOpMode {
                 intakeDoorAction.togglePosition();
             }
             prevGamePadB = gamepad2.b;
-
+            //save for later
             //Linkage
             if (gamepad2.a && !prevGamePadA) {
                 intakeLinkageAction.togglePosition();
+                intakePivotAction.moveDown();
+                telemetry.addData("", intakeLinkageAction.getPosition());
+                telemetry.update();
             }
             prevGamePadA = gamepad2.a;
 
             //LinearSlide toggle
-            if (gamepad2.y && !prevGamePadY) {
-                while (!outtakeSlideAction.toggle()) {
-                    outtakeSlideAction.toggle();
-                }
-            }
-            prevGamePadY = gamepad2.y;
+      //      if (gamepad2.y && !prevGamePadY) {
+       //         while (!outtakeSlideAction.toggle()) {
+      //              outtakeSlideAction.toggle();
+      //          }
+      //      }
+       //     prevGamePadY = gamepad2.y;
             //OUTTAKE
             //LinearSlide
             if (-gamepad2.right_stick_y > 0.1) {
