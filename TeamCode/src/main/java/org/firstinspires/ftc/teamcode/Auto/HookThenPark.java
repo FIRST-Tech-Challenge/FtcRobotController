@@ -4,11 +4,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
 import org.firstinspires.ftc.teamcode.Utils;
 
+@Disabled
 @Autonomous(preselectTeleOp = "Blue Bot Teleop")
 public class HookThenPark extends LinearOpMode {
   private Swerve drivebase;
