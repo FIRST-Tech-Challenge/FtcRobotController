@@ -127,7 +127,8 @@ public class Teleop extends LinearOpMode {
 
             }
             prevDpadUp = gamepad2.dpad_up;
-            telemetry.addData("", outtakePivotAction.);
+            telemetry.addData("", outtakePivotAction.getPosition());
+            telemetry.update();
         }
     }
 }
