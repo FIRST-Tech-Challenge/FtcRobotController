@@ -33,6 +33,7 @@ public class Test extends OpMode {
         if (gamepad1.y) {intakeState = intakeState.OUT;}
         if (gamepad1.dpad_down) {elevatorState = ElevatorState.INTAKE;}
         if (gamepad1.dpad_left) {elevatorState = ElevatorState.SPECIMEN;}
+        if (gamepad1.dpad_up) {elevatorState = ElevatorState.PUTSPECIMEN;}
         if (gamepad1.right_stick_y != 0) {elevatorState = ElevatorState.MANUAL;}
 
         Elevator.operatee( elevatorState,-gamepad1.right_stick_y);

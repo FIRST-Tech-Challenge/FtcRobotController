@@ -12,13 +12,13 @@ public class TestPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        input = new Mat(input, Constants.cropRect);
+        //input = new Mat(input, Constants.cropRect);
         Imgproc.cvtColor(input, input, Constants.binary);
         Imgproc.blur(input, input, Constants.BlurRadius);
         center = Contours.getCenter(
                 Contours.contourPolyList(
                         Contours.getBiggestContour(
-                                Contours.getContour(input, Constants.redLowHSV, Constants.redHighHSV)
+                                Contours.getContour(input, Constants.lowYellowHSV, Constants.highYellowHSV)
                         )
                 )
                 , input);

@@ -24,6 +24,10 @@ public final class Constants {
     public static Rect cropRect = new Rect(new Point(0,270),new Point(1280,720));
     //Blur size radius
     public static Size BlurRadius = new Size(37,37);
+
+    public static Scalar lowYellowHSV = new Scalar(8,105,105);
+    public static Scalar highYellowHSV = new Scalar(38,255,255);
+
     //camera
     public static OpenCvCamera camera;
 }
