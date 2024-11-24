@@ -73,6 +73,11 @@ public class SpecimenAndSample extends LinearOpMode {
 //                        .build());
 
 
+        while(opModeIsActive())
+        {
+
+        }
+
 
     }
 }
