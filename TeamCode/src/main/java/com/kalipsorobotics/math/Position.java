@@ -1,5 +1,8 @@
 package com.kalipsorobotics.math;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Position {
     final private double x;
     final private double y;
@@ -20,8 +23,34 @@ public class Position {
         );
     }
 
-    public Point toPoint() {
-        return new Point(getX(), getY());
+    public Position addPosition(Vector vector) {
+        return new Position(this.getX() + vector.getX(), this.getY() + vector.getY(), Math.atan2(vector.getY(),vector.getX()));
+    }
+
+//    public Point toPoint() {
+//        return new Point(getX(), getY());
+//    }
+
+//    public static List<Point> toPointList(List<Position> positions) {
+//        List<Point> points = new ArrayList<Point>();
+//
+//        for(int i=0; i < positions.size(); i++) {
+//            points.add(positions.get(i).toPoint());
+//        }
+//
+//        return points;
+//    }
+
+    public Position relativeTo(Position other) {
+        return new Position(this.getX() - other.getX(), this.getY() - other.getY(), this.getTheta() - other.getTheta());
+    }
+
+    public Vector projectOnto(Vector vector) {
+        return vector.scale( vector.dot(this)/vector.dot(vector));
+    }
+
+    public double distanceTo(Position other) {
+        return Math.hypot(other.getX() - this.getX(), other.getY() - this.getY());
     }
 
     @Override
@@ -31,6 +60,10 @@ public class Position {
                 ", y=" + y +
                 ", theta=" + theta +
                 '}';
+    }
+
+    public String getPoint() {
+        return x + ", " + y + ", " + theta;
     }
 
     public double getX() {

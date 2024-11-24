@@ -6,7 +6,6 @@ import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Path;
-import com.kalipsorobotics.math.Point;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.math.Segment;
 import com.kalipsorobotics.math.Vector;
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 public class PurePursuitAction extends Action {
 
-    List<Point> pathPoints = new ArrayList<Point>();
+    List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
     Odometry odometry;
 
@@ -33,7 +32,7 @@ public class PurePursuitAction extends Action {
     Segment lastLine;
     double preferredAngle;
     double radius = 1;
-    Optional<Point> follow;
+    Optional<Position> follow;
 
     public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
         this.driveTrain = driveTrain;
@@ -43,8 +42,8 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(0.2, 0, 0);
-        this.pidY = new PidNav(0.2, 0, 0);
+        this.pidX = new PidNav(0.17, 0, 0);
+        this.pidY = new PidNav(0.17, 0, 0);
         this.pidAngle = new PidNav(0.2, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
@@ -65,24 +64,24 @@ public class PurePursuitAction extends Action {
         this.dependentAction = new DoneStateAction();
     }
 
-    public void addPoint(int x, int y) {
-        pathPoints.add(new Point(x, y));
+    public void addPoint(int x, int y, double heading) {
+        pathPoints.add(new Position(x, y, heading));
         Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
-    private void targetPosition(Point target, double preferredAngle) {
+    private void targetPosition(Position target, double preferredAngle) {
         Position currentPos = odometry.getCurrentPosition();
-        Vector currentToTarget = Vector.between(currentPos.toPoint(), target);
+        Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
         double targetDirection = currentToTarget.getHeadingDirection();
 
-        double targetAngle;
-        if (distanceToTarget <= 100) {
-            targetAngle = preferredAngle;
-        } else {
-            targetAngle = currentToTarget.getHeadingDirection();
-        }
+        double targetAngle = preferredAngle;
+//        if (distanceToTarget <= 100) {
+//            targetAngle = preferredAngle;
+//        } else {
+//            targetAngle = currentToTarget.getHeadingDirection();
+//        }
         Log.d("purepursaction", "target angle is " + targetAngle);
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
@@ -110,8 +109,9 @@ public class PurePursuitAction extends Action {
 //        opModeUtilities.getTelemetry().addData("power angle", powerAngle);
 
         double fLeftPower = powerX + powerY + powerAngle;
-        double fRightPower = powerX - powerY - powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
+
+        double fRightPower = powerX - powerY - powerAngle;
         double bRightPower = powerX + powerY - powerAngle;
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
@@ -140,7 +140,7 @@ public class PurePursuitAction extends Action {
 
         lastLine = path.getSegment(path.numSegments() - 1);
 
-        if (odometry.getCurrentPosition().toPoint().distanceTo(lastLine.getFinish()) < 1 //30, 30, 30, 1, 10
+        if (odometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1 //30, 30, 30, 1, 10
                 && odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5))
                 && Math.abs(odometry.getCurrentPosition().getTheta() - preferredAngle) < Math.toRadians(4)) {
             //opModeUtilities.getTelemetry().addLine("breake");
@@ -163,11 +163,11 @@ public class PurePursuitAction extends Action {
 
         //Log.d("purepursaction", "entered update");
 
-        follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
+        follow = path.searchFrom(odometry.getCurrentPosition(), radius);
 
         if (!follow.isPresent()) {
             Log.d("purepursaction", "follow is not present");
-            follow = path.searchFrom(odometry.getCurrentPosition().toPoint(), radius);
+            follow = path.searchFrom(odometry.getCurrentPosition(), radius);
             radius += 0.1;
         }
 
@@ -178,7 +178,7 @@ public class PurePursuitAction extends Action {
             Log.d("purepursaction", "preferred angle " + preferredAngle);
 //                opModeUtilities.getTelemetry().addData("preferredAngle", preferredAngle);
 //                opModeUtilities.getTelemetry().addData("follow point", follow);
-            targetPosition(follow.get(), preferredAngle);
+            targetPosition(follow.get(), pathPoints.get(pathPoints.size()-1).getTheta());
             //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 

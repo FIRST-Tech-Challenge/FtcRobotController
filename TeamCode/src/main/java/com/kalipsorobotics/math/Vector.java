@@ -11,12 +11,20 @@ public class Vector {
     }
 
 
-    public static Vector between(Point start, Point finish) {
+//    public static Vector between(Point start, Point finish) {
+//        double x = finish.getX() - start.getX();
+//        double y = finish.getY() - start.getY();
+//
+//        return new Vector(x, y);
+//    }
+
+    public static Vector between(Position start, Position finish) {
         double x = finish.getX() - start.getX();
         double y = finish.getY() - start.getY();
 
         return new Vector(x, y);
     }
+
     public Vector scale(double factor) {
         return new Vector(
                 this.getX() * factor,
@@ -32,9 +40,14 @@ public class Vector {
         return this.scale(newLength / this.getLength());
     }
 
-    public double dot(Point other) {
+//    public double dot(Point other) {
+//        return (this.getX() * other.getX()) + (this.getY() * other.getY());
+//    }
+
+    public double dot(Position other) {
         return (this.getX() * other.getX()) + (this.getY() * other.getY());
     }
+
     public double dot(Vector other) {
         return (this.getX() * other.getX()) + (this.getY() * other.getY());
     }
@@ -67,5 +80,9 @@ public class Vector {
 
     public Vector add(Vector other) {
         return new Vector(this.getX() + other.getX(), this.getY() + other.getY());
+    }
+
+    public Velocity toVelocity(double theta) {
+        return new Velocity(this.x, this.y, theta);
     }
 }

@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.Optional;
 
 public class Path {
-    private final List<Point> path;
+    private final List<Position> path;
 
-    public Path(List<Point> path) {
+    public Path(List<Position> path) {
         this.path = Collections.unmodifiableList(path);
     }
 
-    public Optional<Point> searchFrom(Point currentPosition, double radius) {
+    public Optional<Position> searchFrom(Position currentPosition, double radius) {
         for (int i = numSegments() - 1; i >= 0; i--) {
             Segment segment = getSegment(i);
 
-            Optional<Point> result = segment.lineCircleIntersection(currentPosition, radius);
+            Optional<Position> result = segment.lineCircleIntersection(currentPosition, radius);
 
             if (result.isPresent()) {
                 return result;
@@ -25,7 +25,7 @@ public class Path {
         return Optional.empty();
     }
 
-    public Point getPoint(int index) {
+    public Position getPoint(int index) {
         return path.get(index);
     }
 

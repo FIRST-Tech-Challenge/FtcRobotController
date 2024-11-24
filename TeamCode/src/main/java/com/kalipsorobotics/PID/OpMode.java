@@ -2,7 +2,7 @@ package com.kalipsorobotics.PID;
 
 import android.annotation.SuppressLint;
 
-import com.kalipsorobotics.math.Point;
+import com.kalipsorobotics.math.Position;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -82,7 +82,7 @@ public class OpMode extends LinearOpMode {
             }
 
 
-            Point pos = driveTrain.odometryFuse.pointCollectData();
+            Position pos = driveTrain.odometryFuse.pointCollectData();
             double heading = driveTrain.odometryFuse.headingUpdateData("right", 0, 0);
             telemetry.addLine(String.format("x | currently at %f", pos.getX()));
             telemetry.addLine(String.format("y | currently at %f", pos.getY()));

@@ -10,7 +10,6 @@ import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.localization.Odometry;
 
 import com.kalipsorobotics.math.CalculateTickInches;
-import com.kalipsorobotics.math.Point;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,8 +37,9 @@ public class TestTeleOpp extends LinearOpMode {
         //Outtake outtake = new Outtake(opModeUtilities);
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, odometry);
-        purePursuitAction.addPoint(0,0);
-        purePursuitAction.addPoint(0,48);
+        purePursuitAction.addPoint(0,0,0);
+        purePursuitAction.addPoint(24,0,0);
+        //x=24.251404795259038, y=-23.87280174910445, theta=-0.031638353750141346
 //        purePursuitAction.addPoint(1000,0);
 //        purePursuitAction.addPoint(400,-400);
 //

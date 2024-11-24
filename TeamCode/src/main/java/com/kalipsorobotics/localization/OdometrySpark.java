@@ -3,7 +3,7 @@ package com.kalipsorobotics.localization;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.kalipsorobotics.math.Point;
+import com.kalipsorobotics.math.Position;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -66,18 +66,18 @@ public class OdometrySpark {
             throw new RuntimeException(e);
         }
     }
-    public Point wheelUpdateData() {
+    public Position wheelUpdateData() {
         double TICKSTOINCH = 1 ;//40 / -13510.0 * (40.0 / 40.3612);
-        return(new Point(backEncoder.getCurrentPosition() * TICKSTOINCH, rightEncoder.getCurrentPosition() * TICKSTOINCH));
+        return(new Position(backEncoder.getCurrentPosition()*TICKSTOINCH, rightEncoder.getCurrentPosition()*TICKSTOINCH, 0));
     }
-    public Point sparkUpdateData() {
+    public Position sparkUpdateData() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return(new Point(-pos.x, -pos.y));
+        return(new Position(-pos.x, -pos.y, pos.h));
     }
-    public Point averageUpdateData() {
+    public Position averageUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        return(new Point(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2));
+        return(new Position(((rightEncoder.getCurrentPosition() * TICKSTOINCH) + pos.x) / 2, ((backEncoder.getCurrentPosition() * TICKSTOINCH) + pos.y) / 2, pos.h));
     }
 
     public double headingUpdateData(String direction, double xOffSet, double yOffset) {
@@ -92,7 +92,7 @@ public class OdometrySpark {
         else { return(0.0); }
     }
 
-    public Point filter(Point sparkPoint, Point wheelPoint) {
+    public Position filter(Position sparkPoint, Position wheelPoint) {
         int diffenceDebug = 1;
         if ((sparkPoint.getX() - wheelPoint.getX() < diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < diffenceDebug) && (sparkPoint.getX() - wheelPoint.getX() > -diffenceDebug) && (sparkPoint.getY() - wheelPoint.getY() < -diffenceDebug)) { return(wheelUpdateData()); }
         else { return(sparkUpdateData()); }
@@ -139,7 +139,7 @@ public class OdometrySpark {
     }
 
     public boolean autoMecanum(double x, double y) {
-        final Point offset = pointCollectData();
+        final Position offset = pointCollectData();
         while (true) {
             if (pointCollectData().getY() - offset.getY() > y &&
                     pointCollectData().getX() - offset.getX() > x) return true;
@@ -148,7 +148,7 @@ public class OdometrySpark {
 
 
 
-    public Point pointCollectData() {
+    public Position pointCollectData() {
         return(filter(sparkUpdateData(), wheelUpdateData()));
     }
 

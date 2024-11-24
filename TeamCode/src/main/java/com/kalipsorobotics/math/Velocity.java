@@ -10,14 +10,15 @@ public class Velocity {
         this.y = y;
         this.theta = theta;
     }
+
 //add vector to vector
-    public Velocity add (Velocity velocity) {
-        return new Velocity(
-          this.x + velocity.x,
-          this.y + velocity.y,
-          this.theta + velocity.y
-        );
-    }
+//    public Velocity add (Velocity velocity) {
+//        return new Velocity(
+//          this.x + velocity.x,
+//          this.y + velocity.y,
+//          this.theta + velocity.y
+//        );
+//    }
 
     public Velocity divide(double denominator) {
         return new Velocity(this.x / denominator, this.y / denominator, this.theta / denominator);

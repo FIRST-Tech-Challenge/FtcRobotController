@@ -1,15 +1,15 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.localization.Odometry;
-import com.kalipsorobotics.math.Point;
+import com.kalipsorobotics.math.Position;
 
 public class CheckPointDone extends Action {
 
     PurePursuitAction purePursuitAction;
     Odometry odometry;
-    Point point;
+    Position point;
 
-    public CheckPointDone(Point point, PurePursuitAction purePursuitAction, Odometry odometry) {
+    public CheckPointDone(Position point, PurePursuitAction purePursuitAction, Odometry odometry) {
         this.point = point;
         this.purePursuitAction = purePursuitAction;
         this.odometry = odometry;
@@ -17,7 +17,7 @@ public class CheckPointDone extends Action {
     }
 
     public double calculateError() {
-        return odometry.getCurrentPosition().toPoint().distanceTo(point);
+        return odometry.getCurrentPosition().distanceTo(point);
     }
 
     @Override

@@ -5,7 +5,7 @@ import android.os.SystemClock;
 
 import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.math.MathFunctions;
-import com.kalipsorobotics.math.Point;
+import com.kalipsorobotics.math.Position;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -65,7 +65,7 @@ public class TestingDriveTrain {
     @SuppressLint("DefaultLocale")
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
         double startingTime = SystemClock.elapsedRealtimeNanos();
-        Point pos = odometryFuse.pointCollectData();  // current
+        Position pos = odometryFuse.pointCollectData();  // current
         double curX = -pos.getX();
         double curY = -pos.getY();
         double curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left", 0, 0));

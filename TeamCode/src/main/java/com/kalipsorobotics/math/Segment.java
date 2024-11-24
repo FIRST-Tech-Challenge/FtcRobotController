@@ -4,21 +4,21 @@ import java.util.Optional;
 
 public class Segment {
 
-    private final Point start;
-    private final Point finish;
+    private final Position start;
+    private final Position finish;
 
-    public Segment(Point start, Point finish) {
+    public Segment(Position start, Position finish) {
         this.start = start;
         this.finish = finish;
     }
 
-    public Optional<Point> lineCircleIntersection(Point current, double radius) {
-        Point shiftedCurrent = current.relativeTo(this.getStart());
+    public Optional<Position> lineCircleIntersection(Position current, double radius) {
+        Position shiftedCurrent = current.relativeTo(this.getStart());
         Optional<Vector> shiftedFollow = lineCircleIntersection(this.getVector(), shiftedCurrent, radius);
 
-        return shiftedFollow.map(this.getStart()::add);
+        return shiftedFollow.map(this.getStart()::addPosition);
     }
-    private static Optional<Vector> lineCircleIntersection(Vector vector, Point shiftedCurrent, double radius) {
+    private static Optional<Vector> lineCircleIntersection(Vector vector, Position shiftedCurrent, double radius) {
         Vector projection = shiftedCurrent.projectOnto(vector);
         double distance = Math.hypot(shiftedCurrent.getX() - projection.getX(), shiftedCurrent.getY() - projection.getY());
 
@@ -44,11 +44,11 @@ public class Segment {
         return Vector.between(this.start, this.finish);
     }
 
-    public Point getStart() {
+    public Position getStart() {
         return start;
     }
 
-    public Point getFinish() {
+    public Position getFinish() {
         return finish;
     }
 
