@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Motors {
 
     public DcMotor[] motors;
 
-//    private final double wheelDiameter = 1.0; Litterally useless because we only have an encoder for the arm
-//    private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens pulse per rotation
+    private final double wheelDiameter = 1.0;
+    private final double PPR = 537.7; //how many times the motor counts before a single 360 rotation happens pulse per rotation
 
 //    double leftFrontPower;
 //    double rightFrontPower;
@@ -18,7 +21,7 @@ public class Motors {
 
     public Motors(HardwareMap hardwareMap) {
 
-        motors = new DcMotor[6];
+        motors = new DcMotor[5];
         //i may or may not have subtracted one from motors length cuz instead of 4 3? it'll work i swear
         // it did not work
         for (int i = 0; i < motors.length; i++) {
@@ -35,8 +38,6 @@ public class Motors {
 
        motors[4].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
        motors[4].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       motors[4].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-       motors[5].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 /*
             This might be a bit difficult to understand at first but the block of code above basically does what the commented out one does below.
 
@@ -85,34 +86,21 @@ public class Motors {
         motors[motorNumber].setPower(actualPower);
     }
 
-//    public double GetArmDistance()
-//    {
-//        double CPR = PPR * 4; //count per rotation
-//        double position = motors[4].getCurrentPosition();
-//
-//        double revolutions = position/CPR;
-//
-//        double angle = revolutions * 360;
-//        double angleNormalized = angle % 360;
-//
-//        double circumference = Math.PI * wheelDiameter;
-//
-//        return circumference * revolutions; // return distance
-//    }
-
-    public void moveArm(double power)
+    public double GetArmDistance()
     {
-        int targetPos = (int) (power * 100);
+        double CPR = PPR * 4; //count per rotation
+        double position = motors[4].getCurrentPosition();
 
-        int currentPos = getArmPosition();
-        int newTargetPos = currentPos + targetPos;
+        double revolutions = position/CPR;
 
-        setArmPosition(newTargetPos);
+        double angle = revolutions * 360;
+        double angleNormalized = angle % 360;
 
-        motors[4].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double circumference = Math.PI * wheelDiameter;
 
-        motors[4].setPower((power != 0 ) ? power : 0);
+        return circumference * revolutions; // return distance
     }
+
 
     public void setArmPosition(int position)
     {
