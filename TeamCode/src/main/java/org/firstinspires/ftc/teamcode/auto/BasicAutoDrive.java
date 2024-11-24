@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
-import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
+//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
@@ -18,7 +18,7 @@ public class BasicAutoDrive extends LinearOpMode {
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-    private ThreeDeadWheelLocalizer deadwheels;
+//    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -33,7 +33,7 @@ public class BasicAutoDrive extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
+//        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();

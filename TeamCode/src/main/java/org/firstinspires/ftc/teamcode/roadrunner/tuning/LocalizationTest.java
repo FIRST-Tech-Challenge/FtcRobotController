@@ -24,12 +24,14 @@ public class LocalizationTest extends LinearOpMode {
     //Will delete limelight initlization code away from LocalizationTest
     private Limelight3A limelight;
     public IMU imu;
+//    GoBildaPinpointDriver odo;
 
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         imu = hardwareMap.get(IMU.class,"imu");
+//        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
@@ -62,17 +64,19 @@ public class LocalizationTest extends LinearOpMode {
                 drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
 
-                                //strafe
+
                                 -gamepad1.left_stick_y,
-                                gamepad1.left_stick_x
+                                -gamepad1.left_stick_x
                         ),
                         gamepad1.right_stick_x
                 ));
 
                 drive.updatePoseEstimate();
 
-                telemetry.addData("x", drive.pose.position.x);
-                telemetry.addData("y", drive.pose.position.y);
+                //I want x to be parallel to the alliance areas and y to be
+                // perpendicular to the side of the field
+                telemetry.addData("x", drive.pose.position.y);
+                telemetry.addData("y", -drive.pose.position.x);
                 telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
 

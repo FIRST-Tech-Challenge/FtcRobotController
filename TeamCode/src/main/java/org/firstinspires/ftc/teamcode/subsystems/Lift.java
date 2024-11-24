@@ -30,7 +30,7 @@ public class Lift{
         leftLift = hw.get(DcMotor.class, leftLiftName);
         rightLift = hw.get(DcMotor.class, rightLiftName);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-//        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
+        encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, nameEncoder)));
 //
 //        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

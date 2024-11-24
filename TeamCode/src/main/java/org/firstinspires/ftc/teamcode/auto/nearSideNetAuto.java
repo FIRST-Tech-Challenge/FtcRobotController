@@ -10,16 +10,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
-import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
+//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-@Autonomous(name="Near Net")
+//@Autonomous(name="Near Net")
 public class nearSideNetAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-    private ThreeDeadWheelLocalizer deadwheels;
+//    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -34,7 +34,7 @@ public class nearSideNetAuto extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
+//        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         lift = new Lift(hardwareMap, "liftLeft", "liftRight", "lift");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
