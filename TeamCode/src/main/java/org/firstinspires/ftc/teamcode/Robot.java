@@ -54,7 +54,8 @@ public abstract class Robot extends LinearOpMode {
 
     public final int Low_Chamber  = 1000;
     public final int High_Chamber = 850;
-    public final int High_Basket  = 3000;
+    public final int High_Basket  = 2800;
+
 
 
 
@@ -145,10 +146,9 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorR", pidR.Error);
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
-            //telemetry.addData("Complete", IS_Complete);
-            telemetry.addData("lift", curPos);
+            telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && AtTargetRange(curPos, height, 10)) {
+            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && AtTargetRange(curPos, height, 100)) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
