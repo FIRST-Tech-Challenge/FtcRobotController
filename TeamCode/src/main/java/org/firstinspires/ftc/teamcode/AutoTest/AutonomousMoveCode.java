@@ -213,16 +213,12 @@ public class AutonomousMoveCode extends LinearOpMode {
     private void strafeToPosition(double dist_mm, double speed) {
         int targetPosition = (int)(dist_mm * COUNTS_PER_MM_Drive);
 
-        // Reset to RUN_USING_ENCODER mode
-        robot.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         // Set target position for both motors
         robot.frontLeftMotor.setTargetPosition(robot.frontLeftMotor.getCurrentPosition() + targetPosition);
@@ -243,7 +239,11 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backRightMotor.setPower(speed);
 
         // Wait until the robot reaches the target position
-        while (opModeIsActive() && (robot.frontLeftMotor.isBusy() && robot.frontRightMotor.isBusy())) {
+        while (opModeIsActive() &&
+                (robot.frontLeftMotor.isBusy()
+                        && robot.frontRightMotor.isBusy()
+                        && robot.backLeftMotor.isBusy()
+                        && robot.backRightMotor.isBusy())) {
             telemetry.addData("Motor Position", "Left: %d, Right: %d",
                     robot.frontLeftMotor.getCurrentPosition(), robot.frontRightMotor.getCurrentPosition());
             telemetry.update();
@@ -264,7 +264,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.initIMU();
         double currentAngle = getHeading();
 
-        while (opModeIsActive() && Math.abs(targetAngle) - Math.abs(currentAngle) > 5) { // Tolerance of 1 degree
+        while (opModeIsActive() && Math.abs(targetAngle) - Math.abs(currentAngle) > 1.5) { // Tolerance of 1 degree
             double turnDirection = Math.signum(targetAngle - currentAngle); // Positive for clockwise, negative for counter-clockwise
 
             // Apply power for turning

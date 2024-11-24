@@ -36,13 +36,6 @@ public class BasicTeleOps extends OpMode {
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
     public FiniteMachineStateIntake intakeArmDrive;
 
-    //public Color_sensor colorSensor;
-
-    //For ServoTest
-    public ServoTest depositServoTest;              //For Deposit Intake Servo testing
-
-    private FtcDashboard dashboard;                 //For Dashboard
-    private TelemetryManager telemetryManager;      //For Telemetry
 
     //Bulk Reading
     private List<LynxModule> allHubs;
@@ -89,7 +82,6 @@ public class BasicTeleOps extends OpMode {
     public void init() {
 
         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
-        telemetryManager = new TelemetryManager(telemetry);
 
         // Initialize hardware in RobotHardware
         robot = new RobotHardware();
@@ -177,29 +169,12 @@ public class BasicTeleOps extends OpMode {
         intakeArmDrive.IntakeArmLoop();
         FiniteMachineStateIntake.INTAKESTATE intakestate = intakeArmDrive.intakeState();
 
-        //depositArmTest
-        //depositServoTest.ServoTestLoop();
-
-
-        // Real-time telemetry data to Driver Station
-        //telemetryManager.update("Front Left Motor Power", robot.frontLeftMotor.getPower());
-        //telemetryManager.update("Front Right Motor Power", robot.frontRightMotor.getPower());
-        //telemetryManager.update("Back Left Motor Power", robot.backLeftMotor.getPower());
-        //telemetryManager.update("Back Right Motor Power", robot.backRightMotor.getPower());
-        //telemetryManager.update("Motor Left Position", robot.liftMotorLeft.getCurrentPosition());
-        //telemetryManager.update("Lift Motor Right Position", robot.liftMotorRight.getCurrentPosition());
-        //telemetryManager.update("Color Sensor red", colorSensor.getColor()[0]);
-        //telemetryManager.update("Color Sensor green", colorSensor.getColor()[1]);
-        //telemetryManager.update("Color Sensor blue", colorSensor.getColor()[2]);
-        //telemetryManager.update("Lift State", depositArmDrive.State().toString());
-        //telemetryManager.update("Servo Intake position", robot.IntakeServo.getPosition());
-        //telemetryManager.update("Servo Intake Arm position", robot.IntakeArmServo.getPosition());
-
+        // Telemetry
         telemetry.addData("deposit Left Arm Position", robot.depositLeftArmServo.getPosition());
         telemetry.addData("deposit Right Arm Position", robot.depositRightArmServo.getPosition());
         telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
         telemetry.addData("Control Mode", currentMode.name());
-        telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles());
+        telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
         telemetry.addData("Lift Mode", liftState.name());
         telemetry.addData("Intake State", intakestate.name());
         telemetry.update();
@@ -213,6 +188,6 @@ public class BasicTeleOps extends OpMode {
         robot.liftMotorLeft.setPower(0);
         robot.liftMotorRight.setPower(0);
         //robot.IntakeServo.setPosition(1.0);
-        telemetryManager.update("Status", "Robot stopped");
+        telemetry.addData("Status", "Robot stopped");
     }
 }
