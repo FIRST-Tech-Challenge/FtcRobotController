@@ -27,7 +27,7 @@ public class OuttakePivotAction {
     }
 
     public void moveOut() {
-        setPosition(0.05);
+        setPosition(0.0);
         isIn = false;
     }
 
