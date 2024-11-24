@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
+//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
@@ -25,7 +25,7 @@ public class SpecimenAndSampleAuto extends LinearOpMode {
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-    private ThreeDeadWheelLocalizer deadwheels;
+//    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -43,8 +43,8 @@ public class SpecimenAndSampleAuto extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "lift");
+//        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 0.6;
@@ -53,11 +53,14 @@ public class SpecimenAndSampleAuto extends LinearOpMode {
 
         waitForStart();
 //        claw.close(clawPos);
-        Actions.runBlocking(drive.actionBuilder(new Pose2d(12,-60,1.5708))
-//                .strafeToLinearHeading(new Vector2d(12,-60), Math.toRadians(-90))
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(12,-60,1.5708))
                 .lineToY(-36)
-                .turn(Math.toRadians(-90))
+//                .strafeTo(new Vector2d(-12,-36))
+//                .turn(Math.toRadians(180))
                 .build());
+
+
 
 //        while(opModeIsActive())
 //        {

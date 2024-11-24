@@ -76,7 +76,7 @@ public class LocalizationTest extends LinearOpMode {
                 //I want x to be parallel to the alliance areas and y to be
                 // perpendicular to the side of the field
                 telemetry.addData("x", drive.pose.position.y);
-                telemetry.addData("y", drive.pose.position.x);
+                telemetry.addData("y", -drive.pose.position.x);
                 telemetry.addData("Yaw (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
 

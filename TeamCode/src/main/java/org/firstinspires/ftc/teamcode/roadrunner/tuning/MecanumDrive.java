@@ -64,13 +64,13 @@ public class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
         // drive model parameters
-        public double inPerTick = 0.0029;
-        public double lateralInPerTick = 0.002277530025905959;
-        public double trackWidthTicks = 0;
+        public double inPerTick = 0.002;
+        public double lateralInPerTick = 0.002;
+        public double trackWidthTicks = 7220;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.9437468784893361;
-        public double kV = 0.0005;
+        public double kS = 0.99;
+        public double kV = 0.0003;
         public double kA = 0.00007;
 
         // path profile parameters (in inches)
@@ -83,9 +83,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = -60; // shared with turn
+        public double axialGain = 3.0;
+        public double lateralGain = 0.5;
+        public double headingGain = 0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -139,7 +139,7 @@ public class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
-            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+//               leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         @Override
@@ -241,8 +241,10 @@ public class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointOdometrySystem(hardwareMap, "odo");
+//        localizer = new PinpointOdometrySystem(hardwareMap, "odo");
 //        localizer = new ThreeDeadWheelLocalizer(hardwareMap);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        localizer = new TwoDeadWheelLocalizer(hardwareMap, imu);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
