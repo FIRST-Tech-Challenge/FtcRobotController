@@ -72,23 +72,23 @@ public class Teleop extends LinearOpMode {
 
             // ===== Gamepad 2 =====
             double intakeControl = gamepad2.right_trigger;
-            boolean outtakeControl = gamepad2.right_bumper;
+            double outtakeControl = gamepad2.left_trigger;
 
-            double extendOutControl = gamepad2.left_trigger;
-            boolean extendInControl = gamepad2.left_bumper;
+            boolean extendOutControl = gamepad2.dpad_up;
+            boolean extendInControl = gamepad2.dpad_down;
 
             boolean pivotUpControl = gamepad2.y;
             boolean pivotDownControl = gamepad2.a;
 
-            boolean groundIntakeControl = gamepad2.b;
+            boolean groundIntakeControl = gamepad2.dpad_right;
 
             boolean resetEncoderControl = gamepad2.x;
 
-            boolean extendSaveControl = gamepad2.dpad_down;
+            boolean extendSaveControl = gamepad2.dpad_left;
 
-            boolean homeArmControl = gamepad2.dpad_up;
-            boolean subIntakeLongControl = gamepad2.dpad_left;
-            boolean subIntakeShortControl = gamepad2.dpad_right;
+            boolean homeArmControl = gamepad2.b;
+            boolean subIntakeLongControl = gamepad2.left_bumper;
+            boolean subIntakeShortControl = gamepad2.right_bumper;
 
             // =====================
 
@@ -96,7 +96,7 @@ public class Teleop extends LinearOpMode {
             // === INTAKE ===
             if (intakeControl > 0.01) {
                 bot.setIntakePosition(-1.0);
-            } else if (outtakeControl) {
+            } else if (outtakeControl>0.01) {
                 bot.setIntakePosition(1.0);
             }
             //when no button is pressed, nothing rotates
@@ -166,7 +166,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // === EXTEND ===
-            if (extendOutControl > 0.01 && bot.getExtendPos() >= Bot.MAX_EXT) {
+            if (extendOutControl && bot.getExtendPos() >= Bot.MAX_EXT) {
                 bot.setExtendPower(-1.0);
             } else if (extendInControl && bot.getExtendPos() <= Bot.MIN_EXTEND) {
                 bot.setExtendPower(1.0);
