@@ -24,8 +24,8 @@ public class Lift{
     /**
      * Primary constructor for the Lift Subsystem Class
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
-     * @param nameLift [String] Name of the lift motor assigned in the configuration.
-     * @param nameEncoder [String] Name of the leftEncoder assigned in the configuration.
+     * @param leftLiftName [String] Name of the left lift motor assigned in the configuration.
+     * @param rightLiftName [String] Name of the right lift motor assigned in the configuration.
      */
     public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String leftEncoderName, String rightEncoderName){
         leftLift = hw.get(DcMotor.class, leftLiftName);
@@ -46,6 +46,11 @@ public class Lift{
         rightLift.setPower(1);
         leftLift.setPower(1);
 
+    }
+    public Lift(HardwareMap hw, String leftLiftName, String rightLiftName){
+        leftLift = hw.get(DcMotor.class, leftLiftName);
+        rightLift = hw.get(DcMotor.class, rightLiftName);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void moveLift(double power){
         leftLift.setPower(power);

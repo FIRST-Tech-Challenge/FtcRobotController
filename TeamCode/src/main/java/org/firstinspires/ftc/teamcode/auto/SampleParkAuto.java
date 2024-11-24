@@ -17,13 +17,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@Autonomous(name="Specimen and Park Auto")
-public class SpecimenAndParkAuto extends LinearOpMode {
+@Autonomous(name="Sample and Park Auto")
+public class SampleParkAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-//    private ThreeDeadWheelLocalizer deadwheels;
+    //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -51,25 +51,26 @@ public class SpecimenAndParkAuto extends LinearOpMode {
 
         waitForStart();
         claw.close(clawPos);
-        arm.setPosition(0.15);
-        lift.setPosition(-1200);
+        arm.setPosition(0);
+//        lift.setPosition(-2000);
         sleep(750);
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(12,-60,1.5708))
-                .lineToY(-26)
+                        .lineToY(-50)
+                        .turn(Math.toRadians(90))
                         .strafeTo(new Vector2d(6,-24))
-                .build());
-        lift.setPosition(-400);
-        sleep(750);
-        claw.release();
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(6,-24,1.5708))
-                        .lineToY(-45)
-                        .strafeTo(new Vector2d(110,-60))
                         .build());
-        sleep(500);
-        arm.setPosition(0);
-        lift.setPosition(0);
+//        lift.setPosition(-400);
+//        sleep(750);
+//        claw.release();
+//        Actions.runBlocking(
+//                drive.actionBuilder(new Pose2d(6,-24,1.5708))
+//                        .lineToY(-45)
+//                        .strafeTo(new Vector2d(110,-60))
+//                        .build());
+//        sleep(500);
+//        arm.setPosition(0);
+//        lift.setPosition(0);
 
 
 
@@ -80,3 +81,5 @@ public class SpecimenAndParkAuto extends LinearOpMode {
 
     }
 }
+
+
