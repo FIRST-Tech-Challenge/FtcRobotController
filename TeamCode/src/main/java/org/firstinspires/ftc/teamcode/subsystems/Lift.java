@@ -48,6 +48,11 @@ public class Lift{
         leftLift.setPower(1);
 
     }
+    public Lift(HardwareMap hw, String leftLiftName, String rightLiftName){
+        leftLift = hw.get(DcMotor.class, leftLiftName);
+        rightLift = hw.get(DcMotor.class, rightLiftName);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
     public void moveLift(double power){
         leftLift.setPower(power);
         rightLift.setPower(power);
@@ -56,6 +61,7 @@ public class Lift{
         return leftEncoder.getPositionAndVelocity().position;
     }
     public void setPosition(int targetPosition){
+
         leftLift.setTargetPosition(targetPosition);
         rightLift.setTargetPosition(targetPosition);
 
