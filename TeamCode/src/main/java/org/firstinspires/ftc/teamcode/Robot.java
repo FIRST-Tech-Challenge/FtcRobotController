@@ -23,7 +23,7 @@ public abstract class Robot extends LinearOpMode {
     public VisionPortal visionPortal;
     public Servo Ll, Rl, LA, RA, RC, Claw, LJ, RJ, ADL, ADR;
     public DcMotorEx FL, FR, BL, BR, RL, LL,  encoder1, encoder2, encoder3 ;
-    public TouchSensor RTS;
+    public TouchSensor RS;
     public int FL_Target, FR_Target, BL_Target, BR_Target;
     public final double[] tileSize            = {60.96, 60.96};  // Width * Length
     /* TETRIX Motor Encoder per revolution */
@@ -117,9 +117,23 @@ public abstract class Robot extends LinearOpMode {
             MovePower((y2 - x2 - r) / d * Move_Factor, (y2 + x2 + r) / d * Move_Factor,
                     (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
             double  curPos     = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double  Lift_Power = AtTargetRange(curPos, height, 10) ?  0 :
-                                              (curPos > height ?  -0.2    :  1);
+            double  Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -1 : 1;
+
             LiftPower(Lift_Power);
+
+            if (curPos > 50) {
+                SetServoPos(0.08, LA, RA);
+                SetServoPos(0.68, LJ, RJ);
+                SetServoPos(0, Claw);
+                continue;
+            }
+
+            if (curPos < 50) {
+                SetServoPos(0, LA, RA);
+                SetServoPos(1, LJ, RJ);
+                continue;
+            }
+
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             telemetry.addData("Move_Factor", Move_Factor);
             telemetry.addData("XY", "%6f cm %6f cm" , Posx, Posy);
@@ -131,6 +145,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
             telemetry.addData("Complete", IS_Complete);
+            telemetry.addData("lift", curPos);
             telemetry.update();
             if (Vx <= 0.1 && Vy <= 0.1 && r <= 0 && AtTargetRange(curPos, height, 10)) {
                 IS_Complete += 1;
@@ -204,7 +219,7 @@ public abstract class Robot extends LinearOpMode {
         Ll  = hardwareMap.get(Servo.class, "Left_link");         Rl  = hardwareMap.get(Servo.class, "Right_link");
         ADL = hardwareMap.get(Servo.class, "Adjust_left");       ADR = hardwareMap.get(Servo.class, "Adjust_right");
         RJ  = hardwareMap.get(Servo.class, "Right_joint");       LJ  = hardwareMap.get(Servo.class, "Left_joint");
-        RTS = hardwareMap.get(TouchSensor.class, "Right_touch");
+        RS = hardwareMap.get(TouchSensor.class, "Right_touch");
         Last_yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         encoder1 = FL;
         encoder2 = FR;
@@ -220,12 +235,13 @@ public abstract class Robot extends LinearOpMode {
         LJ.setDirection(Servo.Direction.REVERSE);
         ADR.setDirection(Servo.Direction.REVERSE);
         RC.setDirection(Servo.Direction.REVERSE);
+//        Claw.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
-        SetServoPos(0.2, LA, RA);
+        SetServoPos(0, LA, RA);
         SetServoPos(0, Ll, Rl);
         SetServoPos(1, LJ, RJ);
         SetServoPos(0.5, ADL, ADR);
-        SetServoPos(0, RC);
+        SetServoPos(0.12, RC);
         SetServoPos(0, Claw);
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

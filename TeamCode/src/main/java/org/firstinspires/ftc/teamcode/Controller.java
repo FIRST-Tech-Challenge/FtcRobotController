@@ -36,6 +36,7 @@ public class Controller {
         if (LastTime == 0) LastTime = CurrentTime;
         this.Dt         = CurrentTime - LastTime;
         this.LastTime    = CurrentTime;
+
         this.Error       = error;  // Error = Setpoint - Current
         boolean Is_Error_In_Tolerance = atSetpoint();
         if (Is_Error_In_Tolerance) {
