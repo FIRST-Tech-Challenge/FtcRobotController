@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
+package org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners;
 
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.CLOSE;
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.OPEN;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.*;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;

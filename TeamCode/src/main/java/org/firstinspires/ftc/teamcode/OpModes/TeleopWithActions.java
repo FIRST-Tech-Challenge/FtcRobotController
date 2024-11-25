@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.CLOSE;
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.OPEN;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners.clawState.CLOSE;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners.clawState.OPEN;
 import static org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension.extensionState.EXTEND;
 import static org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension.extensionState.RETRACT;
-
-import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
