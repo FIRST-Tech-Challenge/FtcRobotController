@@ -171,7 +171,10 @@ public class RobotMain {
         telemetry.update();
     }
 
-
+    public void readHubs() {
+        output.readAllComponents();
+        intake.readAllComponents();
+    }
 
     public static double dpadInputToChangeValueUpIsPositive(double currentValue, GamepadEx gamepadEx) {
         if (gamepadEx.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 @TeleOp
 public class ATeleop extends LinearOpMode {
@@ -73,6 +76,13 @@ public class ATeleop extends LinearOpMode {
         playerOne = new GamepadEx(gamepad1);
         playerTwo = new GamepadEx(gamepad2);
 
+        //Bulk Cache Read
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+
         waitForStart();
         bart.output.setComponentPositionsFromSavedPosition("rest");
 
@@ -89,15 +99,25 @@ public class ATeleop extends LinearOpMode {
 
             elapsedTime.reset();
 
+            //READ
+            playerOne.readButtons();
+            playerTwo.readButtons();
+            bart.readHubs();
+
+            //UPDATE
+            stateMachine();
+
+            //WRITE
+
+
             /** PLAYER ONE CONTROLS **/
             //drive
 
 
 
-            playerOne.readButtons();
-            playerTwo.readButtons();
 
-            stateMachine();
+
+
             bart.mecanaDruve.updatePoseEstimate();
 
 

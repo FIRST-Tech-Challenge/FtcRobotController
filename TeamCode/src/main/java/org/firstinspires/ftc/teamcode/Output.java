@@ -34,6 +34,7 @@ public class Output {
     double wristTargetRollDegrees;
     boolean open;
 
+
     //VALUES
     //possible slide values: 9.44882 (240mm) times 2
     //slide angle (relative to straight forward): 100
@@ -97,7 +98,9 @@ public class Output {
     }
 
 
-
+    public void readAllComponents() {
+        verticalSlides.readCurrentTicks();
+    }
 
     public void transfer(boolean isIntakeAtTarget) {
         //before intake is ready

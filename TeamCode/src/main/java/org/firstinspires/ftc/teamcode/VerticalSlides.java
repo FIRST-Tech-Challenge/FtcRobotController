@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class VerticalSlides {
 
     DcMotorEx front, back;
+    int currentTicks;
     double targetTicks;
     final double ALLOWED_ERROR_INCHES = 0.1;
     final double p = 0.01;
@@ -83,7 +84,11 @@ public class VerticalSlides {
         return ticksToInches(currentTicks());
     }
     public int currentTicks() {
-        return back.getCurrentPosition();
+        return currentTicks;
+    }
+
+    public void readCurrentTicks() {
+        currentTicks = back.getCurrentPosition();
     }
     public void setSlidePower(double power) {
         front.setPower(power);

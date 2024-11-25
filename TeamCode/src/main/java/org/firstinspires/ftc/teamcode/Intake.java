@@ -21,6 +21,7 @@ public class Intake {
 
     //-14 0
     //171 3
+    int horizontalSlidePosition;
 
     final double TICKS_PER_INCH = 61.666667;//175.5
     final double MIN_POINT = 6;
@@ -42,6 +43,12 @@ public class Intake {
 
         savedPositions.put("transfer", MIN_POINT);
         savedPositions.put("max", MAX_POINT);
+
+        horizontalSlidePosition = 0;
+    }
+
+    public void readAllComponents() {
+        horizontalSlidePosition = horizontalSlide.getCurrentPosition();
     }
 
     public void transfer() {
@@ -73,12 +80,12 @@ public class Intake {
     }
 
     public double currentInches() {
-        return ticksToInches(horizontalSlide.getCurrentPosition());
+        return ticksToInches(horizontalSlidePosition);
     }
 
     public void setHorizontalSlidePositionInches(double inches) {
         double tickTarget = inchesToTicks(RobotMath.maxAndMin(inches, 24, 6));
-        double error = tickTarget - horizontalSlide.getCurrentPosition();
+        double error = tickTarget - horizontalSlidePosition;
 
         horizontalSlide.setPower(0.01 * error);
     }

@@ -15,17 +15,17 @@ public class OutputEndPoint {
     public double armDegrees;
 
     //constants
-    final double WRIST_LENGTH = 3.268;
-    final double ARM_LENGTH = 13.3;
-    final double SLIDE_ANGLE_DEG = 100;
-    final double SLIDE_SLOPE = Math.sin(Math.toRadians(SLIDE_ANGLE_DEG)) / Math.cos(Math.toRadians(SLIDE_ANGLE_DEG));
-    final double SLIDE_MAX_EXTENSION = 18.89764;
-    final Point2d SLIDE_START_POINT = new Point2d(-5.56, 15.171);
-    final Point2d SLIDE_MIN_POINT = new Point2d(
+    static final double WRIST_LENGTH = 3.268;
+    static final double ARM_LENGTH = 13.3;
+    static final double SLIDE_ANGLE_DEG = 100;
+    static final double SLIDE_SLOPE = Math.sin(Math.toRadians(SLIDE_ANGLE_DEG)) / Math.cos(Math.toRadians(SLIDE_ANGLE_DEG));
+    static final double SLIDE_MAX_EXTENSION = 18.89764;
+    static final Point2d SLIDE_START_POINT = new Point2d(-5.56, 15.171);
+    static final Point2d SLIDE_MIN_POINT = new Point2d(
             SLIDE_START_POINT.x + SLIDE_MAX_EXTENSION*Math.cos(Math.toRadians(SLIDE_ANGLE_DEG)),
             SLIDE_START_POINT.y + SLIDE_MAX_EXTENSION*Math.sin(Math.toRadians(SLIDE_ANGLE_DEG))
     );
-    final double SLIDE_Y_INTERCEPT = SLIDE_START_POINT.y - SLIDE_SLOPE*SLIDE_START_POINT.x;
+    static final double SLIDE_Y_INTERCEPT = SLIDE_START_POINT.y - SLIDE_SLOPE*SLIDE_START_POINT.x;
 
     Point2d armPoint;
     Point2d slidePoint = new Point2d(0,0);
