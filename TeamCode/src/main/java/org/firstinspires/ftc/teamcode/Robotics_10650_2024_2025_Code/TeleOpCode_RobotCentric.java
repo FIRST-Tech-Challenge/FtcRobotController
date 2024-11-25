@@ -270,10 +270,10 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 //                robot.liftExtender(0, 0.3);
 //            }
-            if (liftPitchPosition<=2325&&liftPitchPosition>=0||
+            if (liftPitchPosition<=2325&&liftPitchPosition>=-600||
                     (liftPitchPosition>=2325&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
                     // maximum horizontal position and further (try something less than this)
-                    (liftPitchPosition<=0&&gamepad2.left_stick_y < 0)) {
+                    (liftPitchPosition<=-600&&gamepad2.left_stick_y < 0)) {
                 if(liftExtenderPosition > maxLifEtxtension) {
                     liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
                 }
@@ -307,8 +307,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
                 }
 
-                if(liftPitchPosition < 0) {
-                    liftPitchPosition = 0;
+                if(liftPitchPosition < -600) {
+                    liftPitchPosition = -600;
                 } else if(liftPitchPosition > 2300) {
                     liftPitchPosition = 2300;  //change to max lift xtension
                 }
@@ -399,7 +399,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
 
                 //Determines if the liftExtender should go up or down based on the controller inputs
-            if (liftExtenderPosition<=(5)&&robot.liftExtender.getCurrentPosition()<=(5)) {
+            if (liftExtenderPosition<=(5)&&robot.liftExtender.getCurrentPosition()<=(5)&&!gamepad2.right_bumper) {
                 //when down, save power
                 robot.liftExtender.setVelocity(0);
             }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
