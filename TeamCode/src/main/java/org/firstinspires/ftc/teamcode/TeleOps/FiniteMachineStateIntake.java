@@ -78,7 +78,7 @@ public class FiniteMachineStateIntake {
             case INTAKE_START:
                 // Debounce the button press for starting the lift extend
                 robot.intakeClawServo.setPosition(intake_Claw_Open);
-                if (gamepad.getButton(GamepadKeys.Button.DPAD_RIGHT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                if (gamepad && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     robot.intakeSlideServo.setPosition(intake_Slide_Extend);
                     robot.intakeRotationServo.setPosition(intake_Rotation_Mid);

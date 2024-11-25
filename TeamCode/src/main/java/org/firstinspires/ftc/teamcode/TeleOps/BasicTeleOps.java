@@ -90,15 +90,16 @@ public class BasicTeleOps extends OpMode {
         //robot configuration
 
         //gamepad
-        gamepadCo1 = new GamepadEx(gamepad2);
+        gamepadCo1 = new GamepadEx(gamepad1);
+        gamepadCo2 = new GamepadEx(gamepad2);
 
         //robotDrive
-        robotDrive = new RobotDrive(robot, gamepadCo1);   // Pass robot instance to RobotDrive
+        robotDrive = new RobotDrive(robot, gamepadCo1, gamepadCo2);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
 
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2,
                                                     deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
                                                     dumpTime, retractTime,
                                                     deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open,deposit_Claw_Close,
@@ -107,7 +108,7 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
                 intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
                 intake_slide_Retract, intake_slide_Extension, intake_Rotation,
                 intake_Claw_Open, intake_Claw_Close);
