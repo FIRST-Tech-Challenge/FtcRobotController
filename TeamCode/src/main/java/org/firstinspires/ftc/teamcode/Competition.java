@@ -31,6 +31,8 @@ public class Competition extends LinearOpMode {
         double y = 0;
         double rotation = 0;
 
+        double elevatorPower = 0;
+
         robot.init();  //Hardware configuration in RobotHardware.java
 
         waitForStart();
@@ -74,6 +76,16 @@ public class Competition extends LinearOpMode {
             rotation = gamepad1.right_stick_x; // Rotation
 
             robot.mecanumDrive(x, y, rotation);
+
+            if (gamepad1.dpad_up){
+                elevatorPower = 0.75;
+            } else if (gamepad1.dpad_down) {
+                elevatorPower = -0.50;
+            }
+            else
+                elevatorPower = 0;
+
+            robot.runElevator(elevatorPower);
 
             telemetry.update();
         }

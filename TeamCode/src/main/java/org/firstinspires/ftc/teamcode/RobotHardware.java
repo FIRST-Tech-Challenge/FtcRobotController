@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -110,6 +111,7 @@ public class RobotHardware {
         // Set Directions
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        elevatorLift.setDirection(DcMotor.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -190,6 +192,14 @@ public class RobotHardware {
         myOpMode.telemetry.update();
     }
 
+    /**
+     * Pass desired power to elevator
+     *
+     * @param elevatorPower Elevator Power
+     */
+    public void runElevator (double elevatorPower){
+        elevatorLift.setPower(elevatorPower);
+    }
 
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
