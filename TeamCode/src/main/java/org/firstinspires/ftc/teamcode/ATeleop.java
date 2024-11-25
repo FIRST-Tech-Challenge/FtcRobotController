@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -58,6 +59,11 @@ public class ATeleop extends LinearOpMode {
 
     GamepadEx playerOne, playerTwo;
 
+    ElapsedTime elapsedTime;
+
+    double loopTime;
+    double peakLoopTime;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //Camera
@@ -79,8 +85,12 @@ public class ATeleop extends LinearOpMode {
         //visionPortal.stopStreaming();
         cameraIsOn = false;
 
-        while (opModeIsActive()) {
+        elapsedTime = new ElapsedTime();
 
+        peakLoopTime = 0;
+
+        while (opModeIsActive()) {
+            elapsedTime.reset();
             /** PLAYER ONE CONTROLS **/
             //drive
 
@@ -102,7 +112,12 @@ public class ATeleop extends LinearOpMode {
             telemetry.addData("armServos", bart.output.arm.left.getPosition());
             telemetry.addData("\nslide power", bart.output.verticalSlides.back.getPower());
             telemetry.addData("p2rsy", playerTwo.getRightY());
+            loopTime = elapsedTime.milliseconds();
+            if (loopTime > peakLoopTime) peakLoopTime = loopTime;
+            telemetry.addData("Loop Time", loopTime);
+            telemetry.addData("Peak Loop Time", peakLoopTime);
             telemetry.update();
+
 
         }
 
@@ -262,7 +277,7 @@ public class ATeleop extends LinearOpMode {
         //OUTPUT CONTROL
         //manual output control
         if (playerTwo.getRightY() != 0) {
-            bart.output.verticalSlides.setSlidePower(0.5 * playerTwo.getRightY());
+            bart.output.verticalSlides.setSlidePower(-0.5 * playerTwo.getRightY());
             bart.output.setTargetToCurrentPosition();
         } else {
             //DONE AUTO
@@ -319,10 +334,10 @@ public class ATeleop extends LinearOpMode {
             bart.output.sendVerticalSlidesToTarget();
         } else {
             bart.output.verticalSlides.setSlidePower(0.5*playerTwo.getRightY());
-        }
+        }*/
         if (playerTwo.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bart.resetEncoders();
-        }*/
+        }
 
 
 
