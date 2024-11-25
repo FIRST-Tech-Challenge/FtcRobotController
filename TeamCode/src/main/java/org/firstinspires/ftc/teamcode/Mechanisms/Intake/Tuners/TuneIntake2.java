@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Tuners;
+package org.firstinspires.ftc.teamcode.Mechanisms.Intake.Tuners;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;

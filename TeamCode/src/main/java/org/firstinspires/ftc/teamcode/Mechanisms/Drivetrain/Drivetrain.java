@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
 import androidx.annotation.NonNull;
 
 import java.util.List;
@@ -234,6 +236,36 @@ public class Drivetrain {
                 telemetry.addData("uRb", motorController.uRb);
                 telemetry.addData("uRf", motorController.uRf);
                 telemetry.update();
+                return true;
+            }
+        };
+    }
+    public Action drive(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                double y = -gamepad1.left_stick_y;
+                double x = -gamepad1.left_stick_x;
+                double rx = gamepad1.right_stick_x;
+
+//                        if(gamepad2.right_stick_y > 0){
+//                            runningActions.add(arm.servoArm());
+//                        }
+                double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+                double frontLeftPower = (y - x + rx) / denominator;
+                double backLeftPower = (y + x + rx) / denominator;
+                double frontRightPower = (y + x - rx) / denominator;
+                double backRightPower = (y - x - rx) / denominator;
+
+                SimpleMatrix drivePowers = new SimpleMatrix(
+                        new double[][]{
+                                new double[]{frontLeftPower},
+                                new double[]{backLeftPower},
+                                new double[]{backRightPower},
+                                new double[]{frontRightPower}
+                        }
+                );
+                setPower(drivePowers);
                 return true;
             }
         };

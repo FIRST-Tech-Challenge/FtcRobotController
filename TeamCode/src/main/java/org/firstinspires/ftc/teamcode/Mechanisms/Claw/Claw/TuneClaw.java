@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Tuners;
+package org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 
 
 import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.CLOSE;
