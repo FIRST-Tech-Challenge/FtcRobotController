@@ -130,7 +130,7 @@ public class FiniteMachineStateArm {
                 break;
             case LIFT_RETRACT:
                 // Check if the lift has reached the low position
-                if(liftTimer.seconds()>= RETRACT_TIME) {
+                if(servo_AtPosition(CLAW_OPEN) && liftTimer.seconds()>= RETRACT_TIME) {
                     robot.liftMotorLeft.setTargetPosition(LIFT_LOW); // Start retracting the lift
                     robot.liftMotorRight.setTargetPosition(LIFT_LOW); // Start retracting the lift
                     robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -174,6 +174,10 @@ public class FiniteMachineStateArm {
     // Helper method to check if the lift is within the desired position threshold
     private boolean isLiftAtPosition(int targetPosition) {
         return Math.abs(robot.liftMotorLeft.getCurrentPosition() - targetPosition) < 5 && Math.abs(robot.liftMotorRight.getCurrentPosition() - targetPosition) < 5;
+    }
+
+    private boolean servo_AtPosition(double servoClawPosition) {
+        return Math.abs(robot.depositClawServo.getPosition() - servoClawPosition) < 0.01;
     }
     LiftState State(){
         return liftState;
