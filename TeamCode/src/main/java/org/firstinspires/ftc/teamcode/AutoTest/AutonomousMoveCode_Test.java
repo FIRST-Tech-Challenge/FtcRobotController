@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.AutoTest;
 
-import android.transition.Slide;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.TeleOps.BasicTeleOps;
-import org.firstinspires.ftc.teamcode.TeleOps.FiniteMachineStateIntake;
 
-@Autonomous(name="AutonomousMoveCode", group="org.firstinspires.ftc.teamcode")
-public class AutonomousMoveCode extends LinearOpMode {
+@Autonomous(name="AutonomousMoveCode_Test", group="org.firstinspires.ftc.teamcode")
+public class AutonomousMoveCode_Test extends LinearOpMode {
     private RobotHardware robot = new RobotHardware();
 
     private ElapsedTime         runtime = new ElapsedTime();
@@ -113,72 +111,31 @@ public class AutonomousMoveCode extends LinearOpMode {
         waitForStart();
 
         //Segment 1 movement
-        driveToPosition(first_forward, speed,15);
+        driveToPosition(-440, 0.4,15);
 
-        // Action 1 - move the intake away
-        robot.intakeLeftArmServo.setPosition(0.1);
-        robot.intakeRightArmServo.setPosition(0.1);
+        driveToPosition(-50,0.4,15);
 
-        //Action 2.1 - rise up the verticla slide
-        Slides_Move(56.5,0.5); //Ris up the vertical slide
-        //Action 2.2 - set the position for deposit arm for hung
-        robot.depositLeftArmServo.setPosition(0.8);
-        robot.depositRightArmServo.setPosition(0.8);
-        robot.depositWristServo.setPosition(0.3);
-        sleep(1500);
+        driveToPosition(250,0.4,15);
 
-        //Segment 2 movement
-        driveToPosition(-158,0.2,15);
-        sleep(500);
+        strafeToPosition(1150,0.4,15);
 
-        //Action 3 + Segment 3 - release the deposit and backward and reset the depsoit.
-        robot.depositClawServo.setPosition(0.11);
-        driveToPosition(300,0.2, 10);
-        robot.depositLeftArmServo.setPosition(0);
-        robot.depositRightArmServo.setPosition(0);
-        robot.depositWristServo.setPosition(deposit_Wrist_retract_Pos);
-        sleep(500);
+        telemetry.addData("first turn", "ready");
+        telemetry.update();
+        turnToAngle(80,0.2);
+        double heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        telemetry.addData("heading", -1*heading);
+        telemetry.update();
+        sleep(1000);
 
-        //Retract deposit slides
-        Slides_Move(3,0.5);
+        telemetry.addData("second turn", "ready");
+        telemetry.update();
+        turnToAngle(170 ,0.2);
 
-        //Segment 4: Move to yellow sample
-        turnToAngle(-175,0.1);
-        strafeToPosition(-1200,0.1);
-
-
-        //Action 4: Grab Yellow Sample
-        robot.intakeSlideServo.setPosition(0.35);
         robot.intakeClawServo.setPosition(intake_Claw_Open);
         robot.intakeLeftArmServo.setPosition(0);
         robot.intakeRightArmServo.setPosition(0);
         sleep(2000);
 
-        robot.intakeClawServo.setPosition(intake_Claw_Close);//Close the claw and grab sample
-        robot.depositClawServo.setPosition(deposit_Claw_Open);
-        sleep(1000);
-
-        //Retract Intake
-        robot.intakeLeftArmServo.setPosition(intake_Arm_retract);//Flip Intake arm back
-        robot.intakeRightArmServo.setPosition(intake_Arm_retract);
-        robot.intakeSlideServo.setPosition(intake_slide_Retract);
-        sleep(1000);
-
-
-        turnToAngle(45,0.2);
-
-        //Segment 5 Movement
-
-        driveToPosition(-290,0.2,10);
-
-        //Transfer sample from Intake to Deposit
-        robot.intakeClawServo.setPosition(intake_Claw_Open);
-        sleep(200);
-        robot.depositClawServo.setPosition(BasicTeleOps.deposit_Claw_Close);
-        robot.intakeLeftArmServo.setPosition(0.1);
-        robot.intakeRightArmServo.setPosition(0.1);
-
-        //
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
@@ -211,7 +168,10 @@ public class AutonomousMoveCode extends LinearOpMode {
         // Wait until the robot reaches the target position
         while (opModeIsActive() &&
                 (runtime.seconds() < timeoutS) &&
-                (robot.frontLeftMotor.isBusy() && robot.frontRightMotor.isBusy() && robot.backLeftMotor.isBusy() && robot.backRightMotor.isBusy())) {
+                (robot.frontLeftMotor.isBusy() &&
+                        robot.frontRightMotor.isBusy() &&
+                        robot.backLeftMotor.isBusy() &&
+                        robot.backRightMotor.isBusy())) {
             // display
             telemetry.addData("Motor Position", "Left: %d, Right: %d",
                     robot.frontLeftMotor.getCurrentPosition(), robot.frontRightMotor.getCurrentPosition());
@@ -234,10 +194,8 @@ public class AutonomousMoveCode extends LinearOpMode {
     /**
      strafing
      **/
-    private void strafeToPosition(double dist_mm, double speed) {
+    private void strafeToPosition(double dist_mm, double speed, double timeoutS) {
         int targetPosition = (int)(dist_mm * COUNTS_PER_MM_Drive);
-
-
 
         // Set target position for both motors
         robot.frontLeftMotor.setTargetPosition(robot.frontLeftMotor.getCurrentPosition() + targetPosition);
@@ -252,13 +210,14 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set motor power
+        runtime.reset();
         robot.frontLeftMotor.setPower(speed);
         robot.frontRightMotor.setPower(speed);
         robot.backLeftMotor.setPower(speed);
         robot.backRightMotor.setPower(speed);
 
         // Wait until the robot reaches the target position
-        while (opModeIsActive() &&
+        while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
                 (robot.frontLeftMotor.isBusy()
                         && robot.frontRightMotor.isBusy()
                         && robot.backLeftMotor.isBusy()
@@ -274,6 +233,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backLeftMotor.setPower(0);
         robot.backRightMotor.setPower(0);
 
+        // Reset to RUN_USING_ENCODER mode
         robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -286,13 +246,14 @@ public class AutonomousMoveCode extends LinearOpMode {
      */
     private void turnToAngle(double targetAngle, double speed) {
         // Reset the IMU angle
-        robot.initIMU();
-        sleep(1000);
-        double currentAngle = getHeading();
-        intakeTimer.reset();
+
+        //Get the current hading from the IMU
+        double currentAngle = -getHeading();
+        /**
         while (opModeIsActive() && intakeTimer.seconds() < 10){
             telemetry.addData("Heading",currentAngle);
         }
+         **/
 
         while (opModeIsActive() && Math.abs(targetAngle - currentAngle) > 1.5) { // Tolerance of 1 degree
             double turnDirection = Math.signum(targetAngle - currentAngle); // Positive for clockwise, negative for counter-clockwise
@@ -304,7 +265,7 @@ public class AutonomousMoveCode extends LinearOpMode {
             robot.backRightMotor.setPower(-turnDirection * speed);
 
             // Update the current angle
-            currentAngle = getHeading();
+            currentAngle = -getHeading();
 
             telemetry.addData("Current Angle", currentAngle);
             telemetry.addData("Turn Direction", turnDirection);
@@ -321,6 +282,13 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
         robot.backRightMotor.setPower(0);
+
+        // Reset to RUN_USING_ENCODER mode
+        robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         sleep(1000);
     }
 
@@ -330,7 +298,7 @@ public class AutonomousMoveCode extends LinearOpMode {
      * @return The heading angle in degrees
      */
     private double getHeading() {
-        double adjustedHeading =  robot.imu.getRobotYawPitchRollAngles().getYaw();
+        double adjustedHeading =  robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         if (adjustedHeading > 180) {
             adjustedHeading -= 360;
         } else if (adjustedHeading < -180) {

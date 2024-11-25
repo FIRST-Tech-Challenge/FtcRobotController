@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS", group = "OpMode")
+@TeleOp(name = "TeleOps_Mecanum_FMS", group = "org.firstinspires.ftc.teamcode")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
