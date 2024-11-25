@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import static org.firstinspires.ftc.teamcode.robot.Hobbes.Hobbes.MARCO.TELEOP;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_INTAKE_ANGLED;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_OUT_SOME;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_INTAKE_ANGLED;
@@ -31,9 +32,9 @@ public class parker extends LinearOpMode {
         hob = new Hobbes();
         hob.init(hardwareMap);
         // SET MACROS TO TELEOP MACROS
-        hob.setMacros(macros);
+        hob.setMacros(TELEOP);
         waitForStart();
-        hob.setup();
+        hob.servosController.setup();
         hob.runMacro("EXTEND");
         timer.reset();
         while (timer.milliseconds() < 5000) hob.tick();
