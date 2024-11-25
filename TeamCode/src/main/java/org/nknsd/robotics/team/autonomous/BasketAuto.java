@@ -89,7 +89,6 @@ public class BasketAuto extends NKNProgram {
         AutoStepRelativeMove moveToPickup = new AutoStepRelativeMove(0, 0.3, 400);
 
         AutoStepAbsoluteControl pickUpSecondYellow = new AutoStepAbsoluteControl(-0.0716, 1.6, -90);
-
         AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2.2, 90);
         AutoStepMove driveInToPark = new AutoStepMove(0.58, 0);
 
@@ -122,8 +121,11 @@ public class BasketAuto extends NKNProgram {
         // Get second block
         stepList.add(slowSpeed);
         stepList.add(pickUpFirstYellow);
-        stepList.add(gripBlock);
+        stepList.add(neutralServo);
         stepList.add(rotateToPickup);
+        stepList.add(moveToPickup);
+        stepList.add(sleep);
+        stepList.add(gripBlock);
         stepList.add(moveToPickup);
         stepList.add(sleep);
         stepList.add(rotateToRest);
@@ -132,6 +134,7 @@ public class BasketAuto extends NKNProgram {
         stepList.add(normalSpeed);
         stepList.add(orientToBasket);
         stepList.add(rotateToHigh);
+        stepList.add(sleep);
         stepList.add(extendToHigh);
         stepList.add(releaseBlock);
         stepList.add(backAwayFromBasket);

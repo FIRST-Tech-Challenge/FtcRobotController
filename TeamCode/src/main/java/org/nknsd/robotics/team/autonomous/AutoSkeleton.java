@@ -173,6 +173,14 @@ public class AutoSkeleton {
         return false;
     }
 
+    public void runMotorsDirectly(double y, double x, double turning) {
+        wheelHandler.relativeVectorToMotion(y, x, turning);
+    }
+
+    public void freeze() {
+        wheelHandler.relativeVectorToMotion(0, 0, 0);
+    }
+
     public void setServoPower(IntakeSpinnerHandler.HandStates handState) {
         intakeSpinnerHandler.setServoPower(handState);
     }
