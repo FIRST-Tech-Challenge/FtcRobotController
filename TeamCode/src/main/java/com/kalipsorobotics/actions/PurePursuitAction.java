@@ -93,15 +93,15 @@ public class PurePursuitAction extends Action {
 //        opModeUtilities.getTelemetry().addData("direction error", directionError);
 
         double xError = Math.cos(directionError) * distanceToTarget;
-        double powerX = Range.clip(pidX.getPower(xError), -1, 1);
+        double powerX = pidX.getPower(xError);
         Log.d("purepursx", "set x " + powerX);
 
         double yError = Math.sin(directionError) * distanceToTarget;
         Log.d("purepursy", "yerror " + yError);
-        double powerY = Range.clip(pidY.getPower(yError), -1, 1);
+        double powerY = pidY.getPower(yError);
         Log.d("purepursy", "set y " + powerY);
 
-        double powerAngle = Range.clip(pidAngle.getPower(angleError), -1, 1);
+        double powerAngle = pidAngle.getPower(angleError);
 //        if(Math.abs(angleError) < 0.5) {
 //            powerAngle = 0;
 //        }

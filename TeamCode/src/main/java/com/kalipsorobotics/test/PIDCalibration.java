@@ -35,16 +35,11 @@ public class PIDCalibration extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, 0);
 
-        ActionSet set = getActionSet(driveTrain, odometry);
         waitForStart();
 
-        HashMap<DriveTrainAction, ArrayList<Double>> errorLogs = new HashMap<>();
-        for (Action action : set.getActions()) {
-            errorLogs.put((DriveTrainAction) action, new ArrayList<>());
-        }
-
-        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, odometry);
+        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, odometry, 0);
         PIDController globalController = action.getPidController();
+
         int i = 0;
         double accumulatedError = 0.;
         double prevError = 0;
@@ -54,8 +49,8 @@ public class PIDCalibration extends LinearOpMode {
             odometry.updatePosition();
             action.updateCheckDone();
             if (action.getIsDone()) {
-                String tag = String.format("ILC %s", globalController.getName());
                 i++;
+                String tag = String.format("ILC %s", globalController.getName());
 
                 double currentTime = SystemClock.elapsedRealtime();
                 double error = action.getRemainingDistance();
@@ -72,7 +67,8 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKp(deltaKP);
                 globalController.chKi(deltaKI);
                 globalController.chKd(deltaKD);
-                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, odometry);
+
+                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, odometry, 0);
                 action.setPidController(globalController);
 
                 Log.d(tag, globalController.toString());
@@ -87,30 +83,5 @@ public class PIDCalibration extends LinearOpMode {
 
             }
         }
-    }
-
-    private double[] calcErrors(DriveTrainAction action, Odometry odometry, HashMap<DriveTrainAction, ArrayList<Double>> errorLogs) {
-        double error = action.getRemainingDistance();
-        double deltaTime = odometry.deltaTime();
-        errorLogs.get(action).add(error);
-
-        ArrayList<Double> errorLog = errorLogs.get(action);
-        double accumulatedError = errorLog.stream().mapToDouble(Double::doubleValue).sum();
-        double previousError = errorLog.size() > 1
-                ? errorLog.get(errorLog.size() - 2)
-                : 0.;
-        double errorRate = (error - previousError) / deltaTime;
-        return new double[]{error, accumulatedError, errorRate};
-    }
-
-    @NonNull
-    private static ActionSet getActionSet(DriveTrain driveTrain, Odometry odometry) {
-        ActionSet set = new ActionSet();
-        set.scheduleSequential(new MoveRobotStraightInchesAction(24, driveTrain, odometry));
-        set.scheduleSequential(new MoveRobotStraightInchesAction(-24, driveTrain, odometry));
-        set.scheduleSequential(new MoveRobotStraightInchesAction(24, driveTrain, odometry));
-        set.scheduleSequential(new MoveRobotStraightInchesAction(-24, driveTrain, odometry));
-
-        return set;
     }
 }

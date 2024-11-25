@@ -5,6 +5,7 @@ import android.util.Log;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.PID.PIDController;
+import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MoveRobotStraightInchesAction extends DriveTrainAction {
@@ -15,13 +16,18 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     double targetInches;
     double currentInches;
     double remainingDistance;
+    double currentTheta;
+    double targetTheta;
+    double thetaOffset;
 
-    public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, Odometry odometry) {
+    public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, Odometry odometry, double targetTheta) {
         this.dependentAction = new DoneStateAction();
-        this.pidController = new PIDController(0.101562, -0.008385, -0.000006, "straight");
+        this.pidController = new PIDController(0.309011, 0.000380, 0.000015, "straight");
         this.driveTrain = driveTrain;
         this.odometry = odometry;
         this.targetInches = targetInches;
+        this.targetTheta = targetTheta;
+        currentTheta = odometry.countTheta();
     }
 
     public PIDController getPidController() {
@@ -48,7 +54,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     public boolean checkDoneCondition() {
         refreshRemainingDistance();
         Log.d("straight", "current error is " + remainingDistance);
-        if (Math.abs(remainingDistance) <= ERROR_TOLERANCE) {
+        if (Math.abs(remainingDistance) <= ERROR_TOLERANCE && Math.abs(thetaOffset) <= Math.toRadians(1)) {
             driveTrain.setPower(0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             Log.d("straight","isdone true");
@@ -64,18 +70,38 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         this.currentInches = odometry.countX();
         refreshRemainingDistance();
 
-        if(!hasStarted) {
+        if (!hasStarted) {
             this.targetInches += currentInches;
             Log.d("straight","target inches is " + this.targetInches);
             hasStarted = true;
         }
 
-        if(!getIsDone()){
-            double power = pidController.calculate(remainingDistance);
-            if (Math.abs(power) < minPower) {
-                power = power < 0 ? -minPower : minPower;
+        if (!getIsDone()) {
+            double linearPower = pidController.calculate(remainingDistance);
+            if (Math.abs(linearPower) < minPower) {
+                linearPower = linearPower < 0 ? -minPower : minPower;
             }
-            driveTrain.setPower(power);
+
+            thetaOffset = odometry.countTheta() - currentTheta;
+            double rotationPower = 0;
+            if (Math.abs(thetaOffset) > Math.toRadians(1)) {
+                rotationPower = -thetaOffset * 0.25;
+            }
+            currentTheta = odometry.countTheta();
+            Log.d("ILC str rotation", String.format("Theta offset %s, Rotation Power %s", thetaOffset, rotationPower));
+
+            double fLeft = linearPower + rotationPower;
+            double fRight = linearPower - rotationPower;
+            double bLeft = linearPower + rotationPower;
+            double bRight = linearPower - rotationPower;
+            double biggest = MathFunctions.maxAbsValueDouble(fLeft, fRight, bLeft, bRight);
+            if (biggest > 1) {
+                fLeft /= biggest;
+                fRight /= biggest;
+                bLeft /= biggest;
+                bRight /= biggest;
+            }
+            driveTrain.setPower(fLeft, fRight, bLeft, bRight);
         }
         else {
             driveTrain.setPower(0);
