@@ -52,17 +52,20 @@ public class SampleParkAuto extends LinearOpMode {
         waitForStart();
         claw.close(clawPos);
         arm.setPosition(0);
-//        lift.setPosition(-2000);
-        sleep(750);
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(12,-60,1.5708))
-                        .lineToY(-50)
-                        .turn(Math.toRadians(90))
-                        .strafeTo(new Vector2d(6,-24))
+                        .lineToY(-52)
+                        .strafeTo(new Vector2d(-1,-50))
+                        .turn(Math.toRadians(110))
                         .build());
-//        lift.setPosition(-400);
-//        sleep(750);
-//        claw.release();
+        lift.setPosition(-4500);
+        sleep(3000);
+        arm.setPosition(0.1);
+        sleep(500);
+        claw.release();
+        sleep(500);
+        arm.setPosition(0);
+        lift.setPosition(0);
 //        Actions.runBlocking(
 //                drive.actionBuilder(new Pose2d(6,-24,1.5708))
 //                        .lineToY(-45)
