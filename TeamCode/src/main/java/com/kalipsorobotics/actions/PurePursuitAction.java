@@ -42,9 +42,9 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(0.03, 0, 0);
-        this.pidY = new PidNav(0.03, 0, 0);
-        this.pidAngle = new PidNav(0.2, 0, 0);
+        this.pidX = new PidNav(0.015, 0, 0);
+        this.pidY = new PidNav(0.025, 0, 0);
+        this.pidAngle = new PidNav(0.11, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
         //0.001, 0.001, 0.4 behavior: turns and then does not move
@@ -125,6 +125,35 @@ public class PurePursuitAction extends Action {
             bRightPower /= biggestPower;
         }
         //92.66611361922297, -235.81741858351225
+
+        if(Math.abs(fLeftPower) < 0.15) {
+            if (fLeftPower < 0) {
+                fLeftPower += -0.05;
+            } else {
+                fLeftPower += 0.05;
+            }
+        }
+        if(Math.abs(fRightPower) < 0.15) {
+            if (fRightPower < 0) {
+                fRightPower += -0.05;
+            } else {
+                fRightPower += 0.05;
+            }
+        }
+        if(Math.abs(bLeftPower) < 0.15) {
+            if (bLeftPower < 0) {
+                bLeftPower += -0.05;
+            } else {
+                bLeftPower += 0.05;
+            }
+        }
+        if(Math.abs(bRightPower) < 0.15) {
+            if (bRightPower < 0) {
+                bRightPower += -0.05;
+            } else {
+                bRightPower += 0.05;
+            }
+        }
 
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);

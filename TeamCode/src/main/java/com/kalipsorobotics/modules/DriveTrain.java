@@ -119,8 +119,17 @@ public class DriveTrain {
         if (reCalibrate) { otos.calibrateImu(); }
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.RADIANS);
-        otos.setOffset(new SparkFunOTOS.Pose2D(0, 0.5, heading));
-        otos.setLinearScalar(24/(0.5 * (22.1072219488189 + 21.374319482037404)));
+        otos.setOffset(new SparkFunOTOS.Pose2D(0, -11/16, heading));
+        //8 1/2, 7 1/8
+
+        double scalar = 24/(0.5 * (25.76732634075329 + 25.554219026496753));
+        scalar += 24/(0.5 * (22.895127085813417 + 20.60628957172073));
+        scalar += 24/(0.5 * (21.696835597286775 + 20.874440832893924));
+        scalar += 24/(0.5 * (22.1072219488189 + 21.374319482037404));
+
+        scalar /= 4;
+
+        otos.setLinearScalar(scalar);
 
         Log.d("sparkfun", "reset data");
         //7, 8
@@ -128,6 +137,9 @@ public class DriveTrain {
 
         //7 1/2, 7 1/2
 
+        //25.76732634075329 25.554219026496753
+        //22.895127085813417 20.60628957172073
+        //21.696835597286775 20.874440832893924
         //22.1072219488189  21.374319482037404 0.0022
         //24 24
     }
