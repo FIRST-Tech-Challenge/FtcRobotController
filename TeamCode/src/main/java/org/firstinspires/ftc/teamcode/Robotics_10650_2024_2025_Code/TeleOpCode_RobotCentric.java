@@ -206,9 +206,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
             if (Math.abs(robot.liftPitch.getCurrentPosition()-liftPitchPosition)>50){
                 if (robot.liftPitch.getCurrentPosition()<liftPitchPosition){
-                    robot.liftPitch.setVelocity(2250);
+                    robot.liftPitch.setVelocity(2150);
                 } else if (robot.liftPitch.getCurrentPosition()>= liftPitchPosition) {
-                    robot.liftPitch.setVelocity(-2250);
+                    robot.liftPitch.setVelocity(-2150);
                     if (liftPitchPosition>1500){
                         robot.liftPitch.setVelocity(-2450);
                     }
@@ -278,16 +278,16 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                     liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
                 }
                 //determines where the lift pitch goes
-                if (gamepad2.left_stick_y > 0.2) {//going down
+                if (gamepad2.left_stick_y < -0.2) {//going up
 
-                    liftPitchPosition = liftPitchPosition - 25;
+                    liftPitchPosition = liftPitchPosition - 35;
                     if (liftPitchPosition>1500){
-                        liftPitchPosition = liftPitchPosition - 15;
+                        liftPitchPosition = liftPitchPosition - 25;
                     }
 
 
-                } else if (gamepad2.left_stick_y< -0.2) {//going up
-                    liftPitchPosition = liftPitchPosition + 25;
+                } else if (gamepad2.left_stick_y>0.2) {//going down
+                    liftPitchPosition = liftPitchPosition + 40;
 
 
                     //if it is a t a really low point
@@ -327,6 +327,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
             //find positon for extension
             telemetry.addData("lift extender pos", robot.liftExtender.getCurrentPosition());
+            telemetry.addData("lift extender target pos", liftExtenderPosition);
+
             telemetry.addData("lift pitch pos", robot.liftPitch.getCurrentPosition());
 
 
@@ -337,7 +339,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (pitchAngle>=31.25){
                 maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
             } else{
-                maxLifEtxtension = 2780;
+                maxLifEtxtension = 3100;
 
             }
 
@@ -364,12 +366,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("pitch angle", (robot.liftPitch.getCurrentPosition()*90)/2595);
             telemetry.addData("pitch angle", pitchAngle);
 
-            if (pitchAngle>=31.25){
-                maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
-            } else{
-                maxLifEtxtension = 2780;
 
-            }
 
 
 
@@ -393,7 +390,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 } else if(liftExtenderPosition > maxLifEtxtension) {
                     liftExtenderPosition = (int) maxLifEtxtension;  //change to max lift xtension
                 }
-                x = liftExtenderPosition;
 
             }
 
