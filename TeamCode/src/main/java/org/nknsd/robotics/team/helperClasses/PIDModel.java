@@ -60,6 +60,10 @@ public class PIDModel {
         double i = errCumulative * kI;
         telemetry.addData("I", i);
 
+        if (i * p < 0) { // If i is trying to move in the wrong direction, reset it
+            errCumulative = 0;
+        }
+
         // D
         double d = 0;
         if (lastCall != 0) {

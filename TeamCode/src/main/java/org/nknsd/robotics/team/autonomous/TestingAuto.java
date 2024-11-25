@@ -4,6 +4,7 @@ import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.autoSteps.AutoStepMove;
+import org.nknsd.robotics.team.autoSteps.AutoStepMoveNRotate;
 import org.nknsd.robotics.team.autoSteps.AutoStepSleep;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.FlowSensorHandler;
@@ -29,13 +30,13 @@ public class TestingAuto extends NKNProgram {
 
         AutoHeart autoHeart = new AutoHeart(stepList);
         components.add(autoHeart);
-        telemetryEnabled.add(autoHeart);
+        //telemetryEnabled.add(autoHeart);
 
 
         // Sensors
         FlowSensorHandler flowSensorHandler = new FlowSensorHandler();
         components.add(flowSensorHandler);
-        telemetryEnabled.add(flowSensorHandler);
+        //telemetryEnabled.add(flowSensorHandler);
 
         IMUComponent imuComponent = new IMUComponent();
         components.add(imuComponent);
@@ -73,15 +74,18 @@ public class TestingAuto extends NKNProgram {
         AutoStepMove left1 = new AutoStepMove(-1, 0);
         AutoStepMove up1 = new AutoStepMove(0, 1);
         AutoStepMove down1 = new AutoStepMove(0, -1);
-        AutoStepSleep sleep = new AutoStepSleep(1500);
+        AutoStepMoveNRotate turn1 = new AutoStepMoveNRotate(0, 0, 90);
+        AutoStepMoveNRotate turn2 = new AutoStepMoveNRotate(0, 0, 0);
+        AutoStepSleep sleep = new AutoStepSleep(500);
 
-//        stepList.add(right1);
-//        stepList.add(sleep);
-//        stepList.add(left1);
-//        stepList.add(sleep);
         stepList.add(up1);
+        stepList.add(turn1);
         stepList.add(sleep);
-//        stepList.add(down1);
+        stepList.add(right1);
+        stepList.add(turn2);
+        stepList.add(sleep);
+        stepList.add(sleep);
+        stepList.add(left1);
 
         autoHeart.linkSteps(stepList, autoSkeleton);
     }
