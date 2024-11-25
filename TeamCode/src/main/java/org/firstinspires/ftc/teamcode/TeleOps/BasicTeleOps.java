@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
@@ -27,7 +28,11 @@ public class BasicTeleOps extends OpMode {
     public RobotHardware robot;                     // Bring in robot hardware configuration
 
     public GamepadEx gamepadCo1;                    //For gamepad
-    //public GamepadEx gamepadCo2;
+    public GamepadEx gamepadCo2;
+
+    public Gamepad gamepad1;
+    public Gamepad gamepad_2;
+
 
     //Robot drive
     public RobotDrive robotDrive;                   //For robot drive
@@ -74,7 +79,7 @@ public class BasicTeleOps extends OpMode {
     public static double dumpTime                       = 1.8;
     public static double retractTime                    = 3.2;
 
-    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
+    public static int deposit_Slide_UpLiftPower      = 1;  //slides power
     public static double downLiftPower                  = 0.7;  //slides power
 
     
@@ -102,9 +107,9 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2,
                                                     deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
                                                     dumpTime, retractTime,
-                                                    deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open,deposit_Claw_Close,
+                                                    deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open, deposit_Claw_Close,
                                                     deposit_Slide_down_Pos,deposit_Slide_Highbasket_Pos,
-                                                    deposit_Slide_UpLiftPower,downLiftPower); // Pass parameters as needed);
+                                                    deposit_Slide_UpLiftPower, downLiftPower); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control

@@ -6,16 +6,15 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 public class FiniteMachineStateIntake {
-    private final GamepadEx gamepad;
+    private final GamepadEx gamepad_1;
+    private final GamepadEx gamepad_2;
     private final RobotHardware robot;
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
 
@@ -33,12 +32,14 @@ public class FiniteMachineStateIntake {
     private double intakeArmPosition;
     private double rotationPosition;
 
-    public FiniteMachineStateIntake(RobotHardware robot, GamepadEx gamepad,
+    public FiniteMachineStateIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2,
                                     double intake_Arm_Idle, double intake_Arm_Pick,double intake_Arm_Trans,
                                     double intake_Slide_Retract, double intake_Slide_Extend,
                                     double intake_Rotation_Mid,
                                     double intake_Claw_Open, double intake_Claw_Close) {
-        this.gamepad = gamepad;
+        this.gamepad_1 = gamepad_1;
+        this.gamepad_2 = gamepad_2;
+
         this.robot = robot;
 
         this.intake_Arm_Idle = intake_Arm_Idle;
@@ -78,7 +79,7 @@ public class FiniteMachineStateIntake {
             case INTAKE_START:
                 // Debounce the button press for starting the lift extend
                 robot.intakeClawServo.setPosition(intake_Claw_Open);
-                if (gamepad && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                if (gamepad_1.getButton(DPAD_RIGHT) || gamepad_2.getButton(DPAD_RIGHT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     robot.intakeSlideServo.setPosition(intake_Slide_Extend);
                     robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
@@ -97,7 +98,7 @@ public class FiniteMachineStateIntake {
                 if (intakeTimer.seconds()> 0.5) {
 
                     // claw rotation
-                    if (gamepad.getButton(LEFT_BUMPER) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                    if (gamepad_1.getButton(LEFT_BUMPER) || gamepad_2.getButton(LEFT_BUMPER) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         //use to be 0.01
                         rotationPosition += 0.05;
@@ -105,7 +106,7 @@ public class FiniteMachineStateIntake {
                         robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
                     }
                     //claw rotation
-                    if (gamepad.getButton(RIGHT_BUMPER) && (debounceTimer.seconds() > DEBOUNCE_THRESHOLD)) {
+                    if (gamepad_1.getButton(RIGHT_BUMPER) || gamepad_2.getButton(RIGHT_BUMPER) && (debounceTimer.seconds() > DEBOUNCE_THRESHOLD)) {
                         debounceTimer.reset();
                         //use to be 0.01
                         rotationPosition -= 0.05;
@@ -114,7 +115,7 @@ public class FiniteMachineStateIntake {
                     }
 
                     // add in the button for claw open and close
-                    if(gamepad.getButton(GamepadKeys.Button.A) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                    if(gamepad_1.getButton(GamepadKeys.Button.A) || gamepad_2.getButton(GamepadKeys.Button.B) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         ToggleClaw();
                     }
@@ -125,7 +126,7 @@ public class FiniteMachineStateIntake {
                     }
 
                     // intake retract.
-                    if (gamepad.getButton(DPAD_LEFT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                    if (gamepad_1.getButton(DPAD_LEFT) || gamepad_2.getButton(DPAD_LEFT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         //retract
                         intakeTimer.reset();
@@ -169,13 +170,15 @@ public class FiniteMachineStateIntake {
                 break;
         }
 
-        // Handle lift cancel action if 'Y' button is pressed
-        if (gamepad.getButton(GamepadKeys.Button.B) && intakestate != INTAKESTATE.INTAKE_START) {
-            intakestate = INTAKESTATE.INTAKE_START;
-        }
-
+        /** Handle lift cancel action if 'Y' button is pressed
+         if (gamepad_1.getButton(GamepadKeys.Button.Y) && intakestate != INTAKESTATE.INTAKE_START) {
+         intakestate = INTAKESTATE.INTAKE_START;
+         }
+         /* *
+         *
+         */
         //intake arm up
-        if (gamepad.getButton(DPAD_UP) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+        if (gamepad_1.getButton(DPAD_UP) || gamepad_2.getButton(DPAD_UP) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             //use to be 0.01
             intakeArmPosition += 0.05;
@@ -184,7 +187,7 @@ public class FiniteMachineStateIntake {
         }
 
         //intake arm down
-        if (gamepad.getButton(DPAD_DOWN) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+        if (gamepad_1.getButton(DPAD_DOWN) || gamepad_2.getButton(DPAD_DOWN) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             //use to be 0.01
             intakeArmPosition -= 0.05;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOps;
+﻿package org.firstinspires.ftc.teamcode.TeleOps;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 
@@ -8,20 +8,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class FiniteMachineStateArm {
-    private final GamepadEx gamepad;
+    private final GamepadEx gamepad_1;
+    private final GamepadEx gamepad_2;
     private final RobotHardware robot;
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
 
 
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
 
-    public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad,
-                                 double DUMP_IDLE, double DUMP_DEPOSIT,
+    public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad_1,
+                                 GamepadEx gamepad_2, double DUMP_IDLE, double DUMP_DEPOSIT,
                                  double DUMP_TIME, double RETRACT_TIME,
-                                 double INTAKE_IDLE,double INTAKE_DUMP,double CLAW_OPEN,double CLAW_CLOSE,
-                                 int LIFT_LOW,int LIFT_HIGH,
+                                 double INTAKE_IDLE, double INTAKE_DUMP, double CLAW_OPEN, double CLAW_CLOSE, int LIFT_LOW, int LIFT_HIGH,
                                  double UPLIFT_POWER, double DOWNLIFT_POWER) {
-        this.gamepad = gamepad;
+        this.gamepad_1 = gamepad_1;
+        this.gamepad_2 = gamepad_2;
         this.robot = robot;
         this.DUMP_IDLE = DUMP_IDLE;
         this.DUMP_DEPOSIT = DUMP_DEPOSIT;
@@ -82,7 +83,7 @@ public class FiniteMachineStateArm {
         switch (liftState) {
             case LIFT_START:
                 // Debounce the button press for starting the lift extend
-                if (gamepad.getButton(GamepadKeys.Button.X) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                if (gamepad_1.getButton(GamepadKeys.Button.X) || gamepad_2.getButton(GamepadKeys.Button.X) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     //if ((colorSensor.getColor()[0] < 220)||(colorSensor.getColor()[2] < 225)) {
 
@@ -149,8 +150,8 @@ public class FiniteMachineStateArm {
                 break;
         }
 
-        // Handle lift Cancel Action if 'Y' button is pressed
-        if (gamepad.getButton(GamepadKeys.Button.Y) && liftState != LiftState.LIFT_START) {
+        // Handle lift Cancel Action if 'B' button is pressed
+        if (gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B) && liftState != LiftState.LIFT_START) {
             liftState = LiftState.LIFT_START;
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
             robot.liftMotorRight.setPower(0);
@@ -161,7 +162,7 @@ public class FiniteMachineStateArm {
         }
 
         // Claw control - Button Back
-        if(gamepad.getTrigger(LEFT_TRIGGER)> 0.5) {
+        if(gamepad_1.getButton(GamepadKeys.Button.Y) || gamepad_2.getButton(GamepadKeys.Button.Y)){
             ToggleDeposit();
             if (depositState == DEPOSITSTATE.OPEN) {
                 robot.depositClawServo.setPosition(CLAW_CLOSE);

@@ -47,31 +47,62 @@ public class RobotDrive {
             toggleControlMode();
             debounceTimer.reset();
             startPressed = true;
-        } else if (!gamepad.getButton(START)) {
+        } else if (!gamepad_1.getButton(START) || !gamepad_2.getButton(START)) {
             startPressed = false;
         }
 
         // Reset IMU heading using button back and reset odometry
-        if (gamepad.getButton(BACK) && !backPressed) {
+        if (gamepad_1.getButton(BACK) || gamepad_2.getButton(BACK) && !backPressed) {
             robot.initIMU();
             //robot.resetDriveEncoders();
             debounceTimer.reset();
             backPressed = true;
-        } else if (!gamepad.getButton(BACK)) {
+        } else if (!gamepad_1.getButton(BACK) || !gamepad_2.getButton(BACK)) {
             backPressed = false;
         }
 
-        if(gamepad.getButton(RIGHT_BUMPER)){
+        if(gamepad_1.getButton(LEFT_BUMPER) || gamepad_2.getButton(LEFT_BUMPER)){
             powerFactor = RobotActionConfig.powerFactor / 2;
         }
         else {
             powerFactor = RobotActionConfig.powerFactor;
         }
-
+        double drive = 0.0;
+        double strafe = 0.0;
+        double rotate = 0.0;
+        if (Math.abs(gamepad_1.getRightY()) > 0.1 || Math.abs(gamepad_1.getRightX()) > 0.1 || Math.abs(gamepad_1.getLeftX()) > 0.1) {
+            drive = -gamepad_1.getRightY();
+            strafe = gamepad_1.getRightX();
+            rotate = gamepad_1.getLeftX();
+        } else if (Math.abs(gamepad_2.getRightY()) > 0.1 || Math.abs(gamepad_2.getRightX()) > 0.1 || Math.abs(gamepad_2.getLeftX()) > 0.1) {
+            drive = -gamepad_2.getRightY();
+            strafe = gamepad_2.getRightX();
+            rotate = gamepad_2.getLeftX();
+        }
+        /**
         // Set gamepad joystick power
-        double drive = -gamepad.getRightY();
-        double strafe = gamepad.getRightX();
-        double rotate = gamepad.getLeftX();
+        double drive = 0.0;
+        if (Math.abs(gamepad_1.getRightY()) > 0.1) {
+            // Use Gamepad 1 if there's input
+            drive = -gamepad_1.getRightY();
+        } else if (Math.abs(gamepad_2.getRightY()) > 0.1) {
+            // If Gamepad 1 has no input, use Gamepad 2
+            drive = -gamepad_2.getRightY();
+        }
+
+        double strafe = 0.0;
+        if (Math.abs(gamepad_1.getRightX()) > 0.1) {
+            strafe = gamepad_1.getRightX();
+        } else if (Math.abs(gamepad_2.getRightX()) > 0.1) {
+            strafe = gamepad_2.getRightX();
+        }
+
+        double rotate = 0.0;
+        if (Math.abs(gamepad_1.getLeftX()) > 0.1) {
+            rotate = gamepad_1.getLeftX();
+        } else if (Math.abs(gamepad_2.getLeftX()) > 0.1)
+            rotate = gamepad_2.getLeftX();
+         **/
 
         // Get robot's current heading
         double currentHeading = getRobotHeading();
