@@ -79,3 +79,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ParkAuto.java
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ParkAuto4.java
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ParkAuto.java
