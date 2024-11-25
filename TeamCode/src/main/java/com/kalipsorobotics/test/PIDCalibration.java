@@ -3,24 +3,18 @@ package com.kalipsorobotics.test;
 import android.os.SystemClock;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.kalipsorobotics.PID.PIDController;
 
-import com.kalipsorobotics.actions.Action;
-import com.kalipsorobotics.actions.ActionSet;
 import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
 import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
-import com.kalipsorobotics.localization.Odometry;
+import com.kalipsorobotics.localization.SparkfunOdometry;
+import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 @Autonomous(name="PIDCalibration")
@@ -33,11 +27,12 @@ public class PIDCalibration extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, 0);
+        SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
+        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
 
         waitForStart();
 
-        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, odometry, 0);
+        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
         PIDController globalController = action.getPidController();
 
         int i = 0;
@@ -46,7 +41,7 @@ public class PIDCalibration extends LinearOpMode {
         double prevTime = SystemClock.elapsedRealtime();
 
         while (opModeIsActive()) {
-            odometry.updatePosition();
+            sparkfunOdometry.updatePosition();
             action.updateCheckDone();
             if (action.getIsDone()) {
                 i++;
@@ -57,7 +52,7 @@ public class PIDCalibration extends LinearOpMode {
                 accumulatedError += Math.abs(error);
                 double errorRate = (error - prevError) / (currentTime - prevTime);
 
-                Log.d(tag, odometry.getCurrentPosition().toString());
+                Log.d(tag, sparkfunOdometry.getCurrentPosition().toString());
                 Log.d(tag, String.format("Error %f, Accumulated error %f, Error rate %f", error, accumulatedError, errorRate));
 
                 double deltaKP = learningRateP * error;
@@ -68,7 +63,7 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKi(deltaKI);
                 globalController.chKd(deltaKD);
 
-                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, odometry, 0);
+                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
                 action.setPidController(globalController);
 
                 Log.d(tag, globalController.toString());

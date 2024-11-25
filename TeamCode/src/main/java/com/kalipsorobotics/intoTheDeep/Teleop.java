@@ -9,6 +9,7 @@ import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
@@ -24,6 +25,7 @@ public class Teleop extends LinearOpMode {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+        SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
         DriveAction driveAction = new DriveAction(driveTrain);
         Intake intake = new Intake(opModeUtilities);
         IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);

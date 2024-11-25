@@ -4,25 +4,25 @@ import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
 import com.kalipsorobotics.actions.DoneStateAction;
-import com.kalipsorobotics.localization.Odometry;
+import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MecanumRobotAction extends DriveTrainAction {
 
     private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;
-    Odometry odometry;
+    SparkfunOdometry sparkfunOdometry;
     PIDController controller;
     double targetInches;
     double currentInches;
     double remainingDistance;
     double power;
 
-    public MecanumRobotAction(double targetInches, DriveTrain driveTrain, Odometry odometry) {
+    public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry) {
         this.dependentAction = new DoneStateAction();
         this.driveTrain = driveTrain;
         controller = new PIDController(0.005, 0.0000005, 0.4, "mecanum");
-        this.odometry = odometry;
+        this.sparkfunOdometry = sparkfunOdometry;
         this.targetInches = targetInches;
     }
 
@@ -62,7 +62,7 @@ public class MecanumRobotAction extends DriveTrainAction {
 
     @Override
     public void update() {
-        this.currentInches = odometry.countX();
+        this.currentInches = sparkfunOdometry.countX();
         refreshRemainingDistance();
 
         if (!hasStarted) {

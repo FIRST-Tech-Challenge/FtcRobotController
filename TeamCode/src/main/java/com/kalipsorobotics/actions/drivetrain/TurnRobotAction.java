@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
 import com.kalipsorobotics.actions.DoneStateAction;
-import com.kalipsorobotics.localization.Odometry;
+import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.math.MathFunctions;
 import com.qualcomm.robotcore.util.Range;
 
@@ -14,17 +14,17 @@ public class TurnRobotAction extends DriveTrainAction {
 
     DriveTrain driveTrain;
     PIDController controller;
-    Odometry odometry;
+    SparkfunOdometry sparkfunOdometry;
     double targetDegrees;
     double currentHeading;
     double ERROR_TOLERANCE = 0.5; // degrees
     double remainingDegrees;
 
-    public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, Odometry odometry) {
+    public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry) {
         this.dependentAction = new DoneStateAction();
         this.targetDegrees = targetDegrees;
         this.driveTrain = driveTrain;
-        this.odometry = odometry;
+        this.sparkfunOdometry = sparkfunOdometry;
         this.controller = new PIDController(0.2, 0.01, 0.01, "turn");  // placeholder values
     }
 
@@ -45,7 +45,7 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     public double getCurrentHeading() {
-        return Math.toDegrees(odometry.countTheta());
+        return Math.toDegrees(sparkfunOdometry.countTheta());
     }
 
     private void refreshError() {

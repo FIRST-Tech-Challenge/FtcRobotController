@@ -2,7 +2,8 @@ package com.kalipsorobotics.test;
 
 import android.util.Log;
 
-import com.kalipsorobotics.localization.Odometry;
+import com.kalipsorobotics.localization.SparkfunOdometry;
+import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,15 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import java.sql.Driver;
-
 @TeleOp
 public class TestDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Odometry odometry = new Odometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+        SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
 
         DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
         DcMotor rFront = hardwareMap.dcMotor.get("fRight");
@@ -57,6 +57,12 @@ public class TestDrive extends LinearOpMode {
         double deltaTheta;
 
         while (opModeIsActive()) {
+
+            sparkfunOdometry.updatePosition();
+            wheelOdometry.updatePosition();
+            Log.d("purepursaction_debug_odo_sparkfun", sparkfunOdometry.getCurrentPosition().toString());
+            Log.d("purepursaction_debug_odo_wheel", wheelOdometry.getCurrentPosition().toString());
+
             /*
             if (gamepad1.left_bumper) {
                 lServo.setPosition(0);
@@ -110,17 +116,17 @@ public class TestDrive extends LinearOpMode {
             lBack.setPower(bLeftPower);
             rBack.setPower(bRightPower);
 
-            odometry.updatePosition();
+            sparkfunOdometry.updatePosition();
 
-            deltaX = odometry.getCurrentPosition().getX() - lastX;
-            deltaY = odometry.getCurrentVelocity().getY() - lastY;
-            deltaTheta = odometry.getCurrentPosition().getTheta() - lastTheta;
+            deltaX = sparkfunOdometry.getCurrentPosition().getX() - lastX;
+            deltaY = sparkfunOdometry.getCurrentVelocity().getY() - lastY;
+            deltaTheta = sparkfunOdometry.getCurrentPosition().getTheta() - lastTheta;
 
             Log.d("drivelog", fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower + " " + deltaX + " " + deltaY + " " + deltaTheta);
 
-            lastX = odometry.getCurrentPosition().getX();
-            lastY = odometry.getCurrentVelocity().getY();
-            lastTheta = odometry.getCurrentPosition().getTheta();
+            lastX = sparkfunOdometry.getCurrentPosition().getX();
+            lastY = sparkfunOdometry.getCurrentVelocity().getY();
+            lastTheta = sparkfunOdometry.getCurrentPosition().getTheta();
 
         }
     }
