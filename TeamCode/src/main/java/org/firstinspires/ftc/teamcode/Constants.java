@@ -14,8 +14,9 @@ public final class Constants {
         public static final boolean thereIGaveYouMoreConstants = true;
     }
     public static final class LinearSlideConstants {
-        public static final double upwardLimit = 1000;
-        public static final double downwardLimit = 0;
+        public static final double upwardLimit = 0;
+        /*TODO: Figure out why the motor thinks that this is negative*/
+        public static final double downwardLimit = -3800;
     }
 
     public static final class ArmConstants {

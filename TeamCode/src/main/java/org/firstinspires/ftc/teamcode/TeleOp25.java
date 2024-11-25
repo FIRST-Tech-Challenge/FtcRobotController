@@ -131,6 +131,9 @@ public class TeleOp25 extends CommandOpMode {
        toolOp.getGamepadButton(GamepadKeys.Button.START).whenReleased(linearSlideOff);
        toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(linearSlideDown);
        toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenReleased(linearSlideOff);
+
+       // TODO: This is probably a bit of a sloppy way to do this, I imagine a less sloppy one would have a command class for it
+        linearSlideSub.resetEncoder();
     }
 
     @Override
