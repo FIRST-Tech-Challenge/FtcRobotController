@@ -12,7 +12,7 @@ import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.helperClasses.PIDModel;
 
 public class AutoSkeleton {
-    private final double maxSpeed;                  // Maximum speed the robot can move at
+    private double maxSpeed;                  // Maximum speed the robot can move at
     private final double movementMargin;            // Margin determines how close to the target we have to be before we are there
     private final double turnMargin;
     private WheelHandler wheelHandler;              // Class which handles wheel motions
@@ -44,7 +44,7 @@ public class AutoSkeleton {
 
         movementPIDx = new PIDModel(kP, kI, kD);
         movementPIDy = new PIDModel(kP, kI, kD);
-        movementPIDturn = new PIDModel(maxSpeed / 20, maxSpeed / (25000), 0.5);
+        movementPIDturn = new PIDModel(maxSpeed / 16, maxSpeed / (16000), 0.5);
     }
 
     public void link(WheelHandler wheelHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler intakeSpinnerHandler, FlowSensorHandler flowSensorHandler, IMUComponent imuComponent) {
@@ -120,7 +120,7 @@ public class AutoSkeleton {
         double xSpeed = 0;
         double ySpeed = 0;
         double turnSpeed = 0;
-        if (Math.abs(xDist) > movementMargin) {
+        if (Math.abs(xDist) > movementMargin / 1.3) { // we need to reduce movement margin to account for the rare scenarios when x & y are both within margin but combined they are not
             if (xDist > 0 ^ xDirPos) {
                 movementPIDx.resetError();
                 //xDirPos = !xDirPos;
@@ -133,7 +133,7 @@ public class AutoSkeleton {
         }
 
 
-        if (Math.abs(yDist) > movementMargin) {
+        if (Math.abs(yDist) > movementMargin / 1.3) {
             if (yDist > 0 ^ yDirPos) {
                 movementPIDy.resetError();
                 //yDirPos = !yDirPos;
@@ -177,5 +177,11 @@ public class AutoSkeleton {
         intakeSpinnerHandler.setServoPower(handState);
     }
 
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
 
+    public void relativeRun(double x, double y) {
+        wheelHandler.relativeVectorToMotion(y, x, 0);
+    }
 }

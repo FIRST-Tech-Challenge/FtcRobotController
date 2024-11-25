@@ -23,7 +23,7 @@ public class ExtensionHandler implements NKNComponent {
     private ExtensionPositions target = ExtensionPositions.RESTING;
 
     public boolean isExtensionDone() {
-        return (Math.abs(motor.getCurrentPosition() - target.position) <= 15);
+        return (Math.abs(motor.getCurrentPosition() - target.position) <= 30);
     }
 
     public enum ExtensionPositions {
@@ -74,11 +74,6 @@ public class ExtensionHandler implements NKNComponent {
             motor.setDirection(DcMotor.Direction.REVERSE);
         }
 
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setPower(motorPower);
-        motor.setTargetPosition(ExtensionPositions.RESTING.position);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         return true;
     }
 
@@ -89,7 +84,9 @@ public class ExtensionHandler implements NKNComponent {
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
-
+        motor.setPower(motorPower);
+        motor.setTargetPosition(ExtensionPositions.RESTING.position);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -137,12 +134,6 @@ public class ExtensionHandler implements NKNComponent {
         return false;
     }
 
-    public void resetEncoder() {
-        if (target == ExtensionPositions.RESTING) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
     public ExtensionPositions targetPosition() {
         return target;
     }

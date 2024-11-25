@@ -74,14 +74,18 @@ public class TestingAuto extends NKNProgram {
         AutoStepMove left1 = new AutoStepMove(-1, 0);
         AutoStepMove up1 = new AutoStepMove(0, 1);
         AutoStepMove down1 = new AutoStepMove(0, -1);
-        AutoStepMoveNRotate turn = new AutoStepMoveNRotate(0, 0, 90);
+        AutoStepMoveNRotate turn1 = new AutoStepMoveNRotate(0, 0, 90);
+        AutoStepMoveNRotate turn2 = new AutoStepMoveNRotate(0, 0, 0);
         AutoStepSleep sleep = new AutoStepSleep(500);
 
         stepList.add(up1);
-        stepList.add(turn);
+        stepList.add(turn1);
         stepList.add(sleep);
         stepList.add(right1);
-        stepList.add(turn);
+        stepList.add(turn2);
+        stepList.add(sleep);
+        stepList.add(sleep);
+        stepList.add(left1);
 
         autoHeart.linkSteps(stepList, autoSkeleton);
     }

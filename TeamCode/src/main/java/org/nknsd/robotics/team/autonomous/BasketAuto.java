@@ -4,9 +4,11 @@ import org.nknsd.robotics.framework.NKNAutoStep;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
 import org.nknsd.robotics.team.autoSteps.AutoStepAbsoluteControl;
+import org.nknsd.robotics.team.autoSteps.AutoStepChangeMaxSpeed;
 import org.nknsd.robotics.team.autoSteps.AutoStepExtendArm;
 import org.nknsd.robotics.team.autoSteps.AutoStepMove;
 import org.nknsd.robotics.team.autoSteps.AutoStepMoveNRotate;
+import org.nknsd.robotics.team.autoSteps.AutoStepRelativeMove;
 import org.nknsd.robotics.team.autoSteps.AutoStepRotateArm;
 import org.nknsd.robotics.team.autoSteps.AutoStepServo;
 import org.nknsd.robotics.team.autoSteps.AutoStepSleep;
@@ -30,7 +32,7 @@ public class BasketAuto extends NKNProgram {
 
 
         // Core mover
-        AutoSkeleton autoSkeleton = new AutoSkeleton(0.7 , 0.2, 1.5);
+        AutoSkeleton autoSkeleton = new AutoSkeleton(0.8, 0.2, 1.5);
 
         AutoHeart autoHeart = new AutoHeart(stepList);
         components.add(autoHeart);
@@ -76,15 +78,21 @@ public class BasketAuto extends NKNProgram {
 
     private void assembleList(List<NKNAutoStep> stepList, AutoHeart autoHeart, AutoSkeleton autoSkeleton) {
         // Declare steps
-        AutoStepSleep sleep = new AutoStepSleep(700);
+        AutoStepSleep sleep = new AutoStepSleep(375);
 
         AutoStepMove moveSlightForward = new AutoStepMove(0, 0.2);
-        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.73, 0.32, -135);
-        AutoStepMoveNRotate pickUpFirstYellow = new AutoStepMoveNRotate(1.05, 0.955, -70);
-        AutoStepMove moveToPickup = new AutoStepMove(-0.25, 0.25);
-        AutoStepMove slightYellowPlaceAdjust = new AutoStepMove(-0.07, 0.05);
+        AutoStepAbsoluteControl orientToBasket = new AutoStepAbsoluteControl(-0.79, 0.34, -135);
+        AutoStepRelativeMove backAwayFromBasket = new AutoStepRelativeMove(0, -.35, 200);
+        AutoStepRelativeMove slightlyBackAway = new AutoStepRelativeMove(0, -.3, 100);
+
+        AutoStepAbsoluteControl pickUpFirstYellow = new AutoStepAbsoluteControl(0.4113, 1.28, -68.3);
+        AutoStepRelativeMove moveToPickup = new AutoStepRelativeMove(0, 0.3, 400);
+
+        AutoStepAbsoluteControl pickUpSecondYellow = new AutoStepAbsoluteControl(-0.0716, 1.6, -90);
+
         AutoStepAbsoluteControl alignToPark = new AutoStepAbsoluteControl(-0.05, 2.2, 90);
-        AutoStepMove driveInToPark = new AutoStepMove(0.64, 0);
+        AutoStepMove driveInToPark = new AutoStepMove(0.58, 0);
+
 
         AutoStepRotateArm rotateToHigh = new AutoStepRotateArm(RotationHandler.RotationPositions.HIGH);
         AutoStepRotateArm rotateToPickup = new AutoStepRotateArm(RotationHandler.RotationPositions.PICKUP);
@@ -98,15 +106,21 @@ public class BasketAuto extends NKNProgram {
         AutoStepServo gripBlock = new AutoStepServo(IntakeSpinnerHandler.HandStates.GRIP, 400);
         AutoStepServo neutralServo = new AutoStepServo(IntakeSpinnerHandler.HandStates.REST, 0);
 
+        AutoStepChangeMaxSpeed slowSpeed = new AutoStepChangeMaxSpeed(0.6);
+        AutoStepChangeMaxSpeed normalSpeed = new AutoStepChangeMaxSpeed(0.8);
+
         // Put away first block
         stepList.add(moveSlightForward);
         stepList.add(orientToBasket);
+        stepList.add(backAwayFromBasket);
         stepList.add(rotateToHigh);
         stepList.add(extendToHigh);
         stepList.add(releaseBlock);
+        stepList.add(slightlyBackAway);
         stepList.add(retract);
 
         // Get second block
+        stepList.add(slowSpeed);
         stepList.add(pickUpFirstYellow);
         stepList.add(gripBlock);
         stepList.add(rotateToPickup);
@@ -115,19 +129,31 @@ public class BasketAuto extends NKNProgram {
         stepList.add(rotateToRest);
 
         // Place second block
+        stepList.add(normalSpeed);
         stepList.add(orientToBasket);
-        stepList.add(slightYellowPlaceAdjust);
         stepList.add(rotateToHigh);
         stepList.add(extendToHigh);
         stepList.add(releaseBlock);
+        stepList.add(backAwayFromBasket);
         stepList.add(retract);
 
-        // Parking!
-        stepList.add(alignToPark);
-        stepList.add(rotateToPrepickup);
-        stepList.add(driveInToPark);
-        stepList.add(rotateToHigh);
+        // Get third block
+        stepList.add(slowSpeed);
+        stepList.add(pickUpSecondYellow);
+        stepList.add(gripBlock);
+        stepList.add(rotateToPickup);
+        stepList.add(moveToPickup);
         stepList.add(sleep);
+        stepList.add(rotateToRest);
+
+        // Place third block
+        stepList.add(normalSpeed);
+        stepList.add(orientToBasket);
+        stepList.add(rotateToHigh);
+        stepList.add(extendToHigh);
+        stepList.add(releaseBlock);
+        stepList.add(backAwayFromBasket);
+        stepList.add(retract);
 
 
         autoHeart.linkSteps(stepList, autoSkeleton);
