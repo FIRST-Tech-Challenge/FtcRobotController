@@ -2,15 +2,14 @@ package com.kalipsorobotics.actions;
 
 import android.util.Log;
 
-import com.kalipsorobotics.localization.Odometry;
+import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.PID.PidNav;
+import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Path;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.math.Segment;
 import com.kalipsorobotics.math.Vector;
-
-import com.qualcomm.robotcore.util.Range;
 
 import com.kalipsorobotics.modules.DriveTrain;
 
@@ -22,7 +21,8 @@ public class PurePursuitAction extends Action {
 
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
-    Odometry odometry;
+    WheelOdometry wheelOdometry;
+    SparkfunOdometry sparkfunOdometry;
 
     private final PidNav pidX;
     private final PidNav pidY;
@@ -34,17 +34,17 @@ public class PurePursuitAction extends Action {
     Optional<Position> follow;
     Optional<Position> prevFollow;
 
-    public PurePursuitAction(DriveTrain driveTrain, Odometry odometry) {
+    public PurePursuitAction(DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry) {
         this.driveTrain = driveTrain;
-        this.odometry = odometry;
+        this.sparkfunOdometry = sparkfunOdometry;
 
 //        this.pidX = new PidNav(1. / 900, 0, 0);
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(0.03, 0, 0);
-        this.pidY = new PidNav(0.03, 0, 0);
-        this.pidAngle = new PidNav(0.2, 0, 0);
+        this.pidX = new PidNav(0.015, 0, 0);
+        this.pidY = new PidNav(0.025, 0, 0);
+        this.pidAngle = new PidNav(0.11, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
         //0.001, 0.001, 0.4 behavior: turns and then does not move
@@ -70,7 +70,7 @@ public class PurePursuitAction extends Action {
     }
 
     private void targetPosition(Position target) {
-        Position currentPos = odometry.getCurrentPosition();
+        Position currentPos = sparkfunOdometry.getCurrentPosition();
         Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
@@ -93,15 +93,15 @@ public class PurePursuitAction extends Action {
 //        opModeUtilities.getTelemetry().addData("direction error", directionError);
 
         double xError = Math.cos(directionError) * distanceToTarget;
-        double powerX = Range.clip(pidX.getPower(xError), -1, 1);
+        double powerX = pidX.getPower(xError);
         Log.d("purepursx", "set x " + powerX);
 
         double yError = Math.sin(directionError) * distanceToTarget;
         Log.d("purepursy", "yerror " + yError);
-        double powerY = Range.clip(pidY.getPower(yError), -1, 1);
+        double powerY = pidY.getPower(yError);
         Log.d("purepursy", "set y " + powerY);
 
-        double powerAngle = Range.clip(pidAngle.getPower(angleError), -1, 1);
+        double powerAngle = pidAngle.getPower(angleError);
 //        if(Math.abs(angleError) < 0.5) {
 //            powerAngle = 0;
 //        }
@@ -126,6 +126,35 @@ public class PurePursuitAction extends Action {
         }
         //92.66611361922297, -235.81741858351225
 
+        if(Math.abs(fLeftPower) < 0.15) {
+            if (fLeftPower < 0) {
+                fLeftPower += -0.05;
+            } else {
+                fLeftPower += 0.05;
+            }
+        }
+        if(Math.abs(fRightPower) < 0.15) {
+            if (fRightPower < 0) {
+                fRightPower += -0.05;
+            } else {
+                fRightPower += 0.05;
+            }
+        }
+        if(Math.abs(bLeftPower) < 0.15) {
+            if (bLeftPower < 0) {
+                bLeftPower += -0.05;
+            } else {
+                bLeftPower += 0.05;
+            }
+        }
+        if(Math.abs(bRightPower) < 0.15) {
+            if (bRightPower < 0) {
+                bRightPower += -0.05;
+            } else {
+                bRightPower += 0.05;
+            }
+        }
+
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
 
@@ -139,11 +168,11 @@ public class PurePursuitAction extends Action {
     public boolean checkDoneCondition() {
 
         lastLine = path.getSegment(path.numSegments() - 1);
-        boolean distanceToEndWithinThreshold = odometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1;
-        boolean velocityWithinThreshold = odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5));
-        boolean angleWithinRange = Math.abs(odometry.getCurrentPosition().getTheta() - pathPoints.get(path.numPoints()-1).getTheta()) < Math.toRadians(4);
+        boolean distanceToEndWithinThreshold = sparkfunOdometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1;
+        //boolean velocityWithinThreshold = odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5));
+        boolean angleWithinRange = Math.abs(sparkfunOdometry.getCurrentPosition().getTheta() - pathPoints.get(path.numPoints()-1).getTheta()) < Math.toRadians(4);
 
-        Log.d("purepursaction_done", distanceToEndWithinThreshold + " " + velocityWithinThreshold + " " + angleWithinRange);
+        //Log.d("purepursaction_done", distanceToEndWithinThreshold + " " + velocityWithinThreshold + " " + angleWithinRange);
 
         if (!follow.isPresent()) {
             //opModeUtilities.getTelemetry().addLine("breake");
@@ -167,7 +196,7 @@ public class PurePursuitAction extends Action {
         //Log.d("purepursaction", "entered update");
 
         //follow = path.searchFrom(odometry.getCurrentPosition(), radius);
-        follow = path.lookAhead(odometry.getCurrentPosition(), radius);
+        follow = path.lookAhead(sparkfunOdometry.getCurrentPosition(), radius);
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow", follow.get().getX() + " " + follow.get().getY() + " " + follow.get().getTheta());
