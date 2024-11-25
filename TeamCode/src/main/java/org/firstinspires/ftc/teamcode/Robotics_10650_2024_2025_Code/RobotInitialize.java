@@ -143,8 +143,6 @@ public class RobotInitialize {
         //Manipulator Servos
 
             // Hang on submersible servos
-        hangL = opMode.hardwareMap.get(Servo.class, "hang l");
-        hangL.setPosition(0);
 
 
         hangR = opMode.hardwareMap.get(Servo.class, "hang r");
@@ -157,10 +155,10 @@ public class RobotInitialize {
         intake.setPower(0); // Off by default
         intake.setDirection(CRServo.Direction.REVERSE);
         //Regular Servos
-        clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
+        clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
         clawRoll.setPosition(0);
-        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        pitch.setPosition(0.0481);
+        pitch = opMode.hardwareMap.get(Servo.class, "roll");
+        pitch.setPosition(0);
 
 //        roll.setDirection(Servo.Direction.FORWARD);
 //        roll.setPosition(0);
