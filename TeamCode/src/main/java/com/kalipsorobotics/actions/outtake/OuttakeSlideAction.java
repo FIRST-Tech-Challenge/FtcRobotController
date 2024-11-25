@@ -20,6 +20,8 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
     }

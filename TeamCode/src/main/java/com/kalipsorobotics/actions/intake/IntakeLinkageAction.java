@@ -1,7 +1,12 @@
 package com.kalipsorobotics.actions.intake;
 
+import android.os.SystemClock;
+
 import com.kalipsorobotics.modules.Intake;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.sql.Time;
+
 //0.6 closed
 //0.245 opened
 public class IntakeLinkageAction {
@@ -9,6 +14,8 @@ public class IntakeLinkageAction {
     private final Intake intake;
     private final Servo linkageServo1;
     private final Servo linkageServo2;
+    private double startTime;
+ //   Time time = new Time(0,0,1);
 
 
     private boolean isRetracted = true;
@@ -17,6 +24,7 @@ public class IntakeLinkageAction {
         this.intake = intake;
         this.linkageServo1 = intake.getLinkageServo1();
         this.linkageServo2 = intake.getLinkageServo2();
+        linkageServo2.setDirection(Servo.Direction.REVERSE);
     }
 
     public void moveIntakeSlide(double position) {
@@ -27,7 +35,13 @@ public class IntakeLinkageAction {
         return linkageServo1.getPosition();
     }
 
+    public boolean checkExtend() {
+        double endTime = SystemClock.currentThreadTimeMillis();
+        return endTime - startTime > 1500;
+    }
+
     public void extend() {
+        startTime = SystemClock.currentThreadTimeMillis();
         moveIntakeSlide(-1.9);
         isRetracted = false;
     }
