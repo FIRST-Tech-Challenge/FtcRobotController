@@ -68,79 +68,56 @@ public class HobbesTele extends OpMode {
     // loops after start press
     public void loop() {
         // p1 & p2: start freeze (to ignore input while switching mode)
-        if (gamepad2.start || gamepad1.start)
-            return;
+        if (gamepad2.start || gamepad1.start) return;
         // p1: motion
-        if (!gamepad1.right_bumper && !gamepad1.left_bumper)
-            hob.motorDriveXYVectors(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-        else
-            hob.motorDriveXYVectors(0.3 * -gamepad1.left_stick_x, 0.3 * -gamepad1.left_stick_y,
-                    0.3 * gamepad1.right_stick_x);
+        if (!gamepad1.right_bumper && !gamepad1.left_bumper) hob.motorDriveXYVectors(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
+        else hob.motorDriveXYVectors(0.3 * -gamepad1.left_stick_x, 0.3 * -gamepad1.left_stick_y, 0.3 * gamepad1.right_stick_x);
 
         // p1: intake
-        if (gamepad1.a)
-            hob.servosController.spintake(INTAKE_POWER);
-        else if (gamepad1.b)
-            hob.servosController.spintake(INTAKE_REVERSE);
-        else if (gamepad1.right_trigger > 0)
-            hob.servosController.spintake(INTAKE_POWER * gamepad1.right_trigger);
-        else if (gamepad1.left_trigger > 0)
-            hob.servosController.spintake(INTAKE_REVERSE * gamepad1.left_trigger);
-        else
-            hob.servosController.spintake(INTAKE_OFF);
+        if (gamepad1.a) hob.servosController.spintake(INTAKE_POWER);
+        else if (gamepad1.b) hob.servosController.spintake(INTAKE_REVERSE);
+        else if (gamepad1.right_trigger > 0) hob.servosController.spintake(INTAKE_POWER * gamepad1.right_trigger);
+        else if (gamepad1.left_trigger > 0) hob.servosController.spintake(INTAKE_REVERSE * gamepad1.left_trigger);
+        else hob.servosController.spintake(INTAKE_OFF);
 
         // p2: slides motion
-        if (gamepad2.right_stick_y != 0)
-            hob.slidesController.driveSlides(-gamepad2.right_stick_y);
+        if (gamepad2.right_stick_y != 0) hob.slidesController.driveSlides(-gamepad2.right_stick_y);
 
         // p2: extendo motion
         hob.servosController.incrementExtendo(-gamepad2.left_stick_y * EXTENDO_SPEED);
 
         // p2: flat on ground
-        if (gamepad2.b && !lastGamepad2.b)
-            hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
+        if (gamepad2.b && !lastGamepad2.b) hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
 
         // p2: up but low
-        if (gamepad2.a && !lastGamepad2.a)
-            hob.runMacro("EXTENDO_ARM_WRIST_UP");
+        if (gamepad2.a && !lastGamepad2.a) hob.runMacro("EXTENDO_ARM_WRIST_UP");
 
         // p2: angled on ground
-        if (gamepad2.x && !lastGamepad2.x)
-            hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
+        if (gamepad2.x && !lastGamepad2.x) hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
 
         // p2: manual extendo arm articulation
-        if (gamepad2.left_trigger > 0)
-            hob.servosController.incrementExtendoArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
-        if (gamepad2.right_trigger > 0)
-            hob.servosController.incrementExtendoArmWrist(gamepad2.right_trigger * -EXTENDO_ARM_SPEED, 0);
+        if (gamepad2.left_trigger > 0) hob.servosController.incrementExtendoArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
+        if (gamepad2.right_trigger > 0) hob.servosController.incrementExtendoArmWrist(gamepad2.right_trigger * -EXTENDO_ARM_SPEED, 0);
 
         // p2: manual extendo wrist articulation
-        if (gamepad2.right_bumper)
-            hob.servosController.incrementExtendoArmWrist(0, EXTENDO_WRIST_SPEED);
-        if (gamepad2.left_bumper)
-            hob.servosController.incrementExtendoArmWrist(0, -EXTENDO_WRIST_SPEED);
+        if (gamepad2.right_bumper) hob.servosController.incrementExtendoArmWrist(0, EXTENDO_WRIST_SPEED);
+        if (gamepad2.left_bumper) hob.servosController.incrementExtendoArmWrist(0, -EXTENDO_WRIST_SPEED);
 
         // p2: transfer macro
-        if (gamepad2.y && !lastGamepad2.y)
-            hob.runMacro("FULL_TRANSFER");
+        if (gamepad2.y && !lastGamepad2.y) hob.runMacro("FULL_TRANSFER");
 
         // p2: run to deposit
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up)
-            hob.runMacro("SLIDES_DEPOSIT");
+        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) hob.runMacro("SLIDES_DEPOSIT");
 
         // p2: toggle claw
-        if (gamepad2.dpad_right && !lastGamepad2.dpad_right)
-            hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
+        if (gamepad2.dpad_right && !lastGamepad2.dpad_right) hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
 
         // p2: wrist re-zeroer
-        if (gamepad2.back)
-            hob.extendoWristRezeroOffset = hob.servosController.extendoWristPos - EXTENDO_WRIST_INTAKE_FLAT;
-        if (gamepad2.left_stick_button)
-            hob.extendoWristRezeroOffset = 0;
+        if (gamepad2.back) hob.extendoWristRezeroOffset = hob.servosController.extendoWristPos - EXTENDO_WRIST_INTAKE_FLAT;
+        if (gamepad2.left_stick_button) hob.extendoWristRezeroOffset = 0;
 
         // p2: slides down, arm above sample
-        if (gamepad2.dpad_down && !lastGamepad2.dpad_down)
-            hob.runMacro("SLIDES_DOWN");
+        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) hob.runMacro("SLIDES_DOWN");
 
         // tick robot
         hob.tick();
