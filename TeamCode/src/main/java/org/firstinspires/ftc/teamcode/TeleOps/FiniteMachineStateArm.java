@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,6 +46,7 @@ public class FiniteMachineStateArm {
 
     private LiftState liftState = LiftState.LIFT_START; // Persisting state
     private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
+    private DEPOSITSTATE depositState;
 
     final double DUMP_IDLE;     // Idle position for the dump servo
     final double DUMP_DEPOSIT;  // Dumping position for the dump servo
@@ -58,6 +61,7 @@ public class FiniteMachineStateArm {
     final double CLAW_OPEN;     // claw open
     final double CLAW_CLOSE;    // claw close
 
+    // Initialize Deposit Arm
     public void Init() {
         liftTimer.reset();
         robot.liftMotorLeft.setTargetPosition(LIFT_LOW);
@@ -69,9 +73,10 @@ public class FiniteMachineStateArm {
         robot.depositWristServo.setPosition(INTAKE_IDLE);
         robot.depositLeftArmServo.setPosition(DUMP_IDLE);
         robot.depositRightArmServo.setPosition(DUMP_IDLE);
-        robot.depositClawServo.setPosition(CLAW_CLOSE);
+        robot.depositClawServo.setPosition(CLAW_OPEN);
     }
 
+    // Deposit Arm Control
     public void DepositArmLoop() {
         // Display current lift state and telemetry feedback
         switch (liftState) {
@@ -125,7 +130,7 @@ public class FiniteMachineStateArm {
                 break;
             case LIFT_RETRACT:
                 // Check if the lift has reached the low position
-                if(liftTimer.seconds()>= RETRACT_TIME) {
+                if(servo_AtPosition(CLAW_OPEN) && liftTimer.seconds()>= RETRACT_TIME) {
                     robot.liftMotorLeft.setTargetPosition(LIFT_LOW); // Start retracting the lift
                     robot.liftMotorRight.setTargetPosition(LIFT_LOW); // Start retracting the lift
                     robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -144,7 +149,7 @@ public class FiniteMachineStateArm {
                 break;
         }
 
-        // Handle lift cancel action if 'Y' button is pressed
+        // Handle lift Cancel Action if 'Y' button is pressed
         if (gamepad.getButton(GamepadKeys.Button.Y) && liftState != LiftState.LIFT_START) {
             liftState = LiftState.LIFT_START;
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
@@ -152,6 +157,17 @@ public class FiniteMachineStateArm {
             robot.depositWristServo.setPosition(INTAKE_IDLE);
             robot.depositLeftArmServo.setPosition(DUMP_IDLE);
             robot.depositRightArmServo.setPosition(DUMP_IDLE);
+            robot.depositClawServo.setPosition(CLAW_OPEN);
+        }
+
+        // Claw control - Button Back
+        if(gamepad.getTrigger(LEFT_TRIGGER)> 0.5) {
+            ToggleDeposit();
+            if (depositState == DEPOSITSTATE.OPEN) {
+                robot.depositClawServo.setPosition(CLAW_CLOSE);
+            } else {
+                robot.depositClawServo.setPosition(CLAW_OPEN);
+            }
         }
     }
 
@@ -159,7 +175,26 @@ public class FiniteMachineStateArm {
     private boolean isLiftAtPosition(int targetPosition) {
         return Math.abs(robot.liftMotorLeft.getCurrentPosition() - targetPosition) < 5 && Math.abs(robot.liftMotorRight.getCurrentPosition() - targetPosition) < 5;
     }
+
+    private boolean servo_AtPosition(double servoClawPosition) {
+        return Math.abs(robot.depositClawServo.getPosition() - servoClawPosition) < 0.01;
+    }
     LiftState State(){
         return liftState;
+    }
+
+    //Deposit Claw State
+    public enum DEPOSITSTATE {
+        OPEN,
+        CLOSE
+    }
+
+    //Toggle Deposit Open - Close
+    private void ToggleDeposit() {
+        if (depositState == DEPOSITSTATE.OPEN) {
+            depositState = DEPOSITSTATE.CLOSE;
+        } else {
+            depositState = DEPOSITSTATE.OPEN;
+        }
     }
 }

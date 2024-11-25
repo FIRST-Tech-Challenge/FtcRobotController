@@ -68,7 +68,8 @@ public class FiniteMachineStateIntake {
         robot.intakeSlideServo.setPosition(intake_Slide_Retract);
         robot.intakeRightArmServo.setPosition(intake_Arm_Trans);
         robot.intakeLeftArmServo.setPosition(intake_Arm_Trans);
-        robot.intakeRotationServo.setPosition(intake_Claw_Open);
+        robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
+        robot.intakeClawServo.setPosition(intake_Claw_Open);
     }
 
     public void IntakeArmLoop() {
@@ -77,12 +78,13 @@ public class FiniteMachineStateIntake {
             case INTAKE_START:
                 // Debounce the button press for starting the lift extend
                 robot.intakeClawServo.setPosition(intake_Claw_Open);
-                if (gamepad.getButton(GamepadKeys.Button.DPAD_RIGHT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                if (gamepad && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     robot.intakeSlideServo.setPosition(intake_Slide_Extend);
                     robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
                     robot.intakeLeftArmServo.setPosition(intake_Arm_Pick);
                     robot.intakeRightArmServo.setPosition(intake_Arm_Pick);
+                    robot.intakeClawServo.setPosition(intake_Claw_Open);
                     intakeTimer.reset();
                     intakestate = INTAKESTATE.INTAKE_EXTEND;
                 }

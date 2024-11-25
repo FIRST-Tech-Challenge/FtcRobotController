@@ -36,13 +36,6 @@ public class BasicTeleOps extends OpMode {
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
     public FiniteMachineStateIntake intakeArmDrive;
 
-    //public Color_sensor colorSensor;
-
-    //For ServoTest
-    public ServoTest depositServoTest;              //For Deposit Intake Servo testing
-
-    private FtcDashboard dashboard;                 //For Dashboard
-    private TelemetryManager telemetryManager;      //For Telemetry
 
     //Bulk Reading
     private List<LynxModule> allHubs;
@@ -54,14 +47,14 @@ public class BasicTeleOps extends OpMode {
     public static double intake_slide_Extension = 0.6;// range(0.3 - 0.65)
     public static double intake_slide_Retract   = 0.3;
 
-    public static double intake_Rotation        = 0.4;
+    public static double intake_Rotation        = 0.49;
 
-    public static double intake_Arm_initial     = 0.1;//0-0.56
+    public static double intake_Arm_initial     = 0.35;//0-0.56
     public static double intake_Arm_down        = 0.05;
     public static double intake_Arm_retract     = 0.53;
 
-    public static double intake_Claw_Open       = 0.1;
-    public static double intake_Claw_Close      = 0.2;
+    public static double intake_Claw_Open       = 0.55;
+    public static double intake_Claw_Close      = 0.3;
 
     //Deposit Config
     public static int deposit_Slide_down_Pos         = 50;   //slides Position Configure
@@ -78,18 +71,17 @@ public class BasicTeleOps extends OpMode {
     public static double deposit_Claw_Open              = 0.11;
     public static double deposit_Claw_Close             = 0.0;
 
-    public static double dumpTime                       = 1.5;
+    public static double dumpTime                       = 1.8;
     public static double retractTime                    = 3.2;
 
-    public static double deposit_Slide_UpLiftPower      = 0.9;  //slides power
-    public static double downLiftPower                  = 0.3;  //slides power
+    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
+    public static double downLiftPower                  = 0.7;  //slides power
 
     
     @Override
     public void init() {
 
         telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
-        telemetryManager = new TelemetryManager(telemetry);
 
         // Initialize hardware in RobotHardware
         robot = new RobotHardware();
@@ -98,15 +90,16 @@ public class BasicTeleOps extends OpMode {
         //robot configuration
 
         //gamepad
-        gamepadCo1 = new GamepadEx(gamepad2);
+        gamepadCo1 = new GamepadEx(gamepad1);
+        gamepadCo2 = new GamepadEx(gamepad2);
 
         //robotDrive
-        robotDrive = new RobotDrive(robot, gamepadCo1);   // Pass robot instance to RobotDrive
+        robotDrive = new RobotDrive(robot, gamepadCo1, gamepadCo2);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
 
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2,
                                                     deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
                                                     dumpTime, retractTime,
                                                     deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open,deposit_Claw_Close,
@@ -115,7 +108,7 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
                 intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
                 intake_slide_Retract, intake_slide_Extension, intake_Rotation,
                 intake_Claw_Open, intake_Claw_Close);
@@ -177,29 +170,12 @@ public class BasicTeleOps extends OpMode {
         intakeArmDrive.IntakeArmLoop();
         FiniteMachineStateIntake.INTAKESTATE intakestate = intakeArmDrive.intakeState();
 
-        //depositArmTest
-        //depositServoTest.ServoTestLoop();
-
-
-        // Real-time telemetry data to Driver Station
-        //telemetryManager.update("Front Left Motor Power", robot.frontLeftMotor.getPower());
-        //telemetryManager.update("Front Right Motor Power", robot.frontRightMotor.getPower());
-        //telemetryManager.update("Back Left Motor Power", robot.backLeftMotor.getPower());
-        //telemetryManager.update("Back Right Motor Power", robot.backRightMotor.getPower());
-        //telemetryManager.update("Motor Left Position", robot.liftMotorLeft.getCurrentPosition());
-        //telemetryManager.update("Lift Motor Right Position", robot.liftMotorRight.getCurrentPosition());
-        //telemetryManager.update("Color Sensor red", colorSensor.getColor()[0]);
-        //telemetryManager.update("Color Sensor green", colorSensor.getColor()[1]);
-        //telemetryManager.update("Color Sensor blue", colorSensor.getColor()[2]);
-        //telemetryManager.update("Lift State", depositArmDrive.State().toString());
-        //telemetryManager.update("Servo Intake position", robot.IntakeServo.getPosition());
-        //telemetryManager.update("Servo Intake Arm position", robot.IntakeArmServo.getPosition());
-
+        // Telemetry
         telemetry.addData("deposit Left Arm Position", robot.depositLeftArmServo.getPosition());
         telemetry.addData("deposit Right Arm Position", robot.depositRightArmServo.getPosition());
         telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
         telemetry.addData("Control Mode", currentMode.name());
-        telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles());
+        telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
         telemetry.addData("Lift Mode", liftState.name());
         telemetry.addData("Intake State", intakestate.name());
         telemetry.update();
@@ -213,6 +189,6 @@ public class BasicTeleOps extends OpMode {
         robot.liftMotorLeft.setPower(0);
         robot.liftMotorRight.setPower(0);
         //robot.IntakeServo.setPosition(1.0);
-        telemetryManager.update("Status", "Robot stopped");
+        telemetry.addData("Status", "Robot stopped");
     }
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TeleOps;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.BACK;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
 
 import android.annotation.SuppressLint;
@@ -15,7 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class RobotDrive {
 
-    private final GamepadEx gamepad;
+    private final GamepadEx gamepad_1;
+    private final GamepadEx gamepad_2;
     private final RobotHardware robot;
     private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
 
@@ -27,10 +29,10 @@ public class RobotDrive {
 
     private double powerFactor;
 
-    public RobotDrive(RobotHardware robot, GamepadEx gamepad) {
+    public RobotDrive(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2) {
         this.robot = robot;
-        this.gamepad = gamepad;
-
+        this.gamepad_1 = gamepad_1;
+        this.gamepad_2 = gamepad_2;
     }
 
     public void Init() {
@@ -41,7 +43,7 @@ public class RobotDrive {
     @SuppressLint("DefaultLocale")
     public void DriveLoop() {
         // Toggle control mode
-        if (gamepad.getButton(START) && !startPressed) {
+        if ((gamepad_1.getButton(START) || gamepad_2.getButton(START)) && !startPressed) {
             toggleControlMode();
             debounceTimer.reset();
             startPressed = true;
@@ -59,7 +61,7 @@ public class RobotDrive {
             backPressed = false;
         }
 
-        if(gamepad.getButton(LEFT_BUMPER)){
+        if(gamepad.getButton(RIGHT_BUMPER)){
             powerFactor = RobotActionConfig.powerFactor / 2;
         }
         else {
