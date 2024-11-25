@@ -7,7 +7,7 @@ import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 
-public class MecanumRobotAction extends DriveTrainAction {
+public class MecanumRobotAction extends DriveTrainAction {  // todo use back wheel
 
     private static final double ERROR_TOLERANCE = 0.2;
     DriveTrain driveTrain;

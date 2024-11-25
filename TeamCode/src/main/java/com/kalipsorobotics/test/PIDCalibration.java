@@ -65,6 +65,7 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKi(deltaKI);
                 globalController.chKd(deltaKD);
 
+                sleep(1000);  // should be safe I think
                 action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
                 action.setPidController(globalController);
 
