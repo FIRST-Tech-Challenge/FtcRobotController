@@ -5,9 +5,10 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.tuning.TwoDeadWheelLocalizer;
+//import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
@@ -16,13 +17,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
-@Autonomous(name = "Specimen and Sample Auto")
-public class SpecimenAndSample extends LinearOpMode {
+@Autonomous(name="Sample and Park Auto")
+public class SampleParkAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-    private TwoDeadWheelLocalizer deadwheels;
+    //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -40,36 +41,40 @@ public class SpecimenAndSample extends LinearOpMode {
         limelight = new Limelight(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
-//        deadwheels = new TwoDeadWheelLocalizer(hardwareMap);
+//        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 1;
-//        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-6,-60,1.5708));
-//
-//        waitForStart();
-//        claw.close(clawPos);
+
+        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(12,-60,1.5708));
+
+        waitForStart();
+        claw.close(clawPos);
+        arm.setPosition(0);
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(12,-60,1.5708))
+                        .lineToY(-52)
+                        .strafeTo(new Vector2d(-1,-50))
+                        .turn(Math.toRadians(110))
+                        .build());
+        lift.setPosition(-4500);
+        sleep(3000);
+        arm.setPosition(0.1);
+        sleep(500);
+        claw.release();
+        sleep(500);
+        arm.setPosition(0);
+        lift.setPosition(0);
 //        Actions.runBlocking(
-//                drive.actionBuilder(new Pose2d(-6,-60,1.5708))
-//                        .lineToY(-24)
-//                        .strafeTo(new Vector2d(0,-24))
-////                .strafeTo(new Vector2d(-12,-36))
-////                .turn(Math.toRadians(180))
+//                drive.actionBuilder(new Pose2d(6,-24,1.5708))
+//                        .lineToY(-45)
+//                        .strafeTo(new Vector2d(110,-60))
 //                        .build());
-//        lift.setPosition(-870);
-//        sleep(1000);
-//        arm.setPosition(0.5);
 //        sleep(500);
-//        arm.setPosition(0.9);
-//        sleep(1000);
-//        claw.release();
-//        arm.setPosition(0.1);
-//        Actions.runBlocking(
-//                drive.actionBuilder(new Pose2d(12,-60,1.5708))
-//                        .strafeTo(new Vector2d(-6,-24))
-//                        .lineToY(-60)
-//                        .strafeTo(new Vector2d(-18,-60))
-//                        .build());
+//        arm.setPosition(0);
+//        lift.setPosition(0);
+
 
 
         while(opModeIsActive())
@@ -77,7 +82,7 @@ public class SpecimenAndSample extends LinearOpMode {
 
         }
 
-
     }
 }
+
 

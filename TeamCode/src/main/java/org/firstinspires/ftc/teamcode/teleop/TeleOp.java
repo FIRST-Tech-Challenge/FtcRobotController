@@ -39,7 +39,7 @@ public class TeleOp extends LinearOpMode {
     private Lift lift;
     private double liftPower;
     boolean reverseArm;
-    private double[] armPositions = {0.9, 1.0,  0.3, 0};
+    private double[] armPositions = {1.0,  0.3, 0};
     private int armPositionIndex = 0;
     private boolean isReversing = false;
     private Climb climb;
@@ -60,7 +60,7 @@ public class TeleOp extends LinearOpMode {
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight");
         reverseArm = false;
         odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 //        climb = new Climb(hardwareMap,"climb");
@@ -294,25 +294,23 @@ public class TeleOp extends LinearOpMode {
             controller.update();
 
             //Climb
-            if(controller.x.onPress()) {
-                liftPower = -1;
-                lift.moveLift(liftPower);
-                sleep(1000);
-                liftPower = 0;
-                lift.moveLift(liftPower);
-
-                strafe = 0;
-                rotate = 0;
-                forward = 0.4;
-                robot.drive(forward, strafe, rotate);
-                sleep(100);
-
-                liftPower = 1;
-                lift.moveLift(liftPower);
-                sleep(1000);
-            }
-
-
+//            if(controller.x.onPress()) {
+//                liftPower = -1;
+//                lift.moveLift(liftPower);
+//                sleep(1000);
+//                liftPower = 0;
+//                lift.moveLift(liftPower);
+//
+//                strafe = 0;
+//                rotate = 0;
+//                forward = 0.4;
+//                robot.drive(forward, strafe, rotate);
+//                sleep(100);
+//
+//                liftPower = 1;
+//                lift.moveLift(liftPower);
+//                sleep(1000);
+//            }
         }
 
 
