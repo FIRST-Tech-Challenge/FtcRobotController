@@ -110,5 +110,6 @@ public class RobotHardware {
                         RevHubOrientationOnRobot.UsbFacingDirection.LEFT
                 ));
         imu.initialize(myIMUparameters);
+        imu.resetYaw();
     }
 }

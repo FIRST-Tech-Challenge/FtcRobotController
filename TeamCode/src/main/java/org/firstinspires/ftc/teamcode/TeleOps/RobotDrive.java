@@ -16,8 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class RobotDrive {
 
-    private final GamepadEx gamepad_1;
-    private final GamepadEx gamepad_2;
+    private final GamepadEx gamepad;
+
     private final RobotHardware robot;
     private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
 
@@ -29,35 +29,35 @@ public class RobotDrive {
 
     private double powerFactor;
 
-    public RobotDrive(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2) {
+    public RobotDrive(RobotHardware robot, GamepadEx gamepad) {
         this.robot = robot;
-        this.gamepad_1 = gamepad_1;
-        this.gamepad_2 = gamepad_2;
+        this.gamepad = gamepad;
     }
 
     public void Init() {
         // Initialize IMU from RobotHardware
         robot.initIMU();
+        robot.imu.resetYaw();
     }
 
     @SuppressLint("DefaultLocale")
     public void DriveLoop() {
         // Toggle control mode
-        if ((gamepad_1.getButton(START) || gamepad_2.getButton(START)) && !startPressed) {
+        if (gamepad.wasJustReleased(START) && !startPressed) {
             toggleControlMode();
             debounceTimer.reset();
             startPressed = true;
-        } else if (!gamepad.getButton(START)) {
+        } else if (!gamepad.wasJustReleased(START)) {
             startPressed = false;
         }
 
         // Reset IMU heading using button back and reset odometry
-        if (gamepad.getButton(BACK) && !backPressed) {
-            robot.initIMU();
+        if (gamepad.wasJustReleased(BACK) && !backPressed) {
+            robot.imu.re();
             //robot.resetDriveEncoders();
             debounceTimer.reset();
             backPressed = true;
-        } else if (!gamepad.getButton(BACK)) {
+        } else if (!gamepad.wasJustReleased(BACK)) {
             backPressed = false;
         }
 

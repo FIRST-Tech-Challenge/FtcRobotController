@@ -105,32 +105,56 @@ public class AutonomousMoveCode_Test extends LinearOpMode {
         telemetry.addData("Starting at ", "%7d:%7d",
                 robot.frontLeftMotor.getCurrentPosition(),
                 robot.frontRightMotor.getCurrentPosition());
+        telemetry.addData("Heading",robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         telemetry.update();
 
         // Wait for the game to start
         waitForStart();
 
         //Segment 1 movement
-        driveToPosition(-440, 0.4,15);
+        driveToPosition(-420, 0.4,15);
 
-        driveToPosition(-50,0.4,15);
+        // Action 1 - move the intake away
+        robot.intakeLeftArmServo.setPosition(0.1);
+        robot.intakeRightArmServo.setPosition(0.1);
+        sleep(500);
 
-        driveToPosition(250,0.4,15);
+        //Action 2.1 - rise up the verticla slide
+        Slides_Move(56.5,0.5); //Ris up the vertical slide
+        //Action 2.2 - set the position for deposit arm for hung
+        robot.depositLeftArmServo.setPosition(0.8);
+        robot.depositRightArmServo.setPosition(0.8);
+        robot.depositWristServo.setPosition(0.3);
+        sleep(1700);
 
-        strafeToPosition(1150,0.4,15);
+        //Segment 2 movement
+        driveToPosition(-140,0.2,15);
+
+        //segment 3 movement
+        driveToPosition(300,0.4,15);
+
+        //Action 3 - retract deposit
+        robot.depositLeftArmServo.setPosition(0);
+        robot.depositRightArmServo.setPosition(0);
+        robot.depositWristServo.setPosition(deposit_Wrist_retract_Pos);
+        sleep(100);
+
+        //segment 4 movement
+        strafeToPosition(1070,0.4,15);
 
         telemetry.addData("first turn", "ready");
         telemetry.update();
-        turnToAngle(80,0.2);
+        turnToAngle(82,0.2);
         double heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         telemetry.addData("heading", -1*heading);
         telemetry.update();
-        sleep(1000);
+        sleep(100);
 
         telemetry.addData("second turn", "ready");
         telemetry.update();
-        turnToAngle(170 ,0.2);
+        turnToAngle(168 ,0.2);
 
+        //Action 4 intake extend out
         robot.intakeClawServo.setPosition(intake_Claw_Open);
         robot.intakeLeftArmServo.setPosition(0);
         robot.intakeRightArmServo.setPosition(0);
