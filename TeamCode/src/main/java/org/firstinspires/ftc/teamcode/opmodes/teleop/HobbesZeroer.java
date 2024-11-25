@@ -32,12 +32,18 @@ public class HobbesZeroer extends OpMode {
 
     @Override
     public void loop() {
-        if (extendoON) hob.servosController.setExtendo(extendo);
-        if (extendoArmWristON) hob.servosController.setExtendoArmWrist(extendoArm, extendoWrist);
-        if (slidesArmWristON) hob.servosController.setSlidesArmWrist(slidesArm, slidesWrist);
-        if (slidesON) hob.slidesController.setTarget(slides);
-        if (intakeON) hob.servosController.intake(intake);
-        if (clawON) hob.servosController.setClawPrecise(clawPos);
+        if (extendoON)
+            hob.servosController.setExtendo(extendo);
+        if (extendoArmWristON)
+            hob.servosController.setExtendoArmWrist(extendoArm, extendoWrist);
+        if (slidesArmWristON)
+            hob.servosController.setSlidesArmWrist(slidesArm, slidesWrist);
+        if (slidesON)
+            hob.slidesController.setTarget(slides);
+        if (intakeON)
+            hob.servosController.spintake(intake);
+        if (clawON)
+            hob.servosController.setClawPrecise(clawPos);
         hob.tick();
     }
 }
