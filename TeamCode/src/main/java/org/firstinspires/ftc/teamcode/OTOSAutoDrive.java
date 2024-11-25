@@ -57,7 +57,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/22/2024, 8:04pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "11/24/2024, 2:09pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         configureOtos();
@@ -70,52 +70,60 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(800);
         setViper(VIPER_MAX);                                        // Extending Viper
         sleep(1000);
-        driveToLoc(6, 14, 45, 1); // Go to basket
+        driveToLoc(6, 12, 45, 1); // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop the block
+        sleep(600);
+        setClaw(CLAW_MIN);
 
         // Second Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(32, 2, 0, 1);
-        setViper(2000);
+        driveToLoc(33, 0, 0, 1);
+        setViper(1900);
         setVertical(70, 1000);
+        setClaw(CLAW_MAX);
         sleep(2200);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(100);
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(6, 14, 45, 1);  // Go to basket
+        driveToLoc(7, 10, 45, 1);  // Go to basket
         sleep(700);
         setClaw(CLAW_MAX);                                          // Drop second block
+        sleep(600);
+        setClaw(CLAW_MIN);
 
         // Third Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(32.5, .5, -1, 1);
+        driveToLoc(33.5, -3.5, -1, 1);
         setViper(1100);
         sleep(700);
-        setVertical(10, 1200);
-        sleep(1700);
+        setVertical(10, 1000);
+        setClaw(CLAW_MAX);
+        sleep(2000);
         setClaw(CLAW_MIN);                                          // Grab third block
         sleep(100);
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(6, 14, 45, 1);  // Go to basket
+        driveToLoc(5, 9, 45, 1);  // Go to basket
         sleep(600);
         setClaw(CLAW_MAX);                                          // Drop third block
+        sleep(600);
+        setClaw(CLAW_MIN);
 
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
-        driveToLoc(52, 5, 0);
+        driveToLoc(55, 5, 0);
         RobotLog.vv("Rockin'", "Set to max");
         setAscentStick(ASCENT_MAX);
-        driveToLoc(52, -7, 180);
-        sleep(200);
+        driveToLoc(55, -12, 180);
+        sleep(300);
         RobotLog.vv("Rockin'", "End program");
         claw.close();                                               // Release tension on the claw
-        ascentStick.close();                                        // Release tension on the stick
+        // ascentStick.close();                                     // Release tension on the stick
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
