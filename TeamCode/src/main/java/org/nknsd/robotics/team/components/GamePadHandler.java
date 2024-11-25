@@ -185,7 +185,12 @@ public class GamePadHandler implements NKNComponent {
     }
 
     public enum GamepadButtons {
-        LEFT_TRIGGER {
+        BACK {
+            @Override
+            public boolean detect(Gamepad gamepad){
+                return (gamepad.back);
+            }
+        }, LEFT_TRIGGER {
             @Override
             public boolean detect(Gamepad gamepad) {
                 return (gamepad.left_trigger > 0.5);
@@ -244,11 +249,6 @@ public class GamePadHandler implements NKNComponent {
             @Override
             public boolean detect(Gamepad gamepad) {
                 return gamepad.y;
-            }
-        }, BACK {
-            @Override
-            public boolean detect(Gamepad gamepad) {
-                return gamepad.back;
             }
         };
 
