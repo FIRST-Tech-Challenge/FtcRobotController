@@ -26,7 +26,6 @@ public class Lift{
      * @param hw [HardwareMap] Hardware map necessary to initialize motors.
      * @param leftLiftName [String] Name of the left lift motor assigned in the configuration.
      * @param rightLiftName [String] Name of the right lift motor assigned in the configuration.
-     * @param nameEncoder [String] Name of the encoder assigned in the configuration.
      */
     public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String leftEncoderName, String rightEncoderName){
         leftLift = hw.get(DcMotor.class, leftLiftName);
