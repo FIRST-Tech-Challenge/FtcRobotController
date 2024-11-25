@@ -42,8 +42,8 @@ public class PurePursuitAction extends Action {
 //        this.pidY = new PidNav(1. / 900, 0, 0);
 //        this.pidAngle = new PidNav(1 / 3.140, 0, 0);
 
-        this.pidX = new PidNav(0.17, 0, 0);
-        this.pidY = new PidNav(0.17, 0, 0);
+        this.pidX = new PidNav(0.03, 0, 0);
+        this.pidY = new PidNav(0.03, 0, 0);
         this.pidAngle = new PidNav(0.2, 0, 0);
         //0.001, 0.001, 0.2 behavior: turns slow and does slow glitches out
         //0.001, 0.001, 0.3 behavior: turns and then does not move
@@ -141,13 +141,11 @@ public class PurePursuitAction extends Action {
         lastLine = path.getSegment(path.numSegments() - 1);
         boolean distanceToEndWithinThreshold = odometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1;
         boolean velocityWithinThreshold = odometry.getCurrentVelocity().isWithinThreshhold(0.1, 0.1, Math.toRadians(5));
-        boolean angleWithinRange = Math.abs(odometry.getCurrentPosition().getTheta() - lastLine.getFinish().getTheta()) < Math.toRadians(4);
+        boolean angleWithinRange = Math.abs(odometry.getCurrentPosition().getTheta() - pathPoints.get(path.numPoints()-1).getTheta()) < Math.toRadians(4);
 
         Log.d("purepursaction_done", distanceToEndWithinThreshold + " " + velocityWithinThreshold + " " + angleWithinRange);
 
-        if (distanceToEndWithinThreshold //30, 30, 30, 1, 10
-                /*&& velocityWithinThreshold
-                && angleWithinRange*/) {
+        if (!follow.isPresent()) {
             //opModeUtilities.getTelemetry().addLine("breake");
             //opModeUtilities.getTelemetry().update();
             driveTrain.setPower(0, 0, 0, 0);
@@ -168,14 +166,8 @@ public class PurePursuitAction extends Action {
 
         //Log.d("purepursaction", "entered update");
 
-        follow = path.searchFrom(odometry.getCurrentPosition(), radius);
-
-        if (!follow.isPresent()) {
-            Log.d("purepursaction", "follow is not present");
-            follow = path.searchFrom(odometry.getCurrentPosition(), radius);
-            radius += 0.5;
-            targetPosition(prevFollow.get());
-        }
+        //follow = path.searchFrom(odometry.getCurrentPosition(), radius);
+        follow = path.lookAhead(odometry.getCurrentPosition(), radius);
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow", follow.get().getX() + " " + follow.get().getY() + " " + follow.get().getTheta());
@@ -185,12 +177,11 @@ public class PurePursuitAction extends Action {
             //Log.d("position", odometry.getCurrentPosition().toString());
             //Log.d("velocity", odometry.getCurrentVelocity().toString());
 
-            radius = 2; //50
-
-            prevFollow = follow;
+            radius = 4; //50
+        } else {
+            driveTrain.setPower(0);
+            Log.d("purepursaction_debug_follow", "done");
         }
-
-
 
         //if (Thread.interrupted()) throw new InterruptedException();
 
