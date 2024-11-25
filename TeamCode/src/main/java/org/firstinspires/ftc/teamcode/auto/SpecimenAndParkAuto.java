@@ -23,7 +23,7 @@ public class SpecimenAndParkAuto extends LinearOpMode {
     private MechDrive robot;
     private Limelight limelight;
     private Imu imu;
-//    private ThreeDeadWheelLocalizer deadwheels;
+    //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
     double forward;
     double strafe;
@@ -56,11 +56,21 @@ public class SpecimenAndParkAuto extends LinearOpMode {
         sleep(750);
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(12,-60,1.5708))
-                .lineToY(-26)
+                        .lineToY(-26)
                         .strafeTo(new Vector2d(6,-24))
-                .build());
+                        .build());
         lift.setPosition(-400);
         sleep(750);
+        arm.setPosition(0.7);
+//        sleep(1000);
+//        arm.setPosition(0.9);
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(6,-24,1.5708))
+                        .strafeTo(new Vector2d(18,-24))
+                        .lineToY(-20)
+
+                        .build());
+        sleep(1000);
         claw.release();
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(6,-24,1.5708))
