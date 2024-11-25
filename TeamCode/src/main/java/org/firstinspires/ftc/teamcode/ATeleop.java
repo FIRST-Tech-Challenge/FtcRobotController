@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -56,6 +57,8 @@ public class ATeleop extends LinearOpMode {
     State currentState;
     State previousState;
 
+    ElapsedTime elapsedTime;
+
     GamepadEx playerOne, playerTwo;
 
     @Override
@@ -79,7 +82,12 @@ public class ATeleop extends LinearOpMode {
         //visionPortal.stopStreaming();
         cameraIsOn = false;
 
+        elapsedTime = new ElapsedTime();
+        elapsedTime.reset();
+
         while (opModeIsActive()) {
+
+            elapsedTime.reset();
 
             /** PLAYER ONE CONTROLS **/
             //drive
@@ -102,6 +110,7 @@ public class ATeleop extends LinearOpMode {
             telemetry.addData("armServos", bart.output.arm.left.getPosition());
             telemetry.addData("\nslide power", bart.output.verticalSlides.back.getPower());
             telemetry.addData("p2rsy", playerTwo.getRightY());
+            telemetry.addData("Loop Time", elapsedTime.milliseconds());
             telemetry.update();
 
         }
