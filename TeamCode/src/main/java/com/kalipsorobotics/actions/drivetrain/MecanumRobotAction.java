@@ -3,7 +3,6 @@ package com.kalipsorobotics.actions.drivetrain;
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
-import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -16,7 +15,7 @@ public class MecanumRobotAction extends DriveTrainAction {
     PIDController controller;
     double targetInches;
     double currentInches;
-    double error;
+    double remainingDistance;
     double power;
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, Odometry odometry) {
@@ -27,22 +26,31 @@ public class MecanumRobotAction extends DriveTrainAction {
         this.targetInches = targetInches;
     }
 
-    public PIDController getController() {
+    public PIDController getPidController() {
         return controller;
     }
 
-    public double getError() {
-        return error;
+    public void setPidController(PIDController controller) {
+        this.controller = controller;
     }
 
-    private void refreshError() {
-        error = targetInches - currentInches;
+    public double getRemainingDistance() {
+        return remainingDistance;
+    }
+
+    public double getTarget() {
+        return targetInches;
+    }
+
+
+    private void refreshRemainingDistance() {
+        remainingDistance = targetInches - currentInches;
     }
 
     @Override
     public boolean checkDoneCondition() {
-        refreshError();
-        if(Math.abs(error) <= ERROR_TOLERANCE) {
+        refreshRemainingDistance();
+        if(Math.abs(remainingDistance) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0); // stop, to be safe
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             Log.d("mecanum", "done");
@@ -55,7 +63,7 @@ public class MecanumRobotAction extends DriveTrainAction {
     @Override
     public void update() {
         this.currentInches = odometry.countX();
-        refreshError();
+        refreshRemainingDistance();
 
         if (!hasStarted) {
             this.targetInches += currentInches;
@@ -65,6 +73,9 @@ public class MecanumRobotAction extends DriveTrainAction {
 
         if(!getIsDone()){
             driveTrain.setPower(power, -power, -power, power);
+        }
+        else {
+            driveTrain.setPower(0);
         }
     }
 }

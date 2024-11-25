@@ -3,7 +3,6 @@ package com.kalipsorobotics.actions.drivetrain;
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PIDController;
-import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.Odometry;
 import com.kalipsorobotics.math.MathFunctions;
@@ -19,7 +18,7 @@ public class TurnRobotAction extends DriveTrainAction {
     double targetDegrees;
     double currentHeading;
     double ERROR_TOLERANCE = 0.5; // degrees
-    double error;
+    double remainingDegrees;
 
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, Odometry odometry) {
         this.dependentAction = new DoneStateAction();
@@ -29,12 +28,20 @@ public class TurnRobotAction extends DriveTrainAction {
         this.controller = new PIDController(0.2, 0.01, 0.01, "turn");  // placeholder values
     }
 
-    public PIDController getController() {
+    public PIDController getPidController() {
         return controller;
     }
 
-    public double getError() {
-        return error;
+    public void setPidController(PIDController controller) {
+        this.controller = controller;
+    }
+
+    public double getRemainingDistance() {
+        return remainingDegrees;
+    }
+
+    public double getTarget() {
+        return targetDegrees;
     }
 
     public double getCurrentHeading() {
@@ -42,13 +49,13 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     private void refreshError() {
-        error = MathFunctions.angleWrapDeg(targetDegrees - currentHeading);
+        remainingDegrees = MathFunctions.angleWrapDeg(targetDegrees - currentHeading);
     }
 
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        if (Math.abs(error) <= ERROR_TOLERANCE) {
+        if (Math.abs(remainingDegrees) <= ERROR_TOLERANCE) {
             driveTrain.setPower(0,0,0,0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             currentHeading = getCurrentHeading();
