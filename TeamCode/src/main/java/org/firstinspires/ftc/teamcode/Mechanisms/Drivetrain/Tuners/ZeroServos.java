@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Tuners;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.CLOSE;
-import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw.clawState.OPEN;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners.clawState.CLOSE;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Claw.Tuners.clawState.OPEN;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 @Config
