@@ -19,13 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * executes
  * the autonomous routine.
  */
-@Autonomous(name = "Main Autonomous", group = "Autonomous")
+@Autonomous(name = "Hardcoded Autonomous", group = "Autonomous")
 public class AutoBase extends LinearOpMode {
     /** Selected alliance color (Red/Blue) */
     String color = "Red";
 
     /** Selected starting position (Left/Right) */
-    String position = "Left";
+    String startingPosition = "Left";
 
     /** Menu options for autonomous configuration */
     private static final String[] MENU_OPTIONS = {
@@ -75,7 +75,7 @@ public class AutoBase extends LinearOpMode {
                     if (currentSelection.get() < MENU_OPTIONS.length - 1) {
                         String[] parts = MENU_OPTIONS[currentSelection.get()].split(" ");
                         color = parts[0]; // "Red" or "Blue"
-                        position = parts[1]; // "Left" or "Right"
+                        startingPosition = parts[1]; // "Left" or "Right"
                     } else {
                         menuActive.set(false);
                     }
@@ -85,7 +85,7 @@ public class AutoBase extends LinearOpMode {
             // Display current selection
             telemetry.addLine("\nSelected Configuration:");
             telemetry.addData("Position",
-                    (color != null && position != null) ? color + " " + position : "Not selected");
+                    (color != null && startingPosition != null) ? color + " " + startingPosition : "Not selected");
             telemetry.update();
         }
 
@@ -94,7 +94,7 @@ public class AutoBase extends LinearOpMode {
 
         // Add ready status
         telemetry.addData("Status", "Ready to start!");
-        telemetry.addData("Configuration", color + " " + position);
+        telemetry.addData("Configuration", color + " " + startingPosition);
         telemetry.update();
 
         // Now wait for start
@@ -102,7 +102,7 @@ public class AutoBase extends LinearOpMode {
 
         try {
             if (opModeIsActive()) {
-                auto.run(color + " " + position);
+                auto.run(color + " " + startingPosition);
             }
         } catch (RuntimeException e) {
             // Shutdown handled by ShutdownManager

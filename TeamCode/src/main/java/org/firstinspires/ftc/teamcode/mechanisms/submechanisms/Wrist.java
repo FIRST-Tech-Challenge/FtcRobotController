@@ -12,7 +12,6 @@ public class Wrist {
     public final Servo wristServo;
     public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
     public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
-    public final double basketPos = Settings.Hardware.Servo.Wrist.BASKET_POSITION;
     public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
 
     private final BaseRobot baseRobot;
@@ -23,7 +22,6 @@ public class Wrist {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
         wristServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST);
-        setPosition(Position.HORIZONTAL);
     }
 
     public void setPosition(Position newPosition) {
@@ -34,9 +32,6 @@ public class Wrist {
                 break;
             case CHAMBER:
                 position = chamberPos;
-                break;
-            case BASKET:
-                position = basketPos;
                 break;
             default:
                 position = horizPos;
@@ -52,8 +47,6 @@ public class Wrist {
             return Position.VERTICAL;
         } else if (position == chamberPos) {
             return Position.CHAMBER;
-        } else if (position == basketPos) {
-            return Position.BASKET;
         } else if (position == horizPos) {
             return Position.HORIZONTAL;
         } else {
@@ -61,11 +54,32 @@ public class Wrist {
         }
     }
 
+    public void cyclePosition() {
+        Position currentPosition = position();
+        Position nextPosition;
+
+        switch (currentPosition) {
+            case HORIZONTAL:
+                nextPosition = Position.CHAMBER;
+                break;
+            case VERTICAL:
+                nextPosition = Position.HORIZONTAL;
+                break;
+            case CHAMBER:
+                nextPosition = Position.VERTICAL;
+                break;
+            default:
+                nextPosition = Position.HORIZONTAL; // Fallback to HORIZONTAL if unknown
+                break;
+        }
+
+        setPosition(nextPosition);
+    }
+
     public enum Position {
         HORIZONTAL,
         VERTICAL,
         CHAMBER,
-        BASKET,
         UNKNOWN,
     }
 

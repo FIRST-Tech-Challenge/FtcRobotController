@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.lang.reflect.Field;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 
 @Config
 /** @noinspection unused */
@@ -48,10 +50,9 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double HORIZONTAL_POSITION = 0.5;
-                public static double CHAMBER_POSITION = -0.75;
-                public static double BASKET_POSITION = -0.7;
-                public static double VERTICAL_POSITION = -0.5;
+                public static double HORIZONTAL_POSITION = 0.7;
+                public static double CHAMBER_POSITION = 0.3;
+                public static double VERTICAL_POSITION = 0.1;
             }
         }
 
@@ -72,24 +73,17 @@ public class Settings {
             public static final String WRIST = "wrist";
             public static final String CLAW_LEFT = "clawL";
             public static final String CLAW_RIGHT = "clawR";
-            public static final String SHOULDER = "shoulder";
-            public static final String ACTUATOR = "actuator";
+            public static final String ACTUATOR = "linearActuator";
         }
 
-        public static final double SHOULDER_GEAR_RATIO = 2;
-        public static final double SHOULDER_TICKS_PER_DEGREE = Hardware.COUNTS_PER_REVOLUTION * SHOULDER_GEAR_RATIO
-                / 360.0;
-        public static double SHOULDER_POWER = 0.5; // Adjust based on your needs
 
         @Config
         public static class Extensor {
-            // Positions in encoder ticks
             public static int PICKUP = 0;
             public static int HOVER = -20;
             public static int LOW_RUNG = -500;
             public static int HIGH_RUNG = -1000;
 
-            // Motor power settings
             public static double MOVEMENT_POWER = 0.5;
         }
 
@@ -130,13 +124,37 @@ public class Settings {
 
         @Config
         public static class Intake {
-            public static double SPEED = 0.5;
+            public static double SPEED = -1;
         }
     }
 
     // Autonomous settings
     @Config
     public static class Autonomous {
+        @Config
+        public static class FieldPositions {
+            // Updated poses for initial robot positions based on IdealLoop
+            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-59.5, -35.8, Math.toRadians(90)); // Updated
+            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36, -60, Math.toRadians(90)); // Updated
+            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270)); // Updated
+            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-36, 60, Math.toRadians(270)); // Updated
+
+            // Updated parked positions for each starting position
+            public static final Pose2d RED_LEFT_PARK_POSE = new Pose2d(-8.3, -29.8, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-23.1, 11.9, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(23.4, -12.2, Math.toRadians(135)); // Updated
+            public static final Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(23.8, 10.0, Math.toRadians(180)); // Updated
+
+            // Updated place positions for each starting position
+            public static final Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-8.1, -29.5, Math.toRadians(90)); // Updated
+            public static final Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(8.5, -30.0, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(8.6, 29.0, Math.toRadians(270)); // Updated
+            public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-7.2, 29.2, Math.toRadians(270)); // Updated
+
+            public static final Pose2d RED_HP_POSE = new Pose2d(-59.5, -25.8, Math.toRadians(90)); // Updated
+            public static final Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45)); // Updated
+        }
+
         @Config
         public static class Movement {
             /** Encoder counts for moving forward one unit */
@@ -173,7 +191,7 @@ public class Settings {
         public double stick_deadzone = 0.05;
 
         /** Sensitivity multiplier for right stick input */
-        public double right_stick_sensitivity = 1.0;
+        public double right_stick_sensitivity = 0.5;
 
         /** Bumper rotation speed */
         public double bumper_rotation_speed = 0.8;
@@ -222,8 +240,8 @@ public class Settings {
 
         // Claw controls
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
-        public final GamepadButton intakeOut = GamepadButton.OPTIONS;
-        public final GamepadButton intakeStop = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeStop = GamepadButton.OPTIONS;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
@@ -289,10 +307,15 @@ public class Settings {
 
         // Development Features
         public static final boolean DEBUG = true;
-        public static final boolean SKIP_AUTONOMOUS = true;
 
         // Special Features
         public static final boolean VICTORY = false;
+
+        public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PARK;
+
+        public enum AutonomousMode {
+            JUST_PARK, JUST_PLACE, FULL
+        }
     }
 
     public static String getDisabledFlags() {
@@ -329,8 +352,7 @@ public class Settings {
             new DefaultGamepadSettings(),
             new DefaultGamepadSettings());
 
-    public static final ControllerProfile BBOONSTRA_PROFILE = new ControllerProfile(
-            "bboonstra",
+    public static final ControllerProfile BBOONSTRA_PROFILE = new ControllerProfile("bboonstra",
             new DefaultGamepadSettings() {
                 {
                     // Customize main gamepad settings
@@ -342,8 +364,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.smooth(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     buttonMapping.extendExtensor = GamepadButton.Y;
@@ -352,8 +373,7 @@ public class Settings {
                 }
             });
 
-    public static final ControllerProfile CISRAEL_PROFILE = new ControllerProfile(
-            "cisrael",
+    public static final ControllerProfile CISRAEL_PROFILE = new ControllerProfile("cisrael",
             new DefaultGamepadSettings() {
                 {
                     dpad_movement_speed = 0.6;
@@ -364,8 +384,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.quadratic(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
@@ -374,8 +393,7 @@ public class Settings {
                 }
             });
 
-    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile(
-            "rsharma",
+    public static final ControllerProfile RSHARMA_PROFILE = new ControllerProfile("rsharma",
             new DefaultGamepadSettings() {
                 {
                     dpad_movement_speed = 0.5;
@@ -386,8 +404,7 @@ public class Settings {
                 public double applyBoostCurve(double input) {
                     return BoostCurves.linear(input);
                 }
-            },
-            new DefaultGamepadSettings() {
+            }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
                     trigger_threshold = 0.1;

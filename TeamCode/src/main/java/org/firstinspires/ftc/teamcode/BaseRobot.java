@@ -107,22 +107,15 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        strafePower = -strafePower;
         double frontLeft = drivePower + strafePower + rotation;
         double frontRight = drivePower - strafePower - rotation;
         double rearLeft = drivePower - strafePower + rotation;
         double rearRight = drivePower + strafePower - rotation;
 
-        // Normalize the power values to stay within the range [-1, 1]
-        double max = Math.max(
-                Math.max(Math.abs(frontLeft), Math.abs(frontRight)),
-                Math.max(Math.abs(rearLeft), Math.abs(rearRight)));
-        if (max > 1.0) {
-            frontLeft /= max;
-            frontRight /= max;
-            rearLeft /= max;
-            rearRight /= max;
-        }
+        logger.update("FRONT LEFT", String.valueOf(frontLeft));
+        logger.update("FRONT RIGHT", String.valueOf(frontRight));
+        logger.update("REAR LEFT", String.valueOf(rearLeft));
+        logger.update("REAR RIGHT", String.valueOf(rearRight));
 
         frontLeftMotor.setPower(frontLeft);
         frontRightMotor.setPower(frontRight);
@@ -146,6 +139,10 @@ public class BaseRobot {
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
 
+        logger.update("X", String.valueOf(directions.x));
+        logger.update("Y", String.valueOf(directions.y));
+        logger.update("strafe", String.valueOf(strafePower));
+
         /*
          * Drives the motors based on the given power/rotation
          */
@@ -163,14 +160,14 @@ public class BaseRobot {
             if (actions.intakeIn) {
                 arm.intake.intake();
             }
-            if (actions.intakeOut) {
+            if (actions.intakeOut && arm.wrist.position() != Wrist.Position.VERTICAL) {
                 arm.intake.outtake();
             }
             if (actions.intakeStop) {
                 arm.intake.stop();
             }
-            if (actions.wristUp) {
-                arm.wrist.setPosition(Wrist.Position.VERTICAL);
+            if (actions.justWristUp) {
+                arm.wrist.cyclePosition();
             } else if (actions.wristDown) {
                 arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
@@ -178,6 +175,8 @@ public class BaseRobot {
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
             DynamicInput.Actions actions = input.getActions();
+            logger.update("LA extending", String.valueOf(actions.linearActuatorExtend));
+            logger.update("LA retracting", String.valueOf(actions.linearActuatorRetract));
 
             if (actions.linearActuatorExtend) {
                 linearActuator.extend();

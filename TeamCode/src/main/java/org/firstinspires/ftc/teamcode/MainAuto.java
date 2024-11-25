@@ -14,7 +14,7 @@ public class MainAuto {
 
     /**
      * Creates a new autonomous controller instance
-     * 
+     *
      * @param base  Base robot instance to control
      * @param color Selected alliance color
      */
@@ -26,14 +26,20 @@ public class MainAuto {
 
     /**
      * Executes the main autonomous routine
-     * 
+     *
      * @param mode Selected autonomous mode (e.g., "red left", "blue right")
      */
     public void run(String mode) {
 
-        if (Settings.Deploy.SKIP_AUTONOMOUS) {
-            baseRobot.logger.update("Autonomous phase", "Skipping due to deploy flag");
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PARK) {
+            baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
             immediatelyPark(mode);
+            return;
+        }
+
+        if (Settings.Deploy.AUTONOMOUS_MODE == Settings.Deploy.AutonomousMode.JUST_PLACE) {
+            baseRobot.logger.update("Autonomous phase", "Placing due to deploy flag");
+            immediatelyPlace(mode);
             return;
         }
 
@@ -87,7 +93,7 @@ public class MainAuto {
 
     /**
      * Places specimen on the scoring chamber
-     * 
+     *
      * @param mode          Current autonomous mode
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
@@ -112,7 +118,7 @@ public class MainAuto {
 
     /**
      * Places a specimen on the chamber during cycling sequence
-     * 
+     *
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     public void placeNextSpecimenOnChamber(ChamberHeight chamberHeight) {
@@ -125,7 +131,7 @@ public class MainAuto {
 
     /**
      * Executes the specimen placement sequence
-     * 
+     *
      * @param chamberHeight Target chamber height (HIGH/LOW)
      */
     private void placeSpecimen(ChamberHeight chamberHeight) {
@@ -147,7 +153,7 @@ public class MainAuto {
 
     /**
      * Moves robot to parking position based on selected mode
-     * 
+     *
      * @param mode Current autonomous mode
      */
     public void park(String mode) {
@@ -157,26 +163,44 @@ public class MainAuto {
 
     /**
      * Emergency parking routine - moves directly to parking position
-     * 
+     *
      * @param mode Current autonomous mode
      */
     public void immediatelyPark(String mode) {
+        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
+        baseRobot.telemetry.update();
         switch (mode.toLowerCase()) {
-            // TODO this all sucks
             case "red right":
             case "blue right":
-                baseRobot.mecanumDrive(0, -0.5, 0);
-                pause(2000);
-                baseRobot.mecanumDrive(0, 0, 0);
+                baseRobot.odometry.moveCounts("forward", 30);
+                baseRobot.odometry.moveCounts("left", 100);
+                baseRobot.odometry.moveCounts("forward", 100);
+                baseRobot.odometry.moveCounts("right", 20);
                 break;
             case "red left":
             case "blue left":
-                baseRobot.mecanumDrive(0, 0.5, 0);
-                pause(2000);
-                baseRobot.mecanumDrive(0, 0, 0);
+                baseRobot.odometry.moveCounts("left", 20);
+                baseRobot.odometry.moveCounts("forward", 100);
+                baseRobot.odometry.moveCounts("right", 20);
                 break;
         }
-        baseRobot.telemetry.addData("Yes, we are parking as ", mode);
+    }
+
+    /**
+     * Moves directly to parking position after placing
+     *
+     * @param mode Current autonomous mode
+     */
+    public void immediatelyPlace(String mode) {
+        // TODO Go to place center, place, then park
+        switch (mode.toLowerCase()) {
+            case "red right":
+            case "blue right":
+                return;
+            case "red left":
+            case "blue left":
+                return;
+        }
     }
 
     /**
@@ -196,7 +220,7 @@ public class MainAuto {
 
     /**
      * Utility method to pause execution
-     * 
+     *
      * @param ms Milliseconds to pause
      */
     private void pause(long ms) {
