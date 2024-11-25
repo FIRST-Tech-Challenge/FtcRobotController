@@ -62,12 +62,25 @@ public class ATeleop extends LinearOpMode {
 
     ElapsedTime elapsedTime;
 
+    double loopTime;
+    double maxLoopTime;
+    double minLoopTime;
+    double avgLoopTime;
+    double totalTime;
+    double totalLoops;
+
     GamepadEx playerOne, playerTwo;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //Camera
         //initAprilTag();
+        loopTime = 0;
+        maxLoopTime = 0;
+        minLoopTime = 999999;
+        avgLoopTime = 0;
+        totalTime = 0;
+        totalLoops = 0;
 
         //create robot
         bart = new RobotMain(hardwareMap, telemetry);
@@ -97,7 +110,6 @@ public class ATeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            elapsedTime.reset();
 
             //READ
             playerOne.readButtons();
@@ -130,7 +142,16 @@ public class ATeleop extends LinearOpMode {
             telemetry.addData("armServos", bart.output.arm.left.getPosition());
             telemetry.addData("\nslide power", bart.output.verticalSlides.back.getPower());
             telemetry.addData("p2rsy", playerTwo.getRightY());
-            telemetry.addData("Loop Time", elapsedTime.milliseconds());
+            loopTime = elapsedTime.milliseconds() - totalTime;
+            if (loopTime > maxLoopTime) maxLoopTime = loopTime;
+            if (loopTime < minLoopTime) minLoopTime = loopTime;
+            totalLoops++;
+            totalTime = elapsedTime.milliseconds();
+            avgLoopTime = totalTime/totalLoops;
+            telemetry.addData("Loop Time", loopTime);
+            telemetry.addData("Max Loop Time", maxLoopTime);
+            telemetry.addData("Min Loop Time", minLoopTime);
+            telemetry.addData("Avg Loop Time", avgLoopTime);
             telemetry.update();
 
         }
