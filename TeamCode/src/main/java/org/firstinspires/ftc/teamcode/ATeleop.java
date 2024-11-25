@@ -45,6 +45,7 @@ public class ATeleop extends LinearOpMode {
     final double xP = 0.05;
     final double yP = 0.05;
     final double thetaP = 0.05;
+    final double angularP = 0;
 
     double inputtedY = 12;
 
@@ -69,6 +70,9 @@ public class ATeleop extends LinearOpMode {
     double totalTime;
     double totalLoops;
 
+    double targetAngle;
+    double automatedAngularVel;
+
     GamepadEx playerOne, playerTwo;
 
     @Override
@@ -81,6 +85,10 @@ public class ATeleop extends LinearOpMode {
         avgLoopTime = 0;
         totalTime = 0;
         totalLoops = 0;
+
+
+        targetAngle = 0;
+        automatedAngularVel = 0;
 
         //create robot
         bart = new RobotMain(hardwareMap, telemetry);
@@ -171,7 +179,10 @@ public class ATeleop extends LinearOpMode {
 
                 //EVENTS
                 if (playerOne.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-
+                    thogLockToNextCounterClockwise();
+                }
+                if (playerOne.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    thogLockToNextClockwise();
                 }
                 if (playerOne.isDown(GamepadKeys.Button.DPAD_RIGHT)) {
                     currentState = State.GO_TO_INPUTTED_Y;
@@ -258,6 +269,34 @@ public class ATeleop extends LinearOpMode {
     }
 
 
+    public void thogLockToNextClockwise() {
+        if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) < -90) {
+            targetAngle = -90;
+        } else if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) < 0) {
+            targetAngle = 0;
+        } else if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) < 90) {
+            targetAngle = 90;
+        } else if (Math.toRadians(bart.mecanaDruve.pose.heading.toDouble()) < 180) {
+            targetAngle = 180;
+        }
+    }
+
+    public void thogLockToNextCounterClockwise() {
+        if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) > 90) {
+            targetAngle = 90;
+        } else if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) > 0) {
+            targetAngle = 0;
+        } else if (Math.toDegrees(bart.mecanaDruve.pose.heading.toDouble()) > -90) {
+            targetAngle = -90;
+        } else if (Math.toRadians(bart.mecanaDruve.pose.heading.toDouble()) > -180) {
+            targetAngle = -180;
+        }
+    }
+
+    public void goToTargetAngle() {
+        automatedAngularVel = (angularP * targetAngle) / 180;
+    }
+
 
     public void pControllerToPos(Pose2d desiredPos) {
         Pose2d difference = desiredPos.minusExp(bart.mecanaDruve.pose);
@@ -266,10 +305,12 @@ public class ATeleop extends LinearOpMode {
         //double yDiff = desiredPos.position.y - bart.mecanaDruve.pose.position.y;
         //double thetaDiff = desiredPos.heading.toDouble() -
 
-        bart.driveFieldRelative(
-                difference.position.x*xP,
-                difference.position.y*yP,
-                difference.heading.toDouble()*thetaP);
+
+            bart.driveFieldRelative(
+                    difference.position.x*xP,
+                    difference.position.y*yP,
+                    difference.heading.toDouble()*thetaP);
+
     }
 
     public double getXSpeed(double desiredX) {
@@ -285,13 +326,26 @@ public class ATeleop extends LinearOpMode {
 
     public void manualControl() {
         //bart.driveRobotRelative(playerOne.getLeftY(), playerOne.getLeftX(), playerOne.getRightX());
-        bart.mecanaDruve.setDrivePowers(new PoseVelocity2d(
-                new Vector2d(
-                        -gamepad1.left_stick_y*0.7,
-                        -gamepad1.left_stick_x*0.7
-                ),
-                -gamepad1.right_stick_x*0.7
-        ));
+        if (playerOne.getRightX() == 0) {
+            bart.mecanaDruve.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(
+                            -gamepad1.left_stick_y*0.7,
+                            -gamepad1.left_stick_x*0.7
+                    ),
+                    targetAngle*0.7
+            ));
+        } else {
+            targetAngle -= gamepad1.right_stick_x*0.7;
+            bart.mecanaDruve.setDrivePowers(new PoseVelocity2d(
+                    new Vector2d(
+                            -gamepad1.left_stick_y*0.7,
+                            -gamepad1.left_stick_x*0.7
+                    ),
+                    automatedAngularVel*0.7
+            ));
+        }
+
+
 
 
         if (playerTwo.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
