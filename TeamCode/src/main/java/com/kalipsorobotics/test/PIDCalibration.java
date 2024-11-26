@@ -11,6 +11,7 @@ import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,9 +27,10 @@ public class PIDCalibration extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        IMUModule imuModule = new IMUModule(opModeUtilities);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
-        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, imuModule, 0, 0, Math.toRadians(0));
 
         waitForStart();
 

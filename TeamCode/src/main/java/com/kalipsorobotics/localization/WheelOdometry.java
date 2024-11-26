@@ -3,6 +3,7 @@ package com.kalipsorobotics.localization;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.kalipsorobotics.modules.IMUModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.math.MathFunctions;
@@ -14,6 +15,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class WheelOdometry {
     OpModeUtilities opModeUtilities;
+    IMUModule imuModule;
     final static private double TRACK_WIDTH = 273.05;
     static private final double BACK_DISTANCE_TO_MID = 69.85;
     private final DcMotor rightEncoder;
@@ -27,8 +29,10 @@ public class WheelOdometry {
     private volatile long prevTime;
     private final double MM_TO_INCH = 1/25.4;
 
-    public WheelOdometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, double xCoordinate, double yCoordinate, double theta) {
+    public WheelOdometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, IMUModule imuModule, double xCoordinate,
+                         double yCoordinate, double theta) {
         this.opModeUtilities = opModeUtilities;
+        this.imuModule = imuModule;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
@@ -99,8 +103,9 @@ public class WheelOdometry {
                 relativeDelta.getX() * Math.cos(previousGlobalPosition.getTheta()) - relativeDelta.getY() * Math.sin(previousGlobalPosition.getTheta());
         double newY =
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
-        double newTheta =
-                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+//        double newTheta =
+//                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+        double newTheta = getIMUHeading();
         return new Velocity(newX, newY, newTheta);
     }
 
@@ -119,6 +124,10 @@ public class WheelOdometry {
                 throw new InterruptedException();
             }
         }
+    }
+
+    public double getIMUHeading() {
+        return imuModule.getIMU().getRobotYawPitchRollAngles().getYaw();
     }
 
     public Position updatePosition() {
@@ -144,6 +153,8 @@ public class WheelOdometry {
         prevLeftTicks = leftTicks;
         prevBackTicks = backTicks;
 
+
+
         //opModeUtilities.getTelemetry().addData("global", currentPosition.toString());
         return currentPosition;
     }
@@ -155,6 +166,29 @@ public class WheelOdometry {
     public Position getCurrentPosition() {
         return currentPosition;
     }
+
+    public IMUModule getImuModule() {return imuModule;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public double countX() {
         return (countLeft() + countRight()) / 2;

@@ -6,6 +6,7 @@ import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 
 import com.kalipsorobotics.localization.WheelOdometry;
+import com.kalipsorobotics.modules.IMUModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -28,8 +29,9 @@ public class TestTeleOpp extends LinearOpMode {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         driveTrain = new DriveTrain(opModeUtilities);
+        IMUModule imuModule = new IMUModule(opModeUtilities);
         sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities,0,0,Math.toRadians(0));
+        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities, imuModule,0,0,Math.toRadians(0));
         //Outtake outtake = new Outtake(opModeUtilities);
 
 //        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, sparkfunOdometry, wheelOdometry);
