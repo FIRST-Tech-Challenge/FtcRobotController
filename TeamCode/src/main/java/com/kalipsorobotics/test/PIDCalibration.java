@@ -6,11 +6,13 @@ import android.util.Log;
 import com.kalipsorobotics.PID.PIDController;
 
 import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
+import com.kalipsorobotics.actions.drivetrain.MecanumRobotAction;
 import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,13 +28,14 @@ public class PIDCalibration extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        IMUModule imuModule = new IMUModule(opModeUtilities);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
-        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, imuModule, 0, 0, Math.toRadians(0));
 
         waitForStart();
 
-        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
+        DriveTrainAction action = new MecanumRobotAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
         PIDController globalController = action.getPidController();
 
         int i = 0;
@@ -63,7 +66,8 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKi(deltaKI);
                 globalController.chKd(deltaKD);
 
-                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
+                sleep(1000);  // should be safe I think
+                action = new MecanumRobotAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
                 action.setPidController(globalController);
 
                 Log.d(tag, globalController.toString());

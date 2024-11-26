@@ -22,11 +22,8 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
-        setPosition(0.925);
         setPosition(0.5);
-        setPosition(0.4);
-        setPosition(0.3);
-        setPosition(0.256);
+        setPosition(0.925);
         isIn = true;
     }
     public double getPosition() {

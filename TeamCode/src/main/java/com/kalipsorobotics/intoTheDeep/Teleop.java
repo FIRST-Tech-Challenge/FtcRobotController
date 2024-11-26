@@ -1,5 +1,8 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import android.os.SystemClock;
+
+import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DriveAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
@@ -20,6 +23,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp
 public class Teleop extends LinearOpMode {
 
+    // BUTTON CONTRACT:  https://docs.google.com/document/d/1XlSuL8Y8_j8Tde5NbMEa1k2LSuc72HpBp4LqAUZ_pjQ/edit?tab=t.0
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -37,6 +42,17 @@ public class Teleop extends LinearOpMode {
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake, outtakePivotAction);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
+        Action action = new Action() {
+            @Override
+            public boolean checkDoneCondition() {
+                return false;
+            }
+
+            @Override
+            public void update() {
+
+            }
+        };
 
         boolean prevGamePadY = false;
         boolean prevGamePadX = false;
@@ -48,16 +64,17 @@ public class Teleop extends LinearOpMode {
 
 
         intakeLinkageAction.retract();
-        intakePivotAction.moveDown();
+        intakePivotAction.moveUp();
         intakeDoorAction.close();
 
         outtakeClawAction.close();
         outtakePivotAction.moveIn();
 
         //Pigeon
-        outtakePigeonAction.moveIn();
+        outtakePigeonAction.setPosition(0);
 
         waitForStart();
+
         while (opModeIsActive()) {
 
             //Drive
@@ -72,39 +89,27 @@ public class Teleop extends LinearOpMode {
             } else {
                 intakeNoodleAction.stop();
             }
-    
+
 
             //Pivot TODO make generic toggle
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
             }
-            if (gamepad2.left_stick_button) {
-                intakePivotAction.togglePosition();
-            }
             prevGamePadX = gamepad2.x;
 
             //Door
+            //TODO alan you should make this whole chunky thing maybe its own teleop ACTION
             if (gamepad2.b && !prevGamePadB) {
-                if (!retracted) {
-                    intakeNoodleAction.stop();
-                    intakePivotAction.moveUp();
-                    intakeLinkageAction.retract();
-                    intakeDoorAction.open();
-                    intakeNoodleAction.run();
-                } else {
-                    intakeNoodleAction.stop();
-                    intakeDoorAction.close();
-                    intakeLinkageAction.extend();
-                    intakePivotAction.moveDown();
-                    intakeNoodleAction.stop();
-                }
+                retracted = true;
             }
             prevGamePadB = gamepad2.b;
             //save for later
             //Linkage
+            //TODO make sure its not blocking w/ the sleeps
             if (gamepad2.a && !prevGamePadA) {
                 if (retracted) {
                     intakeLinkageAction.extend();
+                    SystemClock.sleep(1700);
                     intakePivotAction.moveDown();
                     retracted = false;
                 } else {
@@ -152,7 +157,15 @@ public class Teleop extends LinearOpMode {
                 outtakeSlideAction.Toggle();
 
             }
+            if (gamepad2.dpad_down) {
+                outtakeSlideAction.down();
+                outtakePivotAction.setPosition(0.925);
+            }
             prevDpadUp = gamepad2.dpad_up;
+
+            if (gamepad2.a && gamepad1.a) {
+                telemetry.addData("", "yes");
+            }
         }
     }
 }
