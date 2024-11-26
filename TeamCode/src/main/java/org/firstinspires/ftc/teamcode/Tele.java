@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Utilize.toDegree;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,10 +18,13 @@ public  class Tele extends Robot {
 
     // Variables
     int targetLift = 0;
-    double setpoint = 0, H_Ang = 0, AL_Ang = 0, AD_Ang = 0;
-    boolean autoLift = false, V_Pressed = false, VisBusy = false, ITisOn = false, tp_Pressed = false,
-            H_disable = false, r_disable = false, R_Pressed = false,RisON = false, ll_Pressed = false, ADC_Pressed = false,
-            ADCisON = false, B_Pressed = false, BisON = false, Right_isTouch = false,Auto_Lift = false;
+    double setpoint = 0, H_Ang = 0, AL_Ang = 0, LiftPos = 0;
+    boolean  V_Pressed = false, VisBusy = false, ITisOn = false, tp_Pressed = false,
+             r_disable = false, R_Pressed = false,RisON = false, ADC_Pressed = false,
+             ADCisON = false, B_Pressed = false, BisON = false, Right_isTouch = false,
+             Auto_Lift = false ,a_press = false, On_Lift = false, L_press = false,
+             LisON = false;
+    ;
     double CurrentTime = System.nanoTime() * 1E-9,  lastRXtime = CurrentTime;
 
     private void Init() {
@@ -71,55 +75,71 @@ public  class Tele extends Robot {
         boolean LT_Press = LT > 0.25;
         boolean RT_Press = RT > 0.25;
         boolean lb = gamepad1.left_bumper;
+        boolean ls = gamepad1.left_stick_button;
         double CurPos = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-//        boolean du = gamepad2.dpad_up;
-//        boolean dl = gamepad2.dpad_left;
-//        boolean dd = gamepad2.dpad_down;
         Right_isTouch = RS.isPressed();
 
-        if (Right_isTouch) {
+        if (Right_isTouch && !On_Lift) {
             LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        if (RT > 0 ) {
+        if (RT > 0 || Auto_Lift) {
             LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        if (RT_Press) {
-            SetServoPos(0.08, LA, RA);
+        if (RT_Press ) {
             SetServoPos(0.68, LJ, RJ);
             SetServoPos(0, Claw);
         }
 
         if (LT_Press) {
             SetServoPos(0.2, LA, RA);
-            SetServoPos(1, LJ, RJ);
+            SetServoPos(0.9, LJ, RJ);
 
             BisON = false;
         }
 
-        if (lb) {
-            while (opModeIsActive()) {
-                LiftPower(-0.15);
-            }
+        if (gamepad1.left_stick_button) {
+
+            Auto_Lift = true;
+            LiftPos = High_Chamber;
+
         }
+
 
 
 //        double Pos = Auto_Arm && LT < 0.5 ? arm : (Math.max(LL.getCurrentPosition(), RL.getCurrentPosition()) > LiftPos - 500 ? 1 : 0);
         double sp = RT > 0.25 ? RT : LT > 0.25 ? -LT : 0;
 
-        double power = (Right_isTouch  && LT_Press ? 0 : CurPos > 2900 && RT_Press ? 0 : sp);
+        double power =  On_Lift ? -0.2 : Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
+                        (Right_isTouch  && LT > 0.25 ? 0 : CurPos > 2900 && RT > 0.25 ? 0 : sp);
 
         LiftPower(power);
 
-//        if (spL == 0 && spR == 0) {
-//            LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        }
+        if (power == 0) {
+            LL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        if (CurPos < (LiftPos + 20) && CurPos > (LiftPos - 20)) Auto_Lift = false;
+
 
         telemetry.addData("Lift", CurPos);
+
+        if (!(lb)) {
+            a_press = false;
+            return;
+        }
+        if (a_press) return;
+        a_press = true;
+        if (!(On_Lift)) {
+            On_Lift = true;
+            return;
+        }
+        On_Lift = false;
+
 
 
     }
@@ -161,7 +181,7 @@ public  class Tele extends Robot {
             BisON = true;
             return;
         }
-        SetServoPos(1, LJ, RJ);
+        SetServoPos(0.9, LJ, RJ);
         BisON = false;
     }
 
@@ -191,15 +211,16 @@ public  class Tele extends Robot {
         if (V_Pressed) return;
         V_Pressed = true;
         if (!VisBusy) {
-            SetServoPos(0.85, LA, RA);
+            SetServoPos(0.75, LA, RA);
             VisBusy = true;
             return;
         }
-        SetServoPos(0.75, LA, RA);
+        SetServoPos(0.67, LA, RA);
         VisBusy = false;
     }
 
     private void Frontarm() {
+
         double RT = gamepad1.right_trigger;
         boolean tp = gamepad1.a;
         boolean RT_Pressed = RT > 0.25;
@@ -210,11 +231,11 @@ public  class Tele extends Robot {
         if (tp_Pressed) return;
         tp_Pressed = true;
         if (!ITisOn) {
-            SetServoPos(1, LJ, RJ);
+            SetServoPos(0.9, LJ, RJ);
             SetServoPos(0, Claw);
             SetServoPos(0.6, Ll, Rl);
-            SetServoPos(0.75, LA, RA);
-            SetServoPos(0.5, ADL, ADR);
+            SetServoPos(0.67, LA, RA);
+            SetServoPos(0.55, ADL, ADR);
 
 //            AdjustClaw();
 //            Lowerclaw();
@@ -227,11 +248,11 @@ public  class Tele extends Robot {
         SetServoPos(0, Ll, Rl);
         SetServoPos(0, LA, RA);
         SetServoPos(0.12, RC);
-        SetServoPos(1, ADL, ADR);
-        SetServoPos(1, LJ, RJ);
+        SetServoPos(0, ADL, ADR);
+        SetServoPos(0.9, LJ, RJ);
         ITisOn = false;
     }
-    private void frontarm() {
+    private void FrontarmP() {
         boolean kl = gamepad1.x;
         if (!(kl)) {
             R_Pressed = false;
@@ -240,31 +261,32 @@ public  class Tele extends Robot {
         if (R_Pressed) return;
         R_Pressed = true;
         if (!RisON ) {
-            SetServoPos(1, LJ, RJ);
-            SetServoPos(0.35, Claw);
             SetServoPos(0.6, Ll, Rl);
             SetServoPos(0.75, LA, RA);
-            SetServoPos(0.5, ADL, ADR);
+            SetServoPos(0.55, ADL, ADR);
 
-//            AdjustClaw();
-//            Lowerclaw();
             RisON = true;
-            ITisOn = false;
             return;
         }
         SetServoPos(0, Claw);
         SetServoPos(0, Ll, Rl);
-        SetServoPos(0, LA, RA);
+        SetServoPos(0.5, LA, RA);
         SetServoPos(0.12, RC);
-        SetServoPos(1, ADL, ADR);
-        SetServoPos(1, LJ, RJ);
+        SetServoPos(0, ADL, ADR);
+
         RisON = false;
-        ITisOn = false;
     }
 
     @Override
     public void runOpMode() {
         Init();
+
+        while (!(RS.isPressed())) {
+            double power = RS.isPressed() ? 0 : -0.4;
+            LiftPower(power);
+        }
+        LiftPower(0);
+
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
@@ -275,7 +297,7 @@ public  class Tele extends Robot {
                 Drop();
                 Lowerclaw();
                 AdjustClaw();
-                frontarm();
+                FrontarmP();
 
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);

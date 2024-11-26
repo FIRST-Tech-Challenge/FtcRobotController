@@ -52,9 +52,9 @@ public abstract class Robot extends LinearOpMode {
     private double Last_yaw;
     boolean On = false;
 
-    public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 850;
-    public final int High_Basket  = 2800;
+//    public final int Low_Chamber  = 1000;
+    public final int High_Chamber = 1700;
+    public final int High_Basket  = 2820;
 
 
 
@@ -123,16 +123,16 @@ public abstract class Robot extends LinearOpMode {
 
             LiftPower(Lift_Power);
 
-            if (curPos > 50 && On) {
-                SetServoPos(0.08, LA, RA);
-                SetServoPos(0.68, LJ, RJ);
-                SetServoPos(0, Claw);
-            }
-
-            if (curPos < 50 && On) {
-                SetServoPos(0, LA, RA);
-                SetServoPos(1, LJ, RJ);
-            }
+//            if (curPos < 50 && On) {
+//                SetServoPos(0.08, LA, RA);
+//                SetServoPos(0.68, LJ, RJ);
+//                SetServoPos(0, Claw);
+//            }
+//
+//            if (curPos > 50 && On) {
+//                SetServoPos(0, LA, RA);
+//                SetServoPos(1, LJ, RJ);
+//            }
 
             double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             telemetry.addData("Lift", Lift_Power);
@@ -146,6 +146,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorR", pidR.Error);
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
+            telemetry.addData("Vx", Vx);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
             if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && AtTargetRange(curPos, height, 100)) {
@@ -234,16 +235,17 @@ public abstract class Robot extends LinearOpMode {
         Rl.setDirection(Servo.Direction.REVERSE);
         LA.setDirection(Servo.Direction.REVERSE);
         LJ.setDirection(Servo.Direction.REVERSE);
-        ADR.setDirection(Servo.Direction.REVERSE);
+        ADL.setDirection(Servo.Direction.REVERSE);
         RC.setDirection(Servo.Direction.REVERSE);
 //        Claw.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
-        SetServoPos(0, LA, RA);
+        SetServoPos(0.1, LA, RA);
         SetServoPos(0, Ll, Rl);
         SetServoPos(1, LJ, RJ);
-        SetServoPos(0.5, ADL, ADR);
+        SetServoPos(0, ADL, ADR);
         SetServoPos(0.12, RC);
         SetServoPos(0, Claw);
+
         // setMode Motors
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -252,6 +254,8 @@ public abstract class Robot extends LinearOpMode {
         LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MoveMode(moveMode);
+        LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Reverse Motors
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
