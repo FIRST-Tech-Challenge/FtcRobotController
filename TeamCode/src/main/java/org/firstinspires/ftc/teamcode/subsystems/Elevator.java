@@ -22,7 +22,7 @@ public class Elevator extends SubsystemBase {
         //this.elevatorRight = new Motor(hMap, "ElevatorRight");
 
         this.telemetry = telemetry;
-        this.elevatorRight.setInverted(true);
+        this.elevatorLeft.setInverted(true);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
         elevatorLeft.set(this.elevatorPower + KF);
 
 
-        telemetry.addData("Pos", this.elevatorRight.getCurrentPosition());
+        telemetry.addData("Pos", this.elevatorLeft.getCurrentPosition());
         telemetry.addData("Elevator Power", this.elevatorPower);
         telemetry.addData("Elevator Target", this.target);
     }
