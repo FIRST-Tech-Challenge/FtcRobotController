@@ -46,7 +46,7 @@ public class WheelOdometry {
         final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
         final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
 //      final double TICKS_TO_MM = 13.2625995;
-        return ticks / TICKS_TO_MM;
+        return ticks * TICKS_TO_MM;
     }
 
     public double countRight() {

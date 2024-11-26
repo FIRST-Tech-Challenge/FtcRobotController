@@ -18,7 +18,7 @@ public class OuttakeTest extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
-        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake, outtakePivotAction);
+        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
 

@@ -5,14 +5,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class OuttakeSlideAction {
 
-    Outtake outtake;
+    private final Outtake outtake;
+    private final OuttakePivotAction outtakePivotAction;
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;
     int stage = 0;
 
     public OuttakeSlideAction(Outtake outtake) {
         this.outtake = outtake;
-        OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
+        this.outtakePivotAction = new OuttakePivotAction(outtake);
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
     }
@@ -65,7 +66,7 @@ public class OuttakeSlideAction {
             setPower(0.0);
         }
     }
-    public void Toggle() {
+    public void toggle() {
         if (stage == 0) { moveToPosition(992); outtakePivotAction.moveOut(); stage = 1; }
         else { moveToPosition(2060); stage = 2; }
     }

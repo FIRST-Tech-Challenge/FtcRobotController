@@ -39,7 +39,7 @@ public class Teleop extends LinearOpMode {
         IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
-        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake, outtakePivotAction);
+        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         Action action = new Action() {
@@ -154,7 +154,7 @@ public class Teleop extends LinearOpMode {
 
             //Pivot
             if (gamepad2.dpad_up && !prevDpadUp) {
-                outtakeSlideAction.Toggle();
+                outtakeSlideAction.toggle();
 
             }
             if (gamepad2.dpad_down) {
