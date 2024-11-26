@@ -100,6 +100,16 @@ public class Output {
 
     public void readAllComponents() {
         verticalSlides.readCurrentTicks();
+        arm.readServoPositions();
+        wrist.readServoPositions();
+        gripper.readPosition();
+    }
+
+    public void writeAllComponents() {
+        verticalSlides.writeSlidePower();
+        arm.writeServoPositions();
+        wrist.writeServoPositions();
+        gripper.writePosition();
     }
 
     public void transfer(boolean isIntakeAtTarget) {

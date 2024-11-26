@@ -10,6 +10,10 @@ public class VerticalSlides {
     DcMotorEx front, back;
     int currentTicks;
     double targetTicks;
+    double slidePower;
+    double previousSlidePower;
+    final double SLIDE_POWER_SIGNIFICANT_DIFFERENCE = 0.01;
+
     final double ALLOWED_ERROR_INCHES = 0.1;
     final double p = 0.01;
 
@@ -26,6 +30,8 @@ public class VerticalSlides {
 
         front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        previousSlidePower = 0;
 
     }
 
@@ -54,10 +60,10 @@ public class VerticalSlides {
     //currently just a p controller
     public void goToTargetAsync() {
         if (!isAtTarget()) {
-            setSlidePower((targetTicks - currentTicks()) * p);
+            slidePower = (targetTicks - currentTicks()) * p;
         } else {
             //setSlidePower(currentTicks() * 0.000003);//maybe need back drive in the future
-            setSlidePower(0);
+            slidePower = 0;
         }
 
     }
@@ -91,7 +97,13 @@ public class VerticalSlides {
         currentTicks = back.getCurrentPosition();
     }
     public void setSlidePower(double power) {
-        front.setPower(power);
-        back.setPower(power);
+        slidePower = power;
+    }
+    public void writeSlidePower() {
+        if (Math.abs((previousSlidePower - slidePower)) > SLIDE_POWER_SIGNIFICANT_DIFFERENCE) {
+            front.setPower(slidePower);
+            back.setPower(slidePower);
+        }
+        previousSlidePower = slidePower;
     }
 }

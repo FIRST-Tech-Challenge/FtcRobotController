@@ -81,7 +81,7 @@ public class ATeleop extends LinearOpMode {
         //initAprilTag();
         loopTime = 0;
         maxLoopTime = 0;
-        minLoopTime = 999999;
+        minLoopTime = 99999;
         avgLoopTime = 0;
         totalTime = 0;
         totalLoops = 0;
@@ -123,12 +123,13 @@ public class ATeleop extends LinearOpMode {
             playerOne.readButtons();
             playerTwo.readButtons();
             bart.readHubs();
+            bart.mecanaDruve.updatePoseEstimate();
 
             //UPDATE
             stateMachine();
 
             //WRITE
-
+            bart.output.writeAllComponents();
 
             /** PLAYER ONE CONTROLS **/
             //drive
@@ -138,18 +139,15 @@ public class ATeleop extends LinearOpMode {
 
 
 
-            bart.mecanaDruve.updatePoseEstimate();
 
 
 
             telemetry.addLine(bart.output.currentPosition().pointTelemetry());
             telemetry.addData("\n", bart.output.currentPosition().componentValuesIrl());
             telemetry.addLine(bart.output.wrist.toString());
-            telemetry.addData("wristServosLeft", bart.output.wrist.left.getPosition());
-            telemetry.addData("wristServosRight", bart.output.wrist.right.getPosition());
-            telemetry.addData("armServos", bart.output.arm.left.getPosition());
-            telemetry.addData("\nslide power", bart.output.verticalSlides.back.getPower());
-            telemetry.addData("p2rsy", playerTwo.getRightY());
+            telemetry.addData("wristServosLeft", bart.output.wrist.getCurrentLeftServoPosition());
+            telemetry.addData("wristServosRight", bart.output.wrist.getCurrentRightServoPosition());
+            telemetry.addData("armServos", bart.output.arm.getCurrentServoPosition());
             loopTime = elapsedTime.milliseconds() - totalTime;
             if (loopTime > maxLoopTime) maxLoopTime = loopTime;
             if (loopTime < minLoopTime) minLoopTime = loopTime;

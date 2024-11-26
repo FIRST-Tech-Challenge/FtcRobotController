@@ -4,10 +4,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Wrist {
     Servo left, right;
+    private double currentLeftServoPosition;
+    private double currentRightServoPosition;
+    private double previousLeftServoPosition;
+    private double setLeftServoPosition;
+    private double setRightServoPosition;
     final double DEGREES_FROM_ZERO_TO_ONE = 355;
     //final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT = 0.5;//.5154//.4883
     final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT = 0.5154;//.5154//.4883
     final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS_RIGHT= 0.4883;//.5154//.4883
+    final double SERVO_POSITION_SIGNIFICANT_DIFFERENCE = 0.01;
+
 
 
     public Wrist(HardwareMap hardwareMap) {
@@ -41,16 +48,16 @@ public class Wrist {
         double leftDeg = pitchTarget + (rollTarget / 2);
         double rightDeg = pitchTarget - (rollTarget / 2);
 
-        left.setPosition(degToServoLeft(leftDeg));
-        right.setPosition(degToServoRight(rightDeg));
+        setLeftServoPosition = degToServoLeft(leftDeg);
+        setRightServoPosition = degToServoRight(rightDeg);
     }
 
 
     public double leftDegrees() {
-        return servoToDeg(left.getPosition(), DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT);
+        return servoToDeg(currentLeftServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT);
     }
     public double rightDegrees() {
-        return servoToDeg(right.getPosition(), DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_RIGHT);
+        return servoToDeg(currentRightServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_RIGHT);
     }
     private double servoToDeg(double servoPos, double degreesFromZeroToOne, double angleIsZeroAtThisServoPos) {
         servoPos = RobotMath.maxAndMin(servoPos, 1, 0);
@@ -66,6 +73,26 @@ public class Wrist {
     private double degToServo(double degrees, double degreesFromZeroToOne, double angleIsZeroAtThisServoPos) {
         degrees = RobotMath.maxAndMin(degrees, 180, -135);
         return (degrees/degreesFromZeroToOne) + angleIsZeroAtThisServoPos;
+    }
+
+    public void writeServoPositions() {
+        if (Math.abs(previousLeftServoPosition - currentLeftServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
+            left.setPosition(setLeftServoPosition);
+            right.setPosition(setRightServoPosition);
+        }
+        previousLeftServoPosition = currentLeftServoPosition;
+    }
+
+    public void readServoPositions() {
+        currentLeftServoPosition = left.getPosition();
+        currentRightServoPosition = right.getPosition();
+    }
+
+    public double getCurrentRightServoPosition() {
+        return currentRightServoPosition;
+    }
+    public double getCurrentLeftServoPosition() {
+        return currentLeftServoPosition;
     }
 
     public String toString() {

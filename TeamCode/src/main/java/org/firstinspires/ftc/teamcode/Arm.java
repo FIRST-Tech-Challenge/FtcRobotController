@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     //220 depoist positoin
     Servo left, right;
+    private double setServoPosition;
+    private double previousSetServoPosition;
+    private double readServoPosition;
+    final double SERVO_POSITION_SIGNIFICANT_DIFFERENCE = 0.01;
     final double DEGREES_FROM_ZERO_TO_ONE = 180;//[-45,135]
     final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS = 0.25;//0.3828;
 
@@ -18,16 +22,16 @@ public class Arm {
     }
 
     public double armAngleCurrent() {
-        return servoToDeg(left.getPosition());
+        return servoToDeg(readServoPosition);
     }
 
     public void goToAngle(double targetDeg) {
         setPosition(degToServo(targetDeg));
     }
 
-    public double servoToDeg(double servoPosition) {
-        servoPosition = RobotMath.maxAndMin(servoPosition, 1, 0);
-        return (servoPosition-ANGLE_IS_ZERO_AT_THIS_SERVO_POS) * DEGREES_FROM_ZERO_TO_ONE;
+    public double servoToDeg(double inputServoPosition) {
+        inputServoPosition = RobotMath.maxAndMin(inputServoPosition, 1, 0);
+        return (inputServoPosition-ANGLE_IS_ZERO_AT_THIS_SERVO_POS) * DEGREES_FROM_ZERO_TO_ONE;
     }
 
     public double degToServo(double degrees) {
@@ -36,7 +40,20 @@ public class Arm {
     }
 
     public void setPosition(double position) {
-        left.setPosition(position);
-        right.setPosition(position);
+        setServoPosition = position;
+    }
+
+    public void readServoPositions() {
+        readServoPosition = left.getPosition();
+    }
+    public double getCurrentServoPosition() {
+        return readServoPosition;
+    }
+    public void writeServoPositions() {
+        if (Math.abs(previousSetServoPosition - setServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
+            left.setPosition(setServoPosition);
+            right.setPosition(setServoPosition);
+        }
+        previousSetServoPosition = setServoPosition;
     }
 }
