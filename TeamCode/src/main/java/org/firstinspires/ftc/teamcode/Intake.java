@@ -15,6 +15,19 @@ public class Intake {
     DcMotorEx horizontalSlide, intakeMotor;
     Servo gate;
 
+    private double intakePower;
+    private double previousIntakePower;
+    final double INTAKE_POWER_SIGNIFICANT_DIFFERENCE = 0.01;
+
+    private double horizontalSlidePower;
+    private double previousHorizontalSlidePower;
+    final double HORIZ_POWER_SIGNIFICANT_DIFFERENCE = 0.01;
+
+    private double gatePosition;
+    private double previousGatePosition;
+    final double GATE_POSITION_SIGNIFICANT_DIFFERENCE = 0.01;
+
+
     final double gateOpen = 0.5;
     final double gateClose = 0.1;
 
@@ -54,10 +67,10 @@ public class Intake {
     public void transfer() {
         setHorizontalSlideToSavedPosition("transfer");
         if (isAtSavedPosition("transfer", 1.5)) {
-            intakeMotor.setPower(0.6);
+            intakePower = 0.6;
             openGate();
         } else {
-            intakeMotor.setPower(1);
+            intakePower = 1;
             closeGate();
         }
     }
@@ -87,7 +100,7 @@ public class Intake {
         double tickTarget = inchesToTicks(RobotMath.maxAndMin(inches, 24, 6));
         double error = tickTarget - horizontalSlidePosition;
 
-        horizontalSlide.setPower(0.01 * error);
+        horizontalSlidePower = 0.01 * error;
     }
 
     public double inchesToTicks(double inches) {
@@ -99,10 +112,10 @@ public class Intake {
 
 
     public void setHorizontalSlidePower(double power) {
-        horizontalSlide.setPower(power);
+        horizontalSlidePower = power;
     }
     public void setIntakeMotorPower(double power) {
-        intakeMotor.setPower(power);
+        intakePower = power;
     }
 
     public void resetEncoder() {
@@ -112,12 +125,40 @@ public class Intake {
 
     //GATE
     public void openGate() {
-        gate.setPosition(gateOpen);
+        gatePosition = gateOpen;
     }
     public void closeGate() {
-        gate.setPosition(gateClose);
+        gatePosition = gateClose;
     }
     public boolean isGateOpen() {
-        return RobotMath.isAbsDiffWithinRange(gateOpen, gate.getPosition(), 0.001);
+        return RobotMath.isAbsDiffWithinRange(gateOpen, gatePosition, 0.001);
+    }
+
+    //WRITE
+    public void writeAllComponents() {
+        writeGate();
+        writeIntakeMotor();
+        writeHorizontalSlide();
+    }
+
+    public void writeHorizontalSlide() {
+        if (!RobotMath.isAbsDiffWithinRange(previousHorizontalSlidePower, horizontalSlidePower, HORIZ_POWER_SIGNIFICANT_DIFFERENCE)) {
+            horizontalSlide.setPower(horizontalSlidePower);
+        }
+        previousHorizontalSlidePower = horizontalSlidePower;
+    }
+
+    public void writeIntakeMotor() {
+        if (!RobotMath.isAbsDiffWithinRange(previousIntakePower, intakePower, INTAKE_POWER_SIGNIFICANT_DIFFERENCE)) {
+            intakeMotor.setPower(intakePower);
+        }
+        previousIntakePower = intakePower;
+    }
+
+    public void writeGate() {
+        if (Math.abs(previousGatePosition - gatePosition) > GATE_POSITION_SIGNIFICANT_DIFFERENCE) {
+            gate.setPosition(gatePosition);
+        }
+        previousGatePosition = gatePosition;
     }
 }

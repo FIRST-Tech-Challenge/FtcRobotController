@@ -129,7 +129,7 @@ public class ATeleop extends LinearOpMode {
             stateMachine();
 
             //WRITE
-            bart.output.writeAllComponents();
+            bart.writeAllComponents();
 
             /** PLAYER ONE CONTROLS **/
             //drive
