@@ -26,11 +26,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeRoller;
-
-/***
- * Sample OpMode that uses the CommandOpMode base class.
- *
- */
 @TeleOp
 public class SampleOpMode extends CommandOpMode {
 
@@ -122,7 +117,6 @@ public class SampleOpMode extends CommandOpMode {
             }));
 
         //ScoreAtBucket.whenPressed(new ScoreAtBucket(drivetrain, arm, elevator));
-
 
         elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 35));
 

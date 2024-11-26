@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-public class ZeroPosition {
+public class ZeroPosition extends CommandBase {
+    
 }
