@@ -144,8 +144,8 @@ public class FiniteMachineStateArm {
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
             robot.liftMotorRight.setPower(0);
             robot.depositWristServo.setPosition(DEPOSIT_IDLE);
-            robot.depositLeftArmServo.setPosition(DUMP_IDLE);
-            robot.depositRightArmServo.setPosition(DUMP_IDLE);
+            robot.depositLeftArmServo.setPosition(DEPOSIT_ARM_IDLE);
+            robot.depositRightArmServo.setPosition(DEPOSIT_ARM_IDLE);
             robot.depositClawServo.setPosition(CLAW_OPEN);
         }
 
