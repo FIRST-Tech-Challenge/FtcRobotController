@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -46,6 +47,11 @@ public class UpdatedMain extends LinearOpMode {
 
     // misc vars
     private int arm_target;
+    
+    // tps calculations
+    private int runs = 0;
+    private ElapsedTime time;
+    private double tps = 0;
 
     //main loop
     @Override
@@ -60,6 +66,9 @@ public class UpdatedMain extends LinearOpMode {
         //wait for start
         waitForStart();
         if(opModeIsActive()){
+            //set up timimgs
+            time = ElapsedTime()
+            time.reset()
             while(opModeIsActive()){
                 update_driving();
                 update_grip();
@@ -67,6 +76,12 @@ public class UpdatedMain extends LinearOpMode {
                 update_hand_rotation();
                 display_data();
                 update_arm_extension();
+                runs++
+                if (time.seconds() > 1) {
+                    tps = runs / time.seconds()
+                    runs = 0
+                    time.reset()
+                }
             }
         }
     }
@@ -136,6 +151,8 @@ public class UpdatedMain extends LinearOpMode {
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
         telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
+
+        dashboardTelemetry.addData("tps", tps)
 
         //update telemetry
         dashboardTelemetry.update();
