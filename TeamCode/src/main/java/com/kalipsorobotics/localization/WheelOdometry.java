@@ -45,8 +45,8 @@ public class WheelOdometry {
     private double ticksToMM(double ticks) {
         final double DEAD_WHEEL_RADIUS_MM = 24;
         final double TICKS_PER_REV = 2000;
-        final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS_MM / TICKS_PER_REV;
-        final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
+        final double TICKS_TO_MM = 2.0 * Math.PI * DEAD_WHEEL_RADIUS_MM / TICKS_PER_REV;
+
 //      final double TICKS_TO_MM = 13.2625995;
         return ticks * TICKS_TO_MM;
     }
@@ -66,13 +66,14 @@ public class WheelOdometry {
         double deltaMecanumDistance = backTicks - prevBackTicks;
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
+        //double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
+        double deltaTheta = getIMUHeading() - prevImuHeading;
         double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
-        return new Velocity(
-                deltaX,
-                deltaY,
-                deltaTheta
-        );
+
+        Velocity velocity = new Velocity(deltaX, deltaY, deltaTheta);
+        Log.d("purepursaction_debug_odo_wheel", velocity.toString());
+
+        return velocity;
     }
 
     private Velocity linearToArcDelta(Velocity relativeDelta) {
@@ -156,6 +157,7 @@ public class WheelOdometry {
         prevRightTicks = rightTicks;
         prevLeftTicks = leftTicks;
         prevBackTicks = backTicks;
+        prevImuHeading = getIMUHeading();
 
 
 
