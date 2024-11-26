@@ -18,28 +18,22 @@ public class SpecimenExtensionHandler implements NKNComponent {
     int extenderPrevious = 0;
     private double lastResetAttempt = 200;
 
-    private ExtensionPositions target = ExtensionPositions.RESTING;
+    private SpecimenExtensionPositions target = SpecimenExtensionPositions.RESTING;
 
     public boolean isExtensionDone() {
         return (Math.abs(motor.getCurrentPosition() - target.position) <= 15);
     }
 
-    public enum ExtensionPositions {
-        RESTING(0) {
-        },
-        SPECIMEN_READY(1200) {
-        },
-        SPECIMEN_CLIP(1300) {
-        };
+    public enum SpecimenExtensionPositions {
+        RESTING(0),
+        SPECIMEN_READY(1200),
+        SPECIMEN_CLIP(1300);
 
         final int position;
 
-        ExtensionPositions(int position) {
+        SpecimenExtensionPositions(int position) {
             this.position = position;
         }
-    }
-
-    public SpecimenExtensionHandler() {
     }
     
     @Override
@@ -51,7 +45,7 @@ public class SpecimenExtensionHandler implements NKNComponent {
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setPower(motorPower);
-        motor.setTargetPosition(ExtensionPositions.RESTING.position);
+        motor.setTargetPosition(SpecimenExtensionPositions.RESTING.position);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         return true;
@@ -74,13 +68,13 @@ public class SpecimenExtensionHandler implements NKNComponent {
 
     @Override
     public String getName() {
-        return "ExtensionHandler";
+        return "SpecimenExtensionHandler";
     }
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
         double RESET_DELAY = 400; //adjusts delay
-        if ((runtime.now(TimeUnit.MILLISECONDS) - RESET_DELAY) > lastResetAttempt && target == ExtensionPositions.RESTING && motor.getCurrentPosition() <= 600) {
+        if ((runtime.now(TimeUnit.MILLISECONDS) - RESET_DELAY) > lastResetAttempt && target == SpecimenExtensionPositions.RESTING && motor.getCurrentPosition() <= 600) {
                 if (motor.getCurrentPosition() == extenderPrevious) {
                     motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -96,13 +90,19 @@ public class SpecimenExtensionHandler implements NKNComponent {
         telemetry.addData("Ext Target Position", motor.getTargetPosition());
         telemetry.addData("Ext State", target.name());
     }
+    public boolean gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions specimenExtensionPosition) {
+            motor.setTargetPosition(specimenExtensionPosition.position);
+            target = specimenExtensionPosition;
+
+            return true;
+    }
     public void resetEncoder() {
-        if (target == ExtensionPositions.RESTING) {
+        if (target == SpecimenExtensionPositions.RESTING) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
-    public ExtensionPositions targetPosition() {
+    public SpecimenExtensionPositions targetPosition() {
         return target;
     }
 }
