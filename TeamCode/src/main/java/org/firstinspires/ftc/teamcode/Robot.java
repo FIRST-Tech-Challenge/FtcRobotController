@@ -147,9 +147,10 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("ErrorX", DelthaX.Error);
             telemetry.addData("ErrorY", DelthaY.Error);
             telemetry.addData("Vx", Vx);
+            telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && AtTargetRange(curPos, height, 100)) {
+            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && Lift_Power ==0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;

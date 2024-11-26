@@ -39,16 +39,18 @@ public class Auto_Sample extends Robot {
         WaitForStart();
         if (opModeIsActive()) {
             move(-0.15, 1.19, 0.0, new double[]{0.2, 0.2, 0.2},
-                    new double[]{2.9, 0.00001, 0.1, 0.0}, new double[]{0.4, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, High_Chamber);
+                    new double[]{0.05, 0.1, 0.1, 0.0}, new double[]{2.0, 0.01, 0.03, 0.0}, new double[]{0.06, 0.05, 0.0005, 0.0}, 0.0001, High_Chamber);
 
             move(-0.15, 1.19, 0.0,  new double[]{0.05, 0.1, 0.1},
-                    new double[]{2.9, 0.00001, 0.1, 0.0}, new double[]{0.4, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 1100);
+                    new double[]{2.0, 0.1, 0.3, 0.0}, new double[]{0.1, 0.1, 0.01, 0.0}, new double[]{0.1, 0.1, 0.008, 0.0}, 0.0001, 1100);
 
-            move(1.0, 1.0, 0.0,  new double[]{0.1, 0.3, 0.1},
-                    new double[]{2.9, 0.00001, 0.1, 0.0}, new double[]{0.4, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0, 0);
+            move(1.0, 0.9, 0.0,  new double[]{0.1, 0.3, 0.1},
+                    new double[]{2.0, 0.1, 0.2, 0.0}, new double[]{0.2, 0.001, 0.009, 0.0}, new double[]{0.2, 0.0001, 0.009, 0.0}, 0, 0);
+
+
 
             move(1.0, 2.2, 0.0, new double[]{0.01, 0.1, 0.1},
-                    new double[]{2.9, 0.00001, 0.1, 0.0}, new double[]{0.4, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0, 0);
+                    new double[]{2.0, 0.08, 0.1, 0.0}, new double[]{0.1, 0.01, 0.0009, 0.0}, new double[]{0.09, 0.0001, 0.01, 0.0}, 0, 0);
 
             move(1.4, 0.5, 0.0, new double[]{0.01, 0.05, 0.1},
                     new double[]{2.0, 0.08, 0.1, 0.0}, new double[]{0.7, 0.1, 0.015, 0.0},  new double[]{0.09, 0.0001, 0.01, 0.0}, 0, 0);
