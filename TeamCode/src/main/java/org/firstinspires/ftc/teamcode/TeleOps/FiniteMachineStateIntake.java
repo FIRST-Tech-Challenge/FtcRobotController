@@ -13,12 +13,28 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 public class FiniteMachineStateIntake {
+
+    //Intake STATE
+    public enum INTAKESTATE {
+        INTAKE_START,
+        INTAKE_EXTEND,
+        INTAKE_RETRACT,
+        INTAKE_TRANS
+    }
+
+    // Robot and Gamepad Member
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
-    private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
 
+    //Time member
+    private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
+
+    //Intake states
+    public INTAKESTATE intakeState = INTAKESTATE.INTAKE_START; // Persisting state
+    private ElapsedTime intakeTimer = new ElapsedTime(); // Timer for controlling dumping time
+    private CLAWSTATE clawState = CLAWSTATE.OPEN; //claw default open
 
     final double intake_Arm_Idle;     // intake when retract
     final double intake_Arm_Pick;  // intake arm for pick
@@ -52,18 +68,7 @@ public class FiniteMachineStateIntake {
         this.intake_Claw_Close = intake_Claw_Close;
     }
 
-    public enum INTAKESTATE {
-        INTAKE_START,
-        INTAKE_EXTEND,
-        INTAKE_RETRACT,
-        INTAKE_TRANS
-    }
-
-    public INTAKESTATE intakestate = INTAKESTATE.INTAKE_START; // Persisting state
-    private ElapsedTime intakeTimer = new ElapsedTime(); // Timer for controlling dumping time
-    private CLAWSTATE clawstate = CLAWSTATE.OPEN; //claw default open
-
-
+    //Initialization
     public void Init() {
         intakeTimer.reset();
         robot.intakeSlideServo.setPosition(intake_Slide_Retract);
@@ -73,9 +78,10 @@ public class FiniteMachineStateIntake {
         robot.intakeClawServo.setPosition(intake_Claw_Open);
     }
 
+    //Loop Control
     public void IntakeArmLoop() {
         // Display current lift state and telemetry feedback
-        switch (intakestate) {
+        switch (intakeState) {
             case INTAKE_START:
                 // Debounce the button press for starting the lift extend
                 robot.intakeClawServo.setPosition(intake_Claw_Open);
@@ -166,17 +172,11 @@ public class FiniteMachineStateIntake {
                 }
                 break;
             default:
-                intakestate = INTAKESTATE.INTAKE_START;
+                intakeState = INTAKESTATE.INTAKE_START;
                 break;
         }
 
-        /** Handle lift cancel action if 'Y' button is pressed
-         if (gamepad_1.getButton(GamepadKeys.Button.Y) && intakestate != INTAKESTATE.INTAKE_START) {
-         intakestate = INTAKESTATE.INTAKE_START;
-         }
-         /* *
-         *
-         */
+
         //intake arm up
         if (gamepad_1.getButton(DPAD_UP) || gamepad_2.getButton(DPAD_UP) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
@@ -201,9 +201,9 @@ public class FiniteMachineStateIntake {
         return Math.abs(robot.intakeSlideServo.getPosition() - targetPosition) < 0.05;
     }
 
-    // for return intakestate for telemetry
+    // for return intakeState for telemetry
     INTAKESTATE intakeState(){
-        return intakestate;
+        return intakeState;
     }
 
     //Claw State
@@ -214,10 +214,10 @@ public class FiniteMachineStateIntake {
 
     //Toggle Claw()
     private void ToggleClaw() {
-        if (clawstate == CLAWSTATE.OPEN) {
-            clawstate = CLAWSTATE.CLOSE;
+        if (clawState == CLAWSTATE.OPEN) {
+            clawState = CLAWSTATE.CLOSE;
         } else {
-            clawstate = CLAWSTATE.OPEN;
+            clawState = CLAWSTATE.OPEN;
         }
     }
 }
