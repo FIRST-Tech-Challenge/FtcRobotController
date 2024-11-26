@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Test Drive Phase1")
-public class TestDrivePhase1TeleOp extends LinearOpMode {
+public class Testing_Phase1 extends LinearOpMode {
     private double frontLeftPower = 0;     // declare motor power variable
     private double backLeftPower = 0;      // declare motor power variable
     private double frontRightPower = 0;    // declare motor power variable
