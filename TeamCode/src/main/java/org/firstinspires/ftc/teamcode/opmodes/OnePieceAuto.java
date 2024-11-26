@@ -23,7 +23,6 @@ public class OnePieceAuto extends CommandOpMode {
         this.arm = new Arm(hardwareMap);
         this.elevator = new Elevator(hardwareMap,telemetry);
 
-
         register(drivetrain, arm, elevator);
         waitForStart();
 
