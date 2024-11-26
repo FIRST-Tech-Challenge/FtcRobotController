@@ -114,8 +114,8 @@ public class FiniteMachineStateIntake {
                         robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
                     }
 
-                    // add in the button for claw open and close
-                    if(gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                    // add in the button "A" for intake claw open and close
+                    if(gamepad_1.getButton(GamepadKeys.Button.A) || gamepad_2.getButton(GamepadKeys.Button.A) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         ToggleClaw();
                     }
