@@ -135,14 +135,15 @@ public class Testing_Phase1 extends LinearOpMode {
                     V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));     // Factors trigger value or returns to baseline position if no input
                     Flex = .6;					                       // TODO - determine default Flex value for here
                     Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
-                    if (gamepad2.b && IntakeClawClosed = false){      // Close claw and toggle holder
-            			    IntakeClaw.setPosition(0);
-	            		    IntakeClawClosed = true;
+                    if (gamepad2.b){    				  // Close claw button
+            		if (IntakeClawClosed = true){
+				IntakeClaw.setPosition(0);		// Close claw
     	    	      	}
-	        	else if (gamepad2.b && IntakeClawClosed = true){   // Open the claw and toggle holder
-		                  IntakeClaw.setPosition(1);
-			                IntakeClawClosed = false;
-		        	      }
+	        	else if (IntakeClawClosed = true){  		
+		                  IntakeClaw.setPosition(1);		 // Open claw
+			}
+			IntakeClawClosed = !IntakeClawClosed;
+		    }
                     if (gamepad2.x){				                   // x button Transfer position
                         state = V4Bstate.TRANSFER;
                     }
