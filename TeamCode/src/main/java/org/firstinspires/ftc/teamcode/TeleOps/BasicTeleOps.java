@@ -30,10 +30,6 @@ public class BasicTeleOps extends OpMode {
     public GamepadEx gamepadCo1;                    //For gamepad
     public GamepadEx gamepadCo2;
 
-    public Gamepad gamepad1;
-    public Gamepad gamepad_2;
-
-
     //Robot drive
     public RobotDrive robotDrive;                   //For robot drive
 
@@ -67,7 +63,7 @@ public class BasicTeleOps extends OpMode {
     public static int deposit_Slide_Highbasket_Pos   = 2800; //slides Position Configure
 
     public static double deposit_Wrist_dump_Pos         = 0.3;
-    public static double deposit_Wrist_retract_Pos      = 0.1;
+    public static double deposit_Wrist_retract_Pos      = 0.06;
 
     public static double deposit_Arm_dump_Pos           = 0.8;
     public static double deposit_Arm_retract_Pos        = 0.0;

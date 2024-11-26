@@ -81,7 +81,7 @@ public class FiniteMachineStateArm {
         switch (liftState) {
             case LIFT_START:
                 // Debounce the button press for starting the lift extend
-                if (gamepad_1.getButton(GamepadKeys.Button.X) || gamepad_2.getButton(GamepadKeys.Button.X) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                if ((gamepad_1.getButton(GamepadKeys.Button.X) || gamepad_2.getButton(GamepadKeys.Button.X)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     robot.depositClawServo.setPosition(CLAW_CLOSE);
                     robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
@@ -139,7 +139,8 @@ public class FiniteMachineStateArm {
         }
 
         // Handle lift Cancel Action if 'B' button is pressed
-        if (gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B) && liftState != LiftState.LIFT_START) {
+        if ((gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD && liftState != LiftState.LIFT_START) {
+            debounceTimer.reset();
             liftState = LiftState.LIFT_START;
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
             robot.liftMotorRight.setPower(0);
@@ -150,7 +151,8 @@ public class FiniteMachineStateArm {
         }
 
         // Claw control - Button Back
-        if(gamepad_1.getButton(GamepadKeys.Button.Y) || gamepad_2.getButton(GamepadKeys.Button.Y)){
+        if((gamepad_1.getButton(GamepadKeys.Button.Y) || gamepad_2.getButton(GamepadKeys.Button.Y))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD){
+            debounceTimer.reset();
             ToggleDeposit();
             if (depositState == DEPOSITSTATE.OPEN) {
                 robot.depositClawServo.setPosition(CLAW_CLOSE);
