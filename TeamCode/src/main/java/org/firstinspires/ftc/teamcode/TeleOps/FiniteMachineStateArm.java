@@ -1,6 +1,4 @@
-﻿package org.firstinspires.ftc.teamcode.TeleOps;
-
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+package org.firstinspires.ftc.teamcode.TeleOps;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
