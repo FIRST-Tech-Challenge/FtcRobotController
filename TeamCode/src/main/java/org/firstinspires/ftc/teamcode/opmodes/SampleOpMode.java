@@ -82,7 +82,7 @@ public class SampleOpMode extends CommandOpMode {
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
-        zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
+        ///zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
 
         intakeButton.whenPressed(new SequentialCommandGroup(
                     new ExtendIntake(intake),
