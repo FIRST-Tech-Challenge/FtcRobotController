@@ -71,7 +71,7 @@ public class Teleop extends LinearOpMode {
         outtakePivotAction.moveIn();
 
         //Pigeon
-        outtakePigeonAction.moveIn();
+        outtakePigeonAction.setPosition(0);
 
         waitForStart();
 
@@ -95,28 +95,31 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
             }
-            if (gamepad2.left_stick_button) {
-                intakePivotAction.togglePosition();
-            }
             prevGamePadX = gamepad2.x;
 
             //Door
             if (gamepad2.b && !prevGamePadB) {
-                if (!retracted) {
-                    intakeNoodleAction.stop();
-                    intakePivotAction.moveUp();
-                    intakeLinkageAction.retract();
-                    intakeDoorAction.open();
-                    intakeNoodleAction.run();
-                    retracted = true;
-                } else {
-                    intakeNoodleAction.stop();
-                    intakeDoorAction.close();
-                    intakeLinkageAction.extend();
-                    intakePivotAction.moveDown();
-                    intakeNoodleAction.stop();
-                    retracted = false;
-                }
+                outtakeSlideAction.moveToPosition(400);
+                intakeNoodleAction.stop();
+                intakeDoorAction.open();
+                SystemClock.sleep(500);
+                intakeNoodleAction.run();
+                SystemClock.sleep(800);
+                intakeDoorAction.close();
+                intakeNoodleAction.stop();
+                SystemClock.sleep(600);
+                outtakeSlideAction.down();
+                intakePivotAction.moveDown();
+                SystemClock.sleep(800);
+                outtakeClawAction.open();
+                outtakePivotAction.setPosition(0.925);
+                SystemClock.sleep(330);
+                outtakeClawAction.close();
+                SystemClock.sleep(1000);
+                outtakeSlideAction.Toggle();
+                SystemClock.sleep(700);
+                outtakeSlideAction.idle();
+                retracted = true;
             }
             prevGamePadB = gamepad2.b;
             //save for later
@@ -124,7 +127,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.a && !prevGamePadA) {
                 if (retracted) {
                     intakeLinkageAction.extend();
-                    SystemClock.sleep(1000);
+                    SystemClock.sleep(1700);
                     intakePivotAction.moveDown();
                     retracted = false;
                 } else {
@@ -172,7 +175,15 @@ public class Teleop extends LinearOpMode {
                 outtakeSlideAction.Toggle();
 
             }
+            if (gamepad2.dpad_down) {
+                outtakeSlideAction.down();
+                outtakePivotAction.setPosition(0.925);
+            }
             prevDpadUp = gamepad2.dpad_up;
+
+            if (gamepad2.a && gamepad1.a) {
+                telemetry.addData("", "yes");
+            }
         }
     }
 }

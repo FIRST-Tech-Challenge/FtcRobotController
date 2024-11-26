@@ -39,16 +39,20 @@ public class IntakeLinkageAction {
         double endTime = SystemClock.currentThreadTimeMillis();
         return endTime - startTime > 1500;
     }
-
+    public void control(double joystick) {
+        if (joystick > 0) {
+            ;
+        }
+    }
     public void extend() {
         startTime = SystemClock.currentThreadTimeMillis();
-        moveIntakeSlide(-1.9);
+        moveIntakeSlide(-2.8);
         isRetracted = false;
     }
 
     public void retract() {
         //original 0.7
-        moveIntakeSlide(0.7);
+        moveIntakeSlide(1.7);
         isRetracted = true;
     }
 
