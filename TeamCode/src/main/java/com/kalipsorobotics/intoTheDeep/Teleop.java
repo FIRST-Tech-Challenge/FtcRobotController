@@ -89,7 +89,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 intakeNoodleAction.stop();
             }
-    
+
 
             //Pivot TODO make generic toggle
             if (gamepad2.x && !prevGamePadX) {
@@ -98,12 +98,14 @@ public class Teleop extends LinearOpMode {
             prevGamePadX = gamepad2.x;
 
             //Door
+            //TODO alan you should make this whole chunky thing maybe its own teleop ACTION
             if (gamepad2.b && !prevGamePadB) {
                 retracted = true;
             }
             prevGamePadB = gamepad2.b;
             //save for later
             //Linkage
+            //TODO make sure its not blocking w/ the sleeps
             if (gamepad2.a && !prevGamePadA) {
                 if (retracted) {
                     intakeLinkageAction.extend();
