@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class OuttakeSlideAction {
 
     Outtake outtake;
-    OuttakePivotAction outtakePivotAction;
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;
     int stage = 0;
 
-    public OuttakeSlideAction(Outtake outtake, OuttakePivotAction outtakePivotAction) {
-        this.outtakePivotAction = outtakePivotAction;
+    public OuttakeSlideAction(Outtake outtake) {
         this.outtake = outtake;
+        OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
     }

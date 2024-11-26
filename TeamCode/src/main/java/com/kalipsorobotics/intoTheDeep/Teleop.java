@@ -99,26 +99,6 @@ public class Teleop extends LinearOpMode {
 
             //Door
             if (gamepad2.b && !prevGamePadB) {
-                outtakeSlideAction.moveToPosition(400);
-                intakeNoodleAction.stop();
-                intakeDoorAction.open();
-                SystemClock.sleep(500);
-                intakeNoodleAction.run();
-                SystemClock.sleep(800);
-                intakeDoorAction.close();
-                intakeNoodleAction.stop();
-                SystemClock.sleep(600);
-                outtakeSlideAction.down();
-                intakePivotAction.moveDown();
-                SystemClock.sleep(800);
-                outtakeClawAction.open();
-                outtakePivotAction.setPosition(0.925);
-                SystemClock.sleep(330);
-                outtakeClawAction.close();
-                SystemClock.sleep(1000);
-                outtakeSlideAction.Toggle();
-                SystemClock.sleep(700);
-                outtakeSlideAction.idle();
                 retracted = true;
             }
             prevGamePadB = gamepad2.b;
