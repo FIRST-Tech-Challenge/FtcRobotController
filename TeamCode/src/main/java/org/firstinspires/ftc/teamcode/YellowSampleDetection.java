@@ -10,9 +10,9 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 @Autonomous(name = "Yellow Sample Detection", group = "Autonomous")
-public class YellowSampleDetection extends CommonUtil {
+public class YellowSampleDetection extends LinearOpMode {
 
-    private static final String LIMELIGHT_IP = "172.28.0.1";
+    private static final String LIMELIGHT_IP = "172.28.0.1"; // Replace with your Limelight IP if different
     private static final String LIMELIGHT_URL = "http://" + LIMELIGHT_IP + ":5807/results";
     private static final double MIN_AREA = 3.0;
     private static final double MAX_AREA = 30.0;
@@ -48,9 +48,10 @@ public class YellowSampleDetection extends CommonUtil {
 
                 telemetry.addData("Yellow Sample Detected", yellowSampleSensed);
                 if (yellowSampleSensed) {
-                    telemetry.addData("Target Area", getArea());
-                    telemetry.addData("W/H Ratio", getWHRatio());
-                    s3.setPosition(1);
+                    telemetry.addData("Target Area (ta)", getArea());
+                    telemetry.addData("Horizontal Offset (tx)", getTx());
+                    telemetry.addData("Width/Height Ratio", getWHRatio());
+                    // You can add logic here to move the robot based on tx and ta if desired
                 }
             } else {
                 telemetry.addData("Error", "Limelight not connected");
@@ -89,6 +90,17 @@ public class YellowSampleDetection extends CommonUtil {
             return data.getJSONArray("Results").getJSONObject(0)
                     .getJSONArray("Targets").getJSONObject(0)
                     .getDouble("ta");
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private double getTx() {
+        try {
+            JSONObject data = getLimelightData();
+            return data.getJSONArray("Results").getJSONObject(0)
+                    .getJSONArray("Targets").getJSONObject(0)
+                    .getDouble("tx");
         } catch (Exception e) {
             return -1;
         }
@@ -134,10 +146,10 @@ public class YellowSampleDetection extends CommonUtil {
 
     private void initializeLimelight() {
         try {
-            sendCommand("pipeline", 0);
-            sendCommand("camMode", 0);
-            sendCommand("ledMode", 3);
-            sendCommand("stream", 1);
+            sendCommand("pipeline", 1); // Set pipeline index to 1
+            sendCommand("camMode", 0);  // Set camera mode to driver
+            sendCommand("ledMode", 3);  // Enable LEDs
+            sendCommand("stream", 1);   // Stream to the dashboard
             sleep(100);
         } catch (Exception e) {
             telemetry.addData("Init Error", e.getMessage());
