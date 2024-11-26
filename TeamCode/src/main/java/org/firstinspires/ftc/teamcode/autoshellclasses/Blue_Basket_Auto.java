@@ -1,105 +1,39 @@
 package org.firstinspires.ftc.teamcode.autoshellclasses;
-import androidx.annotation.NonNull;
 
-
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-
-
 import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.BBcode.ActuatorActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.ActuatorActionBuilders.WristClawActions;
-import org.firstinspires.ftc.teamcode.BBcode.WristClaw;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.vision.VisionPortal;
 
 
 @Config
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
-
-    public class viperArm {
-        private DcMotor arm;
-        private DcMotor viper;
-
-        public viperArm(HardwareMap hardwareMap) {
-            arm = hardwareMap.get(DcMotor.class, "armMotor");
-            viper = hardwareMap.get(DcMotor.class, "viperMotor");
-        }
-
-
-        public class basket implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                arm.setDirection(DcMotor.Direction.REVERSE);
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setTargetPosition((int)(7125.0/360.0)*80);    //Sets Target Tick Position
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(1);
-
-                viper.setDirection(DcMotor.Direction.REVERSE);
-                int extensionTicks = (int)(537.7/4.625) * 24;
-                viper.setTargetPosition(extensionTicks);    //Sets Target Tick Position
-                viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viper.setPower(1);
-                return false;
-            }
-        }
-        public Action Basket() {
-            return new basket();
-        }
-
-        public class floor implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                arm.setDirection(DcMotor.Direction.REVERSE);
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                arm.setTargetPosition(0);    //Sets Target Tick Position
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(.5);
-
-                viper.setDirection(DcMotor.Direction.REVERSE);
-                int extensionTicks = (int)(537.7/4.625) * 3;
-                viper.setTargetPosition(extensionTicks);    //Sets Target Tick Position
-                viper.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                viper.setPower(1);
-                return false;
-            }
-        }
-        public Action Floor() {
-            return new floor();
-        }
-    }
-
     @Override
     public void runOpMode() {
+    //Initialization steps
+        //Creates instance of actuator action classes
         WristClawActions _WristClawActions = new WristClawActions(this);
-        viperArm motors = new viperArm(hardwareMap);
+        ViperArmActions _ViperArmActions = new ViperArmActions(this);
 
+        //Initializes Pinpoint
         Pose2d initialPose = new Pose2d(31, 63, Math.toRadians(0));
-        // JOSHUANOTE: Here is where the trajectories are intitialized and defined.
-        //PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
-        Action PushSample = ActionBuilder.BlueBasket(drive::actionBuilder);
+        //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
+
         telemetry.update();
         waitForStart();
-
+    //----------------------------------------------------------------------------------------------
 
         if (isStopRequested()) return;
 
@@ -212,7 +146,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         // JOSHUANOTE: This is where you put the final set of actions.
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
                         driveToClearance,
-                        motors.Basket(),
+                        _ViperArmActions.MoveToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait,
                         driveToDrop,
@@ -220,7 +154,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait,
                         driveToBackAway,
                         _WristClawActions.WristUp(),
-                        motors.Floor(),
+                        _ViperArmActions.MoveToHome(),
                         downWait,
                         driveToSample1,
                         _WristClawActions.WristDown(),
@@ -229,7 +163,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         closeWait,
                         _WristClawActions.WristUp(),
                         driveToClearance1,
-                        motors.Basket(),
+                        _ViperArmActions.MoveToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait1,
                         driveToDrop1,
@@ -237,7 +171,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait1,
                         driveToBackAway1,
                         _WristClawActions.WristUp(),
-                        motors.Floor(),
+                        _ViperArmActions.MoveToHighBasket(),
                         downWait1,
                         driveToSample2,
                         _WristClawActions.WristDown(),
@@ -246,7 +180,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         closeWait1,
                         _WristClawActions.WristUp(),
                         driveToClearance2,
-                        motors.Basket(),
+                        _ViperArmActions.MoveToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait2,
                         driveToDrop2,
@@ -254,7 +188,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait2,
                         driveToBackAway2,
                         _WristClawActions.WristUp(),
-                        motors.Floor()
+                        _ViperArmActions.MoveToHome()
                 )
         );
         while(opModeIsActive()) {
