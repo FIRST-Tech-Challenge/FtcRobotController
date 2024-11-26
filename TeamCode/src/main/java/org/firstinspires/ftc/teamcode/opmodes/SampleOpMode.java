@@ -36,7 +36,6 @@ public class SampleOpMode extends CommandOpMode {
 
     private GamepadEx driver;
     private GamepadEx operator;
-
     private Arm arm;
     private Intake intake;
     private IntakeRoller intakeRoller;
@@ -53,8 +52,12 @@ public class SampleOpMode extends CommandOpMode {
         drivetrain = new Drivetrain(this.hardwareMap, new Pose2d(-58.923881554, -55.0502525317, Math.toRadians(45)), telemetry);
         intakeRoller = new IntakeRoller(hardwareMap);
 
+
         GamepadButton armButton = new GamepadButton(
                 operator, GamepadKeys.Button.A
+        );
+        GamepadButton zeroButton = new GamepadButton(
+                operator, GamepadKeys.Button.X
         );
 
         GamepadButton intakeButton = new GamepadButton(
@@ -79,6 +82,7 @@ public class SampleOpMode extends CommandOpMode {
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
+        zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
 
         intakeButton.whenPressed(new SequentialCommandGroup(
                     new ExtendIntake(intake),
