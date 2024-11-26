@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSub;
+import org.firstinspires.ftc.teamcode.commands.ArmHighGoal;
+import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
 
 @Autonomous(name = "Auto Red/Blue")
 public class AutoRedBlue extends AutoCommandOpMode {
