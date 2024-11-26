@@ -41,8 +41,13 @@ public class TransferSequence {
         this.outtakePivotAction = new OuttakePivotAction(outtake);
     }
     public void sequence() {
+        intakePivotAction.moveDown();
+        SystemClock.sleep(700);
         intakeNoodleAction.stop();
         intakeDoorAction.open();
+        outtakePivotAction.moveOut();
+        SystemClock.sleep(900);
+        intakePivotAction.moveUp();
         SystemClock.sleep(500);
         intakeNoodleAction.run();
         SystemClock.sleep(800);

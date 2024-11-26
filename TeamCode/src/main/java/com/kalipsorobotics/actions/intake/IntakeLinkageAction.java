@@ -52,7 +52,7 @@ public class IntakeLinkageAction {
 
     public void retract() {
         //original 0.7
-        moveIntakeSlide(1.7);
+        moveIntakeSlide(1);
         isRetracted = true;
     }
 

@@ -44,17 +44,7 @@ public class Teleop extends LinearOpMode {
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
-        Action action = new Action() {
-            @Override
-            public boolean checkDoneCondition() {
-                return false;
-            }
 
-            @Override
-            public void update() {
-
-            }
-        };
 
         boolean prevGamePadY = false;
         boolean prevGamePadX = false;
@@ -162,7 +152,7 @@ public class Teleop extends LinearOpMode {
             }
             if (gamepad2.dpad_down) {
                 outtakeSlideAction.down();
-                outtakePivotAction.setPosition(0.925);
+                outtakePivotAction.setPosition(0.825);
             }
             prevDpadUp = gamepad2.dpad_up;
 
