@@ -22,8 +22,6 @@ public class WheelOdometry {
     //200-182 offset compare to line between parallel odo pods
     //negative if robot center behind parallel wheels
     final private static double ROBOT_CENTER_OFFSET_MM = -18;
-    //positive if backwheel to the right of robot center
-    //private final static double BACK_WHEEL_OFFSET_MM = 17;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
@@ -56,7 +54,6 @@ public class WheelOdometry {
         final double TICKS_PER_REV = 2000;
         final double TICKS_TO_MM = 2.0 * Math.PI * DEAD_WHEEL_RADIUS_MM / TICKS_PER_REV;
 
-//      final double TICKS_TO_MM = 13.2625995;
         return ticks * TICKS_TO_MM;
     }
 
@@ -79,26 +76,20 @@ public class WheelOdometry {
         double blendedDeltaTheta = (0.7 * encoderDeltaTheta) + (0.3 * imuDeltaTheta);
         //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
         double deltaTheta = blendedDeltaTheta;
-        //double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
 
         double deltaMecanumOffsetAdjustment = -(ROBOT_CENTER_OFFSET_MM * deltaTheta);
-        //double deltaMecanumBackwheelOffset =  -(BACK_WHEEL_OFFSET_MM * deltaTheta);
-        deltaMecanumDistance = deltaMecanumDistance + deltaMecanumOffsetAdjustment;// + deltaMecanumBackwheelOffset;
+        deltaMecanumDistance = deltaMecanumDistance + deltaMecanumOffsetAdjustment;
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
         double deltaXOffsetAdjustment = -(ROBOT_CENTER_OFFSET_MM * (1 - Math.cos(deltaTheta)));
-        //double deltaXBackwheelOffset = -(BACK_WHEEL_OFFSET_MM * Math.sin(deltaTheta));
-        deltaX = deltaX + deltaXOffsetAdjustment;// + deltaXBackwheelOffset;
+        deltaX = deltaX + deltaXOffsetAdjustment;
 
-        /*double deltaTheta = currentImuHeading - prevImuHeading;
-        wrapping to normalize theta -pi to pi
-        deltaTheta = Math.atan2(Math.sin(deltaTheta), Math.cos(deltaTheta));*/
+
         double deltaY = (deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
         double deltaYOffsetAdjustment = -ROBOT_CENTER_OFFSET_MM * (deltaTheta);
         deltaY = deltaY + deltaYOffsetAdjustment;
 
         Velocity velocity = new Velocity(deltaX, deltaY, deltaTheta);
-//        Log.d("purepursaction_debug_odo_wheel delta", velocity.toString());
 
         return velocity;
     }
@@ -115,9 +106,8 @@ public class WheelOdometry {
         double relDeltaX =
                 forwardRadius * Math.sin(relativeDelta.getTheta()) + -strafeRadius * (1 - Math.cos(relativeDelta.getTheta()));
         double relDeltaXOffsetAdjustment = -(ROBOT_CENTER_OFFSET_MM * (1 - Math.cos(relativeDelta.getTheta())));
-        /*double relDeltaXBackwheelOffset =
-                -(strafeRadius + BACK_WHEEL_OFFSET_MM * 1 - Math.cos(relativeDelta.getTheta()));*/
-        relDeltaX = relDeltaX + relDeltaXOffsetAdjustment;// + relDeltaXBackwheelOffset;
+
+        relDeltaX = relDeltaX + relDeltaXOffsetAdjustment;
 
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
@@ -125,8 +115,6 @@ public class WheelOdometry {
         double relDeltaYBackwheelOffset = forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
         relDeltaY = relDeltaY + relDeltaYOffsetAdjustment + relDeltaYBackwheelOffset;
 
-//        double relDeltaTheta =
-//                MathFunctions.angleWrapRad(relativeDelta.getTheta());
         double relDeltaTheta =
                 relativeDelta.getTheta();
 
@@ -142,19 +130,11 @@ public class WheelOdometry {
         double sinTheta = Math.sin(previousGlobalPosition.getTheta());
         double cosTheta = Math.cos(previousGlobalPosition.getTheta());
 
-        double adjustedDeltaX = relativeDelta.getX();// -(BACK_WHEEL_OFFSET_MM * relativeDelta.getTheta());
+        double adjustedDeltaX = relativeDelta.getX();
         double adjustedDeltaY = relativeDelta.getY();
 
         double newX = adjustedDeltaX * cosTheta - adjustedDeltaY * sinTheta;
         double newY = adjustedDeltaY * cosTheta + adjustedDeltaX * sinTheta;
-
-
-        /*double newX =
-                relativeDelta.getX() * Math.cos(previousGlobalPosition.getTheta()) - relativeDelta.getY() * Math.sin(previousGlobalPosition.getTheta());
-        double newY =
-                relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());*/
-//        double newTheta =
-//                MathFunctions.angleWrapRad(relativeDelta.getTheta());
 
         //use blended heading
         double newTheta = relativeDelta.getTheta();
