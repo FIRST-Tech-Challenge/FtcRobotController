@@ -100,7 +100,7 @@ public class WheelOdometry {
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
         if (Math.abs(arcDelta.getTheta()) > 0.01) {
-            uLog.d("odometry arc delta", "arcDelta " + arcDelta);
+            Log.d("odometry arc delta", "arcDelta 2" + arcDelta);
         }
         return arcDelta;
     }

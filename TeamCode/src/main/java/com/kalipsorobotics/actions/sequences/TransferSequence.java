@@ -23,13 +23,8 @@ public class TransferSequence {
     IntakeNoodleAction intakeNoodleAction;
     IntakeDoorAction intakeDoorAction;
     IntakePivotAction intakePivotAction;
-<<<<<<< HEAD
-    OuttakeClawAction outtakeClawAction;
     OuttakePivotAction outtakePivotAction;
 
-=======
-    OuttakePivotAction outtakePivotAction;
->>>>>>> 8aae86c (transfer sequence class)
 
     public TransferSequence(HardwareMap hardwareMap, OpModeUtilities opModeUtilities, Outtake outtake, Intake intake) {
         this.hardwareMap = hardwareMap;
@@ -42,16 +37,10 @@ public class TransferSequence {
         this.intakeDoorAction = new IntakeDoorAction(intake);
         this.intakeNoodleAction = new IntakeNoodleAction(intake);
         this.intakePivotAction = new IntakePivotAction(intake);
-<<<<<<< HEAD
         this.outtakeClawAction = new OuttakeClawAction(outtake);
         this.outtakePivotAction = new OuttakePivotAction(outtake);
     }
     public void sequence() {
-=======
-    }
-    public void sequence() {
-        outtakeSlideAction.moveToPosition(400);
->>>>>>> 8aae86c (transfer sequence class)
         intakeNoodleAction.stop();
         intakeDoorAction.open();
         SystemClock.sleep(500);
