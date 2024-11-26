@@ -115,7 +115,7 @@ public class FiniteMachineStateIntake {
                     }
 
                     // add in the button for claw open and close
-                    if(gamepad_1.getButton(GamepadKeys.Button.A) || gamepad_2.getButton(GamepadKeys.Button.B) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                    if(gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         ToggleClaw();
                     }
