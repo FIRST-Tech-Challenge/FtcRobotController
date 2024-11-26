@@ -63,13 +63,13 @@ public class SampleOpMode extends CommandOpMode {
                 driver, GamepadKeys.Button.LEFT_BUMPER
         );
 
-        GamepadButton elevatorUpButton = new GamepadButton(
-                operator, GamepadKeys.Button.LEFT_BUMPER
-        );
-
-        GamepadButton elevatorDownButton = new GamepadButton(
-                operator, GamepadKeys.Button.RIGHT_BUMPER
-        );
+//        GamepadButton elevatorUpButton = new GamepadButton(
+//                operator, GamepadKeys.Button.LEFT_BUMPER
+//        );
+//
+//        GamepadButton elevatorDownButton = new GamepadButton(
+//                operator, GamepadKeys.Button.RIGHT_BUMPER
+//        );
 
         GamepadButton scoreAtBucket = new GamepadButton(
                 driver, GamepadKeys.Button.A
@@ -77,7 +77,7 @@ public class SampleOpMode extends CommandOpMode {
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
-        ///zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
+        //zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
 
         intakeButton.whenPressed(new SequentialCommandGroup(
                     new ExtendIntake(intake),
