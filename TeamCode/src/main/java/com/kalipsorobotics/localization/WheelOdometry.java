@@ -6,7 +6,6 @@ import android.util.Log;
 import com.kalipsorobotics.modules.IMUModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.math.Velocity;
 
@@ -16,8 +15,8 @@ import com.kalipsorobotics.modules.DriveTrain;
 public class WheelOdometry {
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
-    final static private double TRACK_WIDTH = 273.05;
-    static private final double BACK_DISTANCE_TO_MID = 69.85;
+    final static private double TRACK_WIDTH_MM = 273.05;
+    static private final double BACK_DISTANCE_TO_MID_MM = 69.85;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
@@ -27,7 +26,9 @@ public class WheelOdometry {
     private volatile double prevLeftTicks = 0;
     volatile private double prevBackTicks = 0;
     private volatile long prevTime;
-    private final double MM_TO_INCH = 1/25.4;
+
+    private volatile double prevImuHeading;
+//    private final double MM_TO_INCH = 1/25.4;
 
     public WheelOdometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, IMUModule imuModule, double xCoordinate,
                          double yCoordinate, double theta) {
@@ -37,26 +38,26 @@ public class WheelOdometry {
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
         this.backEncoder = driveTrain.getBackEncoder();
+        prevTime = SystemClock.elapsedRealtime();
 
     }
 
     private double ticksToMM(double ticks) {
-        final double DEAD_WHEEL_RADIUS = 24;
+        final double DEAD_WHEEL_RADIUS_MM = 24;
         final double TICKS_PER_REV = 2000;
-        final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
+        final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS_MM / TICKS_PER_REV;
         final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
 //      final double TICKS_TO_MM = 13.2625995;
         return ticks * TICKS_TO_MM;
     }
 
     public double countRight() {
-        return ticksToMM(rightEncoder.getCurrentPosition()) * MM_TO_INCH;
+        return ticksToMM(rightEncoder.getCurrentPosition());
     }
     public double countLeft() {
-        return ticksToMM(leftEncoder.getCurrentPosition()) * MM_TO_INCH;
-    }
+        return ticksToMM(leftEncoder.getCurrentPosition());}
     public double countBack() {
-        return ticksToMM(-backEncoder.getCurrentPosition()) * MM_TO_INCH;
+        return ticksToMM(-backEncoder.getCurrentPosition());
     }
 
     private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
@@ -65,8 +66,8 @@ public class WheelOdometry {
         double deltaMecanumDistance = backTicks - prevBackTicks;
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH*MM_TO_INCH);
-        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID*MM_TO_INCH * deltaTheta);
+        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
+        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
         return new Velocity(
                 deltaX,
                 deltaY,
@@ -89,8 +90,10 @@ public class WheelOdometry {
         double relDeltaY =
                 +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
 
+//        double relDeltaTheta =
+//                MathFunctions.angleWrapRad(relativeDelta.getTheta());
         double relDeltaTheta =
-                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+                getIMUHeading() - prevImuHeading;
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
         Log.d("odometry", "arcDelta " + arcDelta);
@@ -105,7 +108,8 @@ public class WheelOdometry {
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
 //        double newTheta =
 //                MathFunctions.angleWrapRad(relativeDelta.getTheta());
-        double newTheta = getIMUHeading();
+        double newTheta = relativeDelta.getTheta();
+
         return new Velocity(newX, newY, newTheta);
     }
 
@@ -127,7 +131,7 @@ public class WheelOdometry {
     }
 
     public double getIMUHeading() {
-        return imuModule.getIMU().getRobotYawPitchRollAngles().getYaw();
+        return Math.toRadians(imuModule.getIMU().getRobotYawPitchRollAngles().getYaw());
     }
 
     public Position updatePosition() {
