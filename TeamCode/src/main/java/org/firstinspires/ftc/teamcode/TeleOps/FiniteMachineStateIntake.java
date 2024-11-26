@@ -93,7 +93,7 @@ public class FiniteMachineStateIntake {
                     robot.intakeRightArmServo.setPosition(intake_Arm_Pick);
                     robot.intakeClawServo.setPosition(intake_Claw_Open);
                     intakeTimer.reset();
-                    intakestate = INTAKESTATE.INTAKE_EXTEND;
+                    intakeState = INTAKESTATE.INTAKE_EXTEND;
                 }
                 break;
             case INTAKE_EXTEND:
