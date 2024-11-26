@@ -20,10 +20,19 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideMotor1.setPower(power);
-        linearSlideMotor2.setPower(power);
+        if (power > 0.1) {
+            setPower(power);
+            linearSlideMotor1.setTargetPosition(2040);
+            linearSlideMotor2.setTargetPosition(2040);
+            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        } else if (power < -0.1) {
+            setPower(-power);
+            linearSlideMotor1.setTargetPosition(0);
+            linearSlideMotor2.setTargetPosition(0);
+            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public void run() {
@@ -68,6 +77,6 @@ public class OuttakeSlideAction {
     }
     public void toggle() {
         if (stage == 0) { moveToPosition(992); outtakePivotAction.moveOut(); stage = 1; }
-        else { moveToPosition(2060); stage = 2; }
+        else { moveToPosition(2060); stage = 0; }
     }
 }

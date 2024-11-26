@@ -46,7 +46,7 @@ public class IntakeLinkageAction {
     }
     public void extend() {
         startTime = SystemClock.currentThreadTimeMillis();
-        moveIntakeSlide(-2.8);
+        moveIntakeSlide(-2);
         isRetracted = false;
     }
 
