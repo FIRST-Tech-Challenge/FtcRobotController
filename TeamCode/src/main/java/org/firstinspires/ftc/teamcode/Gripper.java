@@ -44,17 +44,17 @@ public class Gripper {
         }
     }
     public boolean isOpen() {
-        return RobotMath.isAbsDiffWithinRange(currentPosition, openPos, 0.001);
+        return RobotMath.isAbsDiffWithinRange(position, openPos, 0.001);
     }
     public void readPosition() {
         currentPosition = front.getPosition();
     }
     public void writePosition() {
-        if (Math.abs(previousServoPosition - currentPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
+        if (Math.abs(previousServoPosition - position) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
             front.setPosition(position);
             back.setPosition(position);
         }
-        previousServoPosition = currentPosition;
+        previousServoPosition = position;
     }
     public void setPosition(double pos) {
         position = pos;

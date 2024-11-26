@@ -7,8 +7,8 @@ public class Wrist {
     private double currentLeftServoPosition;
     private double currentRightServoPosition;
     private double previousLeftServoPosition;
-    private double setLeftServoPosition;
-    private double setRightServoPosition;
+    private double leftServoPosition;
+    private double rightServoPosition;
     final double DEGREES_FROM_ZERO_TO_ONE = 355;
     //final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT = 0.5;//.5154//.4883
     final double ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT = 0.5154;//.5154//.4883
@@ -48,16 +48,16 @@ public class Wrist {
         double leftDeg = pitchTarget + (rollTarget / 2);
         double rightDeg = pitchTarget - (rollTarget / 2);
 
-        setLeftServoPosition = degToServoLeft(leftDeg);
-        setRightServoPosition = degToServoRight(rightDeg);
+        leftServoPosition = degToServoLeft(leftDeg);
+        rightServoPosition = degToServoRight(rightDeg);
     }
 
 
     public double leftDegrees() {
-        return servoToDeg(currentLeftServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT);
+        return servoToDeg(leftServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_LEFT);
     }
     public double rightDegrees() {
-        return servoToDeg(currentRightServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_RIGHT);
+        return servoToDeg(rightServoPosition, DEGREES_FROM_ZERO_TO_ONE, ANGLE_IS_ZERO_AT_THIS_SERVO_POS_RIGHT);
     }
     private double servoToDeg(double servoPos, double degreesFromZeroToOne, double angleIsZeroAtThisServoPos) {
         servoPos = RobotMath.maxAndMin(servoPos, 1, 0);
@@ -76,11 +76,11 @@ public class Wrist {
     }
 
     public void writeServoPositions() {
-        if (Math.abs(previousLeftServoPosition - currentLeftServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
-            left.setPosition(setLeftServoPosition);
-            right.setPosition(setRightServoPosition);
+        if (Math.abs(previousLeftServoPosition - leftServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
+            left.setPosition(leftServoPosition);
+            right.setPosition(rightServoPosition);
         }
-        previousLeftServoPosition = currentLeftServoPosition;
+        previousLeftServoPosition = leftServoPosition;
     }
 
     public void readServoPositions() {
@@ -89,10 +89,10 @@ public class Wrist {
     }
 
     public double getCurrentRightServoPosition() {
-        return currentRightServoPosition;
+        return rightServoPosition;
     }
     public double getCurrentLeftServoPosition() {
-        return currentLeftServoPosition;
+        return leftServoPosition;
     }
 
     public String toString() {

@@ -100,9 +100,9 @@ public class Output {
 
     public void readAllComponents() {
         verticalSlides.readCurrentTicks();
-        arm.readServoPositions();
-        wrist.readServoPositions();
-        gripper.readPosition();
+        //arm.readServoPositions();
+        //wrist.readServoPositions();
+        //gripper.readPosition();
     }
 
     public void writeAllComponents() {

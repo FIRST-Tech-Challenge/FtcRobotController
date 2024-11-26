@@ -118,7 +118,6 @@ public class ATeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
             //READ
             playerOne.readButtons();
             playerTwo.readButtons();
@@ -131,16 +130,7 @@ public class ATeleop extends LinearOpMode {
             //WRITE
             bart.writeAllComponents();
 
-            /** PLAYER ONE CONTROLS **/
-            //drive
-
-
-
-
-
-
-
-
+            /** TELEMETRY **/
 
             telemetry.addLine(bart.output.currentPosition().pointTelemetry());
             telemetry.addData("\n", bart.output.currentPosition().componentValuesIrl());

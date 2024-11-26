@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Arm {
     //220 depoist positoin
     Servo left, right;
-    private double setServoPosition;
-    private double previousSetServoPosition;
+    private double ServoPosition;
+    private double previousServoPosition;
     private double readServoPosition;
     final double SERVO_POSITION_SIGNIFICANT_DIFFERENCE = 0.01;
     final double DEGREES_FROM_ZERO_TO_ONE = 180;//[-45,135]
@@ -40,20 +40,20 @@ public class Arm {
     }
 
     public void setPosition(double position) {
-        setServoPosition = position;
+        ServoPosition = position;
     }
 
     public void readServoPositions() {
         readServoPosition = left.getPosition();
     }
     public double getCurrentServoPosition() {
-        return readServoPosition;
+        return ServoPosition;
     }
     public void writeServoPositions() {
-        if (Math.abs(previousSetServoPosition - setServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
-            left.setPosition(setServoPosition);
-            right.setPosition(setServoPosition);
+        if (Math.abs(previousServoPosition - ServoPosition) > SERVO_POSITION_SIGNIFICANT_DIFFERENCE) {
+            left.setPosition(ServoPosition);
+            right.setPosition(ServoPosition);
         }
-        previousSetServoPosition = setServoPosition;
+        previousServoPosition = ServoPosition;
     }
 }
