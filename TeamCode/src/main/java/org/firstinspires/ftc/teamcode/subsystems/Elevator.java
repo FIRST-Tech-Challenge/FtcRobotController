@@ -18,8 +18,8 @@ public class Elevator extends SubsystemBase {
     private double elevatorPower;
     private double target;
     public Elevator(HardwareMap hMap, Telemetry telemetry){
-        //this.elevatorLeft = new Motor(hMap, "ElevatorLeft");
-        this.elevatorRight = new Motor(hMap, "ElevatorRight");
+        this.elevatorLeft = new Motor(hMap, "ElevatorLeft");
+        //this.elevatorRight = new Motor(hMap, "ElevatorRight");
 
         this.telemetry = telemetry;
         this.elevatorRight.setInverted(true);
