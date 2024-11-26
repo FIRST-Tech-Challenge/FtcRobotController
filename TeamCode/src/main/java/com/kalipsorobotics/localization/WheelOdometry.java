@@ -26,7 +26,7 @@ public class WheelOdometry {
     private volatile double prevLeftTicks = 0;
     volatile private double prevBackTicks = 0;
     private volatile long prevTime;
-
+    private volatile double currentImuHeading;
     private volatile double prevImuHeading;
 //    private final double MM_TO_INCH = 1/25.4;
 
@@ -35,11 +35,13 @@ public class WheelOdometry {
         this.opModeUtilities = opModeUtilities;
         this.imuModule = imuModule;
         this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
+        Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
         this.backEncoder = driveTrain.getBackEncoder();
         prevTime = SystemClock.elapsedRealtime();
-
+        prevImuHeading = getIMUHeading();
+        currentImuHeading = prevImuHeading;
     }
 
     private double ticksToMM(double ticks) {
@@ -66,14 +68,14 @@ public class WheelOdometry {
         double deltaMecanumDistance = backTicks - prevBackTicks;
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        //double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
-        double deltaTheta = getIMUHeading() - prevImuHeading;
+        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
+        //double deltaTheta = currentImuHeading - prevImuHeading;
         //wrapping to normalize theta -pi to pi
-        deltaTheta = Math.atan2(Math.sin(deltaTheta), Math.cos(deltaTheta));
-        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
+        //deltaTheta = Math.atan2(Math.sin(deltaTheta), Math.cos(deltaTheta));
+        double deltaY = (deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
 
         Velocity velocity = new Velocity(deltaX, deltaY, deltaTheta);
-        Log.d("purepursaction_debug_odo_wheel delta", velocity.toString());
+//        Log.d("purepursaction_debug_odo_wheel delta", velocity.toString());
 
         return velocity;
     }
@@ -96,11 +98,11 @@ public class WheelOdometry {
 //        double relDeltaTheta =
 //                MathFunctions.angleWrapRad(relativeDelta.getTheta());
         double relDeltaTheta =
-                getIMUHeading() - prevImuHeading;
+                relativeDelta.getTheta();
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
         if (Math.abs(arcDelta.getTheta()) > 0.01) {
-            Log.d("odometry arc delta", "arcDelta 2" + arcDelta);
+            Log.d("odometry new arc delta", "arcDelta4" + arcDelta);
         }
         return arcDelta;
     }
@@ -113,7 +115,7 @@ public class WheelOdometry {
                 relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
 //        double newTheta =
 //                MathFunctions.angleWrapRad(relativeDelta.getTheta());
-        double newTheta = relativeDelta.getTheta();
+        double newTheta = currentImuHeading - prevImuHeading;
 
         return new Velocity(newX, newY, newTheta);
     }
@@ -143,6 +145,7 @@ public class WheelOdometry {
         double rightTicks = countRight();
         double leftTicks = countLeft();
         double backTicks = countBack();
+        currentImuHeading = getIMUHeading();
 
         Log.d("updatepos", rightTicks + " " + leftTicks + " " + backTicks);
 
@@ -162,7 +165,7 @@ public class WheelOdometry {
         prevRightTicks = rightTicks;
         prevLeftTicks = leftTicks;
         prevBackTicks = backTicks;
-        prevImuHeading = getIMUHeading();
+        prevImuHeading = currentImuHeading;
 
 
 
@@ -180,26 +183,9 @@ public class WheelOdometry {
 
     public IMUModule getImuModule() {return imuModule;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public double getCurrentImuHeading() {
+        return this.currentImuHeading;
+    }
 
     public double countX() {
         return (countLeft() + countRight()) / 2;
