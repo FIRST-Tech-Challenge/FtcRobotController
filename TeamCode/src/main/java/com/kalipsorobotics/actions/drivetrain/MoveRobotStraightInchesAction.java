@@ -10,8 +10,8 @@ import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MoveRobotStraightInchesAction extends DriveTrainAction {
-    private static final double ERROR_TOLERANCE = 0.2;
-    private static final double HEADING_ERROR_TOLERANCE = 2;
+    private static final double ERROR_TOLERANCE_IN = 0.2;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 2;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
@@ -19,10 +19,8 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     double targetInches;
     double currentInches;
     double remainingDistance;
-    double prevThetaRadians;
     double targetTheta;
     double thetaOffset;
-    double rotationPower;
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta) {
         this.dependentAction = new DoneStateAction();
@@ -32,7 +30,6 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         this.wheelOdometry = wheelOdometry;
         this.targetInches = targetInches;
         this.targetTheta = targetTheta;
-        prevThetaRadians = sparkfunOdometry.countTheta();
     }
 
     public PIDController getPidController() {
@@ -61,7 +58,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     public boolean checkDoneCondition() {
         refreshRemainingDistance();
         Log.d("straight", "current error is " + remainingDistance);
-        if (Math.abs(remainingDistance) <= ERROR_TOLERANCE && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE)) {
+        if (Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) {
             driveTrain.setPower(0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             Log.d("straight","isdone true");
@@ -79,6 +76,8 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         refreshRemainingDistance();
         refreshThetaOffset();
 
+        Log.d("straight/error", String.format("Error %f Current Inches %f Target Inches %f", remainingDistance, currentInches, targetInches));
+
         if (!hasStarted) {
             this.targetInches += currentInches;
             Log.d("straight","target inches is " + this.targetInches);
@@ -86,13 +85,11 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         }
 
         double linearPower = pidController.calculate(remainingDistance);
+        double rotationPower = 0;
 
-        if (Math.abs(thetaOffset) > Math.toRadians(HEADING_ERROR_TOLERANCE)) {
+        if (Math.abs(thetaOffset) > Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) {
             rotationPower = thetaOffset * 0.25;
         }
-
-        Log.d("ILC str linear", String.format("Linear power %f", linearPower));
-        Log.d("ILC str rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
 
         double fLeft = linearPower + rotationPower;
         double fRight = linearPower - rotationPower;
@@ -100,19 +97,23 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         double bRight = linearPower - rotationPower;
 
         double biggest = MathFunctions.maxAbsValueDouble(fLeft, fRight, bLeft, bRight);
+        double smallest = MathFunctions.minAbsValueDouble(fLeft, fRight, bLeft, bRight);
+
+        if (smallest < minPower) {
+            fLeft *= (minPower / smallest);
+            fRight *= (minPower / smallest);
+            bLeft *= (minPower / smallest);
+            bRight *= (minPower / smallest);
+        }
         if (biggest > 1) {
             fLeft /= biggest;
             fRight /= biggest;
             bLeft /= biggest;
             bRight /= biggest;
         }
-        if (biggest < minPower) {
-            fLeft *= (minPower / biggest);
-            fRight *= (minPower / biggest);
-            bLeft *= (minPower / biggest);
-            bRight *= (minPower / biggest);
-        }
 
+        Log.d("straight/linear", String.format("Linear power %f", linearPower));
+        Log.d("straight/rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
         Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", fLeft, fRight, bLeft, bRight));
 
         driveTrain.setPower(fLeft, fRight, bLeft, bRight);

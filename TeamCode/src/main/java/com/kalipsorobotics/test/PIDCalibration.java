@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kalipsorobotics.PID.PIDController;
 
 import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
+import com.kalipsorobotics.actions.drivetrain.MecanumRobotAction;
 import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
 import com.kalipsorobotics.localization.SparkfunOdometry;
@@ -34,7 +35,7 @@ public class PIDCalibration extends LinearOpMode {
 
         waitForStart();
 
-        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
+        DriveTrainAction action = new MecanumRobotAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
         PIDController globalController = action.getPidController();
 
         int i = 0;
@@ -66,7 +67,7 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKd(deltaKD);
 
                 sleep(1000);  // should be safe I think
-                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
+                action = new MecanumRobotAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
                 action.setPidController(globalController);
 
                 Log.d(tag, globalController.toString());

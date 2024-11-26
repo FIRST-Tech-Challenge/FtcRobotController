@@ -30,4 +30,17 @@ public class MathFunctions {
 
         return Math.abs(max);
     }
+
+    public static double minAbsValueDouble(double a, double... others) {
+
+        double min = a;
+
+        for (double next : others) {
+            if (Math.abs(next) < Math.abs(min)) {
+                min = next;
+            }
+        }
+
+        return Math.abs(min);
+    }
 }
