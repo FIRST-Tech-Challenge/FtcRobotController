@@ -15,8 +15,8 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
     private double denominator = 1;        // declare motor power calculation variable
 
     private int precision = 2;                                  // chassis motor power reduction factor 1
-
-
+    private boolean IntakeClawClosed = false;                    // claw holder variable
+    
     public double LeftServo;
     public double RightServo;
     private double V4Bpos = 1;
@@ -25,25 +25,25 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
     private enum V4Bstate{
         START,
         INTAKE,
-        TRANSFER
+        TRANSFER                                //  TODO add OUTTAKE state  *******************************
     }
     V4Bstate state = V4Bstate.START;
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");   // Chub Port 0 // Gamepad 1
-        DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");     // Chub Port 1 // Left Stick For Moving
-        DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");     // Chub Port 2 // Right Stick For Turning
-        DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");       // Chub Port 3
+        DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");       // Chub Port 0 // Gamepad 1
+        DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");         // Chub Port 1 // Left Stick For Moving
+        DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");         // Chub Port 2 // Right Stick For Turning
+        DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");           // Chub Port 3
 
         Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Increments Using Dpad Side Buttons?
         Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // Ideally Stick Controlled
         Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With X
         Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
-        LeftServo = Flex + (1/2)*Yaw;
-        RightServo = Flex - (1/2)*Yaw;
+        LeftServo = Flex - ( .5 * Yaw);
+        RightServo = Flex + (.5 * Yaw);
 
-        BackLeft.setDirection(DcMotorSimple.Direction.REVERSE);     // Reverses the direction the motor turns
-        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);   // Reverses the direction the motor turns
+        BackLeft.setDirection(DcMotorSimple.Direction.REVERSE);             // Reverses the direction the motor turns
+        FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);           // Reverses the direction the motor turns
 
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);    // Sets the motor to be locked when stopped
         FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);   // Sets the motor to be locked when stopped
@@ -73,12 +73,12 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
             denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);    // calculate motor movement math and adjust according to lift height or manual precision mode selection
 
             // check for Turbo or Precision Mode
-            if (gamepad1.left_bumper) { // Left bumper is being pressed
-                precision = 1;              // set speed to full power - TURBO MODE
+            if (gamepad1.left_bumper) {         // Left bumper is being pressed
+                precision = 1;                  // set speed to full power - TURBO MODE
             } else if (gamepad1.right_bumper) { // Right bumper is being pressed
-                precision = 4;              // set speed to 1/4 power - PRECISION MODE
+                precision = 4;                  // set speed to 1/4 power - PRECISION MODE
             } else {
-                precision = 2;              // reset default speed to half power
+                precision = 2;                  // reset default speed to half power
             }
 
             // calculate motor power
@@ -91,28 +91,28 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
 
             switch (state){
                 case START:
-                    if (gamepad1.a){    // Transfer Position
+                    if (gamepad2.a){    // Transfer Position
                         V4Bpos = 1;
                         Flex = 0;
-                        state = V4Bstate.INTAKE;
+                        state = V4Bstate.INTAKE;    // Switch to INTAKE state
                     }
                     break;
                 case INTAKE:
                     V4Bpos = .3;
                     Flex = .6;
-                    if (gamepad1.touchpad_finger_1){   // Allows manual yaw control if a finger is on the touchpad
-                        Yaw = gamepad1.touchpad_finger_1_x;     // Taking value from touchpad and saving as our desired yaw value
+                    if (gamepad2.touchpad_finger_1){           // Allows manual yaw control if a finger is on the touchpad
+                        Yaw = gamepad2.touchpad_finger_1_x;    // Taking value from touchpad and saving as our desired yaw value
                     }
                     else {
                         Yaw = 0; //Sets yaw to 0 if no finger is detected on the touchpad
                     }
-                    if (gamepad1.right_trigger > 0){
-                        V4Bpos = 0.3*(1-(gamepad1.right_trigger)); //Control for variable virtual four bar height when in INTAKE state
+                    if (gamepad2.right_trigger > 0){
+                        V4Bpos = 0.3*(1-(gamepad2.right_trigger)); //Control for variable virtual four bar height when in INTAKE state
                     }
                     else {
                         V4Bpos = .3;
                     }
-                    if (gamepad1.x){  //Transfer position
+                    if (gamepad2.x){  //Transfer position
                         V4Bpos = 1;
                         Flex = 0;
                         state = V4Bstate.TRANSFER;
@@ -122,10 +122,59 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
                     state = V4Bstate.START;
                     break;
             }
+
+
+
+
+
+/*    **********  This alternate state code has operations refined and moved to GAMEPAD2   **********
+        ********  TODO Create button controls and sequencing for TRANSFER and OUTTAKE cases    **********
+
+            switch (state){
+                case START:		                // START state
+                    V4Bpos = 1;	            	// Bar fully up
+                    Flex = 0;		            // Wrist fully up
+                    if (gamepad2.a){        	// Switch to INTAKE Position
+                        state = V4Bstate.INTAKE;
+                    }
+                    break;
+                case INTAKE:	                                       // INTAKE state
+                    V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));     // Factors trigger value or returns to baseline position if no input
+                    Flex = .6;					                       // ToDo - determine default Flex value for here
+                    Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
+                    if (gamepad2.b && IntakeClawClosed = false;){      // Close claw and toggle holder
+        			    IntakeClaw.setPosition(0);
+	        		    IntakeClawClosed = true;
+    	    		}
+	        		else if (gamepad2.b && IntakeClawClosed = true;){   // Open the claw and toggle holder
+		                IntakeClaw.setPosition(1);
+			            IntakeClawClosed = false;
+		        	}
+                    if (gamepad2.x){				                   // x button Transfer position
+                        state = V4Bstate.TRANSFER;
+                    }
+                    break;
+                case TRANSFER:                           // TODO   transfer buttons and motion   **************************
+                    state = V4Bstate.START;
+                    break;
+	        	case OUTTAKE:                            // TODO   raising and scoring button functions   *********************
+                //    if ( "button pressed"){
+	         	//	  state = V4Bstate.TRANSFER;
+                    break;			    
+                    }
+
+*/
+
+
+
+            if (gamepad2.righttrigger){
+                state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
+            {
+            
             LeftIntakeV4B.setPosition(V4Bpos);
             RightIntakeV4B.setPosition(V4Bpos);
-            LeftServo = Flex - (.5*Yaw); //Calculates required servo angles for combined flex and yaw motion
-            RightServo = Flex + (.5*Yaw);//^
+            LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
+            RightServo = Flex + (.5 * Yaw);//^
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
             RightIntakeWrist.setPosition(RightServo); //^
 
