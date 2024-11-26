@@ -136,11 +136,11 @@ public class Testing_Phase1 extends LinearOpMode {
                     Flex = .6;					                       // TODO - determine default Flex value for here
                     Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
                     if (gamepad2.b){    				  // Close claw button
-            		if (IntakeClawClosed == false){
+            		if (!IntakeClawClosed){
 				IntakeClaw.setPosition(0);		// Close claw
     	    	      	}
-	        	else if (IntakeClawClosed == true){  		
-		                  IntakeClaw.setPosition(1);		 // Open claw
+	        	else {  		
+		                 IntakeClaw.setPosition(1);		 // Open claw
 			}
 			IntakeClawClosed = !IntakeClawClosed;
 		    }
