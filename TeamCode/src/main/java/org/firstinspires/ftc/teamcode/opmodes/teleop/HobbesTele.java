@@ -29,8 +29,6 @@ public class HobbesTele extends OpMode {
         // define and init robot
         hob = new Hobbes();
         hob.init(hardwareMap);
-        // set macros to teleop macros
-        hob.setMacros("TELEOP");
     }
 
     @Override
