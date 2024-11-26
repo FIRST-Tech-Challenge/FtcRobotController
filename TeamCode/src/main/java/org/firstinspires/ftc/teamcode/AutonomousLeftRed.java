@@ -37,6 +37,8 @@ public class AutonomousLeftRed extends AutonomousBase {
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
 
     boolean geckoServoCollecting = false;
+    
+    double pos_y=0, pos_x=0, pos_angle=0.0;  // Allows us to specify movement INCREMENTALLY, not ABSOLUTE
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -153,7 +155,10 @@ public class AutonomousLeftRed extends AutonomousBase {
         }
 
         // Score the preloaded specimen
-        scoreSpecimenPreload();
+        if( !onlyPark && scorePreloadSpecimen ) {
+            scoreSpecimenPreload();
+        }
+
 /*
         // Score starting sample
         scoreSample();
@@ -168,6 +173,9 @@ public class AutonomousLeftRed extends AutonomousBase {
         // Park for 3pts (level 1 ascent)
          level1Ascent();
 
+        // ensure motors are turned off even if we run out of time
+        robot.driveTrainMotorsZero();
+
     } // mainAutonomous
 
     private void scoreSpecimenPreload() {
@@ -178,10 +186,10 @@ public class AutonomousLeftRed extends AutonomousBase {
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
             driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
-            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
-            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // small shift right in preparation for 45deg rotation (minimize shift toward alliance partner)
