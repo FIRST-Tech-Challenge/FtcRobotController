@@ -19,13 +19,13 @@ public class DriveSubsystem extends SubsystemBase {
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
 
     public DriveSubsystem(HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors) {
-        this(driveMotors.get(RobotHardwareInitializer.Component.LEFT_FRONT),
-                driveMotors.get(RobotHardwareInitializer.Component.RIGHT_FRONT),
-                driveMotors.get(RobotHardwareInitializer.Component.LEFT_BACK),
-                driveMotors.get(RobotHardwareInitializer.Component.RIGHT_BACK),
-                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_LEFT),
-                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_BACK),
-                driveMotors.get(RobotHardwareInitializer.Component.ENCODER_RIGHT));
+        this(driveMotors.get(RobotHardwareInitializer.MotorComponent.LEFT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.MotorComponent.RIGHT_FRONT),
+                driveMotors.get(RobotHardwareInitializer.MotorComponent.LEFT_BACK),
+                driveMotors.get(RobotHardwareInitializer.MotorComponent.RIGHT_BACK),
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_LEFT),
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_BACK),
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_RIGHT));
     }
 
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
