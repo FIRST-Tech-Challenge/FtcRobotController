@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
+import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 
 public class ArmHighGoal extends CommandBase {
     private final ArmSub armSub;
@@ -15,6 +16,11 @@ public class ArmHighGoal extends CommandBase {
         this.telemetry = telemetry;
         this.armSub = armSub;
         this.gamepad = gamepad;
+    }
+
+    public ArmHighGoal(ArmSub armSub, DrivetrainSub drivetrain) {
+        this.armSub = armSub;
+        addRequirements(armSub, drivetrain);
     }
 
     @Override
