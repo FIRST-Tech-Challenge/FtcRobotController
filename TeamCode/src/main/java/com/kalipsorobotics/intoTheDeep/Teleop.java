@@ -12,6 +12,7 @@ import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.sequences.TransferSequence;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
@@ -42,6 +43,7 @@ public class Teleop extends LinearOpMode {
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
+        TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
         Action action = new Action() {
             @Override
             public boolean checkDoneCondition() {
@@ -100,6 +102,7 @@ public class Teleop extends LinearOpMode {
             //Door
             //TODO alan you should make this whole chunky thing maybe its own teleop ACTION
             if (gamepad2.b && !prevGamePadB) {
+                transferSequence.sequence();
                 retracted = true;
             }
             prevGamePadB = gamepad2.b;
