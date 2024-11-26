@@ -45,9 +45,9 @@ public class OuttakePivotAutoAction extends Action {
             if (position == Position.IN) {
                 outtakePivotServo.setPosition(0.256);
             } else if (position == Position.SPECIMEN){
-                outtakePivotServo.setPosition(0.675);
-            } else {
-                outtakePivotServo.setPosition(0.85);
+                outtakePivotServo.setPosition(0.0);
+            } else { //position BASKET
+                outtakePivotServo.setPosition(0.0);
             }
 
             hasStarted = true;

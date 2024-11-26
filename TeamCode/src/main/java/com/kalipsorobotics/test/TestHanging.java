@@ -21,13 +21,6 @@ public class TestHanging extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
 
-//        MoveLSAction moveLSUp = new MoveLSAction(30, outtake);
-//
-//        WaitAction waitAction = new WaitAction(2);
-//        waitAction.setDependentAction(moveLSUp);
-//
-//        MoveLSAction moveDown = new MoveLSAction(-12, outtake, 0.01);
-//        moveDown.setDependentAction(waitAction);
 
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
 

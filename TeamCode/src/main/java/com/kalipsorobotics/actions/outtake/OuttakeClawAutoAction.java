@@ -40,9 +40,9 @@ public class OuttakeClawAutoAction extends Action {
     public void update() {
         if (!hasStarted) {
             if (position == ClawPosition.OPEN) {
-                outtakeClawServo.setPosition(0.4);
+                outtakeClawServo.setPosition(0.65);
             } else
-                outtakeClawServo.setPosition(0.5);
+                outtakeClawServo.setPosition(0.45);
             }
 
         hasStarted = true;

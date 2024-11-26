@@ -13,7 +13,7 @@ public class AutoBasketAction extends Action {
     MoveLSAction moveLSToBasket;
     OuttakePivotAutoAction pivotOut;
     WaitAction waitAfterDrop;
-    //OuttakeClawAutoAction clawOpen;
+    OuttakeClawAutoAction clawOpen;
     MoveLSAction moveLSToZero;
 
     public AutoBasketAction(Outtake outtake) {
@@ -22,10 +22,10 @@ public class AutoBasketAction extends Action {
         moveLSToBasket = new MoveLSAction(CalculateTickInches.inchToTicksLS(58), outtake);
         pivotOut = new OuttakePivotAutoAction(outtake, OuttakePivotAutoAction.Position.BASKET);
         pivotOut.setDependentAction(moveLSToBasket);
+        clawOpen = new OuttakeClawAutoAction(outtake, OuttakeClawAutoAction.ClawPosition.OPEN);
+        clawOpen.setDependentAction(pivotOut);
         waitAfterDrop = new WaitAction(0.5);
-        waitAfterDrop.setDependentAction(pivotOut);
-//        clawOpen = new OuttakeClawAutoAction(outtake, OuttakeClawAutoAction.ClawPosition.OPEN);
-//        clawOpen.setDependentAction(pivotOut);
+        waitAfterDrop.setDependentAction(clawOpen);
         moveLSToZero = new MoveLSAction(0, outtake);
         moveLSToZero.setDependentAction(waitAfterDrop);
     }
@@ -43,7 +43,8 @@ public class AutoBasketAction extends Action {
     public void update() {
         moveLSToBasket.updateCheckDone();
         pivotOut.updateCheckDone();
-        //clawOpen.updateCheckDone();
+        clawOpen.updateCheckDone();
+        waitAfterDrop.updateCheckDone();
         moveLSToZero.updateCheckDone();
     }
 }

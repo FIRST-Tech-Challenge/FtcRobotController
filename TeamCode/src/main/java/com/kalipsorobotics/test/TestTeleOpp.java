@@ -1,15 +1,11 @@
 package com.kalipsorobotics.test;
 
-import android.util.Log;
-
-import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import com.kalipsorobotics.actions.PurePursuitAction;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
@@ -27,10 +23,12 @@ public class TestTeleOpp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        driveTrain = new DriveTrain(opModeUtilities);
-        sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities,0,0,Math.toRadians(0));
+//        driveTrain = new DriveTrain(opModeUtilities);
+//        sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
+//        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities,0,0,Math.toRadians(0));
         //Outtake outtake = new Outtake(opModeUtilities);
+
+        SampleColorDetector sampleColorDetector = new SampleColorDetector(opModeUtilities);
 
 //        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, sparkfunOdometry, wheelOdometry);
 //        purePursuitAction.addPoint(0,0,0);
@@ -41,21 +39,14 @@ public class TestTeleOpp extends LinearOpMode {
 //        purePursuitAction.addPoint(1000,0);
 //        purePursuitAction.addPoint(400,-400);
 
-        MoveRobotStraightInchesAction moveRobotStraightInchesAction = new MoveRobotStraightInchesAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0);
-//        Point checkpoint1 = new Point(100, 0);
-//        CheckPointDone checkPointDone = new CheckPointDone(checkpoint1, purePursuitAction, odometry);
-        //AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
-
         waitForStart();
 
         //outtake.outtakeClawServo.setPosition(0.5);
 
         while (opModeIsActive()) {
 
-            sparkfunOdometry.updatePosition();
-            wheelOdometry.updatePosition();
-            moveRobotStraightInchesAction.updateCheckDone();
-
+            opModeUtilities.getTelemetry().addData("color sense", String.valueOf(sampleColorDetector.detectColor()));
+            opModeUtilities.getTelemetry().update();
             //driveTrain.setPower(0.2,-0.2,0.2,-0.2);
 //            checkPointDone.updateCheckDone();
             //autoBasketAction.updateCheckDone();
