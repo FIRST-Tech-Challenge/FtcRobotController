@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Test Drive Phase1")
-public class FourBarWristDriveTeleOp extends LinearOpMode {
+public class TestDrivePhase1TeleOp extends LinearOpMode {
     private double frontLeftPower = 0;     // declare motor power variable
     private double backLeftPower = 0;      // declare motor power variable
     private double frontRightPower = 0;    // declare motor power variable
@@ -39,10 +39,12 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
         DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");         // Chub Port 2 // Right Stick For Turning
         DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");           // Chub Port 3
 
-        Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Increments Using Dpad Side Buttons?
-        Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // Ideally Stick Controlled
-        Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With X
+	Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
+	Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Flex and Yaw controlled
+        Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // IFlex and Yaw controlled
+        Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With A
         Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
+ 
         LeftServo = Flex - (.5 * Yaw);
         RightServo = Flex + (.5 * Yaw);
 
@@ -55,7 +57,7 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
         BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);    // Sets the motor to be locked when stopped
 
 
-        //IntakeClaw.setPosition(0);                // Closes Intake Claw
+        IntakeClaw.setPosition(0);                  // Closes Intake Claw
         LeftIntakeWrist.setPosition(LeftServo);     // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
         LeftIntakeV4B.setPosition(1);               // Sets the intake virtual four bar to the starting position
@@ -109,7 +111,7 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
                     }
                     break;
                 case INTAKE:    
-                    /* V4Bpos = .3;  // This seems redundant as line 120 does the same
+                    /* V4Bpos = .3;  // This seems redundant as line 120 does the same         ****  ORIGINAL CODE
                     Flex = .6;
                     if (gamepad2.touchpad_finger_1) {           // Allows manual yaw control if a finger is on the touchpad
                         Yaw = gamepad2.touchpad_finger_1_x;    // Taking value from touchpad and saving as our desired yaw value
@@ -145,18 +147,19 @@ public class FourBarWristDriveTeleOp extends LinearOpMode {
                         state = V4Bstate.TRANSFER;
                     }
                     break;         
-              case TRANSFER:
-                    state = V4Bstate.START;           // TODO     Transfer sequencing
+                case TRANSFER:
+                    state = V4Bstate.START;              // TODO     Transfer sequencing
                     break;
             	case OUTTAKE:                            // TODO   raising and scoring button functions   *********************
-              //    if ( "button pressed"){
-	           	//	  state = V4Bstate.TRANSFER;
+              	//  if ( "button pressed"){
+	    	//  state = V4Bstate.TRANSFER;
+		//  }			    
                     break;
             }
 
 
-            if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
-                state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
+   	         if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
+   	             state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
                 {
                     // Intake and Wrist positioning
                     LeftIntakeV4B.setPosition(V4Bpos);
