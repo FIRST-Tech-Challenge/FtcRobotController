@@ -63,8 +63,13 @@ public class TestDrive extends LinearOpMode {
             sparkfunOdometry.updatePosition();
             wheelOdometry.updatePosition();
             Log.d("purepursaction_debug_odo_sparkfun", sparkfunOdometry.getCurrentPosition().toString());
-            Log.d("purepursaction_debug_odo_wheel", wheelOdometry.getCurrentPosition().toString());
 
+            if (gamepad1.a) {
+                Log.d("purepursaction_debug_odo_wheel global", wheelOdometry.getCurrentPosition().toString());
+                Log.d("purepursaction_debug_odo_wheel counts", String.format("%f %f %f",wheelOdometry.countRight(),
+                        wheelOdometry.countLeft(),
+                        wheelOdometry.countBack()));
+            }
             /*
             if (gamepad1.left_bumper) {
                 lServo.setPosition(0);

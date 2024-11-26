@@ -68,10 +68,12 @@ public class WheelOdometry {
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
         //double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
         double deltaTheta = getIMUHeading() - prevImuHeading;
+        //wrapping to normalize theta -pi to pi
+        deltaTheta = Math.atan2(Math.sin(deltaTheta), Math.cos(deltaTheta));
         double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID_MM * deltaTheta);
 
         Velocity velocity = new Velocity(deltaX, deltaY, deltaTheta);
-        Log.d("purepursaction_debug_odo_wheel", velocity.toString());
+        Log.d("purepursaction_debug_odo_wheel delta", velocity.toString());
 
         return velocity;
     }
@@ -97,7 +99,9 @@ public class WheelOdometry {
                 getIMUHeading() - prevImuHeading;
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
-        Log.d("odometry", "arcDelta " + arcDelta);
+        if (Math.abs(arcDelta.getTheta()) > 0.01) {
+            Log.d("odometry arc delta", "arcDelta " + arcDelta);
+        }
         return arcDelta;
     }
 
@@ -116,7 +120,7 @@ public class WheelOdometry {
 
     private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
         Velocity globalDelta = rotate(relativeDelta, previousGlobalPosition);
-
+        Log.d("global delta", globalDelta.toString());
         Position position = previousGlobalPosition.add(globalDelta);
         Log.d("thetavalue", "theta " + position.getTheta());
         return position;
@@ -146,6 +150,7 @@ public class WheelOdometry {
         double timeElapsed = (currentTime - prevTime) / 1000.;
 
         Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
+        Log.d("relativeDelta", relativeDelta.toString());
         relativeDelta = linearToArcDelta(relativeDelta);
 
         currentVelocity = relativeDelta.divide(timeElapsed);
