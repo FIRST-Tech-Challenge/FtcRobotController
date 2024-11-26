@@ -24,16 +24,10 @@ public class TestTeleOpp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-<<<<<<< HEAD
-//        driveTrain = new DriveTrain(opModeUtilities);
-//        sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-//        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities,0,0,Math.toRadians(0));
-=======
         driveTrain = new DriveTrain(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
         wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities, imuModule,0,0,Math.toRadians(0));
->>>>>>> 51c982fe5c51ff8b6f88aec48de69d674696e361
         //Outtake outtake = new Outtake(opModeUtilities);
 
         SampleColorDetector sampleColorDetector = new SampleColorDetector(opModeUtilities);
