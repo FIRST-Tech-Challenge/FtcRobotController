@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase {
     public void manualControl(double pow) {
         int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
-        if (pow > 0 && currentPosMM > 36 * 25.4) {
+        if (pow > 0 && currentPosMM > -36 * 25.4) {
             elevatorPower = 0;
             return;
         } else if (pow < 0 && currentPos <= 0) {
