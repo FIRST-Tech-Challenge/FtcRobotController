@@ -125,7 +125,7 @@ public class FiniteMachineStateIntake {
                         debounceTimer.reset();
                         ToggleClaw();
                     }
-                    if (clawstate == CLAWSTATE.OPEN){
+                    if (clawState == CLAWSTATE.OPEN){
                         robot.intakeClawServo.setPosition(intake_Claw_Open);
                     } else{
                         robot.intakeClawServo.setPosition(intake_Claw_Close);
@@ -136,7 +136,7 @@ public class FiniteMachineStateIntake {
                         debounceTimer.reset();
                         //retract
                         intakeTimer.reset();
-                        intakestate = INTAKESTATE.INTAKE_RETRACT;
+                        intakeState = INTAKESTATE.INTAKE_RETRACT;
                     }
                 }
                 break;
@@ -149,7 +149,7 @@ public class FiniteMachineStateIntake {
                 if (intakeTimer.seconds()>0.5){
                     robot.intakeSlideServo.setPosition(intake_Slide_Retract);
                     intakeTimer.reset();
-                    intakestate = INTAKESTATE.INTAKE_TRANS;
+                    intakeState = INTAKESTATE.INTAKE_TRANS;
                 }
                 break;
 
@@ -168,7 +168,7 @@ public class FiniteMachineStateIntake {
                 if(intakeTimer.seconds()>= 1.3) {
                     robot.intakeLeftArmServo.setPosition(0.32);
                     robot.intakeRightArmServo.setPosition(0.32);
-                    intakestate = INTAKESTATE.INTAKE_START;
+                    intakeState = INTAKESTATE.INTAKE_START;
                 }
                 break;
             default:
