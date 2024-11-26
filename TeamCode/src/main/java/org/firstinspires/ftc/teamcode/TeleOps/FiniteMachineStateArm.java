@@ -47,7 +47,6 @@ public class FiniteMachineStateArm {
         this.DOWNLIFT_POWER = DOWNLIFT_POWER;
     }
 
-
     final double DEPOSIT_ARM_IDLE;     // Idle position for the deposit arm servo
     final double DUMP_DEPOSIT;  // Dumping position for the deposit arm servo
     final double DUMP_TIME;     // Time for dumping action in seconds
