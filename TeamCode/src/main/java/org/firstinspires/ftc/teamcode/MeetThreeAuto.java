@@ -23,9 +23,8 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Disabled
-@Autonomous(name = "Meet 2 Auto", group = "Autonomous")
-public class MeetTwoStableAuto extends LinearOpMode {
+@Autonomous(name = "Meet 3 Auto", group = "Autonomous")
+public class MeetThreeAuto extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RED_LEFT;
 
     private static final String[] MENU_OPTIONS = {
@@ -131,9 +130,9 @@ public class MeetTwoStableAuto extends LinearOpMode {
                 return;
 
             case FULL:
-                gameLoopSetup(sp, MeetThreeAuto.ChamberHeight.LOW);
+                gameLoopSetup(sp, ChamberHeight.LOW);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
-                    gameLoop(sp, MeetThreeAuto.ChamberHeight.LOW);
+                    gameLoop(sp, ChamberHeight.LOW);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
                 gameLoopEnd(sp);
@@ -142,7 +141,7 @@ public class MeetTwoStableAuto extends LinearOpMode {
         }
     }
 
-    public void gameLoopSetup(StartingPosition sp, MeetThreeAuto.ChamberHeight chamberHeight) {
+    public void gameLoopSetup(StartingPosition sp, ChamberHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
@@ -152,11 +151,11 @@ public class MeetTwoStableAuto extends LinearOpMode {
                         placeChamber()));
     }
 
-    public void gameLoop(StartingPosition sp, MeetThreeAuto.ChamberHeight chamberHeight) {
+    public void gameLoop(StartingPosition sp, ChamberHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
         getNextSpecimen(sp);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
-        placeNextSpecimenOnChamber(sp, MeetThreeAuto.ChamberHeight.HIGH);
+        placeNextSpecimenOnChamber(sp, ChamberHeight.HIGH);
     }
 
     public void gameLoopEnd(StartingPosition sp) {
@@ -165,6 +164,16 @@ public class MeetTwoStableAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         parkingTrajectory.build()));
+    }
+
+    /**
+     * Enum defining possible chamber heights for scoring
+     */
+    public enum ChamberHeight {
+        /** Lower scoring position */
+        LOW,
+        /** Upper scoring position */
+        HIGH
     }
 
     public class PlaceChamber implements Action {
@@ -195,7 +204,7 @@ public class MeetTwoStableAuto extends LinearOpMode {
         return new GrabSpecimenFromHumanPlayer();
     }
 
-    public void placeNextSpecimenOnChamber(StartingPosition sp, MeetThreeAuto.ChamberHeight mode) {
+    public void placeNextSpecimenOnChamber(StartingPosition sp, ChamberHeight mode) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
         Actions.runBlocking(

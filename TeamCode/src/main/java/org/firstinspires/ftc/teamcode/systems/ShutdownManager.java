@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.systems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
-import org.firstinspires.ftc.teamcode.MainAuto;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,7 +14,6 @@ import java.util.TimerTask;
 public class ShutdownManager {
     private final LinearOpMode linearOpMode;
     private final BaseRobot baseRobot;
-    private final MainAuto mainAuto;
     private final Timer timer;
 
     /**
@@ -23,12 +21,10 @@ public class ShutdownManager {
      * 
      * @param linearOpMode Current OpMode instance
      * @param baseRobot    Reference to main robot instance
-     * @param mainAuto     Reference to autonomous controller
      */
-    public ShutdownManager(LinearOpMode linearOpMode, BaseRobot baseRobot, MainAuto mainAuto) {
+    public ShutdownManager(LinearOpMode linearOpMode, BaseRobot baseRobot) {
         this.linearOpMode = linearOpMode;
         this.baseRobot = baseRobot;
-        this.mainAuto = mainAuto;
         this.timer = new Timer();
     }
 
@@ -54,7 +50,7 @@ public class ShutdownManager {
         // Cancel the timer to stop further periodic checks
         timer.cancel();
 
-        // force the autonomous to shut down
-        throw new RuntimeException("Time to shut down autonomous!");
+        // force the system to shut down
+        throw new RuntimeException("Time to shut down!");
     }
 }
