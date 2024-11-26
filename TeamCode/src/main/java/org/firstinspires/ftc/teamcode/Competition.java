@@ -68,7 +68,7 @@ public class Competition extends LinearOpMode {
             telemetry.addData("Pinpoint Frequency", robot.odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
             telemetry.addData("REV Hub Frequency: ", frequency); //prints the control system refresh rate
 
-            ////MECANUM DRIVE
+            ///MECANUM DRIVE
 
             // Get joystick inputs
             y = -gamepad1.left_stick_y; // Forward/backward
@@ -77,6 +77,7 @@ public class Competition extends LinearOpMode {
 
             robot.mecanumDrive(x, y, rotation);
 
+            ///ELEVATOR
             if (gamepad1.dpad_up){
                 elevatorPower = 0.75;
             } else if (gamepad1.dpad_down) {

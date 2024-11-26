@@ -35,6 +35,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.LED;
 
 /*
  * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
@@ -66,8 +69,14 @@ public class RobotHardware {
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
     private DcMotor elevatorLift = null;
+    private DcMotor intakeSlide = null;
     private Limelight3A limelight = null;
     GoBildaPinpointDriver odo = null; // Declare OpMode member for the Odometry Computer
+    private RevBlinkinLedDriver blinkinLedDriver = null;
+    private RevBlinkinLedDriver.BlinkinPattern pattern = null;
+    private DigitalChannel allianceButton = null;
+    private LED LED_red = null;
+    private LED LED_green = null;
 
     //private Servo   leftHand = null;
     //private Servo   rightHand = null;
@@ -91,7 +100,7 @@ public class RobotHardware {
      */
     public void init()    {
 
-        //GoBilda Odometry Pod Setup
+        ///GoBilda Odometry Pod Setup
         //Deploy to Control Hub to make Odometry Pod show in hardware selection list
         odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
         //TODO Set Odometry Offsets
@@ -100,6 +109,25 @@ public class RobotHardware {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
+        ///REV LED Setup
+        LED_green = myOpMode.hardwareMap.get(LED.class, "front_led_green");
+        LED_red = myOpMode.hardwareMap.get(LED.class, "front_led_red");
+
+        ///Blinkin Setup
+        blinkinLedDriver = myOpMode.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        allianceButton = myOpMode.hardwareMap.get(DigitalChannel.class,"allianceButton");
+        if (allianceButton.getState()) {
+            pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
+            LED_red.on();
+            LED_green.off();
+        } else {
+            pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE;
+            LED_red.off();
+            LED_green.on();
+        }
+        blinkinLedDriver.setPattern(pattern);
+
+        ///Motor Setup
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftFront  = myOpMode.hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = myOpMode.hardwareMap.get(DcMotor.class, "rightFront");
@@ -107,15 +135,17 @@ public class RobotHardware {
         rightBack = myOpMode.hardwareMap.get(DcMotor.class, "rightBack");
 
         elevatorLift = myOpMode.hardwareMap.get(DcMotor.class, "elevatorLift");
+        intakeSlide = myOpMode.hardwareMap.get(DcMotor.class,"intakeSlide");
 
         // Set Directions
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         elevatorLift.setDirection(DcMotor.Direction.REVERSE);
+        intakeSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // elevatorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // intakeSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         //leftHand = myOpMode.hardwareMap.get(Servo.class, "left_hand");
@@ -198,6 +228,7 @@ public class RobotHardware {
      * @param elevatorPower Elevator Power
      */
     public void runElevator (double elevatorPower){
+
         elevatorLift.setPower(elevatorPower);
     }
 
