@@ -122,15 +122,9 @@ public class Hobbes extends Meccanum implements Robot {
         runtime.reset();
     }
 
-    // macros setup
-    public enum MARCO {
-        TELEOP,
-        AUTONOMOUS
-    }
-
-    public void setMacros(MARCO mode) {
+    public void setMacros(String mode) {
         switch (mode) {
-            case TELEOP:
+            case "TELEOP":
                 macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, null));
 
                 macros.put("EXTENDO_ARM_WRIST_FLAT", new HobbesState(null, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, null, null, null, null));
@@ -169,7 +163,7 @@ public class Hobbes extends Meccanum implements Robot {
                 // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED,
                 // SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
                 break;
-            case AUTONOMOUS:
+            case "AUTONOMOUS":
                 break;
             default:
                 macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, null));
