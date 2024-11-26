@@ -10,8 +10,6 @@ public class FiniteMachineStateArm {
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
     
-    private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
-    private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
     public enum LiftState {
         LIFT_START,
         LIFT_EXTEND,
@@ -19,9 +17,13 @@ public class FiniteMachineStateArm {
         LIFT_RETRACT
     }
 
+    private DEPOSITSTATE depositState;
+    
     private LiftState liftState = LiftState.LIFT_START; // Persisting state
     private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
-    private DEPOSITSTATE depositState;
+ 
+    private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
+    private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
 
     public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad_1,
                                  GamepadEx gamepad_2, double DEPOSIT_ARM_IDLE, double DUMP_DEPOSIT,
