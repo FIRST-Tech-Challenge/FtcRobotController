@@ -9,10 +9,19 @@ public class FiniteMachineStateArm {
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
+    
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
-
-
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
+    public enum LiftState {
+        LIFT_START,
+        LIFT_EXTEND,
+        LIFT_DUMP,
+        LIFT_RETRACT
+    }
+
+    private LiftState liftState = LiftState.LIFT_START; // Persisting state
+    private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
+    private DEPOSITSTATE depositState;
 
     public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad_1,
                                  GamepadEx gamepad_2, double DEPOSIT_ARM_IDLE, double DUMP_DEPOSIT,
@@ -36,16 +45,6 @@ public class FiniteMachineStateArm {
         this.DOWNLIFT_POWER = DOWNLIFT_POWER;
     }
 
-    public enum LiftState {
-        LIFT_START,
-        LIFT_EXTEND,
-        LIFT_DUMP,
-        LIFT_RETRACT
-    }
-
-    private LiftState liftState = LiftState.LIFT_START; // Persisting state
-    private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
-    private DEPOSITSTATE depositState;
 
     final double DEPOSIT_ARM_IDLE;     // Idle position for the deposit arm servo
     final double DUMP_DEPOSIT;  // Dumping position for the deposit arm servo
