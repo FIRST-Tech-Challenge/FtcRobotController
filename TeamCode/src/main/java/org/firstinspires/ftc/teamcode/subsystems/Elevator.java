@@ -22,13 +22,13 @@ public class Elevator extends SubsystemBase {
         //this.elevatorRight = new Motor(hMap, "ElevatorRight");
 
         this.telemetry = telemetry;
-        this.elevatorRight.setInverted(true);
+        this.elevatorLeft.setInverted(true);
     }
 
     @Override
     public void periodic() {
 
-        elevatorRight.set(this.elevatorPower + KF);
+        //elevatorRight.set(this.elevatorPower + KF);
         elevatorLeft.set(this.elevatorPower + KF);
 
 
@@ -54,14 +54,14 @@ public class Elevator extends SubsystemBase {
     }
 
     public void goToPos() {
-        int currentPos = this.elevatorRight.getCurrentPosition();
+        int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
         double error = target - currentPosMM;
         this.elevatorPower = error * KP;
     }
 
     public boolean atTarget() {
-        int currentPos = this.elevatorRight.getCurrentPosition();
+        int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
         //  target + 5 > currentPosMM && target - 5 < currentPosMM
         if (currentPosMM < target + 20 &&
@@ -74,7 +74,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void manualControl(double pow) {
-        int currentPos = this.elevatorRight.getCurrentPosition();
+        int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
         if (pow > 0 && currentPosMM > 36 * 25.4) {
             elevatorPower = 0;
