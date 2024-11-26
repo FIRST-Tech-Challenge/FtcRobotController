@@ -11,7 +11,6 @@ public class MovePincherCommand extends CommandBase {
     boolean ran = false;
 
     public MovePincherCommand(PincherSubsystem subsystem, PincherSubsystem.FingerPositions position) {
-        super();
         this.subsystem = subsystem;
         this.position = position;
         addRequirements(subsystem);

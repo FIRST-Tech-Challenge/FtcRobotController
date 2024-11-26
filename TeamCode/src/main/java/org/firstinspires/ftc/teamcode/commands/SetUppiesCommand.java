@@ -22,6 +22,7 @@ public class SetUppiesCommand extends CommandBase {
     public SetUppiesCommand(UppiesSubsystem uppiesSubsystem, UppiesSubsystem.UppiesState state, BooleanSupplier buttonPressedSupplier) {
         this(uppiesSubsystem, state);
         this.buttonPressedSupplier = buttonPressedSupplier;
+        addRequirements(uppiesSubsystem);
     }
 
     @Override

@@ -10,9 +10,16 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
+import org.firstinspires.ftc.teamcode.commands.DumpBucketCommand;
+import org.firstinspires.ftc.teamcode.commands.ExtendoCommand;
 import org.firstinspires.ftc.teamcode.commands.MovePincherCommand;
 import org.firstinspires.ftc.teamcode.commands.SetUppiesCommand;
+import org.firstinspires.ftc.teamcode.commands.TiltIntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.ToggleIntakeCommand;
+import org.firstinspires.ftc.teamcode.subsystems.BucketSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ExtendoSystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.UppiesSubsystem;
@@ -36,6 +43,9 @@ public class DriveCommandOpMode extends CommandOpMode {
     private HangSubsystem hangSubsystem;
     private PincherSubsystem pincherSubsystem;
     private UppiesSubsystem uppiesSubsystem;
+    private BucketSubsystem bucketSubsystem;
+    private ExtendoSystem extendoSystem;
+    private IntakeSubsystem intakeSubsystem;
 
     private DefaultDrive driveCommand;
 
@@ -75,6 +85,7 @@ public class DriveCommandOpMode extends CommandOpMode {
             armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
         } catch (Exception e) {
             e.printStackTrace();
+            //throw new RuntimeException(e);
         }
 
         try {
@@ -83,8 +94,49 @@ public class DriveCommandOpMode extends CommandOpMode {
             register(uppiesSubsystem);
 
             uppiesSubsystem.setDefaultCommand(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE));
+            // TODO: may need to refactor the uppies subsystem
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileHeld(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UPPIES));
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UN_UPPIES));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            //throw new RuntimeException(e);
+        }
+
+        try {
+            ServoEx bucketServo = RobotHardwareInitializer.ServoComponent.BUCKET_DUMPER.getEx(hardwareMap, 0, 0);
+            bucketSubsystem = new BucketSubsystem(bucketServo);
+            register(bucketSubsystem);
+            // R3
+            armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new DumpBucketCommand(bucketSubsystem));
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new RuntimeException(e);
+        }
+
+        try {
+            DcMotorEx motorEx = RobotHardwareInitializer.MotorComponent.EXTENDER.getEx(hardwareMap);
+            extendoSystem = new ExtendoSystem(motorEx);
+            register(extendoSystem);
+
+            extendoSystem.setDefaultCommand(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE));
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD));
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new RuntimeException(e);
+        }
+
+        try {
+            DcMotorEx intakePower = RobotHardwareInitializer.MotorComponent.INTAKE.getEx(hardwareMap);
+            ServoEx intakeTilter = RobotHardwareInitializer.ServoComponent.INTAKE_TILTER.getEx(hardwareMap);
+            intakeSubsystem = new IntakeSubsystem(intakePower, intakeTilter);
+
+            armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                    .toggleWhenPressed(new TiltIntakeCommand(intakeSubsystem, true), new TiltIntakeCommand(intakeSubsystem, false));
+            armerController.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(new ToggleIntakeCommand(intakeSubsystem));
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new RuntimeException(e);
         }
 
         dbp.info("Subsystems registered.");

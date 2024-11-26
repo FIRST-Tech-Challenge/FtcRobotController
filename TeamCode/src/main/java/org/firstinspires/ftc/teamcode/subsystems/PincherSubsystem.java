@@ -38,8 +38,8 @@ public class PincherSubsystem extends SubsystemBase {
     public PincherSubsystem(final ServoEx finger1, final ServoEx finger2) {
         this.finger1 = finger1;
         this.finger2 = finger2;
-        finger1.setRange(0, 90, AngleUnit.DEGREES);
-        finger2.setRange(0, 90, AngleUnit.DEGREES);
+        finger1.setRange(0, 45, AngleUnit.DEGREES);
+        finger2.setRange(0, 45, AngleUnit.DEGREES);
         finger1.setInverted(true); //  Might need to change it to finger2
         // MIGHT cause errors
         locomoteFinger(FingerPositions.ZERO);

@@ -65,6 +65,9 @@ public class RobotHardwareInitializer {
         public ServoEx getEx(HardwareMap map, double minAngle, double maxAngle) throws Exception {
             return new SimpleServo(map, getComponentName(), minAngle, maxAngle);
         }
+        public ServoEx getEx(HardwareMap map) throws Exception {
+            return new SimpleServo(map, getComponentName(), 0, 0);
+        }
     }
 
     public enum EncoderComponent implements Component<DcMotor> {
