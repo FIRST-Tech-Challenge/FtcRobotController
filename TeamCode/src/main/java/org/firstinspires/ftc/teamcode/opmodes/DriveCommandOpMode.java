@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 @TeleOp(name = "RealestDriverOpMode")
@@ -93,10 +94,15 @@ public class DriveCommandOpMode extends CommandOpMode {
             uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
             register(uppiesSubsystem);
 
-            uppiesSubsystem.setDefaultCommand(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE));
-            // TODO: may need to refactor the uppies subsystem
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileHeld(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UPPIES));
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileHeld(new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UN_UPPIES));
+            SetUppiesCommand idleCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE);
+            SetUppiesCommand upCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UPPIES);
+            SetUppiesCommand downCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UN_UPPIES);
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                    .whenPressed(upCommand)
+                    .whenReleased(idleCommand);
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                    .whenPressed(downCommand)
+                    .whenReleased(idleCommand);
         } catch (Exception e) {
             e.printStackTrace();
             //throw new RuntimeException(e);

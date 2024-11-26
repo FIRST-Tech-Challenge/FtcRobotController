@@ -44,6 +44,7 @@ public class UppiesSubsystem extends SubsystemBase {
         if (!PROGRAMATIC_STALL_SAFETY) {
             return;
         }
+
         long elapsedStateMillis = System.currentTimeMillis() - lastStateChange;
         if (elapsedStateMillis > STALL_THRESHOLD) {
             double ticksPerSecond = uppiesMotor.getVelocity(AngleUnit.DEGREES);

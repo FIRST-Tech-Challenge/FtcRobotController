@@ -19,11 +19,6 @@ public class SetUppiesCommand extends CommandBase {
         this.state = state;
         addRequirements(uppiesSubsystem);
     }
-    public SetUppiesCommand(UppiesSubsystem uppiesSubsystem, UppiesSubsystem.UppiesState state, BooleanSupplier buttonPressedSupplier) {
-        this(uppiesSubsystem, state);
-        this.buttonPressedSupplier = buttonPressedSupplier;
-        addRequirements(uppiesSubsystem);
-    }
 
     @Override
     public void initialize() {
@@ -33,6 +28,6 @@ public class SetUppiesCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (buttonPressedSupplier != null && buttonPressedSupplier.getAsBoolean());
+        return true;
     }
 }
