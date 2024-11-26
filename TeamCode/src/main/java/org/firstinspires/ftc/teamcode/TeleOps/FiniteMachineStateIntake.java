@@ -205,10 +205,14 @@ public class FiniteMachineStateIntake {
     INTAKESTATE intakeState(){
         return intakestate;
     }
+
+    //Claw State
     public enum CLAWSTATE {
         OPEN,
         CLOSE
     }
+
+    //Toggle Claw()
     private void ToggleClaw() {
         if (clawstate == CLAWSTATE.OPEN) {
             clawstate = CLAWSTATE.CLOSE;
