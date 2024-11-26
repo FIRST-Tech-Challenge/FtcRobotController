@@ -67,7 +67,6 @@ public class Hobbes extends Meccanum implements Robot {
 
     // all relative to robot's reference frame with deposit as front
 
-    public Map<String, HobbesState> macros;
     Telemetry tele = FtcDashboard.getInstance().getTelemetry();
 
     public void resetImu() {
@@ -122,105 +121,17 @@ public class Hobbes extends Meccanum implements Robot {
         runtime.reset();
     }
 
-    public void setMacros(String mode) {
-        switch (mode) {
-            case "TELEOP":
-                macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_FLAT", new HobbesState(null, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, null, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_UP", new HobbesState(null, EXTENDO_ARM_UP, EXTENDO_WRIST_UP, null, null, INTAKE_OFF, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_ANGLED", new HobbesState(null, EXTENDO_ARM_INTAKE_ANGLED, EXTENDO_WRIST_INTAKE_ANGLED, null, null, null, null, null, null));
-
-                macros.put("FULL_IN", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
-
-                macros.put("FULL_TRANSFER", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_UP, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_WRIST_UP", 600)));
-                macros.put("TRANSFER_WRIST_UP", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 200)));
-                macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 250)));
-                macros.put("TRANSFER_CLOSED", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_CLOSED, SLIDES_IN, null));
-
-                macros.put("SLIDES_DOWN", new HobbesState(null, null, null, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, null, CLAW_OPEN, SLIDES_IN, null));
-
-                macros.put("SLIDES_DEPOSIT", new HobbesState(null, null, null, null, null, null, null, SLIDES_OUT_TOP_SAMPLE, new LinkedState("SLIDES_DEPOSIT2", 1200)));
-                macros.put("SLIDES_DEPOSIT2", new HobbesState(null, null, null, SLIDES_ARM_DEPOSIT, SLIDES_WRIST_DEPOSIT, null, null, null, null));
-
-                macros.put("OPEN_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_OPEN, null, null));
-                macros.put("CLOSE_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_CLOSED, null, null));
-
-                // macros.put("SLIDES_SPECIMEN_PICKUP", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_OPEN,
-                // SLIDES_SPECIMEN_PICKUP, null));
-                // macros.put("SPECIMEN_CLOSE_CLAW", new HobbesState(null, null, null, null,
-                // null, null, CLAW_CLOSED, null, new
-                // LinkedState("SLIDES_SPECIMEN_ABOVE_DEPOSIT", 200)));
-
-                // macros.put("SLIDES_SPECIMEN_ABOVE_DEPOSIT", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED,
-                // SLIDES_OUT_TOP_SPECIMEN, null));
-
-                // macros.put("SLIDES_SPECIMEN_DEPOSIT", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED,
-                // SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
-                break;
-            case "AUTONOMOUS":
-                break;
-            default:
-                macros.put("EXTENDO_BEFORE_PICKUP", new HobbesState(EXTENDO_OUT_SOME, null, null, null, null, INTAKE_POWER, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_FLAT", new HobbesState(null, EXTENDO_ARM_INTAKE, EXTENDO_WRIST_INTAKE_FLAT, null, null, null, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_UP", new HobbesState(null, EXTENDO_ARM_UP, EXTENDO_WRIST_UP, null, null, INTAKE_OFF, null, null, null));
-
-                macros.put("EXTENDO_ARM_WRIST_ANGLED", new HobbesState(null, EXTENDO_ARM_INTAKE_ANGLED, EXTENDO_WRIST_INTAKE_ANGLED, null, null, null, null, null, null));
-
-                macros.put("FULL_IN", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, null));
-
-                macros.put("FULL_TRANSFER", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_UP, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_WRIST_UP", 600)));
-                macros.put("TRANSFER_WRIST_UP", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_ON", 200)));
-                macros.put("TRANSFER_ON", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_OPEN, SLIDES_IN, new LinkedState("TRANSFER_CLOSED", 250)));
-                macros.put("TRANSFER_CLOSED", new HobbesState(EXTENDO_IN, EXTENDO_ARM_TRANSFER, EXTENDO_WRIST_TRANSFER, SLIDES_ARM_TRANSFER, SLIDES_WRIST_TRANSFER, INTAKE_OFF, CLAW_CLOSED, SLIDES_IN, null));
-
-                macros.put("SLIDES_DOWN", new HobbesState(null, null, null, SLIDES_ARM_ABOVE_TRANSFER, SLIDES_WRIST_TRANSFER, null, CLAW_OPEN, SLIDES_IN, null));
-
-                macros.put("SLIDES_DEPOSIT", new HobbesState(null, null, null, null, null, null, null, SLIDES_OUT_TOP_SAMPLE, new LinkedState("SLIDES_DEPOSIT2", 1200)));
-                macros.put("SLIDES_DEPOSIT2", new HobbesState(null, null, null, SLIDES_ARM_DEPOSIT, SLIDES_WRIST_DEPOSIT, null, null, null, null));
-
-                macros.put("OPEN_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_OPEN, null, null));
-                macros.put("CLOSE_CLAW", new HobbesState(null, null, null, null, null, null, CLAW_CLOSED, null, null));
-
-                // macros.put("SLIDES_SPECIMEN_PICKUP", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_OPEN,
-                // SLIDES_SPECIMEN_PICKUP, null));
-                // macros.put("SPECIMEN_CLOSE_CLAW", new HobbesState(null, null, null, null,
-                // null, null, CLAW_CLOSED, null, new
-                // LinkedState("SLIDES_SPECIMEN_ABOVE_DEPOSIT", 200)));
-
-                // macros.put("SLIDES_SPECIMEN_ABOVE_DEPOSIT", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED,
-                // SLIDES_OUT_TOP_SPECIMEN, null));
-
-                // macros.put("SLIDES_SPECIMEN_DEPOSIT", new HobbesState(null, null, null,
-                // SLIDES_ARM_SPECIMEN, SLIDES_WRIST_SPECIMEN, null, CLAW_CLOSED,
-                // SLIDES_OUT_TOP_SPECIMEN_DOWN, new LinkedState("OPEN_CLAW", 500)));
-        }
-
-    }
-
-    public void addMacro(String ID, HobbesState state) {
-        macros.put(ID, state);
-    }
 
     // macros running
-    public String MACRO_ID = null;
+    public HobbesState macroState = null;
     public boolean MACROING = false;
     public ElapsedTime macroTimer = new ElapsedTime();
     public int macroTimeout = INFINITY;
 
-    public void runMacro(String id) {
+    public void runMacro(HobbesState m) {
         if (macroTimer.milliseconds() < macroTimeout)
             macroTimeout = INFINITY; // cancel ongoing macro
-        MACRO_ID = id;
+        macroState = m;
         MACROING = true;
     }
 
@@ -236,12 +147,7 @@ public class Hobbes extends Meccanum implements Robot {
             MACROING = true;
         }
         if (MACROING) {
-            if (macros.get(MACRO_ID) == null) {
-                MACROING = false;
-                Objects.requireNonNull(System.console()).printf("ERROR: unknown macro " + MACRO_ID + ".");
-                return;
-            }
-            HobbesState m = macros.get(MACRO_ID);
+            HobbesState m = macroState;
             if (m.slidesPos != null)
                 slidesController.setTarget(m.slidesPos);
             if (m.extendoPos != null)
@@ -261,7 +167,7 @@ public class Hobbes extends Meccanum implements Robot {
             if (m.linkedState != null) {
                 macroTimer.reset();
                 macroTimeout = m.linkedState.timeout;
-                MACRO_ID = m.linkedState.nextState;
+                macroState = m.linkedState.nextState;
             }
             MACROING = false;
         }

@@ -1,30 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.CLAW_OPEN;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_INTAKE;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_INTAKE_ANGLED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_TRANSFER;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_UP;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_IN;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_OUT_SOME;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_INTAKE_ANGLED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_INTAKE_FLAT;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_TRANSFER;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_UP;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.INTAKE_OFF;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.INTAKE_POWER;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.INTAKE_REVERSE;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_ARM_ABOVE_TRANSFER;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_ARM_DEPOSIT;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_ARM_TRANSFER;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_IN;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_OUT_TOP_SAMPLE;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_WRIST_DEPOSIT;
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.SLIDES_WRIST_TRANSFER;
+import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.*;
+import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.Macros.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -86,13 +63,13 @@ public class HobbesTele extends OpMode {
         hob.servosController.incrementExtendo(-gamepad2.left_stick_y * EXTENDO_SPEED);
 
         // p2: flat on ground
-        if (gamepad2.b && !lastGamepad2.b) hob.runMacro("EXTENDO_ARM_WRIST_FLAT");
+        if (gamepad2.b && !lastGamepad2.b) hob.runMacro(EXTENDO_ARM_WRIST_FLAT);
 
         // p2: up but low
-        if (gamepad2.a && !lastGamepad2.a) hob.runMacro("EXTENDO_ARM_WRIST_UP");
+        if (gamepad2.a && !lastGamepad2.a) hob.runMacro(EXTENDO_ARM_WRIST_UP);
 
         // p2: angled on ground
-        if (gamepad2.x && !lastGamepad2.x) hob.runMacro("EXTENDO_ARM_WRIST_ANGLED");
+        if (gamepad2.x && !lastGamepad2.x) hob.runMacro(EXTENDO_ARM_WRIST_ANGLED);
 
         // p2: manual extendo arm articulation
         if (gamepad2.left_trigger > 0) hob.servosController.incrementExtendoArmWrist(gamepad2.left_trigger * EXTENDO_ARM_SPEED, 0);
@@ -103,10 +80,10 @@ public class HobbesTele extends OpMode {
         if (gamepad2.left_bumper) hob.servosController.incrementExtendoArmWrist(0, -EXTENDO_WRIST_SPEED);
 
         // p2: transfer macro
-        if (gamepad2.y && !lastGamepad2.y) hob.runMacro("FULL_TRANSFER");
+        if (gamepad2.y && !lastGamepad2.y) hob.runMacro(FULL_TRANSFER);
 
         // p2: run to deposit
-        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) hob.runMacro("SLIDES_DEPOSIT");
+        if (gamepad2.dpad_up && !lastGamepad2.dpad_up) hob.runMacro(SLIDES_DEPOSIT);
 
         // p2: toggle claw
         if (gamepad2.dpad_right && !lastGamepad2.dpad_right) hob.servosController.setClaw(hob.servosController.clawPos == CLAW_CLOSED);
@@ -116,7 +93,7 @@ public class HobbesTele extends OpMode {
         if (gamepad2.left_stick_button) hob.extendoWristRezeroOffset = 0;
 
         // p2: slides down, arm above sample
-        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) hob.runMacro("SLIDES_DOWN");
+        if (gamepad2.dpad_down && !lastGamepad2.dpad_down) hob.runMacro(SLIDES_DOWN);
 
         // tick robot
         hob.tick();

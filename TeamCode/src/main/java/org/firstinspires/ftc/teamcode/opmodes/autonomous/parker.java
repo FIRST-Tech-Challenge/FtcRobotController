@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-import static org.firstinspires.ftc.teamcode.robot.Hobbes.Hobbes.MARCO.TELEOP;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_ARM_INTAKE_ANGLED;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_OUT_SOME;
 import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.HobbesConstants.EXTENDO_WRIST_INTAKE_ANGLED;
+import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.Macros.EXTEND;
+import static org.firstinspires.ftc.teamcode.robot.Hobbes.helpers.Macros.FULL_IN;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,16 +27,15 @@ public class parker extends LinearOpMode {
     ElapsedTime timer = new ElapsedTime();
     @Override
     public void runOpMode() {
-        macros.put("EXTEND", new HobbesState(EXTENDO_OUT_SOME+0.1, EXTENDO_ARM_INTAKE_ANGLED, EXTENDO_WRIST_INTAKE_ANGLED, null, null, null, null, null, null));
+
 
         // DEFINE AND INIT ROBOT
         hob = new Hobbes();
         hob.init(hardwareMap);
         // SET MACROS TO TELEOP MACROS
-        hob.setMacros(TELEOP);
         waitForStart();
         hob.servosController.setup();
-        hob.runMacro("EXTEND");
+        hob.runMacro(EXTEND);
         timer.reset();
         while (timer.milliseconds() < 5000) hob.tick();
 
