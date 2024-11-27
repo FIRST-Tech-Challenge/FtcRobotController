@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.inverseKinematics;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.l;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.r;
+import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.w;
 
 import androidx.annotation.NonNull;
 
@@ -245,27 +249,21 @@ public class Drivetrain {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 double y = -gamepad1.left_stick_y;
-                double x = -gamepad1.left_stick_x;
-                double rx = gamepad1.right_stick_x;
+                double x = gamepad1.left_stick_x;
+                double rx = -gamepad1.right_stick_x;
 
 //                        if(gamepad2.right_stick_y > 0){
 //                            runningActions.add(arm.servoArm());
 //                        }
-                double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-                double frontLeftPower = (y - x + rx) / denominator;
-                double backLeftPower = (y + x + rx) / denominator;
-                double frontRightPower = (y + x - rx) / denominator;
-                double backRightPower = (y - x - rx) / denominator;
-
-                SimpleMatrix drivePowers = new SimpleMatrix(
+                SimpleMatrix compensatedTwist = new SimpleMatrix(
                         new double[][]{
-                                new double[]{frontLeftPower},
-                                new double[]{backLeftPower},
-                                new double[]{backRightPower},
-                                new double[]{frontRightPower}
+                                new double[]{r * x, r * y},
+                                new double[]{(r / (l + w)) * rx},
                         }
                 );
-                setPower(drivePowers);
+                double[] compensated_twist = {r * x, r * y, (r / (l + w)) * rx};
+                double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(rx), 1.0);
+                setPower(inverseKinematics(compensatedTwist).scale(1/denominator));
                 return true;
             }
         };
