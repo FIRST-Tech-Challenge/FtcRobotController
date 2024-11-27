@@ -147,26 +147,26 @@ public class Settings {
             public static Vector2d BLUE_RIGHT_JUST_PARK_VEC = new Vector2d(-55, 58);
 
             // place positions for each starting position
-            public static Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-5, -37, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(5, -37, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(5, 37, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-5, 37, Math.toRadians(270));
+            public static Pose2d RED_LEFT_CHAMBER_POSE = new Pose2d(-5, -35, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_CHAMBER_POSE = new Pose2d(5, -35, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_CHAMBER_POSE = new Pose2d(5, 35, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_CHAMBER_POSE = new Pose2d(-5, 35, Math.toRadians(270));
 
             public static Pose2d RED_HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
             public static Pose2d BLUE_HP_POSE = new Pose2d(-36, 55.0, Math.toRadians(135));
 
-            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-44, -37);
-            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(44, 37);
+            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-45, -35);
+            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(45, 35);
 
-            public static Pose2d RED_LEFT_BEFORE_PARK_POSE = new Pose2d(-44, 11, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_BEFORE_PARK_POSE = new Pose2d(-44, -11, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_BEFORE_PARK_POSE = new Pose2d(44, -11, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_BEFORE_PARK_POSE = new Pose2d(44, 11, Math.toRadians(270));
+            public static Pose2d RED_LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 9.5, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_BEFORE_PARK_POSE = new Pose2d(45, -9.5, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_BEFORE_PARK_POSE = new Pose2d(45, 9.5, Math.toRadians(270));
 
-            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-26, 11, Math.toRadians(180));
-            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-26, -11, Math.toRadians(180));
-            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(26, -11, Math.toRadians(90));
-            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(26, 11, Math.toRadians(90));
+            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-26, 13, Math.toRadians(180));
+            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
+            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(26, -13, Math.toRadians(90));
+            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(26, 10, Math.toRadians(90));
         }
 
         @Config
@@ -301,6 +301,7 @@ public class Settings {
     }
 
     // Deploy flags
+    @Config
     public static class Deploy {
         // Core Mechanisms
         public static final boolean ARM = true;
@@ -315,7 +316,7 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.FULL;
+        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.FULL;
 
         public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, FULL

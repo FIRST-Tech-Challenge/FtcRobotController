@@ -290,20 +290,20 @@ public class MeetTwoStableAuto extends LinearOpMode {
         switch (sp) {
             case RED_LEFT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.heading);
             case RED_RIGHT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.heading);
             case BLUE_LEFT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.heading);
             case BLUE_RIGHT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
             default:
                 return roadRunner.actionBuilder(initialPose);
         }

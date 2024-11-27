@@ -188,7 +188,7 @@ public class MeetThreeAuto extends LinearOpMode {
             baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             baseRobot.arm.intake.outtake();
-            pause(200);
+            pause(1500);
             baseRobot.arm.intake.stop();
             return false;
         }
@@ -203,7 +203,9 @@ public class MeetThreeAuto extends LinearOpMode {
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             baseRobot.arm.intake.intake();
+            pause(1500);
             baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
+            baseRobot.arm.intake.stop();
             return false;
         }
     }
@@ -211,7 +213,6 @@ public class MeetThreeAuto extends LinearOpMode {
     public Action grabSpecimenFromHP() {
         return new GrabSpecimenFromHumanPlayer();
     }
-
 
     public class HangAction implements Action {
         @Override
@@ -240,24 +241,24 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public TrajectoryActionBuilder getNextSpecimen(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
+        TrajectoryActionBuilder hpTrajectory = getHPTrajectory(sp, previousTrajectory);
         Actions.runBlocking(
                 new SequentialAction(
-                        getHPTrajectory(sp, previousTrajectory).build(),
+                        hpTrajectory.build(),
                         grabSpecimenFromHP()));
-        return getHPTrajectory(sp, previousTrajectory);
+        return hpTrajectory;
     }
 
     public void immediatelyPlace(StartingPosition sp) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, placingTrajectory.endTrajectory().fresh());
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, placingTrajectory);
 
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
                         placeChamber(),
                         parkingTrajectory.build(),
-                        hang()
-                ));
+                        hang()));
     }
 
     public void justPark(StartingPosition sp) {
@@ -291,22 +292,30 @@ public class MeetThreeAuto extends LinearOpMode {
         // Helper method to get parking trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN,
+                                Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_BEFORE_PARK_POSE.position)
                         .turn(Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position);
             case RED_RIGHT:
-                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN,
+                                Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_BEFORE_PARK_POSE.position)
                         .turn(Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position);
             case BLUE_LEFT:
-                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN,
+                                Math.toRadians(270))
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_BEFORE_PARK_POSE.position)
                         .turn(Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position);
             case BLUE_RIGHT:
-                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN,
+                                Math.toRadians(270))
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_BEFORE_PARK_POSE.position)
                         .turn(Math.toRadians(90))
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position);
@@ -320,12 +329,12 @@ public class MeetThreeAuto extends LinearOpMode {
         switch (sp) {
             case RED_LEFT:
             case RED_RIGHT:
-                return previousTrajectory
+                return previousTrajectory.endTrajectory().fresh()
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
             case BLUE_LEFT:
             case BLUE_RIGHT:
-                return previousTrajectory
+                return previousTrajectory.endTrajectory().fresh()
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
             default:
@@ -338,19 +347,19 @@ public class MeetThreeAuto extends LinearOpMode {
         // Helper method to get placing trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                return previousTrajectory
-                        .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position);
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.heading);
             case RED_RIGHT:
-                return previousTrajectory
-                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position);
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.heading);
             case BLUE_LEFT:
-                return previousTrajectory
-                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position);
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.heading);
             case BLUE_RIGHT:
-                return previousTrajectory
-                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position);
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
             default:
-                return previousTrajectory;
+                return previousTrajectory.endTrajectory().fresh();
         }
     }
 
