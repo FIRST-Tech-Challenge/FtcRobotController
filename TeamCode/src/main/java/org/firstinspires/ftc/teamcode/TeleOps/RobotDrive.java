@@ -8,11 +8,22 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
 import android.annotation.SuppressLint;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+/** Button Config for Drive
+ * * Joy Right Y                : Drive
+ * * Joy Right X                : Strafe
+ * * Joy Left X                 : Turn
+ * * Left Trigger               : Fine Movement + Joystick
+ * * START                      : Field centric / Robot centric toggle
+ * * Back                       : Reset Yaw angle
+ * Gamepad 1 override Gamepad 2
+ */
 
 public class RobotDrive {
 
@@ -22,7 +33,6 @@ public class RobotDrive {
     private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
 
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
-
 
     private boolean startPressed = false;
     private boolean backPressed = false;
@@ -47,31 +57,40 @@ public class RobotDrive {
             toggleControlMode();
             debounceTimer.reset();
             startPressed = true;
-        } else if (!gamepad.getButton(START)) {
+        } else if (!gamepad_1.getButton(START) || !gamepad_2.getButton(START)) {
             startPressed = false;
         }
 
         // Reset IMU heading using button back and reset odometry
-        if (gamepad.getButton(BACK) && !backPressed) {
+        if (gamepad_1.getButton(BACK) || gamepad_2.getButton(BACK) && !backPressed) {
             robot.initIMU();
             //robot.resetDriveEncoders();
             debounceTimer.reset();
             backPressed = true;
-        } else if (!gamepad.getButton(BACK)) {
+        } else if (!gamepad_1.getButton(BACK) || !gamepad_2.getButton(BACK)) {
             backPressed = false;
         }
 
-        if(gamepad.getButton(RIGHT_BUMPER)){
+        if(gamepad_1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.5 || gamepad_2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.5){
             powerFactor = RobotActionConfig.powerFactor / 2;
         }
         else {
             powerFactor = RobotActionConfig.powerFactor;
         }
+        double drive = 0.0;
+        double strafe = 0.0;
+        double rotate = 0.0;
 
-        // Set gamepad joystick power
-        double drive = -gamepad.getRightY();
-        double strafe = gamepad.getRightX();
-        double rotate = gamepad.getLeftX();
+        // gamepad 1 take priority override gamepad 2
+        if (Math.abs(gamepad_1.getRightY()) > 0.1 || Math.abs(gamepad_1.getRightX()) > 0.1 || Math.abs(gamepad_1.getLeftX()) > 0.1) {
+            drive = -gamepad_1.getRightY();
+            strafe = gamepad_1.getRightX();
+            rotate = gamepad_1.getLeftX();
+        } else if (Math.abs(gamepad_2.getRightY()) > 0.1 || Math.abs(gamepad_2.getRightX()) > 0.1 || Math.abs(gamepad_2.getLeftX()) > 0.1) {
+            drive = -gamepad_2.getRightY();
+            strafe = gamepad_2.getRightX();
+            rotate = gamepad_2.getLeftX();
+        }
 
         // Get robot's current heading
         double currentHeading = getRobotHeading();
