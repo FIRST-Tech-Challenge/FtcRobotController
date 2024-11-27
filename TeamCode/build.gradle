@@ -29,6 +29,4 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
-    implementation 'edu.wpi.first.networktables:networktables-java:2024.0.1'
-
 }

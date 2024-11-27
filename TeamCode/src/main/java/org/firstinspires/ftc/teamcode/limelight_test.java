@@ -39,8 +39,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+//import edu.wpi.first.networktables.NetworkTable;
+//import edu.wpi.first.networktables.NetworkTableInstance;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
@@ -66,7 +66,8 @@ public class limelight_test extends CommonUtil {
 
     @Override
     public void runOpMode() {
-
+        return;
+        /*
         //setup
         telemetry.setAutoClear(false);
         // initialize hardware
@@ -103,6 +104,7 @@ public class limelight_test extends CommonUtil {
 
 
         }
+        */
     }
 
 

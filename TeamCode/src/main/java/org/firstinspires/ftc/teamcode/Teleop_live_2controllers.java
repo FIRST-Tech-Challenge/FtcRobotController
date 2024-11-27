@@ -132,71 +132,80 @@ public class Teleop_live_2controllers extends LinearOpMode {
         s4.setPower(0);
         s1.setDirection(Servo.Direction.FORWARD);
         s2.setPosition(0); // open
+        //Basket
 
-        // Start opMode
-        telemetry.addData("Mode", "waiting");
-        telemetry.update();
+            s3.setDirection(Servo.Direction.FORWARD);
+            s3.setPosition(0.5); //up
+        s12.setPosition(1);
+        sleep(100);
+        s12.setPosition(0.5);
+        s6.setPosition(0.75);
+        s12.setPosition(1);
+        sleep(100);
+        s12.setPosition(0.5);
+        s6.setPosition(0.75);
 
-
-        waitForStart();
-        while (opModeIsActive()) {
-
-            // initiate the left and right variables
-            left1Y = this.clampDeadzone(gamepad1.left_stick_y * -1);
-            left1X = this.clampDeadzone(gamepad1.left_stick_x);
-            right1Y = this.clampDeadzone(gamepad1.right_stick_y * -1);
-            right1X = this.clampDeadzone(gamepad1.right_stick_x);
-
-            left2Y = this.clampDeadzone(gamepad2.left_stick_y * -1);
-            left2X = this.clampDeadzone(gamepad2.left_stick_x);
-            right2Y = this.clampDeadzone(gamepad2.right_stick_y * -1);
-            right2X = this.clampDeadzone(gamepad2.right_stick_x);
+            // Start opMode
+            telemetry.addData("Mode", "waiting");
+            telemetry.update();
 
 
-            //Linear Slide movement
-            if (gamepad1.a && gamepad1.b) {
-                m2Power = 0;
-            } else if (gamepad1.b) {
-                m2Power = 1;
-            } else if (gamepad1.a) {
-                m2Power = -1;
-            } else {
-                m2Power = 0.05;
-            }
+            waitForStart();
+            while (opModeIsActive()) {
+
+                // initiate the left and right variables
+                left1Y = this.clampDeadzone(gamepad1.left_stick_y * -1);
+                left1X = this.clampDeadzone(gamepad1.left_stick_x);
+                right1Y = this.clampDeadzone(gamepad1.right_stick_y * -1);
+                right1X = this.clampDeadzone(gamepad1.right_stick_x);
+
+                left2Y = this.clampDeadzone(gamepad2.left_stick_y * -1);
+                left2X = this.clampDeadzone(gamepad2.left_stick_x);
+                right2Y = this.clampDeadzone(gamepad2.right_stick_y * -1);
+                right2X = this.clampDeadzone(gamepad2.right_stick_x);
+
+
+                //Linear Slide movement
+                if (gamepad1.a && gamepad1.b) {
+                    m2Power = 0;
+                } else if (gamepad1.b) {
+                    m2Power = 1;
+                } else if (gamepad1.a) {
+                    m2Power = -1;
+                } else {
+                    m2Power = 0.05;
+                }
 
 //
 ////            // Intake
-            if (gamepad1.x != gamepad1x_previous && gamepad1.x ) {
-                intake_constant = !intake_constant;
-                telemetry.addData("intake",intake_constant);
-                telemetry.update();
+                if (gamepad1.x != gamepad1x_previous && gamepad1.x) {
+                    intake_constant = !intake_constant;
+                    telemetry.addData("intake", intake_constant);
+                    telemetry.update();
 //                s1.setDirection(Servo.Direction.FORWARD);
 
 
-                if (intake_constant) {
-                    s1.setPosition(0);
-                    //Extend
-                } else {
-                    s1.setPosition(1);
-                    //Retract
+                    if (intake_constant) {
+                        s1.setPosition(0);
+                        //Extend
+                    } else {
+                        s1.setPosition(1);
+                        //Retract
+                    }
                 }
-            }
-            gamepad1x_previous = gamepad1.x;
+                gamepad1x_previous = gamepad1.x;
 
 
-            //Intake arm motor
-            if (gamepad1.x) {
-                s12.setPosition(0.5);
-                s6.setPosition(0.5);
-            }
+                //Intake arm motor
+                if (gamepad1.x) {
+                    s12.setPosition(0.5);
+                    s6.setPosition(0.5);
+                }
 
 
-            if (gamepad1.y) {
+                if (gamepad1.y) {
 
-            }
-
-
-
+                }
 
 
                 //specimen claw servo
@@ -227,31 +236,31 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
 
                 if (gamepad1.dpad_right != gamepad1dpadRight_previous && gamepad1.dpad_right) {
-                    s12.setPosition(0.5);
-                    s6.setPosition(1);
+                    s12.setPosition(0.6);
+                    s6.setPosition(0.9);
                 }
                 gamepad1dpadRight_previous = gamepad1.dpad_right;
 
                 if (gamepad1.dpad_left != gamepad1dpadLeft_previous && gamepad1.dpad_left) {
-                    s12.setPosition(1);
-                    sleep(100);
-                    s12.setPosition(0.5);
-                    s6.setPosition(0.5);
-                    s12.setPosition(1);
-                    sleep(100);
-                    s12.setPosition(0.5);
-                    s6.setPosition(0.5);
+                    // s12.setPosition(1);
+                    //sleep(100);
+                    s12.setPosition(0.18);
+                    //s6.setPosition(0.5);
+                    //s12.setPosition(1);
+//                    sleep(100);
+//                    s12.setPosition(0.5);
+                    s6.setPosition(0.75);
                 }
                 gamepad1dpadLeft_previous = gamepad1.dpad_left;
 
 
                 //intake wheel
                 if (gamepad2.right_trigger > 0.2) {
-                    s4.setPower(1);
+                    s4.setPower(-1);
                 }
 
                 if (gamepad2.left_trigger > 0.2) {
-                    s4.setPower(-1);
+                    s4.setPower(1);
                 }
 
                 if (gamepad2.dpad_up) {
@@ -268,7 +277,7 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
                 if (gamepad1.left_trigger > 0.2) {
                     s3.setDirection(Servo.Direction.FORWARD);
-                    s3.setPosition(1); //down
+                    s3.setPosition(0.7); //down
                 }
 
 

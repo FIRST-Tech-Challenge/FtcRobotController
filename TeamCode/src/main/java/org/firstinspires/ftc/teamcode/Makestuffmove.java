@@ -72,11 +72,10 @@ public class Makestuffmove extends CommonUtil {
         waitForStart();
 
         while (opModeIsActive()) {
-           fl.setPower(1);
+           fl.setPower(-1);
            fr.setPower(-1);
-           bl.setPower(1);
+           bl.setPower(-1);
            br.setPower(-1);
-           m2.setPower(-1);
            sleep(1000);
            m2.setPower(0.1);
            fl.setPower(-1);
