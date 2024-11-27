@@ -15,7 +15,7 @@ public class Testing_Phase1 extends LinearOpMode {
     private double denominator = 1;        // declare motor power calculation variable
 
     private int precision = 2;                    // chassis motor power reduction factor 1
-    private boolean IntakeClawClosed = false;     // claw holder variable
+    private boolean intakeClawClosed = false;     // claw holder variable
 
     public double LeftServo;
     public double RightServo;
@@ -39,8 +39,8 @@ public class Testing_Phase1 extends LinearOpMode {
         DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");         // Chub Port 2 // Right Stick For Turning
         DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");           // Chub Port 3
 
-	Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
-	Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Flex and Yaw controlled
+    	Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
+    	Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Flex and Yaw controlled
         Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // IFlex and Yaw controlled
         Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With A
         Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
@@ -62,6 +62,9 @@ public class Testing_Phase1 extends LinearOpMode {
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
         LeftIntakeV4B.setPosition(1);               // Sets the intake virtual four bar to the starting position
         RightIntakeV4B.setPosition(1);              // Sets the intake virtual four bar to the starting position
+
+        // Beginning of opmode
+
         waitForStart();
         while (opModeIsActive()) {
 
@@ -94,18 +97,19 @@ public class Testing_Phase1 extends LinearOpMode {
             frontRightPower = (y - x - rx) / denominator;   // Does math to convert stick movement to motor powers
             backRightPower = (y + x - rx) / denominator;    // Does math to convert stick movement to motor powers
 
+            // State machine for intake and outake servo control
 
-            switch (state) {         //  These controls have been switched to gamepad2
+            switch (state) {                 //  These controls have been switched to gamepad2
                 case START:
-                    /* if (gamepad2.a) {    // Transfer Position  ORIGINAL CODE
+                    /* if (gamepad2.a) {     // Transfer Position  ORIGINAL CODE
                         V4Bpos = 1;
                         Flex = 0;
                         state = V4Bstate.INTAKE;    // Switch to INTAKE state
                     }
                     break; */
                     //                 TODO     Proposed alternate code
-                    V4Bpos = 1;	            	// Bar fully up
-                    Flex = 0;		            // Wrist fully up
+                    V4Bpos = 1;	            	// Bar fully up upon entering state
+                    Flex = 0;		            // Wrist fully up upon entering state
                     if (gamepad2.a){        	// Switch to INTAKE Position
                         state = V4Bstate.INTAKE;
                     }
@@ -135,59 +139,59 @@ public class Testing_Phase1 extends LinearOpMode {
                     V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));     // Factors trigger value or returns to baseline position if no input
                     Flex = .6;					                       // TODO - determine default Flex value for here
                     Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
-                    if (gamepad2.b){    				  // Close claw button
-            		if (!IntakeClawClosed){
-				IntakeClaw.setPosition(0);		// Close claw
-    	    	      	}
-	        	else {  		
-		                 IntakeClaw.setPosition(1);		 // Open claw
-			}
-			IntakeClawClosed = !IntakeClawClosed;
-		    }
-                    if (gamepad2.x){				                   // x button Transfer position
+                    if (gamepad2.b){    			    // Toggle claw with b button
+                 		if (!intakeClawClosed){             // Determine claw position
+		             		IntakeClaw.setPosition(0);  	// Close claw if open
+    	             	}
+	                  	else {  		
+		                 IntakeClaw.setPosition(1);	    	 // Open claw if closed
+	                	}
+	            		intakeClawClosed = !intakeClawClosed; // Switch position status variable
+		            }
+                    if (gamepad2.x){		                  // x button Transfer position
                         state = V4Bstate.TRANSFER;
                     }
                     break;         
-                case TRANSFER:
-                    state = V4Bstate.START;              // TODO     Transfer sequencing
+                case TRANSFER:                          // Currently defaulting to START positions
+                    state = V4Bstate.START;             // TODO     Transfer sequencing
                     break;
-            	case OUTTAKE:                            // TODO   raising and scoring button functions   *********************
-              	//  if ( "button pressed"){
-	    	//  state = V4Bstate.TRANSFER;
-		//  }			    
+            	case OUTTAKE:                           // TODO   raising and scoring button functions   *********************
+                //  if ( "button pressed"){             // Conditional code here
+        	    //  state = V4Bstate.TRANSFER;
+            	//  }			    
                     break;
             }
 
+            // Continuosly looping code outside of State Machine
 
-   	         if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
+   	        if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
    	             state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
-                {
-                    // Intake and Wrist positioning
-                    LeftIntakeV4B.setPosition(V4Bpos);
-                    RightIntakeV4B.setPosition(V4Bpos);
-                    LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
-                    RightServo = Flex + (.5 * Yaw);//^
-                    LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
-                    RightIntakeWrist.setPosition(RightServo); // ^
+            {
+            // Intake and Wrist positioning
+            LeftIntakeV4B.setPosition(V4Bpos);
+            RightIntakeV4B.setPosition(V4Bpos);
+            LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
+            RightServo = Flex + (.5 * Yaw);//^
+            LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
+            RightIntakeWrist.setPosition(RightServo); // ^
 
-                    // TODO OUTTAKE servo code
+            // TODO OUTTAKE servo code
 
-                    // issue Drive Wheels motor power
-                    FrontLeft.setPower(frontLeftPower);    // Sets the front left wheel's power
-                    BackLeft.setPower(backLeftPower);     // Sets the back left wheel's power
-                    FrontRight.setPower(frontRightPower);  // Sets the front right wheel's power
-                    BackRight.setPower(backRightPower);   // Sets the back right wheel's power
+            // issue Drive Wheels motor power
+            FrontLeft.setPower(frontLeftPower);    // Sets the front left wheel's power
+            BackLeft.setPower(backLeftPower);     // Sets the back left wheel's power
+            FrontRight.setPower(frontRightPower);  // Sets the front right wheel's power
+            BackRight.setPower(backRightPower);   // Sets the back right wheel's power
 
-
-                    telemetry.addData("Touch Pad Yaw Input", Yaw)
-                            .addData("Flex Input", Flex)
-                            .addData("Left Wrist Target", LeftServo)
-                            .addData("Right Wrist Target", RightServo)
-                            .addData("Left Wrist Actual", LeftIntakeWrist.getPosition())
-                            .addData("Right Wrist Actual", RightIntakeWrist.getPosition());
-                    telemetry.update();
-                }
-            }
+            // Telemetry information
+            telemetry.addData("Touch Pad Yaw Input", Yaw)
+                     .addData("Flex Input", Flex)
+                     .addData("Left Wrist Target", LeftServo)
+                     .addData("Right Wrist Target", RightServo)
+                     .addData("Left Wrist Actual", LeftIntakeWrist.getPosition())
+                     .addData("Right Wrist Actual", RightIntakeWrist.getPosition());
+            telemetry.update();
+            
         }
     }
 }
