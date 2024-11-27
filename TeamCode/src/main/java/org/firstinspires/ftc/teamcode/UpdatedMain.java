@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -25,6 +26,7 @@ public class UpdatedMain extends LinearOpMode {
     private DcMotor back_left_wheel;
     private DcMotor front_right_wheel;
     private DcMotor back_right_wheel;
+    
 
     //Road Runner Dashboard
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -32,14 +34,26 @@ public class UpdatedMain extends LinearOpMode {
 
     // Runtime modifiable values
     // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
-    public static double arm_less_zero = 0.5;//we already knew 90% speed was way to fast why did you change it in the first place
-    public static double arm_more_zero = 0.5;
+    
+    // Runtime modifiable values should be public static
+    public static int armVelocity;
     public static double triggerModifier = 0.005;
+    /*
     private final int swap  = -329;
 
     private double up_speed = 0.7;
     private double down_speed = 0.7;
+    */
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
+
+    // misc vars
+    private int arm_target;
+    
+    // tps calculations
+    private int runs = 0;
+    private ElapsedTime time;
+    private double tps = 0;
+
     //main loop
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,9 +61,15 @@ public class UpdatedMain extends LinearOpMode {
         initialize_hand();
         initialize_arm();
         initialize_wheels(options.Set1);
+        //here in case it results in movement (no movement allowed during init TeleOp)
+        arm_rotator_motor.setTargetPosition(0);
+        arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION); 
         //wait for start
         waitForStart();
         if(opModeIsActive()){
+            //set up timimgs
+            time = ElapsedTime()
+            time.reset()
             while(opModeIsActive()){
                 update_driving();
                 update_grip();
@@ -57,6 +77,12 @@ public class UpdatedMain extends LinearOpMode {
                 update_hand_rotation();
                 display_data();
                 update_arm_extension();
+                runs++
+                if (time.seconds() > 1) {
+                    tps = runs / time.seconds()
+                    runs = 0
+                    time.reset()
+                }
             }
         }
     }
@@ -118,9 +144,10 @@ public class UpdatedMain extends LinearOpMode {
         //Arm
         dashboardTelemetry.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
         dashboardTelemetry.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
-        telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
+        dashboardTelemetry.addData("Arm Target", arm_target);
         //Vars that should be changeable (please)
         dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
+
         dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
         dashboardTelemetry.addData("Arm < 0 Modifier", arm_less_zero);
         dashboardTelemetry.addData("Gamepad 1", gamepad1.toString());
@@ -129,6 +156,9 @@ public class UpdatedMain extends LinearOpMode {
         //other
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
+        telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
+
+        dashboardTelemetry.addData("tps", tps)
 
         //update telemetry
         dashboardTelemetry.update();
@@ -187,6 +217,7 @@ public class UpdatedMain extends LinearOpMode {
         } else if (gamepad2.right_bumper){
             hand_grip_servo.setPosition(hand_grip_servo.getPosition() - triggerModifier);
         }*/
+
         //0 open 0.75 closed
         if(gamepad2.a){
             hand_grip_servo.setPosition(hand_grip_servo.getPosition() - 0.01);
