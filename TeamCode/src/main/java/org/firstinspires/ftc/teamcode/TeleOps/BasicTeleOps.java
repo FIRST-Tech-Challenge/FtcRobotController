@@ -101,7 +101,7 @@ public class BasicTeleOps extends OpMode {
 
         //Intake Arm Control
         intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
-                RobotActionConfig.intake_Arm_initial, RobotActionConfig.intake_Arm_Idle, RobotActionConfig.intake_Arm_Pick, RobotActionConfig.intake_Arm_Transfer,
+                RobotActionConfig.intake_Arm_Initial, RobotActionConfig.intake_Arm_Idle, RobotActionConfig.intake_Arm_Pick, RobotActionConfig.intake_Arm_Transfer,
                 RobotActionConfig.intake_slide_Retract, RobotActionConfig.intake_slide_Extension,
                 RobotActionConfig.intake_Rotation,
                 RobotActionConfig.intake_Claw_Open, RobotActionConfig.intake_Claw_Close);

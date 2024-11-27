@@ -13,7 +13,7 @@ public class RobotActionConfig {
 
     public static double intake_Rotation                = 0.49; // range(0-1, 0.49 at the middle for installation
 
-    public static double intake_Arm_initial             = 0.30;//range(0-0.56, 0: lowest, 0.56:fully retracted).
+    public static double intake_Arm_Initial             = 0.30;//range(0-0.56, 0: lowest, 0.56:fully retracted).
     public static double intake_Arm_Pick                = 0.05;
     public static double intake_Arm_Idle                = 0.10;
     public static double intake_Arm_Transfer            = 0.53;

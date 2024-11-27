@@ -98,8 +98,8 @@ public class FiniteMachineStateArm {
                         robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
                     }
                     if (transfer_timer.seconds() >= 0.35) {
-                        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_initial);
-                        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_initial);
+                        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+                        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
                     }
                     if (transfer_timer.seconds() >= 0.85) {
                         robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
@@ -128,6 +128,7 @@ public class FiniteMachineStateArm {
                 // Wait for the dump time to pass
                 if (liftTimer.seconds() >= DUMP_TIME) {
                     robot.depositClawServo.setPosition(CLAW_OPEN);
+                    depositState = DEPOSITSTATE.OPEN;
                 }
                 if (liftTimer.seconds() >= DUMP_TIME+0.5) {
                     robot.depositLeftArmServo.setPosition(DEPOSIT_ARM_IDLE);// Reset servo to idle
@@ -199,7 +200,7 @@ public class FiniteMachineStateArm {
         CLOSE
     }
 
-    //Toggle Deposit Open - Close
+    //Toggle Deposit Claw Open - Close
     private void ToggleDeposit() {
         if (depositState == DEPOSITSTATE.OPEN) {
             depositState = DEPOSITSTATE.CLOSE;
