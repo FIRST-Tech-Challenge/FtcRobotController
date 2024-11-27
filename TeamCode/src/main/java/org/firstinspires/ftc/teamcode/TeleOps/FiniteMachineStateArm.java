@@ -15,7 +15,7 @@ public class FiniteMachineStateArm {
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
     
-    public enum LiftState {
+    public enum LIFTSTATE {
         LIFT_START,
         LIFT_EXTEND,
         LIFT_DUMP,
@@ -24,7 +24,7 @@ public class FiniteMachineStateArm {
 
     private DEPOSITSTATE depositState;
     
-    private LiftState liftState = LiftState.LIFT_START; // Persisting state
+    private LIFTSTATE liftState = LIFTSTATE.LIFT_START; // Persisting state
     private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
  
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
