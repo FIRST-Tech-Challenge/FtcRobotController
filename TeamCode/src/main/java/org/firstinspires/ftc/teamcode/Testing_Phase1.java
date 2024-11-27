@@ -16,21 +16,21 @@ public class Testing_Phase1 extends LinearOpMode {
 
     private int precision = 2;                    // chassis motor power reduction factor 1
     private boolean intakeClawClosed = false;     // claw holder variable
+    private ElapsedTime stateDelay = new ElapsedTime(); // possible delay timer for state change
+    public double LeftServo;                // currently intake wrist servo left
+    public double RightServo;               // currently intake wrist servo right
+    private double V4Bpos = 1;              // currently intake V4B
+    private double Flex = .1;               // currently intake wrist angle
+    private double Yaw = 0;                 // currently intake wrist twist
 
-    public double LeftServo;
-    public double RightServo;
-    private double V4Bpos = 1;
-    private double Flex = .1;
-    private double Yaw = 0;
-
-    private enum V4Bstate {
+    private enum V4Bstate {                 // states of intake/outake machine
         START,
         INTAKE,
         TRANSFER,
         OUTTAKE                               //  TODO add OUTTAKE state  *******************************
     }
 
-    V4Bstate state = V4Bstate.START;
+    V4Bstate state = V4Bstate.START;           // initial state of intake/outake servos
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,8 +45,8 @@ public class Testing_Phase1 extends LinearOpMode {
         Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With A
         Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
  
-        LeftServo = Flex - (.5 * Yaw);
-        RightServo = Flex + (.5 * Yaw);
+        LeftServo = Flex - (.5 * Yaw);                                      // intake wrist servo calc
+        RightServo = Flex + (.5 * Yaw);                                     // intake wrist servo calc
 
         BackLeft.setDirection(DcMotorSimple.Direction.REVERSE);             // Reverses the direction the motor turns
         FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);           // Reverses the direction the motor turns
@@ -108,10 +108,14 @@ public class Testing_Phase1 extends LinearOpMode {
                     }
                     break; */
                     //                 TODO     Proposed alternate code
+
+                    // if (stateDelay < .25 ){ break; }   // TODO possible delay code for each state change
+
                     V4Bpos = 1;	            	// Bar fully up upon entering state
                     Flex = 0;		            // Wrist fully up upon entering state
-                    if (gamepad2.a){        	// Switch to INTAKE Position
+                    if (gamepad2.a){        	// Switch to INTAKE Position with a button
                         state = V4Bstate.INTAKE;
+                        // stateDelay.reset();  // used in conjuction with stateDelay checking in each state
                     }
                     break;
                 case INTAKE:    
@@ -139,7 +143,7 @@ public class Testing_Phase1 extends LinearOpMode {
                     V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));     // Factors trigger value or returns to baseline position if no input
                     Flex = .6;					                       // TODO - determine default Flex value for here
                     Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
-                    if (gamepad2.b){    			    // Toggle claw with b button
+                    if (gamepad2.b){    			        // Toggle claw with b button
                  		if (!intakeClawClosed){             // Determine claw position
 		             		IntakeClaw.setPosition(0);  	// Close claw if open
     	             	}
@@ -165,11 +169,11 @@ public class Testing_Phase1 extends LinearOpMode {
             // Continuosly looping code outside of State Machine
 
    	        if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
-   	             state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
+   	             state = V4Bstate.INTAKE;         // changes to INTAKE state to allow manual adjustment
             }
             // Intake and Wrist positioning
-            LeftIntakeV4B.setPosition(V4Bpos);
-            RightIntakeV4B.setPosition(V4Bpos);
+            LeftIntakeV4B.setPosition(V4Bpos);      // issue intake V4B servo position
+            RightIntakeV4B.setPosition(V4Bpos);     // issue intake v4B servo position
             LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
             RightServo = Flex + (.5 * Yaw);//^
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
