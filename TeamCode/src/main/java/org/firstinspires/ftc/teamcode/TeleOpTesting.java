@@ -199,10 +199,15 @@ public class TeleOpTesting extends LinearOpMode {
 
             //**************************** CLAW CONTROLS *********************************************************8
             // Opens the outtake claw
-            if (gamepad2.b && OuttakeActive && OuttakeClawTime.seconds() >= .3){ // If the B button was pressed, Outtake is extended and it has been more than .3 seconds since the outtake claw has been used
+            if (gamepad2.b && OuttakeActive && OuttakeClawTime.seconds() >= .3 && OuttakeClawClosed){ // If the B button was pressed, Outtake is extended and it has been more than .3 seconds since the outtake claw has been used
                 OuttakeClawTime.reset();    // Reset the timer since the outtake claw was just used
                 OuttakeClaw.setPosition(0); // Opens the outtake claw
                 OuttakeClawClosed = false;  // Since the outtake claw was opened we change this to stay accurate
+            }
+            else if (gamepad2.b && OuttakeActive && OuttakeClawTime.seconds() >= .3 && !OuttakeClawClosed){
+                OuttakeClawTime.reset();
+                OuttakeClaw.setPosition(1);
+                OuttakeClawClosed = true;
             }
             // Closes the intake claw
             else if (gamepad2.b && !OuttakeActive && IntakeClawTime.seconds() >= .3 && !IntakeClawClosed){ // If the B button was pressed, Outtake is retracted, It has been more than .3 seconds since the intake claw has been used and the intake claw is open
