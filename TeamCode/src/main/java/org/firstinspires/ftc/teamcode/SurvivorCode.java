@@ -82,7 +82,6 @@ public class SurvivorCode extends LinearOpMode {
             yaw = gamepad1.right_stick_x;
 
             setWheelPower();
-
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
