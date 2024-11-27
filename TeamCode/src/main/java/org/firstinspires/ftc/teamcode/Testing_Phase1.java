@@ -166,7 +166,7 @@ public class Testing_Phase1 extends LinearOpMode {
 
    	        if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
    	             state = V4Bstate.INTAKE;    // changes to INTAKE state to allow manual adjustment
-            {
+            }
             // Intake and Wrist positioning
             LeftIntakeV4B.setPosition(V4Bpos);
             RightIntakeV4B.setPosition(V4Bpos);
@@ -191,7 +191,7 @@ public class Testing_Phase1 extends LinearOpMode {
                      .addData("Left Wrist Actual", LeftIntakeWrist.getPosition())
                      .addData("Right Wrist Actual", RightIntakeWrist.getPosition());
             telemetry.update();
-            
-        }
+                 
+       }
     }
 }
