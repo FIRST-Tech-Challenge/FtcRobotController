@@ -107,11 +107,12 @@ public abstract class Robot extends LinearOpMode {
             this.Current_Time = System.nanoTime() * 1E-9;
             Odomentry();
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double Vx = DelthaX.Calculate((targetx - Posx)*-1);
+            double Vx = DelthaX.Calculate(targetx - Posx);
             double Vy = DelthaY.Calculate(targety - Posy);
+            double theta = -heading
 
-            double x2    =  (Math.cos(heading) * Vx) - (Math.sin(heading) * Vy);
-            double y2    =  (Math.sin(heading) * Vx) + (Math.cos(heading) * Vy);
+            double x2    =  (Math.cos(theta) * Vx) - (Math.sin(theta) * Vy);
+            double y2    =  (Math.sin(theta) * Vx) + (Math.cos(theta) * Vy);
 
             double r =  pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
@@ -150,7 +151,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Vx <= 0.1 && Vy <= 0.1 && r <= 0.1 && Lift_Power ==0) {
+            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power ==0) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
