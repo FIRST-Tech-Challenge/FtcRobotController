@@ -321,12 +321,12 @@ public class MeetThreeAuto extends LinearOpMode {
             case RED_LEFT:
             case RED_RIGHT:
                 return previousTrajectory
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
             case BLUE_LEFT:
             case BLUE_RIGHT:
                 return previousTrajectory
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
             default:
                 return previousTrajectory;

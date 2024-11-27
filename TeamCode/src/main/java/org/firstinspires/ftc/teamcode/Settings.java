@@ -152,8 +152,8 @@ public class Settings {
             public static Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(5, 37, Math.toRadians(270));
             public static Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-5, 37, Math.toRadians(270));
 
-            public static Pose2d RED_HP_POSE = new Pose2d(36, -60.0, Math.toRadians(315));
-            public static Pose2d BLUE_HP_POSE = new Pose2d(-36, 60.0, Math.toRadians(135));
+            public static Pose2d RED_HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
+            public static Pose2d BLUE_HP_POSE = new Pose2d(-36, 55.0, Math.toRadians(135));
 
             public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-44, -37);
             public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(44, 37);
