@@ -178,6 +178,7 @@ public class CaiTest extends LinearOpMode {
             arm_rotator_motor.setTargetPosition(arm_target);
             arm_rotator_motor.setPower(1);
             arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            tacos = 0;
         }else{
             tacos++;
         }
