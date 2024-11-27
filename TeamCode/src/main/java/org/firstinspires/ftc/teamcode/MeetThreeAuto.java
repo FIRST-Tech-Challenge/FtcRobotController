@@ -154,7 +154,8 @@ public class MeetThreeAuto extends LinearOpMode {
 
     public TrajectoryActionBuilder gameLoop(StartingPosition sp, TrajectoryActionBuilder previousTrajectory,
             ChamberHeight chamberHeight) {
-        baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
+        baseRobot.telemetry.addData("Autonomous phase", "Grabbing next specimen");
+        baseRobot.telemetry.update();
         previousTrajectory = getNextSpecimen(sp, previousTrajectory);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
         previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, ChamberHeight.HIGH);
@@ -211,6 +212,21 @@ public class MeetThreeAuto extends LinearOpMode {
         return new GrabSpecimenFromHumanPlayer();
     }
 
+
+    public class HangAction implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.linearActuator.extend();
+            pause(2000);
+            baseRobot.linearActuator.stop();
+            return false;
+        }
+    }
+
+    public Action hang() {
+        return new HangAction();
+    }
+
     public TrajectoryActionBuilder placeNextSpecimenOnChamber(StartingPosition sp,
             TrajectoryActionBuilder previousTrajectory, ChamberHeight mode) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, previousTrajectory);
@@ -239,7 +255,9 @@ public class MeetThreeAuto extends LinearOpMode {
                 new SequentialAction(
                         placingTrajectory.build(),
                         placeChamber(),
-                        parkingTrajectory.build()));
+                        parkingTrajectory.build(),
+                        hang()
+                ));
     }
 
     public void justPark(StartingPosition sp) {
@@ -275,23 +293,23 @@ public class MeetThreeAuto extends LinearOpMode {
             case RED_LEFT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_BEFORE_PARK_POSE.position)
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
+                        .turn(Math.toRadians(90))
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position);
             case RED_RIGHT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
                         .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_BEFORE_PARK_POSE.position)
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
+                        .turn(Math.toRadians(90))
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position);
             case BLUE_LEFT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_BEFORE_PARK_POSE.position)
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
+                        .turn(Math.toRadians(90))
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position);
             case BLUE_RIGHT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
                         .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_BEFORE_PARK_POSE.position)
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
+                        .turn(Math.toRadians(90))
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position);
             default:
                 return previousTrajectory;
         }
