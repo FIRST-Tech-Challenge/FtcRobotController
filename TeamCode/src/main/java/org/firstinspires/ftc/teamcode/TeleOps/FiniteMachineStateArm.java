@@ -5,6 +5,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/** Button Config for deposit
+ * *X                   : extend
+ * *B                   : Cancel
+ */
+
 public class FiniteMachineStateArm {
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;

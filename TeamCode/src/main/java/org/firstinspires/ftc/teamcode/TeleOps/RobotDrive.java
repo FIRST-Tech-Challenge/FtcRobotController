@@ -15,6 +15,16 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+/** Button Config for Drive
+ * * Joy Right Y                : Drive
+ * * Joy Right X                : Strafe
+ * * Joy Left X                 : Turn
+ * * Left Trigger               : Fine Movement + Joystick
+ * * START                      : Field centric / Robot centric toggle
+ * * Back                       : Reset Yaw angle
+ * Gamepad 1 override Gamepad 2
+ */
+
 public class RobotDrive {
 
     private final GamepadEx gamepad_1;
@@ -23,7 +33,6 @@ public class RobotDrive {
     private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
 
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
-
 
     private boolean startPressed = false;
     private boolean backPressed = false;
@@ -71,6 +80,8 @@ public class RobotDrive {
         double drive = 0.0;
         double strafe = 0.0;
         double rotate = 0.0;
+
+        // gamepad 1 take priority override gamepad 2
         if (Math.abs(gamepad_1.getRightY()) > 0.1 || Math.abs(gamepad_1.getRightX()) > 0.1 || Math.abs(gamepad_1.getLeftX()) > 0.1) {
             drive = -gamepad_1.getRightY();
             strafe = gamepad_1.getRightX();
@@ -80,30 +91,6 @@ public class RobotDrive {
             strafe = gamepad_2.getRightX();
             rotate = gamepad_2.getLeftX();
         }
-        /**
-        // Set gamepad joystick power
-        double drive = 0.0;
-        if (Math.abs(gamepad_1.getRightY()) > 0.1) {
-            // Use Gamepad 1 if there's input
-            drive = -gamepad_1.getRightY();
-        } else if (Math.abs(gamepad_2.getRightY()) > 0.1) {
-            // If Gamepad 1 has no input, use Gamepad 2
-            drive = -gamepad_2.getRightY();
-        }
-
-        double strafe = 0.0;
-        if (Math.abs(gamepad_1.getRightX()) > 0.1) {
-            strafe = gamepad_1.getRightX();
-        } else if (Math.abs(gamepad_2.getRightX()) > 0.1) {
-            strafe = gamepad_2.getRightX();
-        }
-
-        double rotate = 0.0;
-        if (Math.abs(gamepad_1.getLeftX()) > 0.1) {
-            rotate = gamepad_1.getLeftX();
-        } else if (Math.abs(gamepad_2.getLeftX()) > 0.1)
-            rotate = gamepad_2.getLeftX();
-         **/
 
         // Get robot's current heading
         double currentHeading = getRobotHeading();

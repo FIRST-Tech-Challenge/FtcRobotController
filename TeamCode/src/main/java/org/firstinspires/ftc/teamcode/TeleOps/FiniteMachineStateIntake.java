@@ -12,6 +12,18 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+/** Button Config for intake
+ * *Dpad left           : extend
+ * *Dpad right          : retract
+ * *Dpad up             : rise intake arm
+ * *Dpad down           : lower intake arm
+ * *A                   : to open/close intake
+ * *left bumper         : to rotate left
+ * *right bumper        : to rotate right
+ * Action for intake
+ * *default open intake when extend
+ * *default close intake when retract
+ */
 public class FiniteMachineStateIntake {
 
     //Intake STATE
@@ -136,6 +148,7 @@ public class FiniteMachineStateIntake {
                     if ((gamepad_1.getButton(DPAD_LEFT) || gamepad_2.getButton(DPAD_LEFT))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
                         robot.intakeClawServo.setPosition(intake_Claw_Close);
+                        clawState = CLAWSTATE.CLOSE;
                         //retract
                         intakeTimer.reset();
                         intakeState = INTAKESTATE.INTAKE_RETRACT;
