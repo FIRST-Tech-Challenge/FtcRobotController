@@ -67,6 +67,8 @@ public  class Tele extends Robot {
         telemetry.addData("yaw", toDegree(yaw));
         telemetry.addData("setpoint", toDegree(setpoint));
         telemetry.addData("error", controller.Error);
+
+
     }
 
     private void Lift() {

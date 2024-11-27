@@ -61,7 +61,7 @@ public class Auto_Bucket extends Robot {
     private void drop() {
 
         SetServoPos(0, LJ, RJ);
-        sleep(850);
+        sleep(900);
         SetServoPos(1, LJ, RJ);
 
         On = true;
@@ -98,44 +98,47 @@ public class Auto_Bucket extends Robot {
         if (opModeIsActive()) {
             SetServoPos(0.9, LJ, RJ);
 
-            move(-0.9, 0.52, 205.0, new double[]{0.2, 0.2, 0.2},
-                    new double[]{1.2, 0.01, 0.09, 0.0}, new double[]{0.2, 0.01, 0.01, 0.0}, new double[]{0.2, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+            move(-0.9, 0.52, 205.0, new double[]{0.2, 0.1, 0.2},
+                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.1, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
 
             drop();
 
-            move(-0.58, 0.62, 189.0, new double[]{0.4, 0.4, 0.4},
-                    new double[]{2.9, 0.00001, 0.1, 0.0}, new double[]{0.4, 0.009, 0.04, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001,0);
+            move(-0.59, 0.62, 180.0, new double[]{0.1, 0.1, 0.1},
+                    new double[]{1.5, 0.00001, 0.1, 0.0}, new double[]{0.1, 0.009, 0.01, 0.0}, new double[]{0.1, 0.007, 0.01, 0.0}, 0.0001,0);
 
             keep();
 
-            move(-0.95, 0.55, 205.0, new double[]{0.3, 0.3, 0.3},
-                    new double[]{2.2, 0.01, 0.09, 0.0}, new double[]{0.4, 0.01, 0.01, 0.0}, new double[]{0.2, 0.01, 0.001, 0.0}, 0.0001, High_Basket);
+            move(-0.95, 0.53, 210.0, new double[]{0.2, 0.1, 0.1},
+                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+
 
             drop();
 
-            move(-0.85, 0.62, 180.0, new double[]{0.45, 0.4, 0.4},
-                    new double[]{3.0, 0.00001, 0.01, 0.0}, new double[]{0.4, 0.01, 0.025, 0.0}, new double[]{0.2, 0.01, 0.03, 0.0}, 0.0001, 0);
+            move(-0.89, 0.62, 178.0, new double[]{0.25, 0.1, 0.2},
+                    new double[]{1.5, 0.00001, 0.01, 0.0}, new double[]{0.1, 0.01, 0.025, 0.0}, new double[]{0.1, 0.01, 0.03, 0.0}, 0.0001, 0);
 
             keep();
 
-            move(-0.95, 0.55, 205.0, new double[]{0.3, 0.3, 0.3},
-                    new double[]{2.2, 0.01, 0.09, 0.0}, new double[]{0.4, 0.01, 0.01, 0.0}, new double[]{0.2, 0.01, 0.001, 0.0}, 0.0001, High_Basket);
+            move(-0.95, 0.53, 210.0, new double[]{0.25, 0.1, 0.25},
+                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+
 
             drop();
 
-            move(-0.56, 0.85, 143.0, new double[]{0.4, 0.4, 0.4},
-                    new double[]{2.9, 0.00001, 0.015, 0.0}, new double[]{0.4, 0.007, 0.001, 0.0}, new double[]{0.2, 0.007, 0.01, 0.0}, 0.0001, 0);
+            move(-0.69, 0.79, 143.0, new double[]{0.2, 0.1, 0.2},
+                    new double[]{1.3, 0.00001, 0.015, 0.0}, new double[]{0.1, 0.007, 0.01, 0.0}, new double[]{0.10, 0.007, 0.01, 0.0}, 0.0001, 0);
 
             SetServoPos(0.9, RC);
             keep();
 
-            move(-0.95, 0.57, 215.0, new double[]{0.5, 0.3, 0.1},
-                    new double[]{2.2, 0.01, 0.09, 0.0}, new double[]{0.4, 0.01, 0.01, 0.0}, new double[]{0.2, 0.01, 0.001, 0.0}, 0.0001, High_Basket);
+            move(-0.95, 0.53, 210.0, new double[]{0.25, 0.1, 0.25},
+                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+
 
             drop();
 
-            move( 0.7, 2.25, 90.0, new double[]{0.4, 0.4, 0.4},
-                    new double[]{2.2, 0.01, 0.2, 0.0}, new double[]{0.07, 0.008, 0.01, 0.0}, new double[]{0.2, 0.01, 0.01, 0.0}, 0.0001, 650);
+            move( 0.45, 2.25, 90.0, new double[]{0.2, 0.2, 0.2},
+                    new double[]{1.6, 0.01, 0.2, 0.0}, new double[]{0.07, 0.008, 0.01, 0.0}, new double[]{0.2, 0.01, 0.01, 0.0}, 0.0001, 650);
 
             SetServoPos(0, LJ, RJ); // 0.55
 

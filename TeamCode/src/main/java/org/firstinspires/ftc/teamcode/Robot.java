@@ -96,7 +96,7 @@ public abstract class Robot extends LinearOpMode {
     public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
                      double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
-        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 11);
+        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
         Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1);
         double targetx = tilex * tileSize[0];
         double targety = tiley * tileSize[1];
@@ -151,7 +151,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Math.abs(Vx) <= 0.1 && Math.abs(Vy) <= 0.1 && Math.abs(r) <= 0.1 && Lift_Power ==0 && AtTargetRange(curPos, height, 100)) {
+            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power ==0 ) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
@@ -228,6 +228,8 @@ public abstract class Robot extends LinearOpMode {
         encoder1 = FL;
         encoder2 = FR;
         encoder3 = BL;
+        Posy = 0;
+        Posx = 0;
 
         // Initialize IMU
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
