@@ -29,7 +29,10 @@ public class PurePursuitAction extends Action {
 
     Path path;
     Segment lastLine;
-    static final private double LOOK_AHEAD_RADIUS_MM = 15;
+    static final private double LOOK_AHEAD_RADIUS_MM = 300;
+
+    private double currentLookAheadRadius;
+    static final private double LAST_RADIUS_MM = 15;
     Optional<Position> follow;
     Optional<Position> prevFollow;
 
@@ -48,6 +51,7 @@ public class PurePursuitAction extends Action {
         this.pidY = new PidNav(1.0/600.0, 0, 0);
         this.pidAngle = new PidNav(1.0 / Math.toRadians(90), 0, 0);
 
+        this.prevFollow = Optional.empty();
 
         Log.d("purepursaction", "constructed");
 
@@ -121,8 +125,11 @@ public class PurePursuitAction extends Action {
             hasStarted = true;
         }
 
-
-        follow = path.lookAhead(wheelOdometry.getCurrentPosition(), LOOK_AHEAD_RADIUS_MM);
+        currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
+        if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
+            currentLookAheadRadius = LAST_RADIUS_MM;
+        }
+        follow = path.lookAhead(wheelOdometry.getCurrentPosition(), currentLookAheadRadius);
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow",

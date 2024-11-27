@@ -1,4 +1,4 @@
-package com.kalipsorobotics.test.autoMovement;
+package com.kalipsorobotics.intoTheDeep;
 
 import android.util.Log;
 
@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class NewTestPurePursuit extends LinearOpMode {
+public class RedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
