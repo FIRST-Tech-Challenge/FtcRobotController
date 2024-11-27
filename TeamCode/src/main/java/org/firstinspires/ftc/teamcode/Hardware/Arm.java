@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.Usefuls.Motor.PID;
 public class Arm {
 
 
-    private static final double TICKS_TO_DEGREES = 0.1602564102564103;
+    private static final double TICKS_TO_DEGREES = 0.1150214;
     public static double targetArmPosition = 100;
-    public static double sKp = 0.07, sKi = 0, sKd = 0.004;
-    public static double powerA = 0.7, powerB = -0.7;
+    public static double sKp = 0.075, sKi = 0, sKd = 0.003;
+    public static double powerA = 1, powerB = -1;
     private final DcMotorEx a;
     private final DcMotorEx armEncoder;
     private final PID armController;
@@ -42,7 +42,8 @@ public class Arm {
     }
 
     public double getCurrentArmPosition() {
-        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES) + 4.4;
+        return (this.armEncoder.getCurrentPosition() * TICKS_TO_DEGREES) + 5.55;
+//        return this.armEncoder.getCurrentPosition();
     }
 
     public void setTargetArmPosition(double position) {
@@ -54,11 +55,11 @@ public class Arm {
     }
 
     public void preTake() {
-        setTargetArmPosition(15);
+        setTargetArmPosition(5);
     }
 
     public void preSubmerse() {
-        setTargetArmPosition(20);
+        setTargetArmPosition(10);
     }
 
     public void holdSpecimen() { setTargetArmPosition(40);}

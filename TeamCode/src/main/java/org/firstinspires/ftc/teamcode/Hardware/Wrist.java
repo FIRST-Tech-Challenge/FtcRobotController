@@ -20,11 +20,15 @@ public class Wrist {
     }
 
     public void intake() {
-        setPosition(0.48);
+        setPosition(0.4);
     }
 
     public void deposit() {
-        setPosition(.95);
+        setPosition(.75);
+    }
+
+    public void score() {
+        setPosition(.85);
     }
 
     public void holdSpecimen() {

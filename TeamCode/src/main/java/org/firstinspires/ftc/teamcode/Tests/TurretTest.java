@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Turret;
 
 @TeleOp
 @Config
+//perpendicular counterclockwise: .17, perpendicular clockwise: .84. middle: .5
 public class TurretTest extends LinearOpMode {
     public static double t = 0.5;
     public void runOpMode(){

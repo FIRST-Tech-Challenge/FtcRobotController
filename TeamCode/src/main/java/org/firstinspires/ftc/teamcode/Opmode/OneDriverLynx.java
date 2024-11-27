@@ -10,13 +10,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.Arm;
-import org.firstinspires.ftc.teamcode.Hardware.Claw;
 import org.firstinspires.ftc.teamcode.Hardware.ColorSensor;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
-import org.firstinspires.ftc.teamcode.Hardware.Hang;
-import org.firstinspires.ftc.teamcode.Hardware.Slides;
-import org.firstinspires.ftc.teamcode.Hardware.Wrist;
+import org.firstinspires.ftc.teamcode.Hardware.Turret;
 import org.firstinspires.ftc.teamcode.RoboActions;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
@@ -33,8 +29,10 @@ import java.util.Locale;
 @Config
 public class OneDriverLynx extends LinearOpMode {
     public double inchesPerSecond = 66.67;
+    double turretPos = 0.5;
     double oldTime = 0;
     double timeStamp = 0;
+    public static double turretSpeed = 1.5;
     enum GlobalStateMachine {
         DEFAULT, INTAKE_READY, CLOSE_INTAKE, FINISHED_INTAKE, READY_DEPOSIT, SLIDES_BEGIN_SCORE,
         WRIST_SCORE, FINISH_SCORE, POST_SCORE, RETURN_TO_DEFAULT,
@@ -47,6 +45,19 @@ public class OneDriverLynx extends LinearOpMode {
     public List<LynxModule> modules;
     public LynxModule CONTROL_HUB;
     RoboActions robot;
+    void updateTurret(stickyGamepad gp, double loopTime) {
+        if(gamepad1.dpad_right) {
+            turretPos -= turretSpeed * loopTime;
+            if (turretPos <= Turret.MIN) {
+                turretPos = Turret.MIN;
+            }
+        } else if (gamepad1.dpad_left) {
+            turretPos += turretSpeed * loopTime;
+            if (turretPos >= Turret.MAX) {
+                turretPos = Turret.MAX;
+            }
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -73,7 +84,9 @@ public class OneDriverLynx extends LinearOpMode {
             for (LynxModule hub : modules) {
                 hub.clearBulkCache();
             }
-
+            if (globalStateMachine != GlobalStateMachine.SUBMERSIBLE_SLIDER && globalStateMachine != GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN && globalStateMachine != GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) {
+                if (turretPos != .5) turretPos = 0.5;
+            }
             if (gp.left_bumper && (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER || globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN)) {
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             }//advances backwards
@@ -165,15 +178,18 @@ public class OneDriverLynx extends LinearOpMode {
                 slideInches = 0;
                 globalStateMachine = GlobalStateMachine.SUBMERSIBLE_SLIDER;
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_SLIDER) { // SUBMERSIBLE SLIDER
-                double increment = inchesPerSecond * loopTime * Math.pow((gamepad1.left_trigger - gamepad1.right_trigger), 2);
+                double increment = Math.signum(gamepad1.left_trigger - gamepad1.right_trigger) * inchesPerSecond * loopTime * Math.pow((gamepad1.left_trigger - gamepad1.right_trigger), 2);
                 slideInches += increment;
                 if (slideInches > 15.0) slideInches = 15.0;
                 if (slideInches < 0.5) slideInches = 0.5;
                 robot.submersibleSlider(slideInches);
+                updateTurret(gp, loopTime);
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_OPEN) { // SUBMERSIBLE INTAKE OPEN
                 robot.submersibleIntakeOpen();
+                updateTurret(gp, loopTime);
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_INTAKE_CLOSE) { // SUBMERSIBLE INTAKE CLOSE
                 robot.closeIntake();
+                updateTurret(gp, loopTime);
             } else if (globalStateMachine == GlobalStateMachine.SUBMERSIBLE_FINISH_1) { // SUBMERSIBLE FINISH 1
                 robot.submersibleFinish1();
                 timeStamp = timer.milliseconds();
@@ -232,9 +248,9 @@ public class OneDriverLynx extends LinearOpMode {
 
 
 
-            if (gamepad1.dpad_down){
+            if (gamepad1.dpad_up){
                 robot.hangPower(-1);
-            } else if (gamepad1.dpad_up){
+            } else if (gamepad1.dpad_down){
                 robot.hangPower(1);
             }
             else{
@@ -252,6 +268,7 @@ public class OneDriverLynx extends LinearOpMode {
             robot.drivePowers(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             robot.slidesUpdate();
             robot.armUpdate();
+            robot.turret.setPosition(turretPos);
             gp.update();
 
 

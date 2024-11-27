@@ -12,7 +12,7 @@ public class Claw {
 
 
     public void open() {
-        double open = 0.76;
+        double open = 0.71;
         claw.setPosition(open);
     }
 

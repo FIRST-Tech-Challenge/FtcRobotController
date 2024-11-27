@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Claw;
 import org.firstinspires.ftc.teamcode.Hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.Hardware.Hang;
 import org.firstinspires.ftc.teamcode.Hardware.Slides;
+import org.firstinspires.ftc.teamcode.Hardware.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Wrist;
 import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 import org.firstinspires.ftc.teamcode.Usefuls.Math.M;
@@ -26,6 +27,7 @@ public class RoboActions {
     public Claw claw;
     public Wrist wrist;
     Hang hang;
+    public Turret turret;
 
     public RoboActions(HardwareMap hardwareMap, Pose2d startPosition){
         drive = new Drivetrain(hardwareMap, startPosition);
@@ -34,6 +36,7 @@ public class RoboActions {
         claw = new Claw(hardwareMap);
         wrist = new Wrist(hardwareMap);
         hang = new Hang(hardwareMap);
+        turret = new Turret(hardwareMap);
     }
     public void slidesUpdate() {
         slides.update();
@@ -73,7 +76,7 @@ public class RoboActions {
         slides.score();
     }
     public void wristScore() {
-        wrist.deposit();
+        wrist.score();
     }
     public void finishScore() {
         claw.open();

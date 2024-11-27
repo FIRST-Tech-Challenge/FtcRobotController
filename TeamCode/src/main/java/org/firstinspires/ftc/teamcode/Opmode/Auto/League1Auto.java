@@ -114,7 +114,7 @@ public class League1Auto extends LinearOpMode {
                         actionToggle = false;
                     }
                     if (timer.milliseconds() > ActionStamp + 600) {
-                        wrist.deposit();
+                        wrist.score();
                         actionToggle = true;
                         currentAction = Actions.DEPOSIT;
                     }

@@ -52,7 +52,7 @@ public class Slides {
     }
 
     public void floorIntake() {
-        setTargetSlidesPosition(0.5);
+        setTargetSlidesPosition(0);
     }
 
     public void preScore() {
