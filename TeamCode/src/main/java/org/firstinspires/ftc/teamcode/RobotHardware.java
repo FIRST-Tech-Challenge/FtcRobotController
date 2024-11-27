@@ -70,6 +70,7 @@ public class RobotHardware {
     private DcMotor rightBack = null;
     private DcMotor elevatorLift = null;
     private DcMotor intakeSlide = null;
+    private Servo intakePincher = null;
     private Limelight3A limelight = null;
     GoBildaPinpointDriver odo = null; // Declare OpMode member for the Odometry Computer
     private RevBlinkinLedDriver blinkinLedDriver = null;
@@ -110,8 +111,8 @@ public class RobotHardware {
         odo.resetPosAndIMU();
 
         ///REV LED Setup
-        LED_green = myOpMode.hardwareMap.get(LED.class, "front_led_green");
-        LED_red = myOpMode.hardwareMap.get(LED.class, "front_led_red");
+        LED_green = myOpMode.hardwareMap.get(LED.class, "LED_green");
+        LED_red = myOpMode.hardwareMap.get(LED.class, "LED_red");
 
         ///Blinkin Setup
         blinkinLedDriver = myOpMode.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
@@ -148,7 +149,9 @@ public class RobotHardware {
         // intakeSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        //leftHand = myOpMode.hardwareMap.get(Servo.class, "left_hand");
+        intakePincher = myOpMode.hardwareMap.get(Servo.class, "intakePincher");
+        intakePincher.setPosition(0);
+        myOpMode.telemetry.addData("Intake Servo Pos",intakePincher.getPosition());
         //rightHand = myOpMode.hardwareMap.get(Servo.class, "right_hand");
         //leftHand.setPosition(MID_SERVO);
         //rightHand.setPosition(MID_SERVO);
@@ -233,13 +236,15 @@ public class RobotHardware {
     }
 
     /**
-     * Pass the requested arm power to the appropriate hardware drive motor
      *
-     * @param power driving power (-1.0 to 1.0)
      */
-    //public void setArmPower(double power) {
-    //    armMotor.setPower(power);
-    //}
+
+    public void CloseIntakePincher (){
+        intakePincher.setPosition(0);
+    }
+    public void OpenIntakePincher (){
+        intakePincher.setPosition(1);
+    }
 
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.

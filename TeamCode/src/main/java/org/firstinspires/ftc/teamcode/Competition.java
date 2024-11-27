@@ -25,13 +25,21 @@ public class Competition extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        ///Variable Setup
+        //Odometry
         double oldTime = 0;
 
+        //Mecanum Drive
         double x = 0;
         double y = 0;
         double rotation = 0;
 
+        //Elevator
         double elevatorPower = 0;
+
+        //Intake
+        boolean IntakeClosed = true;
+        boolean IntakeButtonWasPressed = false;
 
         robot.init();  //Hardware configuration in RobotHardware.java
 
@@ -87,6 +95,24 @@ public class Competition extends LinearOpMode {
                 elevatorPower = 0;
 
             robot.runElevator(elevatorPower);
+
+            ///INTAKE
+
+            //Intake Pincher
+            boolean IntakeButtonPressed = gamepad1.a; //Check if button pressed
+
+            if (IntakeButtonPressed && !IntakeButtonWasPressed){ //Button pressed in this loop
+                IntakeClosed = !IntakeClosed; //Toggle position state
+                if (IntakeClosed){
+                    robot.CloseIntakePincher(); //Move to position 1
+                } else {
+                    robot.OpenIntakePincher(); //Move to position 2
+                }
+            }
+
+            IntakeButtonWasPressed = IntakeButtonPressed; //Update previous button state
+
+            telemetry.addData("Intake Button Pressed", IntakeButtonPressed);
 
             telemetry.update();
         }
