@@ -25,11 +25,11 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDFController xPid = new SonicPIDFController(0.0015, 0, 0, 0.05);
+    SonicPIDFController xPid = new SonicPIDFController(0.0015, 0, 0, 0);
 
-    SonicPIDFController yPid = new SonicPIDFController(-0.001, 0, 0, 0.1);
+    SonicPIDFController yPid = new SonicPIDFController(-0.0018, 0, 0, 0);
 
-    SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0.05);
+    SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this.driveTrain = driveTrain;
@@ -47,7 +47,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     public void execute() {
         odo.update();
 
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
 
         if(addTelemetry) {
             telemetry.addData("tx: ", targetX);
@@ -106,6 +106,23 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
             backLeftPower /= max;
             backRightPower /= max;
         }
+
+        if(Math.abs(frontLeftPower) <  minPower) {
+            frontLeftPower = minPower * Math.signum(frontLeftPower);
+        }
+
+        if(Math.abs(frontRightPower) <  minPower) {
+            frontRightPower = minPower * Math.signum(frontRightPower);
+        }
+
+        if(Math.abs(backLeftPower) <  minPower) {
+            backLeftPower = minPower * Math.signum(backLeftPower);
+        }
+
+        if(Math.abs(backRightPower) <  minPower) {
+            backRightPower = minPower * Math.signum(backRightPower);
+        }
+
 
         Log.i(LOG_TAG, String.format("Wheels power: fL: %f, fR: %f, bL: %f, bR: %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower));
 

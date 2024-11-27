@@ -97,6 +97,10 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart);
     }
 
+    public MovePivotCommand pivotToStart() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.StartPositionFromStart);
+    }
+
     public MovePivotCommand pivotToDelivery() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.DeliveryPositionFromStart);
     }

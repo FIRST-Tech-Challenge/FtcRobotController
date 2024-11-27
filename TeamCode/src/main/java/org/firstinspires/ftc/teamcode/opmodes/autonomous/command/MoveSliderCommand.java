@@ -36,6 +36,8 @@ public class MoveSliderCommand extends SounderBotCommandBase {
         if(isTargetReached()) {
             motor.set(0);
             finished.set(true);
+            telemetry.addLine("Done");
+
         } else {
             double minPower = .2;
 
@@ -44,13 +46,19 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                 power = minPower * Math.abs(power) / power;
             }
 
+            telemetry.addData("slider", position);
+            telemetry.addData("target", target);
+            telemetry.addData("power", power);
+
             motor.set(power);
         }
+
+        telemetry.update();
     }
 
     @Override
     protected boolean isTargetReached() {
-        return Math.abs(target - position) < 40;
+        return Math.abs(target - position) < 70;
     }
 
     @Override

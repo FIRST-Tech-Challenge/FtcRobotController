@@ -41,7 +41,7 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
         odo.setOffsets(Units.inchesToMMs(-6.5), Units.inchesToMMs(5.5));
 
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
     }
 
     @Override

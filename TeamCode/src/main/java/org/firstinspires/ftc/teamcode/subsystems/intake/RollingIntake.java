@@ -40,7 +40,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
         this.elbowServo = hardwareMap.get(Servo.class, "Elbow");
 
-        //colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        this.colorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
@@ -56,42 +56,66 @@ public class RollingIntake extends SonicSubsystemBase {
     public void periodic() {
         super.periodic();
 
-        //double d = GetDepth();
-
+        double d = GetDepth();
 
         //telemetry.addData("distance", d);
-        //telemetry.update();
+        //telemetry.addData("IsDelivery", this.isInDeliveryPosition);
+
+        if(d < 50) {
+            feedback.TurnLedGreen();
+        } else {
+            feedback.TurnLedRed();
+        }
 
         if(state == IntakeState.Intake) {
-            //if(d > 40) {
-                this.leftServo.setPower(-1);
-                this.rightServo.setPower(1);
-            //} else {
-            //    Hold();
-                //feedback.DriverRumbleBlip();
-                //feedback.OperatorRumbleLeft();
-            //    telemetry.addLine("Auto stop");
-            //}
+            //telemetry.addData("State", "Intake");
+
+            if(d > 50 || this.isInDeliveryPosition) {
+                telemetry.addData("power", 1);
+
+                this.leftServo.setPower(1);
+                this.rightServo.setPower(-1);
+
+            } else {
+                this.leftServo.setPower(0.2);
+                this.rightServo.setPower(-0.2);
+                //telemetry.addData("power",0);
+
+                feedback.DriverRumbleBlip();
+                feedback.OperatorRumbleBlip();
+            }
         } else if (state == IntakeState.Outtake) {
-            //if(d > 130) {
-                //feedback.DriverRumbleBlip();
-                //feedback.OperatorRumbleLeft();
-            //}
-            this.leftServo.setPower(1);
-            this.rightServo.setPower(-1);
+            //telemetry.addData("State", "Outtake");
+
+            if(d > 50) {
+                feedback.DriverRumbleBlip();
+                feedback.OperatorRumbleBlip();
+            }
+            this.leftServo.setPower(-1);
+            this.rightServo.setPower(1);
 
         } else {
+            //telemetry.addData("State", "Hold");
+
             this.leftServo.setPower(0);
             this.rightServo.setPower(0);
         }
+
+        //telemetry.update();
+    }
+
+    boolean isInDeliveryPosition = false;
+
+    public void SetInDeliveryPositionn(boolean isInDeliveryPosition) {
+        this.isInDeliveryPosition = isInDeliveryPosition;
     }
 
     public void SetElbowInSpecimenPosition() {
-        this.elbowServo.setPosition(.48);
+        this.elbowServo.setPosition(0.1);
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.75);
+        this.elbowServo.setPosition(.45);
     }
 
     public void SetElbowInInStart() {
@@ -122,7 +146,7 @@ public class RollingIntake extends SonicSubsystemBase {
         state = IntakeState.Hold;
     }
 
- /*   public double GetDepth() {
+    public double GetDepth() {
         if (colorSensor instanceof DistanceSensor) {
             double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
             //telemetry.addData("Left distance (mm)", "%.3f", depth);
@@ -130,7 +154,7 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         return 1000000;
-    }*/
+    }
 
     public void IntakeInAuto() {
         this.leftServo.setPower(-1);

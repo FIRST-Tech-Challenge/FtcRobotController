@@ -99,9 +99,9 @@ public abstract class AutoOpModeBase extends OpModeTemplate {
         super.initialize();
 
         feedback = new DriverFeedback(hardwareMap, driverGamepad, operatorGamepad, telemetry);
-        pivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, null);
-        slider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, null);
         rollingIntake = new RollingIntake(hardwareMap, operatorGamepad, telemetry, feedback);
+        pivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, null, rollingIntake);
+        slider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, null);
         limeLight = new LimeLight(hardwareMap, telemetry);
         driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, null, limeLight);
 

@@ -15,10 +15,28 @@ public class OdoTest extends CommandAutoOpMode {
                 //commandFactory.WriteTelemetry(),
                 new SequentialCommandGroup(
                         commandFactory.driveToTarget(200, 0, 0, 0.1),
-                        //commandFactory.driveToTarget(400, 0, -90),
-                        //commandFactory.driveToTarget(400, 400, -90, 0.1),
-                        commandFactory.driveToTarget(400, 400, -45, 0.2)
-                        //commandFactory.MotorTest()
+                        commandFactory.driveToTarget(450, 250, -45, 0.18),
+                        commandFactory.pivotToDelivery(),
+                        commandFactory.elbowToSpecimenPosition(),
+                        commandFactory.extandSlider(),
+                        commandFactory.driveToTarget(280, 420, -45, 0.1),
+                        commandFactory.waitFor(300),
+                        commandFactory.extandSlider(),
+                        commandFactory.outtake(),
+                        commandFactory.driveToTarget(450, 250, -45, 0.1),
+
+                        commandFactory.collapseSlider(),
+                        commandFactory.pivotToInTake(),
+
+                        commandFactory.driveToTarget(450, 250, 0, 0.1),
+
+                        commandFactory.pivotToStart()
+
+//                        commandFactory.elbowToSpecimenPosition(),
+//                        commandFactory.waitFor(500),
+//                        commandFactory.extandSlider(),
+//                        commandFactory.outtake(),
+//                        commandFactory.collapseSlider()
                 )
         );
     }
