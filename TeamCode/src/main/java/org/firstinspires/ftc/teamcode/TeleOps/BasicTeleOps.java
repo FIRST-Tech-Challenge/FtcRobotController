@@ -45,22 +45,22 @@ public class BasicTeleOps extends OpMode {
     //public static double powerFactor = 0.5;
 
     //Intake Configure
-    public static double intake_slide_Extension = 0.6;// range(0.3 - 0.65)
-    public static double intake_slide_Retract   = 0.3;
+    public static double intake_slide_Extension         = 0.6;// range(0.3 - 0.65)
+    public static double intake_slide_Retract           = 0.3;
 
-    public static double intake_Rotation        = 0.49; // range(0-1, 0.49 at the middle for installation
+    public static double intake_Rotation                = 0.49; // range(0-1, 0.49 at the middle for installation
 
-    public static double intake_Arm_initial     = 0.35;//range(0-0.56, 0: lowest, 0.56:fully retracted).
-    public static double intake_Arm_down        = 0.05;
-    public static double intake_Arm_retract     = 0.53;
+    public static double intake_Arm_initial             = 0.35;//range(0-0.56, 0: lowest, 0.56:fully retracted).
+    public static double intake_Arm_down                = 0.05;
+    public static double intake_Arm_retract             = 0.53;
 
-    public static double intake_Claw_Open       = 0.55; //range(0.25 - 0.6)
-    public static double intake_Claw_Close      = 0.3;
+    public static double intake_Claw_Open               = 0.55; //range(0.25 - 0.6)
+    public static double intake_Claw_Close              = 0.3;
 
     //Deposit Config
-    public static int deposit_Slide_down_Pos         = 50;   //range (0-3300), 50 to prevent hard hit.
-    public static int deposit_Slide_Highbar_Pos      = 795;  //slides Position Configure
-    public static int deposit_Slide_Highbasket_Pos   = 2800; //highest point
+    public static int deposit_Slide_down_Pos             = 50;   //range (0-3300), 50 to prevent hard hit.
+    public static int deposit_Slide_Highbar_Pos         = 795;  //slides Position Configure
+    public static int deposit_Slide_Highbasket_Pos      = 2800; //highest point
 
     public static double deposit_Wrist_dump_Pos         = 0.3; //range(0-1), 0: installation position
     public static double deposit_Wrist_retract_Pos      = 0.06; // 0.06 is rest position.
@@ -133,6 +133,7 @@ public class BasicTeleOps extends OpMode {
     @Override
     public void loop() {
 
+        //Bulk reading
         for (LynxModule hub : allHubs) {
             BulkData bulkData = hub.getBulkData();
             if (bulkData != null) {
@@ -142,7 +143,7 @@ public class BasicTeleOps extends OpMode {
                     int frontRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
 
                     telemetry.addData("Deposit Left Motor Position (Expansion Hub)", frontLeftMotor);
-                    telemetry.addData("Deposit right Motor Position", frontRightMotor);
+                    telemetry.addData("Deposit right Motor Position (Expansion Hub)", frontRightMotor);
                 } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
                     int liftMotorLeft = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
                     int liftMotorRight = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
@@ -156,10 +157,10 @@ public class BasicTeleOps extends OpMode {
         robotDrive.DriveLoop(); // Use RobotDrive methods
         RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
 
-        depositArmDrive.DepositArmLoop();
+        depositArmDrive.DepositArmLoop(); // Use Deposit Arm Loop
         FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
-        intakeArmDrive.IntakeArmLoop();
+        intakeArmDrive.IntakeArmLoop();  // Use Intake Arm Loop
         FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
 
         // Telemetry
