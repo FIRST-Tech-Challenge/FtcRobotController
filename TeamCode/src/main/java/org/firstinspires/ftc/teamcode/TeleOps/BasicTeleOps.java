@@ -28,7 +28,7 @@ import java.util.List;
         * transfer at deposit
  */
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "org.firstinspires.ftc.teamcode")
+@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "Meet_1")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
@@ -47,21 +47,6 @@ public class BasicTeleOps extends OpMode {
     //Bulk Reading
     private List<LynxModule> allHubs;
 
-    //Drive power factor
-    //public static double powerFactor = 0.5;
-
-    //Intake Configure
-    public static double intake_slide_Extension         = 0.6;// range(0.3 - 0.65)
-    public static double intake_slide_Retract           = 0.3;
-
-    public static double intake_Rotation                = 0.49; // range(0-1, 0.49 at the middle for installation
-
-    public static double intake_Arm_initial             = 0.35;//range(0-0.56, 0: lowest, 0.56:fully retracted).
-    public static double intake_Arm_down                = 0.05;
-    public static double intake_Arm_retract             = 0.53;
-
-    public static double intake_Claw_Open               = 0.55; //range(0.25 - 0.6)
-    public static double intake_Claw_Close              = 0.3;
 
     //Deposit Config
     public static int deposit_Slide_down_Pos             = 50;   //range (0-3300), 50 to prevent hard hit.
