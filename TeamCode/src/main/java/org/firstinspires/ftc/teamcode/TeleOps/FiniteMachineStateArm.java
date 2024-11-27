@@ -95,7 +95,7 @@ public class FiniteMachineStateArm {
                     robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.liftMotorLeft.setPower(UPLIFT_POWER);
                     robot.liftMotorRight.setPower(UPLIFT_POWER);
-                    liftState = LiftState.LIFT_EXTEND;
+                    liftState = LIFTSTATE.LIFT_EXTEND;
                 }
                 break;
             case LIFT_EXTEND:
@@ -107,7 +107,7 @@ public class FiniteMachineStateArm {
                    // Move deposit wrist servo to dump position
                     robot.depositWristServo.setPosition(DEPOSIT_DUMP);
                     liftTimer.reset();
-                    liftState = LiftState.LIFT_DUMP;
+                    liftState = LIFTSTATE.LIFT_DUMP;
                 }
                 break;
             case LIFT_DUMP:
@@ -119,7 +119,7 @@ public class FiniteMachineStateArm {
                     robot.depositLeftArmServo.setPosition(DEPOSIT_ARM_IDLE);// Reset servo to idle
                     robot.depositRightArmServo.setPosition(DEPOSIT_ARM_IDLE);
                     robot.depositWristServo.setPosition(DEPOSIT_IDLE);
-                    liftState = LiftState.LIFT_RETRACT;
+                    liftState = LIFTSTATE.LIFT_RETRACT;
                 }
                 break;
             case LIFT_RETRACT:
@@ -135,18 +135,18 @@ public class FiniteMachineStateArm {
                 if (isLiftAtPosition(LIFT_LOW)) {
                     robot.liftMotorLeft.setPower(0); // Stop the motor after reaching the low position
                     robot.liftMotorRight.setPower(0);
-                    liftState = LiftState.LIFT_START;
+                    liftState = LIFTSTATE.LIFT_START;
                 }
                 break;
             default:
-                liftState = LiftState.LIFT_START;
+                liftState = LIFTSTATE.LIFT_START;
                 break;
         }
 
         // Handle lift Cancel Action if 'B' button is pressed
         if ((gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD && liftState != LiftState.LIFT_START) {
             debounceTimer.reset();
-            liftState = LiftState.LIFT_START;
+            liftState = LIFTSTATE.LIFT_START;
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
             robot.liftMotorRight.setPower(0);
             robot.depositWristServo.setPosition(DEPOSIT_IDLE);
@@ -175,7 +175,7 @@ public class FiniteMachineStateArm {
     private boolean servo_AtPosition(double servoClawPosition) {
         return Math.abs(robot.depositClawServo.getPosition() - servoClawPosition) < 0.01;
     }
-    LiftState State(){
+    LIFTSTATE State(){
         return liftState;
     }
 
