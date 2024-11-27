@@ -235,16 +235,21 @@ public class MeetThreeAuto extends LinearOpMode {
         TrajectoryActionBuilder trajectory;
         switch (sp) {
             case RED_LEFT:
+                trajectory = roadRunner.actionBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
+                        .strafeTo(new Vector2d(44, -60));
+                break;
             case BLUE_LEFT:
-                trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .strafeTo(new Vector2d(-25, 0)).strafeTo(new Vector2d(0, 0)) // push the block to the holding zone by strafing left
-                        .strafeTo(new Vector2d(77, 0)); // park on the right side
+                trajectory = roadRunner.actionBuilder(new Pose2d(36, 60, Math.toRadians(270)))
+                        .strafeTo(new Vector2d(-44, 60));
                 break;
             case RED_RIGHT:
+                trajectory = roadRunner.actionBuilder(new Pose2d(23.6, -60, Math.toRadians(90)))
+                        .strafeTo(new Vector2d(62, -60));
+                break;
             case BLUE_RIGHT:
             default:
-                trajectory = roadRunner.actionBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                        .strafeTo(new Vector2d(50, 0));
+                trajectory = roadRunner.actionBuilder(new Pose2d(-12.0, 60, Math.toRadians(270)))
+                        .strafeTo(new Vector2d(-62, 60));
                 break;
         }
         Actions.runBlocking(
