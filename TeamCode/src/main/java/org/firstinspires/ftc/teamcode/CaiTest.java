@@ -151,7 +151,8 @@ public class CaiTest extends LinearOpMode {
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
         telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
-        
+        telemetry.addData("left stick y", gamepad2.left_stick_y);
+        telemetry.addData("motor set position to move to", arm_rotator_motor.getTargetPosition());
         dashboardTelemetry.addData("tps", tps);
 
         //update telemetry
@@ -167,14 +168,19 @@ public class CaiTest extends LinearOpMode {
         front_left_wheel.setPower((((left_stick_y + left_stick_x)*-1) + right_stick_x)*0.5);
         front_right_wheel.setPower((((left_stick_y - left_stick_x)*-1) - right_stick_x)*0.5);
     }
+    private int tacos = 0;
     public void update_arm_rotation(){
         //arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.6)) *-1);
 
+        if(tacos == 40) {
+            arm_target = (int) (arm_rotator_motor.getTargetPosition() + ((gamepad2.left_stick_y * -10)));
 
-        arm_target = (int) (arm_rotator_motor.getTargetPosition() + ((gamepad2.left_stick_y*-10) * armVelocity));
-
-        arm_rotator_motor.setTargetPosition(arm_target);
-
+            arm_rotator_motor.setTargetPosition(arm_target);
+            arm_rotator_motor.setPower(1);
+            arm_rotator_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else{
+            tacos++;
+        }
         /*if(arm_rotator_motor.getCurrentPosition() >= swap){
             if (gamepad2.left_stick_y > 0){
                 arm_rotator_motor.setPower(gamepad2.left_stick_y*0.5 *-1);

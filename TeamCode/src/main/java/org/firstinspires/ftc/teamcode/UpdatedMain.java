@@ -147,14 +147,14 @@ public class UpdatedMain extends LinearOpMode {
         int up = -276;
         int slow_down_pos = -89;
         //arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
-        if(gamepad2.left_stick_y == 0 && arm_rotator_motor.getCurrentPosition() <= -10  && arm_rotator_motor.getCurrentPosition() > -540){
+        /*if(gamepad2.left_stick_y == 0 && arm_rotator_motor.getCurrentPosition() <= -10  && arm_rotator_motor.getCurrentPosition() > -540){
             if(arm_rotator_motor.getCurrentPosition() <= up-8){
                 arm_rotator_motor.setPower(-0.3);
             }else if (arm_rotator_motor.getCurrentPosition() >= up+8){
                 arm_rotator_motor.setPower(0.3);
             }
             telemetry.addData("arm status", "Arm Holding");
-        }else{
+        }else{*/
             if(arm_rotator_motor.getCurrentPosition() <= slow_down_pos){
                 arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
                 telemetry.addData("arm status", "Arm moving full speed");
@@ -163,7 +163,7 @@ public class UpdatedMain extends LinearOpMode {
                 telemetry.addData("arm status", "Arm moving slowed");
             }
             telemetry.addData("gamepad 2 left stick y", gamepad2.left_stick_y);
-        }
+        //}
         //arm_rotator_motor.setPower((gamepad2.left_stick_y == 0 ? 0.2 : (gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8))*-1)));
         /*if(arm_rotator_motor.getCurrentPosition() >= swap){
             if (gamepad2.left_stick_y > 0){
