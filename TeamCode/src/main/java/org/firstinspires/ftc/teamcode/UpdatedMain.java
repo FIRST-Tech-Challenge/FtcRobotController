@@ -45,7 +45,7 @@ public class UpdatedMain extends LinearOpMode {
     private double down_speed = 0.7;
     */
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
-
+    public static wheelSpeed double 0.5;
     // misc vars
     private int arm_target;
     
@@ -168,10 +168,10 @@ public class UpdatedMain extends LinearOpMode {
         double left_stick_x = gamepad1.left_stick_x * -1;
         double left_stick_y = gamepad1.left_stick_y;
         double right_stick_x = gamepad1.right_stick_x;
-        back_left_wheel.setPower((((left_stick_y - left_stick_x)*-1) + right_stick_x)*0.5);
-        back_right_wheel.setPower((((left_stick_y + left_stick_x)*-1) - right_stick_x)*0.5);
-        front_left_wheel.setPower((((left_stick_y + left_stick_x)*-1) + right_stick_x)*0.5);
-        front_right_wheel.setPower((((left_stick_y - left_stick_x)*-1) - right_stick_x)*0.5);
+        back_left_wheel.setPower((((left_stick_y - left_stick_x)*-1) + right_stick_x)*wheelSpeed);
+        back_right_wheel.setPower((((left_stick_y + left_stick_x)*-1) - right_stick_x)*wheelSpeed);
+        front_left_wheel.setPower((((left_stick_y + left_stick_x)*-1) + right_stick_x)*wheelSpeed);
+        front_right_wheel.setPower((((left_stick_y - left_stick_x)*-1) - right_stick_x)*wheelSpeed);
     }
     public void update_arm_rotation(){
         int up = -276;
