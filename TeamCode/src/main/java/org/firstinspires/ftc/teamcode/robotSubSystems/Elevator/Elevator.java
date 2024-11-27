@@ -5,6 +5,101 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Utils.PID;
+
+public class Elevator {
+    private static DcMotor leftMotor;
+    private static DcMotor rightMotor;
+
+    private static int wantedPos = 0;
+
+    private static final PID changeLevelPID = new PID(
+            ElevatorConstants.changeLevelKp,
+            ElevatorConstants.changeLevelKi,
+            ElevatorConstants.changeLevelKd,
+            ElevatorConstants.changeLevelKf,
+            ElevatorConstants.changeLevelIzone,
+            ElevatorConstants.changeLevelMaxSpeed,
+            ElevatorConstants.changeLevelMinSpeed);
+
+
+    public static void init(HardwareMap hardwareMap) {
+        rightMotor = hardwareMap.get(DcMotor.class, "1");
+        leftMotor = hardwareMap.get(DcMotor.class, "0");
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        resetEncoder();
+    }
+
+    private static double power = 0;
+    private static ElevatorState lastWantedState = ElevatorState.INTAKE;
+    public static void operate(ElevatorState wantedState, double gamepadVal, double secondGamepad) {
+        if (gamepadVal == 0 && wantedState != lastWantedState) {
+            switch (wantedState) {
+                case INTAKE:
+                    wantedPos = ElevatorConstants.IntakePos;
+                    break;
+                case SPECIMEN:
+                    wantedPos = ElevatorConstants.SpecimenPos;
+                    break;
+                case PUTSPECIMEN:
+                    wantedPos = ElevatorConstants.PutSpecimenPos;
+                    break;
+            }
+            lastWantedState = wantedState;
+        }
+        if (wantedState != ElevatorState.INTAKE) {
+            wantedPos -= (int) gamepadVal * 25;
+        }
+
+        changeLevelPID.setWanted(wantedPos);
+
+        power = changeLevelPID.update(getElevatorPos());
+
+        if (secondGamepad == 0) {
+            leftMotor.setPower(power);
+            rightMotor.setPower(power);
+        }else {
+            leftMotor.setPower(0.5 * secondGamepad);
+            rightMotor.setPower(0.5 * secondGamepad);
+        }
+
+    }
+    private static int encoderResetVal = 0;
+    private static int encoderResetValL = 0;
+    public static int getElevatorPos() {
+        return leftMotor.getCurrentPosition() - encoderResetVal;
+    }
+
+    public static int getWantedPos(){return wantedPos;}
+
+    public static double getElevatorPosL() {
+        return leftMotor.getCurrentPosition() - encoderResetValL;
+//        return power;
+    }
+
+    public static void resetEncoder(){
+        encoderResetVal = leftMotor.getCurrentPosition();
+        encoderResetValL = leftMotor.getCurrentPosition();
+    }
+
+    private static void setFloor(int wantedPos){
+
+        changeLevelPID.setWanted(wantedPos);
+
+        leftMotor.setPower(changeLevelPID.update(leftMotor.getCurrentPosition()));
+        rightMotor.setPower(changeLevelPID.update(leftMotor.getCurrentPosition()));
+    }
+
+}
+
+/*
 public class Elevator {
     public static DcMotor rightMotor;
     public static DcMotor leftMotor;
@@ -33,8 +128,8 @@ public class Elevator {
             case INTAKE:
                 leftMotor.setTargetPosition(ElevatorConstants.IntakePos);
                 rightMotor.setTargetPosition(0);
-                rightMotor.setPower(0.5);
-                leftMotor.setPower(0.5);
+                rightMotor.setPower(1);
+                leftMotor.setPower(1);
                 leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 currentElevPosL = getElevatorPosL();
@@ -69,6 +164,10 @@ public class Elevator {
                 //the number is the elevator speed (PID already in the settargetposition func)
                 leftMotor.setTargetPosition((int) (currentElevPosL + gamepadVal * 220));
                 rightMotor.setTargetPosition((int) (currentElevPosR + gamepadVal * 220));
+                rightMotor.setPower(1);
+                leftMotor.setPower(1);
+                leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 currentElevPosL = getElevatorPosL();
                 currentElevPosR = getElevatorPosR();
                 break;
@@ -80,6 +179,13 @@ public class Elevator {
         leftMotor.setPower(val);
     }
 
+    public static double getCurrentElevPosL() {
+        return currentElevPosL;
+    }
+    public static void resetElev() {
+        currentElevPosL = 0;
+        currentElevPosR = 0;
+    }
 
     public static void operateTest(int Val) {
         leftMotor.setTargetPosition(Val);
@@ -98,3 +204,5 @@ public class Elevator {
         encoderResetValL = leftMotor.getCurrentPosition();
     }
 }
+
+ */
