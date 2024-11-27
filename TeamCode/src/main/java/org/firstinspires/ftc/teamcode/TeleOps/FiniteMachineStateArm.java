@@ -105,6 +105,7 @@ public class FiniteMachineStateArm {
                         }
                     }
                     if (transfer_timer.seconds() >= 0.85) {
+                        robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
                         robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
                         robot.liftMotorRight.setTargetPosition(LIFT_HIGH);
                         robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
