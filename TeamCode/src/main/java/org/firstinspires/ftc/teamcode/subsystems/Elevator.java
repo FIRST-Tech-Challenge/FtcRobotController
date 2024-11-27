@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.acmerobotics.roadrunner.util.Angle;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,7 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.apache.commons.math3.analysis.function.Acos;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.opencv.core.Mat;
 
 public class Elevator extends SubsystemBase {
     private Telemetry telemetry;
@@ -43,13 +46,13 @@ public class Elevator extends SubsystemBase {
 
     public void extend(double whatPower) {
         telemetry.addData("ElevatorState", "extend");
-//        if (isExtended()){
-//            brake();
-//        } else {
+        if (isExtended()){
+            brake();
+        } else {
             extending = true;
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPower(whatPower);
-//        }
+        }
     }
 
 //    public void extend(int position) {
@@ -96,6 +99,10 @@ public class Elevator extends SubsystemBase {
         return motor.getCurrentPosition();
     }
 
+    public double getDistanceInInches() {
+        return getDistance() * 0.01229202524;
+    }
+
     public boolean isRetracted(){
         return bottomLimit.isPressed();
     }
@@ -103,10 +110,11 @@ public class Elevator extends SubsystemBase {
     //this method returns true if we are maxed out on distance
     public boolean isExtended(){
         //TODO: calculate maximum distance based on angle
+        double elevatorDistance = getDistanceInInches();
+        //wormAngle
+        double horizontalExtension = (elevatorDistance / Math.cos(wormAngle));
 
-
-
-        return getDistance() >= 3300 || getDistance() == extendingPosition;
+        return horizontalExtension >= 21;
     }
 
     //this function fires every cycle, at about 50hz, so anything in here will effectively be the default state
