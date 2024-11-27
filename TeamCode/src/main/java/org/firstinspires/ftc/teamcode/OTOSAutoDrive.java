@@ -57,7 +57,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/26/2024, 5:57pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "11/27/2024, 2:20pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         configureOtos();
@@ -70,44 +70,62 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(800);
         setViper(VIPER_MAX);                                        // Extending Viper
         sleep(1000);
-        driveToLoc(8, 18, 45, 1.5);    // Go to basket
-        sleep(200);
+        driveToLoc(9, 16, 45, 1.5);    // Go to basket
+        sleep(100);
         setClaw(CLAW_MAX);                                          // Drop the block
 
         // Second Sample ///////////////////////////////////////////////////////////////
         driveToLoc(31, -4, -10, 1);
-        setViper(1500);
+        setViper(1400);
         sleep(1000);
         setVertical(VERTICAL_MIN);
-        sleep(2000);
+        sleep(1500);
         driveToLoc(32, 0, -10, 1);
-        setClaw(CLAW_MIN);
-        /*
+        sleep(200);
+        setClaw(CLAW_MIN);                                          // Grab second block
+        sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(7, 10, 45, 1);  // Go to basket
-        sleep(700);
+        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        sleep(200);
         setClaw(CLAW_MAX);                                          // Drop second block
-        //sleep(600);
 
         // Third Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(33.5, 10, -1, 1);   // Todo: fix numbers
-        setViper(1500);
-        sleep(700);
-        setVertical(0);
-        sleep(2000);
-        moveForward(0.3, 700);
-        //sleep(300);
+        driveToLoc(31, 6, -10, 1);
+        setViper(1400);
+        sleep(1000);
+        setVertical(VERTICAL_MIN);
+        sleep(1000);
+        driveToLoc(32, 10, -10, 1);
+        sleep(200);
         setClaw(CLAW_MIN);                                          // Grab third block
+        sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(5, 9, 45, 1);  // Go to basket
-        sleep(600);
+        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        sleep(200);
         setClaw(CLAW_MAX);                                          // Drop third block
-        //sleep(600);
 
+        // Fourth Sample ///////////////////////////////////////////////////////////////
+        driveToLoc(31, 14, -10, 1);
+        setViper(1400);
+        sleep(1000);
+        setVertical(VERTICAL_MIN);
+        sleep(1000);
+        driveToLoc(32, 17, -10, 1);
+        sleep(200);
+        setClaw(CLAW_MIN);                                          // Grab fourth block
+        sleep(200);
+        driveToLoc(31, 12, -10, 1);
+        setVertical(VERTICAL_MAX, 1000);
+        sleep(700);
+        setViper(VIPER_MAX);
+        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        sleep(200);
+        setClaw(CLAW_MAX);                                          // Drop fourth block
+/*
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
         setViper(VIPER_MIN);
