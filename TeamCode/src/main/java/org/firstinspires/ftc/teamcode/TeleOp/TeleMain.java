@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import android.graphics.Color;
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
-import org.firstinspires.ftc.teamcode.Systems.Servos;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
-@TeleOp(name="Main")
+@TeleOp(name="Teleop-Main")
 
 public class TeleMain extends LinearOpMode {
 
@@ -20,8 +26,12 @@ public class TeleMain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+
+
         motors = new Motors(hardwareMap); // just needed for debugging, probably comment out and line 32
         input = new Input(hardwareMap);
+
+
 
         waitForStart();
 
@@ -39,15 +49,19 @@ public class TeleMain extends LinearOpMode {
             double armRaise = gamepad2.right_stick_y * 100;
             boolean dropButton = gamepad2.a;
 
-            input.Move(move);
-            input.Spin(spin);
-            input.Strafe(strafe);
+            input.move(move);
+            input.spin(spin);
+            input.strafe(strafe);
 
-            input.Intake(intake);
-            input.Pickup(armHold);
+            //input.intake(intake);
+            //input.pickup(armHold);
 
             input.armMove(-armRaise);
             input.drop(dropButton);
+
+
+
+            input.stabalizeArm(gamepad2.left_stick_y);
 
             telemetry.addData("MOVE:", "left_y (%.2f),", move);
             telemetry.addData("SPIN:", "right_x (%.2f),", spin);

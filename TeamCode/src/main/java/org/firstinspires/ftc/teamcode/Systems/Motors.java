@@ -1,12 +1,29 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Motors {
+
+
+    enum Type {
+        LeftBack (0),
+        LeftFront (1),
+        RightFront (2),
+        RightBack (3),
+        Arm (4),
+        Claw (5);
+
+        private int value;
+
+        Type(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 
     public DcMotor[] motors;
 
@@ -21,23 +38,34 @@ public class Motors {
 
     public Motors(HardwareMap hardwareMap) {
 
-        motors = new DcMotor[5];
+        motors = new DcMotor[6];
         //i may or may not have subtracted one from motors length cuz instead of 4 3? it'll work i swear
         // it did not work
-        for (int i = 0; i < motors.length; i++) {
-            motors[i] = hardwareMap.get(DcMotor.class, Integer.toString(i));
 
-            if((i <= 1 ) || (i == 4)) {
-                motors[i].setDirection(DcMotor.Direction.REVERSE);
-            }
-            else {
-                motors[i].setDirection(DcMotor.Direction.FORWARD);
-            }
+        motors[Type.LeftBack.getValue()] = hardwareMap.get(DcMotor.class, "0");
+        motors[Type.LeftFront.getValue()] = hardwareMap.get(DcMotor.class, "1");
+        motors[Type.RightFront.getValue()] = hardwareMap.get(DcMotor.class, "2");
+        motors[Type.RightBack.getValue()] = hardwareMap.get(DcMotor.class, "3");
+        motors[Type.Arm.getValue()] = hardwareMap.get(DcMotor.class, "4");
+        motors[Type.Claw.getValue()] = hardwareMap.get(DcMotor.class, "5");
 
-        }
 
-       motors[4].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       motors[4].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[Type.LeftBack.getValue()].setDirection(DcMotor.Direction.REVERSE);
+        motors[Type.LeftFront.getValue()].setDirection(DcMotor.Direction.REVERSE);
+        motors[Type.Arm.getValue()].setDirection(DcMotor.Direction.REVERSE);
+
+        motors[Type.RightFront.getValue()].setDirection(DcMotor.Direction.FORWARD);
+        motors[Type.RightBack.getValue()].setDirection(DcMotor.Direction.FORWARD);
+        motors[Type.Claw.getValue()].setDirection(DcMotor.Direction.FORWARD);
+
+
+        motors[Type.Claw.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motors[Type.Claw.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
 /*
             This might be a bit difficult to understand at first but the block of code above basically does what the commented out one does below.
 
@@ -79,11 +107,11 @@ public class Motors {
 
     }
 
-    public void MoveMotor(int motorNumber, double power) { //choose motor to move, power is 0-100, motorNumber is 0-3
+    public void MoveMotor(Type motorNumber, double power) { //choose motor to move, power is 0-100, motorNumber is 0-3
 
         double actualPower = power / 100;
 
-        motors[motorNumber].setPower(actualPower);
+        motors[motorNumber.getValue()].setPower(actualPower);
     }
 
     public double GetArmDistance()
