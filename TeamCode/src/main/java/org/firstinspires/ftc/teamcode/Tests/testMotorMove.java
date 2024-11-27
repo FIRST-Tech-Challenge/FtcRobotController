@@ -26,9 +26,9 @@ public class testMotorMove extends LinearOpMode {
             double leftstickx = gamepad1.left_stick_x * 100;
 
 
-            input.Move(leftsticky);
-            input.Spin(rightstickx);
-            input.Strafe(leftstickx);
+            input.move(leftsticky);
+            input.spin(rightstickx);
+            input.strafe(leftstickx);
 
             telemetry.addData("MOVE:", "left_y (%.2f),", leftsticky);
             telemetry.addData("SPIN:", "right_x (%.2f),", rightstickx);
