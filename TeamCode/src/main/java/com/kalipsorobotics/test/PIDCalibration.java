@@ -31,7 +31,7 @@ public class PIDCalibration extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
-        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, imuModule, 0, 0, Math.toRadians(0));
+        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
 
         waitForStart();
 

@@ -12,7 +12,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 @TeleOp
-public class TestColor extends LinearOpMode {
+public class TestColorOfSample extends LinearOpMode {
 
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
@@ -28,7 +28,7 @@ public class TestColor extends LinearOpMode {
         driveTrain = new DriveTrain(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        wheelOdometry = new WheelOdometry(driveTrain,opModeUtilities, imuModule,0,0,Math.toRadians(0));
+        wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
         //Outtake outtake = new Outtake(opModeUtilities);
 
         ColorDetector sampleColorDetector = new ColorDetector(opModeUtilities);

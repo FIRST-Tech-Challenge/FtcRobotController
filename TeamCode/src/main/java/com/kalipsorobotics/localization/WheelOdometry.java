@@ -36,11 +36,12 @@ public class WheelOdometry {
     private volatile double prevImuHeading;
 //    private final double MM_TO_INCH = 1/25.4;
 
-    public WheelOdometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, IMUModule imuModule, double xCoordinate,
-                         double yCoordinate, double theta) {
+    public WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule,
+                         double xCoordinate,
+                         double yCoordinate, double thetaDeg) {
         this.opModeUtilities = opModeUtilities;
         this.imuModule = imuModule;
-        this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
+        this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
         Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
@@ -62,11 +63,20 @@ public class WheelOdometry {
     }
 
     public double countRight() {
-        return ticksToMM(rightEncoder.getCurrentPosition());
+        //corresponds to fRight
+        //direction FORWARD
+        //negative because encoder directions
+        return ticksToMM(-rightEncoder.getCurrentPosition());
     }
     public double countLeft() {
+        //corresponds to fLeft
+        //direction FORWARD
+        //positive because encoder directions
         return ticksToMM(leftEncoder.getCurrentPosition());}
     public double countBack() {
+        //corresponds to bRight
+        //direction REVERSE
+        //positive because encoder directions
         return ticksToMM(backEncoder.getCurrentPosition());
     }
 
@@ -184,7 +194,7 @@ public class WheelOdometry {
         prevTime = currentTime;
 
         currentPosition = calculateGlobal(relativeDelta, currentPosition);
-        Log.d("currentpos", "current pos " + currentPosition.getTheta());
+        Log.d("currentpos", "current pos " + currentPosition.toString());
 
         prevRightDistanceMM = rightDistanceMM;
         prevLeftDistanceMM = leftDistanceMM;
@@ -193,8 +203,6 @@ public class WheelOdometry {
         prevImuHeading = currentImuHeading;
 
 
-
-        //opModeUtilities.getTelemetry().addData("global", currentPosition.toString());
         return currentPosition;
     }
 

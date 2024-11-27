@@ -55,7 +55,8 @@ public class Position {
 
     @Override
     public String toString() {
-        return  String.format("x=%.2f, y=%.2f, theta=%.4f", x, y, theta);
+        return  String.format("x=%.2f (%.2f in), y=%.2f (%.2f in), theta=%.4f (%.1f deg)", x, x/25.4, y, y/25.4,
+                theta, Math.toDegrees(theta));
     }
 
     public String getPoint() {
