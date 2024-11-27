@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -29,7 +30,7 @@ public class CaiTest extends LinearOpMode {
 
     //Road Runner Dashboard
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-    private final Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    private MultipleTelemetry telemetry;
 
     // Runtime modifiable values
     // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
@@ -54,6 +55,7 @@ public class CaiTest extends LinearOpMode {
     //main loop
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //setting up motors
         initialize_hand();
         initialize_arm();
@@ -135,25 +137,21 @@ public class CaiTest extends LinearOpMode {
      */
     public void display_data(){
         //Hand
-        dashboardTelemetry.addData("Hand Grip", hand_grip_servo.getPosition());
-        dashboardTelemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
+        telemetry.addData("Hand Grip", hand_grip_servo.getPosition());
+        telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
         telemetry.addData("Hand Grip", hand_grip_servo.getPosition());
         //Arm
-        dashboardTelemetry.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
-        dashboardTelemetry.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
-        dashboardTelemetry.addData("Arm Target", arm_target);
+        telemetry.addData("Arm Extension", arm_extender_motor.getCurrentPosition());
+        telemetry.addData("Arm Rotation", arm_rotator_motor.getCurrentPosition());
+        telemetry.addData("Arm Target", arm_target);
         //Vars that should be changeable (please)
-        dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
+        telemetry.addData("Trigger Modifier", triggerModifier);
         //other
-        telemetry.addData("hand grip", hand_grip_servo.getPosition());
-        telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
-        telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
         telemetry.addData("left stick y", gamepad2.left_stick_y);
         telemetry.addData("motor set position to move to", arm_rotator_motor.getTargetPosition());
-        dashboardTelemetry.addData("tps", tps);
+        telemetry.addData("tps", tps);
 
         //update telemetry
-        dashboardTelemetry.update();
         telemetry.update();
     }
     public void update_driving(){
