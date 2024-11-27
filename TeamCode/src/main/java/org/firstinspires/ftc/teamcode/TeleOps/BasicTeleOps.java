@@ -21,8 +21,14 @@ import java.util.List;
  *
  */
 
+/** version 1.0
+ * transfer at intake
+ */
+/** version 1.1
+        * transfer at deposit
+ */
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS", group = "org.firstinspires.ftc.teamcode")
+@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "org.firstinspires.ftc.teamcode")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
@@ -110,9 +116,10 @@ public class BasicTeleOps extends OpMode {
 
         //Intake Arm Control
         intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
-                intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
-                intake_slide_Retract, intake_slide_Extension, intake_Rotation,
-                intake_Claw_Open, intake_Claw_Close);
+                RobotActionConfig.intake_Arm_initial, RobotActionConfig.intake_Arm_Idle, RobotActionConfig.intake_Arm_Pick, RobotActionConfig.intake_Arm_Transfer,
+                RobotActionConfig.intake_slide_Retract, RobotActionConfig.intake_slide_Extension,
+                RobotActionConfig.intake_Rotation,
+                RobotActionConfig.intake_Claw_Open, RobotActionConfig.intake_Claw_Close);
         intakeArmDrive.Init();
 
         // get bulk reading
