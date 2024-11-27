@@ -152,6 +152,9 @@ public class Settings {
             public static Pose2d BLUE_LEFT_CHAMBER_POSE = new Pose2d(5, 35, Math.toRadians(270));
             public static Pose2d BLUE_RIGHT_CHAMBER_POSE = new Pose2d(-5, 35, Math.toRadians(270));
 
+            public static Pose2d RED_BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
+            public static Pose2d BLUE_BASKET_POSE = new Pose2d(55, 55, Math.toRadians(225));
+
             public static Pose2d RED_HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
             public static Pose2d BLUE_HP_POSE = new Pose2d(-36, 55.0, Math.toRadians(135));
 
@@ -316,10 +319,10 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.FULL;
+        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.BASKET;
 
         public enum AutonomousMode {
-            JUST_PARK, JUST_PLACE, FULL
+            JUST_PARK, JUST_PLACE, CHAMBER, BASKET
         }
     }
 

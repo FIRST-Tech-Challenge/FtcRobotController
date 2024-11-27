@@ -130,10 +130,11 @@ public class MeetTwoStableAuto extends LinearOpMode {
                 immediatelyPlace(sp);
                 return;
 
-            case FULL:
-                gameLoopSetup(sp, MeetThreeAuto.ChamberHeight.LOW);
+            case CHAMBER:
+            case BASKET:
+                gameLoopSetup(sp, MeetThreeAuto.PlacementHeight.CHAMBER_LOW);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
-                    gameLoop(sp, MeetThreeAuto.ChamberHeight.LOW);
+                    gameLoop(sp, MeetThreeAuto.PlacementHeight.CHAMBER_LOW);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
                 gameLoopEnd(sp);
@@ -142,7 +143,7 @@ public class MeetTwoStableAuto extends LinearOpMode {
         }
     }
 
-    public void gameLoopSetup(StartingPosition sp, MeetThreeAuto.ChamberHeight chamberHeight) {
+    public void gameLoopSetup(StartingPosition sp, MeetThreeAuto.PlacementHeight placementHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
@@ -152,11 +153,11 @@ public class MeetTwoStableAuto extends LinearOpMode {
                         placeChamber()));
     }
 
-    public void gameLoop(StartingPosition sp, MeetThreeAuto.ChamberHeight chamberHeight) {
+    public void gameLoop(StartingPosition sp, MeetThreeAuto.PlacementHeight placementHeight) {
         baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
         getNextSpecimen(sp);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
-        placeNextSpecimenOnChamber(sp, MeetThreeAuto.ChamberHeight.HIGH);
+        placeNextSpecimenOnChamber(sp, MeetThreeAuto.PlacementHeight.CHAMBER_HIGH);
     }
 
     public void gameLoopEnd(StartingPosition sp) {
@@ -195,7 +196,7 @@ public class MeetTwoStableAuto extends LinearOpMode {
         return new GrabSpecimenFromHumanPlayer();
     }
 
-    public void placeNextSpecimenOnChamber(StartingPosition sp, MeetThreeAuto.ChamberHeight mode) {
+    public void placeNextSpecimenOnChamber(StartingPosition sp, MeetThreeAuto.PlacementHeight mode) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
 
         Actions.runBlocking(

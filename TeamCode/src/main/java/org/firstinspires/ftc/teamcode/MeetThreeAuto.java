@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -128,19 +127,29 @@ public class MeetThreeAuto extends LinearOpMode {
                 immediatelyPlace(sp);
                 return;
 
-            case FULL:
-                TrajectoryActionBuilder previousTrajectory = gameLoopSetup(sp, ChamberHeight.LOW);
+            case CHAMBER:
+                TrajectoryActionBuilder previousChamberTrajectory = gameLoopSetup(sp, PlacementHeight.CHAMBER_HIGH);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
-                    previousTrajectory = gameLoop(sp, previousTrajectory, ChamberHeight.LOW);
+                    previousChamberTrajectory = gameLoop(sp, previousChamberTrajectory, PlacementHeight.CHAMBER_HIGH);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
-                previousTrajectory = gameLoopEnd(sp, previousTrajectory);
+                gameLoopEnd(sp, previousChamberTrajectory);
+                baseRobot.logger.update("Autonomous phase", "Victory is ours");
+                break;
+
+            case BASKET:
+                TrajectoryActionBuilder previousBasketTrajectory = gameLoopSetup(sp, PlacementHeight.BASKET_HIGH);
+                while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
+                    previousBasketTrajectory = gameLoop(sp, previousBasketTrajectory, PlacementHeight.BASKET_HIGH);
+                }
+                baseRobot.logger.update("Autonomous phase", "Parking");
+                gameLoopEnd(sp, previousBasketTrajectory);
                 baseRobot.logger.update("Autonomous phase", "Victory is ours");
                 break;
         }
     }
 
-    public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, ChamberHeight chamberHeight) {
+    public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, PlacementHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
 
@@ -153,12 +162,20 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public TrajectoryActionBuilder gameLoop(StartingPosition sp, TrajectoryActionBuilder previousTrajectory,
-            ChamberHeight chamberHeight) {
+            PlacementHeight placementHeight) {
         baseRobot.telemetry.addData("Autonomous phase", "Grabbing next specimen");
         baseRobot.telemetry.update();
         previousTrajectory = getNextSpecimen(sp, previousTrajectory);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
-        previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, ChamberHeight.HIGH);
+        switch (placementHeight) {
+            case CHAMBER_LOW:
+            case CHAMBER_HIGH:
+                previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, placementHeight);
+            case BASKET_LOW:
+            case BASKET_HIGH:
+                previousTrajectory = placeNextSampleInBasket(sp, previousTrajectory, placementHeight);
+
+        }
         return previousTrajectory;
     }
 
@@ -175,11 +192,15 @@ public class MeetThreeAuto extends LinearOpMode {
     /**
      * Enum defining possible chamber heights for scoring
      */
-    public enum ChamberHeight {
+    public enum PlacementHeight {
         /** Lower scoring position */
-        LOW,
+        CHAMBER_LOW,
         /** Upper scoring position */
-        HIGH
+        CHAMBER_HIGH,
+        BASKET_LOW,
+        /** Upper scoring position */
+        BASKET_HIGH,
+
     }
 
     public class PlaceChamber implements Action {
@@ -229,7 +250,7 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public TrajectoryActionBuilder placeNextSpecimenOnChamber(StartingPosition sp,
-            TrajectoryActionBuilder previousTrajectory, ChamberHeight mode) {
+                                                              TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, previousTrajectory);
 
         Actions.runBlocking(
@@ -238,6 +259,18 @@ public class MeetThreeAuto extends LinearOpMode {
                         placeChamber()));
 
         return placingTrajectory;
+    }
+
+    public TrajectoryActionBuilder placeNextSampleInBasket(StartingPosition sp,
+                                                              TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
+        TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, previousTrajectory);
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        basketTrajectory.build(),
+                        placeChamber()));
+
+        return basketTrajectory;
     }
 
     public TrajectoryActionBuilder getNextSpecimen(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
@@ -358,6 +391,22 @@ public class MeetThreeAuto extends LinearOpMode {
             case BLUE_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
+            default:
+                return previousTrajectory.endTrajectory().fresh();
+        }
+    }
+
+    private TrajectoryActionBuilder getBasketTrajectory(StartingPosition sp,
+                                                         TrajectoryActionBuilder previousTrajectory) {
+        switch (sp) {
+            case RED_LEFT:
+            case RED_RIGHT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_BASKET_POSE.position, Settings.Autonomous.FieldPositions.RED_BASKET_POSE.heading);
+            case BLUE_LEFT:
+            case BLUE_RIGHT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.position, Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.heading);
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
