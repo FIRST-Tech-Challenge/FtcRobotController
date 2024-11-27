@@ -76,11 +76,11 @@ public class Teleop extends LinearOpMode {
             //INTAKE
             //Noodles
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
-                intakeNoodleAction.run();
                 telemetry.addData("R", intakeNoodleAction.red());
                 telemetry.addData("G", intakeNoodleAction.green());
                 telemetry.addData("B", intakeNoodleAction.blue());
                 telemetry.update();
+
                 if (!intakeNoodleAction.colorSense("blue")) {
                     intakeDoorAction.open();
                 } else intakeDoorAction.close();
