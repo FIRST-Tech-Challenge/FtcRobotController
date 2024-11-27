@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Test Drive Phase1")
 public class Testing_Phase1 extends LinearOpMode {
@@ -17,8 +18,8 @@ public class Testing_Phase1 extends LinearOpMode {
     private int precision = 2;                    // chassis motor power reduction factor 1
     private boolean intakeClawClosed = false;     // claw holder variable
     private ElapsedTime stateDelay = new ElapsedTime(); // possible delay timer for state change
-    public double LeftServo;                // currently intake wrist servo left
-    public double RightServo;               // currently intake wrist servo right
+    private double LeftServo;                // currently intake wrist servo left
+    private double RightServo;               // currently intake wrist servo right
     private double V4Bpos = 1;              // currently intake V4B
     private double Flex = .1;               // currently intake wrist angle
     private double Yaw = 0;                 // currently intake wrist twist
