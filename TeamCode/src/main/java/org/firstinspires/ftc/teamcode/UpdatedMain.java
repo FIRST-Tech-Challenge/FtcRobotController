@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -122,6 +123,8 @@ public class UpdatedMain extends LinearOpMode {
         dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
         dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
         dashboardTelemetry.addData("Arm < 0 Modifier", arm_less_zero);
+        dashboardTelemetry.addData("Gamepad 1", gamepad1.toString());
+        dashboardTelemetry.addData("Gamepad 2", gamepad2.toString());
 
         //other
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
@@ -141,15 +144,33 @@ public class UpdatedMain extends LinearOpMode {
         front_right_wheel.setPower((((left_stick_y - left_stick_x)*-1) - right_stick_x)*0.5);
     }
     public void update_arm_rotation(){
-        //arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.6)) *-1);
-        arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
-
+        int up = -276;
+        int slow_down_pos = -89;
+        //arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
+        if(gamepad2.left_stick_y == 0 && arm_rotator_motor.getCurrentPosition() <= -10  && arm_rotator_motor.getCurrentPosition() > -540){
+            if(arm_rotator_motor.getCurrentPosition() <= up-8){
+                arm_rotator_motor.setPower(-0.3);
+            }else if (arm_rotator_motor.getCurrentPosition() >= up+8){
+                arm_rotator_motor.setPower(0.3);
+            }
+            telemetry.addData("arm status", "Arm Holding");
+        }else{
+            if(arm_rotator_motor.getCurrentPosition() <= slow_down_pos){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8)) *-1);
+                telemetry.addData("arm status", "Arm moving full speed");
+            } else if(arm_rotator_motor.getCurrentPosition() >= slow_down_pos && gamepad2.left_stick_y*-1 < 0){
+                arm_rotator_motor.setPower(gamepad2.left_stick_y*0.35*-1);
+                telemetry.addData("arm status", "Arm moving slowed");
+            }
+            telemetry.addData("gamepad 2 left stick y", gamepad2.left_stick_y);
+        }
+        //arm_rotator_motor.setPower((gamepad2.left_stick_y == 0 ? 0.2 : (gamepad2.left_stick_y*((gamepad2.left_stick_y > 0 ? 0.7 : 0.8))*-1)));
         /*if(arm_rotator_motor.getCurrentPosition() >= swap){
             if (gamepad2.left_stick_y > 0){
                 arm_rotator_motor.setPower(gamepad2.left_stick_y*0.5 *-1);
             }else if (gamepad2.left_stick_y < 0){
                 arm_rotator_motor.setPower(gamepad2.left_stick_y*0.7 *-1);
-            }
+            }+
         } else if (arm_rotator_motor.getCurrentPosition() < swap){
             if (gamepad2.left_stick_y > 0){
                 arm_rotator_motor.setPower(gamepad2.left_stick_y*0.7 *-1);
