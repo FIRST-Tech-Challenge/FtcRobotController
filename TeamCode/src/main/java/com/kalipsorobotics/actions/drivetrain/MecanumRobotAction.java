@@ -39,7 +39,6 @@ public class MecanumRobotAction extends DriveTrainAction {
 
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
-        System.out.println(this.getRemainingDistance());
     }
 
     public PIDController getPidController() {
@@ -66,9 +65,8 @@ public class MecanumRobotAction extends DriveTrainAction {
 
     @Override
     public boolean checkDoneCondition() {
-        System.out.println();
         refreshRemainingDistance();
-        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || (SystemClock.elapsedRealtime() - startTime) / 1000 > 5) {
+        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || (SystemClock.elapsedRealtime() - startTime) / 1000 > timeout) {
             driveTrain.setPower(0); // stop, to be safe
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             Log.d("mecanum", "done");
