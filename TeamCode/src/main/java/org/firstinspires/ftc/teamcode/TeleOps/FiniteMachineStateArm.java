@@ -144,7 +144,7 @@ public class FiniteMachineStateArm {
         }
 
         // Handle lift Cancel Action if 'B' button is pressed
-        if ((gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD && liftState != LiftState.LIFT_START) {
+        if ((gamepad_1.getButton(GamepadKeys.Button.B) || gamepad_2.getButton(GamepadKeys.Button.B)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD && liftState != LIFTSTATE.LIFT_START) {
             debounceTimer.reset();
             liftState = LIFTSTATE.LIFT_START;
             robot.liftMotorLeft.setPower(0); // Ensure the motor is stopped
