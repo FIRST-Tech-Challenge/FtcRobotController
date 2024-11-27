@@ -35,7 +35,6 @@ public class CaiTest extends LinearOpMode {
     // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
 
     // Runtime modifiable values should be public static
-    public static int armVelocity;
     public static double triggerModifier = 0.005;
     /*
     private final int swap  = -329;
@@ -50,7 +49,6 @@ public class CaiTest extends LinearOpMode {
 
     // tps calculations
     private int runs = 0;
-    private ElapsedTime time;
     private double tps = 0;
 
     //main loop
@@ -67,7 +65,7 @@ public class CaiTest extends LinearOpMode {
         waitForStart();
         if(opModeIsActive()){
             //set up timimgs
-            time = new ElapsedTime();
+            ElapsedTime time = new ElapsedTime();
             time.reset();
             while(opModeIsActive()){
                 update_driving();
@@ -146,7 +144,6 @@ public class CaiTest extends LinearOpMode {
         dashboardTelemetry.addData("Arm Target", arm_target);
         //Vars that should be changeable (please)
         dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
-        dashboardTelemetry.addData("Arm velocity", armVelocity);
         //other
         telemetry.addData("hand grip", hand_grip_servo.getPosition());
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());

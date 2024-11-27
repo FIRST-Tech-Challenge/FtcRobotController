@@ -36,7 +36,6 @@ public class UpdatedMain extends LinearOpMode {
     // IF YOU CHANGE TELL PEOPLE!!! vvvvv (people might stab you if you don't)
     
     // Runtime modifiable values should be public static
-    public static int armVelocity;
     public static double triggerModifier = 0.005;
     /*
     private final int swap  = -329;
@@ -45,14 +44,12 @@ public class UpdatedMain extends LinearOpMode {
     private double down_speed = 0.7;
     */
     // IF YOU CHANGE TELL PEOPLE!!! ^^^^^
-    public static wheelSpeed double 0.5;
+    public static double wheelSpeed = 0.5;
     // misc vars
     private int arm_target;
     
     // tps calculations
     private int runs = 0;
-    private ElapsedTime time;
-    private double tps = 0;
 
     //main loop
     @Override
@@ -68,8 +65,6 @@ public class UpdatedMain extends LinearOpMode {
         waitForStart();
         if(opModeIsActive()){
             //set up timimgs
-            time = ElapsedTime()
-            time.reset()
             while(opModeIsActive()){
                 update_driving();
                 update_grip();
@@ -77,12 +72,6 @@ public class UpdatedMain extends LinearOpMode {
                 update_hand_rotation();
                 display_data();
                 update_arm_extension();
-                runs++
-                if (time.seconds() > 1) {
-                    tps = runs / time.seconds()
-                    runs = 0
-                    time.reset()
-                }
             }
         }
     }
@@ -148,8 +137,8 @@ public class UpdatedMain extends LinearOpMode {
         //Vars that should be changeable (please)
         dashboardTelemetry.addData("Trigger Modifier", triggerModifier);
 
-        dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
-        dashboardTelemetry.addData("Arm < 0 Modifier", arm_less_zero);
+        //dashboardTelemetry.addData("Arm > 0 Modifier", arm_more_zero);
+        //dashboardTelemetry.addData("Arm < 0 Modifier", arm_less_zero);
         dashboardTelemetry.addData("Gamepad 1", gamepad1.toString());
         dashboardTelemetry.addData("Gamepad 2", gamepad2.toString());
 
@@ -158,7 +147,6 @@ public class UpdatedMain extends LinearOpMode {
         telemetry.addData("Hand Rotation", hand_rotation_servo.getPosition());
         telemetry.addData("Arm Position", arm_rotator_motor.getCurrentPosition());
 
-        dashboardTelemetry.addData("tps", tps)
 
         //update telemetry
         dashboardTelemetry.update();
