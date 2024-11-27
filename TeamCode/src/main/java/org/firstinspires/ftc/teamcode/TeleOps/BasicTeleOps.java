@@ -27,7 +27,7 @@ public class BasicTeleOps extends OpMode {
     public RobotHardware robot;                     // Bring in robot hardware configuration
 
     public GamepadEx gamepadCo1;                    //For gamepad
-    //public GamepadEx gamepadCo2;
+    public GamepadEx gamepadCo2;
 
     //Robot drive
     public RobotDrive robotDrive;                   //For robot drive
