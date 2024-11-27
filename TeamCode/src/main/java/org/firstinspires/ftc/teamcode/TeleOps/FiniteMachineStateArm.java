@@ -90,16 +90,19 @@ public class FiniteMachineStateArm {
                 if ((gamepad_1.getButton(GamepadKeys.Button.X) || gamepad_2.getButton(GamepadKeys.Button.X)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
                     transfer_timer.reset();
-                    robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
-                    if (transfer_timer.seconds() >= 0.15) {
-                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
-                    }
-                    if (transfer_timer.seconds() >= 0.25) {
-                        robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
-                    }
-                    if (transfer_timer.seconds() >= 0.35) {
-                        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
-                        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+
+                    if (robot.intakeLeftArmServo.getPosition()>0.35) {
+                        robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
+                        if (transfer_timer.seconds() >= 0.15) {
+                            robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
+                        }
+                        if (transfer_timer.seconds() >= 0.25) {
+                            robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
+                        }
+                        if (transfer_timer.seconds() >= 0.35) {
+                            robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+                            robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+                        }
                     }
                     if (transfer_timer.seconds() >= 0.85) {
                         robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
