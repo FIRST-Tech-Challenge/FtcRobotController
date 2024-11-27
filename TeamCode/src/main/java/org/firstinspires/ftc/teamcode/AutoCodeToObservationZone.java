@@ -67,6 +67,8 @@ public class AutoCodeToObservationZone extends LinearOpMode {
     public void runOpMode() {
         initialize();
 
+        double armPosition = 0.0;
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -84,7 +86,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                 if (dropSpecimen) {
                     telemetry.addData("Move Forward to reach subermersible  ", "");
                     //TODO: adjust the distance during testing
-                    int distanceToSub = 26;
+                    int distanceToSub = 25;
                     telemetry.addData("Distance To Sub: ", distanceToSub);
                     telemetry.update();
                     sleep(1500);
@@ -95,7 +97,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     telemetry.update();
 
                     //Set Arm in a position to hang specimen
-                    double armPosition = 0.37; //TODO: Correct during testing
+                    armPosition = 0.37; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
@@ -106,7 +108,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     telemetry.update();
                     sleep(2000);
 
-                    armPosition = 0.4; //TODO: Correct during testing
+                    armPosition = 0.45; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
@@ -137,15 +139,48 @@ public class AutoCodeToObservationZone extends LinearOpMode {
 
                 if (parkInObservationZone) {
                     // Go reverse to be away from submersible to move to park in obs zone
-                    int reverseDistance = 19; //TODO: Adjust during testing
+                    int reverseDistance = 7; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
 
                     //strafe to move to obs zone
-                    int strafeDistance = 40; //TODO: Adjust during testing
+                    int strafeDistance = 47; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
+                    telemetry.update();
+
+                    armPosition = 0.3; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
+                    sleep(2000);
+
+                    grabberManager.OpenOrCloseGrabber(true);
+                    telemetry.addData("Open Grabber", "");
+                    telemetry.update();
+                    sleep(2000);
+
+                    armPosition = 0.15; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
+                    sleep(2000);
+
+
+                    grabberManager.OpenOrCloseGrabber(false);
+                    telemetry.addData("Open Grabber", "");
+                    telemetry.update();
+                    sleep(2000);
+
+                    armPosition = 0.9; //TODO: Correct during testing
+                    armManager.MoveArmToPosition(armPosition);
+                    telemetry.addData("Set Arm Pos: ", armPosition);
+                    telemetry.update();
+                    sleep(2000);
+
+                    driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD,DRIVE_SPEED, -17);
+                    telemetry.addData("Reached Submersible", "");
                     telemetry.update();
                 }
                 //done
