@@ -31,11 +31,14 @@ public class ParkFromRight extends LinearOpMode {
 
   private void driveForTime(ChassisSpeeds speeds, double time) {
     double startTime = Utils.getTimeSeconds();
+    double lastTime = startTime;
     while (opModeIsActive()) {
-      drivebase.drive(speeds);
+      double currentTime = Utils.getTimeSeconds();
+      drivebase.drive(speeds, currentTime - lastTime);
       if (Utils.getTimeSeconds() - startTime >= time) {
         return;
       }
+      lastTime = currentTime;
     }
   }
 }

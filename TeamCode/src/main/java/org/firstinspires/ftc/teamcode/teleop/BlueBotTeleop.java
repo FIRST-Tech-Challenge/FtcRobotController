@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
+import org.firstinspires.ftc.teamcode.Utils;
 
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
@@ -21,8 +22,11 @@ public class BlueBotTeleop extends LinearOpMode {
     boolean bPressed = false;
     waitForStart();
     arm.homeArm();
+    double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
-      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+      double currentTime = Utils.getTimeSeconds();
+      double dt = currentTime - lastTime;
+      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
       swerve.periodic();
 
       // game pad 2
@@ -47,6 +51,8 @@ public class BlueBotTeleop extends LinearOpMode {
       }
 
       telemetry.update();
+
+      lastTime = currentTime;
     }
   }
 }

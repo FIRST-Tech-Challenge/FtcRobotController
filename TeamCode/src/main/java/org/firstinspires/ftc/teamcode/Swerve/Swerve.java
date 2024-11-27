@@ -82,7 +82,7 @@ public class Swerve {
 
   double maxErrorDeg = 0;
 
-  public void drive(ChassisSpeeds speeds) {
+  public void drive(ChassisSpeeds speeds, double dt) {
     var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
     if (translationalMagnitude > Module.maxDriveSpeedMetersPerSec) {
       speeds.vxMetersPerSecond *= Module.maxDriveSpeedMetersPerSec / translationalMagnitude;
@@ -96,6 +96,8 @@ public class Swerve {
         .5,
         MathUtil.inverseInterpolate(
           0, Module.maxDriveSpeedMetersPerSec, translationalMagnitude));
+
+    speeds = ChassisSpeeds.discretize(speeds, dt);
 
     var scalar = Math.cos(Units.degreesToRadians(maxErrorDeg));
     speeds =
@@ -114,16 +116,16 @@ public class Swerve {
     }
   }
 
-  public void fieldRelativeDrive(ChassisSpeeds speeds) {
+  public void fieldRelativeDrive(ChassisSpeeds speeds, double dt) {
     var yaw =
       odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY
         ? odometry.getHeading()
         : new Rotation2d();
-    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, yaw));
+    drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, yaw), dt);
     telemetry.addData("Swerve/Yaw", yaw.getDegrees());
   }
 
-  public void teleopDrive(double xInput, double yInput, double yawInput) {
+  public void teleopDrive(double xInput, double yInput, double yawInput, double dt) {
     var translationalMagnitude = Math.hypot(xInput, yInput);
     if (translationalMagnitude > 1) {
       xInput /= translationalMagnitude;
@@ -141,7 +143,7 @@ public class Swerve {
           * (Module.maxDriveSpeedMetersPerSec
           * speedMult
           * rotationalScalar
-          / drivebaseRadius)));
+          / drivebaseRadius)), dt);
   }
 
   public Pose2d getPose() {
