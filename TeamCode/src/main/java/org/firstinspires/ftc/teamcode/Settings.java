@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 @Config
 /** @noinspection unused */
@@ -134,33 +135,37 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-59.5, -35.8, Math.toRadians(90)); // Updated
-            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(36, -60, Math.toRadians(90)); // Updated
-            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270)); // Updated
-            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-36, 60, Math.toRadians(270)); // Updated
+            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-36, -60, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(11.5, -60, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-11.5, 60, Math.toRadians(270));
 
             // Updated parked positions for each starting position
-            public static final Pose2d RED_LEFT_PARK_POSE = new Pose2d(-8.3, -29.8, Math.toRadians(90)); // Updated
-            public static final Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-23.1, 11.9, Math.toRadians(90)); // Updated
-            public static final Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(23.4, -12.2, Math.toRadians(135)); // Updated
-            public static final Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(23.8, 10.0, Math.toRadians(180)); // Updated
+            public static Vector2d RED_LEFT_JUST_PARK_VEC = new Vector2d(44, -58);
+            public static Vector2d RED_RIGHT_JUST_PARK_VEC = new Vector2d(55, -58);
+            public static Vector2d BLUE_LEFT_JUST_PARK_VEC = new Vector2d(-44, 58);
+            public static Vector2d BLUE_RIGHT_JUST_PARK_VEC = new Vector2d(-55, 58);
 
-            // Updated place positions for each starting position
-            public static final Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-8.1, -29.5, Math.toRadians(90)); // Updated
-            public static final Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(8.5, -30.0, Math.toRadians(90)); // Updated
-            public static final Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(8.6, 29.0, Math.toRadians(270)); // Updated
-            public static final Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-7.2, 29.2, Math.toRadians(270)); // Updated
+            // place positions for each starting position
+            public static Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-5, -38, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(5, -38, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(5, 38, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-5, 38, Math.toRadians(270));
 
-            public static final Pose2d RED_HP_POSE = new Pose2d(-59.5, -25.8, Math.toRadians(90)); // Updated
-            public static final Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45)); // Updated
+            public static Pose2d RED_HP_POSE = new Pose2d(-59.5, -25.8, Math.toRadians(90));
+            public static Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45));
+
+            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-45, -40);
+            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(45, 40);
+
+            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-25.4, 12.8, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-25.4, -12.8, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(25.4, -12.8, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(25.4, 12.8, Math.toRadians(270));
         }
 
         @Config
         public static class Movement {
-            /** Encoder counts for moving forward one unit */
-            public static double FWD_ONE_TILE = 100; // TODO tune
-            public static double STRAFE_ONE_TILE = 50; // TODO tune
-            public static double TURN_NINETY_DEGREES = 50; // TODO tune
             public static int ENCODERS_NEEDED_TO_CORRECT_ODOMETRY = 3;
         }
 
@@ -170,12 +175,6 @@ public class Settings {
             public static long CLAW_PAUSE = 500;
             public static long WRIST_PAUSE = 1000;
             public static long EXTENSOR_PAUSE = 2500;
-        }
-
-        @Config
-        public static class ColorSensor {
-            public static int COLOR_THRESHOLD = 500;
-            public static int SAMPLE_COUNT = 30;
         }
     }
 
@@ -311,7 +310,7 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PARK;
+        public static final AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PLACE;
 
         public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, FULL

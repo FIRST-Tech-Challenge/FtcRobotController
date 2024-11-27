@@ -248,20 +248,20 @@ public class MeetTwoStableAuto extends LinearOpMode {
         switch (sp) {
             case RED_LEFT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_JUST_PARK_VEC,
+                                0);
             case RED_RIGHT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_JUST_PARK_VEC,
+                                0);
             case BLUE_LEFT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_JUST_PARK_VEC,
+                                0);
             case BLUE_RIGHT:
                 return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
+                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_JUST_PARK_VEC,
+                                0);
             default:
                 return roadRunner.actionBuilder(initialPose);
         }

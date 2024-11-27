@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
@@ -130,40 +129,46 @@ public class MeetThreeAuto extends LinearOpMode {
                 return;
 
             case FULL:
-                gameLoopSetup(sp, ChamberHeight.LOW);
+                TrajectoryActionBuilder previousTrajectory = gameLoopSetup(sp, ChamberHeight.LOW);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
-                    gameLoop(sp, ChamberHeight.LOW);
+                    previousTrajectory = gameLoop(sp, previousTrajectory, ChamberHeight.LOW);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
-                gameLoopEnd(sp);
+                previousTrajectory = gameLoopEnd(sp, previousTrajectory);
                 baseRobot.logger.update("Autonomous phase", "Victory is ours");
                 break;
         }
     }
 
-    public void gameLoopSetup(StartingPosition sp, ChamberHeight chamberHeight) {
+    public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, ChamberHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
 
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
                         placeChamber()));
+
+        return placingTrajectory;
     }
 
-    public void gameLoop(StartingPosition sp, ChamberHeight chamberHeight) {
+    public TrajectoryActionBuilder gameLoop(StartingPosition sp, TrajectoryActionBuilder previousTrajectory,
+            ChamberHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Grabbing next specimen");
-        getNextSpecimen(sp);
+        previousTrajectory = getNextSpecimen(sp, previousTrajectory);
         baseRobot.logger.update("Autonomous phase", "Placing next specimen");
-        placeNextSpecimenOnChamber(sp, ChamberHeight.HIGH);
+        previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, ChamberHeight.HIGH);
+        return previousTrajectory;
     }
 
-    public void gameLoopEnd(StartingPosition sp) {
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
+    public TrajectoryActionBuilder gameLoopEnd(StartingPosition sp, TrajectoryActionBuilder previousPose) {
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, previousPose);
 
         Actions.runBlocking(
                 new SequentialAction(
                         parkingTrajectory.build()));
+
+        return parkingTrajectory;
     }
 
     /**
@@ -182,6 +187,8 @@ public class MeetThreeAuto extends LinearOpMode {
             baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
             baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
             baseRobot.arm.intake.outtake();
+            pause(200);
+            baseRobot.arm.intake.stop();
             return false;
         }
     }
@@ -204,25 +211,29 @@ public class MeetThreeAuto extends LinearOpMode {
         return new GrabSpecimenFromHumanPlayer();
     }
 
-    public void placeNextSpecimenOnChamber(StartingPosition sp, ChamberHeight mode) {
-        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
+    public TrajectoryActionBuilder placeNextSpecimenOnChamber(StartingPosition sp,
+            TrajectoryActionBuilder previousTrajectory, ChamberHeight mode) {
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, previousTrajectory);
 
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
                         placeChamber()));
+
+        return placingTrajectory;
     }
 
-    public void getNextSpecimen(StartingPosition sp) {
+    public TrajectoryActionBuilder getNextSpecimen(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
         Actions.runBlocking(
                 new SequentialAction(
-                        getHPTrajectory(sp).build(),
+                        getHPTrajectory(sp, previousTrajectory).build(),
                         grabSpecimenFromHP()));
+        return getHPTrajectory(sp, previousTrajectory);
     }
 
     public void immediatelyPlace(StartingPosition sp) {
-        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp);
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp);
+        TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, placingTrajectory.endTrajectory().fresh());
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -235,21 +246,21 @@ public class MeetThreeAuto extends LinearOpMode {
         TrajectoryActionBuilder trajectory;
         switch (sp) {
             case RED_LEFT:
-                trajectory = roadRunner.actionBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
-                        .strafeTo(new Vector2d(44, -60));
+                trajectory = roadRunner.actionBuilder(Settings.Autonomous.FieldPositions.RED_LEFT_INITIAL_POSE)
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_JUST_PARK_VEC);
                 break;
             case BLUE_LEFT:
-                trajectory = roadRunner.actionBuilder(new Pose2d(36, 60, Math.toRadians(270)))
-                        .strafeTo(new Vector2d(-44, 60));
+                trajectory = roadRunner.actionBuilder(Settings.Autonomous.FieldPositions.BLUE_LEFT_INITIAL_POSE)
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_JUST_PARK_VEC);
                 break;
             case RED_RIGHT:
-                trajectory = roadRunner.actionBuilder(new Pose2d(23.6, -60, Math.toRadians(90)))
-                        .strafeTo(new Vector2d(62, -60));
+                trajectory = roadRunner.actionBuilder(Settings.Autonomous.FieldPositions.RED_RIGHT_INITIAL_POSE)
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_JUST_PARK_VEC);
                 break;
             case BLUE_RIGHT:
             default:
-                trajectory = roadRunner.actionBuilder(new Pose2d(-12.0, 60, Math.toRadians(270)))
-                        .strafeTo(new Vector2d(-62, 60));
+                trajectory = roadRunner.actionBuilder(Settings.Autonomous.FieldPositions.BLUE_RIGHT_INITIAL_POSE)
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_JUST_PARK_VEC);
                 break;
         }
         Actions.runBlocking(
@@ -257,69 +268,67 @@ public class MeetThreeAuto extends LinearOpMode {
                         trajectory.build()));
     }
 
-    private TrajectoryActionBuilder getParkingTrajectory(StartingPosition sp) {
+    private TrajectoryActionBuilder getParkingTrajectory(MeetThreeAuto.StartingPosition sp,
+            TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get parking trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
+                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
             case RED_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
+                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
             case BLUE_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
+                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
             case BLUE_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
+                return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
             default:
-                return roadRunner.actionBuilder(initialPose);
+                return previousTrajectory;
         }
     }
 
-    private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp) {
+    private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get human player trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
             case RED_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
+                return previousTrajectory
                         .splineTo(Settings.Autonomous.FieldPositions.RED_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_HP_POSE.heading);
             case BLUE_LEFT:
             case BLUE_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
+                return previousTrajectory
                         .splineTo(Settings.Autonomous.FieldPositions.BLUE_HP_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_HP_POSE.heading);
             default:
-                return roadRunner.actionBuilder(initialPose);
+                return previousTrajectory;
         }
     }
 
-    private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp) {
+    private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp,
+            TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get placing trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.heading);
+                return previousTrajectory
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_PLACE_POSE.position);
             case RED_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.heading);
+                return previousTrajectory
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_PLACE_POSE.position);
             case BLUE_LEFT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.heading);
+                return previousTrajectory
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_PLACE_POSE.position);
             case BLUE_RIGHT:
-                return roadRunner.actionBuilder(initialPose)
-                        .splineTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position,
-                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.heading);
+                return previousTrajectory
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PLACE_POSE.position);
             default:
-                return roadRunner.actionBuilder(initialPose);
+                return previousTrajectory;
         }
     }
 
