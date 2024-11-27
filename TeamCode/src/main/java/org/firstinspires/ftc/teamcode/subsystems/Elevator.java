@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase {
         return getDistance() * 0.01229202524;
     }
 
-    public boolean isRetracted(){
+    public boolean isRetracted() {
         return bottomLimit.isPressed();
     }
 
@@ -112,7 +112,7 @@ public class Elevator extends SubsystemBase {
         //TODO: calculate maximum distance based on angle
         double elevatorDistance = getDistanceInInches();
         //wormAngle
-        double horizontalExtension = (elevatorDistance / Math.cos(wormAngle));
+        double horizontalExtension = (elevatorDistance / Math.cos(Math.toRadians(wormAngle))); // Changes angle to radians as java uses them by default
 
         return horizontalExtension >= 21;
     }
