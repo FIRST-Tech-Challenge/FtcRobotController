@@ -1,15 +1,13 @@
-package com.kalipsorobotics.test;
+package com.kalipsorobotics.modules;
 
 import android.util.Log;
 
-import com.kalipsorobotics.modules.KColor;
+import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
 
-public class SampleColorDetector{
+public class ColorDetector {
 
     OpModeUtilities opModeUtilities;
 
@@ -19,7 +17,7 @@ public class SampleColorDetector{
     KColor currentColors;
     KColor baseColors;
 
-    public SampleColorDetector(OpModeUtilities opModeUtilities) {
+    public ColorDetector(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         this.colorSensor = opModeUtilities.getHardwareMap().get(ColorSensor.class, "color sensor");
 

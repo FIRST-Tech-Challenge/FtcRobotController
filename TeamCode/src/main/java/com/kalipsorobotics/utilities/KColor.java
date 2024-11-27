@@ -1,4 +1,4 @@
-package com.kalipsorobotics.modules;
+package com.kalipsorobotics.utilities;
 
 public class KColor {
 
