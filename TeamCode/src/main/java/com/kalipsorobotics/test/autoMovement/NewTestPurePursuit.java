@@ -3,7 +3,6 @@ package com.kalipsorobotics.test.autoMovement;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.PurePursuitAction;
-import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -25,22 +24,6 @@ public class NewTestPurePursuit extends LinearOpMode {
         purePursuitAction.addPoint(0, 0, 0);
         purePursuitAction.addPoint(600, -600, 90);
 
-        Log.d("pidangle", purePursuitAction.getPidAngle().toString());
-        while (opModeInInit()) {
-            if (gamepad1.dpad_up) {
-                purePursuitAction.incrementAnglePID(0.00001, 0., 0.);
-            }
-            if (gamepad1.dpad_down) {
-                purePursuitAction.incrementAnglePID(-0.00001, 0., 0.);
-            }
-            if (gamepad1.dpad_left) {
-                purePursuitAction.incrementAnglePID(0., -0.00001, 0.);
-            }
-            if (gamepad1.dpad_right) {
-                purePursuitAction.incrementAnglePID(0., 0.00001, 0.);
-            }
-
-        }
 
         waitForStart();
         while (opModeIsActive()) {

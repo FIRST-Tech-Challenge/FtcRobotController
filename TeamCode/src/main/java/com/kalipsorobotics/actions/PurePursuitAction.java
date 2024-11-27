@@ -33,14 +33,20 @@ public class PurePursuitAction extends Action {
     Optional<Position> follow;
     Optional<Position> prevFollow;
 
+    /**
+     * Should not do more than 24 inches or 600mm moves in X and Y (single move)
+     * Should not turn more than 90 deg (single move)
+     * If move more than normal range --> add more waypoints
+     */
+
     public PurePursuitAction(DriveTrain driveTrain/*, SparkfunOdometry sparkfunOdometry*/,
                              WheelOdometry wheelOdometry) {
         this.driveTrain = driveTrain;
         //this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
-        this.pidX = new PidNav(0.015, 0, 0);
-        this.pidY = new PidNav(0.025, 0, 0);
-        this.pidAngle = new PidNav(0.30, 0, 0);
+        this.pidX = new PidNav(1.0/600.0, 0, 0);
+        this.pidY = new PidNav(1.0/600.0, 0, 0);
+        this.pidAngle = new PidNav(1.0 / Math.toRadians(90), 0, 0);
 
 
         Log.d("purepursaction", "constructed");
@@ -58,29 +64,23 @@ public class PurePursuitAction extends Action {
         Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
-        double targetDirection = currentToTarget.getHeadingDirection();
 
+        double targetDirection = currentToTarget.getHeadingDirection();
         double targetAngle = target.getTheta();
 
-        Log.d("purepursaction", "target angle is " + targetAngle);
+        double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
-        double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
-        Log.d("purepursaction", "angle error " + angleError);
+        double powerAngle = pidAngle.getPower(angleError);
+
 
         double xError = Math.cos(directionError) * distanceToTarget;
         double powerX = pidX.getPower(xError);
-        Log.d("purepursx", "set x " + powerX);
 
         double yError = Math.sin(directionError) * distanceToTarget;
-        Log.d("purepursy", "yerror " + yError);
-
         double powerY = pidY.getPower(yError);
-        Log.d("purepursy", "set y " + powerY);
 
-        double powerAngle = pidAngle.getPower(angleError);
-        Log.d("powerJimmeh", String.format("powerX = %.4f, powerY = %.4f, powerAngle = %.4f", powerX, powerY,
-                powerAngle));
+
         double fLeftPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
 
@@ -89,42 +89,7 @@ public class PurePursuitAction extends Action {
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
-        double biggestPower = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
-        if (biggestPower > 1) {
-            fLeftPower /= biggestPower;
-            fRightPower /= biggestPower;
-            bLeftPower /= biggestPower;
-            bRightPower /= biggestPower;
-        }
-
-        if(Math.abs(fLeftPower) < 0.15) {
-            if (fLeftPower < 0) {
-                fLeftPower += -0.05;
-            } else {
-                fLeftPower += 0.05;
-            }
-        }
-        if(Math.abs(fRightPower) < 0.15) {
-            if (fRightPower < 0) {
-                fRightPower += -0.05;
-            } else {
-                fRightPower += 0.05;
-            }
-        }
-        if(Math.abs(bLeftPower) < 0.15) {
-            if (bLeftPower < 0) {
-                bLeftPower += -0.05;
-            } else {
-                bLeftPower += 0.05;
-            }
-        }
-        if(Math.abs(bRightPower) < 0.15) {
-            if (bRightPower < 0) {
-                bRightPower += -0.05;
-            } else {
-                bRightPower += 0.05;
-            }
-        }
+        driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.7);
 
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
@@ -170,35 +135,11 @@ public class PurePursuitAction extends Action {
             if (Math.abs(prevFollow.get().getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2)) {
                 driveTrain.setPower(0);
             } else {
-                incrementAnglePID(0, 0.000001, 0);
                 targetPosition(prevFollow.get());
             }
 
             Log.d("purepursaction_debug_follow", "done");
 
         }
-    }
-
-    public void incrementAnglePID(double deltaKP, double deltaKI, double deltaKD) {
-        pidAngle.setP(pidAngle.getP()+deltaKP);
-        pidAngle.setI(pidAngle.getI()+deltaKI);
-        pidAngle.setD(pidAngle.getD()+deltaKD);
-        Log.d("PID_angle_2", pidAngle.toString());
-    }
-
-    public void incrementXPID(double deltaKP, double deltaKI, double deltaKD) {
-        pidX.setP(pidX.getP()+deltaKP);
-        pidX.setI(pidX.getI()+deltaKI);
-        pidX.setD(pidX.getD()+deltaKD);
-    }
-
-    public void incrementYPID(double deltaKP, double deltaKI, double deltaKD) {
-        pidY.setP(pidY.getP()+deltaKP);
-        pidY.setI(pidY.getI()+deltaKI);
-        pidY.setD(pidY.getD()+deltaKD);
-    }
-
-    public PidNav getPidAngle() {
-        return pidAngle;
     }
 }
