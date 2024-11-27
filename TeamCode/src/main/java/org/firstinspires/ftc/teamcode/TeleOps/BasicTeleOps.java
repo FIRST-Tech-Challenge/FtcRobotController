@@ -9,9 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
-import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.List;
 
@@ -22,7 +19,7 @@ import java.util.List;
  */
 
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS", group = "OpMode")
+@TeleOp(name = "TeleOps_MW_FMS_v1.0", group = "Meet_1")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
