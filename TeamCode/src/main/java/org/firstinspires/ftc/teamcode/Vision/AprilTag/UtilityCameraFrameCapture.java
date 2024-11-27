@@ -56,6 +56,16 @@ import java.util.Locale;
  *  Camera: Sony imx274 CMOS 1/2.5"
  *  Resolution: 3840x2160, 2560x1440, 2048x1536, 1920x1080, 1280x720, 640x480
  *  USB UVC, MPEG
+ *
+ *  From @WestsideRobotics per https://github.com/FIRST-Tech-Challenge/FtcRobotController/discussions/1328
+ *  The search box at ftc-docs shows two references to the sample UtilityCameraFrameCapture:
+ *  https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_camera_calibration/apriltag-camera-calibration.html#utility-opmode
+ *  images are stored on the RC device, not at the PC desktop
+ *  shows the image filename format
+ *  recommends transferring to desktop after each test run, to prevent over-writing
+ *  https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/camera_calibration/camera-calibration.html#calibrating-with-3df-zephyr
+ *  gives the images' location on the RC device: root of USB device
+ *
  */
 
 @TeleOp(name = "Utility: Camera Frame Capture", group = "Vision")
