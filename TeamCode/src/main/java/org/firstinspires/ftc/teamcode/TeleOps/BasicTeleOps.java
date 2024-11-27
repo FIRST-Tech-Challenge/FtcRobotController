@@ -28,7 +28,7 @@ import java.util.List;
         * transfer at deposit
  */
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "org.firstinspires.ftc.teamcode")
+@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "Meet_1")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
