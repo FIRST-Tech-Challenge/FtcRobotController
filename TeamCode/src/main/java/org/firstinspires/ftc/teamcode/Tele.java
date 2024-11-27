@@ -101,7 +101,7 @@ public  class Tele extends Robot {
             BisON = false;
         }
 
-        if (gamepad1.left_stick_button) {
+        if (gamepad1.right_stick_button) {
 
             Auto_Lift = true;
             LiftPos = High_Chamber;
@@ -114,7 +114,7 @@ public  class Tele extends Robot {
         double sp = RT > 0.25 ? RT : LT > 0.25 ? -LT : 0;
 
         double power =  On_Lift ? -0.2 : Auto_Lift ? ((CurPos < (LiftPos + 50) && CurPos > (LiftPos - 50)) ? 0 : CurPos > LiftPos ? -0.8 : 1) :
-                        (Right_isTouch  && LT > 0.25 ? 0 : CurPos > 2900 && RT > 0.25 ? 0 : sp);
+                        (Right_isTouch  && LT > 0.25 ? 0 : CurPos > 2900 && RT > 0.25 ? 0 : sp );
 
         LiftPower(power);
 
@@ -123,7 +123,9 @@ public  class Tele extends Robot {
             RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        if (CurPos < (LiftPos + 20) && CurPos > (LiftPos - 20)) Auto_Lift = false;
+        if (Lift_Power ==0) {
+            Auto_Lift = false;
+        }
 
 
         telemetry.addData("Lift", CurPos);
@@ -220,10 +222,7 @@ public  class Tele extends Robot {
     }
 
     private void Frontarm() {
-
-        double RT = gamepad1.right_trigger;
         boolean tp = gamepad1.a;
-        boolean RT_Pressed = RT > 0.25;
         if (!(tp)) {
             tp_Pressed = false;
             return;
@@ -237,8 +236,8 @@ public  class Tele extends Robot {
             SetServoPos(0.67, LA, RA);
             SetServoPos(0.55, ADL, ADR);
 
-//            AdjustClaw();
-//            Lowerclaw();
+            AdjustClaw();
+            Lowerclaw();
             ITisOn = true;
             return;
         }
@@ -270,7 +269,7 @@ public  class Tele extends Robot {
         }
         SetServoPos(0, Claw);
         SetServoPos(0, Ll, Rl);
-        SetServoPos(0.5, LA, RA);
+        SetServoPos(0.35, LA, RA);
         SetServoPos(0.12, RC);
         SetServoPos(0, ADL, ADR);
 

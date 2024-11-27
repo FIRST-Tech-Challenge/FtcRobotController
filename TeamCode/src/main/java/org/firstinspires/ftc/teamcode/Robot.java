@@ -53,7 +53,7 @@ public abstract class Robot extends LinearOpMode {
     boolean On = false;
 
 //    public final int Low_Chamber  = 1000;
-    public final int High_Chamber = 1700;
+    public final int High_Chamber = 1780;
     public final int High_Basket  = 2820;
 
 
@@ -96,8 +96,8 @@ public abstract class Robot extends LinearOpMode {
     public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
                      double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
-        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 2);
-        Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 2);
+        Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 11);
+        Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1);
         double targetx = tilex * tileSize[0];
         double targety = tiley * tileSize[1];
         int IS_Complete = 0;
@@ -107,12 +107,12 @@ public abstract class Robot extends LinearOpMode {
             this.Current_Time = System.nanoTime() * 1E-9;
             Odomentry();
 //            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double Vx = DelthaX.Calculate(targetx - Posx);
+            double Vx = DelthaX.Calculate((targetx - Posx)*-1);
             double Vy = DelthaY.Calculate(targety - Posy);
-            double theta = -heading
 
-            double x2    =  (Math.cos(theta) * Vx) - (Math.sin(theta) * Vy);
-            double y2    =  (Math.sin(theta) * Vx) + (Math.cos(theta) * Vy);
+
+            double x2    =  (Math.cos(heading) * Vx) - (Math.sin(heading) * Vy);
+            double y2    =  (Math.sin(heading) * Vx) + (Math.cos(heading) * Vy);
 
             double r =  pidR.Calculate(WrapRads(toRadian(setpoint) - heading));
             double d = Math.max(Math.abs(Vx) + Math.abs(Vy) + Math.abs(r), 1);
@@ -151,7 +151,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power ==0) {
+            if (Math.abs(Vx) <= 0.1 && Math.abs(Vy) <= 0.1 && Math.abs(r) <= 0.1 && Lift_Power ==0 && AtTargetRange(curPos, height, 100)) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
