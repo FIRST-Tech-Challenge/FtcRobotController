@@ -13,7 +13,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 public class MecanumRobotAction extends DriveTrainAction {
 
     private static final double ERROR_TOLERANCE_IN = 1;
-    private static final double HEADING_ERROR_TOLERANCE_DEG = 2;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
@@ -125,8 +125,8 @@ public class MecanumRobotAction extends DriveTrainAction {
 
         Log.d("mecanum/linear", String.format("Linear power %f", linearPower));
         Log.d("mecanum/rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
-        Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", -fLeft, fRight, bLeft, -bRight));
+        Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", fLeft, -fRight, -bLeft, bRight));
 
-        driveTrain.setPower(-fLeft, fRight, bLeft, -bRight);
+        driveTrain.setPower(fLeft, -fRight, -bLeft, bRight);
     }
 }

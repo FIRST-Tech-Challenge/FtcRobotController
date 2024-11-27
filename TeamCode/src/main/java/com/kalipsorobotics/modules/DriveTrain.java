@@ -28,10 +28,10 @@ public class DriveTrain {
         bLeft = opModeUtilities.getHardwareMap().dcMotor.get("bLeft");
         bRight = opModeUtilities.getHardwareMap().dcMotor.get("bRight");
 
-        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        fLeft.setDirection(DcMotorSimple.Direction.FORWARD);  // change to reverse on test drivetrain
         fRight.setDirection(DcMotorSimple.Direction.FORWARD);
         bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bRight.setDirection(DcMotorSimple.Direction.REVERSE);  // change to forward on test drivetrain
 
         fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
