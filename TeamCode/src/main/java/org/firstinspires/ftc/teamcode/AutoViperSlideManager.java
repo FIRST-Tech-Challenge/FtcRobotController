@@ -98,6 +98,19 @@ public class AutoViperSlideManager {
             ;
         }
     }
+
+    public void BrakeOrReleaseViperSlide(Boolean Brake)
+    {
+        if (Brake) {
+            hornetRobo.ViperSlideOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            hornetRobo.ViperSlideTwo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+        else {
+            hornetRobo.ViperSlideOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            hornetRobo.ViperSlideTwo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        }
+    }
 }
 
 

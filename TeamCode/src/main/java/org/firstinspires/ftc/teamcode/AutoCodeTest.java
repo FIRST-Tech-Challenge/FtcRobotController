@@ -66,8 +66,8 @@ public class AutoCodeTest extends LinearOpMode {
         waitForStart();
 
         int rotateToPosition = 5;
-        driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
-        driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
+        //driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
+        //driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
 
         //Change motor to test all
         //driveManager.SetMotorDirection(AutoDriveManager.DriveDirection.FORWARD);
@@ -106,6 +106,7 @@ public class AutoCodeTest extends LinearOpMode {
         //TestViperSlide();
         //TestRotate180();
         //TestViperSlideArmGrabber();
+        TestViperSlideWithBrake();
     }
 
     public void TestDriveMotorEncodedMove(DcMotor Motor) {
@@ -267,7 +268,6 @@ public class AutoCodeTest extends LinearOpMode {
         AutoViperSlideManager vsManager = new AutoViperSlideManager(this, hornetRobo);
         AutoArmManager armManager = new AutoArmManager(this, hornetRobo);
         AutoGrabberManager grabberManager = new AutoGrabberManager(this, hornetRobo);
-
         vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         if (opModeIsActive()) {
 
@@ -303,7 +303,7 @@ public class AutoCodeTest extends LinearOpMode {
         }
     }
 
-    public void TestViperSlide() {
+    public void TestViperSlideWithBrake() {
         AutoViperSlideManager vsManager = new AutoViperSlideManager(this, hornetRobo);
         vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         if (opModeIsActive()) {
@@ -313,10 +313,28 @@ public class AutoCodeTest extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("Move forward for 1 sec", "");
                 telemetry.update();
-                vsManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, 0.2, 5);
-                telemetry.addData("VS test done", "");
+                vsManager.ResetAndSetToEncoder();
+                vsManager.BrakeOrReleaseViperSlide(true);
+                vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+                vsManager.SetTargetPosition(20);
+                vsManager.SetPower(0.3);
+                sleep(2000);
+                telemetry.addData("reached position after 1 sec", "");
                 telemetry.update();
-
+                vsManager.SetPower(0.0);
+                telemetry.addData("in brake mode", "");
+                telemetry.update();
+                armManager.MoveArmToPosition(0.5);
+                sleep(3000);
+                armManager.MoveArmToPosition(0.3);
+                vsManager.BrakeOrReleaseViperSlide(false);
+                vsManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                vsManager.SetPower(0.2);
+                sleep(1000);
+                //vsManager.BrakeOrReleaseViperSlide(false);
+                //vsManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                //vsManager.SetPower(0.1);
+                //sleep(500);
                 break;
             }
 
