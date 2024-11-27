@@ -28,8 +28,8 @@ public class IntakeLinkageAction {
     }
 
     public void moveIntakeSlide(double position) {
-        linkageServo1.setPosition(position);
-        linkageServo2.setPosition(position);
+        linkageServo1.setPosition(-position);
+        linkageServo2.setPosition(-position);
     }
     public double getPosition() {
         return linkageServo1.getPosition();
@@ -40,19 +40,25 @@ public class IntakeLinkageAction {
         return endTime - startTime > 1500;
     }
     public void control(double joystick) {
-        if (joystick > 0) {
-            ;
+        if (joystick > 0.1) {
+            setPosition(getPosition()+0.1);
+        } else if (joystick < -0.1) {
+            setPosition(getPosition()-0.1);
         }
+    }
+    public void setPosition(double position) {
+        linkageServo1.setPosition(position);
+        linkageServo2.setPosition(position);
     }
     public void extend() {
         startTime = SystemClock.currentThreadTimeMillis();
-        moveIntakeSlide(-2);
+        moveIntakeSlide(0);
         isRetracted = false;
     }
 
     public void retract() {
         //original 0.7
-        moveIntakeSlide(1);
+        moveIntakeSlide(-1);
         isRetracted = true;
     }
 

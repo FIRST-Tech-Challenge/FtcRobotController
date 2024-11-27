@@ -42,12 +42,12 @@ public class TransferSequence {
     }
     public void sequence() {
         outtakeSlideAction.moveToPosition(300);
-        outtakeClawAction.open();
-        intakeDoorAction.open();
-        intakeNoodleAction.run();
-        SystemClock.sleep(700);
-
-        outtakeSlideAction.down();
-        outtakeClawAction.open();
+//        outtakeClawAction.open();
+//        intakeDoorAction.open();
+//        intakeNoodleAction.run();
+//        SystemClock.sleep(700);
+//
+//        outtakeSlideAction.down();
+//        outtakeClawAction.open();
     }
 }

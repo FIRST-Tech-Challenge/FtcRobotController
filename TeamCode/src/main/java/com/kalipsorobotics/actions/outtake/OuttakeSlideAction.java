@@ -20,19 +20,13 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
-        if (power > 0.1) {
-            setPower(power);
-            linearSlideMotor1.setTargetPosition(2040);
-            linearSlideMotor2.setTargetPosition(2040);
-            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else if (power < -0.1) {
-            setPower(-power);
-            linearSlideMotor1.setTargetPosition(0);
-            linearSlideMotor2.setTargetPosition(0);
-            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        if (power > 0.1) {
+//            moveToPosition(2040);
+//        } else if (power < -0.1) {
+//            moveToPosition(0);
+//        }
     }
 
     public void run() {
@@ -48,8 +42,8 @@ public class OuttakeSlideAction {
     }
 
     public void moveToPosition(int target) {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setPower(0.75);
         linearSlideMotor2.setTargetPosition(target);
         linearSlideMotor1.setTargetPosition(target);

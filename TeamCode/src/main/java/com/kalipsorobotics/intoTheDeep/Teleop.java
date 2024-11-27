@@ -56,6 +56,7 @@ public class Teleop extends LinearOpMode {
 
 
         intakeLinkageAction.retract();
+        SystemClock.sleep(500);
         intakePivotAction.moveUp();
         intakeDoorAction.close();
 
@@ -76,6 +77,14 @@ public class Teleop extends LinearOpMode {
             //Noodles
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 intakeNoodleAction.run();
+                telemetry.addData("R", intakeNoodleAction.red());
+                telemetry.addData("G", intakeNoodleAction.green());
+                telemetry.addData("B", intakeNoodleAction.blue());
+                telemetry.update();
+                if (!intakeNoodleAction.colorSense("blue")) {
+                    intakeDoorAction.open();
+                } else intakeDoorAction.close();
+
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
             } else {
@@ -124,17 +133,23 @@ public class Teleop extends LinearOpMode {
             //LinearSlide
 
 
-//            if (-gamepad2.right_stick_y > 0.1) {
-//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-//            } else if (-gamepad2.right_stick_y < -0.1) {
-//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-//            } else {
-//                outtakeSlideAction.idle();
-//            }
+            if (-gamepad2.right_stick_y > 0.1) {
+                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+            } else if (-gamepad2.right_stick_y < -0.1) {
+                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+            } else {
+                outtakeSlideAction.idle();
+            }
+
+
             outtakeSlideAction.setPower(gamepad2.left_stick_y);
 
 
             //Claw
+            if (gamepad2.left_stick_y != 0) {
+                intakeLinkageAction.control(gamepad2.left_stick_y);
+            }
+
             if (gamepad2.right_bumper) {
                 outtakeClawAction.open();
             } else outtakeClawAction.close();

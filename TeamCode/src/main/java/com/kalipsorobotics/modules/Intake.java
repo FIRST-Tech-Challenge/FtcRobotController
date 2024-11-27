@@ -1,5 +1,7 @@
 package com.kalipsorobotics.modules;
 
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,10 +14,11 @@ public class Intake {
     private Servo intakePivotServo;
     private Servo doorServo;
     private Servo linkageServo1, linkageServo2;
+    private ColorSensor colorSensor;
+
 
     public Intake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
-
         setUpHardware();
     }
 
@@ -25,7 +28,7 @@ public class Intake {
         doorServo = opModeUtilities.getHardwareMap().servo.get("doorServo");
         linkageServo1 = opModeUtilities.getHardwareMap().servo.get("linkageServo1");
         linkageServo2 = opModeUtilities.getHardwareMap().servo.get("linkageServo2");
-
+        colorSensor = opModeUtilities.getHardwareMap().colorSensor.get("intakeColorSensor");
 
         noodleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         noodleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,6 +56,10 @@ public class Intake {
 
     public Servo getLinkageServo2() {
         return linkageServo2;
+    }
+
+    public ColorSensor getColorSensor() {
+        return colorSensor;
     }
 }
 
