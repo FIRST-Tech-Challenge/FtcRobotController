@@ -12,23 +12,22 @@ public class ColorDetector {
     OpModeUtilities opModeUtilities;
 
     ColorSensor colorSensor;
-    KColor.Color detectedColor;
 
     KColor currentColors;
     KColor baseColors;
 
     public ColorDetector(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
-        this.colorSensor = opModeUtilities.getHardwareMap().get(ColorSensor.class, "color sensor");
+        this.colorSensor = opModeUtilities.getHardwareMap().get(ColorSensor.class, "intakeColorSensor");
 
         opModeUtilities.getOpMode().sleep(100);
 
         baseColors = new KColor(colorSensor.red(), colorSensor.green(), colorSensor.blue());
         Log.d("color detectors", "base set to " + baseColors.getRed() + " " + baseColors.getGreen() + " " + baseColors.getBlue());
-        detectedColor = KColor.Color.NONE;
     }
 
     public KColor.Color detectColor() {
+        KColor.Color detectedColor;
 
         if(currentColors == null) {
             currentColors = new KColor();
@@ -46,16 +45,18 @@ public class ColorDetector {
         int greenOffset = currentColors.getGreen() - baseColors.getGreen();
         int blueOffset = currentColors.getBlue() - baseColors.getBlue();
 
-        opModeUtilities.getTelemetry().addData("Deltas", redOffset + " " + greenOffset + " " + blueOffset);
-
-        if(redOffset > greenOffset && redOffset > blueOffset && redOffset > 100) {
-            detectedColor = KColor.Color.RED;
-        } else if (blueOffset > redOffset && blueOffset > greenOffset && blueOffset > 100) {
-            detectedColor = KColor.Color.BLUE;
-        } else if (greenOffset > blueOffset && greenOffset > redOffset && greenOffset > 100) {
+ //       opModeUtilities.getTelemetry().addData("Deltas", redOffset + " " + greenOffset + " " + blueOffset);
+        Log.d("Deltas", redOffset + " " + greenOffset + " " + blueOffset);
+        if (greenOffset > blueOffset && greenOffset > 20) {
             detectedColor = KColor.Color.YELLOW;
+        } else if(redOffset > greenOffset && redOffset > blueOffset && redOffset > 50) {
+            detectedColor = KColor.Color.RED;
+        } else if (blueOffset > redOffset && blueOffset > greenOffset && blueOffset > 50) {
+            detectedColor = KColor.Color.BLUE;
+        } else {
+            detectedColor = KColor.Color.NONE;
         }
-
+        Log.d("detected color" , "" + detectedColor);
         return detectedColor;
 
     }

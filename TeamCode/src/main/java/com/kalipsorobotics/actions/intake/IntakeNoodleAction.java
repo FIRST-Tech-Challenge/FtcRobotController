@@ -53,7 +53,7 @@ public class IntakeNoodleAction {
         return colorSensor.argb();
     }
     public void reverse() {
-        intakeNoodleMotor.setPower(-1);
+        intakeNoodleMotor.setPower(-0.75);
     }
     public void stop() {
         intakeNoodleMotor.setPower(0);

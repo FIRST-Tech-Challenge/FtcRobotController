@@ -33,10 +33,10 @@ public class DriveAction {
         double forward = -gamepad.left_stick_x;
         double turn = gamepad.right_stick_x;
         double strafe = gamepad.left_stick_y;
-        double fLeftPower = forward + turn - strafe;
-        double fRightPower = forward - turn + strafe;
-        double bLeftPower = forward + turn + strafe;
-        double bRightPower = forward - turn - strafe;
+        double fLeftPower = -(forward + turn - strafe);
+        double fRightPower = (forward - turn + strafe);
+        double bLeftPower = (forward + turn + strafe);
+        double bRightPower = -(forward - turn - strafe);
 
         double absMaxPower = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
         if (absMaxPower > 1) {

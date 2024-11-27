@@ -14,9 +14,11 @@ import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
 import com.kalipsorobotics.actions.sequences.TransferSequence;
 import com.kalipsorobotics.localization.SparkfunOdometry;
+import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -44,6 +46,7 @@ public class Teleop extends LinearOpMode {
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
+        ColorDetector colorDetector = new ColorDetector(opModeUtilities);
 
 
         boolean prevGamePadY = false;
@@ -53,6 +56,9 @@ public class Teleop extends LinearOpMode {
         boolean prevDpadLeft = false;
         boolean prevDpadUp = false;
         boolean retracted = true;
+
+        //CHANGE ACCORDING TO ALLIANCE
+        boolean isRed = true;
 
 
         intakeLinkageAction.retract();
@@ -76,15 +82,14 @@ public class Teleop extends LinearOpMode {
             //INTAKE
             //Noodles
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
-                telemetry.addData("R", intakeNoodleAction.red());
-                telemetry.addData("G", intakeNoodleAction.green());
-                telemetry.addData("B", intakeNoodleAction.blue());
-                telemetry.update();
-
-                if (!intakeNoodleAction.colorSense("blue")) {
-                    intakeDoorAction.open();
-                } else intakeDoorAction.close();
-
+                if (((!isRed) && colorDetector.detectColor() == KColor.Color.RED) ||
+                        ((isRed) && colorDetector.detectColor() == KColor.Color.BLUE)) {
+                    intakeNoodleAction.reverse();
+                    sleep(1000);
+                } else {
+                    intakeDoorAction.close();
+                    intakeNoodleAction.run();
+                }
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
             } else {
