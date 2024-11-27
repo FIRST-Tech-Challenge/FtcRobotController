@@ -125,6 +125,7 @@ public class CheckSuite extends LinearOpMode {
         telemetry.update();
         
         // Test positions
+
         double[] positions = {0.0, 0.5, 1.0, 0.5};
         for (double position : positions) {
             telemetry.addData("Testing", "Position: %.2f", position);

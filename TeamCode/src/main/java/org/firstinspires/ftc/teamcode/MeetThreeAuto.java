@@ -274,18 +274,22 @@ public class MeetThreeAuto extends LinearOpMode {
         switch (sp) {
             case RED_LEFT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_LEFT_BEFORE_PARK_POSE.position)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_LEFT_PARK_POSE.heading);
             case RED_RIGHT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.RED_PARK_MIDDLEMAN)
+                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_BEFORE_PARK_POSE.position)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_RIGHT_PARK_POSE.heading);
             case BLUE_LEFT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_LEFT_BEFORE_PARK_POSE.position)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_LEFT_PARK_POSE.heading);
             case BLUE_RIGHT:
                 return previousTrajectory.strafeTo(Settings.Autonomous.FieldPositions.BLUE_PARK_MIDDLEMAN)
+                        .strafeTo(Settings.Autonomous.FieldPositions.BLUE_RIGHT_BEFORE_PARK_POSE.position)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_RIGHT_PARK_POSE.heading);
             default:

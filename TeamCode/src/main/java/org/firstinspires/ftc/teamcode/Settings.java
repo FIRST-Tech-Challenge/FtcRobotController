@@ -147,21 +147,26 @@ public class Settings {
             public static Vector2d BLUE_RIGHT_JUST_PARK_VEC = new Vector2d(-55, 58);
 
             // place positions for each starting position
-            public static Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-5, -38, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(5, -38, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(5, 38, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-5, 38, Math.toRadians(270));
+            public static Pose2d RED_LEFT_PLACE_POSE = new Pose2d(-5, -37, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_PLACE_POSE = new Pose2d(5, -37, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_PLACE_POSE = new Pose2d(5, 37, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_PLACE_POSE = new Pose2d(-5, 37, Math.toRadians(270));
 
             public static Pose2d RED_HP_POSE = new Pose2d(-59.5, -25.8, Math.toRadians(90));
             public static Pose2d BLUE_HP_POSE = new Pose2d(-35.6, 59.7, Math.toRadians(45));
 
-            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-45, -40);
-            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(45, 40);
+            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-45, -37);
+            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(45, 37);
 
-            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-25.4, 12.8, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-25.4, -12.8, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(25.4, -12.8, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(25.4, 12.8, Math.toRadians(270));
+            public static Pose2d RED_LEFT_BEFORE_PARK_POSE = new Pose2d(-46, 12.8, Math.toRadians(90));
+            public static Pose2d RED_RIGHT_BEFORE_PARK_POSE = new Pose2d(-46, -12.8, Math.toRadians(90));
+            public static Pose2d BLUE_LEFT_BEFORE_PARK_POSE = new Pose2d(46, -12.8, Math.toRadians(270));
+            public static Pose2d BLUE_RIGHT_BEFORE_PARK_POSE = new Pose2d(46, 12.8, Math.toRadians(270));
+
+            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-25.4, 10, Math.toRadians(180));
+            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-25.4, -10, Math.toRadians(180));
+            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(25.4, -10, Math.toRadians(90));
+            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(25.4, 10, Math.toRadians(90));
         }
 
         @Config
