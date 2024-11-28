@@ -88,7 +88,7 @@ public class linearOpMode extends LinearOpMode {
 
       // drive train controls
       double y = -gamepad1.left_stick_y;
-      double x = gamepad1.left_stick_x;
+      double x = gamepad1.left_stick_x * 1.1;
       double turn = gamepad1.right_stick_x;
       
       // input: theta and power
