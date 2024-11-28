@@ -58,7 +58,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         //wall to bar third specimen
         moveWallToBar2.addPoint(-740, 400, 0);
 
-        //
+
 
         waitForStart();
         while (opModeIsActive()) {

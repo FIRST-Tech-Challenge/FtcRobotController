@@ -1,9 +1,9 @@
 package com.kalipsorobotics.test.outtake;
 
-import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.OuttakePigeonAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

@@ -22,13 +22,13 @@ public abstract class Action {
     }
 
     //updates the action
-    public void updateCheckDone() {
-        if (isDone) { return; } //if i'm done never update
-        if (!dependentAction.getIsDone()) { return; } //if dependent action is not done never update
+    public boolean updateCheckDone() {
+        if (isDone) { return true; } //if i'm done never update
+        if (!dependentAction.getIsDone()) { return false; } //if dependent action is not done never update
 
         update();
 
-        updateIsDone();
+        return updateIsDone();
     }
 
     private boolean updateIsDone() {

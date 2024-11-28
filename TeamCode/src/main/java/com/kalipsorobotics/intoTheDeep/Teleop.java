@@ -2,16 +2,15 @@ package com.kalipsorobotics.intoTheDeep;
 
 import android.os.SystemClock;
 
-import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DriveAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.OuttakePigeonAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.actions.sequences.TransferSequence;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.ColorDetector;

@@ -1,4 +1,4 @@
-package com.kalipsorobotics.actions.outtake;
+package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.Servo;

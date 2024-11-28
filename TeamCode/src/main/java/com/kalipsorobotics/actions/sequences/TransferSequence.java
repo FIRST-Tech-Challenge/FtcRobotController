@@ -1,13 +1,11 @@
 package com.kalipsorobotics.actions.sequences;
 
-import android.os.SystemClock;
-
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
