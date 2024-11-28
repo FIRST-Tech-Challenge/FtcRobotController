@@ -57,7 +57,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/27/2024, 2:20pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "11/28/2024, 12:08pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         configureOtos();
@@ -67,19 +67,20 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // First Sample ///////////////////////////////////////////////////////////////
         setVertical(VERTICAL_MAX);                                  // Raising Arm
-        sleep(800);
+        sleep(500);
         setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(1000);
+        sleep(700);
         driveToLoc(9, 16, 45, 1.5);    // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop the block
 
         // Second Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(31, -4, -10, 1);
+        driveToLoc(15, 12, -10);
         setViper(1400);
-        sleep(1000);
+        sleep(300);
         setVertical(VERTICAL_MIN);
-        sleep(1500);
+        driveToLoc(31, -4, -10, 1);
+        sleep(500);
         driveToLoc(32, 0, -10, 1);
         sleep(200);
         setClaw(CLAW_MIN);                                          // Grab second block
@@ -92,11 +93,12 @@ public class OTOSAutoDrive extends LinearOpMode {
         setClaw(CLAW_MAX);                                          // Drop second block
 
         // Third Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(31, 6, -10, 1);
+        driveToLoc(16, 10, -10);
         setViper(1400);
-        sleep(1000);
+        sleep(300);
         setVertical(VERTICAL_MIN);
-        sleep(1000);
+        driveToLoc(31, 6, -10, 1);
+        sleep(500);
         driveToLoc(32, 10, -10, 1);
         sleep(200);
         setClaw(CLAW_MIN);                                          // Grab third block
@@ -104,27 +106,33 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        driveToLoc(10, 15, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop third block
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(31, 14, -10, 1);
-        setViper(1400);
+        driveToLoc(30, 14, -10, 1);
+        setViper(1200);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(32, 17, -10, 1);
+        driveToLoc(31, 17, -10, 1);
+        setViper(1300);
         sleep(200);
         setClaw(CLAW_MIN);                                          // Grab fourth block
         sleep(200);
-        driveToLoc(31, 12, -10, 1);
+        driveToLoc(29, 12, -10, 1);
         setVertical(VERTICAL_MAX, 1000);
         sleep(700);
         setViper(VIPER_MAX);
-        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        driveToLoc(10, 15, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
+        // Reset robot
+        driveToLoc(15, 7, 0, 3);
+        setViper(VIPER_MIN);
+        setVertical(VERTICAL_MIN, 1500);
+        sleep(3000);
 /*
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
@@ -150,10 +158,12 @@ public class OTOSAutoDrive extends LinearOpMode {
         ascentStick.setPosition(target);
     }
 
-    public void setViper(int length){
+    public void setViper(int length){ setViper(length, 2000); }
+
+    public void setViper(int length, int velocity){
         RobotLog.vv("Rockin' Robots", "setViper() length: %d, current: %d", length, viperSlide.getCurrentPosition());
         viperSlide.setTargetPosition(length);
-        ((DcMotorEx) viperSlide).setVelocity(2000);
+        ((DcMotorEx) viperSlide).setVelocity(velocity);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
