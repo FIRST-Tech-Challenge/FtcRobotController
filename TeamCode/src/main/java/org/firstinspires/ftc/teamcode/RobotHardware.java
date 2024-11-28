@@ -71,7 +71,7 @@ public class RobotHardware {
     private DcMotor elevatorLift = null;
     private DcMotor intakeSlide = null;
     private Servo intakePincher = null;
-    private Limelight3A limelight = null;
+    Limelight3A limelight = null;
     GoBildaPinpointDriver odo = null; // Declare OpMode member for the Odometry Computer
     private RevBlinkinLedDriver blinkinLedDriver = null;
     private RevBlinkinLedDriver.BlinkinPattern pattern = null;
@@ -156,14 +156,14 @@ public class RobotHardware {
         //leftHand.setPosition(MID_SERVO);
         //rightHand.setPosition(MID_SERVO);
 
-        /*
+
         //Limelight Setup
         limelight = myOpMode.hardwareMap.get(Limelight3A.class, "limelight");
-        telemetry.setMsTransmissionInterval(11);
+        //odo.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
-         */
 
+        //Telemetry Data
         myOpMode.telemetry.addData("Status", "Initialized");
         myOpMode.telemetry.addData("X offset", odo.getXOffset());
         myOpMode.telemetry.addData("Y offset", odo.getYOffset());
@@ -177,8 +177,8 @@ public class RobotHardware {
      * robot motions: Drive (Axial motion) and Turn (Yaw motion).
      * Then sends these power levels to the motors.
      *
-     * @param x     Lateral power
-     * @param y      Vertical power
+     * @param x     x-axis power
+     * @param y     y-axis power
      * @param rotation Rotation
      */
     public void mecanumDrive(double x, double y, double rotation) {

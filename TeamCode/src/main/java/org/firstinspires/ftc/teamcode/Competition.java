@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
-//import com.qualcomm.hardware.limelightvision.LLResult;
-//import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import java.util.Locale;
 
@@ -49,9 +49,8 @@ public class Competition extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            /*
             //Limelight Data
-            LLResult result = limelight.getLatestResult();
+            LLResult result = robot.limelight.getLatestResult();
             if (result != null) {
                 if (result.isValid()) {
                     Pose3D botpose = result.getBotpose();
@@ -59,7 +58,7 @@ public class Competition extends LinearOpMode {
                     telemetry.addData("ty", result.getTy());
                     telemetry.addData("Botpose", botpose.toString());
                 }
-             */
+            }
 
             //Odometry
             robot.odo.update(); //Update odometry
