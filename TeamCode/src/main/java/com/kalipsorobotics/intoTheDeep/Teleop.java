@@ -132,17 +132,16 @@ public class Teleop extends LinearOpMode {
 
 
             if (gamepad2.right_stick_y != 0) {
-                outtakeSlideAction.setL2Power(gamepad2.right_stick_y);
-            } //else {
-            //    outtakeSlideAction.idle();
-           // }
+                outtakeSlideAction.setPower(gamepad2.right_stick_y);
+            } else {
+                outtakeSlideAction.idle();
+            }
 
 
 
             //Claw
             if (gamepad2.left_stick_y != 0) {
-            //    intakeLinkageAction.control(gamepad2.left_stick_y);
-                outtakeSlideAction.setL1Power(gamepad2.left_stick_y);
+                intakeLinkageAction.control(gamepad2.left_stick_y);
             }
 
             if (gamepad2.right_bumper) {
