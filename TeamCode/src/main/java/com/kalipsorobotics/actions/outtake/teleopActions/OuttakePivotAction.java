@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class OuttakePivotAction {
 
     final private Outtake outtake;
-    private final Servo outtakePivotServo;
+    private final KServo outtakePivotServo;
 
     private boolean isIn = true;
 
@@ -27,9 +27,6 @@ public class OuttakePivotAction {
         setPosition(0.5);
         setPosition(0.925);
         isIn = true;
-    }
-    public double getPosition() {
-        return outtakePivotServo.getPosition();
     }
 
     public void moveOut() {

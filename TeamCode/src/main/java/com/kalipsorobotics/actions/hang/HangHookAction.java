@@ -4,13 +4,13 @@ import android.util.Log;
 
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class HangHookAction extends Action {
 
-    Servo hang1, hang2;
+    KServo hang1, hang2;
 
     public HangHookAction(Outtake outtake) {
         this.hang1 = outtake.getHangHook1();

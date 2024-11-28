@@ -1,12 +1,13 @@
 package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class OuttakePigeonAction {
 
     private final Outtake outtake;
-    private final Servo outtakePigeonServo;
+    private final KServo outtakePigeonServo;
 
     private boolean isIn;
     public OuttakePigeonAction(Outtake outtake) {

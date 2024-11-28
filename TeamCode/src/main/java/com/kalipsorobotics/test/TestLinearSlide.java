@@ -108,8 +108,8 @@ public class TestLinearSlide extends LinearOpMode {
             }
 
             telemetry.addData("lienar slides position", outtake2024.linearSlideMotor1.getCurrentPosition());
-            telemetry.addData("arm pivot position", outtake2024.outtakePivotServo.getPosition());
-            telemetry.addData("claw position", outtake2024.outtakeClawServo.getPosition());
+            //telemetry.addData("arm pivot position", outtake2024.outtakePivotServo.getPosition());
+            //telemetry.addData("claw position", outtake2024.outtakeClawServo.getPosition());
             telemetry.update();
 
             outtake2024.outtakePivotServo.setPosition(armPivotPos);

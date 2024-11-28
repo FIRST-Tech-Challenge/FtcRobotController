@@ -1,8 +1,6 @@
 package com.kalipsorobotics.intoTheDeep;
 
 import com.kalipsorobotics.actions.PurePursuitAction;
-import com.kalipsorobotics.actions.outtake.AutoSampleDumpAction;
-import com.kalipsorobotics.actions.outtake.AutoSpecimenHangAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -25,11 +23,10 @@ public class RedAutoBasket extends LinearOpMode {
 
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
 
-        AutoSpecimenHangAction specimenHang1 = new AutoSpecimenHangAction(outtake);
-        specimenHang1.setDependentAction(moveToSpecimenBar);
+        //hang specimen 1
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample1.setDependentAction(specimenHang1);
+        moveToSample1.setDependentAction(moveToSpecimenBar/*specimenHang1*/);
 
         //TODO INTAKE ACTION
 
@@ -37,19 +34,17 @@ public class RedAutoBasket extends LinearOpMode {
         moveToBasket1.setDependentAction(moveToSample1);
 
         //TODO seperate action into linear slide raise to make quickie quickie
-        AutoSampleDumpAction dumpSample1 = new AutoSampleDumpAction(outtake);
-        dumpSample1.setDependentAction(moveToBasket1);
+        //dump sample 1
 
         PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample2.setDependentAction(dumpSample1);
+        moveToSample2.setDependentAction(moveToBasket1);
 
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket2.setDependentAction(moveToSample2);
 
-        AutoSampleDumpAction dumpSample2 = new AutoSampleDumpAction(outtake);
-        dumpSample1.setDependentAction(moveToBasket2);
+        //dump sample 2
 
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample3.setDependentAction(moveToBasket2);
@@ -59,10 +54,7 @@ public class RedAutoBasket extends LinearOpMode {
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket3.setDependentAction(moveToSample3);
 
-        AutoSampleDumpAction dumpSample3 = new AutoSampleDumpAction(outtake);
-        dumpSample1.setDependentAction(moveToBasket3);
-
-        moveToSpecimenBar.setSleep(1000);
+        //dump sample 3
 
         int outtakeXPos = -350;
         int outtakeYPos = 900;
@@ -108,7 +100,6 @@ public class RedAutoBasket extends LinearOpMode {
 
             moveToSpecimenBar.updateCheckDone();
 
-            specimenHang1.updateCheckDone();
 
             moveToSample1.updateCheckDone();
 
@@ -116,7 +107,6 @@ public class RedAutoBasket extends LinearOpMode {
 
             moveToBasket1.updateCheckDone();
 
-            dumpSample1.updateCheckDone();
 
             moveToSample2.updateCheckDone();
 
@@ -124,7 +114,6 @@ public class RedAutoBasket extends LinearOpMode {
 
             moveToBasket2.updateCheckDone();
 
-            dumpSample2.updateCheckDone();
 
             moveToSample3.updateCheckDone();
 
@@ -132,7 +121,6 @@ public class RedAutoBasket extends LinearOpMode {
 
             moveToBasket3.updateCheckDone();
 
-            dumpSample3.updateCheckDone();
 
         }
 

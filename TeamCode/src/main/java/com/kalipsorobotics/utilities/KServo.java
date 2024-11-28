@@ -42,6 +42,10 @@ public class KServo {
         return currentPosition;
     }
 
+    public void setPosition(double position) {
+        servo.setPosition(position);
+    }
+
 
     public double getTargetPosition() {
         return targetPosition;

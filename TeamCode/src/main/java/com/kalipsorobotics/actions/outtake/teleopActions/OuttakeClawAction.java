@@ -1,13 +1,14 @@
 package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 //open 0.85
 //closed 0.95
 public class OuttakeClawAction {
 
     final private Outtake outtake;
-    final private Servo outtakeClawServo;
+    final private KServo outtakeClawServo;
 
     private boolean isClosed = true;
     public OuttakeClawAction(Outtake outtake) {
