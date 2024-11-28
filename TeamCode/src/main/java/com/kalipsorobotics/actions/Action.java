@@ -1,5 +1,7 @@
 package com.kalipsorobotics.actions;
 
+import android.util.Log;
+
 public abstract class Action {
 
     protected Action dependentAction;
@@ -37,5 +39,10 @@ public abstract class Action {
     //what condition the action needs to fulfill in order to be done
     public abstract boolean checkDoneCondition();
     //motor power, etc
-    public abstract void update();
+    public void update() {
+        if (isDone) {
+            Log.d("in super", "action done");
+            return;
+        }
+    }
 }

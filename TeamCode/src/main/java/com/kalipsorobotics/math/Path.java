@@ -49,13 +49,7 @@ public class Path {
                 return Optional.of(position);
             }
         }
-
-        if (Math.abs(currentPosition.getTheta() - getPoint(currentSearchWayPointIndex).getTheta()) < Math.toRadians(4)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(getPoint(currentSearchWayPointIndex));
-        }
-
+        return Optional.empty();
     }
 
     public Position getPoint(int index) {

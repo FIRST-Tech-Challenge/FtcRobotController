@@ -29,12 +29,14 @@ public class PurePursuitAction extends Action {
 
     Path path;
     Segment lastLine;
-    static final private double LOOK_AHEAD_RADIUS_MM = 300;
+    static final private double LOOK_AHEAD_RADIUS_MM = 75;
 
     private double currentLookAheadRadius;
     static final private double LAST_RADIUS_MM = 15;
     Optional<Position> follow;
     Optional<Position> prevFollow;
+
+    private long sleepTimeMS = 0;
 
     /**
      * Should not do more than 24 inches or 600mm moves in X and Y (single move)
@@ -49,7 +51,7 @@ public class PurePursuitAction extends Action {
         this.wheelOdometry = wheelOdometry;
         this.pidX = new PidNav(1.0/600.0, 0, 0);
         this.pidY = new PidNav(1.0/600.0, 0, 0);
-        this.pidAngle = new PidNav(1.0 / Math.toRadians(90), 0, 0);
+        this.pidAngle = new PidNav(0.5 * (1.0 / Math.toRadians(90)), 0, 0);
 
         this.prevFollow = Optional.empty();
 
@@ -102,30 +104,22 @@ public class PurePursuitAction extends Action {
 
     @Override
     public boolean checkDoneCondition() {
-
-        lastLine = path.getSegment(path.numSegments() - 1);
-        boolean distanceToEndWithinThreshold = wheelOdometry.getCurrentPosition().distanceTo(lastLine.getFinish()) < 1;
-        boolean angleWithinRange =
-                Math.abs(wheelOdometry.getCurrentPosition().getTheta() - pathPoints.get(path.numPoints()-1).getTheta()) < Math.toRadians(4);
-
-
-        if (!follow.isPresent()) {
-            driveTrain.setPower(0, 0, 0, 0);
-            Log.d("purepursaction_done", "done");
-            return true;
-        } else {
-            return false;
-        }
+        return isDone;
     }
 
     @Override
     public void update() {
-        if(!hasStarted) {
+        super.update();
+        if (isDone) {
+            return;
+        }
+        if (!hasStarted) {
             path = new Path(pathPoints);
             hasStarted = true;
         }
 
         currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
+
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = LAST_RADIUS_MM;
         }
@@ -141,6 +135,12 @@ public class PurePursuitAction extends Action {
 
             if (Math.abs(prevFollow.get().getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2)) {
                 driveTrain.setPower(0);
+                isDone = true;
+                try {
+                    Thread.sleep(sleepTimeMS);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 targetPosition(prevFollow.get());
             }
@@ -149,4 +149,9 @@ public class PurePursuitAction extends Action {
 
         }
     }
+
+    public void setSleep(long sleepTimeMS) {
+        this.sleepTimeMS = sleepTimeMS;
+    }
+
 }
