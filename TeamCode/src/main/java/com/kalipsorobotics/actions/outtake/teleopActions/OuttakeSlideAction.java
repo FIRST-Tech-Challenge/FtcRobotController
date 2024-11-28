@@ -21,6 +21,9 @@ public class OuttakeSlideAction {
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
         linearSlideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
