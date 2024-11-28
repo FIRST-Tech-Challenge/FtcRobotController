@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PinchBot extends PivotBot{
 
     private boolean isOpen = false;
+    private boolean specimenReady = false;
 
     public Servo pinch;
 
@@ -31,7 +32,7 @@ public class PinchBot extends PivotBot{
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
 
-        pinch.setPosition(0.5);
+        pinch.setPosition(0.7);
         rotate.setPosition(0.5);
     }
 
@@ -41,12 +42,22 @@ public class PinchBot extends PivotBot{
         rotate.setPosition(servoPos);
     }
 
+    public void autoPinch(){
+        if(isOpen){
+            isOpen = false;
+            pinch.setPosition(0.7);
+        }
+        if(!isOpen){
+            isOpen = true;
+            pinch.setPosition(1);
+        }
+    }
     public void pinchControl(boolean open, boolean close){
 
         if (open) {
 
             isOpen = true;
-            pinch.setPosition(0.5);
+            pinch.setPosition(0.7);
 
         }
         if (close) {
@@ -104,7 +115,7 @@ public class PinchBot extends PivotBot{
         double x = position[0];
         double y = position[1];
         double theta = position[2];
-        moveSlide((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION)); //move slide vertically
+        moveSlide((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION),0.5); //move slide vertically
         driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
         rotate(theta);
         isOpen = false;

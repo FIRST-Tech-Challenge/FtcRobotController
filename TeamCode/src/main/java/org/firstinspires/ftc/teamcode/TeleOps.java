@@ -8,13 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.bots.AutomationBot;
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
 import org.firstinspires.ftc.teamcode.bots.PivotBot;
 import org.firstinspires.ftc.teamcode.bots.PinchBot;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
-    private PinchBot robot = new PinchBot(this);
+    private AutomationBot robot = new AutomationBot(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,6 +62,7 @@ public class TeleOps extends LinearOpMode {
             robot.slideControl(gamepad1.right_bumper, gamepad1.left_bumper);
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
+            robot.scoreSpecimen(gamepad2.a);
 
             double[] values = robot.detectOne();
 
