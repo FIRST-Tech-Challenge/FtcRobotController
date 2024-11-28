@@ -1,0 +1,36 @@
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>distributionBase=GRADLE_USER_HOME\r\ndistributionPath=wrapper/dists\r\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-7.4.2-bin.zip\r\nzipStoreBase=GRADLE_USER_HOME\r\nzipStorePath=wrapper/dists\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	(revision eadd5bf8a72c66115a2039821530774d21b39237)
++++ b/gradle/wrapper/gradle-wrapper.properties	(date 1730942372645)
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/**\r\n * Top-level build file for ftc_app project.\r\n *\r\n * It is extraordinarily rare that you will ever need to edit this file.\r\n */\r\n\r\nbuildscript {\r\n    repositories {\r\n        mavenCentral()\r\n        google()\r\n    }\r\n    dependencies {\r\n        // Note for FTC Teams: Do not modify this yourself.\r\n        classpath 'com.android.tools.build:gradle:7.2.0'\r\n    }\r\n}\r\n\r\n// This is now required because aapt2 has to be downloaded from the\r\n// google() repository beginning with version 3.2 of the Android Gradle Plugin\r\nallprojects {\r\n    repositories {\r\n        mavenCentral()\r\n        google()\r\n    }\r\n}\r\n\r\nrepositories {\r\n    mavenCentral()\r\n}\r\n\r\n/* Copyright (c) 2017 FIRST. All rights reserved.\r\n *\r\n * Redistribution and use in source and binary forms, with or without modification,\r\n * are permitted (subject to the limitations in the disclaimer below) provided that\r\n * the following conditions are met:\r\n *\r\n * Redistributions of source code must retain the above copyright notice, this list\r\n * of conditions and the following disclaimer.\r\n *\r\n * Redistributions in binary form must reproduce the above copyright notice, this\r\n * list of conditions and the following disclaimer in the documentation and/or\r\n * other materials provided with the distribution.\r\n *\r\n * Neither the name of FIRST nor the names of its contributors may be used to endorse or\r\n * promote products derived from this software without specific prior written permission.\r\n * n\r\n * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS\r\n * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\r\n * \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,\r\n * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\r\n * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE\r\n * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\r\n * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\r\n * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\r\n * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\r\n * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\r\n * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\r\n */\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision eadd5bf8a72c66115a2039821530774d21b39237)
++++ b/build.gradle	(date 1730942372637)
+@@ -11,7 +11,7 @@
+     }
+     dependencies {
+         // Note for FTC Teams: Do not modify this yourself.
+-        classpath 'com.android.tools.build:gradle:7.2.0'
++        classpath 'com.android.tools.build:gradle:7.4.2'
+     }
+ }
+ 
