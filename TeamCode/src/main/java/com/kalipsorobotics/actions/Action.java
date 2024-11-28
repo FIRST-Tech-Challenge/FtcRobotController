@@ -23,8 +23,9 @@ public abstract class Action {
 
     //updates the action
     public boolean updateCheckDone() {
-        if (isDone) { return true; } //if i'm done never update
+        if (isDone) { return true; } //if done never update
         if (!dependentAction.getIsDone()) { return false; } //if dependent action is not done never update
+        //dont start if dependant action not finished
 
         update();
 

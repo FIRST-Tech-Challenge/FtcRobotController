@@ -1,7 +1,6 @@
 package com.kalipsorobotics.intoTheDeep;
 
 import com.kalipsorobotics.actions.PurePursuitAction;
-import com.kalipsorobotics.actions.outtake.SpecimenHangAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;

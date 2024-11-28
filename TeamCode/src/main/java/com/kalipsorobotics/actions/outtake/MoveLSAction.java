@@ -1,12 +1,20 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.outtake;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.DoneStateAction;
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.modules.Outtake;
 
 public class MoveLSAction extends Action {
+
+    public enum Position {
+        DOWN, SPECIMEN, BASKET
+    }
+
 
     Outtake outtake;
     DcMotor linearSlide, linearSlideTwo;
@@ -16,12 +24,12 @@ public class MoveLSAction extends Action {
     double currentTicks;
     double error;
 
-    public MoveLSAction(double targetTicks, Outtake outtake) {
+    public MoveLSAction(double targetMM, Outtake outtake) {
         this.outtake = outtake;
         linearSlide = outtake.linearSlideMotor1;
         linearSlideTwo = outtake.linearSlideMotor2;
-        this.targetTicks = targetTicks;
-        Log.d("movels", "target ticks set to " + targetTicks);
+        this.targetTicks = CalculateTickPer.ticksToMmLS(targetMM);
+        Log.d("movels", "target ticks set to " + targetMM);
         this.dependentAction = new DoneStateAction();
     }
 

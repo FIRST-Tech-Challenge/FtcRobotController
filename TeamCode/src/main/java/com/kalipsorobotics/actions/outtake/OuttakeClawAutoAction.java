@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class OuttakeClawAutoAction extends Action {
     Servo outtakeClawServo;
-    WaitAction wait = new WaitAction(0.15);
+    WaitAction wait = new WaitAction(15);
 
     public static enum ClawPosition {
         OPEN, CLOSE;

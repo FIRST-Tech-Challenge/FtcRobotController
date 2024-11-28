@@ -1,7 +1,8 @@
 package com.kalipsorobotics.intoTheDeep;
 
 import com.kalipsorobotics.actions.PurePursuitAction;
-import com.kalipsorobotics.actions.outtake.SpecimenHangAction;
+import com.kalipsorobotics.actions.outtake.AutoSpecimenHangAction;
+import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -9,7 +10,6 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Autonomous
 public class RedAutoSpecimen extends LinearOpMode {
@@ -18,17 +18,45 @@ public class RedAutoSpecimen extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+        Outtake outtake = new Outtake(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
-        SpecimenHangAction specimenHangAction1 = new SpecimenHangAction();
-        SpecimenHangAction specimenHangAction2 = new SpecimenHangAction();
-        SpecimenHangAction specimenHangAction3 = new SpecimenHangAction();
+
+        AutoSpecimenHangAction specimenHang1 = new AutoSpecimenHangAction(outtake);
+        specimenHang1.setDependentAction(moveToSpecimenBar);
+
         PurePursuitAction moveToFloorSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToFloorSample1.setDependentAction(specimenHang1);
+
+        PurePursuitAction moveToWall1 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToWall1.setDependentAction(moveToFloorSample1);
+
+        //TODO add linearslide raise
+        OuttakePivotAutoAction intakeWall1 = new OuttakePivotAutoAction(outtake,
+                OuttakePivotAutoAction.Position.SPECIMEN);
+        intakeWall1.setDependentAction(moveToWall1);
+
         PurePursuitAction moveWallToBar1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        PurePursuitAction moveBarToWall1 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveWallToBar1.setDependentAction(moveToFloorSample1);
+
+        AutoSpecimenHangAction specimenHang2 = new AutoSpecimenHangAction(outtake);
+        specimenHang2.setDependentAction(moveWallToBar1);
+
+        PurePursuitAction moveToWall2 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToWall2.setDependentAction(specimenHang2);
+
+        OuttakePivotAutoAction intakeWall2 = new OuttakePivotAutoAction(outtake,
+                OuttakePivotAutoAction.Position.SPECIMEN);
+        intakeWall2.setDependentAction(moveToWall2);
+
         PurePursuitAction moveWallToBar2 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveWallToBar2.setDependentAction(moveToWall2);
+
+        AutoSpecimenHangAction specimenHang3 = new AutoSpecimenHangAction(outtake);
+        specimenHang3.setDependentAction(moveWallToBar2);
+
 
         moveToSpecimenBar.setSleep(1000);
         moveToSpecimenBar.addPoint(0, 0, 0);
@@ -47,13 +75,13 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveToFloorSample1.addPoint(-430, -1100, -180);
 
         //sample to wall
-        moveToFloorSample1.addPoint(-80, -600, -180);
+        moveToWall1.addPoint(-80, -600, -180);
 
         //wall to bar second specimen
         moveWallToBar1.addPoint(-740, 350, 0);
 
         //bar to wall third specimen
-        moveBarToWall1.addPoint(-80, -600, -180);
+        moveToWall2.addPoint(-80, -600, -180);
 
         //wall to bar third specimen
         moveWallToBar2.addPoint(-740, 400, 0);
@@ -65,31 +93,21 @@ public class RedAutoSpecimen extends LinearOpMode {
 
             wheelOdometry.updatePosition();
 
-            moveToSpecimenBar.update();
+            moveToSpecimenBar.updateCheckDone();
 
-            if (moveToSpecimenBar.checkDoneCondition()) {
-                specimenHangAction1.update();
-            }
+            specimenHang1.updateCheckDone();
 
-            if (moveToSpecimenBar.checkDoneCondition()/*specimenHangAction1.checkDoneCondition()*/) {
-                moveToFloorSample1.update();
-            }
+            moveToFloorSample1.updateCheckDone();
 
-            if (moveToFloorSample1.checkDoneCondition()) {
-                moveWallToBar1.update();
-            }
+            intakeWall1.updateCheckDone();
 
-            if (moveWallToBar1.checkDoneCondition()) {
-                moveBarToWall1.update();
-            }
+            moveWallToBar1.updateCheckDone();
 
-            if (moveBarToWall1.checkDoneCondition()) {
-                moveWallToBar2.update();
-            }
+            moveToWall2.updateCheckDone();
 
-            if (moveWallToBar2.checkDoneCondition()) {
-                break;
-            }
+            intakeWall2.updateCheckDone();
+
+            moveWallToBar2.updateCheckDone();
         }
 
     }

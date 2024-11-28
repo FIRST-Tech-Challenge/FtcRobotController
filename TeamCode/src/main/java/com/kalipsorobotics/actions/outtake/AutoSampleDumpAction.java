@@ -2,13 +2,11 @@ package com.kalipsorobotics.actions.outtake;
 
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
-import com.kalipsorobotics.actions.MoveLSAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.math.CalculateTickInches;
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 
-public class AutoBasketAction extends Action {
+public class AutoSampleDumpAction extends Action {
 
     MoveLSAction moveLSToBasket;
     OuttakePivotAutoAction pivotOut;
@@ -16,15 +14,15 @@ public class AutoBasketAction extends Action {
     OuttakeClawAutoAction clawOpen;
     MoveLSAction moveLSToZero;
 
-    public AutoBasketAction(Outtake outtake) {
+    public AutoSampleDumpAction(Outtake outtake) {
         this.dependentAction = new DoneStateAction();
 
-        moveLSToBasket = new MoveLSAction(CalculateTickInches.inchToTicksLS(58), outtake);
+        moveLSToBasket = new MoveLSAction(CalculateTickPer.mmToTicksLS(1473.2), outtake);
         pivotOut = new OuttakePivotAutoAction(outtake, OuttakePivotAutoAction.Position.BASKET);
         pivotOut.setDependentAction(moveLSToBasket);
         clawOpen = new OuttakeClawAutoAction(outtake, OuttakeClawAutoAction.ClawPosition.OPEN);
         clawOpen.setDependentAction(pivotOut);
-        waitAfterDrop = new WaitAction(0.5);
+        waitAfterDrop = new WaitAction(300);
         waitAfterDrop.setDependentAction(clawOpen);
         moveLSToZero = new MoveLSAction(0, outtake);
         moveLSToZero.setDependentAction(waitAfterDrop);

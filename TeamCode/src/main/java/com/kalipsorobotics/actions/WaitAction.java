@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class WaitAction extends Action {
 
-    double waitTimeSeconds;
+    double waitTimeMS;
     ElapsedTime elapsedTime;
 
-    public WaitAction(double targetWaitTimeSeconds) {
+    public WaitAction(double targetWaitTimeMS) {
         this.dependentAction = new DoneStateAction();
-        this.waitTimeSeconds = targetWaitTimeSeconds;
+        this.waitTimeMS = targetWaitTimeMS;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class WaitAction extends Action {
         if (hasStarted) {
 //            boolean done = elapsedTime.seconds() >= waitTimeSeconds;
             Log.d("waitaction", "elapsed time " + elapsedTime.seconds());
-            if(elapsedTime.milliseconds()/1000 >= waitTimeSeconds) {
+            if(elapsedTime.milliseconds() >= waitTimeMS) {
                 return true;
             } else {
                 return false;

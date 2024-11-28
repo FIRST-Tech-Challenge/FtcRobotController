@@ -2,7 +2,6 @@ package com.kalipsorobotics.modules;
 
 import android.util.Log;
 
-import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.math.MathFunctions;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;

@@ -1,6 +1,6 @@
 package com.kalipsorobotics.math;
 
-public class CalculateTickInches {
+public class CalculateTickPer {
 
     static double ticksPerRevolutionOdometry = 2000;
     static double ticksPerRevolutionLS = 145.1;

@@ -1,6 +1,8 @@
 package com.kalipsorobotics.actions.outtake.teleopActions;
 
+import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //0.925 in

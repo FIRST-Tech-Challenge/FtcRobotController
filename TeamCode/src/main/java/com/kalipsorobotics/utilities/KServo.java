@@ -3,7 +3,7 @@ package com.kalipsorobotics.utilities;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public abstract class KServo {
+public class KServo {
 
     private final double servoSpeed; // degrees per sec
     private final Servo servo;
