@@ -58,7 +58,6 @@ public class Elevator {
             if (wantedState != ElevatorState.INTAKE) {
                 wantedPos -= (int) gamepadVal * 25;
             }
-
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
             wantedPos = limiter(wantedPos, 0, 2235);
             changeLevelPID.setWanted(wantedPos);
@@ -86,11 +85,6 @@ public class Elevator {
     public static int limiter(int pose , int lowVal, int highVal) {
         if(pose > highVal) { pose = highVal; } else if(pose < lowVal) { pose = lowVal; }
         return pose;
-    }
-
-    public static double getElevatorPosL() {
-        return leftMotor.getCurrentPosition() - encoderResetValL;
-//        return power;
     }
 
     public static void resetEncoder(){

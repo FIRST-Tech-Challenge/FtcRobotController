@@ -36,6 +36,7 @@ public class Test extends OpMode {
         if (gamepad1.dpad_left) {elevatorState = ElevatorState.SPECIMEN;}
         if (gamepad1.dpad_up) {elevatorState = ElevatorState.PUTSPECIMEN;}
         if (gamepad1.right_stick_y != 0) {elevatorState = ElevatorState.MANUAL;}
+        if (gamepad1.start) {Elevator.resetEncoder();}
 
         Elevator.operate( elevatorState, gamepad1.right_stick_y, -gamepad2.right_stick_y);
         Intake.operate(intakeState);
@@ -45,7 +46,7 @@ public class Test extends OpMode {
         telemetry.addData("wanted pos", Elevator.getWantedPos());
         telemetry.addData("state",elevatorState);
         telemetry.addData("gamepadval", -gamepad1.right_stick_y);
-        telemetry.addData("height", Elevator.getElevatorPosL());
+        telemetry.addData("height", Elevator.getElevatorPos());
 //        telemetry.addData("Ltarget", Elevator.leftMotor.getTargetPosition());
 //        telemetry.addData("Rtarget", Elevator.rightMotor.getTargetPosition());
     }

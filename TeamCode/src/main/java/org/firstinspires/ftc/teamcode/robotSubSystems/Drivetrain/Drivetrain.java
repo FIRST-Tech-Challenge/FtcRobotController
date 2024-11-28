@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utils.Vector;
 import org.firstinspires.ftc.teamcode.Utils.Angle;
 import org.firstinspires.ftc.teamcode.Utils.PID;
+import org.firstinspires.ftc.teamcode.robotSubSystems.Elevator.Elevator;
 
 public class Drivetrain {
 
@@ -30,9 +31,9 @@ public class Drivetrain {
         drive(
                 slowedVec(
                         fieldCentric(vector),
-                        0, //Elevator.getElevatorPos(),
-                        1, //ElevatorConstance.level3Pos,
-                        0.3
+                         Elevator.getElevatorPos()
+                        , 2235,
+                        0.4
                 ),
                 rotation
         );
