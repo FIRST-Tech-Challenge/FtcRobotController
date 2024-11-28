@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
+import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
 
 // Example Sequential Command Group
 // There are also:
@@ -34,7 +36,9 @@ public class StartingArmStowHigh extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
 
                 // powers the wrist and moves it to straight position
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
+
+                new CloseClaw()
 
 
 

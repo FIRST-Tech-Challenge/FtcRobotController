@@ -33,6 +33,8 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
         addCommands (
                 // sets the starting position
                 new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(0.25, 1.6, new Rotation2d(Math.toRadians(-90))))),
+
+
                 //makes sure the claw is closed
                 new CloseClaw(),
 
@@ -60,46 +62,46 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90))),
 
-                new HuntingPos(),
+//                new HuntingPos(),
+//
+//                new FollowPath(
+//                        2.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        new Rotation2d(Math.toRadians(-90.0)),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        new Pose2d(0.25, 0.8, new Rotation2d(Math.toRadians(-90.0))),
+//                        new Rotation2d(Math.toRadians(-90))),
+//
+//                // use camera to orient to sample
+//                // claw will close using touch sensor when it touches a sample
+//
+//                new DropToGrab(),
+//
+//                new Pause(0.5),
+//
+//                new CloseClaw(),
+//
+//                new Pause(0.5),
+//
+//                new HuntingPos(),
+//
+//                new FollowPath(
+//                        2.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        new Rotation2d(Math.toRadians(90.0)),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
+//                        new Rotation2d(Math.toRadians(-90))),
 
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 0.8, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
-
-                // use camera to orient to sample
-                // claw will close using touch sensor when it touches a sample
-
-                new DropToGrab(),
-
-                new Pause(0.5),
-
-                new CloseClaw(),
-
-                new Pause(0.5),
-
-                new HuntingPos(),
-
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
-
-                new ArmStowHigh(),
-
-                new Pause(0.5),
-                //  place in high bucket
-                new BlueSideHighBucketDeposit(),
+//                new ArmStowHigh(),
+//
+//                new Pause(0.5),
+//                //  place in high bucket
+//                new BlueSideHighBucketDeposit(),
 
                 // pickup all three and cycling in high bucket
                 new GroundCyclingAuto()

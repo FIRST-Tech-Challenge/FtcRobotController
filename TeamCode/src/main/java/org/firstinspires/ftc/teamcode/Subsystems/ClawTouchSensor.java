@@ -24,5 +24,5 @@ public class ClawTouchSensor extends SubsystemBase {
     }
 
     // place special subsystem methods here
-    public boolean ControleTouchSenser(){return clawTouch.isPressed();}
+    public boolean ControlTouchSenser(){return clawTouch.isPressed();}
 }

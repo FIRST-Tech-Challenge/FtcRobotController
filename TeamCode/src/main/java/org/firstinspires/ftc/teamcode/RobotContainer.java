@@ -130,32 +130,13 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)));
-
-
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new BackDepositePose());
-
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new WallPickUp());
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whileHeld(new WallPickUp());
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new PlaceSpecimenAddOffset());
-
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whileHeld(new PlaceSpecimenAddOffset());
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new DropToGrab());
-
-        if (isRedAlliance){
-            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
-        } else {
-            odometry.setCurrentPos(new Pose2d(0.8, 1.6, new Rotation2d(Math.toRadians(BlueStartAngle))));
-        }
-
-        // driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(()->elbowJoint.RotateTo(0)));
-
-       // driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(()->shoulderJoint.RotateTo(55)));
 
         // Controls the claw using bumpers
         // left = close
@@ -163,6 +144,17 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
+
+
+
+
+        if (isRedAlliance){
+            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
+        } else {
+            odometry.setCurrentPos(new Pose2d(0.8, 1.6, new Rotation2d(Math.toRadians(BlueStartAngle))));
+        }
+
+
 
 
 

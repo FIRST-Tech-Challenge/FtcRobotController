@@ -29,7 +29,7 @@ public class BlueSideHighBucketDeposit extends SequentialCommandGroup {
 
         addCommands (
                 new FollowPath(
-                        1.0,
+                        2.0,
                         1.0,
                         0.0,
                         0.0,
@@ -38,11 +38,11 @@ public class BlueSideHighBucketDeposit extends SequentialCommandGroup {
                         new Pose2d(1.53, 1.43, new Rotation2d(Math.toRadians(-135))),
                         new Rotation2d(Math.toRadians(-135))),
 
-                new Pause(1),
+                //new Pause(1),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
-                new Pause(1),
+               new Pause(1),
 
                 new BackDepositePose(),
 
@@ -50,7 +50,7 @@ public class BlueSideHighBucketDeposit extends SequentialCommandGroup {
 
                 new OpenClaw(),
 
-                new Pause(1),
+                new Pause(0.25),
 
                 new ArmStowHigh(),
 

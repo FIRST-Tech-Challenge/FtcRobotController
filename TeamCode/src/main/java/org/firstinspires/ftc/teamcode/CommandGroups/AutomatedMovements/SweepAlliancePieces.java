@@ -25,6 +25,7 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
         addCommands (
                 new InstantCommand(()-> RobotContainer.odometry.setCurrentPos(new Pose2d(-0.40,1.6,new Rotation2d(Math.toRadians(-90))))),
 
+                //sweep 1
                 new FollowPath(
                         1.0,
                         1.0,
@@ -66,7 +67,7 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
                         new Pose2d(-1.15, 1.35, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
-
+                // Sweep 2
                 new FollowPath(
                         1.0,
                         1.0,
@@ -100,6 +101,7 @@ public class SweepAlliancePieces extends SequentialCommandGroup {
                         new Pose2d(-1.45, 1.35, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
+                // sweep 3
                 new FollowPath(
                         1.0,
                         1.0,
