@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpec
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
 //import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
@@ -249,10 +250,13 @@ public class RobotContainer {
         GoToNextDropOff.initializeDestinationDecrement();
     }
 
+    public static int piece_angle;
 
     // call this function periodically to operate scheduler
     public static void Periodic() {
-        new ConvertAngleForWristRotate().schedule();
+        piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Blue"));
+        if (piece_angle>-1){
+        new ConvertAngleForWristRotate().schedule();}
         // actual interval time
         double intervaltime = timer.milliseconds();
 
@@ -271,6 +275,8 @@ public class RobotContainer {
             // report time interval on robot controller
             RCTelemetry.addData("interval time(ms)", intervaltime);
             RCTelemetry.addData("execute time(ms)", exectimer.milliseconds());
+            RCTelemetry.addData("blue", new ColorAndOrientationDetect().calAngle("Blue"));
+            RCTelemetry.addData("piece angle", piece_angle);
             RCTelemetry.update();
         }
     }

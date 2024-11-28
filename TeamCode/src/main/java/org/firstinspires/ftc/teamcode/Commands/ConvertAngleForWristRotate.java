@@ -20,7 +20,9 @@ public class ConvertAngleForWristRotate extends CommandBase {
     // This method is called once when command is started
     @Override
     public void initialize() {
-        RobotContainer.wristRotateServo.RotateTo((int) Math.round(new ColorAndOrientationDetect().calAngle("Blue")));
+        RobotContainer.wristRotateServo.RotateTo(RobotContainer.piece_angle);
+        //RobotContainer.wristRotateServo.RotateTo((int) Math.round(new ColorAndOrientationDetect().calAngle("Blue")));
+        new Pause(3);
     }
 
     // This method is called periodically while command is active
