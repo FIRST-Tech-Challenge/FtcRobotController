@@ -15,13 +15,14 @@ public class OdometryBot extends PinchBot {
     // Wheel diameters in mm
     final double VERTICAL_WHEEL_DIAMETER = 32; // Vertical wheel diameter
     final double HORIZONTAL_WHEEL_DIAMETER = 48; // Horizontal wheel diameter
+    final double ORIGINAL_WHEEL_DIAMETER = 37; // Wheel diameter from previous season - used for conversion of ticks
 
     // Encoder ticks per revolution
     final double TICKS_PER_REV = 2048;
 
     // Conversion factors for ticks to distance (mm)
-    final double VERTICAL_TICKS_TO_MM = (Math.PI * VERTICAL_WHEEL_DIAMETER) / TICKS_PER_REV;
-    final double HORIZONTAL_TICKS_TO_MM = (Math.PI * HORIZONTAL_WHEEL_DIAMETER) / TICKS_PER_REV;
+    final double VERTICAL_TICKS_TO_ORIGINAL = ORIGINAL_WHEEL_DIAMETER/VERTICAL_WHEEL_DIAMETER;
+    final double HORIZONTAL_TICKS_TO_ORIGINAL = ORIGINAL_WHEEL_DIAMETER/HORIZONTAL_WHEEL_DIAMETER;
 
     public DcMotor horizontal = null;
     public DcMotor verticalRight = null;
@@ -41,7 +42,7 @@ public class OdometryBot extends PinchBot {
     final int vLDirection = 1;
     final int vRDirection = 1;
     final int hDirection = -1;
-    final double diameter = 15697; // actually diameter: 239/609 = d/40000
+    final double diameter = 15697; // actual diameter: 239/609 = d/40000
     final double hDiameter = 10771; //diameter of horizontal encoder: 82*2/609 = hD/40000
     final double leftX = -(diameter/2); //135mm
     final double rightX = (diameter/2); //170mm
@@ -116,9 +117,9 @@ public class OdometryBot extends PinchBot {
      * @param h position of horizontal encoder
      */
     public void calculateCaseThree(double vL, double vR, double h) {
-        vL = vL * vLDirection * VERTICAL_TICKS_TO_MM;
-        vR = vR * vRDirection * VERTICAL_TICKS_TO_MM;
-        h = h * hDirection * HORIZONTAL_TICKS_TO_MM;
+        vL = vL * vLDirection * VERTICAL_TICKS_TO_ORIGINAL;
+        vR = vR * vRDirection * VERTICAL_TICKS_TO_ORIGINAL;
+        h = h * hDirection * HORIZONTAL_TICKS_TO_ORIGINAL;
 
         double lC = vL - previousVL;
         double rC = vR - previousVR;
