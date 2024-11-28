@@ -88,12 +88,22 @@ public class PrimaryOpMode extends LinearOpMode {
         double wantedAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         pid.setSetPoint(wantedAngle);
         boolean isTurning = false;
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         while (opModeIsActive()) {
 
             /* ##################################################
                             Inputs and Initializing
                ################################################## */
+
+            double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            // ChatGPT says:
+            // -------------
+            // Update the robot's heading using the unwrapped angle.
+            // This ensures the heading remains continuous even when crossing ±π boundaries.
+            // The IMU's raw heading wraps around at ±π, so we use unwrapAngle to prevent sudden jumps.
+            botHeading = unwrapAngle(botHeading, currentHeading); // Use unwrapping here
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = 1.1 * -gamepad1.left_stick_x;
@@ -103,9 +113,6 @@ public class PrimaryOpMode extends LinearOpMode {
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
-
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
             if (gamepad1.y)
                 imu.resetYaw();
 
@@ -123,9 +130,7 @@ public class PrimaryOpMode extends LinearOpMode {
             /* ##################################################
                                    Rotation
                ################################################## */
-
-            double FixError = pid.calculate(botHeading);
-
+            double fixError = pid.calculate(botHeading);
             if (rx == 0 && isTurning) {
                 wantedAngle = botHeading % (Math.PI*2);
                 isTurning = false;
@@ -133,13 +138,20 @@ public class PrimaryOpMode extends LinearOpMode {
             else if (rx != 0 && !isTurning) {
                 isTurning = true;
             }
+
             //makes sure the robot doesn't fix small angles
             if (Math.abs(Math.toDegrees(botHeading-wantedAngle)) > 6 && !isTurning){
-                rx -= FixError;
+                rx -= fixError;
             }
 
             pid.setSetPoint(wantedAngle);
 
+            if (gamepad1.dpad_up)
+                wantedAngle = 0;
+            if (gamepad1.dpad_right)
+                wantedAngle -= 0.5 * Math.PI;
+            if (gamepad1.dpad_left)
+                wantedAngle += 0.5 * Math.PI;
 
             /* ##################################################
                                     Elevator
@@ -180,9 +192,28 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.addData("Angle", Math.toDegrees(botHeading));
             telemetry.addData("rx:", rx);
             telemetry.addData("wanted angle",wantedAngle);
+            telemetry.addData("bot heading", botHeading);
             telemetry.addData("x", x);
             telemetry.addData("y", y);
             telemetry.update();
         }
+    }
+
+    // ChatGPT says:
+    // -------------
+    /**
+     * Unwraps the angle to ensure continuity.
+     * This method adjusts for the wraparound at ±π (or ±180°) by calculating
+     * the shortest angular distance between the current and previous angles.
+     * Without unwrapping, the angle may jump abruptly, causing erratic behavior.
+     */
+    private double unwrapAngle(double previousAngle, double currentAngle) {
+        double delta = currentAngle - previousAngle;
+        if (delta > Math.PI) {
+            delta -= 2 * Math.PI;
+        } else if (delta < -Math.PI) {
+            delta += 2 * Math.PI;
+        }
+        return previousAngle + delta;
     }
 }
