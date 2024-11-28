@@ -29,7 +29,7 @@ public class ManualBotDrive extends LinearOpMode {
         Init init = new Init(hardwareMap);
         DriveTrain driveTrain = new DriveTrain(init, telemetry);
         Outake outake = new Outake(init, telemetry);
-        Intake intake = new Intake(init);
+        Intake intake = new Intake(init, telemetry);
 
         telemetry.update();
 

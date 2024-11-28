@@ -21,7 +21,7 @@ public class intakeTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Init init = new Init(hardwareMap);
-        Intake intake = new Intake(init);
+        Intake intake = new Intake(init, telemetry);
 
         telemetry.update();
 

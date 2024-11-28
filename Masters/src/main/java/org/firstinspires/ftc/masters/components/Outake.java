@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -27,7 +28,8 @@ public class Outake implements Component{
     public static double wristF = 0.9;
     public static double wristB = 0.7;
 
-    private final Servo elbow1, elbow2, fingers;
+    private final Servo fingers;
+    private final Servo elbow1, elbow2;
     private final DcMotor extension1;
     private final DcMotor extension2;
 
@@ -57,24 +59,25 @@ public class Outake implements Component{
 
         target = 0;
 
+        fingers.setPosition(ITDCons.close);
+        elbow1.setPosition(.5);
+        elbow2.setPosition(.5);
+
     }
 
-    public void slidePower(int power) {
+    public void slidePower(double power) {
         extension1.setPower(power);
         extension2.setPower(power);
     }
 
-    public void moveElbow(float pos) {
-        elbow1.setPosition(pos);
+    public void diffy1(double pos) {
+        elbow1.setPosition(pos);    }
+
+    public void diffy2(double pos) {
         elbow2.setPosition(pos);
     }
 
-    public void moveWrist(float mod) {
-        elbow1.setPosition(.5 + mod);
-        elbow1.setPosition(.5 - mod);
-    }
-
-    public void moveClaw(float pos) {
+    public void moveClaw(double pos) {
         fingers.setPosition(pos);
     }
 

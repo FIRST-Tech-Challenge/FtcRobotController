@@ -13,13 +13,10 @@ import java.util.Locale;
 @TeleOp(name = "Diffy Test ")
 public class diffyTest extends LinearOpMode {
 
-    private Servo servo1;
-    private Servo servo2;
-
     public void runOpMode() throws InterruptedException {
 
-        servo1 = hardwareMap.servo.get("servo1");
-        servo2 = hardwareMap.servo.get("servo2");
+        Servo servo1 = hardwareMap.servo.get("servo1");
+        Servo servo2 = hardwareMap.servo.get("servo2");
 
 
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.masters.components;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +15,8 @@ public class Init {
     private final DcMotor leftRearMotor;
     private final DcMotor rightRearMotor;
 
-    private final Servo elbow1, elbow2, fingers;
+    private final Servo fingers;
+    private final Servo elbow1, elbow2;
     private final DcMotor extension1;
     private final DcMotor extension2;
 
