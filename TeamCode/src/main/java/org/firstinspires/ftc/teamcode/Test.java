@@ -42,9 +42,10 @@ public class Test extends OpMode {
         Drivetrain.operate(new Vector(gamepad1.left_stick_x, -gamepad1.left_stick_y), gamepad1.right_trigger - gamepad1.left_trigger);
         telemetry.addData("Gyro", Gyro.getAngle());
 //        telemetry.addData("elevPosL", Elevator.leftMotor.getCurrentPosition());
-//        telemetry.addData("elevPosR", Elevator.rightMotor.getCurrentPosition());
+        telemetry.addData("wanted pos", Elevator.getWantedPos());
         telemetry.addData("state",elevatorState);
         telemetry.addData("gamepadval", -gamepad1.right_stick_y);
+        telemetry.addData("height", Elevator.getElevatorPosL());
 //        telemetry.addData("Ltarget", Elevator.leftMotor.getTargetPosition());
 //        telemetry.addData("Rtarget", Elevator.rightMotor.getTargetPosition());
     }

@@ -40,34 +40,38 @@ public class Elevator {
     private static double power = 0;
     private static ElevatorState lastWantedState = ElevatorState.INTAKE;
     public static void operate(ElevatorState wantedState, double gamepadVal, double secondGamepad) {
-        if (gamepadVal == 0 && wantedState != lastWantedState) {
-            switch (wantedState) {
-                case INTAKE:
-                    wantedPos = ElevatorConstants.IntakePos;
-                    break;
-                case SPECIMEN:
-                    wantedPos = ElevatorConstants.SpecimenPos;
-                    break;
-                case PUTSPECIMEN:
-                    wantedPos = ElevatorConstants.PutSpecimenPos;
-                    break;
+        if (getElevatorPos() <= 2235) {
+            if (gamepadVal == 0 && wantedState != lastWantedState) {
+                switch (wantedState) {
+                    case INTAKE:
+                        wantedPos = ElevatorConstants.IntakePos;
+                        break;
+                    case SPECIMEN:
+                        wantedPos = ElevatorConstants.SpecimenPos;
+                        break;
+                    case PUTSPECIMEN:
+                        wantedPos = ElevatorConstants.PutSpecimenPos;
+                        break;
+                }
+                lastWantedState = wantedState;
             }
-            lastWantedState = wantedState;
-        }
-        if (wantedState != ElevatorState.INTAKE) {
-            wantedPos -= (int) gamepadVal * 25;
-        }
+            if (wantedState != ElevatorState.INTAKE) {
+                wantedPos -= (int) gamepadVal * 25;
+            }
 
-        changeLevelPID.setWanted(wantedPos);
+//            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
+            wantedPos = limiter(wantedPos, 0, 2235);
+            changeLevelPID.setWanted(wantedPos);
 
-        power = changeLevelPID.update(getElevatorPos());
+            power = changeLevelPID.update(getElevatorPos());
 
-        if (secondGamepad == 0) {
-            leftMotor.setPower(power);
-            rightMotor.setPower(power);
-        }else {
-            leftMotor.setPower(0.5 * secondGamepad);
-            rightMotor.setPower(0.5 * secondGamepad);
+            if (secondGamepad == 0) {
+                leftMotor.setPower(power);
+                rightMotor.setPower(power);
+            } else {
+                leftMotor.setPower(0.5 * secondGamepad);
+                rightMotor.setPower(0.5 * secondGamepad);
+            }
         }
 
     }
@@ -78,6 +82,11 @@ public class Elevator {
     }
 
     public static int getWantedPos(){return wantedPos;}
+
+    public static int limiter(int pose , int lowVal, int highVal) {
+        if(pose > highVal) { pose = highVal; } else if(pose < lowVal) { pose = lowVal; }
+        return pose;
+    }
 
     public static double getElevatorPosL() {
         return leftMotor.getCurrentPosition() - encoderResetValL;
