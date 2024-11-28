@@ -91,7 +91,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(10, 14, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop second block
-
+        
         // Third Sample ///////////////////////////////////////////////////////////////
         driveToLoc(16, 10, -10);
         setViper(1400);
