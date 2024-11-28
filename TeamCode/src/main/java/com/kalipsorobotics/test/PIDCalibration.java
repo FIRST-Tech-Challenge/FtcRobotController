@@ -16,10 +16,11 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
-@Autonomous(name="PIDCalibration")
+@Disabled
+//@Autonomous(name="PIDCalibration")
 public class PIDCalibration extends LinearOpMode {
     public static final double learningRateP = 0.05;
     public static final double learningRateI = 0.001;

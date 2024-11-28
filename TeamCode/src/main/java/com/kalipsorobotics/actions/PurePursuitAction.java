@@ -51,7 +51,7 @@ public class PurePursuitAction extends Action {
         this.wheelOdometry = wheelOdometry;
         this.pidX = new PidNav(1.0/600.0, 0, 0);
         this.pidY = new PidNav(1.0/600.0, 0, 0);
-        this.pidAngle = new PidNav(0.5 * (1.0 / Math.toRadians(90)), 0, 0);
+        this.pidAngle = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
 
         this.prevFollow = Optional.empty();
 
