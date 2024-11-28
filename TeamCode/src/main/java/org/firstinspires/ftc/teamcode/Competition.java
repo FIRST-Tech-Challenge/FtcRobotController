@@ -40,6 +40,7 @@ public class Competition extends LinearOpMode {
         //Intake
         boolean IntakeClosed = true;
         boolean IntakeButtonWasPressed = false;
+        double PosChange = 0.0;
 
         robot.init();  //Hardware configuration in RobotHardware.java
 
@@ -112,7 +113,17 @@ public class Competition extends LinearOpMode {
 
             IntakeButtonWasPressed = IntakeButtonPressed; //Update previous button state
 
-            telemetry.addData("Intake Button Pressed", IntakeButtonPressed);
+            /*
+            if (gamepad1.right_bumper){
+                robot.IntakePosition(0.005);
+            } else if (gamepad1.left_bumper) {
+                robot.IntakePosition(-0.005);
+            } else {
+                robot.IntakePosition(0);
+            }
+
+            //telemetry.addData("Intake Button Pressed", IntakeButtonPressed);
+             */
 
             telemetry.update();
         }

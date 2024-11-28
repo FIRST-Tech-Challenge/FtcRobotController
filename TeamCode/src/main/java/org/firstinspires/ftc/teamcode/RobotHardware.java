@@ -243,8 +243,17 @@ public class RobotHardware {
         intakePincher.setPosition(0);
     }
     public void OpenIntakePincher (){
-        intakePincher.setPosition(1);
+        intakePincher.setPosition(0.60);
     }
+
+    public void IntakePosition (double PosChange){
+        double CurrentPosition = intakePincher.getPosition();
+        double NewPosition = CurrentPosition + PosChange;
+        intakePincher.setPosition(NewPosition);
+        myOpMode.telemetry.addData("Intake Servo Pos", intakePincher.getPosition());
+        myOpMode.telemetry.update();
+    }
+
 
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
