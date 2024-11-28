@@ -41,13 +41,22 @@ public class TransferSequence {
         this.outtakePivotAction = new OuttakePivotAction(outtake);
     }
     public void sequence() {
-        outtakeSlideAction.moveToPosition(300);
-//        outtakeClawAction.open();
-//        intakeDoorAction.open();
-//        intakeNoodleAction.run();
-//        SystemClock.sleep(700);
-//
+        outtakePivotAction.moveOut();
+        SystemClock.sleep(600);
+        intakeNoodleAction.run();
+//        outtakeSlideAction.moveToPosition(300);
+        outtakeClawAction.open();
+        intakeDoorAction.open();
+        outtakeClawAction.open();
+
+        SystemClock.sleep(700);
+
 //        outtakeSlideAction.down();
-//        outtakeClawAction.open();
+        intakeNoodleAction.stop();
+        intakePivotAction.moveDown();
+        outtakePivotAction.moveIn();
+        SystemClock.sleep(650);
+        outtakeClawAction.close();
+        //ADD LINEAR SLIDE STUFF
     }
 }

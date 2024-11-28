@@ -34,7 +34,7 @@ public class OuttakeTest extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            outtakeSlideAction.moveToPosition(1);
+//            outtakeSlideAction.moveToPosition(1);
 
             if (-gamepad1.right_stick_y > 0.1) {
                 outtakeSlideAction.setPower(-gamepad1.right_stick_y);

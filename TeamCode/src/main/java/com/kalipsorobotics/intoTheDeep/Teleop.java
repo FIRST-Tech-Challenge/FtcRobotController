@@ -87,7 +87,6 @@ public class Teleop extends LinearOpMode {
                     intakeNoodleAction.reverse();
                     sleep(1000);
                 } else {
-                    intakeDoorAction.close();
                     intakeNoodleAction.run();
                 }
             } else if (gamepad2.left_bumper) {
@@ -127,24 +126,19 @@ public class Teleop extends LinearOpMode {
             }
             prevGamePadA = gamepad2.a;
 
-            //LinearSlide toggle
-      //      if (gamepad2.y && !prevGamePadY) {
-       //         while (!outtakeSlideAction.toggle()) {
-      //              outtakeSlideAction.toggle();
-      //          }
-      //      }
-       //     prevGamePadY = gamepad2.y;
-            //OUTTAKE
-            //LinearSlide
-
-
-            if (-gamepad2.right_stick_y > 0.1) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-            } else if (-gamepad2.right_stick_y < -0.1) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-            } else {
-                outtakeSlideAction.idle();
+            if (gamepad2.y && !prevGamePadY) {
+                outtakePivotAction.togglePosition();
             }
+            prevGamePadY = gamepad2.y;
+
+
+//            if (-gamepad2.right_stick_y > 0.1) {
+//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+//            } else if (-gamepad2.right_stick_y < -0.1) {
+//                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+//            } else {
+//                outtakeSlideAction.idle();
+//            }
 
 
             outtakeSlideAction.setPower(gamepad2.left_stick_y);
@@ -165,14 +159,17 @@ public class Teleop extends LinearOpMode {
             }
             prevDpadLeft = gamepad2.dpad_left;
 
+            if (gamepad2.right_stick_y != 0) {
+                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+            }
 
             //Pivot
-            if (gamepad2.dpad_up && !prevDpadUp) {
+            if (gamepad2.dpad_up) {
                 outtakeSlideAction.toggle();
 
             }
             if (gamepad2.dpad_down) {
-                outtakeSlideAction.down();
+                outtakeSlideAction.reverse();
                 outtakePivotAction.setPosition(0.825);
             }
             prevDpadUp = gamepad2.dpad_up;

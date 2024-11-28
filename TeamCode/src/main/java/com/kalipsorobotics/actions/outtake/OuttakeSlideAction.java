@@ -1,7 +1,11 @@
 package com.kalipsorobotics.actions.outtake;
 
+import android.os.SystemClock;
+import android.util.Log;
+
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class OuttakeSlideAction {
 
@@ -16,17 +20,22 @@ public class OuttakeSlideAction {
         this.outtakePivotAction = new OuttakePivotAction(outtake);
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
+        linearSlideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
     public void setPower(double power) {
-//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        if (power > 0.1) {
 //            moveToPosition(2040);
 //        } else if (power < -0.1) {
 //            moveToPosition(0);
 //        }
+     //   linearSlideMotor1.setPower(power);
+        linearSlideMotor2.setPower(power);
     }
 
     public void run() {
@@ -37,19 +46,22 @@ public class OuttakeSlideAction {
         setPower(0);
     }
 
+    public void reverse() { setPower(-1); }
+
     public void idle() {
         setPower(0.1);
     }
 
-    public void moveToPosition(int target) {
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setPower(0.75);
-        linearSlideMotor2.setTargetPosition(target);
-        linearSlideMotor1.setTargetPosition(target);
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
+//    public void moveToPosition(int target) {
+//        Log.d("out slide", "MOVING");
+//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        setPower(1);
+//        linearSlideMotor2.setTargetPosition(target);
+//        linearSlideMotor1.setTargetPosition(target);
+//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    }
     public void up(double distance) {
         if (getPosition() < distance) {
             setPower(1);
@@ -70,7 +82,14 @@ public class OuttakeSlideAction {
         }
     }
     public void toggle() {
-        if (stage == 0) { moveToPosition(992); outtakePivotAction.moveOut(); stage = 1; }
-        else { moveToPosition(2060); stage = 0; }
+        if (stage == 0) {
+            run();
+            SystemClock.sleep(300);
+            outtakePivotAction.moveOut();
+            stage = 1; }
+        else {
+            reverse();
+            SystemClock.sleep(300);
+            stage = 0; }
     }
 }
