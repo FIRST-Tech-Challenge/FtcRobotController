@@ -34,7 +34,7 @@ public class OuttakeSlideAction {
 //        } else if (power < -0.1) {
 //            moveToPosition(0);
 //        }
-     //   linearSlideMotor1.setPower(power);
+        linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
     }
 
@@ -91,5 +91,11 @@ public class OuttakeSlideAction {
             reverse();
             SystemClock.sleep(300);
             stage = 0; }
+    }
+    public void setL1Power(double power) {
+        linearSlideMotor1.setPower(power);
+    }
+    public void setL2Power(double power) {
+        linearSlideMotor2.setPower(power);
     }
 }
