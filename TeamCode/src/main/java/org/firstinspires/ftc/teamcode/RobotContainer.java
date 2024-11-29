@@ -13,18 +13,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.FullClimb;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
-import org.firstinspires.ftc.teamcode.Commands.LowerJack;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 
-import org.firstinspires.ftc.teamcode.Commands.RaiseJack;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
@@ -125,6 +124,7 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
+
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new SweepAlliancePieces());
@@ -137,19 +137,23 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whileHeld(new WallPickUp());
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whileHeld(new WallPickUp());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whileHeld(new PlaceSpecimenAddOffset());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whileHeld(new PlaceSpecimenAddOffset());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
+
         // Controls the claw using bumpers
         // left = close
         // right = open
-
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 

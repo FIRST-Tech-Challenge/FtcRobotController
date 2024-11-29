@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
+package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
