@@ -117,6 +117,7 @@ public class Teleop extends LinearOpMode {
             //save for later
             //Linkage
             //TODO make sure its not blocking w/ the sleeps
+
             if (gamepad2.a && !prevGamePadA) {
                 intakeSequence.extend();
                 if (retracted) {
@@ -128,12 +129,13 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
+            //outtake pivot
             if (gamepad2.y && !prevGamePadY) {
                 outtakePivotAction.togglePosition();
                 Log.d("teleop", "outtake pivoted");
             }
 
-
+            //linear slides
             if (gamepad2.right_stick_y != 0) {
                 outtakeSlideAction.setPower(gamepad2.right_stick_y);
                 Log.d("teleop", "linear slide moving...");
@@ -148,7 +150,7 @@ public class Teleop extends LinearOpMode {
                 intakeLinkageAction.control(gamepad2.left_stick_y);
                 Log.d("teleop", "intake linkage moving...");
             }
-
+            //outtake claw
             if (gamepad2.right_bumper) {
                 outtakeClawAction.open();
                 Log.d("teleop", "outtake claw is open...");
@@ -164,11 +166,13 @@ public class Teleop extends LinearOpMode {
                 outtakeSlideAction.toggle();
                 Log.d("teleop", "outtake slide toggled");
             }
+            //linear slides down
             if (gamepad2.dpad_down) {
                 outtakeSlideAction.moveToPosition(0);
                 outtakePivotAction.setPosition(0.825);
                 Log.d("teleop", "outtake slide moved down");
             }
+
 
             if (gamepad2.a && gamepad1.a) {
                 telemetry.addData("", "yes");
