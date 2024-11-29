@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.TeleOps.BasicTeleOps;
 import org.firstinspires.ftc.teamcode.TeleOps.FiniteMachineStateIntake;
 
@@ -19,7 +20,7 @@ public class AutonomousMoveCode extends LinearOpMode {
     // Constants for distance calculations
     static final double COUNTS_PER_MOTOR_GOBILDA_435    = 384.5;
     static final double COUNTS_PER_MOTOR_GOBILDA_312    = 537.7;
-    static final double DRIVE_GEAR_REDUCTION            = 0.66; //24:16 Motor:Wheel
+    static final double DRIVE_GEAR_REDUCTION            = 1.5; //24:16 Motor:Wheel
     static final double WHEEL_DIAMETER_MM               = 96; // Wheel diameter mm
     static final double COUNTS_PER_MM_Drive             = (COUNTS_PER_MOTOR_GOBILDA_435 * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * Math.PI);
     static final double COUNTS_PER_CM_Slides = COUNTS_PER_MOTOR_GOBILDA_312 / 38.2; //Ticks Per Rotation * Pulley Circumference
@@ -229,15 +230,13 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        sleep(1000);
+        sleep(250);
     }
     /**
      strafing
      **/
     private void strafeToPosition(double dist_mm, double speed) {
         int targetPosition = (int)(dist_mm * COUNTS_PER_MM_Drive);
-
-
 
         // Set target position for both motors
         robot.frontLeftMotor.setTargetPosition(robot.frontLeftMotor.getCurrentPosition() + targetPosition);
@@ -279,22 +278,18 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        sleep(1000);
+        sleep(250);
     }
     /**
      * Turns the robot by a specific angle (in degrees) at a given speed.
      */
     private void turnToAngle(double targetAngle, double speed) {
         // Reset the IMU angle
-        robot.initIMU();
+        robot.imu.resetYaw();
         sleep(1000);
         double currentAngle = getHeading();
-        intakeTimer.reset();
-        while (opModeIsActive() && intakeTimer.seconds() < 10){
-            telemetry.addData("Heading",currentAngle);
-        }
 
-        while (opModeIsActive() && Math.abs(targetAngle - currentAngle) > 1.5) { // Tolerance of 1 degree
+        while (opModeIsActive() && Math.abs(targetAngle - currentAngle) > 1.0) { // Tolerance of 1 degree
             double turnDirection = Math.signum(targetAngle - currentAngle); // Positive for clockwise, negative for counter-clockwise
 
             // Apply power for turning
@@ -304,7 +299,7 @@ public class AutonomousMoveCode extends LinearOpMode {
             robot.backRightMotor.setPower(-turnDirection * speed);
 
             // Update the current angle
-            currentAngle = getHeading();
+            currentAngle = -1*getHeading();
 
             telemetry.addData("Current Angle", currentAngle);
             telemetry.addData("Turn Direction", turnDirection);
@@ -321,7 +316,13 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.backLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
         robot.backRightMotor.setPower(0);
-        sleep(1000);
+
+        robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        sleep(250);
     }
 
     /**
@@ -330,7 +331,7 @@ public class AutonomousMoveCode extends LinearOpMode {
      * @return The heading angle in degrees
      */
     private double getHeading() {
-        double adjustedHeading =  robot.imu.getRobotYawPitchRollAngles().getYaw();
+        double adjustedHeading =  robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
         if (adjustedHeading > 180) {
             adjustedHeading -= 360;
         } else if (adjustedHeading < -180) {
