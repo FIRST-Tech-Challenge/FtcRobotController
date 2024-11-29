@@ -1,7 +1,11 @@
 package com.kalipsorobotics.modules;
 
+import static java.lang.Thread.sleep;
+
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -81,5 +85,17 @@ public class ColorDetector {
             return false;
         }
     }
-
+    public void cycle(boolean isRed, boolean takeInYellow, IntakeNoodleAction intakeNoodleAction) {
+        if (((!isRed) && detectRed()) ||
+                (isRed) && detectBlue()) {
+            intakeNoodleAction.reverse();
+            SystemClock.sleep(1000);
+        } else if (takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
+                (isRed) && detectBlue()) {
+            intakeNoodleAction.reverse();
+            SystemClock.sleep(1000);
+        } else {
+            intakeNoodleAction.run();
+        }
+    }
 }

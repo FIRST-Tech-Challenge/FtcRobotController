@@ -81,23 +81,7 @@ public class Teleop extends LinearOpMode {
             //INTAKE
             //Noodles
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
-                if (takeInYellow) {
-                    if (((!isRed) && colorDetector.detectRed()) ||
-                            (isRed) && colorDetector.detectBlue()) {
-                        intakeNoodleAction.reverse();
-                        sleep(1000);
-                    } else {
-                        intakeNoodleAction.run();
-                    }
-                } else {
-                    if (((!isRed) && colorDetector.detectRed()) || (colorDetector.detectYellow()) ||
-                            (isRed) && colorDetector.detectBlue()) {
-                        intakeNoodleAction.reverse();
-                        sleep(1000);
-                    } else {
-                        intakeNoodleAction.run();
-                    }
-                }
+                colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
             } else {
