@@ -1,6 +1,6 @@
 # Connections
 
-## Control Hub
+## CONTROL HUB
 
 ### Motors
 
@@ -13,7 +13,25 @@
 
 ### Servos
 
-## Expansion Hub
+| Servo Port | Name            | Description               |
+|------------|-----------------|---------------------------|
+| 0          | Limelight Servo | Currently broken          |
+| 1          | Elbow           | Intake Elbow servo        |
+| 2          | RightIntake     | CR servo for right intake |
+| 3          | LeftIntake      | CR servo for left intake  |
+| 4          | Stopper         | Servo for stopper         |
+| 5          | -               | -                         |
+
+## I2C
+
+| I2C | Name        | Description                     |
+|-----|-------------|---------------------------------|
+| 0   | odo         | Odometry computer               |
+| 1   | -           | -                               |
+| 2   | ColorSensor | Color sensor for rolling intake |
+| 3   | -           | -                               |
+
+## EXPANSION HUB
 
 ### Motors
 
@@ -26,23 +44,7 @@
 
 ### Servos
 
-| Servo Port | Name        | Description               |
-|------------|-------------|---------------------------|
-| 0          | Elbow       | Intake Elbow servo        |
-| 1          | RightIntake | CR servo for right intake |
-| 2          | LeftIntake  | CR servo for left intake  |
-| 3          | Stopper     | Servo for stopper         |
-| 4          | -           | -                         |
-| 5          | -           | -                         |
-
-
-
 ## I2C
-
-| I2C Bus | Name        | Description                                |
-|---------|-------------|--------------------------------------------|
-| 0       | odo         | IMU(vert. deadwheel, horizontal deadwheel) |
-| 1       | ColorSensor | Intake color sensor                        |
 
 ## Digital
 
