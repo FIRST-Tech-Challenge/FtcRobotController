@@ -286,8 +286,8 @@ public class AutonomousMoveCode extends LinearOpMode {
     private void turnToAngle(double targetAngle, double speed) {
         // Reset the IMU angle
         robot.imu.resetYaw();
-        sleep(1000);
-        double currentAngle = getHeading();
+        sleep(200);
+        double currentAngle = -getHeading();
 
         while (opModeIsActive() && Math.abs(targetAngle - currentAngle) > 1.0) { // Tolerance of 1 degree
             double turnDirection = Math.signum(targetAngle - currentAngle); // Positive for clockwise, negative for counter-clockwise
@@ -354,7 +354,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         while (opModeIsActive() && (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy())) {
 
         }
-        sleep(1000);
+        sleep(500);
     }
 
 }
