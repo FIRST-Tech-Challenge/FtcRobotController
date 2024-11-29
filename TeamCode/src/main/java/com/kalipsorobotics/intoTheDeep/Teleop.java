@@ -134,13 +134,13 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.right_stick_y != 0) {
                 outtakeSlideAction.setPower(gamepad2.right_stick_y);
             } else {
-                outtakeSlideAction.idle();
+                outtakeSlideAction.stop();
             }
 
 
 
             //Claw
-            if (gamepad2.left_stick_y != 0) {
+            if (gamepad2.left_stick_y != 0 && gamepad2.left_stick_y != 0.1) {
                 intakeLinkageAction.control(gamepad2.left_stick_y);
             }
 
@@ -153,11 +153,6 @@ public class Teleop extends LinearOpMode {
                 intakeDoorAction.togglePosition();
             }
             prevDpadLeft = gamepad2.dpad_left;
-
-            if (gamepad2.right_stick_y != 0) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-            }
-
             //Pivot
             if (gamepad2.dpad_up) {
                 outtakeSlideAction.toggle();

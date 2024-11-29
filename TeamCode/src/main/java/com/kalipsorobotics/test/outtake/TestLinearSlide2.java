@@ -19,7 +19,7 @@ public class TestLinearSlide2 extends LinearOpMode {
         linearSlideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         while (opModeIsActive()) {
-            linearSlideMotor1.setPower(gamepad2.left_stick_y);
+            linearSlideMotor1.setPower(gamepad2.right_stick_y);
             linearSlideMotor2.setPower(gamepad2.right_stick_y);
             //Both motors are reversed
         }

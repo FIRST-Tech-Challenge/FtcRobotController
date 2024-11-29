@@ -20,9 +20,6 @@ public class OuttakeSlideAction {
         this.outtakePivotAction = new OuttakePivotAction(outtake);
         this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
-
-        linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
@@ -36,7 +33,8 @@ public class OuttakeSlideAction {
 //        } else if (power < -0.1) {
 //            moveToPosition(0);
 //        }
-       // linearSlideMotor1.setPower(power);
+        linearSlideMotor1.setPower(power);
+        Log.d("outtake slides", "POWER: " + power);
         linearSlideMotor2.setPower(power);
     }
 
@@ -51,7 +49,7 @@ public class OuttakeSlideAction {
     public void reverse() { setPower(-1); }
 
     public void idle() {
-        setPower(0.1);
+        setPower(0.2);
     }
 
 //    public void moveToPosition(int target) {
