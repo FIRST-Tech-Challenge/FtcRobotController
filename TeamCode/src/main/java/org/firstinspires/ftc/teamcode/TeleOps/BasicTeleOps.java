@@ -47,7 +47,8 @@ public class BasicTeleOps extends OpMode {
 
     public static double intake_Rotation        = 0.49;
 
-    public static double intake_Arm_initial     = 0.35;//0-0.56
+    public static double intake_Arm_Idle        =0.1;
+    public static double intake_Arm_Initial     = 0.35;//0-0.56
     public static double intake_Arm_down        = 0.05;
     public static double intake_Arm_retract     = 0.53;
 
@@ -107,7 +108,7 @@ public class BasicTeleOps extends OpMode {
 
         //Intake Arm Control
         intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
-                intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
+                intake_Arm_Initial, intake_Arm_Idle, intake_Arm_down,intake_Arm_retract,
                 intake_slide_Retract, intake_slide_Extension, intake_Rotation,
                 intake_Claw_Open, intake_Claw_Close);
         intakeArmDrive.Init();
