@@ -88,7 +88,6 @@ public class Teleop extends LinearOpMode {
                 takeInYellow = !takeInYellow;
                 Log.d ("teleop", "taking in yellow is " + takeInYellow);
             }
-            prevDpadRight = gamepad2.dpad_right;
             //press dpad right to toggle taking in yellow
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
@@ -181,6 +180,7 @@ public class Teleop extends LinearOpMode {
 
             prevDpadUp = gamepad2.dpad_up;
             prevDpadLeft = gamepad2.dpad_left;
+            prevDpadRight = gamepad2.dpad_right;
             prevGamePadA = gamepad2.a;
             prevGamePadB = gamepad2.b;
             prevGamePadX = gamepad2.x;
