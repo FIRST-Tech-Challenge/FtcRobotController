@@ -37,7 +37,9 @@ public class OuttakeSlideAction {
         setPower(0);
     }
 
-    public void reverse() { setPower(-1); }
+    public void reverse() {
+        setPower(-1);
+    }
 
     public void idle() {
         setPower(-0.2);
@@ -53,39 +55,35 @@ public class OuttakeSlideAction {
         linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
     public void up(double distance) {
         if (getPosition() < distance) {
             setPower(1);
-        }
-        else {
+        } else {
             setPower(0);
         }
     }
+
     public int getPosition() {
         return linearSlideMotor1.getCurrentPosition();
     }
+
     public void down() {
         if (getPosition() > 0) {
             setPower(-1);
-        }
-        else {
+        } else {
             setPower(0.0);
         }
     }
+
     public void toggle() {
         if (stage == 0) {
             moveToPosition(330);
             outtakePivotAction.moveOut();
-            stage = 1; }
-        else {
-            reverse();
-            SystemClock.sleep(500);
-            stage = 0; }
-    }
-    public void setL1Power(double power) {
-        linearSlideMotor1.setPower(power);
-    }
-    public void setL2Power(double power) {
-        linearSlideMotor2.setPower(power);
+            stage = 1;
+        } else {
+            moveToPosition(400);
+            stage = 0;
+        }
     }
 }

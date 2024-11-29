@@ -86,11 +86,11 @@ public class ColorDetector {
         }
     }
     public void cycle(boolean isRed, boolean takeInYellow, IntakeNoodleAction intakeNoodleAction) {
-        if (((!isRed) && detectRed()) ||
+        if (takeInYellow && ((!isRed) && detectRed()) ||
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
             SystemClock.sleep(1000);
-        } else if (takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
+        } else if (!takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
             SystemClock.sleep(1000);

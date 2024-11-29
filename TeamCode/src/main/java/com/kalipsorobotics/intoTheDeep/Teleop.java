@@ -11,6 +11,7 @@ import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
+import com.kalipsorobotics.actions.sequences.IntakeSequence;
 import com.kalipsorobotics.actions.sequences.TransferSequence;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.ColorDetector;
@@ -45,6 +46,7 @@ public class Teleop extends LinearOpMode {
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
+        IntakeSequence intakeSequence = new IntakeSequence(intakePivotAction, intakeLinkageAction);
         ColorDetector colorDetector = new ColorDetector(opModeUtilities);
 
 
@@ -57,8 +59,8 @@ public class Teleop extends LinearOpMode {
         boolean retracted = true;
 
         //CHANGE ACCORDING TO ALLIANCE
-        boolean isRed = true;
 
+        boolean isRed = true;
 
         intakeLinkageAction.retract();
         SystemClock.sleep(500);
@@ -80,6 +82,7 @@ public class Teleop extends LinearOpMode {
             boolean takeInYellow = gamepad2.dpad_right;
             //INTAKE
             //Noodles
+            //HOLD DPAD RIGHT TO TAKE IN YELLOW
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
             } else if (gamepad2.left_bumper) {
@@ -93,7 +96,6 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
             }
-            prevGamePadX = gamepad2.x;
 
             //Door
             //TODO alan you should make this whole chunky thing maybe its own teleop ACTION
@@ -101,28 +103,22 @@ public class Teleop extends LinearOpMode {
                 transferSequence.sequence();
                 retracted = true;
             }
-            prevGamePadB = gamepad2.b;
             //save for later
             //Linkage
             //TODO make sure its not blocking w/ the sleeps
             if (gamepad2.a && !prevGamePadA) {
                 if (retracted) {
-                    intakeLinkageAction.extend();
-                    SystemClock.sleep(1700);
-                    intakePivotAction.moveDown();
+                    intakeSequence.extend();
                     retracted = false;
                 } else {
-                    intakeLinkageAction.retract();
-                    intakePivotAction.togglePosition();
+                    intakeSequence.extend();
                     retracted = true;
                 }
             }
-            prevGamePadA = gamepad2.a;
 
             if (gamepad2.y && !prevGamePadY) {
                 outtakePivotAction.togglePosition();
             }
-            prevGamePadY = gamepad2.y;
 
 
             if (gamepad2.right_stick_y != 0) {
@@ -146,21 +142,27 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.dpad_left && !prevDpadLeft) {
                 intakeDoorAction.togglePosition();
             }
-            prevDpadLeft = gamepad2.dpad_left;
             //Pivot
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_up && !prevDpadUp) {
                 outtakeSlideAction.toggle();
 
             }
             if (gamepad2.dpad_down) {
-                outtakeSlideAction.reverse();
+                outtakeSlideAction.moveToPosition(0);
                 outtakePivotAction.setPosition(0.825);
             }
-            prevDpadUp = gamepad2.dpad_up;
 
             if (gamepad2.a && gamepad1.a) {
                 telemetry.addData("", "yes");
             }
+
+
+            prevDpadUp = gamepad2.dpad_up;
+            prevDpadLeft = gamepad2.dpad_left;
+            prevGamePadA = gamepad2.a;
+            prevGamePadB = gamepad2.b;
+            prevGamePadX = gamepad2.x;
+            prevGamePadY = gamepad2.y;
         }
     }
 }
