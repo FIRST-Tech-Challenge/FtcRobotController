@@ -8,12 +8,12 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,14 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 /*
  * Hardware class for goBilda robot (12"x15" chassis with 96mm/3.8" goBilda mecanum wheels)
@@ -81,18 +73,24 @@ public class HardwareMinibot
     // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
     protected double COUNTS_PER_INCH2      = 1738.4;  // 8192 counts-per-rev / (1.5" omni wheel * PI)
 
-    //====== ODOMETRY ENCODERS (encoder values only!) =====
-    protected DcMotorEx rightOdometer      = null;
-    public int          rightOdometerCount = 0;       // current encoder count
-    public int          rightOdometerPrev  = 0;       // previous encoder count
+    //==============================================================================================
+    //Claw servo (demo)
+    public Servo clawServo = null;
 
-    protected DcMotorEx leftOdometer       = null;
-    public int          leftOdometerCount  = 0;       // current encoder count
-    public int          leftOdometerPrev   = 0;       // previous encoder count
+    final public static double CLAW_SERVO_CLOSED  = 0.455;  // Claw closed (hold sample/specimen)
+    final public static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
+    final public static double CLAW_SERVO_OPEN_N  = 0.550;  // claw opened narrow (enough to release/drop)
+    final public static double CLAW_SERVO_OPEN_W  = 0.850;  // claw opened wide (fully open)
 
-    protected DcMotorEx strafeOdometer      = null;
-    public int          strafeOdometerCount = 0;      // current encoder count
-    public int          strafeOdometerPrev  = 0;      // previous encoder count
+    public enum clawStateEnum {
+        CLAW_INIT,
+        CLAW_OPEN_NARROW,
+        CLAW_OPEN_WIDE,
+        CLAW_OPEN,
+        CLAW_CLOSED
+    }
+    public clawStateEnum clawState = clawStateEnum.CLAW_INIT;
+    //==============================================================================================
 
     //Ultrasonic sensors
     private MaxSonarI2CXL sonarRangeF = null;
@@ -149,12 +147,56 @@ public class HardwareMinibot
         rearLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //==============================================================================================
+        // Claw Servo initialization
+        clawServo = hwMap.servo.get("ClawServo");             // servo port 0 (Expansion Hub)
+        clawServo.setPosition(CLAW_SERVO_INIT);
+        //==============================================================================================
+
         // Initialize REV Control Hub IMU
         initIMU();
 
 //      sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "distance" );
 
     } /* init */
+
+    /*--------------------------------------------------------------------------------------------*/
+    public void clawStateSet( clawStateEnum newClawState )
+    {
+        switch( newClawState ) {
+            case CLAW_INIT :
+                clawServo.setPosition( CLAW_SERVO_INIT );
+                clawState = newClawState;
+                break;
+            case CLAW_OPEN :  // OPEN is used to toggle between OPEN_NARROW and OPEN_WIDE
+                if( clawState == HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW ) {
+                    clawServo.setPosition( CLAW_SERVO_OPEN_W );
+                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE;
+                } else if( clawState == HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE ) {
+                    clawServo.setPosition( CLAW_SERVO_OPEN_N );
+                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW;
+                } else { // Not currently OPEN in either NARROW or WIDE; start NARROW
+                    clawServo.setPosition( CLAW_SERVO_OPEN_N );
+                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW;
+                }
+                break;
+            case CLAW_OPEN_NARROW :
+                clawServo.setPosition( CLAW_SERVO_OPEN_N );
+                clawState = newClawState;
+                break;
+            case CLAW_OPEN_WIDE :
+                clawServo.setPosition( CLAW_SERVO_OPEN_W );
+                clawState = newClawState;
+                break;
+            case CLAW_CLOSED :
+                clawServo.setPosition( CLAW_SERVO_CLOSED );
+                clawState = newClawState;
+                break;
+            default:
+                break;
+        } // switch()
+
+    } // clawStateSet
 
     /*--------------------------------------------------------------------------------------------*/
     public void initIMU()

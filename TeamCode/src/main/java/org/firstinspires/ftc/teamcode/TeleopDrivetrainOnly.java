@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * TeleOp DriveTrain Only (with test modes).
  */
 @TeleOp(name="Teleop-DrivetrainOnly", group="7592")
-@Disabled
+//@Disabled
 public class TeleopDrivetrainOnly extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
@@ -121,6 +121,8 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
+            processOpenClaw();
+
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
             nanoTimeCurr = System.nanoTime();
@@ -157,6 +159,20 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
         gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
         gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
     } // captureGamepad1Buttons
+
+void processOpenClaw() {
+
+    // Left Bumper = OPEN claw
+    if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last) {
+      robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
+    }
+
+    // Right Bumper = CLOSE claw
+    if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
+        robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+    }
+
+} // processOpenClaw
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
