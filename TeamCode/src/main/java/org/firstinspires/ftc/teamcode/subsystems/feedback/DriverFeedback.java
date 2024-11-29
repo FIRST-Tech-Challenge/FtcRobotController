@@ -20,7 +20,7 @@ public class DriverFeedback extends SubsystemBase {
 
     private final int RumbleTime = 500;
 
-    private final boolean withLED = false;
+    private final boolean withLED = true;
 
     public DriverFeedback(HardwareMap hardwareMap, GamepadEx driverGamepad, GamepadEx operatorGamepad, Telemetry telemetry) {
         this.driverGamepad = driverGamepad;
@@ -63,7 +63,7 @@ public class DriverFeedback extends SubsystemBase {
 
     public void DriverRumbleBlip() {
 
-        DriverRumbleBlip(2);
+        DriverRumbleBlip(1);
     }
 
     public void DriverRumbleBlip(int blipCount) {
@@ -87,7 +87,7 @@ public class DriverFeedback extends SubsystemBase {
 
     public void OperatorRumbleBlip() {
 
-        DriverRumbleBlip(2);
+        DriverRumbleBlip(1);
     }
 
     public void OperatorRumbleBlip(int blipCount) {

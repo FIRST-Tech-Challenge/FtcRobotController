@@ -7,8 +7,7 @@ import com.google.common.util.concurrent.Uninterruptibles;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
-import org.opencv.core.Mat;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +28,9 @@ public class DriveToTargetCommandAlterate extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    private SonicPIDController xPid = new SonicPIDController(0.0015, 0, 0.0002);
-    private SonicPIDController yPid = new SonicPIDController(0.0025, 0, 0.0002);
-    private SonicPIDController hPid = new SonicPIDController(0.5, 0, 0.001);
+    private SonicPIDFController xPid = new SonicPIDFController(0.0015, 0, 0.0002);
+    private SonicPIDFController yPid = new SonicPIDFController(0.0025, 0, 0.0002);
+    private SonicPIDFController hPid = new SonicPIDFController(0.5, 0, 0.001);
 
     public DriveToTargetCommandAlterate(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeadingInDegrees) {
         this.driveTrain = driveTrain;

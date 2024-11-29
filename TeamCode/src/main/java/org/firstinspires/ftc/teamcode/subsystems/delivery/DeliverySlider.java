@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.function.Supplier;
 
@@ -23,14 +23,14 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    public static int BasketDeliveryPosition = -3300;
+    public static int BasketDeliveryPosition = -2300;
     public static int CollapsedPosition = -90;
 
     private int ExtendLimit = -1100;
 
     private int currentTarget = 0;
 
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     private boolean isTeleop = true;
 
@@ -50,7 +50,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //MoveToTransferPosition();
 
-        pidController = new SonicPIDController(0.08, 0, 0);
+        pidController = new SonicPIDFController(0.01, 0, 0, 0.05);
     }
 
     private void SetTelop() {
@@ -84,7 +84,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliveryPosition() {
         SetAuto();
-        currentTarget = BasketDeliveryPosition;
+        currentTarget = BasketDeliveryPosition - 50;
     }
 
     public void MoveToTransferPosition() {
@@ -95,25 +95,24 @@ public class DeliverySlider extends SonicSubsystemBase {
     public void periodic() {
         double position = motor.encoder.getPosition();
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
-        //telemetry.addData("target", currentTarget);
-        //telemetry.addData("current", position);
-        //telemetry.addData("telop", isTeleop);
+
+        boolean addTelemetry = false;
+        if(addTelemetry) {
+            telemetry.addData("target", currentTarget);
+            telemetry.addData("current", position);
+            telemetry.update();
+        }
 
         if(!isTeleop) {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
-            //telemetry.addData("power", power);
-
 
             if(Math.abs(currentTarget - position) < 40) {
-                //telemetry.addData("done", true);
                 motor.set(0);
             }
             else {
-                double minPower = .2;
+                double minPower = 0;
 
                 if(Math.abs(power) < minPower) {
-                    //telemetry.addData("minPower", true);
-
                     power = minPower * Math.abs(power) / power;
                 }
 
@@ -128,6 +127,12 @@ public class DeliverySlider extends SonicSubsystemBase {
                 motor.stopMotor();
                 MoveToValidPosition();
 
+            }
+
+            if (position < BasketDeliveryPosition &&
+                     Math.abs(motor.get()) > 0){
+                motor.stopMotor();
+                currentTarget = -BasketDeliveryPosition;
             }
         }
 
@@ -178,7 +183,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         return motor;
     }
 
-    public SonicPIDController getPidController() {
+    public SonicPIDFController getPidController() {
         return pidController;
     }
 }

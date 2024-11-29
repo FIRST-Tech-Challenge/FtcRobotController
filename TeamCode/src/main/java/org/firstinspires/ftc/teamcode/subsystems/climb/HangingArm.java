@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class HangingArm extends SonicSubsystemBase {
 
@@ -22,8 +22,8 @@ public class HangingArm extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    SonicPIDController leftPidController;
-    SonicPIDController rightPidController;
+    SonicPIDFController leftPidController;
+    SonicPIDFController rightPidController;
 
 
 
@@ -34,8 +34,8 @@ public class HangingArm extends SonicSubsystemBase {
         this.gamepad = gamepad;
         this.feedback = feedback;
 
-        leftPidController = new SonicPIDController(0.08, 0, 0);
-        rightPidController = new SonicPIDController(0.08, 0, 0);
+        leftPidController = new SonicPIDFController(0.08, 0, 0);
+        rightPidController = new SonicPIDFController(0.08, 0, 0);
     }
 
     public void extend() {

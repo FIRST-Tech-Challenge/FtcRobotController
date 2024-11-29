@@ -31,8 +31,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
     LimeLight limeLight;
 
-    private MecanumDriveKinematics driveKinematics;
-
     public AutoMecanumDriveTrain(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, LimeLight limeLight) {
         super(hardwareMap, gamepad, telemetry, feedback, true);
 
@@ -44,33 +42,20 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-
-        Translation2d frontLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
-        Translation2d frontRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, Tunables.WHEEL_BASE / 2);
-        Translation2d rearLeftWheelMeters = new Translation2d(-Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
-        Translation2d rearRightWheelMeters = new Translation2d(Tunables.TRACK_WIDTH / 2, -Tunables.WHEEL_BASE / 2);
-
-        driveKinematics = new MecanumDriveKinematics(
-                frontLeftWheelMeters, frontRightWheelMeters,
-                rearLeftWheelMeters, rearRightWheelMeters);
-
-
     }
 
     @Override
     protected void createAndInitHardwares(HardwareMap hardwareMap) {
         super.createAndInitHardwares(hardwareMap);
-
-
     }
 
     @Override
     public void periodic() {
         super.periodic();
 
-        odo.update();
+        if(false) {
+            odo.update();
 
-        if(true) {
             telemetry.addData("x", odo.getPosX());
             telemetry.addData("y", odo.getPosY());
             telemetry.addData("theta", Math.toDegrees(odo.getHeading()));
@@ -360,10 +345,6 @@ public class AutoMecanumDriveTrain extends FourWheelMecanumDrive {
 
     public void resetOdo() {
         odo.resetPosAndIMU();
-    }
-
-    public MecanumDriveKinematics getDriveKinematics() {
-        return driveKinematics;
     }
 
     private static Pose2d toPose2d(GoBildaPinpointDriver.Pose2D pose2D) {

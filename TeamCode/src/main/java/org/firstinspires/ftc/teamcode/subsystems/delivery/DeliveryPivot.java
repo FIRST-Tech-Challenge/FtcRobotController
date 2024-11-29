@@ -5,17 +5,19 @@ import android.util.Log;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.util.SonicPIDController;
-
-import java.util.Set;
+import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
+import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class DeliveryPivot extends SonicSubsystemBase {
 
     private Motor motor;
+
+    private Servo stopper;
 
     private Telemetry telemetry;
 
@@ -23,41 +25,66 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int StartPositionFromCalibration = 1975 - 310;
+    private int StartPositionFromCalibration = 1590;
 
-    public static int DeliveryPositionFromStart = 425 + 310;
+    public static int DeliveryPositionFromStart = 1400;
 
-    public static int IntakePositionFromStart = -1500 + 310;
+    public static int IntakePositionFromStart = -1025;
 
-    private int SampleIntakePositionFromStart = -1800 + 310;
+    private int SampleIntakePositionFromStart = -1490;
 
     private int SliderCheckLimit = -625;
 
-    private int StartPositionFromStart = 0;
+    public static int StartPositionFromStart = 0;
 
 
     private boolean isTeleop = true;
 
     private int currentTarget = 0;
 
-    SonicPIDController pidController;
+    SonicPIDFController pidController;
 
     public static double recordedPosition;
 
-    public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
+    RollingIntake rollingIntake;
+
+    public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, RollingIntake rollingIntake) {
         /* instantiate motors */
         this.motor  = new Motor(hardwareMap, "DeliveryPivot");
-
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.motor.encoder.reset();
+
+        this.stopper  = hardwareMap.get(Servo.class,"Stopper");
+        this.stopper.setPosition(1);
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
+        this.rollingIntake = rollingIntake;
 
         this.recordedPosition = 0;
 
-        pidController = new SonicPIDController(0.005, 0, 0.000);
+        pidController = new SonicPIDFController(0.005, 0, 0.000);
+    }
+
+    boolean isStopperClosed = false;
+
+    public void ToggleStopper() {
+        if(isStopperClosed) {
+            CloseStopper();
+        } else {
+            OpenStopper();
+        }
+
+        isStopperClosed = !isStopperClosed;
+    }
+
+    private void CloseStopper() {
+        this.stopper.setPosition(0.25);
+    }
+
+    private void OpenStopper() {
+        this.stopper.setPosition(0.875);
     }
 
     private void SetTelop() {
@@ -80,12 +107,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public void RotateTowardsIntakeSlowly() {
         SetTelop();
-        motor.set(-.33);
+        motor.set(-.4);
     }
 
     public void RotateTowardsDeliverySlowly() {
         SetTelop();
-        motor.set(.33);
+        motor.set(.4);
     }
 
     public void HoldArm() {
@@ -114,14 +141,31 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.currentTarget = 0;
     }
 
+    double previousPosition = -1000000.0;
+
     @Override
     public void periodic() {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        //telemetry.addData("target", currentTarget);
-        //telemetry.addData("current", position);
-        //telemetry.addData("telop", isTeleop);
+        boolean addTelemetry = false;
+
+        if(addTelemetry) {
+            telemetry.addData("target", currentTarget);
+            telemetry.addData("current", position);
+            telemetry.update();
+        }
+
+        if(position < DeliveryPositionFromStart - 300) {
+            OpenStopper();
+            rollingIntake.SetInDeliveryPositionn(false);
+        }
+        else {
+            CloseStopper();
+            rollingIntake.SetInDeliveryPositionn(true);
+        }
+
+        this.previousPosition = position;
 
         if(!isTeleop) {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
@@ -217,7 +261,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         return motor;
     }
 
-    public SonicPIDController getPidController() {
+    public SonicPIDFController getPidController() {
         return pidController;
     }
 }
