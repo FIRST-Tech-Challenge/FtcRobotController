@@ -69,7 +69,7 @@ public class AutonomousMoveCode extends LinearOpMode {
 
     //Segment 1 Distance
     static double first_forward = -500;
-    static double speed = 0.2;
+    static double speed = 0.2*2.25;
 
     //Action 1:
 
@@ -144,9 +144,10 @@ public class AutonomousMoveCode extends LinearOpMode {
         Slides_Move(3,0.5);
 
         //Segment 4: Move to yellow sample
-        turnToAngle(-175,0.1);
-        strafeToPosition(-1200,0.1);
 
+        strafeToPosition(-1200,0.5);
+
+        turnToAngle(90,0.2);
 
         //Action 4: Grab Yellow Sample
         robot.intakeSlideServo.setPosition(0.35);
