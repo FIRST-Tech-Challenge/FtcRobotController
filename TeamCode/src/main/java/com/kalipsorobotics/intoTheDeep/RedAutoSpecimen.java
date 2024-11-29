@@ -1,11 +1,12 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import com.kalipsorobotics.actions.ActionSet;
 import com.kalipsorobotics.actions.PurePursuitAction;
+import com.kalipsorobotics.actions.outtake.HangSpecimenActionSet;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,32 +22,28 @@ public class RedAutoSpecimen extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
 
         //hang specimen
+        HangSpecimenActionSet hangSpecimen1 = new HangSpecimenActionSet(outtake);
 
         PurePursuitAction moveToFloorSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToFloorSample1.setDependentAction(moveToSpecimenBar);
 
-        PurePursuitAction moveToWall1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToWall1.setDependentAction(moveToFloorSample1);
+        PurePursuitAction moveBarToWall1 = new PurePursuitAction(driveTrain, wheelOdometry);
 
-        //TODO add linearslide raise
+        HangSpecimenActionSet hangSpecimen2 = new HangSpecimenActionSet(outtake);
 
         PurePursuitAction moveWallToBar1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveWallToBar1.setDependentAction(moveToWall1);
 
         //specimen hang 2
 
-        PurePursuitAction moveToWall2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToWall2.setDependentAction(moveToFloorSample1);
-
-
+        PurePursuitAction moveBarToWall2 = new PurePursuitAction(driveTrain, wheelOdometry);
 
         PurePursuitAction moveWallToBar2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveWallToBar2.setDependentAction(moveToWall2);
 
         //specimen hang 3
+        HangSpecimenActionSet hangSpecimen3 = new HangSpecimenActionSet(outtake);
 
 
         moveToSpecimenBar.addPoint(0, 0, 0);
@@ -65,44 +62,41 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveToFloorSample1.addPoint(-430, -1100, -180);
 
         //sample to wall
-        moveToWall1.addPoint(-80, -600, -180);
+        moveBarToWall1.addPoint(-80, -600, -180);
 
         //wall to bar second specimen
         moveWallToBar1.addPoint(-740, 350, 0);
 
         //bar to wall third specimen
-        moveToWall2.addPoint(-80, -600, -180);
+        moveBarToWall2.addPoint(-80, -600, -180);
 
         //wall to bar third specimen
         moveWallToBar2.addPoint(-740, 400, 0);
 
+        ActionSet redAutoAction = new ActionSet();
 
+        redAutoAction.scheduleSequential(moveToSpecimenBar);
+        //raise slides
+        redAutoAction.scheduleSequential(hangSpecimen1);
+        redAutoAction.scheduleSequential(moveToFloorSample1);
+        //raise slides
+        redAutoAction.scheduleSequential(moveBarToWall1);
+        //intake wall
+        //raise slides
+        redAutoAction.scheduleSequential(moveWallToBar1);
+        redAutoAction.scheduleSequential(hangSpecimen2);
+        //raise slides + pivot
+        redAutoAction.scheduleSequential(moveBarToWall2);
+        redAutoAction.scheduleSequential(moveWallToBar2);
+        //raise slides
+        redAutoAction.scheduleSequential(hangSpecimen3);
 
         waitForStart();
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();
+            redAutoAction.updateCheckDone();
 
-            moveToSpecimenBar.updateCheckDone();
-
-            //hang specimen 1
-            //raise LS
-            //outtake Pivot
-            //lower LS
-
-            moveToFloorSample1.updateCheckDone();
-
-            //intake wall
-
-            moveWallToBar1.updateCheckDone();
-
-            moveToWall2.updateCheckDone();
-
-            //outtakePivotWall2.open();
-
-            moveWallToBar2.updateCheckDone();
-
-            //hang specimen 3
         }
 
     }

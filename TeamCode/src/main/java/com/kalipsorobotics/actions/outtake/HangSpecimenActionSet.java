@@ -13,6 +13,7 @@ public class HangSpecimenActionSet extends ActionSet {
         //Linear slide  TODO
         KServoAutoAction outtakePivotActionClose = new KServoAutoAction(outtake.getOuttakePivotServo(), 0.925);
         this.scheduleSequential(outtakePivotActionClose);
+
     }
 
 
