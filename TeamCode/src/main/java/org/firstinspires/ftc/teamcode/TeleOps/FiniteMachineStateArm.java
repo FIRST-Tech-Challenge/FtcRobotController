@@ -17,6 +17,7 @@ public class FiniteMachineStateArm {
     
     public enum LIFTSTATE {
         LIFT_START,
+        LIFT_TRANSFER,
         LIFT_EXTEND,
         LIFT_DUMP,
         LIFT_RETRACT
@@ -89,27 +90,29 @@ public class FiniteMachineStateArm {
                 // Debounce the button press for starting the lift extend
                 if ((gamepad_1.getButton(GamepadKeys.Button.X) || gamepad_2.getButton(GamepadKeys.Button.X)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
-                    transfer_timer.reset();
                     robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
-                    if (transfer_timer.seconds() >= 0.15) {
-                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
-                    }
-                    if (transfer_timer.seconds() >= 0.25) {
-                        robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
-                    }
-                    if (transfer_timer.seconds() >= 0.35) {
-                        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
-                        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
-                    }
-                    if (transfer_timer.seconds() >= 0.85) {
-                        robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
-                        robot.liftMotorRight.setTargetPosition(LIFT_HIGH);
-                        robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        robot.liftMotorLeft.setPower(UPLIFT_POWER);
-                        robot.liftMotorRight.setPower(UPLIFT_POWER);
-                        liftState = LIFTSTATE.LIFT_EXTEND;
-                    }
+                    transfer_timer.reset();
+                    liftState = LIFTSTATE.LIFT_TRANSFER;
+                }
+            case LIFT_TRANSFER:
+                if (transfer_timer.seconds() >= 0.15) {
+                    robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
+                }
+                if (transfer_timer.seconds() >= 0.25) {
+                    robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
+                }
+                if (transfer_timer.seconds() >= 0.35) {
+                    robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+                    robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+                }
+                if (transfer_timer.seconds() >= 0.85) {
+                    robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
+                    robot.liftMotorRight.setTargetPosition(LIFT_HIGH);
+                    robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.liftMotorLeft.setPower(UPLIFT_POWER);
+                    robot.liftMotorRight.setPower(UPLIFT_POWER);
+                    liftState = LIFTSTATE.LIFT_EXTEND;
                 }
                 break;
             case LIFT_EXTEND:
