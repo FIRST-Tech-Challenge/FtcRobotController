@@ -154,7 +154,11 @@ public class BasicTeleOps extends OpMode {
         robotDrive.DriveLoop(); // Use RobotDrive methods
         RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
 
-        depositArmDrive.DepositArmLoop();
+        try {
+            depositArmDrive.DepositArmLoop();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
         intakeArmDrive.IntakeArmLoop();
