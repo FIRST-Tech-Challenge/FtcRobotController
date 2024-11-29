@@ -105,6 +105,11 @@ public class Teleop extends LinearOpMode {
                 intakePivotAction.togglePosition();
                 Log.d("teleop", "intake toggled");
             }
+            //drive logging for sparkfun position
+            if (gamepad1.a) {
+                Log.d("teleop", "x: " + sparkfunOdometry.updatePosition().getX() + "y: " +
+                        sparkfunOdometry.updatePosition().getY());
+            }
 
             //Door
             //TODO
@@ -175,6 +180,7 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad2.a && gamepad1.a) {
                 telemetry.addData("", "yes");
+                telemetry.update();
             }
 
 
