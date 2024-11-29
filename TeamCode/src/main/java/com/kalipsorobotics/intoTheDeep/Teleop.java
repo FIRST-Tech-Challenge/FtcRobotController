@@ -1,6 +1,7 @@
 package com.kalipsorobotics.intoTheDeep;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.DriveAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
@@ -56,11 +57,13 @@ public class Teleop extends LinearOpMode {
         boolean prevGamePadA = false;
         boolean prevDpadLeft = false;
         boolean prevDpadUp = false;
+        boolean prevDpadRight = false;
         boolean retracted = true;
 
         //CHANGE ACCORDING TO ALLIANCE
 
         boolean isRed = true;
+        boolean takeInYellow = true;
 
         intakeLinkageAction.retract();
         SystemClock.sleep(500);
@@ -79,14 +82,21 @@ public class Teleop extends LinearOpMode {
 
             //Drive
             driveAction.move(gamepad1);
-            boolean takeInYellow = gamepad2.dpad_right;
+
             //INTAKE
-            //Noodles
-            //HOLD DPAD RIGHT TO TAKE IN YELLOW
+            //Noodle
+            if (gamepad2.dpad_right && !prevDpadRight) {
+                takeInYellow = !takeInYellow;
+                Log.d ("teleop", "taking in yellow is " + takeInYellow);
+            }
+            prevDpadRight = gamepad2.dpad_right;
+            //press dpad right to toggle taking in yellow
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
+                Log.d("teleop", "intake cycling");
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
+                Log.d("teleop", "intake reversing");
             } else {
                 intakeNoodleAction.stop();
             }
@@ -95,13 +105,15 @@ public class Teleop extends LinearOpMode {
             //Pivot TODO make generic toggle
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
+                Log.d("teleop", "intake toggled");
             }
 
             //Door
-            //TODO alan you should make this whole chunky thing maybe its own teleop ACTION
+            //TODO
             if (gamepad2.b && !prevGamePadB) {
                 transferSequence.sequence();
                 retracted = true;
+                Log.d("teleop", "transfering...");
             }
             //save for later
             //Linkage
@@ -110,21 +122,25 @@ public class Teleop extends LinearOpMode {
                 if (retracted) {
                     intakeSequence.extend();
                     retracted = false;
+                    Log.d("teleop", "intake extended");
                 } else {
                     intakeSequence.extend();
                     retracted = true;
+                    Log.d("teleop", "intake retracted");
                 }
             }
 
             if (gamepad2.y && !prevGamePadY) {
                 outtakePivotAction.togglePosition();
+                Log.d("teleop", "outtake pivoted");
             }
 
 
             if (gamepad2.right_stick_y != 0) {
                 outtakeSlideAction.setPower(gamepad2.right_stick_y);
+                Log.d("teleop", "linear slide moving...");
             } else {
-                outtakeSlideAction.idle();
+                outtakeSlideAction.stop();
             }
 
 
@@ -132,24 +148,28 @@ public class Teleop extends LinearOpMode {
             //Claw
             if (gamepad2.left_stick_y != 0 && gamepad2.left_stick_y != 0.1) {
                 intakeLinkageAction.control(gamepad2.left_stick_y);
+                Log.d("teleop", "intake linkage moving...");
             }
 
             if (gamepad2.right_bumper) {
                 outtakeClawAction.open();
+                Log.d("teleop", "outtake claw is open...");
             } else outtakeClawAction.close();
 
             //dpad left for door toggle
             if (gamepad2.dpad_left && !prevDpadLeft) {
                 intakeDoorAction.togglePosition();
+                Log.d("teleop", "intake door has been toggled");
             }
             //Pivot
             if (gamepad2.dpad_up && !prevDpadUp) {
                 outtakeSlideAction.toggle();
-
+                Log.d("teleop", "outtake slide toggled");
             }
             if (gamepad2.dpad_down) {
                 outtakeSlideAction.moveToPosition(0);
                 outtakePivotAction.setPosition(0.825);
+                Log.d("teleop", "outtake slide moved down");
             }
 
             if (gamepad2.a && gamepad1.a) {
