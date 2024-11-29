@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
@@ -20,14 +21,20 @@ import java.util.List;
  *
  */
 
+/** version 1.0
+ * transfer at intake
+ */
+/** version 1.1
+        * transfer at deposit
+ */
 @Config
-@TeleOp(name = "TeleOps_Mecanum_FMS", group = "org.firstinspires.ftc.teamcode")
+@TeleOp(name = "TeleOps_Mecanum_FMS_v1.1", group = "Meet_1")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
 
     public GamepadEx gamepadCo1;                    //For gamepad
-    //public GamepadEx gamepadCo2;
+    public GamepadEx gamepadCo2;
 
     //Robot drive
     public RobotDrive robotDrive;                   //For robot drive
@@ -40,41 +47,26 @@ public class BasicTeleOps extends OpMode {
     //Bulk Reading
     private List<LynxModule> allHubs;
 
-    //Drive power factor
-    //public static double powerFactor = 0.5;
-
-    //Intake Configure
-    public static double intake_slide_Extension = 0.6;// range(0.3 - 0.65)
-    public static double intake_slide_Retract   = 0.3;
-
-    public static double intake_Rotation        = 0.49;
-
-    public static double intake_Arm_initial     = 0.35;//0-0.56
-    public static double intake_Arm_down        = 0.05;
-    public static double intake_Arm_retract     = 0.53;
-
-    public static double intake_Claw_Open       = 0.55;
-    public static double intake_Claw_Close      = 0.3;
 
     //Deposit Config
-    public static int deposit_Slide_down_Pos         = 50;   //slides Position Configure
-    public static int deposit_Slide_Highbar_Pos      = 795;  //slides Position Configure
-    public static int deposit_Slide_Highbasket_Pos   = 2800; //slides Position Configure
+    public static int deposit_Slide_down_Pos             = 50;   //range (0-3300), 50 to prevent hard hit.
+    public static int deposit_Slide_Highbar_Pos         = 795;  //slides Position Configure
+    public static int deposit_Slide_Highbasket_Pos      = 2800; //highest point
 
-    public static double deposit_Wrist_dump_Pos         = 0.3;
-    public static double deposit_Wrist_retract_Pos      = 0.1;
+    public static double deposit_Wrist_dump_Pos         = 0.3; //range(0-1), 0: installation position
+    public static double deposit_Wrist_retract_Pos      = 0.06; // 0.06 is rest position.
 
-    public static double deposit_Arm_dump_Pos           = 0.8;
-    public static double deposit_Arm_retract_Pos        = 0.0;
+    public static double deposit_Arm_dump_Pos           = 0.8; // range (0-1) 0: installation position
+    public static double deposit_Arm_retract_Pos        = 0.0; // 0 is rest position.
 
     public static double deposit_Arm_hook_Pos           = 0.8;
     public static double deposit_Claw_Open              = 0.11;
     public static double deposit_Claw_Close             = 0.0;
 
-    public static double dumpTime                       = 1.8;
-    public static double retractTime                    = 3.2;
+    public static double dumpTime                       = 1.8; // deposit time need to rotate deposit arm then open claw
+    public static double retractTime                    = 3.2; // wait then retract slide
 
-    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
+    public static int deposit_Slide_UpLiftPower         = 1;  //slides power
     public static double downLiftPower                  = 0.7;  //slides power
 
     
@@ -91,37 +83,29 @@ public class BasicTeleOps extends OpMode {
 
         //gamepad
         gamepadCo1 = new GamepadEx(gamepad1);
-        //gamepadCo2 = new GamepadEx(gamepad2);
+        gamepadCo2 = new GamepadEx(gamepad2);
 
         //robotDrive
-        robotDrive = new RobotDrive(robot, gamepadCo1);   // Pass robot instance to RobotDrive
+        robotDrive = new RobotDrive(robot, gamepadCo1, gamepadCo2);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
 
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,,
-                                                    deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
-                                                    dumpTime, retractTime,
-                                                    deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open,deposit_Claw_Close,
-                                                    deposit_Slide_down_Pos,deposit_Slide_Highbasket_Pos,
-                                                    deposit_Slide_UpLiftPower,downLiftPower); // Pass parameters as needed);
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2,
+                deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
+                dumpTime, retractTime,
+                deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open, deposit_Claw_Close,
+                deposit_Slide_down_Pos,deposit_Slide_Highbasket_Pos,
+                deposit_Slide_UpLiftPower, downLiftPower); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,
-                intake_Arm_initial, intake_Arm_down, intake_Arm_retract,
-                intake_slide_Retract, intake_slide_Extension, intake_Rotation,
-                intake_Claw_Open, intake_Claw_Close);
-
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
+                RobotActionConfig.intake_Arm_Initial, RobotActionConfig.intake_Arm_Idle, RobotActionConfig.intake_Arm_Pick, RobotActionConfig.intake_Arm_Transfer,
+                RobotActionConfig.intake_slide_Retract, RobotActionConfig.intake_slide_Extension,
+                RobotActionConfig.intake_Rotation,
+                RobotActionConfig.intake_Claw_Open, RobotActionConfig.intake_Claw_Close);
         intakeArmDrive.Init();
-
-        /**
-         //Servo Test
-         depositServoTest = new ServoTest(robot,gamepadCo1);
-         depositServoTest.ServoTestInit();
-         */
-
-        //colorSensor = new Color_sensor(robot);// Initialize color sensor
 
         // get bulk reading
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -141,6 +125,7 @@ public class BasicTeleOps extends OpMode {
     @Override
     public void loop() {
 
+        //Bulk reading
         for (LynxModule hub : allHubs) {
             BulkData bulkData = hub.getBulkData();
             if (bulkData != null) {
@@ -150,7 +135,7 @@ public class BasicTeleOps extends OpMode {
                     int frontRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
 
                     telemetry.addData("Deposit Left Motor Position (Expansion Hub)", frontLeftMotor);
-                    telemetry.addData("Deposit right Motor Position", frontRightMotor);
+                    telemetry.addData("Deposit right Motor Position (Expansion Hub)", frontRightMotor);
                 } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
                     int liftMotorLeft = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
                     int liftMotorRight = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
@@ -164,11 +149,11 @@ public class BasicTeleOps extends OpMode {
         robotDrive.DriveLoop(); // Use RobotDrive methods
         RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
 
-        depositArmDrive.DepositArmLoop();
-        FiniteMachineStateArm.LiftState liftState = depositArmDrive.State();
+        depositArmDrive.DepositArmLoop(); // Use Deposit Arm Loop
+        FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
-        intakeArmDrive.IntakeArmLoop();
-        FiniteMachineStateIntake.INTAKESTATE intakestate = intakeArmDrive.intakeState();
+        intakeArmDrive.IntakeArmLoop();  // Use Intake Arm Loop
+        FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
 
         // Telemetry
         telemetry.addData("deposit Left Arm Position", robot.depositLeftArmServo.getPosition());
@@ -177,7 +162,7 @@ public class BasicTeleOps extends OpMode {
         telemetry.addData("Control Mode", currentMode.name());
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
         telemetry.addData("Lift Mode", liftState.name());
-        telemetry.addData("Intake State", intakestate.name());
+        telemetry.addData("Intake State", intakeState.name());
         telemetry.update();
     }
 
