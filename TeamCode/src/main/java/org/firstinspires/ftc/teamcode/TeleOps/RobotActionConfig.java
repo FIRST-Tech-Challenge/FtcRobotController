@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class RobotActionConfig {
     //drive chassis
-    public static double powerFactor = 0.4;
+    public static double powerFactor = 1;
 
     //Intake Configure
     public static double intake_slide_Extension         = 0.6;// range(0.3 - 0.65)

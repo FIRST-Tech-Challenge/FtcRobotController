@@ -69,7 +69,7 @@ public class AutonomousMoveCode extends LinearOpMode {
 
     //Segment 1 Distance
     static double first_forward = -500;
-    static double speed = 0.2;
+    static double speed = 0.2*2.25;
 
     //Action 1:
 
@@ -121,7 +121,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         robot.intakeRightArmServo.setPosition(0.1);
 
         //Action 2.1 - rise up the verticla slide
-        Slides_Move(56.5,0.5); //Ris up the vertical slide
+        Slides_Move(54.5,0.5); //Ris up the vertical slide
         //Action 2.2 - set the position for deposit arm for hung
         robot.depositLeftArmServo.setPosition(0.8);
         robot.depositRightArmServo.setPosition(0.8);
@@ -129,7 +129,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         sleep(1500);
 
         //Segment 2 movement
-        driveToPosition(-158,0.2,15);
+        driveToPosition(-175,0.5,15);
         sleep(500);
 
         //Action 3 + Segment 3 - release the deposit and backward and reset the depsoit.
@@ -144,42 +144,21 @@ public class AutonomousMoveCode extends LinearOpMode {
         Slides_Move(3,0.5);
 
         //Segment 4: Move to yellow sample
-        turnToAngle(-175,0.1);
-        strafeToPosition(-1200,0.1);
 
+        strafeToPosition(800,0.6);
+        sleep(250);
+        driveToPosition(-900,0.6,15);
 
-        //Action 4: Grab Yellow Sample
-        robot.intakeSlideServo.setPosition(0.35);
-        robot.intakeClawServo.setPosition(intake_Claw_Open);
-        robot.intakeLeftArmServo.setPosition(0);
-        robot.intakeRightArmServo.setPosition(0);
-        sleep(2000);
+        turnToAngle(85,0.3);
+        robot.depositLeftArmServo.setPosition(0.8);
+        robot.depositRightArmServo.setPosition(0.8);
+        sleep(300);
+        robot.depositWristServo.setPosition(0.2);
+        driveToPosition(-250,0.1,15);
 
-        robot.intakeClawServo.setPosition(intake_Claw_Close);//Close the claw and grab sample
-        robot.depositClawServo.setPosition(deposit_Claw_Open);
-        sleep(1000);
+        robot.intakeLeftArmServo.setPosition(0.2);
+        robot.intakeRightArmServo.setPosition(0.2);
 
-        //Retract Intake
-        robot.intakeLeftArmServo.setPosition(intake_Arm_retract);//Flip Intake arm back
-        robot.intakeRightArmServo.setPosition(intake_Arm_retract);
-        robot.intakeSlideServo.setPosition(intake_slide_Retract);
-        sleep(1000);
-
-
-        turnToAngle(45,0.2);
-
-        //Segment 5 Movement
-
-        driveToPosition(-290,0.2,10);
-
-        //Transfer sample from Intake to Deposit
-        robot.intakeClawServo.setPosition(intake_Claw_Open);
-        sleep(200);
-        robot.depositClawServo.setPosition(BasicTeleOps.deposit_Claw_Close);
-        robot.intakeLeftArmServo.setPosition(0.1);
-        robot.intakeRightArmServo.setPosition(0.1);
-
-        //
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
@@ -286,8 +265,8 @@ public class AutonomousMoveCode extends LinearOpMode {
     private void turnToAngle(double targetAngle, double speed) {
         // Reset the IMU angle
         robot.imu.resetYaw();
-        sleep(1000);
-        double currentAngle = getHeading();
+        sleep(200);
+        double currentAngle = -getHeading();
 
         while (opModeIsActive() && Math.abs(targetAngle - currentAngle) > 1.0) { // Tolerance of 1 degree
             double turnDirection = Math.signum(targetAngle - currentAngle); // Positive for clockwise, negative for counter-clockwise
@@ -354,7 +333,7 @@ public class AutonomousMoveCode extends LinearOpMode {
         while (opModeIsActive() && (robot.liftMotorLeft.isBusy() && robot.liftMotorRight.isBusy())) {
 
         }
-        sleep(1000);
+        sleep(500);
     }
 
 }

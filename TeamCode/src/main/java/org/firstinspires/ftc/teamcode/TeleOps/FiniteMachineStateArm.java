@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import static java.lang.Thread.sleep;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -83,7 +85,7 @@ public class FiniteMachineStateArm {
     }
 
     // Deposit Arm Control
-    public void DepositArmLoop() {
+    public void DepositArmLoop() throws InterruptedException {
         // Display current lift state and telemetry feedback
         switch (liftState) {
             case LIFT_START:
@@ -94,25 +96,29 @@ public class FiniteMachineStateArm {
                     transfer_timer.reset();
                     liftState = LIFTSTATE.LIFT_TRANSFER;
                 }
+                break;
             case LIFT_TRANSFER:
-                if (transfer_timer.seconds() >= 0.15) {
+                if (transfer_timer.milliseconds()>250){
                     robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
                 }
-                if (transfer_timer.seconds() >= 0.25) {
+
+                if (transfer_timer.milliseconds()>400){
                     robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
                 }
-                if (transfer_timer.seconds() >= 0.35) {
+
+                if (transfer_timer.milliseconds()>500){
                     robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
                 }
-                if (transfer_timer.seconds() >= 0.85) {
-                    robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
-                    robot.liftMotorRight.setTargetPosition(LIFT_HIGH);
-                    robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.liftMotorLeft.setPower(UPLIFT_POWER);
-                    robot.liftMotorRight.setPower(UPLIFT_POWER);
-                    liftState = LIFTSTATE.LIFT_EXTEND;
+
+                if (transfer_timer.milliseconds() >= 850) {
+                        robot.liftMotorLeft.setTargetPosition(LIFT_HIGH);
+                        robot.liftMotorRight.setTargetPosition(LIFT_HIGH);
+                        robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        robot.liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        robot.liftMotorLeft.setPower(UPLIFT_POWER);
+                        robot.liftMotorRight.setPower(UPLIFT_POWER);
+                        liftState = LIFTSTATE.LIFT_EXTEND;
                 }
                 break;
             case LIFT_EXTEND:
