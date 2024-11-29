@@ -22,22 +22,22 @@ public class BlueAutoBasket extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample1.setDependentAction(moveToSpecimenBar);
+        moveToSample1.setDependantActions(moveToSpecimenBar);
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket1.setDependentAction(moveToSample1);
+        moveToBasket1.setDependantActions(moveToSample1);
 
         PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample2.setDependentAction(moveToBasket1);
+        moveToSample2.setDependantActions(moveToBasket1);
 
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket2.setDependentAction(moveToSample2);
+        moveToBasket2.setDependantActions(moveToSample2);
 
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample3.setDependentAction(moveToBasket2);
+        moveToSample3.setDependantActions(moveToBasket2);
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket3.setDependentAction(moveToSample3);
+        moveToBasket3.setDependantActions(moveToSample3);
 
         moveToSpecimenBar.setSleep(1000);
 

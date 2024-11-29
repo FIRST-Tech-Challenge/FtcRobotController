@@ -9,12 +9,12 @@ public class ActionSet extends Action {
     private final ArrayList<Action> actions;
     public ActionSet(Action dependentAction) {
         actions = new ArrayList<Action>();
-        this.dependentAction = dependentAction;
+        this.dependentActions.add(dependentAction);
     }
 
     public ActionSet() {
         actions = new ArrayList<Action>();
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
     }
 
     public ArrayList<Action> getActions() {
@@ -23,12 +23,12 @@ public class ActionSet extends Action {
 
     public void scheduleSequential(Action action) {
         if (actions.isEmpty()) {
-            action.setDependentAction(new DoneStateAction());
+            action.setDependantActions(new DoneStateAction());
             actions.add(action);
             Log.d("parallelaction", "scheduled empty sequential");
         } else {
             Action recentAction = actions.get(actions.size()-1);
-            action.setDependentAction(recentAction);
+            action.setDependantActions(recentAction);
             actions.add(action);
             Log.d("parallelaction", "scheduled sequential");
         }
@@ -36,12 +36,12 @@ public class ActionSet extends Action {
 
     public void scheduleParallel(Action action) {
         if (actions.isEmpty()) {
-            action.setDependentAction(new DoneStateAction());
+            action.setDependantActions(new DoneStateAction());
             actions.add(action);
             Log.d("parallelaction", "scheduled empty parallel");
         } else {
             Action recentAction = actions.get(actions.size()-1);
-            action.setDependentAction(recentAction.getDependentAction());
+            action.setDependantActions(recentAction.getDependentActions());
             actions.add(action);
             Log.d("parallelaction", "scheduled parallel");
         }

@@ -24,22 +24,22 @@ public class MoveLSAction extends Action {
     double currentTicks;
     double error;
 
-    public MoveLSAction(double targetMM, Outtake outtake) {
+    public MoveLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
         linearSlide = outtake.linearSlideMotor1;
         linearSlideTwo = outtake.linearSlideMotor2;
-        this.targetTicks = CalculateTickPer.ticksToMmLS(targetMM);
+        this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
         Log.d("movels", "target ticks set to " + targetMM);
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
     }
 
-    public MoveLSAction(double targetTicks, Outtake outtake, double P_CONSTANT) {
+    public MoveLSAction(Outtake outtake, double targetTicks, double P_CONSTANT) {
         this.outtake = outtake;
         linearSlide = outtake.linearSlideMotor1;
         linearSlideTwo = outtake.linearSlideMotor2;
         this.targetTicks = targetTicks;
         Log.d("movels", "target ticks set to " + targetTicks);
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         this.P_CONSTANT = P_CONSTANT;
     }
 
@@ -50,7 +50,7 @@ public class MoveLSAction extends Action {
 
     private void refreshError() {
         error = targetTicks - currentTicks;
-        Log.d("movels", error + " " + targetTicks + " " + currentTicks);
+        Log.d("movels", "error" + error + " target" + targetTicks + "current " + currentTicks);
     }
 
     @Override
@@ -62,7 +62,8 @@ public class MoveLSAction extends Action {
             linearSlideTwo.setPower(Outtake.LS_STAYUP_POWER);
             Log.d("movels", "done");
             //outtake.getOpModeUtilities().getOpMode().sleep(100);
-            return true;
+            isDone = true;
+            return isDone;
         } else {
             return false;
         }
@@ -70,6 +71,9 @@ public class MoveLSAction extends Action {
 
     @Override
     public void update() {
+        if (isDone) {
+            return;
+        }
         this.currentTicks = linearSlide.getCurrentPosition();
 
         if(!hasStarted) {

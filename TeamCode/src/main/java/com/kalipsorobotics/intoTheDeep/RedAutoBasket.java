@@ -26,33 +26,33 @@ public class RedAutoBasket extends LinearOpMode {
         //hang specimen 1
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample1.setDependentAction(moveToSpecimenBar/*specimenHang1*/);
+        moveToSample1.setDependantActions(moveToSpecimenBar/*specimenHang1*/);
 
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket1.setDependentAction(moveToSample1);
+        moveToBasket1.setDependantActions(moveToSample1);
 
         //TODO seperate action into linear slide raise to make quickie quickie
         //dump sample 1
 
         PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample2.setDependentAction(moveToBasket1);
+        moveToSample2.setDependantActions(moveToBasket1);
 
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket2.setDependentAction(moveToSample2);
+        moveToBasket2.setDependantActions(moveToSample2);
 
         //dump sample 2
 
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample3.setDependentAction(moveToBasket2);
+        moveToSample3.setDependantActions(moveToBasket2);
 
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket3.setDependentAction(moveToSample3);
+        moveToBasket3.setDependantActions(moveToSample3);
 
         //dump sample 3
 

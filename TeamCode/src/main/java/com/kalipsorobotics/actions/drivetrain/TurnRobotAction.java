@@ -21,7 +21,7 @@ public class TurnRobotAction extends DriveTrainAction {
     double remainingDegrees;
 
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry) {
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         this.targetDegrees = targetDegrees;
         this.driveTrain = driveTrain;
         this.sparkfunOdometry = sparkfunOdometry;

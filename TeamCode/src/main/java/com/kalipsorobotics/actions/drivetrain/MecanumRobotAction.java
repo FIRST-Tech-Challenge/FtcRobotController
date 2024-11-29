@@ -27,7 +27,7 @@ public class MecanumRobotAction extends DriveTrainAction {
     double timeout;
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         this.pidController = new PIDController(0.051665, 0.013042, 0.000008, "mecanum");
         this.driveTrain = driveTrain;
 

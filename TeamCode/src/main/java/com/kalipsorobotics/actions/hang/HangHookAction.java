@@ -6,7 +6,6 @@ import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.KServo;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class HangHookAction extends Action {
 
@@ -14,7 +13,7 @@ public class HangHookAction extends Action {
 
     public HangHookAction(Outtake outtake) {
         this.hang1 = outtake.getHangHook1();
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         hang1.setPosition(0.4);
     }
 

@@ -13,7 +13,7 @@ public class CheckPointDone extends Action {
         this.point = point;
         this.purePursuitAction = purePursuitAction;
         this.sparkfunOdometry = sparkfunOdometry;
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
     }
 
     public double calculateError() {
