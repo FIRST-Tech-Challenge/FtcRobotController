@@ -49,6 +49,10 @@ public class CommandFactory {
         this.slider = slider;
     }
 
+    public AlignToSample alignToSample() {
+        return new AlignToSample(driveTrain, vision, telemetry);
+    }
+
     public TelemetryCommand WriteTelemetry() {
         return  new TelemetryCommand(driveTrain, telemetry);
     }

@@ -87,7 +87,7 @@ public class DriverFeedback extends SubsystemBase {
 
     public void OperatorRumbleBlip() {
 
-        DriverRumbleBlip(1);
+        OperatorRumbleBlip(1);
     }
 
     public void OperatorRumbleBlip(int blipCount) {
