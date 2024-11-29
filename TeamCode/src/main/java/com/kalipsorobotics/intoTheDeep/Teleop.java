@@ -19,7 +19,6 @@ import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -119,12 +118,11 @@ public class Teleop extends LinearOpMode {
             //Linkage
             //TODO make sure its not blocking w/ the sleeps
             if (gamepad2.a && !prevGamePadA) {
+                intakeSequence.extend();
                 if (retracted) {
-                    intakeSequence.extend();
                     retracted = false;
                     Log.d("teleop", "intake extended");
                 } else {
-                    intakeSequence.extend();
                     retracted = true;
                     Log.d("teleop", "intake retracted");
                 }
