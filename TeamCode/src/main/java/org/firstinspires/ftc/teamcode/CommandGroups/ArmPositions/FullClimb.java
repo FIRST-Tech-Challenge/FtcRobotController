@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
+package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -6,12 +6,12 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
-import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
+import org.firstinspires.ftc.teamcode.Commands.LowerJack;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
+import org.firstinspires.ftc.teamcode.Commands.RaiseJack;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 
 import java.util.ArrayList;
 
@@ -21,65 +21,35 @@ import java.util.ArrayList;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class WallPickUp extends SequentialCommandGroup {
+public class FullClimb extends SequentialCommandGroup {
 
     // constructor
-    public WallPickUp() {
+    public FullClimb() {
 
         addCommands (
-        // What this position should do is give the camera a good vantage point as well as keep the arm out of the way
-
-                //new InstantCommand(()-> RobotContainer.odometry.setCurrentPos(new Pose2d(-0.40,1.6,new Rotation2d(Math.toRadians(-90))))),
-
 
                 new FollowPath(
-                        1.0,
+                        2.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        new Rotation2d(Math.toRadians(180)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
-                // lifts the shoulder up 90+-60 degrees
-                // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(35)),
+                        new Pose2d(0.45, 0.2, new Rotation2d(Math.toRadians(180.0))),
+                        new Rotation2d(Math.toRadians(0.0))),
 
-                // folds the elbow in 270
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
-                // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(90)),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
-                // powers the wrist and moves it to straight position
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(0)),
+                new Pause(0.5),
 
-                new Pause(0.25),
+                new RaiseJack(),
 
-                new OpenClaw(),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
-                new Pause(0.25),
+                new Pause(0.5),
 
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.2, 1.44, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
-
-                new CloseClaw(),
-
-                new Pause(0.25),
-
-                new ArmStowHigh(),
-
-                new Pause(0.25)
-
+                new LowerJack()
 
         );
     }
