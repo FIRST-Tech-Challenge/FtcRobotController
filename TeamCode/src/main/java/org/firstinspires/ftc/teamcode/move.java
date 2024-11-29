@@ -29,10 +29,27 @@
 //MINE ( AARUSH )
 package org.firstinspires.ftc.teamcode;
 
-
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.CommonUtil;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
 /**
@@ -49,80 +66,62 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Unit_Test", group="Linear Opmode2")
-public class Unit_Test extends CommonUtil {
+@Autonomous(name="move", group="Linear Opmode2")
+public class move extends CommonUtil {
 
     Orientation myRobotOrientation;
 
     @Override
     public void runOpMode() {
 
-        //setup
-        telemetry.setAutoClear(false);
-        // initialize hardware
-        initialize(hardwareMap);
-        // Initialize motors
-        setMotorOrientation();
-        //resetMotorEncoderCounts();
-        setMotorToZeroPower();
-        setZeroPowerBehavior();
 
+
+        Orientation myRobotOrientation;
+
+        double ENC2DIST = 4593.0/102.0; //2000.0/48.0; // FW/BW
+        double ENC2DIST_SIDEWAYS = 2911.0/57.0;
+        ElapsedTime timer = new ElapsedTime();
+
+        //imu init
+        BHI260IMU imu;
+        BHI260IMU.Parameters myIMUParameters;
+        YawPitchRollAngles robotOrientation;
+
+        //motor / servo init
+        DcMotor bl = null;
+        DcMotor fl = null;
+        DcMotor fr = null;
+        DcMotor br = null;
+
+        bl = hardwareMap.get(DcMotorEx.class, "LB");
+        fl = hardwareMap.get(DcMotor.class, "LF");
+        fr = hardwareMap.get(DcMotor.class, "RF");
+        br = hardwareMap.get(DcMotor.class, "RB");
+        s1 = hardwareMap.get(Servo.class, "s1");
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-
-//            moveBackwards_wDistance_wGyro(25,0.3);
-//
-//
-//            moveForward_wDistance_wGyro(3,0.3);
-//            sleep(500);
-//
-//            telemetry.addData("trying to move sideways","starting");
-//            telemetry.update();
-//            moveSideways_wCorrection("left",6,1);
-//            telemetry.addData("trying to move sideways","complete");
-//            telemetry.update();
-//            sleep(500);
-//
-//
-//            turn("left",90);
-//            sleep(100);
-//
-//            moveForward_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            turn("right",90);
-//            sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            sleep(100);
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            //sleep(2000);
+           s1.setDirection(Servo.Direction.FORWARD);
+           s1.setPosition(0);
+           sleep(5000);
+           s1.setPosition(1);
+           sleep(5000);
 
 
-            //sleep(2000);
-            //setMotorToZeroPower();
-            moveForward_wDistance_wGyro(50,0.3,3);
-
-
-         sleep(9000000);
 
         }
     }
 
 
 }
+
+
 
 
 

@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Unit_Test", group="Linear Opmode2")
-public class Unit_Test extends CommonUtil {
+@Autonomous(name="Eesha_New_Code", group="Linear Opmode2")
+public class Eesha_New_Code extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,59 +65,14 @@ public class Unit_Test extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        setZeroPowerBehavior();
-
+        clawClosed();
+        wristFlat();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
-
-//            moveBackwards_wDistance_wGyro(25,0.3);
-//
-//
-//            moveForward_wDistance_wGyro(3,0.3);
-//            sleep(500);
-//
-//            telemetry.addData("trying to move sideways","starting");
-//            telemetry.update();
-//            moveSideways_wCorrection("left",6,1);
-//            telemetry.addData("trying to move sideways","complete");
-//            telemetry.update();
-//            sleep(500);
-//
-//
-//            turn("left",90);
-//            sleep(100);
-//
-//            moveForward_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            turn("right",90);
-//            sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            sleep(100);
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            //sleep(2000);
-
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            moveForward_wDistance_wGyro(50,0.3,3);
-
-
-         sleep(9000000);
-
+            m0.setPower(0.2);
         }
     }
 

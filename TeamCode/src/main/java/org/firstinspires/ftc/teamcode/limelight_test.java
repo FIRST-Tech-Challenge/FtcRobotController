@@ -29,9 +29,18 @@
 //MINE ( AARUSH )
 package org.firstinspires.ftc.teamcode;
 
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import edu.wpi.first.networktables.NetworkTable;
+//import edu.wpi.first.networktables.NetworkTableInstance;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
@@ -49,14 +58,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Unit_Test", group="Linear Opmode2")
-public class Unit_Test extends CommonUtil {
+@Autonomous(name="limelight_test", group="Linear Opmode2")
+public class limelight_test extends CommonUtil {
 
     Orientation myRobotOrientation;
 
+
     @Override
     public void runOpMode() {
-
+        return;
+        /*
         //setup
         telemetry.setAutoClear(false);
         // initialize hardware
@@ -66,59 +77,34 @@ public class Unit_Test extends CommonUtil {
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
         setZeroPowerBehavior();
+        NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+
+        // Set the pipeline to the one that detects the blue rectangle
+        limelight.getEntry("yellow-sample").setNumber(1); // Pipeline index for "blue rectangle"
+
+        telemetry.addLine("Pipeline set to 3 for blue rectangle detection.");
+        telemetry.update();
+
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
+            double tx = limelight.getEntry("tx").getDouble(0.0);  // Horizontal offset
+            double ta = limelight.getEntry("ta").getDouble(0.0);  // Target area
+            double tv = limelight.getEntry("tv").getDouble(0.0);  // Valid target (1 = valid, 0 = no target)
 
-//            moveBackwards_wDistance_wGyro(25,0.3);
-//
-//
-//            moveForward_wDistance_wGyro(3,0.3);
-//            sleep(500);
-//
-//            telemetry.addData("trying to move sideways","starting");
-//            telemetry.update();
-//            moveSideways_wCorrection("left",6,1);
-//            telemetry.addData("trying to move sideways","complete");
-//            telemetry.update();
-//            sleep(500);
-//
-//
-//            turn("left",90);
-//            sleep(100);
-//
-//            moveForward_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            turn("right",90);
-//            sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            sleep(100);
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            //sleep(2000);
+            // Display values on telemetry
+            telemetry.addData("tx (Horizontal Offset)", tx);
+            telemetry.addData("ta (Target Area)", ta);
+            telemetry.addData("tv (Valid Target Detected)", tv == 1 ? "Yes" : "No");
+            telemetry.update();
 
 
-            //sleep(2000);
-            //setMotorToZeroPower();
-            moveForward_wDistance_wGyro(50,0.3,3);
-
-
-         sleep(9000000);
 
         }
+        */
     }
 
 

@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Unit_Test", group="Linear Opmode2")
-public class Unit_Test extends CommonUtil {
+@Autonomous(name="Makestuffmove", group="Linear Opmode2")
+public class Makestuffmove extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,58 +65,36 @@ public class Unit_Test extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        setZeroPowerBehavior();
-
+        clawClosed();
+        wristFlat();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
+           fl.setPower(-1);
+           fr.setPower(-1);
+           bl.setPower(-1);
+           br.setPower(-1);
+           sleep(1000);
+           m2.setPower(0.1);
+           fl.setPower(-1);
+           fr.setPower(1);
+           bl.setPower(-1);
+           br.setPower(1);
+           sleep(1000);
+           m2.setPower(0);
+           fl.setPower(0);
+           fr.setPower(0);
+           bl.setPower(0);
+           br.setPower(0);
+           sleep(1000);
+           fl.setPower(1);
+           fr.setPower(-1);
+           br.setPower(1);
+           bl.setPower(-1);
+           sleep(1000);
 
-//            moveBackwards_wDistance_wGyro(25,0.3);
-//
-//
-//            moveForward_wDistance_wGyro(3,0.3);
-//            sleep(500);
-//
-//            telemetry.addData("trying to move sideways","starting");
-//            telemetry.update();
-//            moveSideways_wCorrection("left",6,1);
-//            telemetry.addData("trying to move sideways","complete");
-//            telemetry.update();
-//            sleep(500);
-//
-//
-//            turn("left",90);
-//            sleep(100);
-//
-//            moveForward_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            turn("right",90);
-//            sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            sleep(100);
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            //sleep(2000);
-
-
-            //sleep(2000);
-            //setMotorToZeroPower();
-            moveForward_wDistance_wGyro(50,0.3,3);
-
-
-         sleep(9000000);
 
         }
     }

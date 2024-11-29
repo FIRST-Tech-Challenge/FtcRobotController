@@ -49,8 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 
-@Autonomous(name="Unit_Test", group="Linear Opmode2")
-public class Unit_Test extends CommonUtil {
+@Autonomous(name="Auto_Basket1", group="Linear Opmode2")
+public class Auto_Basket1 extends CommonUtil {
 
     Orientation myRobotOrientation;
 
@@ -65,58 +65,48 @@ public class Unit_Test extends CommonUtil {
         setMotorOrientation();
         //resetMotorEncoderCounts();
         setMotorToZeroPower();
-        setZeroPowerBehavior();
-
+        resetMotorEncoderCounts();
+        imu.resetYaw();
+        armReleaseP1();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         while (opModeIsActive()) {
+            moveSideways_wCorrection("left",3,0.6,3);
+            sleep(100);
+            moveBackwards_wDistance_wGyro(20.5,0.3,100);
+            sleep(500);
+            turn("left",39,2);
+            sleep(500);
+            moveBackwards_wDistance_wGyro(20,0.3,1);
+            sleep(200);
+            sleep(500);
+            slideUp(1,4350,3);
+            basketUp();
+            sleep(500);
 
-//            moveBackwards_wDistance_wGyro(25,0.3);
-//
-//
-//            moveForward_wDistance_wGyro(3,0.3);
-//            sleep(500);
-//
-//            telemetry.addData("trying to move sideways","starting");
-//            telemetry.update();
-//            moveSideways_wCorrection("left",6,1);
-//            telemetry.addData("trying to move sideways","complete");
-//            telemetry.update();
-//            sleep(500);
-//
-//
-//            turn("left",90);
-//            sleep(100);
-//
-//            moveForward_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            moveBackwards_wDistance_wGyro(8,0.3);
-//            sleep(100);
-//
-//
-//
-//            turn("right",90);
-//            sleep(100);
-//
-//            moveSideways_wCorrection("right",6,1);
-//            sleep(100);
+            basketDown();
+            sleep(2550);
 
-            //sleep(2000);
-            //setMotorToZeroPower();
-            //sleep(2000);
+            basketUp();
+            slideDown(0.8,4200,3);
+            sleep(500);
 
+//            turn("right",39,3);
 
-            //sleep(2000);
-            //setMotorToZeroPower();
-            moveForward_wDistance_wGyro(50,0.3,3);
+            moveForward_wDistance_wGyro(38,0.3,3);
+            turn("left",58,5);
+            sleep(100);
 
+            moveForward_wDistance_wGyro(38,0.3,3);
+            sleep(100);
 
-         sleep(9000000);
+            moveSideways_wCorrection("right",35,0.5,3);
+            sleep(500);
+            slideUp(1,2500,3);
+
+            sleep(9000000);
 
         }
     }
