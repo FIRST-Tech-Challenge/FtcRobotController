@@ -134,7 +134,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.right_stick_y != 0) {
                 outtakeSlideAction.setPower(gamepad2.right_stick_y);
             } else {
-                outtakeSlideAction.stop();
+                outtakeSlideAction.idle();
             }
 
 

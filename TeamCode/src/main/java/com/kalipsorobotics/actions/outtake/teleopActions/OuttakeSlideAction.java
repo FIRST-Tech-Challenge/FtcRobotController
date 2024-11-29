@@ -24,17 +24,8 @@ public class OuttakeSlideAction {
 
 
     public void setPower(double power) {
-//        linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        if (power > 0.1) {
-//            moveToPosition(2040);
-//        } else if (power < -0.1) {
-//            moveToPosition(0);
-//        }
-        linearSlideMotor1.setPower(power);
         Log.d("outtake slides", "POWER: " + power);
+        linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
     }
 
@@ -49,7 +40,7 @@ public class OuttakeSlideAction {
     public void reverse() { setPower(-1); }
 
     public void idle() {
-        setPower(0.2);
+        setPower(-0.2);
     }
 
 //    public void moveToPosition(int target) {
