@@ -33,7 +33,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.internal.opengl.models.SolidCylinder;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -73,6 +76,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private Servo   extensionServo = null;
+    private double   extensionPos = 0.5;
+
+    private double openPos = 0.03;
+    private double closedPos = 0.07;
+
     @Override
     public void runOpMode() {
 
@@ -82,6 +91,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "Left Back");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "Right Front");
         rightBackDrive = hardwareMap.get(DcMotor.class, "Right Back");
+
+        extensionServo = hardwareMap.get(Servo.class, "Extension");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -104,15 +115,61 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        long lastLoopStartNs = runtime.nanoseconds() - 100;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            long nowNs = runtime.nanoseconds();
+            long lastLoopDurationNs = nowNs - lastLoopStartNs;
+            lastLoopStartNs = nowNs;
+
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
+
+
+//            if (gamepad1.b) {
+//                extensionPos = extensionPos - (lastLoopDurationNs * 0.3E-9);
+//            }
+//            if (gamepad1.a) {
+//                extensionPos = extensionPos + (lastLoopDurationNs * 0.3E-9);
+//            }
+//            if (gamepad1.y) {
+//                extensionPos = 0.5;
+//            }
+//            extensionPos = Math.min(1.0, Math.max(0.0, extensionPos));
+//
+//            if (gamepad1.x) {
+//                extensionServo.setPosition(extensionPos);
+//            }
+
+            if (gamepad1.a) {
+                openPos = openPos - (lastLoopDurationNs * 1.0E-10);
+            }
+            if (gamepad1.b) {
+                openPos = openPos + (lastLoopDurationNs * 1.0E-10);
+            }
+            openPos = Math.min(1.0, Math.max(0.0, openPos));
+
+            if (gamepad1.x) {
+                closedPos = closedPos - (lastLoopDurationNs * 1.0E-10);
+            }
+            if (gamepad1.y) {
+                closedPos = closedPos + (lastLoopDurationNs * 1.0E-10);
+            }
+            closedPos = Math.min(1.0, Math.max(0.0, closedPos));
+
+            if (gamepad1.left_bumper) {
+                extensionServo.setPosition(openPos);
+            }
+            else if (gamepad1.right_bumper) {
+                extensionServo.setPosition(closedPos);
+            }
+
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -127,7 +184,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
 
-            max *= 2.0;
+//            max *= 2.0;
 
             if (max > 1.0) {
                 leftFrontPower  /= max;
@@ -163,6 +220,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Servo  Position", "%6.4f", extensionServo.getPosition());
+            telemetry.addData("Open   Target", "%6.4f", openPos);
+            telemetry.addData("Closed Target", "%6.4f", closedPos);
             telemetry.update();
         }
     }}
