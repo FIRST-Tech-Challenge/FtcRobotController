@@ -60,5 +60,26 @@ public class ColorDetector {
         return detectedColor;
 
     }
+    public boolean detectRed() {
+        if (detectColor() == KColor.Color.RED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean detectBlue() {
+        if (detectColor() == KColor.Color.BLUE) {
+            return true;
+        } else {
+            return false
+        }
+    }
+    public boolean detectYellow() {
+        if (detectColor() == KColor.Color.YELLOW) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }

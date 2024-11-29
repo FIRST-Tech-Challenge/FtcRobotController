@@ -77,16 +77,26 @@ public class Teleop extends LinearOpMode {
 
             //Drive
             driveAction.move(gamepad1);
-
+            boolean takeInYellow = gamepad2.dpad_right;
             //INTAKE
             //Noodles
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
-                if (((!isRed) && colorDetector.detectColor() == KColor.Color.RED) ||
-                        ((isRed) && colorDetector.detectColor() == KColor.Color.BLUE)) {
-                    intakeNoodleAction.reverse();
-                    sleep(1000);
+                if (takeInYellow) {
+                    if (((!isRed) && colorDetector.detectRed()) ||
+                            (isRed) && colorDetector.detectBlue()) {
+                        intakeNoodleAction.reverse();
+                        sleep(1000);
+                    } else {
+                        intakeNoodleAction.run();
+                    }
                 } else {
-                    intakeNoodleAction.run();
+                    if (((!isRed) && colorDetector.detectRed()) || (colorDetector.detectYellow()) ||
+                            (isRed) && colorDetector.detectBlue()) {
+                        intakeNoodleAction.reverse();
+                        sleep(1000);
+                    } else {
+                        intakeNoodleAction.run();
+                    }
                 }
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
