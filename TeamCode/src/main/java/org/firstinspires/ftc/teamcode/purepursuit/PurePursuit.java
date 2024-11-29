@@ -8,7 +8,7 @@ public class PurePursuit {
     public final double LOOKAHEAD_RADIUS = 1.0;
     public double robotX = 0, robotY = 0;
     public ArrayList<Double> intersections;
-    public int lastIntersectionIndex = -1;
+    public int lastIntersectionIndex = 0;
     public PurePursuit(double robotX, double robotY) {
         this.robotX = robotX;
         this.robotY = robotY;
@@ -18,9 +18,13 @@ public class PurePursuit {
     public void updatePositions(double velocity, double angle, double timeslice) {
         this.robotX += velocity * Math.cos(angle) * timeslice;
         this.robotY += velocity * Math.sin(angle) * timeslice;
+
     }
 
     public boolean findIntersections(int index) {
+        if(index > path.size() - 1) {
+            return false;
+        }
         LineSegment lineSegment = this.path.get(index);
         double x0 = lineSegment.x0, y0 = lineSegment.y0, x1 = lineSegment.x1, y1 = lineSegment.y1;
         double a = Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2);
@@ -42,6 +46,9 @@ public class PurePursuit {
     }
 
     public double calculateMovementAngle() {
+        for (int i = 0; i < 3; i++){
+            findIntersections(lastIntersectionIndex + i);
+        }
         double tLast = intersections.get(intersections.size() - 1);
         LineSegment segmentLast = path.get(this.lastIntersectionIndex);
         double targetx = segmentLast.x0 + (segmentLast.x1 - segmentLast.x0) * tLast;
@@ -49,7 +56,7 @@ public class PurePursuit {
 
         double movementAngle = Math.atan((targety - robotY) / (targetx - robotX));
 
-
+        return movementAngle;
     }
 
     public void addSegmentToPath(LineSegment segment) {
