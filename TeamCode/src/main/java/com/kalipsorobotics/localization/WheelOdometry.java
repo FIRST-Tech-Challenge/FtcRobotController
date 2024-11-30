@@ -66,7 +66,7 @@ public class WheelOdometry {
         //corresponds to fRight
         //direction FORWARD
         //negative because encoder directions
-        return ticksToMM(-rightEncoder.getCurrentPosition());
+        return ticksToMM(rightEncoder.getCurrentPosition());
     }
     public double countLeft() {
         //corresponds to fLeft

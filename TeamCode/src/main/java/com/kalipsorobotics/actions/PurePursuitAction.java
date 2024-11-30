@@ -86,7 +86,8 @@ public class PurePursuitAction extends Action {
         double yError = Math.sin(directionError) * distanceToTarget;
         double powerY = pidY.getPower(yError);
 
-
+        Log.d("directionalpower", String.format("power x=%.4f, power y=%.5f, powertheta=%.6f", powerX, powerY,
+                powerAngle));
         double fLeftPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
 
@@ -95,10 +96,9 @@ public class PurePursuitAction extends Action {
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
-        driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.7);
+        driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.4);
 
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
-        driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
         prevFollow = Optional.of(target);
     }
 
@@ -132,21 +132,25 @@ public class PurePursuitAction extends Action {
             targetPosition(follow.get());
 
         } else {
+            Position lastPoint = path.getLastPoint();
 
-            if (Math.abs(prevFollow.get().getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2)) {
+            if ((lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
                 driveTrain.setPower(0);
+                Log.d("purepursaction_debug_follow", "done");
                 isDone = true;
-                try {
-                    Thread.sleep(sleepTimeMS);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (sleepTimeMS != 0) {
+                    try {
+                        Thread.sleep(sleepTimeMS);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else {
-                targetPosition(prevFollow.get());
+                Log.d("purepursaction_debug_follow",
+                        "locking final angle:  " + lastPoint);
+                Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
+                targetPosition(lastPoint);
             }
-
-            Log.d("purepursaction_debug_follow", "done");
-
         }
     }
 

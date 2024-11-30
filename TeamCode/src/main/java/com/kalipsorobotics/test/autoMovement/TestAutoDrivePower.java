@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class NewTestPurePursuit extends LinearOpMode {
+public class TestAutoDrivePower extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,21 +22,15 @@ public class NewTestPurePursuit extends LinearOpMode {
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         purePursuitAction.addPoint(0, 0, 0);
-        //purePursuitAction.addPoint(600, 0, 0);
-        //purePursuitAction.addPoint(0, 600, 0);
         purePursuitAction.addPoint(600, 600, 90);
-
-
+//        purePursuitAction.addPoint(600, -1200, 90);
+        double time  = System.currentTimeMillis();
 
         waitForStart();
         while (opModeIsActive()) {
-
-            wheelOdometry.updatePosition();
-
-            purePursuitAction.update();
-
-            if (purePursuitAction.checkDoneCondition()) {
-                break;
+            if ((System.currentTimeMillis() - time) < 1000) {
+                driveTrain.setPower(0.3, 0.3, 0.3, 0.3);
+                //driveTrain.setPower(0.3, -0.3, 0.3, -0.3);
             }
         }
 

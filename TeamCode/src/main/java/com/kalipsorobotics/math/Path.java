@@ -60,6 +60,10 @@ public class Path {
         return path.size();
     }
 
+    public Position getLastPoint() {
+        return path.get(path.size() - 1);
+    }
+
     public int numSegments() {
         return numPoints() - 1;
     }
