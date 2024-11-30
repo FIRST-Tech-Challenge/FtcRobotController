@@ -107,6 +107,9 @@ public class MecanumTeleOp extends LinearOpMode {
             servoMoves();
             twist();
             lift(hardware);
+            if(gamepad1.x){
+                transfer(hardware);
+            }
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
             }
@@ -393,5 +396,18 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(0);
         sleep(500);
         armTargetPosDeg = 0;
+    }
+    private void transfer(Hardware hardware){
+        hardware.arm.setPower(-0.5);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        hardware.verticalSlide.setTargetPosition(900);
+        maintainHeightTicks = 900;
+        sleep(500);
+        hardware.arm.setTargetPosition(33);
+        sleep(500);
+        hardware.wrist.setPosition(0.9);
+        sleep(500);
+        armTargetPosDeg=33;
     }
 }
