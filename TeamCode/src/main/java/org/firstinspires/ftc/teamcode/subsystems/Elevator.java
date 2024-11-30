@@ -110,11 +110,17 @@ public class Elevator extends SubsystemBase {
     //this method returns true if we are maxed out on distance
     public boolean isExtended(){
         //TODO: calculate maximum distance based on angle
-        double elevatorDistance = getDistanceInInches();
-        //wormAngle
-        double horizontalExtension = (elevatorDistance / Math.cos(Math.toRadians(wormAngle))); // Changes angle to radians as java uses them by default
 
+        //wormAngle
+         // Changes angle to radians as java uses them by default
+        double horizontalExtension = getHorizontalExtension();
         return horizontalExtension >= 21;
+    }
+
+    private double getHorizontalExtension() {
+        double elevatorDistance = getDistanceInInches();
+        double horizontalExtension = (elevatorDistance * Math.abs(Math.cos(Math.toRadians(wormAngle))));
+        return horizontalExtension;
     }
 
     //this function fires every cycle, at about 50hz, so anything in here will effectively be the default state
@@ -123,6 +129,8 @@ public class Elevator extends SubsystemBase {
         telemetry.addData("ElevatorIsRetracted", isRetracted());
         telemetry.addData("ElevatorIsExtended", isExtended());
         telemetry.addData("ElevatorDistance", getDistance());
+        telemetry.addData("ElevatorDistanceInInches", getDistanceInInches());
+        telemetry.addData("ElevatorHorizontal", getHorizontalExtension());
         telemetry.addData("IsHomed", isHomed);
 
 //        if (bottomLimit.isPressed() && !extending && !retracting) {

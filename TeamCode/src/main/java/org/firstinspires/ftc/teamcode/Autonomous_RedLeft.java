@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Worm;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name="Scrimmage: TeleOp", group="Scrimmage")
+@Autonomous(name="Autonomous: RedLeft", group="Scrimmage")
 public class Autonomous_RedLeft extends OpMode {
 
     private Elevator elevator;

@@ -69,7 +69,7 @@ public class Worm extends SubsystemBase {
 
     public double getAngle() {
         final double potentiometerAngle = angleLookup.get(pot.getVoltage());
-        return (potentiometerAngle - potOffset);
+        return (potentiometerAngle);
     }
 
     public void raise() {
