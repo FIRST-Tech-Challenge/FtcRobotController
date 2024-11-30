@@ -84,7 +84,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliveryPosition() {
         SetAuto();
-        currentTarget = BasketDeliveryPosition - 50;
+        currentTarget = -514;//BasketDeliveryPosition - 50;
     }
 
     public void MoveToTransferPosition() {
@@ -96,10 +96,10 @@ public class DeliverySlider extends SonicSubsystemBase {
         double position = motor.encoder.getPosition();
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
         if(addTelemetry) {
-            telemetry.addData("target", currentTarget);
-            telemetry.addData("current", position);
+            telemetry.addData("slider target", currentTarget);
+            telemetry.addData("slider current", position);
             telemetry.update();
         }
 

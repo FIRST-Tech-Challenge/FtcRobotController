@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
-import org.firstinspires.ftc.teamcode.subsystems.intake.Stopper;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**

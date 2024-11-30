@@ -27,7 +27,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int StartPositionFromCalibration = 1590;
 
-    public static int DeliveryPositionFromStart = 1400;
+    public static int DeliveryPositionFromStart = -61; //CHANGED
 
     public static int IntakePositionFromStart = -1025;
 
@@ -95,6 +95,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.isTeleop = false;
     }
 
+
+
     public void RotateTowardsIntake() {
         SetTelop();
         motor.set(-1);
@@ -148,12 +150,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
 
         if(addTelemetry) {
-            telemetry.addData("target", currentTarget);
-            telemetry.addData("current", position);
-            telemetry.update();
+            telemetry.addData("pivot target", currentTarget);
+            telemetry.addData("pivot current", position);
         }
 
         if(position < DeliveryPositionFromStart - 300) {
