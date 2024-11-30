@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters.components;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -78,10 +79,8 @@ public class Init {
         extension1 = hardwareMap.dcMotor.get("extension1");
         extension2 = hardwareMap.dcMotor.get("extension2");
 
-        extension2.setDirection(DcMotor.Direction.REVERSE);
-
-        extension1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extension2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extension2.setDirection(DcMotorSimple.Direction.REVERSE);
+        extension2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
        elbow1 = hardwareMap.servo.get("elbow1");
        elbow2 = hardwareMap.servo.get("elbow2");

@@ -22,7 +22,7 @@ public class TeleopManualV1 extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        double horpos = ITDCons.slideInit;
+        int slideTarget = 0;
 
         double servo1pos = 0.5;
         double servo2pos = 0.5;
@@ -64,36 +64,36 @@ public class TeleopManualV1 extends LinearOpMode {
                 intake.intakeLift(ITDCons.liftUp);
             }
 
-            if (gamepad1.right_bumper){
-                outake.slidePower(.5);
-            } else if (gamepad1.left_bumper) {
-                outake.slidePower(-.5);
-            } else {
-                outake.slidePower(0);
-            }
+//            if (gamepad1.right_bumper){
+//                slideTarget = slideTarget + 5;
+//            } else if (gamepad1.left_bumper) {
+//                slideTarget = slideTarget - 5;
+//            }
+//            outake.moveSlide(slideTarget);
 
             if (gamepad1.dpad_up) {
-                servo1pos += 0.005;
-                servo2pos += 0.005;
+                outake.diffy1(ITDCons.BucketDiffy1);
+                outake.diffy2(ITDCons.BucketDiffy2);
+                outake.moveSlide(ITDCons.BucketTarget);
             }
 
             if (gamepad1.dpad_down) {
-                servo1pos -= 0.005;
-                servo2pos -= 0.005;
+                outake.diffy1(ITDCons.FloorDiffy1);
+                outake.diffy2(ITDCons.FloorDiffy2);
+                outake.moveSlide(0);
             }
 
             if (gamepad1.dpad_left) {
-                servo1pos += 0.005;
-                servo2pos -= 0.005;
+                outake.diffy1(ITDCons.WallDiffy1);
+                outake.diffy2(ITDCons.WallDiffy2);
+                outake.moveSlide(0);
             }
 
             if (gamepad1.dpad_right) {
-                servo1pos -= 0.005;
-                servo2pos += 0.005;
+                outake.diffy1(ITDCons.SpecimenDiffy1);
+                outake.diffy2(ITDCons.SpecimenDiffy2);
+                outake.moveSlide(ITDCons.SpecimenTarget);
             }
-
-            outake.diffy1(servo1pos);
-            outake.diffy2(servo2pos);
 
             if(gamepad1.a){
                 outake.moveClaw(ITDCons.open);
@@ -101,6 +101,9 @@ public class TeleopManualV1 extends LinearOpMode {
                 outake.moveClaw(ITDCons.close);
             }
 
+
+            telemetry.addData("Slide Target", outake.getTarget());
+            telemetry.addData("Slide Position", outake.getExtensionPos());
             telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
             telemetry.addData("Diffy Servo1 Pos", servo1pos);
             telemetry.addData("Diffy Servo2 Pos", servo2pos);
