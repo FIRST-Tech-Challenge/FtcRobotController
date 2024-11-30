@@ -5,16 +5,14 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="Auto Drive", group="Robot")
-public class OTOSAutoDrive extends LinearOpMode {
+@Autonomous(name="Auto Park", group="Robot")
+public class PARKAuto extends LinearOpMode {
     // Initialize all variables for the program
     // Hardware variables
     SparkFunOTOS myOtos;
@@ -53,152 +51,33 @@ public class OTOSAutoDrive extends LinearOpMode {
     final double ASCENT_MIN = 0.17;          // Stick is down
     final double ASCENT_MAX = 0.49;         // Stick is up
 
-    final ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
         defineHardware();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/29/2024, 6:08pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "11/30/2024, 11:11pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         configureOtos();
 
-        // First Sample ///////////////////////////////////////////////////////////////
-        setVertical(VERTICAL_MAX);                                  // Raising Arm
-        sleep(300);
-        setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(500);
-        driveToLoc(9, 16, 45, 1.5);  // Go to basket
-        sleep(100);
-        setClaw(CLAW_MAX);                                          // Drop the block
+        // Drive ///////////////////////////////////////////////////////////////
+        setClaw(CLAW_MIN);
+        driveToLoc(4, -30,0);
+        sleep(2000);
 
-        // Second Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(15, 12, -10);
-        setViper(VIPER_GROUND);
-        sleep(300);
-        setVertical(VERTICAL_MIN);
-        driveToLoc(29, -7, -10, 1);
-        sleep(300);
-        driveToLoc(31, -2, -10, 1);
-        sleep(100);
-        setClaw(CLAW_MIN);                                          // Grab second block
-        //sleep(200);
-        setVertical(VERTICAL_MAX, 1000);
-        while(vertical.getCurrentPosition() < 400) { sleep(10); }
-        setViper(VIPER_MAX);
-        driveToLoc(10, 14, 45, 1.5);  // Go to basket
-        sleep(600);
-        setClaw(CLAW_MAX);                                          // Drop second block
-        
-        // Third Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(16, 10, -10);
-        setViper(VIPER_GROUND);
-        sleep(300);
-        setVertical(VERTICAL_MIN);
-        driveToLoc(30, 6, -10, 1);
-        sleep(300);
-        driveToLoc(31, 10, -10, 1);
-        sleep(100);
-        setClaw(CLAW_MIN);                                          // Grab third block
-        // sleep(200);
-        setVertical(VERTICAL_MAX, 1000);
-        while(vertical.getCurrentPosition() < 600) { sleep(10); }
-        setViper(VIPER_MAX);
-        driveToLoc(10, 15, 45, 1.5);  // Go to basket
-        sleep(200);
-        setClaw(CLAW_MAX);                                          // Drop third block
-
-        // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(29, 13, -10, 1);
-        setViper(VIPER_GROUND);
-        sleep(1000);
-        setVertical(VERTICAL_MIN);
-        sleep(1000);
-        driveToLoc(30, 17, -10, 1);
-        setClaw(CLAW_MIN);                                          // Grab fourth block
-        driveToLoc(29, 12, -10, 1);
-        setVertical(VERTICAL_MAX, 1000);
-        while(vertical.getCurrentPosition() < 700) { sleep(10); }
-        setViper(VIPER_MAX);
-        driveToLoc(10, 15, 45, 1.5);  // Go to basket
-        sleep(200);
-        setClaw(CLAW_MAX);                                          // Drop fourth block
-
-        // Park ///////////////////////////////////////////////////////////////
-        driveToLoc(25, 5, 0, 3);
-        setViper(VIPER_MIN);
-        sleep(700);
-        setVertical(VERTICAL_MIN);
-        driveToLoc(50, 5, 0); // todo: og xtarget is 55
-        setAscentStick(ASCENT_MAX);
-        driveToLoc(50, -12, 180);
-        RobotLog.vv("Rockin'", "End program");
-        claw.close();                                               // Release tension on the claw
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
-    }
-
-    public void setAscentStick(double target) {
-        RobotLog.vv("Rockin' Robots", "setAscentStick() target: %4.2f, current: %4.2f", target, ascentStick.getPosition());
-        ascentStick.setPosition(target);
-    }
-
-    public void setViper(int length){ setViper(length, 3000); }
-
-    public void setViper(int length, int velocity){
-        RobotLog.vv("Rockin' Robots", "setViper() length: %d, current: %d", length, viperSlide.getCurrentPosition());
-        viperSlide.setTargetPosition(length);
-        ((DcMotorEx) viperSlide).setVelocity(velocity);
-        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void setVertical(int height){
-        setVertical(height, VERTICAL_DEFAULT_SPEED);
-    }
-
-    public void setVertical(int height, int speed){
-        RobotLog.vv("Rockin' Robots", "setVertical() height: %d, speed: %d, current: %d", height, speed, vertical.getCurrentPosition());
-        vertical.setTargetPosition(height);
-        ((DcMotorEx) vertical).setVelocity(speed);
-        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void setClaw(double position) {
         RobotLog.vv("Rockin' Robots", "setClaw() position: %4.2f, current: %4.2f", position, claw.getPosition());
         claw.setPosition(position);
         sleep(400);
-    }
-
-    private void moveForward(double speed, long msDuration) {
-        RobotLog.vv("Rockin' Robots", "moveForward() speed: %4.2f, msDuration:: %d", speed, msDuration);
-        leftFrontDrive.setPower(speed);
-        rightFrontDrive.setPower(speed);
-        leftBackDrive.setPower(speed);
-        rightBackDrive.setPower(speed);
-        sleep(msDuration);
-        stopMoving();
-    }
-
-    private void turnRight(double speed, double target) {
-        RobotLog.vv("Rockin' Robots", "turnRight() speed: %4.2f, target: %4.2f, current: %4.2f", speed, target, hLoc);
-        leftFrontDrive.setPower(speed);
-        rightFrontDrive.setPower(-speed);
-        leftBackDrive.setPower(speed);
-        rightBackDrive.setPower(-speed);
-        getPosition();
-        while(hLoc < target -2 || hLoc > target + 2) {
-            sleep(10);
-            getPosition();
-            if(hLoc > 180) hLoc -= 360;
-            if(hLoc < -180) hLoc += 360;
-        }
-        stopMoving();
     }
 
     private void stopMoving() {
@@ -250,9 +129,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         RobotLog.vv("Rockin' Robots", "driveToLoc() xTarget: %.2f, yTarget: %.2f, hTarget: %.2f, accuracy: %.2f",
                 xTarget, yTarget, hTarget, accuracy);
 
-        runtime.reset();
         while (opModeIsActive()
-                &&(runtime.seconds() < 5)
                 && (Math.abs(xDistance) > accuracy
                 || Math.abs(yDistance) > accuracy
                 || Math.abs(hDistance) > accuracy)) {
