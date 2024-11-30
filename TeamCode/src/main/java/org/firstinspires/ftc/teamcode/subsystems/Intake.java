@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setPivot(IntakeState state) {
-
+ 
         this.state = state;
 
         switch(state) {

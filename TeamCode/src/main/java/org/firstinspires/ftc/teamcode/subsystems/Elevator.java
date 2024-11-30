@@ -22,8 +22,8 @@ public class Elevator extends SubsystemBase {
         //this.elevatorRight = new Motor(hMap, "ElevatorRight");
 
         this.telemetry = telemetry;
-        this.elevatorLeft.setInverted(true);
-        this.elevatorLeft.encoder.setDirection(Motor.Direction.REVERSE);
+        this.elevatorLeft.setInverted(false);
+        this.elevatorLeft.encoder.setDirection(Motor.Direction.FORWARD);
     }
 
     @Override
@@ -75,12 +75,13 @@ public class Elevator extends SubsystemBase {
     }
 
     public void manualControl(double pow) {
+        telemetry.addData("pow", pow);
         int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
         if (pow > 0 && currentPosMM > 36 * 25.4) {
             elevatorPower = 0;
             return;
-        } else if (pow < 0 && currentPos <= 0) {
+        } else if (pow < 0 && currentPos <= 5) {
             elevatorPower = 0;
             return;
         }
