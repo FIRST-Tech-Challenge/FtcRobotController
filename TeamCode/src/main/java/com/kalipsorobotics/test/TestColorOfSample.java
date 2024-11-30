@@ -31,7 +31,7 @@ public class TestColorOfSample extends LinearOpMode {
         wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
         //Outtake outtake = new Outtake(opModeUtilities);
 
-        ColorDetector sampleColorDetector = new ColorDetector(opModeUtilities);
+        ColorDetector sampleColorDetector = new ColorDetector(opModeUtilities, hardwareMap);
 
 //        PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, sparkfunOdometry, wheelOdometry);
 //        purePursuitAction.addPoint(0,0,0);

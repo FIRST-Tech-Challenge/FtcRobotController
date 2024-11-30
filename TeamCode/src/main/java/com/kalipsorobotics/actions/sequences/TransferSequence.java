@@ -40,18 +40,24 @@ public class TransferSequence {
         this.outtakeClawAction = new OuttakeClawAction(outtake);
         this.outtakePivotAction = new OuttakePivotAction(outtake);
     }
+//    public boolean checkdone(double time, double waitLength) {
+//        if (SystemClock.currentThreadTimeMillis() - time > waitLength) {
+//            return true;
+//        } else  {
+//            return false;
+//        }
+//    }
     public void sequence() {
         outtakePivotAction.moveOut();
-        SystemClock.sleep(600);
         intakeNoodleAction.run();
-//        outtakeSlideAction.moveToPosition(300);
+        outtakeSlideAction.moveToPosition(300);
         outtakeClawAction.open();
         intakeDoorAction.open();
         outtakeClawAction.open();
 
         SystemClock.sleep(700);
 
-//        outtakeSlideAction.down();
+        outtakeSlideAction.down();
         intakeNoodleAction.stop();
         intakePivotAction.moveDown();
         outtakePivotAction.moveIn();
@@ -60,3 +66,4 @@ public class TransferSequence {
         //ADD LINEAR SLIDE STUFF
     }
 }
+

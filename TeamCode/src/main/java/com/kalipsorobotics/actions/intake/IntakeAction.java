@@ -10,6 +10,7 @@ import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeAction extends Action {
     OpModeUtilities opModeUtilities;
@@ -19,15 +20,17 @@ public class IntakeAction extends Action {
     IntakeDoorAction intakeDoorAction;
     IntakeNoodleAction intakeNoodleAction;
     ColorDetector colorDetector;
+    HardwareMap hardwareMap;
 
     public IntakeAction(OpModeUtilities opModeUtilities, Intake intake) {
+
         this.opModeUtilities = opModeUtilities;
         this.intake = intake;
         this.intakeLinkageAction = new IntakeLinkageAction(intake);
         this.intakePivotAction = new IntakePivotAction(intake);
         this.intakeDoorAction = new IntakeDoorAction(intake);
         this.intakeNoodleAction = new IntakeNoodleAction(intake);
-        this.colorDetector = new ColorDetector(opModeUtilities);
+        this.colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
     }
     @Override
     public boolean checkDoneCondition() {

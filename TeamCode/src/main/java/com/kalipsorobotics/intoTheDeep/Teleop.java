@@ -19,6 +19,7 @@ import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.modules.RevLED;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -47,7 +48,7 @@ public class Teleop extends LinearOpMode {
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
         IntakeSequence intakeSequence = new IntakeSequence(intakePivotAction, intakeLinkageAction);
-        ColorDetector colorDetector = new ColorDetector(opModeUtilities);
+        ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
 
 
         boolean prevGamePadY = false;
@@ -122,12 +123,18 @@ public class Teleop extends LinearOpMode {
             //Linkage
             //TODO make sure its not blocking w/ the sleeps
 
-            if (gamepad2.a && !prevGamePadA) {
-                intakeSequence.extend();
+            if (gamepad2.a && !prevGamePadA || !intakeSequence.checkDone(500)) {
                 if (retracted) {
+                    intakeLinkageAction.extend();
+                    intakeSequence.setUpCheckDone();
+                    if (intakeSequence.checkDone(500)) {
+                        intakePivotAction.moveDown();
+                    }
                     retracted = false;
                     Log.d("teleop", "intake extended");
                 } else {
+                    intakeLinkageAction.retract();
+                    intakePivotAction.moveUp();
                     retracted = true;
                     Log.d("teleop", "intake retracted");
                 }

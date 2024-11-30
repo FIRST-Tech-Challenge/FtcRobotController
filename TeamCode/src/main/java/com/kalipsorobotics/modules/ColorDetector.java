@@ -9,6 +9,7 @@ import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 public class ColorDetector {
@@ -19,13 +20,14 @@ public class ColorDetector {
 
     KColor currentColors;
     KColor baseColors;
+    RevLED revLED;
 
-    public ColorDetector(OpModeUtilities opModeUtilities) {
+    public ColorDetector(OpModeUtilities opModeUtilities, HardwareMap hardwareMap) {
         this.opModeUtilities = opModeUtilities;
         this.colorSensor = opModeUtilities.getHardwareMap().get(ColorSensor.class, "intakeColorSensor");
 
         opModeUtilities.getOpMode().sleep(100);
-
+        revLED = new RevLED(hardwareMap,"red", "green", "red2","green2","red3","green3","red4","green4");
         baseColors = new KColor(colorSensor.red(), colorSensor.green(), colorSensor.blue());
         Log.d("color detectors", "base set to " + baseColors.getRed() + " " + baseColors.getGreen() + " " + baseColors.getBlue());
     }
@@ -89,13 +91,16 @@ public class ColorDetector {
         if (takeInYellow && ((!isRed) && detectRed()) ||
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
+            revLED.turnOnRed();
             SystemClock.sleep(1000);
         } else if (!takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
             SystemClock.sleep(1000);
+            revLED.turnOnRed();
         } else {
             intakeNoodleAction.run();
+            revLED.turnOnGreen();
         }
     }
 }
