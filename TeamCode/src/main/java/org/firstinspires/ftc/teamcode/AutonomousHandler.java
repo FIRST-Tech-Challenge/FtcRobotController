@@ -60,7 +60,7 @@ public class AutonomousHandler {
                 theTelemetry.addData("driveSystemStopped", "waitingForServo");
                 packet.put("driveSystemStopped", "waitingForServo");
                 waiting = true;
-            } else if (timer.milliseconds() > (servoWaitStart + 1500)) {
+            } else if (timer.milliseconds() > (servoWaitStart + 650)) {
                 waiting = false;
                 stateStartTime = timer.milliseconds();
                 theTelemetry.addData("driveSystemStopped", "changing");
@@ -77,7 +77,7 @@ public class AutonomousHandler {
             packet.put("driveSystemStopped", "no");
             theTelemetry.addData("driveSystemStopped", "no");
         }
-        packet.put("timeToWait", servoWaitStart + 1500);
+        packet.put("timeToWait", servoWaitStart + 650);
         packet.put("currentTime", timer.milliseconds());
         armSubSys.periodicUpdate(packet); // Moves arm
         driveSubSys.periodicUpdate(packet); // Moves Drive Base

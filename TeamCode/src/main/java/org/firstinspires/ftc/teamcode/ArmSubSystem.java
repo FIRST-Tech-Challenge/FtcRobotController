@@ -67,12 +67,12 @@ public class ArmSubSystem {
             case CHAMBER_B:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 315;
+                capstanReference = 280;
                 break;
             case CHAMBER_A:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 360;
+                capstanReference = 380;
                 break;
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
@@ -84,6 +84,21 @@ public class ArmSubSystem {
                 extendoReference = 0;
                 capstanReference = 360;
                 break;
+            case AUTO_PRE_2:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 0;
+                capstanReference = 500;
+                break;
+            case AUTO_2:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 1500;
+                capstanReference = 730;
+                break;
+            case AUTO_3:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 1500;
+                capstanReference = 50;
+                break;
             case REST:
                 positionalZone = armPoseZone.OTHER;
                 extendoReference = 200;
@@ -93,6 +108,11 @@ public class ArmSubSystem {
                 positionalZone = armPoseZone.OTHER;
                 extendoReference = 100;
                 capstanReference = 0;
+                break;
+            case AUTO_FINISHER:
+                positionalZone = armPoseZone.OTHER;
+                extendoReference = 0;
+                capstanReference = 600;
                 break;
             case BASKET_PREP:
                 positionalZone = armPoseZone.OTHER;

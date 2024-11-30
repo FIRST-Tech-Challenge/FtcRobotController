@@ -14,9 +14,6 @@ import java.util.HashMap;
 @Autonomous(name="antAuto", group="Auto")
 public class antAuto extends OpMode {
     private AutonomousHandler autoHandler;
-    public static float Trans_P = 0.01f;
-    public static float Trans_I = 0;
-    public static float Trans_D = 0;
 
     @Override
     public void init() {
@@ -45,7 +42,7 @@ public class antAuto extends OpMode {
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set motor modes
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -65,15 +62,15 @@ public class antAuto extends OpMode {
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
         stateOne.wristPosition = wristState.UP;
-        stateOne.armPosition = armPose.CHAMBER_B;
-        stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
+        stateOne.armPosition = armPose.ZERO;
+        stateOne.drivePose = new SparkFunOTOS.Pose2D(-20, 0, 0);
         stateOne.ignorePosTime = 100000;
 
         // State too
         SystemState stateToo = new SystemState();
         stateToo.clawPosition = clawState.OPENED;
         stateToo.wristPosition = wristState.UP;
-        stateToo.armPosition = armPose.CHAMBER_B;
+        stateToo.armPosition = armPose.ZERO;
         stateToo.drivePose = new SparkFunOTOS.Pose2D(20, 0, 0);
         stateToo.ignorePosTime = 100000;
         // Generate Path
@@ -100,6 +97,5 @@ public class antAuto extends OpMode {
     @Override
     public void loop() {
         autoHandler.periodicFunction();
-        autoHandler.resetPID(Trans_P, Trans_I, Trans_D);
     }
 }
