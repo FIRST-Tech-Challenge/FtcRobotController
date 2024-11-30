@@ -5,6 +5,7 @@ import android.util.Log;
 import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.PurePursuitAction;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.HangSpecimenReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.WaitLowerSlides;
@@ -35,7 +36,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-800, 300, 0);
+        moveToSpecimenBar.addPoint(-785, 300, 0);
         HangSpecimenReady hangSpecimenReady1 = new HangSpecimenReady(outtake);
         hangSpecimenReady1.setName("hangSpecimenReady1");
         MoveLSAction lowerSlidesHalf1 = new MoveLSAction(outtake, 200);
@@ -67,27 +68,35 @@ public class RedAutoSpecimen extends LinearOpMode {
         PurePursuitAction moveDepotToWall1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveDepotToWall1.setName("moveDepotToWall1");
         moveDepotToWall1.setDependantActions(moveFloorSamples);
-        moveDepotToWall1.addPoint(-80, -600, -180);
+        moveDepotToWall1.addPoint(-205, -600, -180);
+        moveDepotToWall1.addPoint(-55, -600, -180);
+
+        WaitAction waitAtWall1 = new WaitAction(1000);
+        waitAtWall1.setName("waitAtWall1");
+        waitAtWall1.setDependantActions(moveDepotToWall1);
         //==============end of pushing================
 
 
         //=============begin of second specimen=================
         PurePursuitAction moveWallToBar1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveWallToBar1.setName("moveWallToBar1");
-        moveWallToBar1.setDependantActions(moveDepotToWall1);
-        moveWallToBar1.addPoint(-740, 350, 0);
-        //HangSpecimenReady hangSpecimenReady2 = new HangSpecimenReady(outtake);
-        //hangSpecimenReady2.setName("hangSpecimenReady2");
-        //hangSpecimenReady2.setDependantActions(moveDepotToWall1);
-        //MoveLSAction lowerSlides2 = new MoveLSAction(outtake, 100);
-        //lowerSlides2.setName("lowerSlides2");
-        //lowerSlides2.setDependantActions(hangSpecimenReady2, moveWallToBar1);
+        moveWallToBar1.setDependantActions(waitAtWall1);
+        moveWallToBar1.addPoint(-785, 250, 0);
+        HangSpecimenReady hangSpecimenReady2 = new HangSpecimenReady(outtake);
+        hangSpecimenReady2.setName("hangSpecimenReady2");
+        hangSpecimenReady2.setDependantActions(waitAtWall1);
+        MoveLSAction lowerSlidesHalf2 = new MoveLSAction(outtake, 100);
+        lowerSlidesHalf2.setName("lowerSlidesHalf2");
+        lowerSlidesHalf2.setDependantActions(hangSpecimenReady2, moveWallToBar1);
+        WaitLowerSlides waitLowerSlidesZero2 = new WaitLowerSlides(outtake);
+        waitLowerSlidesZero2.setName("waitLowerSlidesZero2");
+        waitLowerSlidesZero2.setDependantActions(lowerSlidesHalf2);
         //===============end of second specimen==============
 
         //============begin of third================
         PurePursuitAction moveBarToWall2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveBarToWall2.setName("moveBarToWall2");
-        //moveBarToWall2.setDependantActions(lowerSlides2);
+        //moveBarToWall2.setDependantActions(lowerSlidesHalf2);
         moveBarToWall2.setDependantActions(moveWallToBar1);
         moveBarToWall2.addPoint(-80, -600, -180);
         PurePursuitAction moveWallToBar2 = new PurePursuitAction(driveTrain, wheelOdometry);
@@ -107,15 +116,20 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         KActionSet redAutoSpecimen = new KActionSet();
 
+        //===========Specimen1==============
         redAutoSpecimen.addAction(moveToSpecimenBar);
         redAutoSpecimen.addAction(hangSpecimenReady1);
         redAutoSpecimen.addAction(lowerSlidesHalf1);
         redAutoSpecimen.addAction(waitLowerSlidesZero1);
+        //===============PushSample==========
         redAutoSpecimen.addAction(moveFloorSamples);
-        //redAutoSpecimen.addAction(moveDepotToWall1);
-        //redAutoSpecimen.addAction(moveWallToBar1);
-        //redAutoSpecimen.addAction(hangSpecimenReady2);
-        //redAutoSpecimen.addAction(lowerSlides2);
+        //===========Specimen2==============
+        redAutoSpecimen.addAction(moveDepotToWall1);
+        redAutoSpecimen.addAction(waitAtWall1);
+        redAutoSpecimen.addAction(moveWallToBar1);
+        redAutoSpecimen.addAction(hangSpecimenReady2);
+        redAutoSpecimen.addAction(lowerSlidesHalf2);
+        //===========Specimen3==============
         //redAutoSpecimen.addAction(moveBarToWall2);
         //redAutoSpecimen.addAction(moveWallToBar2);
         //redAutoSpecimen.addAction(hangSpecimenReady3);
