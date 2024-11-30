@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 public class Arm {
@@ -14,10 +15,11 @@ public class Arm {
     Servo servoWrist;
     Servo servoArmLeft;
     Servo servoArmRight;
-    public static double armRetract = 0.5;
+    public static double armRetract = 0.66;
     //public static double wristRetract = 0.5;
-    public static double armExtend = -0.5;
+    public static double armExtend = -0.66;
     public static double wristExtend = 0;
+    public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         //this.servoWrist = hardwareMap.get(Servo.class, "wrist");
@@ -34,17 +36,20 @@ public class Arm {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                if (armPos == armState.RETRACT) {
-                    servoArmLeft.setPosition(armExtend);
-                    servoArmRight.setPosition(armExtend);
-                    //servoWrist.setPosition(wristExtend);
-                    armPos = armState.EXTEND;
-                }
-                else if (armPos == armState.EXTEND) {
-                    servoArmLeft.setPosition(armRetract);
-                    servoArmRight.setPosition(armRetract);
-                    //servoWrist.setPosition(wristRetract);
-                    armPos = armState.RETRACT;
+                double timeLastUpdate = timer.seconds();
+                if (timeLastUpdate > 0.5) {
+                    if (armPos == armState.RETRACT) {
+                        servoArmLeft.setPosition(armExtend);
+                        servoArmRight.setPosition(armExtend);
+                        //servoWrist.setPosition(wristExtend);
+                        armPos = armState.EXTEND;
+                    } else if (armPos == armState.EXTEND) {
+                        servoArmLeft.setPosition(armRetract);
+                        servoArmRight.setPosition(armRetract);
+                        //servoWrist.setPosition(wristRetract);
+                        armPos = armState.RETRACT;
+                    }
+                    timer.reset();
                 }
                 return false;
             }
