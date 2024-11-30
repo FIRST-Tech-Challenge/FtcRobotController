@@ -51,8 +51,8 @@ public class AlignToSample extends SounderBotCommandBase {
             }
 
             if (isTargetReached()) {
-                // Give a 100ms to identify overshoot
-                Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+                // Give a 200ms to identify overshoot
+                sleep(200);
                 this.lastResult = limeLight.GetResult();
 
                 if (this.lastResult != null && isTargetReached()) {

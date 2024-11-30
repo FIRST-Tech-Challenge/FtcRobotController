@@ -38,7 +38,7 @@ public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
 
         if (isTargetReached()) {
             driveTrain.stop();
-            Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
+            sleep(100);
 
             odo.update();
             error = targetTurnInRadians - odo.getHeading();

@@ -51,8 +51,7 @@ public class DriveToTargetCommandAlterate extends SounderBotCommandBase {
         if(isTargetReached()) {
             driveTrain.stop();
 
-            // Give a 100ms to identify overshoot
-            Uninterruptibles.sleepUninterruptibly(150, TimeUnit.MILLISECONDS);
+            sleep(150);
             odo.update();
 
             if(isTargetReached()) {

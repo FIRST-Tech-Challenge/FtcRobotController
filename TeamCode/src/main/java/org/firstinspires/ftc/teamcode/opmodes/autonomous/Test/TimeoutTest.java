@@ -8,14 +8,14 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.LongSleepCommand;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.SleeperCommand;
 
 @Autonomous
 public class TimeoutTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
         return new SequentialCommandGroup(
-                new LongSleepCommand(),
+                new SleeperCommand(5000),
                 new InstantCommand(() -> Log.i("TimeoutTest",  "Command after long sleep executed"))
         );
     }

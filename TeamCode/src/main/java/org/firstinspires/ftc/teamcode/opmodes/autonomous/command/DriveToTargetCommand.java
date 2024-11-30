@@ -63,8 +63,8 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         Log.i(LOG_TAG, String.format("tx=%f, ty=%f, x=%f, y=%f, heading=%f", targetX, targetY, odo.getPosX(), odo.getPosY(), Math.toDegrees(odo.getHeading())));
 
         if(isTargetReached()) {
-            // Give a 100ms to identify overshoot
-            Uninterruptibles.sleepUninterruptibly(200, TimeUnit.MILLISECONDS);
+            // Give a 200ms to identify overshoot
+            sleep(200);
             odo.update();
 
             if(isTargetReached()) {

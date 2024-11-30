@@ -93,8 +93,8 @@ public class CommandFactory {
         return new TurnAngleRelativeCommand(driveTrain, telemetry, angleInDegrees);
     }
 
-    public InstantCommand waitFor(long timeInMs) {
-        return new InstantCommand(() -> Uninterruptibles.sleepUninterruptibly(timeInMs, TimeUnit.MILLISECONDS));
+    public SleeperCommand waitFor(long timeInMs) {
+        return new SleeperCommand(timeInMs);
     }
 
     public MovePivotCommand pivotToInTake() {
