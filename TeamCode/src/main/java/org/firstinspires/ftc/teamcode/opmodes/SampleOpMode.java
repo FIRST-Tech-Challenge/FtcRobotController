@@ -86,12 +86,13 @@ public class SampleOpMode extends CommandOpMode {
        .whenReleased(new SequentialCommandGroup(
                new SetRollerState(intakeRoller, IntakeRoller.States.STOP),
                new RetractIntake(intake),
-               new PivotIntake(Intake.IntakeState.HOME, intake)
+               new PivotIntake(Intake.IntakeState.HOME, intake) 
                ));
 
         outtakeButton.whenPressed(new ConditionalCommand(
                 new SequentialCommandGroup(
                     new PivotIntake(Intake.IntakeState.STORE, intake),
+                    new RunCommand(() -> {}).withTimeout(300),
                     new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE)),
                 new SequentialCommandGroup(
                         new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE)
