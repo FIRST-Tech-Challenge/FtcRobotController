@@ -46,8 +46,8 @@ public class Outtake {
         linearSlideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlideMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlideMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearSlideMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearSlideMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public DcMotor getLinearSlideMotor1() {

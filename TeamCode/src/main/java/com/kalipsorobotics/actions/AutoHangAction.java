@@ -27,7 +27,7 @@ public class AutoHangAction extends Action {
         waitActionTwo = new WaitAction(300);
         waitActionTwo.setDependantActions(moveLSDown);
 
-        pullUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-20), 1);
+        pullUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-20));
         pullUp.setDependantActions(waitActionTwo);
 
         hangHookAction = new HangHookAction(outtake);

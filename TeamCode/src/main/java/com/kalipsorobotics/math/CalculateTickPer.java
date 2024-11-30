@@ -30,7 +30,8 @@ public class CalculateTickPer {
     }
 
     public static double mmToTicksLS(double mm) {
-        return (mm * getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
+        //single string going across so tick x2
+        return 2 * (mm * getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
     }
 
     public static double ticksToMmLS(double ticks) {

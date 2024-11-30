@@ -116,24 +116,6 @@ public class RedAutoSpecimen extends LinearOpMode {
 
 
 
-        /*ActionSet redAutoAction = new ActionSet();
-
-        redAutoAction.scheduleSequential(moveToSpecimenBar);
-        redAutoAction.scheduleParallel(lowerSlides1);
-//        hangSpecimenReady1.setDependantActions(sch, moveToSpecimenBar);
-        redAutoAction.scheduleSequential(moveFloorSamples);
-        //raise slides
-        redAutoAction.scheduleSequential(moveDepotToWall1);
-        //intake wall
-        //raise slides
-        redAutoAction.scheduleSequential(moveWallToBar1);
-//        redAutoAction.scheduleSequential(hangSpecimenReady2);
-        //raise slides + pivot
-        redAutoAction.scheduleSequential(moveBarToWall2);
-        redAutoAction.scheduleSequential(moveWallToBar2);
-        //raise slides
-//        redAutoAction.scheduleSequential(hangSpecimenReady3);
-*/
         redAutoSpecimen.printWithDependantActions();
         waitForStart();
         while (opModeIsActive()) {

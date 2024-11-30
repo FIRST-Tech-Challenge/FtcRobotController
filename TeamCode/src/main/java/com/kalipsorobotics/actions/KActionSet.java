@@ -41,4 +41,9 @@ public class KActionSet extends Action{
             a.printWithDependantActions();
         }
     }
+
+    public void clear() {
+        actions.clear();
+    }
+
 }

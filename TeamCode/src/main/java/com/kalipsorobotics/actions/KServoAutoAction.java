@@ -14,6 +14,7 @@ public class KServoAutoAction extends Action {
         this.targetPos = targetPos;
     }
 
+
     @Override
     public void update() {
         super.update();
@@ -43,5 +44,7 @@ public class KServoAutoAction extends Action {
     public boolean checkDoneCondition() {
         return isDone;
     }
+
+
 
 }
