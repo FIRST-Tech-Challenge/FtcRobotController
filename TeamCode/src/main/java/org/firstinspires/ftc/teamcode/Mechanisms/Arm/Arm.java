@@ -15,12 +15,12 @@ public class Arm {
     Servo servoArmLeft;
     Servo servoArmRight;
     public static double armRetract = 0.5;
-    public static double wristRetract = -0.5;
-    public static double armExtend = -1;
+    //public static double wristRetract = 0.5;
+    public static double armExtend = -0.5;
     public static double wristExtend = 0;
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        this.servoWrist = hardwareMap.get(Servo.class, "wrist");
+        //this.servoWrist = hardwareMap.get(Servo.class, "wrist");
         this.servoArmLeft = hardwareMap.get(Servo.class, "armRight");
         this.servoArmRight = hardwareMap.get(Servo.class, "armLeft");
     }
@@ -29,20 +29,22 @@ public class Arm {
         RETRACT,    // pulls arm in
         EXTEND      // pushes arm out
     }
-    public Action servoArm(armState armPos){
+    public armState armPos = armState.RETRACT;
+    public Action servoArm(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
                 if (armPos == armState.RETRACT) {
+                    servoArmLeft.setPosition(armExtend);
+                    servoArmRight.setPosition(armExtend);
+                    //servoWrist.setPosition(wristExtend);
+                    armPos = armState.EXTEND;
+                }
+                else if (armPos == armState.EXTEND) {
                     servoArmLeft.setPosition(armRetract);
                     servoArmRight.setPosition(armRetract);
-                    servoWrist.setPosition(wristRetract);
-
-                }
-                if (armPos == armState.EXTEND) {
-                    servoArmLeft.setPosition(armExtend);
-                    servoArmLeft.setPosition(armExtend);
-                    servoWrist.setPosition(wristExtend);
+                    //servoWrist.setPosition(wristRetract);
+                    armPos = armState.RETRACT;
                 }
                 return false;
             }

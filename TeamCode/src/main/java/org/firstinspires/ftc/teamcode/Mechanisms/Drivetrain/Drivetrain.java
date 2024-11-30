@@ -95,7 +95,7 @@ public class Drivetrain {
         this.motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         this.motorLeftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         this.motorRightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.motorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.motorRightBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
         /**
          * Establish that motors will not be using their native encoders:

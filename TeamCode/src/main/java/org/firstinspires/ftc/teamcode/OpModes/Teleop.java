@@ -15,8 +15,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 
-@Config
-@TeleOp(name = "TeleOp", group = "Autonomous")
+
 public class Teleop extends LinearOpMode {
     Drivetrain drivetrain = null;
     // Use FTCDashboard
@@ -55,7 +54,6 @@ public class Teleop extends LinearOpMode {
 //                    .setFill("white")
 //                    .fillRect(0,0,10, 10);
 //            dashboard.sendTelemetryPacket(packet);
-            telemetry.addData("Battery ", drivetrain.battery.getVoltage());
             telemetry.update();
 
         }
