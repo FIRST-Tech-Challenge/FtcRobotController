@@ -33,7 +33,7 @@ public class IntakeCommand extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         if (isTargetReached()) {
             intake.HoldInAuto();
         } else {

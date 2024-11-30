@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.base;
 
+import android.content.Intent;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -22,12 +24,15 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         GamepadEx driverGamePad = new GamepadEx(gamepad1);
         GamepadEx operatorGamePad = new GamepadEx(gamepad2);
 
-        DriverFeedback feedback = new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
-        LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
+        Intent launchIntent = hardwareMap.appContext.getPackageManager().getLaunchIntentForPackage(hardwareMap.appContext.getPackageName());
+        assert launchIntent != null;
+        final boolean barebone = launchIntent.getBooleanExtra("barebone", false);
+        DriverFeedback feedback = barebone ? null : new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
+        LimeLight limeLight = barebone ? null : new LimeLight(hardwareMap, telemetry);
         AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, null, limeLight);
-        RollingIntake rollingIntake = new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
-        DeliveryPivot pivot = new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback, rollingIntake);
-        DeliverySlider slider = new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
+        RollingIntake rollingIntake = barebone ? null : new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
+        DeliveryPivot pivot = barebone ? null : new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback, rollingIntake);
+        DeliverySlider slider = barebone ? null : new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
 
         commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, limeLight, pivot,slider);
         schedule(createCommand());

@@ -43,7 +43,7 @@ public class DriveToTargetCommandAlterate extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         odo.update();
 
         Log.i(LOG_TAG, String.format("tx=%f, ty=%f, x=%f, y=%f, heading=%f", targetX, targetY, odo.getPosX(), odo.getPosY(), Math.toDegrees(odo.getHeading())));
@@ -56,7 +56,7 @@ public class DriveToTargetCommandAlterate extends SounderBotCommandBase {
             odo.update();
 
             if(isTargetReached()) {
-                finished.set(true);
+                finished = true;
                 return;
             }
         }

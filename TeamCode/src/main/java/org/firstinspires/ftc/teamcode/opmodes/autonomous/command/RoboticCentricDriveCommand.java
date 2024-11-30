@@ -29,7 +29,7 @@ public class RoboticCentricDriveCommand extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         if (startTime < 0) {
             startTime = System.currentTimeMillis();
         }
@@ -39,14 +39,14 @@ public class RoboticCentricDriveCommand extends SounderBotCommandBase {
         if (isTargetReached()) {
             Log.i(LOG_TAG, "Time out!!!");
             driveTrain.stop();
-            finished.set(true);
+            finished = true;
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         driveTrain.stop();
-        finished.set(true);
+        finished = true;
     }
 
     @Override

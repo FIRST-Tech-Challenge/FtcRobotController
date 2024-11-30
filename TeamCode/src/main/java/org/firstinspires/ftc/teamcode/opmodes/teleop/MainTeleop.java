@@ -67,6 +67,14 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(deliveryPivot::RotateTowardsDeliverySlowly, deliveryPivot))
                 .whenReleased(new InstantCommand(deliveryPivot::HoldArm, deliveryPivot));
 
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).toggleWhenPressed(
+                new InstantCommand(() -> {
+                    // first set of button binding
+                }),
+                new InstantCommand(() -> {
+                    // second set of button binding
+                })
+        );
         // Delivery Slider
         new Trigger(() -> gamepad2.left_stick_y > 0.5)
                 .whenActive(new InstantCommand(deliverySlider::Expand, deliverySlider))

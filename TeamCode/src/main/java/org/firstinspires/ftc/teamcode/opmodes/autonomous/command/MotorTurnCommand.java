@@ -22,7 +22,7 @@ public class MotorTurnCommand extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         this.driveTrain.setWheelsPower(.5, 0, 0, 0);
         Uninterruptibles.sleepUninterruptibly(1000, TimeUnit.MILLISECONDS);
 

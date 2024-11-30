@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrai
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.util.AngleTracker;
 
-public class DriveToPositionCommand extends CommandBase {
+public class DriveToPositionCommand extends SounderBotCommandBase {
     private static final String TAG = "DriveToPositionCmd";
 
     private static class DriftStats {
@@ -169,7 +168,7 @@ public class DriveToPositionCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         odo.update();
 
         double currentX = odo.getPosX();
@@ -228,6 +227,11 @@ public class DriveToPositionCommand extends CommandBase {
         drive.driveRobotCentric(yOutput, xOutput, rotOutput);
 
         updateTelemetry(currentX, currentY, currentHeading, xError, yError, rotError, xOutput, yOutput, rotOutput);
+    }
+
+    @Override
+    protected boolean isTargetReached() {
+        return false;
     }
 
     @Override

@@ -43,8 +43,9 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         addRequirements(driveTrain);
     }
 
+
     @Override
-    public void execute() {
+    public void doExecute() {
         odo.update();
 
         boolean addTelemetry = false;
@@ -72,7 +73,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
                     telemetry.addLine("Done");
                 }
 
-                finished.set(true);
+                finished = true;
                 return;
             }
         }

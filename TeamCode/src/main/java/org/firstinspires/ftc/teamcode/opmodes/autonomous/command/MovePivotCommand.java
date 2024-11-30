@@ -35,12 +35,12 @@ public class MovePivotCommand extends SounderBotCommandBase{
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         position = motor.encoder.getPosition();
         double power = pidController.calculatePIDAlgorithm(target - position);
         if (isTargetReached()) {
             motor.set(0);
-            finished.set(true);
+            finished = true;
         } else {
             double minPower = .2;
 

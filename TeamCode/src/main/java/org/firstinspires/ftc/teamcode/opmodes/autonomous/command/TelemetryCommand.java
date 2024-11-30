@@ -22,7 +22,7 @@ public class TelemetryCommand extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         odo.update();
         GoBildaPinpointDriver.Pose2D pose = odo.getPosition();
 

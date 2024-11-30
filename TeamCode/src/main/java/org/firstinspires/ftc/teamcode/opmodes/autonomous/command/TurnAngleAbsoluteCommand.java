@@ -32,7 +32,7 @@ public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
     }
 
     @Override
-    public void execute() {
+    public void doExecute() {
         odo.update();
         error = targetTurnInRadians - odo.getHeading();
 
@@ -43,7 +43,7 @@ public class TurnAngleAbsoluteCommand extends SounderBotCommandBase {
             odo.update();
             error = targetTurnInRadians - odo.getHeading();
             if (isTargetReached()) {
-                finished.set(true);
+                finished = true;
                 return;
             }
         }

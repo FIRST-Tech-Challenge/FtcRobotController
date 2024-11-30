@@ -38,7 +38,7 @@ public class AlignToSample extends SounderBotCommandBase {
     LimeLight.LimelightResult lastResult;
 
     @Override
-    public void execute() {
+    public void doExecute() {
         boolean addTelemetry = false;
 
         this.lastResult = limeLight.GetResult();
@@ -61,7 +61,7 @@ public class AlignToSample extends SounderBotCommandBase {
                         telemetry.addLine("Done");
                     }
 
-                    finished.set(true);
+                    finished = true;
                     return;
                 }
             }
@@ -95,7 +95,6 @@ public class AlignToSample extends SounderBotCommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        super.end(interrupted);
         driveTrain.stop();
     }
 }
