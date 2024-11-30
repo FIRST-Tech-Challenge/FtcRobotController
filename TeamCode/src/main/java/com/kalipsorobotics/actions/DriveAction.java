@@ -16,7 +16,7 @@ public class DriveAction {
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
 
-    private double[] driveTrainPower = new double[4];
+    private final double[] driveTrainPower = new double[4];
 
     public DriveAction(DriveTrain driveTrain) {
         this.driveTrain = driveTrain;

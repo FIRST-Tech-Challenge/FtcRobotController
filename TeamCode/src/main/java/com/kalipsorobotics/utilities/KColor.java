@@ -3,7 +3,7 @@ package com.kalipsorobotics.utilities;
 public class KColor {
 
     public enum Color {
-        RED, YELLOW, BLUE, NONE;
+        RED, YELLOW, BLUE, NONE
     }
 
     int red;

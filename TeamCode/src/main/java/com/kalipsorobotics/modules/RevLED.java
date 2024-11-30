@@ -1,11 +1,11 @@
-package com.kalipsorobotics.modules;
 
+package com.kalipsorobotics.modules;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class RevLED {
-    private static DigitalChannel redLed;
-    private static DigitalChannel greenLed;
+    private DigitalChannel redLed;
+    private DigitalChannel greenLed;
 
     public RevLED(HardwareMap hardwareMap, String redPort, String greenPort) {
         redLed = hardwareMap.get(DigitalChannel.class, redPort);
@@ -15,14 +15,20 @@ public class RevLED {
         greenLed.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
-    public static void turnOnRed() {
+    public void turnOnRed() {
         redLed.setState(false);
         greenLed.setState(true);
     }
 
-    public static void turnOnGreen() {
-        greenLed.setState(false);
+    public void turnOnGreen() {
         redLed.setState(true);
+        greenLed.setState(false);
     }
 
-}
+    public void turnoff() {
+        redLed.setState(true);
+        greenLed.setState(true);
+    }
+
+    }
+

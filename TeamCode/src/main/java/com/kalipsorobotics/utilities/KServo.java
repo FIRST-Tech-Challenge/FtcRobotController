@@ -23,7 +23,7 @@ public class KServo {
     }
 
     private double targetPosition;
-    private ElapsedTime time = new ElapsedTime();
+    private final ElapsedTime time = new ElapsedTime();
     private double currentPosition;
     private double currentTime;
     private double prevPosition;

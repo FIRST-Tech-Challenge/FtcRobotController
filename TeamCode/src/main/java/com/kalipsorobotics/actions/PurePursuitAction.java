@@ -127,7 +127,7 @@ public class PurePursuitAction extends Action {
 
         if (follow.isPresent()) {
             Log.d("purepursaction_debug_follow",
-                    "follow point:  " + follow.get().toString());
+                    "follow point:  " + follow.get());
             Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
             targetPosition(follow.get());
 

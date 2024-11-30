@@ -3,6 +3,7 @@ package com.kalipsorobotics.actions;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class Action {
 
@@ -25,9 +26,7 @@ public abstract class Action {
             dependentActions = new ArrayList<>();
         }
         dependentActions.clear();
-        for (Action a : actions) {
-            dependentActions.add(a);
-        }
+        Collections.addAll(dependentActions, actions);
 
     }
 
@@ -85,7 +84,6 @@ public abstract class Action {
     public void update() {
         if (isDone) {
             Log.d("in super", "action done");
-            return;
         }
     }
 

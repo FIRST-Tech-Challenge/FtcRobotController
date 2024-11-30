@@ -3,15 +3,14 @@ package com.kalipsorobotics.actions;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class KActionSet extends Action{
 
     ArrayList<Action> actions = new ArrayList<>();
 
     public void addAction(Action... actions) {
-        for (Action a : actions ) {
-            this.actions.add(a);
-        }
+        Collections.addAll(this.actions, actions);
     }
 
     public void update() {
@@ -20,7 +19,7 @@ public class KActionSet extends Action{
         }
         for (Action a : actions) {
             if (a.dependantActionsDone()) {
-                Log.d("action set log", "executing " + a.toString());
+                Log.d("action set log", "executing " + a);
                 a.updateCheckDone();
             }
         }

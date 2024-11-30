@@ -19,11 +19,7 @@ public class HangHookAction extends Action {
 
     @Override
     public boolean checkDoneCondition() {
-        if (hasStarted) {
-            return true;
-        } else {
-            return false;
-        }
+        return hasStarted;
     }
 
     @Override

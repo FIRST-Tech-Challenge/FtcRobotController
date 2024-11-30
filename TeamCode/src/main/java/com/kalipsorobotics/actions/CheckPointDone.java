@@ -22,11 +22,8 @@ public class CheckPointDone extends Action {
 
     @Override
     public boolean checkDoneCondition() {
-        if(purePursuitAction.getHasStarted() && calculateError() < 50) { //TODO add ppa when tests run true
-            return true;
-        } else {
-            return false;
-        }
+        //TODO add ppa when tests run true
+        return purePursuitAction.getHasStarted() && calculateError() < 50;
     }
 
     @Override
