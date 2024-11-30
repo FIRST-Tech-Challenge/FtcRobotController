@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 public class Outtake {
-    private final OpModeUtilities opModeUtilities;
-    public static final double P_CONSTANT = 0.004;
-    public static final double LS_STAYUP_POWER = 0.1;
 
+    //TODO MAKE PRIVATE
+    private final OpModeUtilities opModeUtilities;
     public DcMotor linearSlideMotor1, linearSlideMotor2;
     public KServo outtakePivotServo;
     public KServo outtakeClawServo;

@@ -11,8 +11,8 @@ public class OuttakePivotAction {
 
     final private Outtake outtake;
     private final KServo outtakePivotServo;
-    public static double OUTTAKE_PIVOT_IN_POS = 0.925;
-    public static double OUTTAKE_PIVOT_OUT_POS = 0.0;
+    public static double OUTTAKE_PIVOT_IN_POS = 1.0;
+    public static double OUTTAKE_PIVOT_OUT_POS = 0.05;
     public static double OUTTAKE_PIVOT_HALF_POS = 0.5;
 
 

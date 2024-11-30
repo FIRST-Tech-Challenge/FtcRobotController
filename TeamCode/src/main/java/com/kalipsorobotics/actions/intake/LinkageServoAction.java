@@ -1,4 +1,5 @@
 package com.kalipsorobotics.actions.intake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.kalipsorobotics.modules.Intake;
 
@@ -6,7 +7,7 @@ import com.kalipsorobotics.modules.Intake;
 public class LinkageServoAction {
     Intake intake;
 
-    Servo linkageServo;
+    KServo linkageServo;
 
     public LinkageServoAction(Intake intake) {
         this.intake = intake;

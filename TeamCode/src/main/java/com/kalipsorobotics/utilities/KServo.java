@@ -80,4 +80,15 @@ public class KServo {
         return servo.getPortNumber();
     }
 
+    public void setDirection(Servo.Direction direction) {
+        servo.setDirection(direction);
+    }
+
+    public double getPosition() {
+        return servo.getPosition();
+    }
+
+    public Servo getServo() {
+        return servo;
+    }
 }

@@ -36,14 +36,20 @@ public class KActionSet extends Action{
         return isDone;
     }
     public void printWithDependantActions() {
+        Log.d("action dependancies", "Start Action Set");
         super.printWithDependantActions();
+
         for (Action a : actions) {
             a.printWithDependantActions();
         }
+        Log.d("action dependancies", "End Action Set");
+
     }
 
     public void clear() {
         actions.clear();
     }
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.kalipsorobotics.actions.intake;
 
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kalipsorobotics.modules.Intake;
@@ -8,7 +9,7 @@ import com.kalipsorobotics.modules.Intake;
 //~0.45 up
 public class IntakePivotAction {
     final private Intake intake;
-    private final Servo intakePivotServo;
+    private final KServo intakePivotServo;
 
     private boolean isDown = true;
 

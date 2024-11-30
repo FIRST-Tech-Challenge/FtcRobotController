@@ -19,7 +19,7 @@ public class MoveLSAction extends Action {
     Outtake outtake;
     DcMotor linearSlide, linearSlideTwo;
     final double ERROR_TOLERANCE_TICKS = 30;
-    double P_CONSTANT = 1 / CalculateTickPer.mmToTicksLS(48 * 25.4);
+    double P_CONSTANT = 1 / CalculateTickPer.mmToTicksLS(400);
     final double targetTicks;
     double currentTicks;
     final double MIN_IDLE_POWER = 0.15;
@@ -34,11 +34,12 @@ public class MoveLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.5;
+        double lowestPower = 0.7;
         if (Math.abs(power) < lowestPower) {
             power = power * (lowestPower / Math.abs(power));
         }
         return  power;
+        //return 1;
     }
 
     @Override
