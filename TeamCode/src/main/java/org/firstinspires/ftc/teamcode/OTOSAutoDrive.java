@@ -40,6 +40,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     DcMotor viperSlide = null;
     final int VIPER_MIN = 0;
     final int VIPER_MAX = 3100;
+    final int VIPER_GROUND = 1400;
 
     // This chunk controls our claw
     //Callie
@@ -57,100 +58,87 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/28/2024, 12:08pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "11/29/2024, 6:08pm"); // Todo: Update this date when the code is updated
         telemetry.update();
-
-        configureOtos();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        configureOtos();
 
         // First Sample ///////////////////////////////////////////////////////////////
         setVertical(VERTICAL_MAX);                                  // Raising Arm
-        sleep(500);
+        sleep(300);
         setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(700);
-        driveToLoc(9, 16, 45, 1.5);    // Go to basket
+        sleep(500);
+        driveToLoc(9, 16, 45, 1.5);  // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop the block
 
         // Second Sample ///////////////////////////////////////////////////////////////
         driveToLoc(15, 12, -10);
-        setViper(1400);
+        setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(31, -4, -10, 1);
-        sleep(500);
-        driveToLoc(32, 0, -10, 1);
-        sleep(200);
+        driveToLoc(29, -7, -10, 1);
+        sleep(300);
+        driveToLoc(31, -2, -10, 1);
+        sleep(100);
         setClaw(CLAW_MIN);                                          // Grab second block
-        sleep(200);
+        //sleep(200);
         setVertical(VERTICAL_MAX, 1000);
-        sleep(700);
+        while(vertical.getCurrentPosition() < 400) { sleep(10); }
         setViper(VIPER_MAX);
         driveToLoc(10, 14, 45, 1.5);  // Go to basket
-        sleep(200);
+        sleep(600);
         setClaw(CLAW_MAX);                                          // Drop second block
         
         // Third Sample ///////////////////////////////////////////////////////////////
         driveToLoc(16, 10, -10);
-        setViper(1400);
+        setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(31, 6, -10, 1);
-        sleep(500);
-        driveToLoc(32, 10, -10, 1);
-        sleep(200);
+        driveToLoc(30, 6, -10, 1);
+        sleep(300);
+        driveToLoc(31, 10, -10, 1);
+        sleep(100);
         setClaw(CLAW_MIN);                                          // Grab third block
-        sleep(200);
+        // sleep(200);
         setVertical(VERTICAL_MAX, 1000);
-        sleep(700);
+        while(vertical.getCurrentPosition() < 600) { sleep(10); }
         setViper(VIPER_MAX);
         driveToLoc(10, 15, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop third block
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(30, 14, -10, 1);
-        setViper(1200);
+        driveToLoc(29, 13, -10, 1);
+        setViper(VIPER_GROUND);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(31, 17, -10, 1);
-        setViper(1300);
-        sleep(200);
+        driveToLoc(30, 17, -10, 1);
         setClaw(CLAW_MIN);                                          // Grab fourth block
-        sleep(200);
         driveToLoc(29, 12, -10, 1);
         setVertical(VERTICAL_MAX, 1000);
-        sleep(700);
+        while(vertical.getCurrentPosition() < 700) { sleep(10); }
         setViper(VIPER_MAX);
         driveToLoc(10, 15, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
-        // Reset robot
-        driveToLoc(15, 7, 0, 3);
-        setViper(VIPER_MIN);
-        setVertical(VERTICAL_MIN, 1500);
-        sleep(3000);
-/*
+
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
-        driveToLoc(55, 5, 0);
-        RobotLog.vv("Rockin'", "Set to max");
+        driveToLoc(50, 5, 0); // todo: og xtarget is 55
         setAscentStick(ASCENT_MAX);
-        driveToLoc(55, -12, 180);
-        sleep(300);
+        driveToLoc(50, -12, 180);
         RobotLog.vv("Rockin'", "End program");
         claw.close();                                               // Release tension on the claw
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
-
- */
     }
 
     public void setAscentStick(double target) {
@@ -158,7 +146,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         ascentStick.setPosition(target);
     }
 
-    public void setViper(int length){ setViper(length, 2000); }
+    public void setViper(int length){ setViper(length, 3000); }
 
     public void setViper(int length, int velocity){
         RobotLog.vv("Rockin' Robots", "setViper() length: %d, current: %d", length, viperSlide.getCurrentPosition());
@@ -181,7 +169,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     public void setClaw(double position) {
         RobotLog.vv("Rockin' Robots", "setClaw() position: %4.2f, current: %4.2f", position, claw.getPosition());
         claw.setPosition(position);
-        sleep(500);
+        sleep(400);
     }
 
     private void moveForward(double speed, long msDuration) {
@@ -297,9 +285,9 @@ public class OTOSAutoDrive extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
-                    "leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
-                    xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+            //RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
+                    //"leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
+                    //xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
             getPosition();
             xDistance = xTarget - xLoc;
