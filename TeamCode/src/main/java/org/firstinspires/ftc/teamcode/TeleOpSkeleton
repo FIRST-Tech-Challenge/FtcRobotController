@@ -84,7 +84,7 @@
 
              BackLeft.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
             // FrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            FrontRight.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
+            FrontRi`ght.setDirection(DcMotorSimple.Direction.REVERSE);            // Reverses the direction the motor turns
             //BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
             IntakeVirtualFourBar.setDirection(DcMotorSimple.Direction.REVERSE);        // Reverses the direction the motor turns
