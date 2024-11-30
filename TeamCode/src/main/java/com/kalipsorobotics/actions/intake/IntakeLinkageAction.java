@@ -12,8 +12,8 @@ import java.sql.Time;
 //0.245 opened
 public class IntakeLinkageAction {
 
-    public static final double INTAKE_LINKAGE_CLOSE_POS = 0;
-    public static final double INTAKE_LINKAGE_OPEN_POS = 0.5;
+    public static final double INTAKE_LINKAGE_CLOSE_POS = 0.6;
+    public static final double INTAKE_LINKAGE_OPEN_POS = 0.2;
 
     private final Intake intake;
     private final KServo linkageServo1;

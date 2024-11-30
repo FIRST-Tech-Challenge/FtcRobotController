@@ -2,6 +2,7 @@ package com.kalipsorobotics.test;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.KServoAutoAction;
 import com.kalipsorobotics.actions.PurePursuitAction;
@@ -11,6 +12,7 @@ import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
+import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -33,6 +35,11 @@ public class MechanismTestAuto extends LinearOpMode {
                 OuttakePivotAction.OUTTAKE_PIVOT_OUT_POS);
 
         KActionSet redAutoSpecimen = new KActionSet();
+
+        Intake intake = new Intake(opModeUtilities);
+
+        InitAuto initAuto = new InitAuto(intake);
+
         while (opModeInInit()) {
             if (gamepad1.a) {
                 redAutoSpecimen.clear();
@@ -41,7 +48,10 @@ public class MechanismTestAuto extends LinearOpMode {
                 telemetry.update();
             }
             if (gamepad1.b) {
-
+                redAutoSpecimen.clear();
+                redAutoSpecimen.addAction(initAuto);
+                telemetry.addLine("done init");
+                telemetry.update();
             }
         }
 

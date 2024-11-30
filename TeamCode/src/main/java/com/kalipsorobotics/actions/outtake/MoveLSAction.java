@@ -22,7 +22,7 @@ public class MoveLSAction extends Action {
     double P_CONSTANT = 1 / CalculateTickPer.mmToTicksLS(400);
     final double targetTicks;
     double currentTicks;
-    final double MIN_IDLE_POWER = 0.15;
+    public double minIdlePower = 0.15;
 
     public MoveLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
@@ -33,6 +33,12 @@ public class MoveLSAction extends Action {
     }
 
     private double calculatePower(double targetError) {
+        if (targetTicks == 0) {
+            minIdlePower = 0;
+        } else {
+            minIdlePower = 0.15;
+        }
+
         double power = targetError * P_CONSTANT;
         double lowestPower = 0.7;
         if (Math.abs(power) < lowestPower) {
@@ -67,8 +73,8 @@ public class MoveLSAction extends Action {
                     currentTicks, power));
         } else if (Math.abs(targetErrorTicks) <= ERROR_TOLERANCE_TICKS) {
             Log.d("Outtake_LS", "done");
-            linearSlide.setPower(MIN_IDLE_POWER);
-            linearSlideTwo.setPower(MIN_IDLE_POWER);
+            linearSlide.setPower(minIdlePower);
+            linearSlideTwo.setPower(minIdlePower);
             isDone = true;
         }
 
