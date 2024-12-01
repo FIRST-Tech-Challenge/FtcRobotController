@@ -9,8 +9,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
-import org.firstinspires.ftc.teamcode.BBcode.ActuatorActionBuilders.ViperArmActions;
-import org.firstinspires.ftc.teamcode.BBcode.ActuatorActionBuilders.WristClawActions;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 
