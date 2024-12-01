@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class DiffyInverseKinematicTest extends LinearOpMode {
     private ElapsedTime IntakeClawTime = new ElapsedTime();
     private double TouchPadInput = 0;
+    private boolean IntakeClawClosed = false;
+    private ElapsedTime ClawTime = new ElapsedTime();
     public double LeftServo;
     public double RightServo;
     private double V4Bpos = 1;
@@ -18,22 +20,25 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
         TRANSFER
     }
     V4Bstate state = V4Bstate.START;
-    private boolean IntakeClawClosed = false;
+
     private boolean OuttakeActive = false;
     @Override
     public void runOpMode() throws InterruptedException {
         //Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
         Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Increments Using Dpad Side Buttons?
         Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // Ideally Stick Controlled
-        Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With X
-        Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
+        Servo IntakeV4B = hardwareMap.servo.get("Intake V4B");     // Chub Port 3 // Preset To Swing Out With X
+        Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");
+
+
         LeftServo = Flex + (1/2)*Yaw;
         RightServo = Flex - (1/2)*Yaw;
         //IntakeClaw.setPosition(0);    // Closes Intake Claw
         LeftIntakeWrist.setPosition(LeftServo);    // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
-        LeftIntakeV4B.setPosition(1);   // Sets the intake virtual four bar to the starting position
-        RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to the starting position
+        IntakeV4B.setPosition(1);   // Sets the intake virtual four bar to the starting position
+        IntakeClaw.setPosition(0);
+
         waitForStart();
         while (opModeIsActive()){
             /* Closes the intake claw
@@ -81,8 +86,19 @@ public class DiffyInverseKinematicTest extends LinearOpMode {
                     state = V4Bstate.START;
                     break;
             }
-            LeftIntakeV4B.setPosition(V4Bpos);
-            RightIntakeV4B.setPosition(V4Bpos);
+
+            if (gamepad1.right_bumper  && !IntakeClawClosed && ClawTime.seconds() >= .3){
+                ClawTime.reset();
+                IntakeClaw.setPosition(1);
+                IntakeClawClosed = true;
+            }
+            else if (gamepad1.right_bumper && IntakeClawClosed && ClawTime.seconds() >= .3){
+                ClawTime.reset();
+                IntakeClaw.setPosition(0);
+                IntakeClawClosed = false;
+            }
+
+            IntakeV4B.setPosition(V4Bpos);
             LeftServo = Flex - (.5*Yaw); //Calculates required servo angles for combined flex and yaw motion
             RightServo = Flex + (.5*Yaw);//^
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions

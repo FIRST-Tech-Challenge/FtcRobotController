@@ -147,7 +147,7 @@ public class ManualTransferTest extends LinearOpMode {
             double y = -gamepad1.left_stick_y;         // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;       // Measures turning
-            if (gamepad1.left_trigger >= 0.75) {      // Checks if the Right Trigger was pressed and if so it continues the stuff in the brackets
+            if (gamepad1.right_trigger >= 0.75) {      // Checks if the Right Trigger was pressed and if so it continues the stuff in the brackets
                 y = gamepad1.left_stick_y;           // Remember, this is reversed!
                 x = -gamepad1.left_stick_x * 1.1;    // Counteract imperfect strafing
                 rx = gamepad1.right_stick_x;          // Measures turning
@@ -211,8 +211,8 @@ public class ManualTransferTest extends LinearOpMode {
                     Flex = 0;
                 }
                 else{
-                    if (gamepad1.right_trigger > 0){
-                        V4Bpos = 0.3*(1-(gamepad1.right_trigger)); //Control for variable virtual four bar height when in INTAKE state
+                    if (gamepad1.left_trigger > 0){
+                        V4Bpos = 0.3*(1-(gamepad1.left_trigger)); //Control for variable virtual four bar height when in INTAKE state
                     }
                     else {
                         V4Bpos = .3;}
