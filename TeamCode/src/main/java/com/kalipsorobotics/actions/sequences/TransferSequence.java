@@ -1,8 +1,10 @@
 package com.kalipsorobotics.actions.sequences;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
+import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
@@ -24,6 +26,7 @@ public class TransferSequence {
     IntakeDoorAction intakeDoorAction;
     IntakePivotAction intakePivotAction;
     OuttakePivotAction outtakePivotAction;
+    IntakeSequence intakeSequence;
 
 
     public TransferSequence(HardwareMap hardwareMap, OpModeUtilities opModeUtilities, Outtake outtake, Intake intake) {
@@ -39,6 +42,7 @@ public class TransferSequence {
         this.intakePivotAction = new IntakePivotAction(intake);
         this.outtakeClawAction = new OuttakeClawAction(outtake);
         this.outtakePivotAction = new OuttakePivotAction(outtake);
+        this.intakeSequence = new IntakeSequence(intakePivotAction, new IntakeLinkageAction(intake));
     }
 //    public boolean checkdone(double time, double waitLength) {
 //        if (SystemClock.currentThreadTimeMillis() - time > waitLength) {
