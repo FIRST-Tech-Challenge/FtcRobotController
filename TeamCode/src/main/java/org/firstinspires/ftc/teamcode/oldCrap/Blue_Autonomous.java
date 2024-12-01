@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "Ali's Distance Based Autonomous")
+//@Autonomous(name = "Ali's Distance Based Autonomous")
 public class Blue_Autonomous extends LinearOpMode {
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;

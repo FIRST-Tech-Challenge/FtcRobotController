@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "Red Autonomous Into The Deep")
+//@Autonomous(name = "Red Autonomous Into The Deep")
 public class Red_Autonomous extends LinearOpMode {
     // Motors
     private DcMotor frontLeft = null;

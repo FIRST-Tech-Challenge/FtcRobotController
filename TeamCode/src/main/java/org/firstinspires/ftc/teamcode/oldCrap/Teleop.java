@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Random;
 
-@TeleOp(name = "Into The Deep Teleop")
+//@TeleOp(name = "Into The Deep Teleop")
 public class Teleop extends LinearOpMode {
     // Motors for the wheels
     private DcMotor frontLeft = null;

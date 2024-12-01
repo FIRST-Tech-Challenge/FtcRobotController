@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.teleop.newTeleop;
+package org.firstinspires.ftc.teamcode.oldCrap.newTeleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-@TeleOp(name = "Wheel Control")
+//@TeleOp(name = "Wheel Control", group = "Temporary")
 public class wheels extends LinearOpMode {
     
     DcMotor frontLeft;
@@ -51,18 +49,6 @@ public class wheels extends LinearOpMode {
         }
     }
 
-    
-    public void telemetryInit() {
-        // Provide feedback about the robot's state
-        while (opModeInInit()) {
-            telemetry.addLine("=== Robot Initialization ===");
-            telemetry.addLine("Status: Initializing");
-            telemetry.addLine("Press START when ready");
-            telemetry.update();
-        }
-    }
-
-    
     public void setDirection() {
         // Set the direction of each motor
         frontLeft.setDirection(DcMotor.Direction.REVERSE); // Reverse front left motor

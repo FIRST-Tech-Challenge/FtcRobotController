@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.teleop.newTeleop;
+package org.firstinspires.ftc.teamcode.oldCrap.newTeleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware;
 
-@TeleOp(name = "Mantis Test", group = "Teleop")
+//@TeleOp(name = "Mantis Test", group = "Teleop")
 public class mantisTest extends LinearOpMode {
     hardware hardware = new hardware();
     @Override
