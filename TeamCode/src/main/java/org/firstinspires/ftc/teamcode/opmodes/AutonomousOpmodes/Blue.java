@@ -44,6 +44,20 @@ public class Blue extends LinearOpMode {
                 .lineToX(47.5)
                 .waitSeconds(3);
 
+        TrajectoryActionBuilder red = drive.actionBuilder(new Pose2d(7.00, -70.00, Math.toRadians(90.00)))
+                .splineToConstantHeading(new Vector2d(7.00, -25.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(7.00, -45.00), Math.toRadians(90.00))
+                .splineToConstantHeading(new Vector2d(50.00, -35.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(50.00, -60.00), Math.toRadians(-90.00))
+                .splineToConstantHeading(new Vector2d(60.00, -60.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(60.00, -35.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(60.00, -60.00), Math.toRadians(-90.00))
+                .splineTo(new Vector2d(48.00, -52.00), Math.toRadians(-90.00))
+                .splineTo(new Vector2d(48.00, -70.00), Math.toRadians(-90.00))
+                .splineTo(new Vector2d(7.00, -25.00), Math.toRadians(90.00));
+
+
+
         Action trajectoryActionChosen;
         if (startPosition == 1) {
             trajectoryActionChosen = tab1.build();
