@@ -25,6 +25,7 @@ public class MecanumRobotAction extends DriveTrainAction {
     double thetaOffset;
     double startTime;
     double timeout;
+    double duration;
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -66,9 +67,11 @@ public class MecanumRobotAction extends DriveTrainAction {
     @Override
     public boolean checkDoneCondition() {
         refreshRemainingDistance();
-        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || (SystemClock.elapsedRealtime() - startTime) / 1000 > timeout) {
+        duration = (SystemClock.elapsedRealtime() - startTime) / 1000;
+        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || duration > timeout) {
             driveTrain.setPower(0); // stop, to be safe
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
+            duration = SystemClock.elapsedRealtime() - startTime;
             Log.d("mecanum", "done");
             return true;
         } else {
@@ -97,23 +100,29 @@ public class MecanumRobotAction extends DriveTrainAction {
         double rotationPower = 0;
 
         if (Math.abs(thetaOffset) > Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) {
-            rotationPower = -thetaOffset * 0.2;
+            rotationPower = thetaOffset * 0.4;
         }
 
         double fLeft = linearPower + rotationPower;
         double fRight = linearPower - rotationPower;
-        double bLeft = linearPower + rotationPower;
-        double bRight = linearPower - rotationPower;
+        double bLeft = linearPower - rotationPower;
+        double bRight = linearPower + rotationPower;
 
         double biggest = MathFunctions.maxAbsValueDouble(fLeft, fRight, bLeft, bRight);
         double smallest = MathFunctions.minAbsValueDouble(fLeft, fRight, bLeft, bRight);
+        double scalingFactor = 1;
 
-        if (smallest < minPower) {
-            fLeft *= (minPower / smallest);
-            fRight *= (minPower / smallest);
-            bLeft *= (minPower / smallest);
-            bRight *= (minPower / smallest);
+        Log.d("mecanum/range", biggest + " " + smallest);
+
+        if (Math.abs(smallest) < minPower) {
+            scalingFactor = minPower / smallest;
         }
+
+        fLeft *= scalingFactor;
+        fRight *= scalingFactor;
+        bLeft *= scalingFactor;
+        bRight *= scalingFactor;
+
         if (biggest > 1) {
             fLeft /= biggest;
             fRight /= biggest;

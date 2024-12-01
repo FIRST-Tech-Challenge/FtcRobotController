@@ -24,6 +24,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     double thetaOffset;
     double startTime;
     double timeout;
+    double duration;
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -38,6 +39,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
+        double duration;
     }
 
     public PIDController getPidController() {
@@ -68,7 +70,8 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     public boolean checkDoneCondition() {
         refreshRemainingDistance();
         Log.d("straight", "current error is " + remainingDistance);
-        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || (SystemClock.elapsedRealtime() - startTime) / 1000 > timeout) {
+        duration = (SystemClock.elapsedRealtime() - startTime) / 1000;
+        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || duration > timeout) {
             driveTrain.setPower(0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
             Log.d("straight", "isdone true");

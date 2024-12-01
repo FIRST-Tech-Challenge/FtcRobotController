@@ -24,6 +24,7 @@ public class TurnRobotAction extends DriveTrainAction {
     double remainingDegrees;
     double startTime;
     double timeout;
+    double duration;
 
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -65,11 +66,12 @@ public class TurnRobotAction extends DriveTrainAction {
     @Override
     public boolean checkDoneCondition() {
         refreshError();
-        if ((Math.abs(remainingDegrees) <= ERROR_TOLERANCE) || (SystemClock.elapsedRealtime() - startTime) / 1000 > timeout) {
+        duration = (SystemClock.elapsedRealtime() - startTime) / 1000;
+        if ((Math.abs(remainingDegrees) <= ERROR_TOLERANCE) || duration > timeout) {
             driveTrain.setPower(0, 0, 0, 0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
-            currentHeading = getCurrentHeading();
-            targetDegrees = 0;
+//            currentHeading = getCurrentHeading();
+//            targetDegrees = 0;
             Log.d("turn", "setHeading: final heading is " + currentHeading);
             return true;
         } else {
