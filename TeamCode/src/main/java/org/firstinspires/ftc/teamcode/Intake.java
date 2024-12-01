@@ -9,8 +9,8 @@ public class Intake {
     private CRServo intakeServo;
     private Servo intakeLift;
 
-    private int intakeDownPosition;
-    private int intakeUpPosition;
+    private int intakeDownPosition = 0;
+    private int intakeUpPosition = 1;
     public void initIntake() {
         intakeServo.setPower(0);
     }
@@ -20,7 +20,7 @@ public class Intake {
     }
 
     public void liftIntake() {
-        if (intakeLift.getPosition() <= 0.5)
+        if (intakeLift.getPosition() <= intakeUpPosition)
             intakeLift.setPosition(intakeUpPosition);
         else {
             intakeLift.setPosition(intakeDownPosition);

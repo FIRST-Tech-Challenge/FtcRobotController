@@ -15,22 +15,21 @@ public class IntakeTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        intakeLiftActive = false;
         intake = new Intake(this);
-        intake.liftIntake();
+        intake.initIntake();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            intake.collect(gamepad1.left_trigger);
+            if (gamepad2.circle){
+                intake.collect(1);
 
-            if (gamepad1.right_bumper && !intakeLiftActive) {
-                intakeLiftActive = true;
-                intake.liftIntake();
+            }
+            else if (gamepad2.square){
+                intake.collect(-1);
+            }
 
-            } else {
-                intakeLiftActive = false;
             }
         }
     }
-}
+

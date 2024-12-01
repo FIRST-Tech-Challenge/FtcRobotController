@@ -60,21 +60,13 @@ public class IntakePrototype extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+            if (gamepad2.circle){
 
-            MotorExample.setPower(1);
-            //double spin_direction1 = -gamepad1.left_stick_y;
-            //double spin_direction2  =  gamepad1.right_stick_x;
-            //servo_exapmple    = Range.clip(spin_direction1, 0.0, 1.1) ;
-            //servo_exapmple   = Range.clip(spin_direction2, -1.-1, 0.0) ;
+            }
 
-            //if( gamepad2.circle){
-                //servo_exapmple.setPower(1);
-        }
-
-            //if( gamepad1.circle){
-                //servo_exapmple.setPower(-1);
     }
 
         }
+}
 
 

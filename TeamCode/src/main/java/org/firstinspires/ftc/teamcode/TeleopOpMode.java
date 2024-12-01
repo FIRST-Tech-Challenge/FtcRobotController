@@ -65,14 +65,19 @@ public class TeleopOpMode extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        wheels = new Wheels(this, imu);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        elevator = new Elevator(this);
         elevator.initElevator();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
+        elevator = new Elevator(this);
+        wheels = new Wheels(this, imu);
         intake = new Intake(this);
+
+        elevator.initElevator();
+        intake.initIntake();
+
 
 
         waitForStart();
@@ -87,7 +92,13 @@ public class TeleopOpMode extends LinearOpMode {
             if (gamepad1.left_bumper){elevator.rotateForword();}
             if (gamepad1.right_bumper){elevator.rotateBackword();}
 
+            if (gamepad2.circle){ intake.collect(1);}
 
+            else if (gamepad2.square){intake.collect(-1);}
+
+            elevator.extend(gamepad1.left_stick_y);
+            if (gamepad1.left_bumper){elevator.rotateForword();}
+            if (gamepad1.right_bumper){elevator.rotateBackword();}
 
         }
     }
