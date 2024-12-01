@@ -8,6 +8,8 @@ abstract class AutonomousTask {
         this.robot = robot;
     }
 
+    public abstract void start();
+
     // Method to execute the task; to be implemented by subclasses
     public abstract void execute();
 

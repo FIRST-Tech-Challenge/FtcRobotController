@@ -22,7 +22,8 @@ class MecanumDriveDurationTask extends AutonomousTask {
         this.opMode = opMode;
         System.out.println(String.format("MecanumDriveDurationTask initialized - Forward: %2.2f, Strafe: %2.2f, Rotate: %2.2f, Time: %2.2f", forward, strafe, rotate, time));
     }
-
+    
+    @Override
     public void start() {
         // Reset timer when the task starts to avoid delay issues
         timer.reset();
