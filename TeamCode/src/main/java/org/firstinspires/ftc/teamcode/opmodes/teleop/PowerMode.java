@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 public enum PowerMode {
     REGULAR(.8),
     NITRO(1),
-    SLOW(.3);
+    SLOW(.25);
 
     PowerMode(double powerRatio) {
         this.powerRatio = powerRatio;

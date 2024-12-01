@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
-import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
@@ -66,6 +66,14 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(deliveryPivot::RotateTowardsDeliverySlowly, deliveryPivot))
                 .whenReleased(new InstantCommand(deliveryPivot::HoldArm, deliveryPivot));
 
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new InstantCommand(deliverySlider::CollapseSlowly, deliverySlider))
+                .whenReleased(new InstantCommand(deliverySlider::Hold, deliverySlider));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new InstantCommand(deliverySlider::ExpandSlowly, deliverySlider))
+                .whenReleased(new InstantCommand(deliverySlider::Hold, deliverySlider));
+
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).toggleWhenPressed(
                 new InstantCommand(() -> {
                     // first set of button binding
@@ -98,7 +106,7 @@ public class MainTeleop extends OpModeTemplate {
                 .whenHeld(new InstantCommand(deliverySlider::MoveToDeliveryPosition, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
-                .whenHeld(new InstantCommand(deliverySlider::MoveToTransferPosition, deliverySlider));
+                .whenHeld(new InstantCommand(deliverySlider::MoveToCollapsedPosition, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
                 .whenHeld(new InstantCommand(deliveryPivot::AutoToDelivery, deliveryPivot));
@@ -107,10 +115,17 @@ public class MainTeleop extends OpModeTemplate {
                 .whenHeld(new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot));
+                .whenPressed(new ParallelCommandGroup(
+                                new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot),
+                                new InstantCommand(deliverySlider::MoveToDeliveryPosition, deliverySlider),
+                                new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake)
+                ));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+                .whenPressed(new InstantCommand(deliverySlider::ResetEncoder, deliverySlider));
 
         //driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //        .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));

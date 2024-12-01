@@ -77,12 +77,12 @@ public class RollingIntake extends SonicSubsystemBase {
             if(d > 50 || this.isInDeliveryPosition) {
                 telemetry.addData("power", 1);
 
-                this.leftServo.setPower(1);
-                this.rightServo.setPower(-1);
+                this.leftServo.setPower(-1);
+                this.rightServo.setPower(1);
 
             } else {
-                this.leftServo.setPower(0.2);
-                this.rightServo.setPower(-0.2);
+                this.leftServo.setPower(-0.2);
+                this.rightServo.setPower(0.2);
                 //telemetry.addData("power",0);
 
                 if (feedback != null) {
@@ -99,8 +99,8 @@ public class RollingIntake extends SonicSubsystemBase {
                     feedback.OperatorRumbleBlip();
                 }
             }
-            this.leftServo.setPower(-1);
-            this.rightServo.setPower(1);
+            this.leftServo.setPower(1);
+            this.rightServo.setPower(-1);
 
         } else {
             //telemetry.addData("State", "Hold");

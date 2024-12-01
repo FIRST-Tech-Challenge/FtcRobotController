@@ -71,6 +71,16 @@ public class DeliverySlider extends SonicSubsystemBase {
         motor.set(-1);
     }
 
+    public void ExpandSlowly() {
+        SetTelop();
+        motor.set(-.5);
+    }
+
+    public void CollapseSlowly() {
+        SetTelop();
+        motor.set(.3);
+    }
+
     public void Hold() {
         SetTelop();
         motor.set(0);
@@ -84,10 +94,10 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliveryPosition() {
         SetAuto();
-        currentTarget = -514;//BasketDeliveryPosition - 50;
+        currentTarget = -450;//BasketDeliveryPosition - 50;
     }
 
-    public void MoveToTransferPosition() {
+    public void MoveToCollapsedPosition() {
         currentTarget = CollapsedPosition;
     }
 
@@ -141,6 +151,10 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void ExtendMaxInAuto() {
         MoveToPositionInAuto(BasketDeliveryPosition + 100);
+    }
+
+    public void ResetEncoder() {
+        this.motor.encoder.reset();
     }
 
     public void CollapseMinInAuto() {
