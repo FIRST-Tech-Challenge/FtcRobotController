@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.acmerobotics.roadrunner.Action;
-import org.firstinspires.ftc.teamcode.BBcode.Arm;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.TelemetryHelper;
-import org.firstinspires.ftc.teamcode.BBcode.Viper;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 
 public class ViperArmActions {
     //_Arm and _Viper must be global to allow use in the action classes

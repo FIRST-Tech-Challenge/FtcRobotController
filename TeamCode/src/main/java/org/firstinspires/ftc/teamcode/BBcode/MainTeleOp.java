@@ -16,6 +16,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode{
@@ -42,17 +45,17 @@ public class MainTeleOp extends LinearOpMode{
     private void handleGamepad1(Arm arm, Viper viper) {
         Gamepad gamepad = gamepad1;
         //Bring the arm out to hang
-        if(gamepad.right_trigger > 0 && gamepad.y) {
-            arm.MoveToHang();
-            desiredViperState = ViperState.PrepareToHang;
-            viper.ExtendHalf(0.5);
-        }
-
-        //Pull up the robot
-        if(gamepad.right_trigger > 0 && gamepad.a) {
-            desiredViperState = ViperState.PrepareToHang;
-            viper.ExtendSpecimenhang(0.5);
-        }
+//        if(gamepad.right_trigger > 0 && gamepad.y) {
+//            arm.MoveToHang();
+//            desiredViperState = ViperState.PrepareToHang;
+//            viper.ExtendHalf(0.5);
+//        }
+//
+//        //Pull up the robot
+//        if(gamepad.right_trigger > 0 && gamepad.a) {
+//            desiredViperState = ViperState.PrepareToHang;
+//            viper.ExtendSpecimenhang(0.5);
+//        }
     }
     private void handleGamepad2(Arm arm, Viper viper, WristClaw wristClaw) {
        Gamepad gamepad = gamepad2;
@@ -72,7 +75,7 @@ public class MainTeleOp extends LinearOpMode{
             wristClaw.WristDump();
         }
 
-        //brings arm down to pick up samples
+        //brings arm down
         if ((gamepad.left_trigger > 0 && gamepad.dpad_down) || (desiredViperState == ViperState.Closed && arm.get_armMotor().getCurrentPosition()>1300) ) {
             wristClaw.WristUp();
             desiredViperState = ViperState.Closed;

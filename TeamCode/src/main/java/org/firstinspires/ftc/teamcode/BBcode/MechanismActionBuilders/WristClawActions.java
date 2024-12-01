@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders;
 
 import androidx.annotation.NonNull;
-import org.firstinspires.ftc.teamcode.BBcode.WristClaw;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.acmerobotics.roadrunner.Action;
