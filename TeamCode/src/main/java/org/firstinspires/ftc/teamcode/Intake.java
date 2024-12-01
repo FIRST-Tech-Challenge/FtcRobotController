@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,10 @@ public class Intake {
     public Intake(HardwareMap hardwareMap) {
         intakeServo = hardwareMap.get(CRServo.class, "IntakeServo");
         intakeLift = hardwareMap.get(Servo.class, "IntakeLift");
+    }
+
+    public Intake(OpMode OpMode) {
+
     }
 
     public void liftIntake(double position) {
