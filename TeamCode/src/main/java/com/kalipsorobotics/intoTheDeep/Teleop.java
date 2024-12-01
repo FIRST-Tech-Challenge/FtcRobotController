@@ -114,30 +114,33 @@ public class Teleop extends LinearOpMode {
 
             //Door
             //TODO
-            if (gamepad2.b && !prevGamePadB) {
-                transferSequence.sequence();
-                retracted = true;
-                Log.d("teleop", "transfering...");
-            }
+//            if (gamepad2.b && !prevGamePadB) {
+//                transferSequence.sequence();
+//                retracted = true;
+//                Log.d("teleop", "transfering...");
+//            }
             //save for later
             //Linkage
             //TODO make sure its not blocking w/ the sleeps
-
-            if (gamepad2.a && !prevGamePadA || !intakeSequence.checkDone(500)) {
+            if (gamepad2.a) {
+                intakeSequence.setUpCheckDone();
+            }
+            if (gamepad2.a && !prevGamePadA || !intakeSequence.checkDone(1001)) {
                 if (retracted) {
                     intakeLinkageAction.extend();
-                    intakeSequence.setUpCheckDone();
-                    if (intakeSequence.checkDone(500)) {
+                    if (intakeSequence.checkDone(1000)) {
                         intakePivotAction.moveDown();
+                        //}
+                        retracted = false;
+                        Log.d("teleop", "intake extended");
                     }
-                    retracted = false;
-                    Log.d("teleop", "intake extended");
-                } else {
-                    intakeLinkageAction.retract();
-                    intakePivotAction.moveUp();
-                    retracted = true;
-                    Log.d("teleop", "intake retracted");
                 }
+            }
+            if (gamepad2.b && !prevGamePadB){
+                intakeLinkageAction.retract();
+                intakePivotAction.moveUp();
+                retracted = true;
+                Log.d("teleop", "intake retracted");
             }
 
             //outtake pivot
@@ -201,3 +204,4 @@ public class Teleop extends LinearOpMode {
         }
     }
 }
+
