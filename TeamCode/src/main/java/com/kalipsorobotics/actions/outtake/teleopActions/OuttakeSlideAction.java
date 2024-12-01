@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class OuttakeSlideAction {
 
@@ -18,7 +17,7 @@ public class OuttakeSlideAction {
     public OuttakeSlideAction(Outtake outtake) {
         this.outtake = outtake;
         this.outtakePivotAction = new OuttakePivotAction(outtake);
-        this.linearSlideMotor1 = outtake.getLinearSlideMotor1();
+        this.linearSlideMotor1 = outtake.getLinearSlide1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
     }
     public void setTargetPos(int position) {

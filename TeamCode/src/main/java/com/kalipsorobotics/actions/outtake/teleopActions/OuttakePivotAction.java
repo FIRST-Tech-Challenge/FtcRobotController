@@ -15,7 +15,7 @@ public class OuttakePivotAction {
     public static double OUTTAKE_PIVOT_OUT_POS = 0.05;
     public static double OUTTAKE_PIVOT_HALF_POS = 0.5;
 
-    public static double OUTTAKE_PIVOT_WALL_POS = 0.15;
+    public static double OUTTAKE_PIVOT_WALL_POS = 0.17;
 
 
     private boolean isIn = true;

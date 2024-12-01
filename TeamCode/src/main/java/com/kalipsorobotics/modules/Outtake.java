@@ -3,7 +3,6 @@ package com.kalipsorobotics.modules;
 import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
@@ -11,7 +10,7 @@ public class Outtake {
 
     //TODO MAKE PRIVATE
     private final OpModeUtilities opModeUtilities;
-    public DcMotor linearSlideMotor1, linearSlideMotor2;
+    public DcMotor linearSlide1, linearSlide2;
     public KServo outtakePivotServo;
     public KServo outtakeClawServo;
     public KServo outtakePigeonServo;
@@ -24,8 +23,8 @@ public class Outtake {
     }
 
     private void setUpHardware() {
-        linearSlideMotor1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
-        linearSlideMotor2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
+        linearSlide1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
+        linearSlide2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
         outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivotServo"), 60/0.11, 300,
                 0, false);
         outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("clawServo"), 60/0.25, 300,
@@ -37,23 +36,23 @@ public class Outtake {
         hangHook2 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang2"), 60/0.25, 300,
                 0, false);
 
-        linearSlideMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        linearSlideMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlideMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlideMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlideMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public DcMotor getLinearSlideMotor1() {
-        return linearSlideMotor1;
+    public DcMotor getLinearSlide1() {
+        return linearSlide1;
     }
     public DcMotor getLinearSlide2() {
-        return linearSlideMotor2;
+        return linearSlide2;
     }
     public KServo getOuttakePivotServo() {
         return outtakePivotServo;

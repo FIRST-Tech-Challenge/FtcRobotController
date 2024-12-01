@@ -9,6 +9,8 @@ public class OuttakePigeonAction {
     private final Outtake outtake;
     private final KServo outtakePigeonServo;
 
+    final public static double OUTTAKE_PIGEON_IN_POS = 0.524;
+
     private boolean isIn;
     public OuttakePigeonAction(Outtake outtake) {
         this.outtake = outtake;
@@ -20,7 +22,7 @@ public class OuttakePigeonAction {
     }
 
     public void moveIn() {
-        setPosition(0.524);
+        setPosition(OUTTAKE_PIGEON_IN_POS);
         isIn = true;
     }
 

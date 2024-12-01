@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class KActionSet extends Action{
+public class KActionSet extends Action {
 
     ArrayList<Action> actions = new ArrayList<>();
 

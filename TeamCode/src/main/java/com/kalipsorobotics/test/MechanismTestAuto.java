@@ -1,13 +1,11 @@
 package com.kalipsorobotics.test;
 
-import android.util.Log;
-
 import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.KServoAutoAction;
-import com.kalipsorobotics.actions.PurePursuitAction;
-import com.kalipsorobotics.actions.outtake.HangSpecimenReady;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -29,7 +27,7 @@ public class MechanismTestAuto extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-
+        MoveLSAction maintenanceLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainPos);
 
         KServoAutoAction outtakePivotActionIn = new KServoAutoAction(outtake.getOuttakePivotServo(),
                 OuttakePivotAction.OUTTAKE_PIVOT_OUT_POS);
@@ -38,7 +36,17 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        InitAuto initAuto = new InitAuto(intake);
+        InitAuto initAuto = new InitAuto(intake, outtake);
+
+        MoveLSAction moveLSAction = new MoveLSAction(outtake, 400);
+
+        WaitAction waitAction = new WaitAction(3000);
+        waitAction.setDependantActions(moveLSAction);
+
+        MoveLSAction moveLSAction2 = new MoveLSAction(outtake, 200);
+        moveLSAction2.setDependantActions(waitAction);
+
+        SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
 
         while (opModeInInit()) {
             if (gamepad1.a) {
@@ -50,7 +58,21 @@ public class MechanismTestAuto extends LinearOpMode {
             if (gamepad1.b) {
                 redAutoSpecimen.clear();
                 redAutoSpecimen.addAction(initAuto);
-                telemetry.addLine("done init");
+                telemetry.addLine("done auto init");
+                telemetry.update();
+            }
+            if (gamepad1.x) {
+                redAutoSpecimen.clear();
+                redAutoSpecimen.addAction(moveLSAction);
+                redAutoSpecimen.addAction(waitAction);
+                redAutoSpecimen.addAction(moveLSAction2);
+                telemetry.addLine("done Move Ls");
+                telemetry.update();
+            }
+            if (gamepad1.y) {
+                redAutoSpecimen.clear();
+                redAutoSpecimen.addAction(specimenWallReady);
+                telemetry.addLine("done wall ready");
                 telemetry.update();
             }
         }
@@ -58,7 +80,7 @@ public class MechanismTestAuto extends LinearOpMode {
         redAutoSpecimen.printWithDependantActions();
         waitForStart();
         while (opModeIsActive()) {
-
+            maintenanceLS.update();
             wheelOdometry.updatePosition();
             redAutoSpecimen.updateCheckDone();
 
