@@ -190,7 +190,9 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     TargetLift = 520;
                     if(LeftLift.getCurrentPosition() < 524){
                         OuttakeClaw.setPosition(1);
-                        IntakeClaw.setPosition(0);
+                        if(OuttakeClaw.getPosition() == 1){
+                            IntakeClaw.setPosition(0);
+                        }
                     }
                     if(IntakeClaw.getPosition() == 0){
                         state = State.IDLE;
