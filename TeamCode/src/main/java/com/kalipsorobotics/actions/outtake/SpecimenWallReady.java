@@ -19,6 +19,7 @@ public class SpecimenWallReady extends KActionSet {
         lowerSlidesZero.setDependantActions(waitOneSec);
         this.addAction(lowerSlidesZero);
 
+
         KServoAutoAction pivotToWallPos = new KServoAutoAction(outtake.getOuttakePivotServo(),
                 OuttakePivotAction.OUTTAKE_PIVOT_WALL_POS);
         pivotToWallPos.setName("pivotToWallPos");

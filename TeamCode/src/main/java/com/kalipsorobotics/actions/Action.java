@@ -49,6 +49,7 @@ public abstract class Action {
     public boolean updateCheckDone() {
         if (isDone) {
             return true;
+
         } //if done never update
         for (Action action : dependentActions) {
             if (!action.getIsDone()) {
