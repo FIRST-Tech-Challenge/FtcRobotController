@@ -27,7 +27,7 @@ class MecanumDriveDistanceTask extends AutonomousTask {
     @Override
     public void execute() {
         // Set motor power to move to the target position
-        robot.getDriveSystem().drive(0.5, 0, 0); // Drive forward at 50% power
+        robot.getDriveSystem().setTargetPositionAndRun(targetTicks); // Set target position and run motors accordingly
 
         // Display telemetry
         opMode.telemetry.addData("Target Position", targetTicks);
@@ -40,7 +40,7 @@ class MecanumDriveDistanceTask extends AutonomousTask {
         // The task is complete when all motors have reached the target position
         boolean complete = !robot.getDriveSystem().isBusy();
         if (complete) {
-            robot.drive(0, 0, 0); // Stop the robot
+            robot.getDriveSystem().resetAndRunToPosition(); // Stop all motors by resetting to default state
             System.out.println("MecanumDriveDistanceTask is complete - Robot stopped.");
         }
         return complete;

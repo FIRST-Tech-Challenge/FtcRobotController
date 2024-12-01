@@ -24,11 +24,13 @@ class MecanumDriveDurationTask extends AutonomousTask {
     }
 
     @Override
+    public void start() {
+        // Reset timer when the task starts to avoid delay issues
+        timer.reset();
+    }
+
+    @Override
     public void execute() {
-        // Reset timer immediately before starting the task to avoid delay issues
-        if (timer.seconds() == 0) {
-            timer.reset();
-        }
         // Continuously add telemetry data for monitoring
         if (!isComplete()) {
             opMode.telemetry.addData("Time elapsed", String.format("%2.2f / %2.2f seconds", timer.seconds(), time));
@@ -41,7 +43,6 @@ class MecanumDriveDurationTask extends AutonomousTask {
             opMode.telemetry.update();
             System.out.println("MecanumDriveDurationTask complete - Robot stopped");
         }
-
     }
 
     @Override
