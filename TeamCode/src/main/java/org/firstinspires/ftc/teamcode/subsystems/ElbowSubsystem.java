@@ -59,7 +59,7 @@ public class ElbowSubsystem extends SubsystemBase {
         leftMotor.setPower(power);
         rightMotor.setPower(power);
     }
-
+    //todo software limit switch
      /** Takes the input from a controller and converts it into a plus or minus targetposition based on the previous target position.
      * 
      * @param input -> Controller Input
@@ -97,8 +97,8 @@ public class ElbowSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            elbowSubsystem.telemetry.addData("Target position", elbowSubsystem.getTargetPosition());
-            elbowSubsystem.telemetry.addData("Current position", elbowSubsystem.getCurrentPosition());
+            elbowSubsystem.telemetry.addData("Elbow Target position", elbowSubsystem.getTargetPosition());
+            elbowSubsystem.telemetry.addData("Elbow Current position", elbowSubsystem.getCurrentPosition());
             elbowSubsystem.runPIDPosition(elbowSubsystem.getTargetPosition());
         }
     }

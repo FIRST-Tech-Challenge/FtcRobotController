@@ -88,9 +88,9 @@ public abstract class Constants {
         public static final double INTAKE_WRIST_SERVO_UP_POSITION = 0;
         public static final double INTAKE_WRIST_SERVO_DOWN_POSITION = 180;
 
-        public static int MANUAL_CONTROL_RATE = 2; //add final later
+        public static int MANUAL_CONTROL_RATE = 25; //add final later
 
-        public static final int MAXIMUM_SLIDE_POS = 2800;
+        public static final int MAXIMUM_SLIDE_POS = 2900;
         public static final int MINIMUM_SLIDE_POS = 0;
 
         public static final int MAXIMUM_ELBOW_POS = 770;
@@ -101,6 +101,8 @@ public abstract class Constants {
 
         public static final double WRIST_OUTTAKE_POS = 0;
         public static final double WRIST_INTAKE_POS = 0.35;
+
+        public static final double PID_SAFE_POWER = 0.0;
 
         public static class FloorScanningMode {
             public static final double MINIMUM_FLOOR_SCANNING_REGRESSION_ANGLE = -1; //DEGREES

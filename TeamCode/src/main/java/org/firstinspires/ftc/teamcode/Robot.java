@@ -59,6 +59,11 @@ public class Robot {
        *    Go to start from outtaking -> down d-pad
        */
 
+
+
+//TODO to be determined: operator command override button
+
+
        CommandScheduler.getInstance().reset();
        CommandScheduler.getInstance().cancelAll();
 
@@ -105,8 +110,8 @@ public class Robot {
        intake.whenInactive(() -> intakeSubsystem.stopIntakeServo());
 
        Trigger outtake = new Trigger(() -> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > Constants.DriveConstants.DEADZONE);
-       intake.whenActive(() -> intakeSubsystem.outtake());
-       intake.whenInactive(() -> intakeSubsystem.stopIntakeServo());
+       outtake.whenActive(() -> intakeSubsystem.outtake());
+       outtake.whenInactive(() -> intakeSubsystem.stopIntakeServo());
 
        Trigger goHome = new Trigger(() -> operatorGamepad.getButton(GamepadKeys.Button.DPAD_LEFT));
        goHome.whenActive(new SequentialCommandGroup(
@@ -133,5 +138,7 @@ public class Robot {
        opMode.telemetry.addData("Elbow Current Position:", elbowSubsystem.getCurrentPosition());
        opMode.telemetry.addData("Wrist Current Position:", intakeSubsystem.getCurrentPosition());
        opMode.telemetry.update();
+
+
    }
 }
