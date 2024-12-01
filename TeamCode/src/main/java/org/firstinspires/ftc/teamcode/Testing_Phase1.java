@@ -15,9 +15,23 @@ public class Testing_Phase1 extends LinearOpMode {
     private double backRightPower = 0;     // declare motor power variable
     private double denominator = 1;        // declare motor power calculation variable
 
+    private final int MAX_TARGET_LIFT = 2825;	// Full extension limit of the lift slides
+    private final int MAX_EXTENSION_LENGTH = 500;  // Full extension limit of the intake slides	
+
+    private int TargetLift = 0;
+    private inte ExtensionTarget = 0;
+
+    private int LiftPower = 1;			// predetermined extending speed - could be a final at this point
+    private double ExtensionPower = .75		// predetermined extending speed - could be a final at this point
+
     private int precision = 2;                    // chassis motor power reduction factor 1
     private boolean intakeClawClosed = false;     // claw holder variable
+    private booolean outtakeClawClosed = false;   // claw holder variable
+	
     private ElapsedTime stateDelay = new ElapsedTime(); // possible delay timer for state change
+    private ElapsedTime transferTime = new ElapsedTime(); // delay timer for transfer
+    private ElapsedTime clawTime = new ElapsedTime();     // delay timer for claw
+	
     private double LeftServo;                // currently intake wrist servo left
     private double RightServo;               // currently intake wrist servo right
     private double V4Bpos = 1;              // currently intake V4B
@@ -28,24 +42,36 @@ public class Testing_Phase1 extends LinearOpMode {
         START,
         INTAKE,
         TRANSFER,
-        OUTTAKE                               //  TODO add OUTTAKE state  *******************************
+        OUTTAKE,
+	CLIMB					//  TODO add OUTTAKE and CLIMB state  *******************************
     }
 
     V4Bstate state = V4Bstate.START;           // initial state of intake/outake servos
 
     @Override
     public void runOpMode() throws InterruptedException {
+	// ************************************* MOTORS *******************************************************    
         DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");       // Chub Port 0 // Gamepad 1
         DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");         // Chub Port 1 // Left Stick For Moving
         DcMotor FrontLeft = hardwareMap.dcMotor.get("Front Left");         // Chub Port 2 // Right Stick For Turning
         DcMotor BackLeft = hardwareMap.dcMotor.get("Back Left");           // Chub Port 3
+	DcMotor IntakeRight = hardwareMap.dcMotoer.get("Intake Right")	   // Ehub Port 0
+	DcMotor IntakeLeft = hardwareMap.dcMotoer.get("Intake Left")	   // Ehub Port 1
+	DcMotor RightLift = hardwareMap.dcMotoer.get("Right Lift")	   // Ehub Port 2
+	DcMotor LeftLift = hardwareMap.dcMotoer.get("Left Lift")	   // Ehub Port 3
 
-    	Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
+	// ****************************************** SERVOS ****************************************************
+	Servo IntakeClaw = hardwareMap.servo.get("Intake Claw");              // Chub Port 0 // O Button
     	Servo RightIntakeWrist = hardwareMap.servo.get("Right Intake Wrist"); // Chub Port 1 // Flex and Yaw controlled
         Servo LeftIntakeWrist = hardwareMap.servo.get("Left Intake Wrist");   // Chub Port 2 // IFlex and Yaw controlled
-        Servo RightIntakeV4B = hardwareMap.servo.get("Right Intake V4B");     // Chub Port 3 // Preset To Swing Out With A
-        Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
- 
+        Servo IntakeV4B = hardwareMap.servo.get("Intake V4B");   	      // Chub Port 3 // Preset To Swing Out With A
+        //Servo LeftIntakeV4B = hardwareMap.servo.get("Left Intake V4B");       // Chub Port 4 // --------------------------
+
+	Servo OuttakeClaw = hardwareMap.servo.get("Outtake Claw");         // Ehub Port 0
+	Servo OuttakeWrist = hardwareMap.dcMotoer.get("Outtake Wrist")	   // Ehub Port 1    
+ 	Servo OuttakeWrist = hardwareMap.dcMotoer.get("Outtake Wrist")	   // Ehub Port 1
+
+		
         LeftServo = Flex - (.5 * Yaw);                                      // intake wrist servo calc
         RightServo = Flex + (.5 * Yaw);                                     // intake wrist servo calc
 
@@ -102,85 +128,135 @@ public class Testing_Phase1 extends LinearOpMode {
 
             switch (state) {                 //  These controls have been switched to gamepad2
                 case START:
-                    /* if (gamepad2.a) {     // Transfer Position  ORIGINAL CODE
-                        V4Bpos = 1;
-                        Flex = 0;
-                        state = V4Bstate.INTAKE;    // Switch to INTAKE state
-                    }
-                    break; */
-                    //                 TODO     Proposed alternate code
-
-                    // if (stateDelay < .25 ){ break; }   // TODO possible delay code for each state change
-
-                    V4Bpos = 1;	            	// Bar fully up upon entering state
+                    V4Bpos = .78;	            	// Bar up upon entering state
                     Flex = 0;		            // Wrist fully up upon entering state
                     if (gamepad2.a){        	// Switch to INTAKE Position with a button
                         state = V4Bstate.INTAKE;
-                        // stateDelay.reset();  // used in conjuction with stateDelay checking in each state
+                        stateDelay.reset();    // used in conjuction with stateDelay checking in each state
                     }
                     break;
                 case INTAKE:    
-                    /* V4Bpos = .3;  // This seems redundant as line 120 does the same         ****  ORIGINAL CODE
-                    Flex = .6;
-                    if (gamepad2.touchpad_finger_1) {           // Allows manual yaw control if a finger is on the touchpad
-                        Yaw = gamepad2.touchpad_finger_1_x;    // Taking value from touchpad and saving as our desired yaw value
-                    } else {
-                        Yaw = 0; //Sets yaw to 0 if no finger is detected on the touchpad
-                    }
-                    if (gamepad2.right_trigger > 0) {
-                        V4Bpos = 0.3 * (1 - (gamepad2.right_trigger)); //Control for variable virtual four bar height when in INTAKE state
-                    } else {
-                        V4Bpos = .3;
-                    }
-                    if (gamepad2.x) {  //Transfer position
-                        V4Bpos = 1;
-                        Flex = 0;
-                        state = V4Bstate.TRANSFER;
-                    }
-                    break;  */
                     //                  TODO        Proposed alternate code
                     //                              Create button controls and sequencing for TRANSFER and OUTTAKE cases
-
-                    V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));     // Factors trigger value or returns to baseline position if no input
-                    Flex = .6;					                       // TODO - determine default Flex value for here
-                    Yaw = gamepad2.touchpad_finger_1_x;		           // Taking value from touchpad and saving as our desired yaw value
-                    if (gamepad2.b){    			        // Toggle claw with b button
-                 		if (!intakeClawClosed){             // Determine claw position
-		             		IntakeClaw.setPosition(0);  	// Close claw if open
-    	             	}
+		    if (stateDelay < .25 ){break;}			// state delay at entry to every state
+                    V4Bpos = .3 * ( 1 - (gamepad2.right_trigger));	// Factors trigger value or returns to baseline position if no input
+                    Flex = .6;					        // TODO - determine default Flex value for here
+                    Yaw = 0 + gamepad2.touchpad_finger_1_x;	        // Taking value from touchpad and saving as our desired yaw value
+		    if (gamepad2.b){					// b button full extension
+			    ExtensionTarget = 490;
+		    }
+		    else if (gamepad2.y){				// y button full retraction and switch to TRANSFER state
+			    ExtensionTarget = 1;
+                            state = V4Bstate.TRANSFER;
+                   	    stateDelay.reset();				// used in conjuction with stateDelay checking in each state
+		    }
+		    if (gamepad2.dpad_left && ExtensionTarget < (MAX_EXTENSION_LENGTH < 10)){	// checks for dpadinput to micro adjust extenstion out by 10
+			ExtensionTarget = ExtensionTarget + 10;
+		    }
+		    else if(gamepad2.dpad_right && ExtensionTarget > 11){			// checks for dpadinput to micro adjust extenstion in by 10
+			ExtensionTarget = ExtensionTarget - 10;
+		    } 
+                    if (gamepad2.right_bumper && ClawTime.seconds(( >= .3 )){    			        // Toggle claw with rightbumper
+                 		if (intakeClawClosed){            	// Determine claw position
+		             		IntakeClaw.setPosition(.5);  	// Open claw if closed
+    	             		}
 	                  	else {  		
-		                 IntakeClaw.setPosition(1);	    	 // Open claw if closed
+		                	IntakeClaw.setPosition(0);    	// Close claw if open
 	                	}
-	            		intakeClawClosed = !intakeClawClosed; // Switch position status variable
+	            		intakeClawClosed = !intakeClawClosed;	// Switch position status variable
+			    	ClawTime.reset();			// reset claw timer
 		            }
                     if (gamepad2.x){		                  // x button Transfer position
-                        state = V4Bstate.TRANSFER;
+                        // retract intake slide
+			    // set intakeV4B position up and wrist and claw to transfer alignment
+			    // open outake claw and toggle holder variable
+			    // set lift to low position
+			    // lower outake claw onto specimen
+			    // toggle claws and holder variable
+			    
+			state = V4Bstate.TRANSFER;
+			stateDelay.reset();    // used in conjuction with stateDelay checking in each state    
                     }
-                    break;         
-                case TRANSFER:                          // Currently defaulting to START positions
-                    state = V4Bstate.START;             // TODO     Transfer sequencing
                     break;
-            	case OUTTAKE:                           // TODO   raising and scoring button functions   *********************
-                //  if ( "button pressed"){             // Conditional code here
-        	    //  state = V4Bstate.TRANSFER;
+			    
+                case TRANSFER:                          // TODO sequence positioning and claw open/close
+		    if (stateDelay < .25 ){break;}  // state delay at entry to every state	    
+/*		    if (){
+
+			    
+                        stateDelay.reset();    // used in conjuction with stateDelay checking in each state
+		    }			        // button activation for claw transfer
+				*/	
+                    break;
+			    
+		case OUTTAKE:                           // TODO   raising and scoring button functions   *********************
+		    if (stateDelay < .25 ){break;}  // state delay at entry to every state
+                    if (gamepad2.a){             // High delivery preset
+			TargetLift = 2820;	// sets lift to high delivery level
+			OuttakeV4B.setPosition(0);	// adjust v4b to deliver
+			OuttakeWrist.setPosition(.7)	// adjust claw to deliver   
+		     }
+		     if (gamepad2.x){             // Low delivery preset
+			TargetLift = 2820;	// sets lift to high delivery level
+			OuttakeV4B.setPosition(0);	// adjust v4b to deliver
+			OuttakeWrist.setPosition(.7)	// adjust claw to deliver   
+		     }
+		     if (gamepad2.left_bumper && ClawTime.seconds(( >= .3 )){    			        // Toggle claw with leftbumper
+                 		if (outtakeClawClosed){            	// Determine claw position
+		             		OuttakeClaw.setPosition(.5);  	// Open claw if closed
+    	             		}
+	                  	else {  		
+		                	OuttakeClaw.setPosition(0);    	// Close claw if open
+	                	}
+	            		outtakeClawClosed = !outtakeClawClosed;	// Switch position status variable
+			    	ClawTime.reset();			// reset claw timer
+		    }
+    		    if (gamepad2.dpad_up && LiftTarget < (MAX_TARGET_LIFT < 10)){	// checks for dpadinput to micro adjust lift up by 10
+			TargetLift = TargetLift + 10;
+		    }
+		    else if(gamepad2.dpad_right && TargetLift > 11){			// checks for dpadinput to micro adjust lift down by 10
+			TargetLift = TargetLift - 10;
+		    } 
+
+        	//  if(which button to go back to intake state){
+			    //   TODO    adjust v4bars and wrists to setup next intake and transfer sequence
+			    state = V4Bstate.INTAKE;
+	                    stateDelay.reset();    // used in conjuction with stateDelay checking in each state
             	//  }			    
                     break;
+		case CLIMB:
+		    if (stateDelay < .25 ){break;}  // state delay at entry to every state
+			//	 TODO incorporate climbing presets for buttons and lift motor positions
+			    
+		    break;
             }
 
             // Continuosly looping code outside of State Machine
-
-   	        if (gamepad2.right_trigger > 0) {     // This righttrigger override is an alternate TRANSFER state selector
+	    
+   	    if (gamepad1.right_trigger > 0 && IntakeLeft.getCurrentPostition >=50) {     // This righttrigger override is an alternate TRANSFER state selector
+		    //  TODO   for this to be active at all times, care must be taken to address the lift position and should be called here prior to the state change
+		    //  the button will change to INTAKE state but the state delay timer will keep the extension from operating for .25 seconds
    	             state = V4Bstate.INTAKE;         // changes to INTAKE state to allow manual adjustment
             }
             // Intake and Wrist positioning
-            LeftIntakeV4B.setPosition(V4Bpos);      // issue intake V4B servo position
-            RightIntakeV4B.setPosition(V4Bpos);     // issue intake v4B servo position
+            IntakeV4B.setPosition(V4Bpos);      // issue intake V4B servo position
             LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
             RightServo = Flex + (.5 * Yaw);//^
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
             RightIntakeWrist.setPosition(RightServo); // ^
+	    if (Math.abs(ExtensionTarget <= MAX_EXTENSION_LENGTH)){
+		IntakeLeft.setTargetPosition(ExtensionTarget);   // adjust intake to targetposition if within MAX boundary
+		IntakeRight.setTargetPosition(ExtensionTarget);  // adjust intake to targetposition if within MAX boundary
+		IntakeLeft.setPower(ExtensionPower);		 // issues power to Left Extension
+		IntakeRight.setPower(ExtensionPower);		 // issues power to Right Extension
+	    }
 
-            // TODO OUTTAKE servo code
+            // Lift Power and Management
+	    if (!(Math.abs(TargetLift > MAX_TARGET_LIFT))){	// (TargetLift < MAX_TARGET_LIFT)
+		RightLift.setTargetPosition(TargetLift);   // adjust lift to targetposition if within MAX boundary
+		LeftLift.setTargetPosition(TargetLift);   // adjust lift to targetposition if within MAX boundary
+		RightLift.setPower(LiftPower);		   // issues power to RightLift
+		LeftLift.setPower(LiftPower);		   // issues power to LeftLift
 
             // issue Drive Wheels motor power
             FrontLeft.setPower(frontLeftPower);    // Sets the front left wheel's power
