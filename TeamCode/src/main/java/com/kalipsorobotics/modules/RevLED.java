@@ -66,5 +66,5 @@ public class RevLED {
         greenLed4.setState(true);
     }
 
-    }
+}
 

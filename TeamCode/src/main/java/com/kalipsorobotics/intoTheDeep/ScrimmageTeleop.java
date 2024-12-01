@@ -25,16 +25,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class Teleop extends LinearOpMode {
-
-    // BUTTON CONTRACT:  https://docs.google.com/document/d/1XlSuL8Y8_j8Tde5NbMEa1k2LSuc72HpBp4LqAUZ_pjQ/edit?tab=t.0
+public class ScrimmageTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
         DriveAction driveAction = new DriveAction(driveTrain);
         Intake intake = new Intake(opModeUtilities);
         IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
@@ -46,8 +43,6 @@ public class Teleop extends LinearOpMode {
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
         OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
-        TransferSequence transferSequence = new TransferSequence(hardwareMap, opModeUtilities, outtake, intake);
-        IntakeSequence intakeSequence = new IntakeSequence(intakePivotAction, intakeLinkageAction);
         ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
 
 
@@ -63,7 +58,7 @@ public class Teleop extends LinearOpMode {
         //CHANGE ACCORDING TO ALLIANCE
 
         boolean isRed = true;
-        boolean takeInYellow = true;
+        boolean takeInYellow = false;
 
         intakeLinkageAction.retract();
         intakePivotAction.moveUp();
@@ -86,104 +81,55 @@ public class Teleop extends LinearOpMode {
             //Noodle
             if (gamepad2.dpad_right && !prevDpadRight) {
                 takeInYellow = !takeInYellow;
-                Log.d ("teleop", "taking in yellow is " + takeInYellow);
             }
-            //press dpad right to toggle taking in yellow
             if (gamepad2.left_trigger > 0.5 || gamepad2.right_trigger > 0.5) {
                 colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
-                Log.d("teleop", "intake cycling");
             } else if (gamepad2.left_bumper) {
                 intakeNoodleAction.reverse();
-                Log.d("teleop", "intake reversing");
             } else {
                 intakeNoodleAction.stop();
             }
 
-
-            //Pivot TODO make generic toggle
+            //intake pivot
             if (gamepad2.x && !prevGamePadX) {
                 intakePivotAction.togglePosition();
-                Log.d("teleop", "intake toggled");
             }
-//            //drive logging for sparkfun position
-//            if (gamepad1.a) {
-//                Log.d("teleop", "x: " + sparkfunOdometry.updatePosition().getX() + "y: " +
-//                        sparkfunOdometry.updatePosition().getY());
-//            }
-
-            //Door
-            //TODO
-//            if (gamepad2.b && !prevGamePadB) {
-//                transferSequence.sequence();
-//                retracted = true;
-//                Log.d("teleop", "transfering...");
-//            }
-            //save for later
-            //Linkage
-            if (gamepad2.a) {
-                intakeSequence.setUpCheckDone();
-            }
-            if (gamepad2.a && !prevGamePadA || !intakeSequence.checkDone(1001)) {
-                if (retracted) {
-                    intakeLinkageAction.extend();
-                    if (intakeSequence.checkDone(1000)) {
-                        intakePivotAction.moveDown();
-                        //}
-                        retracted = false;
-                        Log.d("teleop", "intake extended");
-                    }
-                }
-            }
-            if (gamepad2.b && !prevGamePadB){
-                intakeLinkageAction.retract();
-                intakePivotAction.moveUp();
-                retracted = true;
-                Log.d("teleop", "intake retracted");
-            }
-
-            //outtake pivot
-            if (gamepad2.y && !prevGamePadY) {
-                outtakePivotAction.togglePosition();
-                Log.d("teleop", "outtake pivoted");
-            }
-
-            //linear slides
-            if (gamepad2.right_stick_y != 0) {
-                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
-                Log.d("teleop", "linear slide moving...");
-            } else {
-                outtakeSlideAction.idle();
-            }
-
-
-
-            //Claw
-            if (gamepad2.left_stick_y != 0 && gamepad2.left_stick_y != 0.1) {
-                intakeLinkageAction.control(gamepad2.left_stick_y);
-                Log.d("teleop", "intake linkage moving...");
-            }
-            //outtake claw
-            if (gamepad2.right_bumper) {
-                outtakeClawAction.open();
-                Log.d("teleop", "outtake claw is open...");
-            } else outtakeClawAction.close();
 
             //dpad left for door toggle
             if (gamepad2.dpad_left && !prevDpadLeft) {
                 intakeDoorAction.togglePosition();
-                Log.d("teleop", "intake door has been toggled");
             }
-            //Pivot
+
+            //manual control intake slide
+            if (gamepad2.left_stick_y != 0 && gamepad2.left_stick_y != 0.1) {
+                intakeLinkageAction.control(gamepad2.left_stick_y);
+            }
+
+
+
+            //===============Outtake================
+
+            //outtake pivot
+            if (gamepad2.y && !prevGamePadY) {
+                outtakePivotAction.togglePosition();
+            }
+            //outtake linear slides manual
+            if (gamepad2.right_stick_y != 0) {
+                outtakeSlideAction.setPower(-gamepad2.right_stick_y);
+            } else {
+                outtakeSlideAction.idle();
+            }
+
+            //outtake claw
+            if (gamepad2.right_bumper) {
+                outtakeClawAction.open();
+            } else outtakeClawAction.close();
+
+            //outtake linear slide toggle
             if (gamepad2.dpad_up && !prevDpadUp) {
                 outtakeSlideAction.toggle();
-                Log.d("teleop", "outtake slide toggled");
             }
-            //linear slides down
-            if (gamepad2.dpad_down) {
-                outtakeSlideAction.moveToPosition(0);
-                outtakePivotAction.setPosition(0.825);
-                Log.d("teleop", "outtake slide moved down");
-            }
+
 
 
             if (gamepad2.a && gamepad1.a) {

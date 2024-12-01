@@ -11,7 +11,7 @@ public class RevLEDTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        revLED = new RevLED(hardwareMap,"red", "green", "red2","green2","red3","green3","red4","green4");
+        revLED = new RevLED(hardwareMap,"red1", "green1", "red2","green2","red3","green3","red4","green4");
 
         waitForStart();
         while (opModeIsActive()) {

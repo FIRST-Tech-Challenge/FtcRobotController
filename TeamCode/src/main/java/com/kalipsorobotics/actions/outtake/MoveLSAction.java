@@ -23,7 +23,7 @@ public class MoveLSAction extends Action {
     final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(10);
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
     final double targetTicks;
-    double currentTicks;
+    private double currentTicks;
     public MoveLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
@@ -92,5 +92,9 @@ public class MoveLSAction extends Action {
                 currentTicks, power));
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
+    }
+
+    public double getCurrentTicks() {
+        return currentTicks;
     }
 }

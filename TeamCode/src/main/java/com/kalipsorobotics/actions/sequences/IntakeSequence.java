@@ -15,14 +15,14 @@ public class IntakeSequence {
     public IntakeSequence(IntakePivotAction intakePivotAction, IntakeLinkageAction intakeLinkageAction) {
         this.intakePivotAction = intakePivotAction;
         this.intakeLinkageAction = intakeLinkageAction;
-        timeBefore = SystemClock.currentThreadTimeMillis();
+        timeBefore = System.currentTimeMillis();
     }
     public void setUpCheckDone() {
-        double timeNow = SystemClock.currentThreadTimeMillis();
+        double timeNow = System.currentTimeMillis();
         timeBefore = timeNow;
     }
     public boolean checkDone(double waitLength) {
-        double timeHere = SystemClock.currentThreadTimeMillis();
+        double timeHere = System.currentTimeMillis();
         if (timeHere - timeBefore > waitLength) {
             return true;
         } else {

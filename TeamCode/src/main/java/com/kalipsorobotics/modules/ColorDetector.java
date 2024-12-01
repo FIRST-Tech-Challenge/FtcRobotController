@@ -27,7 +27,7 @@ public class ColorDetector {
         this.colorSensor = opModeUtilities.getHardwareMap().get(ColorSensor.class, "intakeColorSensor");
 
         opModeUtilities.getOpMode().sleep(100);
-        revLED = new RevLED(hardwareMap,"red", "green", "red2","green2","red3","green3","red4","green4");
+        revLED = new RevLED(hardwareMap,"red1", "green1", "red2","green2","red3","green3","red4","green4");
         baseColors = new KColor(colorSensor.red(), colorSensor.green(), colorSensor.blue());
         Log.d("color detectors", "base set to " + baseColors.getRed() + " " + baseColors.getGreen() + " " + baseColors.getBlue());
     }

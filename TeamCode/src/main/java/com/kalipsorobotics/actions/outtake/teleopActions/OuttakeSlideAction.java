@@ -3,6 +3,8 @@ package com.kalipsorobotics.actions.outtake.teleopActions;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,6 +14,7 @@ public class OuttakeSlideAction {
     private final OuttakePivotAction outtakePivotAction;
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;
+    MoveLSAction moveLSAction;
     int stage = 0;
 
     public OuttakeSlideAction(Outtake outtake) {
@@ -59,18 +62,27 @@ public class OuttakeSlideAction {
     }
 
     public void idle() {
-        setPower(-0.2);
+        if (moveLSAction == null) {
+            setPower(0);
+            return;
+        }
+        if (Math.abs(moveLSAction.getCurrentTicks()) < CalculateTickPer.mmToTicksLS(3)) {
+            setPower(0);
+        } else {
+            setPower(0.15);
+        }
     }
 
     public void moveToPosition(int target) {
-        Log.d("out slide", "MOVING");
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setPower(1);
-        linearSlideMotor2.setTargetPosition(target);
-        linearSlideMotor1.setTargetPosition(target);
-        linearSlideMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (moveLSAction != null && !moveLSAction.checkDoneCondition()) {
+            return;
+        }
+        moveLSAction = new MoveLSAction(this.outtake, target);
+        moveLSAction.updateCheckDone();
+    }
+
+    public void updateCheckDone() {
+        moveLSAction.updateCheckDone();
     }
 
     public void up(double distance) {
@@ -95,11 +107,10 @@ public class OuttakeSlideAction {
 
     public void toggle() {
         if (stage == 0) {
-            moveToPosition(330);
-            outtakePivotAction.moveOut();
+            moveToPosition(400);
             stage = 1;
         } else {
-            moveToPosition(400);
+            moveToPosition(0);
             stage = 0;
         }
     }
