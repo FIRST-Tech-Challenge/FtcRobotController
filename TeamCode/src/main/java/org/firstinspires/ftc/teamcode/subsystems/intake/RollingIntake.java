@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.intake;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
+import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
+import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 
 public class RollingIntake extends SonicSubsystemBase {
 
@@ -19,7 +22,6 @@ public class RollingIntake extends SonicSubsystemBase {
     private CRServo rightServo;
 
     private Servo elbowServo;
-
 
     NormalizedColorSensor colorSensor;
 
@@ -72,7 +74,7 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         if(state == IntakeState.Intake) {
-            //telemetry.addData("State", "Intake");
+            telemetry.addData("State", "Intake");
 
             if(d > 50 || this.isInDeliveryPosition) {
                 telemetry.addData("power", 1);
@@ -83,6 +85,7 @@ public class RollingIntake extends SonicSubsystemBase {
             } else {
                 this.leftServo.setPower(-0.2);
                 this.rightServo.setPower(0.2);
+
                 //telemetry.addData("power",0);
 
                 if (feedback != null) {
@@ -91,7 +94,7 @@ public class RollingIntake extends SonicSubsystemBase {
                 }
             }
         } else if (state == IntakeState.Outtake) {
-            //telemetry.addData("State", "Outtake");
+            telemetry.addData("State", "Outtake");
 
             if(d > 50) {
                 if (feedback != null) {
@@ -103,7 +106,15 @@ public class RollingIntake extends SonicSubsystemBase {
             this.rightServo.setPower(-1);
 
         } else {
-            //telemetry.addData("State", "Hold");
+
+            telemetry.addData("State", "Hold");
+            telemetry.addData("Pivot", DeliveryPivot.recordedPosition);
+            telemetry.addData("Slider", DeliverySlider.recordedPosition);
+
+            if (DeliveryPivot.recordedPosition > 1000 && DeliverySlider.recordedPosition < -2200) {
+                telemetry.addLine("Toggling wrist...");
+                SetElbowInSpecimenPosition();
+            }
 
             this.leftServo.setPower(0);
             this.rightServo.setPower(0);

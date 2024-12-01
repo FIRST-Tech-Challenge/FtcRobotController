@@ -27,7 +27,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private int StartPositionFromCalibration = 1590;
 
-    public static int DeliveryPositionFromStart = -61; //CHANGED
+    public static int DeliveryPositionFromStart = 1400;
 
     public static int IntakePositionFromStart = -1025;
 
@@ -150,6 +150,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
+        recordedPosition = position;
         boolean addTelemetry = true;
 
         if(addTelemetry) {
@@ -189,9 +190,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
                 motor.set(power);
             }
         } else {
-            if (motor.get() != 0 && position != 0) {
-                recordedPosition = position;
-            }
+
             double currentPower = motor.get();
             String action = currentPower > 0 ? "up" : (currentPower < 0 ? "down" : "stop");
             Log.i("armControl", "pivot position = " + position + ", current action: " + action + ", too low? " + (lowEnoughToLimitSlider() ? "yes" : "no"));
