@@ -13,6 +13,8 @@ public class karineClickHere extends LinearOpMode {
 
     private boolean sheepFound;
 
+    private int test;
+
     private boolean wasX = false;
 
     public void runOpMode() throws InterruptedException {

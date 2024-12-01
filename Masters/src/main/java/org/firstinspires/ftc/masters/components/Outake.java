@@ -4,10 +4,13 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.lang.annotation.Target;
 
 @Config
 public class Outake implements Component{
@@ -15,19 +18,13 @@ public class Outake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    public static double p = 0.0001, i = 0, d = 0;
+    public static double f = 0.002;
 
     public int target = 0;
 
-    private final double ticks_in_degree = 1425 / 180.0;
-
-    public static double open = 0.7;
-    public static double close = 0.45;
-    public static double wristF = 0.9;
-    public static double wristB = 0.7;
-
-    private final Servo elbow1, elbow2, fingers;
+    private final Servo fingers;
+    private final Servo elbow1, elbow2;
     private final DcMotor extension1;
     private final DcMotor extension2;
 
@@ -57,37 +54,46 @@ public class Outake implements Component{
 
         target = 0;
 
+        fingers.setPosition(ITDCons.close);
+        elbow1.setPosition(.5);
+        elbow2.setPosition(.5);
+
     }
 
-    public void slidePower(int power) {
-        extension1.setPower(power);
-        extension2.setPower(power);
-    }
+//    public void slidePower(double power) {
+//        extension1.setPower(power);
+//        extension2.setPower(power);
+//    }
 
-    public void moveElbow(float pos) {
-        elbow1.setPosition(pos);
+    public void diffy1(double pos) { elbow1.setPosition(pos); }
+
+    public void diffy2(double pos) {
         elbow2.setPosition(pos);
     }
 
-    public void moveWrist(float mod) {
-        elbow1.setPosition(.5 + mod);
-        elbow1.setPosition(.5 - mod);
-    }
-
-    public void moveClaw(float pos) {
+    public void moveClaw(double pos) {
         fingers.setPosition(pos);
     }
 
     public void moveSlide(int target) {
 
-        int rotatePos = extension1.getCurrentPosition();
+        this.target=target;
+
+        int rotatePos = extension2.getCurrentPosition();
         double pid = controller.calculate(rotatePos, target);
-        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
-        double lift = pid + ff;
+        double lift = pid + f;
 
         extension1.setPower(lift);
         extension2.setPower(lift);
 
+    }
+
+    public int getTarget(){
+        return target;
+    }
+
+    public int getExtensionPos(){
+        return extension2.getCurrentPosition();
     }
 
 
