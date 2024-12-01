@@ -30,7 +30,7 @@ public class DcMotorAdvanced {
     }
     public void setPower(double power){
 //        setVoltage();
-        batteryVoltage = 12;
+        batteryVoltage = battery.getVoltage();
         if (Math.abs(power - previousPower) > acceptablePowerDifference) {
             motor.setPower(maxVoltage/batteryVoltage*power);
             previousPower = power;

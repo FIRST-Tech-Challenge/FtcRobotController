@@ -57,16 +57,16 @@ public class TeleopWithActions extends OpMode {
     public void loop() {
         TelemetryPacket packet = new TelemetryPacket();
         if(gamepad1.a){
-            runningActions.add(extension.servoExtension(RETRACT));
+            runningActions.add(extension.servoExtension());
         }
         if(gamepad1.left_trigger > 0){
-            runningActions.add(extension.servoExtension(EXTEND));
+            runningActions.add(extension.servoExtension());
         }
         if(gamepad2.left_bumper){
-            runningActions.add(claw.servoClaw(OPEN));
+            runningActions.add(claw.servoClaw());
         }
         if(gamepad2.right_bumper){
-            runningActions.add(claw.servoClaw(CLOSE));
+            runningActions.add(claw.servoClaw());
         }
         // updated based on gamepads
         runningActions.add(

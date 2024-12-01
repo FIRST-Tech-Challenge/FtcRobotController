@@ -25,24 +25,24 @@ public class ZeroServos extends LinearOpMode {
     @Override
     public void runOpMode() {
         //servoWrist = hardwareMap.get(Servo.class, "wrist");
-        servoArmLeft = hardwareMap.get(Servo.class, "armRight");
-        servoArmRight = hardwareMap.get(Servo.class, "armLeft");
+        //servoArmLeft = hardwareMap.get(Servo.class, "armRight");
+        //servoArmRight = hardwareMap.get(Servo.class, "armLeft");
         //pivotLeft = hardwareMap.get(Servo.class, "pivotLeft");
         //pivotRight = hardwareMap.get(Servo.class, "pivotRight");
         //clawServo = hardwareMap.get(Servo.class, "clawServo");
-        //servoExtendLeft = hardwareMap.get(Servo.class, "leftExtension");
-        //servoExtendRight = hardwareMap.get(Servo.class, "rightExtension");
+        servoExtendLeft = hardwareMap.get(Servo.class, "leftExtension");
+        servoExtendRight = hardwareMap.get(Servo.class, "rightExtension");
         waitForStart();
 
         while (opModeIsActive()) {
-            servoArmLeft.setPosition(0.5);
-            servoArmRight.setPosition(0.5);
+            //servoArmLeft.setPosition(0);
+            //servoArmRight.setPosition(0);
             //servoWrist.setPosition(0.5);
             //pivotRight.setPosition(0.5);
             //pivotLeft.setPosition(0.5);
             //clawServo.setPosition(0.5);
-            //servoExtendLeft.setPosition(0.5);
-            //servoExtendRight.setPosition(0.52);
+            servoExtendLeft.setPosition(0.025);
+            servoExtendRight.setPosition(0);
         }
     }
 }
