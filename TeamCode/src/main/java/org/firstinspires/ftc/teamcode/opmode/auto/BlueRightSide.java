@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.CommandGroups.Auto.LeftSideAuto87Pts;
+import org.firstinspires.ftc.teamcode.CommandGroups.Auto.RightSideAuto;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
-@Autonomous(name="BlueLeftSide87Pts", group="OpMode")
+@Autonomous(name="BlueRightSide", group="OpMode")
 //@Disabled
-public class BlueLeftSide87Pts extends CommandOpMode {
+public class BlueRightSide extends CommandOpMode {
 
     // Initialize all objects, set up subsystems, etc...
     @Override
@@ -31,7 +31,7 @@ public class BlueLeftSide87Pts extends CommandOpMode {
         // ---------- autonomous command ----------
 
         // add autonomous command to scheduler and run it
-        new LeftSideAuto87Pts().schedule();
+        new RightSideAuto().schedule();
 
     }
 

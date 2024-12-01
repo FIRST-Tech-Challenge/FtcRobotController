@@ -137,19 +137,19 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whileHeld(new WallPickUp());
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whileHeld(new PlaceSpecimenAddOffset());
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
 
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
 
         // Controls the claw using bumpers
         // left = close
