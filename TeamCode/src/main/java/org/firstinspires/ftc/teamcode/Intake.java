@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
@@ -10,21 +9,27 @@ public class Intake {
     private CRServo intakeServo;
     private Servo intakeLift;
 
-
-    public Intake(HardwareMap hardwareMap) {
-        intakeServo = hardwareMap.get(CRServo.class, "IntakeServo");
-        intakeLift = hardwareMap.get(Servo.class, "IntakeLift");
+    private int intakeDownPosition;
+    private int intakeUpPosition;
+    public void initIntake() {
+        intakeServo.setPower(0);
     }
 
     public Intake(OpMode OpMode) {
 
     }
 
-    public void liftIntake(double position) {
-        intakeLift.setPosition(position);
+    public void liftIntake() {
+        if (intakeLift.getPosition() <= 0.5)
+            intakeLift.setPosition(intakeUpPosition);
+        else {
+            intakeLift.setPosition(intakeDownPosition);
     }
 
-    public void take(double power) {
+}
+
+
+    public void collect(double power) {
         intakeServo.setPower(power);
     }
 
