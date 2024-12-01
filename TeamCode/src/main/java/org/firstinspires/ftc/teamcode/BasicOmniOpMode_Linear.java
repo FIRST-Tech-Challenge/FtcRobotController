@@ -76,7 +76,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
-    private Servo   extensionServo = null;
+    private ScaledServo   extensionServo = null;
     private double   extensionPos = 0.5;
 
     private double openPos = 0.03;
@@ -92,7 +92,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "Right Front");
         rightBackDrive = hardwareMap.get(DcMotor.class, "Right Back");
 
-        extensionServo = hardwareMap.get(Servo.class, "Extension");
+        extensionServo = new ScaledServo(
+            hardwareMap.get(Servo.class, "Extension"), "Extension",
+            0.0, 1.0);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -131,43 +133,25 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
-
-//            if (gamepad1.b) {
-//                extensionPos = extensionPos - (lastLoopDurationNs * 0.3E-9);
-//            }
-//            if (gamepad1.a) {
-//                extensionPos = extensionPos + (lastLoopDurationNs * 0.3E-9);
-//            }
-//            if (gamepad1.y) {
-//                extensionPos = 0.5;
-//            }
-//            extensionPos = Math.min(1.0, Math.max(0.0, extensionPos));
-//
-//            if (gamepad1.x) {
-//                extensionServo.setPosition(extensionPos);
-//            }
-
             if (gamepad1.a) {
-                openPos = openPos - (lastLoopDurationNs * 1.0E-10);
+                extensionServo.adjustServoMin(lastLoopDurationNs * -1.0E-10);
             }
             if (gamepad1.b) {
-                openPos = openPos + (lastLoopDurationNs * 1.0E-10);
+                extensionServo.adjustServoMin(lastLoopDurationNs * +1.0E-10);
             }
-            openPos = Math.min(1.0, Math.max(0.0, openPos));
 
             if (gamepad1.x) {
-                closedPos = closedPos - (lastLoopDurationNs * 1.0E-10);
+                extensionServo.adjustServoMax(lastLoopDurationNs * -1.0E-10);
             }
             if (gamepad1.y) {
-                closedPos = closedPos + (lastLoopDurationNs * 1.0E-10);
+                extensionServo.adjustServoMax(lastLoopDurationNs * +1.0E-10);
             }
-            closedPos = Math.min(1.0, Math.max(0.0, closedPos));
 
             if (gamepad1.left_bumper) {
-                extensionServo.setPosition(openPos);
+                extensionServo.setTargetPosition(0.0);
             }
             else if (gamepad1.right_bumper) {
-                extensionServo.setPosition(closedPos);
+                extensionServo.setTargetPosition(1.0);
             }
 
 
@@ -203,13 +187,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
-
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
@@ -220,9 +197,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Servo  Position", "%6.4f", extensionServo.getPosition());
-            telemetry.addData("Open   Target", "%6.4f", openPos);
-            telemetry.addData("Closed Target", "%6.4f", closedPos);
+
+            extensionServo.dumpTelemetry(telemetry);
+
             telemetry.update();
         }
     }}
