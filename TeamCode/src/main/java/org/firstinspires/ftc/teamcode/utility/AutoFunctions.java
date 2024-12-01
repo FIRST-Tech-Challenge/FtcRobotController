@@ -27,15 +27,12 @@ public class AutoFunctions {
             return translation;
     }
 
-    // mirror provided angle in deg for red vs blue team
-    public static double redVsBlue(double angle) {
+    // mirror provided rotation2d for red vs blue team
+    public static Rotation2d redVsBlue(Rotation2d rotation) {
         if (RobotContainer.isRedAlliance)
-            return angle-180.0;
+            return new Rotation2d (rotation.getRadians() - Math.PI);
         else
-            return angle;
+            return rotation;
     }
-
-
-
 
 }
