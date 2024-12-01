@@ -127,6 +127,9 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
         IntakeClaw.setPosition(0);    // Closes Intake Claw
         OuttakeClaw.setPosition(0);   // Closes Outtake Claw
 
+        LeftServo = Math.max(0, Math.min(1, Flex - (.5 * Yaw)));
+        RightServo = Math.max(0, Math.min(1, Flex + (.5 * Yaw)));
+
         LeftIntakeWrist.setPosition(LeftServo);    // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
         IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
@@ -264,12 +267,15 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
 
                     OuttakeV4B.setPosition(1);  // Sets the outtake virtual four bar to the starting position
-                    TargetLift = MAX_TARGET_LIFT;
+
+                    if (gamepad1.a){
+                        TargetLift = 5;
+                    }
 
                     if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
                         TargetLift = TargetLift + 10;
                     }
-                    else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
+                    else if (gamepad2.left_trigger >= .75 && TargetLift > 50){
                         TargetLift = TargetLift - 50;
                     }
                     if(gamepad2.dpad_down){
@@ -279,6 +285,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     break;
             }
             if(gamepad1.dpad_up && gamepad2.dpad_up){
+                TargetLift = MAX_TARGET_LIFT;
                 state = State.CLIMB;
             }
 
@@ -323,8 +330,8 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
 
             IntakeV4B.setPosition(V4Bpos);
             //RightIntakeV4B.setPosition(V4Bpos);
-            LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
-            RightServo = Flex + (.5 * Yaw);//^
+            LeftServo = Math.max(0, Math.min(1, Flex - (.5 * Yaw)));
+            RightServo = Math.max(0, Math.min(1, Flex + (.5 * Yaw)));
             LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
             RightIntakeWrist.setPosition(RightServo); //^
 
