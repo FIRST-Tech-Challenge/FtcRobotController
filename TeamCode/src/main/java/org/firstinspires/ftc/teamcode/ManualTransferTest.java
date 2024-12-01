@@ -327,6 +327,11 @@ public class ManualTransferTest extends LinearOpMode {
                 IntakeLeft.setPower(ExtensionPower);            // Sets the Motor Power to ExtensionPower Declared Above
                 IntakeRight.setPower(ExtensionPower);           // Sets the Motor Power to ExtensionPower Declared Above
             }
+            telemetry.addData("Yaw", Yaw);
+            telemetry.addData("Left Wrist Position", LeftServo);
+            telemetry.addData("Right Wrist Position", RightServo);
+
+            telemetry.update();
 
            /* if (V4Bpos <= .3) {
 

@@ -44,7 +44,8 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
         INTAKE,
         TRANSFER,
         IDLE,
-        OUTTAKE
+        OUTTAKE,
+        CLIMB
     }
 
     State state = State.INTAKE;
@@ -160,6 +161,8 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     }
                     else if(gamepad2.y){
                         ExtensionTarget = 1;
+                    }
+                    if (IntakeLeft.getCurrentPosition() <= 5 && IntakeClaw.getPosition() == .5){
                         state = State.TRANSFER;
                     }
                     if (gamepad2.right_bumper  && !IntakeClawClosed && ClawTime.seconds() >= .3){
@@ -179,12 +182,13 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                         ExtensionTarget = ExtensionTarget - 10;
                     }
 
-                    if (gamepad2.dpad_up && TargetLift < MAX_TARGET_LIFT){
+                    if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
                         TargetLift = TargetLift + 10;
                     }
-                    else if (gamepad2.dpad_down && TargetLift > 10){
+                    else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
                         TargetLift = TargetLift - 10;
                     }
+
                     break;
                 case TRANSFER:
                     TargetLift = 520;
@@ -197,6 +201,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     if(IntakeClaw.getPosition() == 0){
                         state = State.IDLE;
                     }
+                    break;
 
                 case IDLE:
                     if (gamepad2.a) {
@@ -244,18 +249,43 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                         OuttakeClaw.setPosition(0);
                         OuttakeClawClosed = false;
                     }
-                    if (gamepad2.dpad_up && TargetLift < MAX_TARGET_LIFT){
+                    if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
                         TargetLift = TargetLift + 10;
                     }
-                    else if (gamepad2.dpad_down && TargetLift > 10){
+                    else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
                         TargetLift = TargetLift - 10;
                     }
                     break;
+
+                case CLIMB:
+                    IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
+                    //RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to the starting position
+
+                    OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
+
+                    OuttakeV4B.setPosition(1);  // Sets the outtake virtual four bar to the starting position
+                    TargetLift = MAX_TARGET_LIFT;
+
+                    if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
+                        TargetLift = TargetLift + 10;
+                    }
+                    else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
+                        TargetLift = TargetLift - 50;
+                    }
+                    if(gamepad2.dpad_down){
+                        TargetLift = 600;
+                        state = State.INTAKE;
+                    }
+                    break;
+            }
+            if(gamepad1.dpad_up && gamepad2.dpad_up){
+                state = State.CLIMB;
             }
 
                 if(IntakeLeft.getCurrentPosition() <= 50){
-                    V4Bpos = .78;
                     Flex = 0;
+                    V4Bpos = .78;
+
                 }
                 else{
                     if (gamepad1.left_trigger > 0){
@@ -313,14 +343,17 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                 IntakeRight.setPower(ExtensionPower);           // Sets the Motor Power to ExtensionPower Declared Above
             }
 
-            if (V4Bpos <= .3) {
+           /* if (V4Bpos <= .3) {
 
                 if (gamepad1.touchpad_finger_1) {   // Allows manual yaw control if a finger is on the touchpad
                     Yaw = gamepad1.touchpad_finger_1_x;     // Taking value from touchpad and saving as our desired yaw value
                 }
                 else{ Yaw = 0; }
 
-            }
+            }*/
+            telemetry.addData("Yaw", Yaw);
+            telemetry.addData("Left Wrist Position", LeftServo);
+            telemetry.addData("Right Wrist Position", RightServo);
             telemetry.addData("state", state);
             telemetry.update();
 
