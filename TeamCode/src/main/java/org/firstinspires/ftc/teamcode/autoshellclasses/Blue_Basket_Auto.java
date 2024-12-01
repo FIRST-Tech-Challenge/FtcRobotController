@@ -20,7 +20,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
     //Initialization steps
-        //Creates instance of actuator action classes
+        //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
 
