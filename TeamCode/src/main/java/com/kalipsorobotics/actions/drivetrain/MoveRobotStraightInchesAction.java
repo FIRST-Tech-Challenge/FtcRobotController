@@ -61,7 +61,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     }
 
     private void refreshThetaOffset() {
-        thetaOffset = targetTheta - sparkfunOdometry.countTheta();
+        thetaOffset = targetTheta - wheelOdometry.getCurrentImuHeading();
     }
 
     @Override

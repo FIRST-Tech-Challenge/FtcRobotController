@@ -61,7 +61,7 @@ public class MecanumRobotAction extends DriveTrainAction {
         remainingDistance = targetInches - currentInches;
     }
 
-    private void refreshThetaOffset() {thetaOffset = targetTheta - sparkfunOdometry.countTheta();}
+    private void refreshThetaOffset() {thetaOffset = targetTheta - wheelOdometry.getCurrentImuHeading();}
 
     @Override
     public boolean checkDoneCondition() {

@@ -55,7 +55,7 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     public double getCurrentHeading() {
-        return Math.toDegrees(sparkfunOdometry.countTheta());
+        return Math.toDegrees(wheelOdometry.getCurrentImuHeading());
     }
 
     private void refreshError() {
