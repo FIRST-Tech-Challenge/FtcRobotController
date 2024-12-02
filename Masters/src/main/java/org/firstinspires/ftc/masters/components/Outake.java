@@ -18,7 +18,7 @@ public class Outake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.0001, i = 0, d = 0;
+    public static double p = 0.00057, i = 0, d = 0.000000015;
     public static double f = 0.002;
 
     public int target = 0;

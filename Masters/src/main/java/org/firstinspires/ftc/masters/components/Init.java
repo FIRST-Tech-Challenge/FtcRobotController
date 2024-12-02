@@ -81,6 +81,7 @@ public class Init {
 
         extension2.setDirection(DcMotorSimple.Direction.REVERSE);
         extension2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extension2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
        elbow1 = hardwareMap.servo.get("elbow1");
        elbow2 = hardwareMap.servo.get("elbow2");
