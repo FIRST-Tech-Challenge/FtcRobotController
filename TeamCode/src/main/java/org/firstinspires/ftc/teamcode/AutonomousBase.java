@@ -82,26 +82,25 @@ public abstract class AutonomousBase extends LinearOpMode {
     double afterAngle                           = 0.0;
 
     String      storageDir;
-    boolean     alignToFront    = true;  // Use front facing camera or back facing
-    boolean     redAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
-    boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
+    boolean     redAlliance      = true;  // Is alliance BLUE (true) or RED (false)?
+    boolean     forceAlliance    = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         initMenuSelected = 1;    // start on the first entry
     int         initMenuMax      = 6;    // we have 6 total entries
-//  String[]    initMenuStr  = new String[initMenuMax];
-
     int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both left/rigth starting positions
     int         parkDelaySec     = 0;     // 2: wait [seconds] before parking in observation zone -- applies to that parking zone
 
     boolean scorePreloadSpecimen = true;  // 3: score preloaded specimen (true=yes; false=no)
     boolean onlyPark = false;   // 4: only park no scoring (true=yes; false=no)
 
-    int         parkLocation    = 0;      // 5: park 0=NONE, 1=LEFT, 2=RIGHT
-    int         spikeSamples = 3;
-    final int   PARK_NONE = 0;
-    final int   PARK_LEFT = 1;
-    final int   PARK_RIGHT = 2;
+    int         spikeSamples     = 0;      // set in each left/right autonomous program
+    int         parkLocation     = 0;      // 5: park 0=NONE, 1=OBSERVATION, 2=SUBMERSIBLE
+    final int   PARK_NONE        = 0;
+    final int   PARK_OBSERVATION = 1;
+    final int   PARK_SUBMERSIBLE = 2;
 
-    String[]    parkLocationStr = {"NONE", "LEFT", "RIGHT"};
+    String[]    parkLocationStr = {"NONE", "OBSERVATION", "SUBMERSIBLE"};
+    // For RIGHT, parking in OBSERVATION means the far end
+    // For LEFT,  parking in OBSERVATION means the triangular section
 
     ElapsedTime autonomousTimer     = new ElapsedTime();  // overall
     ElapsedTime motionTimer         = new ElapsedTime();  // for driving
@@ -213,7 +212,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                     }
                 } // prev
                 break;
-            case 2 : // TRUSS DELAY [sec]
+            case 2 : // PARK DELAY [sec]
                 if( nextValue ) {
                     if (parkDelaySec < 9) {
                         parkDelaySec++;

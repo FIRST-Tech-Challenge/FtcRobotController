@@ -55,7 +55,10 @@ public class AutonomousLeftRed extends AutonomousBase {
         sleep( 1000 );
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
-        parkLocation = PARK_NONE;  // no parking, observation zone CORNER, observation zone TRIANGLE or Submersible
+        redAlliance  = true;
+        spikeSamples = 0;  // until we get that code working...
+        parkLocation = PARK_SUBMERSIBLE;
+
         while (!isStarted()) {
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
