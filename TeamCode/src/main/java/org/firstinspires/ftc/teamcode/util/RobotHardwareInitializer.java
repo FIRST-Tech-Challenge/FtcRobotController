@@ -121,7 +121,7 @@ public class RobotHardwareInitializer {
             leftBackDrive = MotorComponent.LEFT_BACK.get(hMap);
             rightBackDrive = MotorComponent.RIGHT_BACK.get(hMap);
 
-            leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+            leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
             rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
             rightBackDrive.setDirection(DcMotor.Direction.FORWARD);

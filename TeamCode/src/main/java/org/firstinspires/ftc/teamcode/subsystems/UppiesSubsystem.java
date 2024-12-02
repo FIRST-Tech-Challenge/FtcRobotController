@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,6 +13,7 @@ public class UppiesSubsystem extends SubsystemBase {
     DcMotorEx uppiesMotor;
     private UppiesState state;
     long lastStateChange = 0;
+    static float speedMultiplier = .2f;
 
     public static final boolean PROGRAMATIC_STALL_SAFETY = true;
     // After the motor has enough time to start moving, start checking if the motor is stalling.
@@ -22,13 +24,14 @@ public class UppiesSubsystem extends SubsystemBase {
     public UppiesSubsystem(DcMotorEx uppiesMotor) {
         this.uppiesMotor = uppiesMotor;
         this.state = UppiesState.IDLE;
+        uppiesMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setUppiesState(UppiesState state) {
         UppiesState lastState = state;
         this.state = state;
         // TODO: Verify that this is the correct direction
-        uppiesMotor.setPower(state == UppiesState.UN_UPPIES ? 1 : -1);
+        uppiesMotor.setPower(state == UppiesState.UN_UPPIES ? speedMultiplier : -speedMultiplier);
         if (state == UppiesState.IDLE) {
             uppiesMotor.setPower(0);
         }

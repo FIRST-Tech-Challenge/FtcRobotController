@@ -12,6 +12,7 @@ public class ExtendoCommand extends CommandBase {
 
     public ExtendoCommand(ExtendoSystem subsystem, Direction direction) {
         this.subsystem = subsystem;
+        this.direction = direction;
         addRequirements(subsystem);
     }
 

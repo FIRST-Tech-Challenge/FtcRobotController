@@ -1,23 +1,32 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer.MIN_POWER;
+
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.HashMap;
 
 public class DriveSubsystem extends SubsystemBase {
-    private final DcMotor lF, rF, lB, rB, eL, eB, eR;
+    private DcMotor lF, rF, lB, rB, eL, eB, eR;
     private final double INCHES_PER_TICK = 0.0018912d;
-    public final ElapsedTime elapsedTime;
+    public ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
+    MecanumDrive drive;
 
+    @Deprecated
     public DriveSubsystem(HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors) {
         this(driveMotors.get(RobotHardwareInitializer.MotorComponent.LEFT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.MotorComponent.RIGHT_FRONT),
@@ -26,6 +35,10 @@ public class DriveSubsystem extends SubsystemBase {
                 driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_LEFT),
                 driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_BACK),
                 driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_RIGHT));
+    }
+
+    public DriveSubsystem(HardwareMap hMap) {
+        drive = new MecanumDrive(hMap, new Pose2d(0, 0, 0));
     }
 
     public DriveSubsystem(final DcMotor leftFront, final DcMotor rightFront,
@@ -49,6 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     @SuppressLint("DefaultLocale")
+    @Deprecated
     public boolean moveRobot(double axial, double lateral, double yaw) {
 
         dbp.createNewTelePacket();
@@ -84,6 +98,18 @@ public class DriveSubsystem extends SubsystemBase {
         lB.setPower(leftBackPower);
         rB.setPower(rightBackPower);
         return true;
+    }
+
+    public void moveRobot(Gamepad gamepad1) {
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x
+                ),
+                -gamepad1.right_stick_x
+        ));
+
+        drive.updatePoseEstimate();
     }
 
     /**

@@ -45,15 +45,19 @@ public class Blue extends LinearOpMode {
                 .waitSeconds(3);
 
         TrajectoryActionBuilder red = drive.actionBuilder(new Pose2d(7.00, -70.00, Math.toRadians(90.00)))
-                .splineToConstantHeading(new Vector2d(7.00, -25.00), Math.toRadians(90.00))
-                .splineTo(new Vector2d(7.00, -45.00), Math.toRadians(90.00))
-                .splineToConstantHeading(new Vector2d(50.00, -35.00), Math.toRadians(90.00))
-                .splineTo(new Vector2d(50.00, -60.00), Math.toRadians(-90.00))
-                .splineToConstantHeading(new Vector2d(60.00, -60.00), Math.toRadians(90.00))
-                .splineTo(new Vector2d(60.00, -35.00), Math.toRadians(90.00))
-                .splineTo(new Vector2d(60.00, -60.00), Math.toRadians(-90.00))
-                .splineTo(new Vector2d(48.00, -52.00), Math.toRadians(-90.00))
-                .splineTo(new Vector2d(48.00, -70.00), Math.toRadians(-90.00))
+                .lineToY(-25) // (7, -25) 90 deg
+                .lineToY(-45.00) // (7, -45) 90 deg
+                .splineToConstantHeading(new Vector2d(50.00, -35.00), Math.toRadians(90.00)) // (50, -35) 90 deg
+                .turnTo(-90)
+                .lineToY(-60.00) // (50, -60) -90 deg
+                .turnTo(90) // 90 deg
+                .lineToX(-60.00) // (60, -60) 90 deg
+                .lineToY(-35.00) // (60, -35) 90 deg
+                .turnTo(-90) // -90 deg
+                .lineToY(-60.00) // (60, -60) -90 deg
+                .splineTo(new Vector2d(48.00, -52.00), Math.toRadians(-90.00)) // (48, -52)
+                .lineToY(-70.00) // (48, -80) -90 deg
+                .turnTo(90)
                 .splineTo(new Vector2d(7.00, -25.00), Math.toRadians(90.00));
 
 

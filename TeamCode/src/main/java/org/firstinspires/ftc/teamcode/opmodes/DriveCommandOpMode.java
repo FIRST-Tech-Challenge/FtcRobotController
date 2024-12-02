@@ -62,12 +62,12 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.send(false);
 
         try {
-            HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
-            assert driveMotors != null;
-            driveSubsystem = new DriveSubsystem(driveMotors);
+            // HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
+            // assert driveMotors != null;
+            driveSubsystem = new DriveSubsystem(hardwareMap);
             register(driveSubsystem);
             initializeDriveSuppliers();
-            driveCommand = new DefaultDrive(driveSubsystem, forwardBack, leftRight, rotation);
+            driveCommand = new DefaultDrive(driveSubsystem, gamepad1);
             driveSubsystem.setDefaultCommand(driveCommand);
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         }
 
         try {
-            DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
+            /*DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
             uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
             register(uppiesSubsystem);
 
@@ -102,7 +102,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                     .whenReleased(idleCommand);
             armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(downCommand)
-                    .whenReleased(idleCommand);
+                    .whenReleased(idleCommand);*/
         } catch (Exception e) {
             e.printStackTrace();
             //throw new RuntimeException(e);
@@ -124,9 +124,9 @@ public class DriveCommandOpMode extends CommandOpMode {
             extendoSystem = new ExtendoSystem(motorEx);
             register(extendoSystem);
 
-            extendoSystem.setDefaultCommand(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE));
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD));
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD));
+            ExtendoCommand noMovementCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE);
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD)).whenReleased(noMovementCommand);
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD)).whenReleased(noMovementCommand);
         } catch (Exception e) {
             e.printStackTrace();
             //throw new RuntimeException(e);

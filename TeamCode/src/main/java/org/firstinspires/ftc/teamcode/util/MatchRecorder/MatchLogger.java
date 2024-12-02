@@ -61,7 +61,7 @@ public class MatchLogger {
                 // Not a valid match directory
                 continue;
             }
-            String matchNumber = name.substring(0, MATCH_FILE_NAME.length() - 1);
+            String matchNumber = name.substring(MATCH_FILE_NAME.length(), name.length() - 1);
             // TODO: Verify that the substring thing works and doesn't produce an error
             try {
                 Integer parsedInteger = Integer.parseInt(matchNumber);
