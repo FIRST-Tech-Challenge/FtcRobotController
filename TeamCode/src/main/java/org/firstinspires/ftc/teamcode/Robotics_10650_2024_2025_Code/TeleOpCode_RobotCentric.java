@@ -349,7 +349,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (pitchAngle>=31.25){
                 maxLifEtxtension = 1210/(Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
             } else{
-                maxLifEtxtension = 3100;
+                maxLifEtxtension = 5000;
 
             }
 
