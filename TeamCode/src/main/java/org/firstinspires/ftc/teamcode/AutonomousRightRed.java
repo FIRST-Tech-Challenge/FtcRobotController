@@ -199,7 +199,7 @@ public class AutonomousRightRed extends AutonomousBase {
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
             pos_y=3.0; pos_x=0.0; pos_angle=0.0; // start at this absolute location
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
-            autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG);
             pos_y += 3.0;
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
@@ -238,7 +238,7 @@ public class AutonomousRightRed extends AutonomousBase {
         // Rotate lift down to get specimen close to bar
         if( opModeIsActive() ) {
             robot.geckoServo.setPower(-0.50); // hold it while we clip
-            autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO2);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO2_DEG);
             do {
                 if( !opModeIsActive() ) break;
                 // wait for lift/tilt to finish...
@@ -283,7 +283,7 @@ public class AutonomousRightRed extends AutonomousBase {
 
         // Lower the arm for parking
         if( opModeIsActive() ) {
-            autoTiltMotorMoveToTarget( robot.TILT_ANGLE_ZERO);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ZERO_DEG);
             do {
                 if( !opModeIsActive() ) break;
                 // wait for lift/tilt to finish...

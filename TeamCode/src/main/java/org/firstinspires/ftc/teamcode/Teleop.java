@@ -238,7 +238,7 @@ public abstract class Teleop extends LinearOpMode {
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
-            telemetry.addData("Tilt", "%d counts %.1f deg", robot.wormTiltMotorPos, robot.turretAngle);
+            telemetry.addData("Tilt", "%d counts %.1f deg", robot.wormTiltMotorPos, robot.armTiltAngle);
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.1f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.1f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
@@ -591,8 +591,10 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processTiltControls() {
-        boolean safeToManuallyLower = (robot.wormTiltMotorPos > robot.TILT_ANGLE_HW_MIN);
-        boolean safeToManuallyRaise = (robot.wormTiltMotorPos < robot.TILT_ANGLE_HW_MAX);
+        // The encoder is backwards from our definition of MAX and MIN. Maybe change the
+        // convention in hardware class?
+        boolean safeToManuallyLower = (robot.armTiltAngle < robot.TILT_ANGLE_HW_MIN_DEG);
+        boolean safeToManuallyRaise = (robot.armTiltAngle > robot.TILT_ANGLE_HW_MAX_DEG);
         double  gamepad2_right_stick = gamepad2.right_stick_y;
         boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.08 );
 
@@ -662,7 +664,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Retract lift to the collection position
-            boolean armRaised = (robot.viperMotorPos > robot.TILT_ANGLE_RAISED)? true: false;
+            boolean armRaised = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_RAISED_DEG)? true: false;
             // If raised to the basket, do this automatically before lowering
             // (don't want to do it if we use this backing out of submersimble
             if (armRaised) {
@@ -784,7 +786,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_SETUP:
                 // Send TILT motor to hang position
-                robot.wormTiltMotor.setTargetPosition( robot.TILT_ANGLE_HANG1 );
+                robot.wormTiltMotor.setTargetPosition( robot.computeEncoderCountsFromAngle(Hardware2025Bot.TILT_ANGLE_HANG1_DEG) );
                 robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
                 robot.wormTiltMotor.setPower( 0.90 );
                 // Send LIFT motor to hang position
@@ -794,7 +796,7 @@ public abstract class Teleop extends LinearOpMode {
                 ascent2state = ASCENT_STATE_MOVING;
                 break;
             case ASCENT_STATE_MOVING :
-                boolean tiltReady  = (Math.abs(robot.wormTiltMotorPos - robot.TILT_ANGLE_HANG1) < 20)? true:false;
+                boolean tiltReady  = (Math.abs(robot.armTiltAngle - robot.TILT_ANGLE_HANG1_DEG) < 0.2)? true:false;
                 boolean viperReady = (Math.abs(robot.viperMotorPos - robot.VIPER_EXTEND_HANG1) < 20)? true:false;
                 break;
             case ASCENT_STATE_READY :
@@ -822,7 +824,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.viperMotor.setPower( -0.10 );  // hold power
             }
             // Do we need to further store the robot drivetrain?
-            boolean tiltRetractionIncomplete = (robot.wormTiltMotorPos < robot.TILT_ANGLE_HANG2)? true : false;
+            boolean tiltRetractionIncomplete = (robot.armTiltAngle > robot.TILT_ANGLE_HANG2_DEG)? true : false;
             boolean tiltMotorLoadOkay = (robot.wormTiltMotorAmps < 8.5)? true : false;
             if( viperRetractionIncomplete && viperMotorLoadOkay ) {
                 robot.wormTiltMotor.setPower( 0.30 );   // test at lower  power!!!

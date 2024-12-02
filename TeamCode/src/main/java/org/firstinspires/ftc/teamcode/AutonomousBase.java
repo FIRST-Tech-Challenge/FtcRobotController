@@ -364,8 +364,10 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // autoViperMotorWaitToComplete
 
     /*---------------------------------------------------------------------------------*/
-    void autoTiltMotorMoveToTarget(int targetEncoderCount )
+    void autoTiltMotorMoveToTarget(double targetArmAngle )
     {
+        // Convert angle to encoder counts
+        int targetEncoderCount = robot.computeEncoderCountsFromAngle(robot.armTiltAngle);
         // Configure target encoder count
         robot.wormTiltMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
@@ -480,7 +482,7 @@ public abstract class AutonomousBase extends LinearOpMode {
      */
     protected double getAngleError(double targetAngle) {
         // calculate error in -179 to +180 range  (
-        double robotError = targetAngle - robot.headingAngle;
+        double robotError = targetAngle - robot.imuHeadingAngle;
         while (robotError >  180.0)  robotError -= 360.0;
         while (robotError <= -180.0) robotError += 360.0;
         return robotError;

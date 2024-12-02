@@ -33,8 +33,8 @@ public class Hardware2025Bot
 
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
     protected BNO055IMU imu    = null;
-    public double headingAngle = 0.0;
-    public double tiltAngle    = 0.0;
+    public double imuHeadingAngle = 0.0;
+    public double    imuTiltAngle = 0.0;
 
     //====== GOBILDA PINPOINT ODOMETRY COMPUTER ======
     GoBildaPinpointDriver odom;
@@ -99,9 +99,9 @@ public class Hardware2025Bot
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
 
-    protected AnalogInput turretEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
-    public double       turretAngle        = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       turretAngleOffset  = 129.0;     // allows us to adjust the 0-360 deg range
+    protected AnalogInput armTiltEncoder   = null;    // US Digital absolute magnetic encoder (MA3)
+    public double           armTiltAngle   = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
+    public double     armTiltAngleOffset   = 129.0;     // allows us to adjust the 0-360 deg range
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
     public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
@@ -115,7 +115,7 @@ public class Hardware2025Bot
     public int          TILT_ANGLE_AUTO2    =  1780;  // tilted up for autonomous specimen scoring (clipped)
     public int          TILT_ANGLE_HW_MIN   = -2000;  // encoder at maximum rotation DOWN/FWD
 
-    public double startingTurretAngle = 97.0;
+    public static double startingTurretAngle = 97.0;
     public final static double ENCODER_COUNTS_PER_DEG  = 5675.0 / 90.9;
     public final static double TILT_ANGLE_HW_MAX_DEG   =   38.1;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG   =   38.1;  // encoder at rotation back to the basket for scoring
@@ -268,8 +268,8 @@ public class Hardware2025Bot
         // Define and Initialize pan and tilt motors
         wormPanMotor   = hwMap.get(DcMotorEx.class,"WormPan");   // Control Hub port 0
         wormTiltMotor  = hwMap.get(DcMotorEx.class,"WormTilt");  // Control Hub port 1
-        turretEncoder  = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
-        startingTurretAngle = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
+        armTiltEncoder = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
+        startingTurretAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
 
         wormPanMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -351,9 +351,9 @@ public class Hardware2025Bot
     public double headingIMU()
     {
         Orientation angles = imu.getAngularOrientation( AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES );
-        headingAngle = angles.firstAngle;
-        tiltAngle = angles.secondAngle;
-        return -headingAngle;  // degrees (+90 is CW; -90 is CCW)
+        imuHeadingAngle = angles.firstAngle;
+        imuTiltAngle = angles.secondAngle;
+        return -imuHeadingAngle;  // degrees (+90 is CW; -90 is CCW)
     } // headingIMU
 
     /*--------------------------------------------------------------------------------------------*/
@@ -400,7 +400,7 @@ public class Hardware2025Bot
     /* using this function to account for that offset, we can place zero where we want it in s/w. */
     /* Having DEGREES_PER_ROTATION as a variable lets us adjust for the 3.3V vs. 5.0V difference. */
     /*--------------------------------------------------------------------------------------------*/
-    public int computeEncoderCountsFromAngle( double angle )
+    public static int computeEncoderCountsFromAngle( double angle )
     {
         return (int)((startingTurretAngle - angle) * ENCODER_COUNTS_PER_DEG);
     } // computeEncoderCountsFromAngle
@@ -433,7 +433,7 @@ public class Hardware2025Bot
         wormTiltMotorPos    = wormTiltMotor.getCurrentPosition();
         wormTiltMotorVel    = wormTiltMotor.getVelocity();
         wormTiltMotorPwr    = wormTiltMotor.getPower();
-        turretAngle         = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
+        armTiltAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
         // NOTE: motor mA data is NOT part of the bulk-read, so increases cycle time!
 //      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
 //      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
