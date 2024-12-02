@@ -8,7 +8,8 @@ public class IntakeReadyAction extends Action {
     IntakePivotAutoAction intakePivotAutoAction;
     IntakeDoorAutoAction intakeDoorAutoAction;
     public IntakeReadyAction() {
-
+        intakeDoorAutoAction = new IntakeDoorAutoAction(intake, 0.15);
+        intakePivotAutoAction = new IntakePivotAutoAction(intake, 0.0);
     }
     @Override
     public boolean checkDoneCondition() {
