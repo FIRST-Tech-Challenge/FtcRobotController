@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
@@ -33,7 +34,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets the slides to low
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
-                new Pause(1),
+                //new Pause(1),
                 //max speed = 1
                 new GoToNextDropOff(
                         2.0,
@@ -42,14 +43,21 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(-90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.25, 0.805, new Rotation2d(Math.toRadians(-90.0))),
+                        new Pose2d(-0.12, 0.750, new Rotation2d(Math.toRadians(-90.0))),
                         new Rotation2d(Math.toRadians(-90))),
+
+                // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
+                new InstantCommand(()-> {
+                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+                    Pose2d correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
+                    RobotContainer.odometry.setCurrentPos(correctedPosition);
+                }),
 
                 new Pause(1),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new OpenClaw(),
 
@@ -57,7 +65,9 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
-                new Pause(1)
+                //new Pause(1),
+
+                new ArmStowHigh()
         );
 
 

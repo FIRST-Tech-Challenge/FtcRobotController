@@ -1,10 +1,19 @@
-package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
+package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.LowerJack;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
+import org.firstinspires.ftc.teamcode.Commands.RaiseJack;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+
+import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -12,37 +21,37 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class DropToGrab extends SequentialCommandGroup {
+public class FullClimb extends SequentialCommandGroup {
 
     // constructor
-    public DropToGrab() {
-        addCommands(
+    public FullClimb() {
+
+        addCommands (
+
+                new FollowPath(
+                        2.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(180)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(0.45, 0.2, new Rotation2d(Math.toRadians(180.0))),
+                        new Rotation2d(Math.toRadians(0.0))),
 
 
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
-                // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+                new Pause(0.5),
 
-                // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
+                new RaiseJack(),
 
-                new Pause(0.4),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
-                // same as in hunting pos moving wrist 45 degrees
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+                new Pause(0.5),
 
-                // same as in hunting pos going to 135 degrees straight
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
-
-
+                new LowerJack()
 
         );
-
-
-        // new command1
-        // new command2
-        // new command3
-
     }
 
 }

@@ -1,10 +1,15 @@
-package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
+package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 
-import org.firstinspires.ftc.teamcode.Commands.Pause;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+
+import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -12,37 +17,51 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class DropToGrab extends SequentialCommandGroup {
+public class Sweep2 extends SequentialCommandGroup {
 
     // constructor
-    public DropToGrab() {
-        addCommands(
+    public Sweep2() {
+
+        addCommands (
+                new InstantCommand(()-> RobotContainer.odometry.setCurrentPos(new Pose2d(-0.40,1.6,new Rotation2d(Math.toRadians(-90))))),
 
 
+                // Sweep 2
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(-90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.15, 0.3, new Rotation2d(Math.toRadians(-90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                ),
 
-                // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(180.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.45, 0.3, new Rotation2d(Math.toRadians(180.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
 
-                // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
+                ),
 
-                new Pause(0.4),
-
-                // same as in hunting pos moving wrist 45 degrees
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
-
-                // same as in hunting pos going to 135 degrees straight
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
-
-
+                new FollowPath(
+                        1.0,
+                        1.0,
+                        0.0,
+                        0.0,
+                        new Rotation2d(Math.toRadians(90.0)),
+                        new ArrayList<Translation2d>() {{ }},
+                        new Pose2d(-1.45, 1.35, new Rotation2d(Math.toRadians(90.0))),
+                        new Rotation2d(Math.toRadians(-90.0))
+                )
 
         );
-
-
-        // new command1
-        // new command2
-        // new command3
-
     }
 
 }

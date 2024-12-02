@@ -6,15 +6,14 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 // command template
-public class ClawSense extends CommandBase {
+public class WaitForClawButton extends CommandBase {
 
     // constructor
-    public ClawSense() {
-
-        // add subsystem requirements (if any) - for example:
-        //addRequirements(RobotContainer.drivesystem);
+    public WaitForClawButton() {
 
         addRequirements(RobotContainer.clawTouch);
+        // add subsystem requirements (if any) - for example:
+        //addRequirements(RobotContainer.drivesystem);
     }
 
     // This method is called once when command is started
@@ -33,7 +32,6 @@ public class ClawSense extends CommandBase {
     @Override
     public boolean isFinished() {
         return RobotContainer.clawTouch.ControlTouchSenser();
-
 
 
     }
