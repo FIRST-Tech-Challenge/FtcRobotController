@@ -41,7 +41,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     DcMotor viperSlide = null;
     final int VIPER_MIN = 0;
     final int VIPER_MAX = 3100;
-    final int VIPER_GROUND = 1400;
+    final int VIPER_GROUND = 1000;
 
     // This chunk controls our claw
     //Callie
@@ -51,7 +51,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
-    final double ASCENT_MAX = 0.49;         // Stick is up
+    final double ASCENT_MAX = 0.43;         // Stick is up
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "11/30/2024, 6:12 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/02/2024, 10:30 am"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -76,22 +76,22 @@ public class OTOSAutoDrive extends LinearOpMode {
         driveToLoc(9, 14, 45, 1.5);  // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop the block
+        sleep(200);
 
         // Second Sample ///////////////////////////////////////////////////////////////
         driveToLoc(15, 12, -10, 4);
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(29, -7, -10, 1);
-        //sleep(300);
-        driveToLoc(31, -2, -10, 1);  // Move forward to get block
+        driveToLoc(27, -7, -10, 1);
+        driveToLoc(29, -2, -10, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab second block
         //sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 500) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 14, 45, 1.5);  // Go to basket
+        driveToLoc(10, 12, 45, 1.5);  // Go to basket
         sleep(500);
         setClaw(CLAW_MAX);                                          // Drop second block
         
@@ -100,32 +100,31 @@ public class OTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(30, 6, -10, 1);
-        //sleep(300);
-        driveToLoc(31, 10, -10, 1);  // Move forward to get block
+        driveToLoc(27, 6, -10, 1);
+        driveToLoc(29, 10, -10, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab third block
-        // sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 700) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 15, 45, 1.5);  // Go to basket
+        driveToLoc(9, 12, 45, 1.5);  // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop third block
+        sleep(300);
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(29, 13, -10, 1);
+        driveToLoc(26, 13, -10, 1);
         setViper(VIPER_GROUND);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(30, 17, -10, 1);  // Move forward to get block
+        driveToLoc(26, 17, -10, 1);  // Move forward to get block
         setClaw(CLAW_MIN);                                          // Grab fourth block
-        driveToLoc(29, 12, -10, 1);
+        driveToLoc(25, 12, -10);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 800) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 15, 45, 1.5);  // Go to basket
+        driveToLoc(8, 12, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
 
