@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Motors {
 
 
-    enum Type {
+    public enum Type {
         LeftBack (0),
         LeftFront (1),
         RightFront (2),
