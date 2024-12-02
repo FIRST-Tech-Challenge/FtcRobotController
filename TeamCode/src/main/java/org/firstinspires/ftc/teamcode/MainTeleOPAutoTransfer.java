@@ -19,10 +19,10 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
     private final int MAX_TARGET_LIFT = 2825;
     private final int MAX_EXTENSION_LENGTH = 500;
 
-    private int TargetLift = 600;
+    private int TargetLift = 700;
     private int ExtensionTarget = 0;
 
-    private int LiftPower = 1;
+    private double LiftPower = .9;
     private double ExtensionPower = .75;
 
     private int precision = 2;                                  // chassis motor power reduction factor 1
@@ -191,10 +191,20 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
                         TargetLift = TargetLift - 10;
                     }
-
+                    if (gamepad1.touchpad_finger_1) {
+                        Yaw = gamepad1.touchpad_finger_1_x;
+                    }
+                    else {
+                        Yaw = 0;
+                    }
                     break;
                 case TRANSFER:
-                    TargetLift = 520;
+                    if (IntakeLeft.getCurrentPosition() < 5) {
+                        TargetLift = 520;
+                    }
+                    else {
+                        TargetLift = 750;
+                    }
                     if(LeftLift.getCurrentPosition() < 524){
                         OuttakeClaw.setPosition(1);
                         if(OuttakeClaw.getPosition() == 1){
@@ -237,7 +247,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     break;
                 case OUTTAKE:
                     if (gamepad2.x){
-                        TargetLift = 600;
+                        TargetLift = 750;
                         OuttakeV4B.setPosition(1);
                         OuttakeWrist.setPosition(0);
                         state = State.INTAKE;
