@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.ArmHighGoal;
+import org.firstinspires.ftc.teamcode.commands.ArmLow;
+import org.firstinspires.ftc.teamcode.commands.ArmLowGoal;
 import org.firstinspires.ftc.teamcode.commands.DriveDistanceCmd;
 import org.firstinspires.ftc.teamcode.commands.TurnCmd;
 import org.firstinspires.ftc.teamcode.commands.ArmMed;
@@ -31,6 +34,9 @@ public class AutoCommandOpMode extends CommandOpMode
     public ArmHighGoal armHighGoal;
 
     private boolean fieldCentric = true;
+    private ArmLow armLow;
+    private ArmLowGoal armLowGoal;
+
     @Override
     public void initialize() {
         //Initializing Hardware
@@ -39,6 +45,8 @@ public class AutoCommandOpMode extends CommandOpMode
         //webcam = new WebcamSub(hardwareMap, telemetry);
         //intake = new IntakeSub(hardwareMap, telemetry);
         arm = new ArmSub(hardwareMap, telemetry);
+        armLow = new ArmLow(arm, telemetry);
+        armLowGoal = new ArmLowGoal(arm, telemetry);
         armMed = new ArmMed(arm, drive);
         armHighGoal = new ArmHighGoal(arm, drive);
 

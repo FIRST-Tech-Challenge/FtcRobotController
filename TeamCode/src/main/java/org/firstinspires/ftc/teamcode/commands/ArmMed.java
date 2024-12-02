@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 public class ArmMed extends CommandBase {
     private final ArmSub armSub;
 
-    public ArmMed(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
+    public ArmMed(ArmSub armSub, Telemetry telemetry) {
         this.armSub = armSub;
         addRequirements(armSub);
     }

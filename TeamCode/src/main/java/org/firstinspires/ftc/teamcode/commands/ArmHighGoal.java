@@ -9,13 +9,11 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 
 public class ArmHighGoal extends CommandBase {
     private final ArmSub armSub;
-    private final GamepadEx gamepad;
     private Telemetry telemetry;
 
-    public ArmHighGoal(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
+    public ArmHighGoal(ArmSub armSub, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.armSub = armSub;
-        this.gamepad = gamepad;
     }
 
     public ArmHighGoal(ArmSub armSub, DrivetrainSub drivetrain) {

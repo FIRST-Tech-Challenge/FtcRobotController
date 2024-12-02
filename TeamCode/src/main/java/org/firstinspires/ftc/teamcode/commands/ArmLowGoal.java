@@ -8,14 +8,13 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 
 public class ArmLowGoal extends CommandBase {
     private final ArmSub armSub;
-    private final GamepadEx gamepad;
     private Telemetry telemetry;
 
-    public ArmLowGoal(ArmSub armSub, GamepadEx gamepad, Telemetry telemetry) {
+    public ArmLowGoal(ArmSub armSub, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.armSub = armSub;
-        this.gamepad = gamepad;
     }
+
 
     @Override
     public void execute() {

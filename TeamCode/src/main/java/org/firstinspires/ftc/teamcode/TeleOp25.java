@@ -82,6 +82,33 @@ public class TeleOp25 extends CommandOpMode {
         drive.setDefaultCommand(driveCmd);
 
 
+        // Linear Slide
+        linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
+        moveLinearSlide = new MoveLinearSlide(linearSlideSub, toolOp::getRightY, telemetry);
+
+        register(linearSlideSub);
+        linearSlideSub.setDefaultCommand(moveLinearSlide);
+
+
+        // Arm
+        armSub = new ArmSub(hardwareMap, telemetry);
+        moveArm = new MoveArm(armSub, toolOp::getRightY, telemetry);
+        armLow = new ArmLow(armSub, telemetry);
+        armMed = new ArmMed(armSub, telemetry);
+        armLowGoal = new ArmLowGoal(armSub, telemetry);
+        armHighGoal = new ArmHighGoal(armSub, telemetry);
+
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armLow);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armMed);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(armLowGoal);
+        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(armHighGoal);
+
+        register(armSub);
+        armSub.setDefaultCommand(moveArm);
+
+
+
+        // SERVO SYSTEMS
         // Intake
         intake = new IntakeSub(hardwareMap, telemetry);
         intakeIn = new IntakeCmd(intake, 1);
