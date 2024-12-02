@@ -65,6 +65,7 @@ public class OuttakeSlideAction {
         }
         moveLSAction = new MoveLSAction(this.outtake, target);
         moveLSAction.updateCheckDone();
+
     }
 
     public void updateCheckDone() {
