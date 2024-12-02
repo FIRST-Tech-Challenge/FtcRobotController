@@ -40,7 +40,7 @@ public class MoveLSAction extends Action {
         double lowestPower = 0.15;
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.35;
+            lowestPower = 0.3;
         }
 
         if (Math.abs(power) < lowestPower) {
