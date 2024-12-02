@@ -4,6 +4,8 @@ import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.intake.IntakeReadyAction;
+import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
@@ -48,6 +50,10 @@ public class MechanismTestAuto extends LinearOpMode {
         moveLSAction2.setDependantActions(waitAction);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
+
+        IntakeReadyAction intakeReadyAction = new IntakeReadyAction();
+        //BasketReadyAction basketReadyAction = new BasketReadyAction();
+        //TODO yaaa w w w
 
         while (opModeInInit()) {
             if (gamepad1.a) {
