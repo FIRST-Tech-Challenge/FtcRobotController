@@ -55,6 +55,10 @@ public class OuttakeSlideAction {
         setPower(0);
     }
 
+    public void idle() {
+        setPower(0.1);
+    }
+
     public void reverse() {
         setPower(-1);
     }
