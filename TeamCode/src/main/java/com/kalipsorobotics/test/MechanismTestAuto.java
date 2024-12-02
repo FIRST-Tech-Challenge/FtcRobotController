@@ -27,7 +27,7 @@ public class MechanismTestAuto extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveLSAction maintenanceLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainPos);
+        MoveLSAction maintenanceLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainTicks);
 
         KServoAutoAction outtakePivotActionIn = new KServoAutoAction(outtake.getOuttakePivotServo(),
                 OuttakePivotAction.OUTTAKE_PIVOT_OUT_POS);

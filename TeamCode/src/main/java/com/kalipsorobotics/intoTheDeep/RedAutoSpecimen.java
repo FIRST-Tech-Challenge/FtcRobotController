@@ -10,7 +10,6 @@ import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -34,7 +33,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
 
-        MoveLSAction maintainLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainPos);
+        MoveLSAction maintainLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intake, outtake);
@@ -42,7 +41,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
 
         //================begin of first specimen====================
-        WaitAction waitAtStart = new WaitAction(500);
+        WaitAction waitAtStart = new WaitAction(300);
         waitAtStart.setName("waitAtStart");
         redAutoSpecimen.addAction(waitAtStart);
 
@@ -62,10 +61,15 @@ public class RedAutoSpecimen extends LinearOpMode {
         lowerSlidesHalf1.setDependantActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(lowerSlidesHalf1);
 
+        WaitAction waitAfterHang = new WaitAction(500);
+        waitAfterHang.setName("waitAfterHang");
+        waitAfterHang.setDependantActions(lowerSlidesHalf1);
+        redAutoSpecimen.addAction(waitAfterHang);
+
         KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClawServo(),
                 OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw.setName("openClaw");
-        openClaw.setDependantActions(lowerSlidesHalf1);
+        openClaw.setDependantActions(waitAfterHang);
         redAutoSpecimen.addAction(openClaw);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
@@ -80,7 +84,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         //================beginning of push================
         PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry);
         moveFloorSamples.setName("moveFloorSamples");
-        moveFloorSamples.setDependantActions(lowerSlidesHalf1);
+        moveFloorSamples.setDependantActions(waitAfterHang);
         //first sample to depot
         moveFloorSamples.addPoint( -620, -475, -90);
         moveFloorSamples.addPoint(-1330, -500, -180);

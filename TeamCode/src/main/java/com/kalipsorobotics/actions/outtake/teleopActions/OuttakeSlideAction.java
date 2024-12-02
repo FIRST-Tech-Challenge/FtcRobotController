@@ -1,10 +1,8 @@
 package com.kalipsorobotics.actions.outtake.teleopActions;
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
-import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -61,18 +59,6 @@ public class OuttakeSlideAction {
         setPower(-1);
     }
 
-    public void idle() {
-        if (moveLSAction == null) {
-            setPower(0);
-            return;
-        }
-        if (Math.abs(moveLSAction.getCurrentTicks()) < CalculateTickPer.mmToTicksLS(3)) {
-            setPower(0);
-        } else {
-            setPower(0.15);
-        }
-    }
-
     public void moveToPosition(int target) {
         if (moveLSAction != null && !moveLSAction.checkDoneCondition()) {
             return;
@@ -84,6 +70,7 @@ public class OuttakeSlideAction {
     public void updateCheckDone() {
         moveLSAction.updateCheckDone();
     }
+
 
     public void up(double distance) {
         if (getPosition() < distance) {

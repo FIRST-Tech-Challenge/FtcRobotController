@@ -40,6 +40,11 @@ public class OuttakePivotAction {
         isIn = false;
     }
 
+    public void moveWall() {
+        setPosition(OUTTAKE_PIVOT_WALL_POS);
+        isIn = false;
+    }
+
     public void togglePosition() {
         if (!isIn) {
             moveIn();

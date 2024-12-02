@@ -1,5 +1,8 @@
 package com.kalipsorobotics.actions.outtake;
 
+import static com.kalipsorobotics.math.CalculateTickPer.MAX_RANGE_LS_TICKS;
+import static com.kalipsorobotics.math.CalculateTickPer.MIN_RANGE_LS_TICKS;
+
 import android.util.Log;
 
 import com.kalipsorobotics.actions.Action;
@@ -18,7 +21,7 @@ public class MoveLSAction extends Action {
 
     Outtake outtake;
 
-    public static double globalLinearSlideMaintainPos;
+    public static double globalLinearSlideMaintainTicks;
     DcMotor linearSlide1, linearSlide2;
     final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(10);
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
@@ -51,19 +54,28 @@ public class MoveLSAction extends Action {
     public void update() {
 
         if(!hasStarted) {
-            globalLinearSlideMaintainPos = targetTicks;
-            Log.d("Outtake_LS", "set global to" + globalLinearSlideMaintainPos);
+            setGlobalLinearSlideMaintainTicks(targetTicks);
+            Log.d("Outtake_LS", "set global to" + globalLinearSlideMaintainTicks);
             hasStarted = true;
         }
 
         double currentTargetTicks;
         this.currentTicks = linearSlide1.getCurrentPosition();
 
+
         if (isDone) {
-            currentTargetTicks = globalLinearSlideMaintainPos;
-            Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainPos);
+            currentTargetTicks = globalLinearSlideMaintainTicks;
+            Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
         } else {
             currentTargetTicks = this.targetTicks;
+        }
+
+
+        //soft stop for low and high
+        if (currentTargetTicks > MAX_RANGE_LS_TICKS) {
+            currentTargetTicks = MAX_RANGE_LS_TICKS;
+        } else if (currentTargetTicks < MIN_RANGE_LS_TICKS) {
+            currentTargetTicks = MIN_RANGE_LS_TICKS;
         }
 
         double targetErrorTicks = currentTargetTicks - currentTicks;
@@ -80,7 +92,7 @@ public class MoveLSAction extends Action {
         }
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0.15;
-            if (globalLinearSlideMaintainPos == 0) {
+            if (globalLinearSlideMaintainTicks == 0) {
                 power = 0;
             }
         }
@@ -94,6 +106,16 @@ public class MoveLSAction extends Action {
         linearSlide2.setPower(power);
     }
 
+    static public void setGlobalLinearSlideMaintainTicks(double pos) {
+        if (pos < MIN_RANGE_LS_TICKS) {
+            globalLinearSlideMaintainTicks = MIN_RANGE_LS_TICKS;
+        } else if (pos > MAX_RANGE_LS_TICKS) {
+            globalLinearSlideMaintainTicks = MAX_RANGE_LS_TICKS;
+        } else {
+            globalLinearSlideMaintainTicks = pos;
+        }
+    }
+    
     public double getCurrentTicks() {
         return currentTicks;
     }

@@ -92,11 +92,9 @@ public class ColorDetector {
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
             revLED.turnoff();
-            SystemClock.sleep(1000);
         } else if (!takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
                 (isRed) && detectBlue()) {
             intakeNoodleAction.reverse();
-            SystemClock.sleep(1000);
             revLED.turnoff();
         } else {
             intakeNoodleAction.run();
