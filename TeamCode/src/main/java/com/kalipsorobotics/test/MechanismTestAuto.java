@@ -53,7 +53,6 @@ public class MechanismTestAuto extends LinearOpMode {
 
         IntakeReadyAction intakeReadyAction = new IntakeReadyAction();
         //BasketReadyAction basketReadyAction = new BasketReadyAction();
-        //TODO yaaa w w w
 
         while (opModeInInit()) {
             if (gamepad1.a) {
