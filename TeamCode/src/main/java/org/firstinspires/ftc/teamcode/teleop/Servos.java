@@ -48,26 +48,31 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="jhknkm", group="Robot")
+@TeleOp(name="all da servos", group="Linear OpMode")
 //@Disabled
-public class servo extends LinearOpMode {
+public class Servos extends LinearOpMode {
 
     /* Declare OpMode members. */
-    public Servo    leftClaw    = null;
-    public Servo    rightClaw   = null;
+    public Servo    intakeClaw    = null;
+    public Servo    clawPivot   = null;
+    public Servo    wrist   = null;
+    public Servo    intakeElbow = null;
 
-    double clawOffset = 0;
+    public Servo    outtakeClaw = null;
+    public Servo    outtakeElbow = null;
+
+    public Servo    slide1 = null;
+    public Servo    slide2 = null;
 
     public static final double MID_SERVO   =  0.5 ;
 
 
     @Override
     public void runOpMode() {
-        double left;
-        double right;
-        double drive;
-        double turn;
-        double max;
+        double intakeClawPos;
+        double clawPivotPos;
+        double wristPos;
+        double intakeElbowPos;
 
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -75,11 +80,19 @@ public class servo extends LinearOpMode {
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        leftClaw  = hardwareMap.get(Servo.class, "2");
-        rightClaw = hardwareMap.get(Servo.class, "3");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);
-        //
+        intakeClaw  = hardwareMap.get(Servo.class, "0");
+        clawPivot = hardwareMap.get(Servo.class, "1");
+        wrist  = hardwareMap.get(Servo.class, "2");
+        intakeElbow = hardwareMap.get(Servo.class, "3");
+
+        clawPivot.setPosition(MID_SERVO);
+        clawPivot.setPosition(MID_SERVO);
+        wrist.setPosition(MID_SERVO);
+        intakeElbow.setPosition(MID_SERVO);
+
+        slide1.setPosition(1);
+        slide2.setPosition(0);
+
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
@@ -91,24 +104,19 @@ public class servo extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-             double w = -gamepad1.left_stick_y;
-             double e  =  gamepad1.right_stick_y;
+             double a = -gamepad1.left_stick_y;
+             double b  =  gamepad1.right_stick_y;
 
-
-            // Move both servos to new position.  Assume servos are mirror image of each other.
-            clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-            leftClaw.setPosition(MID_SERVO + w);
-            rightClaw.setPosition(MID_SERVO - e);
 
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-            telemetry.addData("left",  "%.2f", leftClaw.getPosition());
-            telemetry.addData("right", "%.2f", rightClaw.getPosition());
+            telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
+            telemetry.addData("Intake yaw",  "%.2f", wrist);
+            telemetry.addData("Intake big rotate",  "%.2f", intakeElbow.getPosition());
+            telemetry.addData("outtake Claw",  "%.2f", outtakeClaw.getPosition());
+            telemetry.addData("outtake rotate",  "%.2f", outtakeElbow.getPosition());
             telemetry.update();
 
-            // Pace this loop so jaw action is reasonable speed.
-            sleep(50);
         }
     }
 }

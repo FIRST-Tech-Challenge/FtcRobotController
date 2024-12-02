@@ -24,7 +24,7 @@ public class testServos extends LinearOpMode {
     public void runOpMode() {
         double left;
         double right;
-        double turn;
+
 
         // Define and initialize ALL installed servos.
         servo1  = hardwareMap.get(Servo.class, "2");
@@ -39,13 +39,13 @@ public class testServos extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            left = -gamepad1.left_stick_y + 0.5;
-            right = gamepad1.right_stick_y + 0.5;
+            left = gamepad1.left_stick_y;
+            right = gamepad1.right_stick_y;
             servo1.setPosition(left);
             servo2.setPosition(right);
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw",  "Offset = %.2f", clawOffset);
+            telemetry.addData("claw", "%2f,", left);
             telemetry.addData("left",  "%.2f", servo1.getPosition());
             telemetry.addData("right", "%.2f", servo2.getPosition());
 
