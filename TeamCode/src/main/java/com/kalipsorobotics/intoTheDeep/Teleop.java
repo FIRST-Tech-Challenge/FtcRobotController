@@ -253,7 +253,10 @@ public class Teleop extends LinearOpMode {
         ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
         SpecimenHangReady specimenHangReady = null;
         SpecimenWallReady specimenWallReady = null;
-        MoveLSAction maintainGlobalPos = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainTicks);
+        // Targer should always be 0
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveLSAction maintainGlobalPos = new MoveLSAction(outtake, 0);
+//        MoveLSAction.globalLinearSlideMaintainTicks);
 
 
         boolean prevGamePadY = false;
@@ -298,8 +301,7 @@ public class Teleop extends LinearOpMode {
 
             //outtake manual LS
             if (gamepad2.left_stick_y != 0) {
-                MoveLSAction.setGlobalLinearSlideMaintainTicks(MoveLSAction.globalLinearSlideMaintainTicks +
-                        CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
+                MoveLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
             }
 
 

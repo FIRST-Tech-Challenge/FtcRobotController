@@ -32,8 +32,10 @@ public class RedAutoSpecimen extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-
-        MoveLSAction maintainLS = new MoveLSAction(outtake, MoveLSAction.globalLinearSlideMaintainTicks);
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
+        // Target can always be 0 because Hung said so
+        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
+//                MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intake, outtake);

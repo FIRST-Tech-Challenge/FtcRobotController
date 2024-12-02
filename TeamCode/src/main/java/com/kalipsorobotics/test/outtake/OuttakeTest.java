@@ -41,7 +41,7 @@ public class OuttakeTest extends LinearOpMode {
             } else if (-gamepad1.right_stick_y < -0.1) {
                 outtakeSlideAction.setPower(-gamepad1.right_stick_y);
             } else {
-                outtakeSlideAction.idle();
+                //outtakeSlideAction.idle();
             }
 
             if (gamepad1.y) {

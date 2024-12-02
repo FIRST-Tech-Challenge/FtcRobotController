@@ -124,7 +124,7 @@ public class ScrimmageTeleop extends LinearOpMode {
             if (gamepad2.right_stick_y != 0) {
                 outtakeSlideAction.setPower(-gamepad2.right_stick_y);
             } else if ((specimenWallReady == null || specimenWallReady.checkDoneCondition()) && (specimenHangReady == null || specimenHangReady.checkDoneCondition())) {
-                outtakeSlideAction.idle();
+
             }
 
             //outtake claw

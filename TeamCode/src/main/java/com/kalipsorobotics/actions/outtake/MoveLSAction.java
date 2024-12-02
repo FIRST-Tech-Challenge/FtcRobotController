@@ -21,9 +21,9 @@ public class MoveLSAction extends Action {
 
     Outtake outtake;
 
-    public static double globalLinearSlideMaintainTicks;
+    private static double globalLinearSlideMaintainTicks = 0;
     DcMotor linearSlide1, linearSlide2;
-    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(10);
+    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
     final double targetTicks;
     private double currentTicks;
@@ -37,7 +37,12 @@ public class MoveLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.4;
+        double lowestPower = 0.15;
+
+        if (globalLinearSlideMaintainTicks > 1800) {
+            lowestPower = 0.35;
+        }
+
         if (Math.abs(power) < lowestPower) {
             power = power * (lowestPower / Math.abs(power));
         }
@@ -91,22 +96,23 @@ public class MoveLSAction extends Action {
             isDone = true;
         }
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
-            power = 0.15;
-            if (globalLinearSlideMaintainTicks == 0) {
+            power = 0;
+            if (globalLinearSlideMaintainTicks < 0) {
                 power = 0;
             }
         }
         Log.d("Outtake_LS", String.format(
-                "Setting power, targetErrorTicks=%.3f, errorTolerance=%.3f, targetTicks=%.3f" +
+                "Setting power, targetErrorTicks=%.3f, errorTolerance=%.3f, currentTargetTicks=%.3f" +
                         "currentTicks=%.3f, " +
                         "power=%.3f",
-                targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+                targetErrorTicks, ERROR_TOLERANCE_TICKS, currentTargetTicks,
                 currentTicks, power));
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
     }
 
     static public void setGlobalLinearSlideMaintainTicks(double pos) {
+        Log.d("Outtake_LS setGlobalLinearSlideMaintainTicks", "setGlobal " + pos);
         if (pos < MIN_RANGE_LS_TICKS) {
             globalLinearSlideMaintainTicks = MIN_RANGE_LS_TICKS;
         } else if (pos > MAX_RANGE_LS_TICKS) {
@@ -115,7 +121,10 @@ public class MoveLSAction extends Action {
             globalLinearSlideMaintainTicks = pos;
         }
     }
-    
+
+    static public void incrementGlobal(double incrementTicks) {
+        setGlobalLinearSlideMaintainTicks(globalLinearSlideMaintainTicks + incrementTicks);
+    }
     public double getCurrentTicks() {
         return currentTicks;
     }

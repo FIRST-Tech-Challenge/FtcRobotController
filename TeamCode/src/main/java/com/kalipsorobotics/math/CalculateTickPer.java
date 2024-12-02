@@ -7,7 +7,7 @@ public class CalculateTickPer {
     static double lsCircumfMm = 36 * Math.PI;
     static double odoCircumfMm = 48 * Math.PI;
 
-    static final public double MAX_RANGE_LS_TICKS = 1900;
+    static final public double MAX_RANGE_LS_TICKS = 2050;
     static final public double MIN_RANGE_LS_TICKS = -30;
 
 
