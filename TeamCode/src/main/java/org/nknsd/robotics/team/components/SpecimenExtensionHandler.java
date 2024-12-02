@@ -11,7 +11,7 @@ import org.nknsd.robotics.framework.NKNComponent;
 import java.util.concurrent.TimeUnit;
 
 public class SpecimenExtensionHandler implements NKNComponent {
-    private final String extenderName = "motorArmExtend";
+    private final String extenderName = "motorSpecimenExtend";
     private final boolean doInvertMotor = true;
     private final double motorPower = 1;
     private DcMotor motor;          // extender motor
@@ -26,8 +26,8 @@ public class SpecimenExtensionHandler implements NKNComponent {
 
     public enum SpecimenExtensionPositions {
         RESTING(0),
-        SPECIMEN_READY(1200),
-        SPECIMEN_CLIP(1300);
+        SPECIMEN_READY(1950),
+        SPECIMEN_CLIP(2300);
 
         final int position;
 

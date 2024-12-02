@@ -2,16 +2,13 @@ package org.nknsd.robotics.team.programs;
 
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.framework.NKNProgram;
-import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
-import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
-import org.nknsd.robotics.team.components.PotentiometerHandler;
-import org.nknsd.robotics.team.components.RotationHandler;
+import org.nknsd.robotics.team.components.SpecimenClawHandler;
 import org.nknsd.robotics.team.components.SpecimenExtensionHandler;
+import org.nknsd.robotics.team.components.SpecimenRotationHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.AdvancedWheelDriver;
-import org.nknsd.robotics.team.components.drivers.EACDriver;
 import org.nknsd.robotics.team.components.drivers.SpecimenDriver;
 
 import java.util.List;
@@ -26,8 +23,15 @@ public class SpecimenTestProgram extends NKNProgram {
         WheelHandler wheelHandler = new WheelHandler();
         components.add(wheelHandler);
 
+        // Specimen Handlers
         SpecimenExtensionHandler specimenExtensionHandler = new SpecimenExtensionHandler();
         components.add(specimenExtensionHandler);
+
+        SpecimenRotationHandler specimenRotationHandler = new SpecimenRotationHandler();
+        components.add(specimenRotationHandler);
+
+        SpecimenClawHandler specimenClawHandler = new SpecimenClawHandler();
+        components.add(specimenClawHandler);
 
         // Sensors
         IMUComponent imuComponent = new IMUComponent();
@@ -42,8 +46,10 @@ public class SpecimenTestProgram extends NKNProgram {
         components.add(specimenDriver);
         telemetryEnabled.add(specimenDriver);
 
+
+
         // Link the components to each other
         wheelDriver.link(gamePadHandler, wheelHandler, imuComponent);
-        specimenDriver.link(specimenExtensionHandler);
+        specimenDriver.link(specimenExtensionHandler, specimenRotationHandler, specimenClawHandler, gamePadHandler);
     }
 }
