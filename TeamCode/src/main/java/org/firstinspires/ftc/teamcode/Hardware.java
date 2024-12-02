@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
 import org.firstinspires.ftc.teamcode.mmooover.TriOdoProvider;
+
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -20,8 +21,18 @@ import dev.aether.collaborative_multitasking.SharedResource;
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static class Locks {
+        /// The four drive motors: frontLeft, frontRight, backLeft, and backRight.
         public static final SharedResource DriveMotors = new SharedResource("DriveMotors");
+
+        /// The vertical slide.
+        ///
+        /// It usually makes sense to have one task 'own' this the entire time
+        /// and provide its own APIs and lock.
         public static final SharedResource VerticalSlide = new SharedResource("VerticalSlide");
+
+        /// The components that make up the main arm assembly:
+        /// * the `arm` motor
+        /// * the `wrist`, `twist`, and `claw` servos
         public static final SharedResource ArmAssembly = new SharedResource("ArmAssembly");
     }
 
@@ -93,7 +104,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
 
     @Override
-    public Encoder getLeftEncoder() { return encoderLeft; }
+    public Encoder getLeftEncoder() {
+        return encoderLeft;
+    }
 
     @Override
     public Encoder getRightEncoder() {

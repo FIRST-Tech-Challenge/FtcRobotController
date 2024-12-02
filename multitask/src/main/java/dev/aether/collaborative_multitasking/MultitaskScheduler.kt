@@ -277,6 +277,21 @@ class MultitaskScheduler
         return locks[resource.id] != null
     }
 
+    override fun manualAcquire(resource: SharedResource): Boolean {
+        if (locks[resource.id] != null) return false
+        locks[resource.id] = -1
+        return true
+    }
+
+    override fun manualRelease(resource: SharedResource) {
+        if (locks[resource.id] != -1) {
+            if (throwDebuggingErrors) throw IllegalStateException("Cannot manually release: lock not held by [-1], or was already released")
+            else println("ERROR [suppressed]: Cannot manually release: lock not held by [-1], or was already released")
+            return
+        }
+        locks[resource.id] = null
+    }
+
     override fun panic() {
         for (task in tasks.values) {
             if (task.state == State.Finished || task.state == State.NotStarted || task.state == State.Cancelled) continue
