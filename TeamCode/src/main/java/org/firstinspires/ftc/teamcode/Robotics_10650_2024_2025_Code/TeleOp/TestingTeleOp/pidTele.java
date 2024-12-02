@@ -35,25 +35,25 @@ public class pidTele extends LinearOpMode {
 
     public void controllerInput() {
         if ((Math.abs(gamepad2.right_stick_y)>0.2)
-                &&(liftExtenderPosition<=2780)
+                &&(liftExtenderPosition<=5000)
                 &&(liftExtenderPosition>=0)
                 ||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)
-                ||(robot.liftExtender.getCurrentPosition()>2780&&gamepad2.right_stick_y>0)) {
+                ||(robot.liftExtender.getCurrentPosition()>5000&&gamepad2.right_stick_y>0)) {
 
             liftExtenderPosition = liftExtenderPosition - (int)(30*gamepad2.right_stick_y);
             if(liftExtenderPosition < 0)
                 liftExtenderPosition = 0;
-            if(liftExtenderPosition > 2780)
-                liftExtenderPosition = 2780;
+            if(liftExtenderPosition > 5000)
+                liftExtenderPosition = 5000;
         }
         //Determines if the liftExtender should go up or down based on the controller inputs
         if (liftExtenderPosition<=5&&robot.liftExtender.getCurrentPosition()<=5) {
             robot.liftExtender.setVelocity(0);
         }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
             if (robot.liftExtender.getCurrentPosition() < liftExtenderPosition) {
-                robot.liftExtender.setVelocity(1500);
+                robot.liftExtender.setVelocity(2000); //was 1500
             } else if (robot.liftExtender.getCurrentPosition() >= liftExtenderPosition) {
-                robot.liftExtender.setVelocity(-1500);
+                robot.liftExtender.setVelocity(-2000); //was -1500
             }
             //If no input, make sure the liftExtender motor does not move
         }else {
