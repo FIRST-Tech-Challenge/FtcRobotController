@@ -479,13 +479,13 @@ public class ExperimentalTeleOp_RobotCentric extends LinearOpMode {
             }
 
             if (gamepad1.dpad_left) {
-                robot.hangR.setPosition(robot.hangR.getPosition()+0.002);
+                robot.parkingServo.setPosition(robot.parkingServo.getPosition()+0.002);
 
 //                robot.hangR.setPosition(0.9611);
 //                robot.hangL.setPosition(0.0439);
             }
             if (gamepad1.dpad_right) {
-                robot.hangR.setPosition(robot.hangR.getPosition()-0.002);
+                robot.parkingServo.setPosition(robot.parkingServo.getPosition()-0.002);
 
 //                robot.hangR.setPosition(0.9611);
 //                robot.hangL.setPosition(0.0439);

@@ -8,7 +8,6 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -34,8 +33,7 @@ public class RobotInitialize {
     // Create servo variables
     CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
-    Servo hangR;
-    Servo hangL;
+    Servo parkingServo;
 
     Servo pitch;
     Servo clawRoll;
@@ -145,9 +143,9 @@ public class RobotInitialize {
             // Hang on submersible servos
 
 
-        hangR = opMode.hardwareMap.get(Servo.class, "hang r");
+        parkingServo = opMode.hardwareMap.get(Servo.class, "hang r");
         //hangR.setDirection(Servo.Direction.REVERSE);
-        hangR.setPosition(1);
+        parkingServo.setPosition(1);
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");

@@ -5,7 +5,6 @@
 package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 
 // Import all of the necessary FTC libraries and code
-import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -93,7 +92,7 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         robot.newTurnFunction(-180);
         robot.goStraight(660, 500);
         //goal = 0.946
-        robot.hangR.setPosition(0.946);
+        robot.parkingServo.setPosition(0.946);
         sleep(1000);
 
 

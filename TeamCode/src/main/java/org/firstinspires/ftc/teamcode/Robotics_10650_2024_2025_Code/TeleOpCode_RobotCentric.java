@@ -34,6 +34,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         //edit this to be valid for the dual mode servo
         //initial position
         robot.clawRoll.setPosition(0.1606);
+        robot.parkingServo.setPosition(1);
 
         //robot.intake.setPower(0);
 
@@ -59,6 +60,12 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         // Gamepad1 configuration
         {
             int speed = 2700;
+
+            if (gamepad1.right_bumper){
+                robot.parkingServo.setPosition(0.946); //Where it can touch the bar
+            } else {
+                robot.parkingServo.setPosition(1); //all the way down
+            }
 
             if (gamepad1.circle){
                 speed = 270;
@@ -448,19 +455,18 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }
 
             if (gamepad1.dpad_left) {
-                robot.hangR.setPosition(robot.hangR.getPosition()+0.002);
+                robot.parkingServo.setPosition(robot.parkingServo.getPosition()+0.002);
 
 //                robot.hangR.setPosition(0.9611);
 //                robot.hangL.setPosition(0.0439);
             }
             if (gamepad1.dpad_right) {
-                robot.hangR.setPosition(robot.hangR.getPosition()-0.002);
+                robot.parkingServo.setPosition(robot.parkingServo.getPosition()-0.002);
 
 //                robot.hangR.setPosition(0.9611);
 //                robot.hangL.setPosition(0.0439);
             }
-            telemetry.addData("hang r pos", robot.hangR.getPosition());
-            telemetry.addData("hang l pos", robot.hangL.getPosition());
+            telemetry.addData("hang r pos", robot.parkingServo.getPosition());
 
             if (gamepad2.circle) {
 //                robot.liftPitch(726, 0.2);
