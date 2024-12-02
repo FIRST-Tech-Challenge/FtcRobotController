@@ -362,7 +362,7 @@ public class LeftAuto extends LinearOpMode {
     public static final double VERTICAL_SLIDE_SPEED = 0.75;
     public static final int HIGH_BASKET_TICKS = 2180;
     public static final int PICK_UP_TICKS = 224;
-    public static final int PICK_UP_TICKS_2 = 60;
+    public static final int PICK_UP_TICKS_2 = 75;
     public static final int PICK_UP_TICKS_3 = 200;
     public static final int ARM_BASKET_TICKS = 222;
     public static final int ARM_PICK_UP_TICKS = 67;
