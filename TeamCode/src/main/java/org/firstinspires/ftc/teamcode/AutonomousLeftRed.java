@@ -184,16 +184,20 @@ public class AutonomousLeftRed extends AutonomousBase {
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-            driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+            pos_y=3.0; pos_x=0.0; pos_angle=0.0; // start at this absolute location
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
-            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
+            pos_y += 3.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
-            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
+            pos_y += 3.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // small shift right in preparation for 45deg rotation (minimize shift toward alliance partner)
-            driveToPosition( 9.0, 3.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
+            pos_x += 3.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
                 if( !opModeIsActive() ) break;
@@ -205,7 +209,8 @@ public class AutonomousLeftRed extends AutonomousBase {
         } // opModeIsActive
 
         if( opModeIsActive() ) {
-            driveToPosition( 32.0, 6.5, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+            pos_y += 23.0;  pos_x += 3.5; pos_angle = 45.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
             robot.driveTrainMotorsZero();
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_AUTO1);
             do {

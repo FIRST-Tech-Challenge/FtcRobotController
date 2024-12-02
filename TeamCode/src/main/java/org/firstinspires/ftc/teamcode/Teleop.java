@@ -654,7 +654,10 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {   // Extend lift to the specimen-scoring hook-above-the-bar height
-//           robot.startViperSlideExtension( robot.VIPER_EXTEND_HOOK );
+            robot.startViperSlideExtension( robot.VIPER_EXTEND_AUTO1 );
+            // Position for scoring a specimen on the submersible bar
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
@@ -750,13 +753,6 @@ public abstract class Teleop extends LinearOpMode {
             }
             geckoServoEjecting = false;           // (we can't be doing this)
         } // r_bumper
-
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
-        else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
-        {   // Position for scoring a specimen on the submersible bar
- //           robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
- //           robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
-        }
 
     }  // processCollectorControls
 

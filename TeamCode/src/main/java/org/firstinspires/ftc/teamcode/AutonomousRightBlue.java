@@ -166,7 +166,7 @@ public class AutonomousRightBlue extends AutonomousBase {
 
 
         if( !onlyPark && (spikeSamples > 0) ) {
-            herdSample(spikeSamples);
+            herdSamples(spikeSamples);
         }
 /*
         // Score starting specimen
@@ -194,16 +194,20 @@ public class AutonomousRightBlue extends AutonomousBase {
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-            driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
+            pos_y=3.0; pos_x=0.0; pos_angle=0.0; // start at this absolute location
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_50, TURN_SPEED_20, DRIVE_THRU );
             autoTiltMotorMoveToTarget( robot.TILT_ANGLE_AUTO1);
-            driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
+            pos_y += 3.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
-            driveToPosition( 9.0, 0.0, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
+            pos_y += 3.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_THRU );
             robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(robot.WRIST_SERVO_BAR2);
             // approach submersible away from alliance partner
-            driveToPosition( 20.0, -2.2, 0.0, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
+            pos_y += 11.0;  pos_x -= 2.2;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();
             do {
                 if( !opModeIsActive() ) break;
@@ -215,7 +219,8 @@ public class AutonomousRightBlue extends AutonomousBase {
         } // opModeIsActive
 
         if( opModeIsActive() ) {
-            driveToPosition( 32.0, -2.2, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+            pos_y += 12.0;  pos_angle = 45.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
             robot.driveTrainMotorsZero();
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_AUTO1);
             do {
@@ -284,12 +289,13 @@ public class AutonomousRightBlue extends AutonomousBase {
                 performEveryLoop();
             } while( autoTiltMotorMoving() );
             // Back up from submersible
-            driveToPosition( 30.0, 14.0, 45.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+            pos_y -= 2.0;  pos_x += 16.2;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
         } // opModeIsActive
 
     } // scoreSpecimenPreload
 
-    private void herdSample(int samplesToHerd) {
+    private void herdSamples(int samplesToHerd) {
         // Do we herd the first specimen?
         if( opModeIsActive() && (samplesToHerd > 0) ) {
             pos_y=30.0; pos_x=20.0; pos_angle=0.0; // start at this absolute location
@@ -347,9 +353,9 @@ public class AutonomousRightBlue extends AutonomousBase {
 */
 
     private void parkInObservation() {
-        if (spikeSamples < 1) {
+        if( (spikeSamples < 1) && opModeIsActive() ) {
             // Rotate 90deg to face wall (protect collector from alliance partner damage)
-            driveToPosition(12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_TO);
+            driveToPosition(12.0, 14.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_50, DRIVE_THRU);
             // Park in far corner of observation zone
             driveToPosition(6.0, 32.0, -91.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO);
         }
