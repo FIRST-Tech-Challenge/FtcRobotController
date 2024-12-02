@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.JackBurr.Servos;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class DifferentialArmTest extends OpMode {
     public Servo grippers;
     public Servo left_servo;
-    public Servo left_servo_encoder;
+    public AnalogInput left_servo_encoder;
     public Servo right_servo;
     public ElapsedTime timer = new ElapsedTime();
 
@@ -18,7 +19,7 @@ public class DifferentialArmTest extends OpMode {
         grippers = hardwareMap.get(Servo.class, "grippers");
         left_servo = hardwareMap.get(Servo.class, "left_diff");
         right_servo = hardwareMap.get(Servo.class, "right_diff");
-        left_servo_encoder = hardwareMap.get(Servo.class,"left_servo_encoder");
+        left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
         left_servo.setPosition(0);
         right_servo.setPosition(0);
     }
@@ -56,6 +57,6 @@ public class DifferentialArmTest extends OpMode {
         }
         telemetry.addData("Left Servo:", left_servo.getPosition());
         telemetry.addData("Right Servo:", right_servo.getPosition());
-        telemetry.addData("Encoder: ", left_servo_encoder.getPosition());
+        telemetry.addData("Encoder: ", String.valueOf(left_servo_encoder.getVoltage() / 3.3 * 360) + "°");
     }
 }
