@@ -53,8 +53,8 @@ public class RobotHardwareInitializer {
     }
 
     public enum ServoComponent implements Component<Servo> {
-        FINGER_1("finger1"),
-        FINGER_2("finger2"),
+        FINGER_1("finger1"), // left finger
+        FINGER_2("finger2"), // right finger
         BUCKET_DUMPER("bucket"), // Used to dump the bucket and return to the collecting position
         INTAKE_TILTER("intake_servo"), // Used to tilt the intake system toward the bucket at to the ground
         ;

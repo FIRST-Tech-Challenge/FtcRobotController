@@ -71,6 +71,7 @@ public class DriveCommandOpMode extends CommandOpMode {
             driveSubsystem.setDefaultCommand(driveCommand);
         } catch (Exception e) {
             e.printStackTrace();
+            requestOpModeStop();
             return;
         }
 
@@ -85,8 +86,8 @@ public class DriveCommandOpMode extends CommandOpMode {
             // NOT NEEDED IN GAME! This is for debug purposes only and personal testing
             armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         try {
@@ -104,8 +105,8 @@ public class DriveCommandOpMode extends CommandOpMode {
                     .whenPressed(downCommand)
                     .whenReleased(idleCommand);*/
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         try {
@@ -115,8 +116,8 @@ public class DriveCommandOpMode extends CommandOpMode {
             // R3
             armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new DumpBucketCommand(bucketSubsystem));
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         try {
@@ -128,8 +129,8 @@ public class DriveCommandOpMode extends CommandOpMode {
             armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD)).whenReleased(noMovementCommand);
             armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD)).whenReleased(noMovementCommand);
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         try {
@@ -141,8 +142,8 @@ public class DriveCommandOpMode extends CommandOpMode {
                     .toggleWhenPressed(new TiltIntakeCommand(intakeSubsystem, true), new TiltIntakeCommand(intakeSubsystem, false));
             armerController.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(new ToggleIntakeCommand(intakeSubsystem));
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
+            //e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         dbp.info("Subsystems registered.");
@@ -162,7 +163,9 @@ public class DriveCommandOpMode extends CommandOpMode {
     public void reset() {
         super.reset();
         // Reset the finger back to the original position
-        pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.ZERO);
+        if (pincherSubsystem != null) {
+            pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.ZERO);
+        }
     }
 
     private void initializeDriveSuppliers() {
