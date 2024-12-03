@@ -11,26 +11,29 @@ public class Jarlsbergian_Teleop extends OpMode {
 
     JarlsCHasse drivetrain;
     Odometry_Info odo;
-    Telemetry.Line rotation;
-
+    CheetoFingers arm;
 
     @Override
     public void init() {
         drivetrain = new JarlsCHasse(hardwareMap);
         odo = new Odometry_Info(hardwareMap);
+        arm = new CheetoFingers(hardwareMap);
         odo.resetEncoders();
     }
 
     @Override
     public void loop() {
-
+        drivetrain.GamepadInputs(odo.cur0, gamepad1);
+        arm.gamepadInputsArm(gamepad1);
         odo.updateCurPos();
-        drivetrain.GamepadInputs( odo.cur0, gamepad1);
 
-        telemetry.addData("Rotation", odo.cur0);
-        telemetry.addData("odoLeft", odo.Cn1);
-        telemetry.addData("odoRight", odo.Cn2);
+        telemetry.addData("Rotation", Math.toDegrees(odo.cur0));
+        telemetry.addData("X Value", odo.Xc);
+        telemetry.addData("Y Value", odo.Xp);
         telemetry.addData("odoback", odo.Cn3);
+
+        telemetry.addData("Right Finger", arm.FINGER_RS.getPosition());
+        telemetry.addData("Left Finger", arm.FINGER_LS.getPosition());
 
 
     }

@@ -13,8 +13,8 @@ public class Odometry_Info {
     /*static variables for odometry sensor stats*/
     static double odoTPM = 2000.0;
     static double C = 2*Math.PI*16;
-    static double L = 19.05;
-    static double B = 146.0;
+    static double L = 190.504;
+    static double B = 42.382;
 
     /* Variables to notate the current positions of the robot*/
     double Xc = 0.0;
@@ -39,6 +39,9 @@ public class Odometry_Info {
         odoRight = hwMap.get(DcMotorEx.class, "Odometry_Pod_Right");
         odoLeft = hwMap.get(DcMotorEx.class, "Odometry_Pod_Left");
         odoBack = hwMap.get(DcMotorEx.class, "Odometry_Pod_Back");
+
+        odoRight.setDirection(DcMotorEx.Direction.REVERSE);
+        odoLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     /* this function should be placed in the loop section*/
@@ -50,12 +53,14 @@ public class Odometry_Info {
 
         Xc = ((Cn1+Cn2)/2);
         Theta0 = cur0;
-        cur0 = ((Cn2-Cn1)/L)*6;
+        cur0 = ((Cn1-Cn2)/L);
         Xp = (Cn3 - (B*cur0));
 
         curX = (Xc*Math.cos(Theta0) - Xp*Math.sin(Theta0));
         curY = (Xc*Math.sin(Theta0) + Xp*Math.cos(Theta0));
     }
+
+    /* Tool Functions */
 
     public void setTargetPos(double x, double y, double O){
         tarX = x;
@@ -65,10 +70,10 @@ public class Odometry_Info {
 
     public boolean curPosIsTarPos() {
         if (curX != tarX && curY != tarY && cur0 != tar0) {
-            return true;
+            return false;
         }
         else{
-            return false;
+            return true;
         }
     }
 

@@ -17,10 +17,10 @@ public class JarlsCHasse {
     double Ymov = 0.0;
     double rXmov = 0.0;
 
+    double x;
+    double y;
+
     double max;
-
-    public static final double LENGTH = 0.0;
-
 
     JarlsCHasse(HardwareMap hwMap){
         RMFront = hwMap.get(DcMotorEx.class, "rightFront");
@@ -37,7 +37,7 @@ public class JarlsCHasse {
         LMBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void moveX(boolean sign, double rotation){
+    public void moveY(boolean sign, double rotation){
 
         if(sign) {
             Xmov = (1 * Math.cos(rotation) - (0 * Math.sin(rotation)));
@@ -48,7 +48,7 @@ public class JarlsCHasse {
 
     }
 
-    public void moveY(boolean sign, double rotation){
+    public void moveX(boolean sign, double rotation){
 
         if(sign) {
             Ymov = (0 * Math.sin(rotation) + (1 * Math.cos(rotation)));
@@ -77,15 +77,14 @@ public class JarlsCHasse {
         float yt = -gmpad.left_stick_y;
         float rx = gmpad.right_stick_x;
 
-        double x = (xt * Math.cos(rotation) - (yt * Math.sin(rotation)));
-        double y = (xt * Math.sin(rotation) + (yt * Math.cos(rotation)));
+        x = (xt * Math.cos(rotation) - (yt * Math.sin(rotation)));
+        y = (xt * Math.sin(rotation) + (yt * Math.cos(rotation)));
 
 
         double leftFrontPower = y+x+rx;
         double rightFrontPower = y-x-rx;
         double leftBackPower = y-x+rx;
         double rightBackPower = y+x-rx;
-
 
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
@@ -97,6 +96,7 @@ public class JarlsCHasse {
             leftBackPower   /= max;
             rightBackPower  /= max;
         }
+
 
         LMFront.setPower(leftFrontPower);
         RMFront.setPower(rightFrontPower);
