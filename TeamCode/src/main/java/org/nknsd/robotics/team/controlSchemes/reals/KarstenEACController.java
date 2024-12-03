@@ -9,13 +9,13 @@ import java.util.concurrent.Callable;
 public class KarstenEACController extends EACControlScheme {
     boolean controlEACDelay = false;
     @Override
-    public Callable swapEACcontrol() {
-        return new Callable() {
+    public Callable<Boolean> swapEACcontrol() {
+        return new Callable<Boolean>() {
 
             @Override
-            public Object call() throws Exception {
+            public Boolean call() {
                 if (GamePadHandler.GamepadButtons.BACK.detect(gamepad2)){
-                    if(controlEACDelay = false){
+                    if(!controlEACDelay){
                         controlEAC = !controlEAC;
                     }
                     controlEACDelay = true;
@@ -28,70 +28,70 @@ public class KarstenEACController extends EACControlScheme {
     }
 
     @Override
-    public Callable sampleGrab() {
-        return new Callable() {
+    public Callable<Boolean> sampleGrab() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.A.detect(gamepad2) && controlEAC;
             }
         };
     }
 
     @Override
-    public Callable sampleNeutral() {
-        return new Callable() {
+    public Callable<Boolean> sampleNeutral() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return !(GamePadHandler.GamepadButtons.A.detect(gamepad2) && (GamePadHandler.GamepadButtons.B.detect(gamepad2)) && controlEAC);
             }
         };
     }
 
     @Override
-    public Callable sampleRelease() {
-        return new Callable() {
+    public Callable<Boolean> sampleRelease() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.B.detect(gamepad2) && controlEAC;
             }
         };
     }
 
     @Override
-    public Callable sampleUp() {
-        return new Callable() {
+    public Callable<Boolean> sampleUp() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.DPAD_UP.detect(gamepad2) && controlEAC;
             }
         };
     }
 
     @Override
-    public Callable sampleDown() {
-        return new Callable() {
+    public Callable<Boolean> sampleDown() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamepad2) && controlEAC;
             }
         };
     }
 
     @Override
-    public Callable sampleExtend() {
-        return new Callable() {
+    public Callable<Boolean> sampleExtend() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamepad2) && controlEAC;
             }
         };
     }
 
     @Override
-    public Callable sampleRetract() {
-        return new Callable() {
+    public Callable<Boolean> sampleRetract() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamepad2) && controlEAC;
             }
         };

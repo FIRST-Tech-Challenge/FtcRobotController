@@ -6,13 +6,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
+import org.nknsd.robotics.team.helperClasses.EventPair;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 public class GamePadHandler implements NKNComponent {
     // TreeMap of the button to list for, and the event to trigger based on that
     // The key is the button + the name of the event
     private TreeMap<String, Runnable> eventListeners = new TreeMap<String, Runnable>();
+    private ArrayList<EventPair> eventListeners2 = new ArrayList<EventPair>();
+
     private final double TRIGGERDEADZONE = 0.5;
 
     // Iterates through the eventListeners tree map to call the runnables on a given button
@@ -59,6 +64,18 @@ public class GamePadHandler implements NKNComponent {
         }
 
 
+    }
+
+    private void iterateListeners() {
+        for (EventPair eventListener : eventListeners2) {
+            try {
+                if (eventListener.listener.call()) {
+                    eventListener.event.run();
+                }
+            } catch (Exception e) {
+
+            }
+        }
     }
 
     @Override
@@ -173,6 +190,10 @@ public class GamePadHandler implements NKNComponent {
         eventListeners.put(keyName, event);
     }
 
+    public void addListener2(Callable<Boolean> listener, Runnable event) {
+        eventListeners2.add(new EventPair(listener, event));
+    }
+
     public void removeListener(GamepadButtons button, int gamepadNumber, String eventName, boolean singular) {
         String keyName;
         if (singular) {
@@ -182,6 +203,12 @@ public class GamePadHandler implements NKNComponent {
         }
 
         eventListeners.remove(keyName);
+    }
+
+    public void removeListener2(Callable listener, Runnable event) {
+        for (EventPair eventListener : eventListeners2) {
+            eventListener.isEqualTo(listener, event);
+        }
     }
 
     public enum GamepadButtons {
