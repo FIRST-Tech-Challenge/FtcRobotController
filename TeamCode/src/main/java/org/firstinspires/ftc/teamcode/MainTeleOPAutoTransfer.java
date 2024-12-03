@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "State Machine Auto Transfer Delivery")
+@TeleOp(name = "Main TeleOp")
 public class MainTeleOPAutoTransfer extends LinearOpMode {
 
     private double frontLeftPower = 0;     // declare motor power variable
@@ -16,22 +16,22 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
     private double backRightPower = 0;     // declare motor power variable
     private double denominator = 1;        // declare motor power calculation variable
 
-    private final int MAX_TARGET_LIFT = 2825;
-    private final int MAX_EXTENSION_LENGTH = 500;
+    private final int MAX_TARGET_LIFT = 2825;       // The max Lift Height
+    private final int MAX_EXTENSION_LENGTH = 500;   // The max Extension Length
 
-    private int TargetLift = 700;
-    private int ExtensionTarget = 0;
+    private int TargetLift = 700;                   // The Lift target position
+    private int ExtensionTarget = 0;                // The Extension target position
 
-    private double LiftPower = .9;
-    private double ExtensionPower = .75;
+    private double LiftPower = .9;                  // The Power set to the lift
+    private double ExtensionPower = .75;            // The Power set to the extension
 
     private int precision = 2;                                  // chassis motor power reduction factor 1
-    private boolean IntakeClawClosed = false;                    // claw holder variable
-    private boolean OuttakeClawClosed = false;
-    private boolean LiftDown = true;
+    private boolean IntakeClawClosed = false;                   // claw holder variable
+    private boolean OuttakeClawClosed = false;                  // claw holder variable
+    private boolean LiftDown = true;                            // Is the Lift all the way down
 
-    private ElapsedTime Transfer_Time = new ElapsedTime();
-    private ElapsedTime ClawTime = new ElapsedTime();
+    private ElapsedTime Transfer_Time = new ElapsedTime();      // Timer to keep track of the transfer time
+    private ElapsedTime ClawTime = new ElapsedTime();           // Timer to keep track since the claw was used last
 
     private ElapsedTime ClawDelay = new ElapsedTime();
 
