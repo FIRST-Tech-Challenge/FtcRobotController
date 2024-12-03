@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.teamcode.TeleOp.RobotHardware;
+import org.firstinspires.ftc.teamcode.commons.RobotHardware;
 
 @Autonomous
 public class AutoM1 extends LinearOpMode {
@@ -14,7 +14,6 @@ public class AutoM1 extends LinearOpMode {
         // Initialize robot hardware and AutoBase
         robot.init(hardwareMap);
         AutoFunctions autoFunctions = new AutoFunctions(robot, this);
-
         waitForStart();
 
         if (isStopRequested()) return;

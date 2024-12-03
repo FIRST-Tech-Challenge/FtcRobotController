@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.commons;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -33,6 +33,7 @@ public class RobotHardware {
 
         // Configure motor directions if needed
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // TODO: is it ok to set backleft in reverse or should it be back right
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftClaw.setDirection(DcMotor.Direction.REVERSE);
 

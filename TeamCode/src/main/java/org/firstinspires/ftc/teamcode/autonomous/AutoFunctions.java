@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.autonomous;
 
-import org.firstinspires.ftc.teamcode.TeleOp.RobotHardware;
+import org.firstinspires.ftc.teamcode.commons.RobotHardware;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class AutoFunctions {

@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.teleOp;
+
+import org.firstinspires.ftc.teamcode.commons.RobotHardware;
 
 public class Hang {
 
