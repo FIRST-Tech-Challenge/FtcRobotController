@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
 import org.firstinspires.ftc.teamcode.RobotContainer;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
 @Autonomous(name="Red Auto", group="OpMode")
-//@Disabled
+@Disabled
 public class RedAutoOp extends CommandOpMode {
 
     // Initialize all objects, set up subsystems, etc...

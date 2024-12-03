@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
 import java.util.ArrayList;
 
@@ -35,20 +36,17 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-135)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.53, 1.05, new Rotation2d(Math.toRadians(-90))),
-                        new Rotation2d(Math.toRadians(-90.0))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.53, 1.05, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new Pause(0.5),
 
                 new HuntingPos(),
 
-               // new Pause(0.5),
-
                 new DropToGrab(),
 
-                //new Pause(0.5),
 
                 new CloseClaw(),
 
@@ -59,7 +57,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 // raise elevator to be ready to drop off
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
-                new BlueSideHighBucketDeposit(),
+                new HighBucketDeposit(),
 
                 // pick up right
                 new FollowPath(
@@ -67,20 +65,14 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-135)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.27, 1.05, new Rotation2d(Math.toRadians(-90))),
-                        new Rotation2d(Math.toRadians(-90.0))),
-
-                //new Pause(0.5),
+                        AutoFunctions.redVsBlue(new Pose2d(1.27, 1.05, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new HuntingPos(),
 
-                //new Pause(0.5),
-
                 new DropToGrab(),
-
-                //new Pause(0.5),
 
                 new CloseClaw(),
 
@@ -91,18 +83,18 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 // raise elevator to be ready to drop off
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
-                new BlueSideHighBucketDeposit(),
+                new HighBucketDeposit(),
 
-              //pick up left
-              new FollowPath(
+                // pick up left
+                new FollowPath(
                         1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-135)),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(1.58, 0.27, new Rotation2d(Math.toRadians(0))),
-                        new Rotation2d(Math.toRadians(70))),
+                      AutoFunctions.redVsBlue(new Pose2d(1.58, 0.27, new Rotation2d(Math.toRadians(0)))),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(70)))),
 
                 new DropToGrab(),
 
@@ -117,33 +109,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 // raise elevator to be ready to drop off
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
-                new BlueSideHighBucketDeposit()
-
-
-//                new Pause(2),
-//
-//                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
-//
-//                new HuntingPos(),
-//
-//                new Pause(1),
-//
-//                new DropToGrab(),
-//
-//                new Pause(1),
-//
-//                new CloseClaw(),
-//
-//                new Pause(1),
-//
-//                new ArmStowHigh(),
-//
-//                new BlueSideHighBucketDeposit()
-
-                // x - 1.209
-                // y - 1.3655
-                //
-
+                new HighBucketDeposit()
 
         );
     }
