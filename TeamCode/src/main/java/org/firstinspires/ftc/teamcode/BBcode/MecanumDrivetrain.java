@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class MecanumDrivetrain {
     OpMode _opMode;
     TelemetryHelper _telemetryHelper;
@@ -49,11 +47,12 @@ public class MecanumDrivetrain {
         double strafe;
         double fLeftPow, fRightPow, bLeftPow, bRightPow;
         double speedMultiplier = 0.75;
+        double turnEasingExponet = 3, turnEasingYIntercept = 0.05;
 
         Gamepad gamepad1 = _opMode.gamepad1;
         //drive inputs
         drive = gamepad1.left_stick_y;
-        turn = gamepad1.right_stick_x * -1;
+        turn = Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (turnEasingYIntercept * (gamepad1.right_stick_x / Math.abs(gamepad1.right_stick_x)));
         strafe = gamepad1.left_stick_x * -1;
         if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
 
