@@ -11,6 +11,7 @@ public class DifferentialArmTest extends OpMode {
     public Servo grippers;
     public Servo left_servo;
     public AnalogInput left_servo_encoder;
+    public AnalogInput right_servo_encoder;
     public Servo right_servo;
     public ElapsedTime timer = new ElapsedTime();
 
@@ -20,6 +21,7 @@ public class DifferentialArmTest extends OpMode {
         left_servo = hardwareMap.get(Servo.class, "left_diff");
         right_servo = hardwareMap.get(Servo.class, "right_diff");
         left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
+        right_servo_encoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
         left_servo.setPosition(0);
         right_servo.setPosition(0);
     }
@@ -46,17 +48,18 @@ public class DifferentialArmTest extends OpMode {
         }
         //----------------------------------------------------------------------------------------------------------
         if(gamepad1.dpad_left && timer.seconds() > 0.3){
-            left_servo.setPosition(left_servo.getPosition() - 0.1);
-            right_servo.setPosition(right_servo.getPosition() - 0.1);
+            left_servo.setPosition(left_servo.getPosition() - 0.05);
+            right_servo.setPosition(right_servo.getPosition() - 0.05);
             timer.reset();
         }
         if(gamepad1.dpad_right && timer.seconds() > 0.3){
-            left_servo.setPosition(left_servo.getPosition() + 0.1);
-            right_servo.setPosition(right_servo.getPosition() + 0.1);
+            left_servo.setPosition(left_servo.getPosition() + 0.05);
+            right_servo.setPosition(right_servo.getPosition() + 0.05);
             timer.reset();
         }
         telemetry.addData("Left Servo:", left_servo.getPosition());
         telemetry.addData("Right Servo:", right_servo.getPosition());
-        telemetry.addData("Encoder: ", String.valueOf(left_servo_encoder.getVoltage() / 3.3 * 360) + "°");
+        telemetry.addData("Left Encoder: ", String.valueOf(left_servo_encoder.getVoltage() / 3.3 * 360) + "°");
+        telemetry.addData("Right Encoder: ", String.valueOf(right_servo_encoder.getVoltage() / 3.3 * 360) + "°");
     }
 }
