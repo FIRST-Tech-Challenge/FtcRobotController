@@ -7,19 +7,12 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.BlueSideHighBucketDeposit;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.GroundCyclingAuto;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 
 import java.util.ArrayList;
 
