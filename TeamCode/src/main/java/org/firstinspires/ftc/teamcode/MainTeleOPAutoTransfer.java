@@ -28,6 +28,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
     private int precision = 2;                                  // chassis motor power reduction factor 1
     private boolean IntakeClawClosed = false;                    // claw holder variable
     private boolean OuttakeClawClosed = false;
+    private boolean LiftDown = true;
 
     private ElapsedTime Transfer_Time = new ElapsedTime();
     private ElapsedTime ClawTime = new ElapsedTime();
@@ -132,7 +133,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
 
         LeftIntakeWrist.setPosition(LeftServo);    // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
-        IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
+        IntakeV4B.setPosition(.8);   // Sets the intake virtual four bar to the starting position
         //RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to the starting position
 
         OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
@@ -166,6 +167,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                         ExtensionTarget = 1;
                     }
                     if (IntakeLeft.getCurrentPosition() <= 5 && IntakeClaw.getPosition() == .5){
+                        Transfer_Time.reset();
                         state = State.TRANSFER;
                     }
                     if (gamepad2.right_bumper  && !IntakeClawClosed && ClawTime.seconds() >= .3){
@@ -185,12 +187,6 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                         ExtensionTarget = ExtensionTarget - 10;
                     }
 
-                    if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
-                        TargetLift = TargetLift + 10;
-                    }
-                    else if (gamepad2.left_trigger >= .75 && TargetLift > 10){
-                        TargetLift = TargetLift - 10;
-                    }
                     if (gamepad1.touchpad_finger_1) {
                         Yaw = gamepad1.touchpad_finger_1_x;
                     }
@@ -199,15 +195,17 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     }
                     break;
                 case TRANSFER:
-                    if (IntakeLeft.getCurrentPosition() < 5) {
-                        TargetLift = 520;
+                    if (Transfer_Time.seconds() >= .5) {
+                        TargetLift = 480;
                     }
                     else {
-                        TargetLift = 750;
+                        TargetLift = 950;
                     }
-                    if(LeftLift.getCurrentPosition() < 524){
+                    if(LeftLift.getCurrentPosition() < 484){
+                        OuttakeClawClosed = true;
                         OuttakeClaw.setPosition(1);
                         if(OuttakeClaw.getPosition() == 1){
+                            IntakeClawClosed = false;
                             IntakeClaw.setPosition(0);
                         }
                     }
@@ -218,10 +216,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
 
                 case IDLE:
                     if (gamepad2.a) {
-                        TargetLift = 2820;
-                        OuttakeV4B.setPosition(0);
-                        //RightOuttakeV4B.setPosition(0);
-                        OuttakeWrist.setPosition(.7);
+                        TargetLift = 2520;
                         state = State.OUTTAKE;
                     }
                     if (gamepad2.left_bumper && !OuttakeClawClosed && ClawTime.seconds() >= .3){
@@ -248,8 +243,6 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                 case OUTTAKE:
                     if (gamepad2.x){
                         TargetLift = 750;
-                        OuttakeV4B.setPosition(1);
-                        OuttakeWrist.setPosition(0);
                         state = State.INTAKE;
                     }
                     if (gamepad2.left_bumper && !OuttakeClawClosed && ClawTime.seconds() >= .3){
@@ -271,12 +264,6 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     break;
 
                 case CLIMB:
-                    IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
-                    //RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to the starting position
-
-                    OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
-
-                    OuttakeV4B.setPosition(1);  // Sets the outtake virtual four bar to the starting position
 
                     if (gamepad1.a){
                         TargetLift = 5;
@@ -298,18 +285,26 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                 TargetLift = MAX_TARGET_LIFT;
                 state = State.CLIMB;
             }
+            if(LeftLift.getCurrentPosition() >= 1000 && LeftLift.getCurrentPosition() <= MAX_TARGET_LIFT - 5){
+                OuttakeV4B.setPosition(0);
+                OuttakeWrist.setPosition(.7);
+            }
+            else {
+                OuttakeV4B.setPosition(1);
+                OuttakeWrist.setPosition(0);
+            }
 
                 if(IntakeLeft.getCurrentPosition() <= 50){
                     Flex = 0;
-                    V4Bpos = .78;
+                    V4Bpos = 1;
 
                 }
                 else{
                     if (gamepad1.left_trigger > 0){
-                        V4Bpos = 0.3*(1-(gamepad1.left_trigger)); //Control for variable virtual four bar height when in INTAKE state
+                        V4Bpos = 0.4*(1-(gamepad1.left_trigger)); //Control for variable virtual four bar height when in INTAKE state
                     }
                     else {
-                        V4Bpos = .3;}
+                        V4Bpos = .4;}
                     Flex = .63;
                 }
 

@@ -7,10 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto Skelly Don't Run")
-public class AutoSkeleton extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
+@Autonomous(name = "Left Basket Test")
+public class LeftAuto extends LinearOpMode {
 
     private double frontLeftPower = 0;     // declare motor power variable
     private double backLeftPower = 0;      // declare motor power variable
@@ -38,6 +36,11 @@ public class AutoSkeleton extends LinearOpMode {
     private double V4Bpos = 1;
     private double Flex = 0;
     private double Yaw = 0;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+
 
         //*********************************** MOTORS ************************************************
         DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");   // Chub Port 0 // Gamepad 1
@@ -111,7 +114,7 @@ public class AutoSkeleton extends LinearOpMode {
 
         //***************************** RESET SERVOS ***********************************************************
         IntakeClaw.setPosition(0);    // Closes Intake Claw
-        OuttakeClaw.setPosition(0);   // Closes Outtake Claw
+        OuttakeClaw.setPosition(1);   // Closes Outtake Claw
 
         LeftServo = Math.max(0, Math.min(1, Flex - (.5 * Yaw)));
         RightServo = Math.max(0, Math.min(1, Flex + (.5 * Yaw)));
@@ -132,6 +135,114 @@ public class AutoSkeleton extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
+
+          /*  FrontLeft.setPower(1);
+            FrontRight.setPower(1);
+            BackLeft.setPower(1);
+            BackRight.setPower(1);
+
+            sleep(500);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(200);
+
+            FrontLeft.setPower(1);
+            FrontRight.setPower(-1);
+            BackLeft.setPower(-1);
+            BackRight.setPower(1);
+
+            sleep(1000);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(200);
+
+            LeftLift.setPower(1);
+            RightLift.setPower(1);
+
+            sleep(3000);
+
+            LeftLift.setPower(0);
+            RightLift.setPower(0);
+
+            sleep(1000);
+
+            OuttakeV4B.setPosition(0);
+            OuttakeWrist.setPosition(.7);
+
+            sleep(500);
+
+            OuttakeClaw.setPosition(0);
+
+            sleep(500);
+
+            LeftLift.setPower(-1);
+            RightLift.setPower(-1);
+
+            sleep(3000);
+
+            LeftLift.setPower(0);
+            RightLift.setPower(0);
+
+            sleep(1000);
+
+            FrontLeft.setPower(-1);
+            FrontRight.setPower(1);
+            BackLeft.setPower(1);
+            BackRight.setPower(-1);
+
+            sleep(1000);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(200);*/
+
+            // BELOW THIS IS JUST PARKING.
+
+            FrontLeft.setPower(1);
+            FrontRight.setPower(-1);
+            BackLeft.setPower(-1);
+            BackRight.setPower(1);
+
+            sleep(200);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(200);
+
+            FrontLeft.setPower(1);
+            FrontRight.setPower(1);
+            BackLeft.setPower(1);
+            BackRight.setPower(1);
+
+            sleep(3000);
+
+            FrontLeft.setPower(-1);
+            FrontRight.setPower(1);
+            BackLeft.setPower(1);
+            BackRight.setPower(-1);
+
+            sleep(500);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            break;
             //Drive To Submersible
 
             //Deliver Specimen
