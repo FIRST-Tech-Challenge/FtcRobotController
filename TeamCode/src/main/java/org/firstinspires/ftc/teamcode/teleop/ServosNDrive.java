@@ -29,12 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This OpMode executes a POV Game style Teleop for a direct drive robot
@@ -48,9 +46,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="all da servos", group="Linear OpMode")
+@TeleOp(name="all da servos and Drive", group="Linear OpMode")
 //@Disabled
-public class Servos extends LinearOpMode {
+public class ServosNDrive extends LinearOpMode {
 
     /* Declare OpMode members. */
     public Servo    intakeClaw    = null;
@@ -63,6 +61,11 @@ public class Servos extends LinearOpMode {
 
     public Servo    slide1 = null;
     public Servo    slide2 = null;
+
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
 
     public static final double MID_SERVO   =  0.5 ;
 
@@ -78,6 +81,15 @@ public class Servos extends LinearOpMode {
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "Motor0");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "Motor1");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "Motor2");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "Motor3");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Define and initialize ALL installed servos.
         intakeClaw  = hardwareMap.get(Servo.class, "0");
@@ -101,13 +113,36 @@ public class Servos extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
-            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
-            // This way it's also easy to just drive straight, or just turn.
-             double a = -gamepad1.left_stick_y;
-             double b  =  gamepad1.right_stick_y;
+            double max;
 
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
 
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower  = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower   = axial - lateral + yaw;
+            double rightBackPower  = axial + lateral - yaw;
+
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+
+            if (max > 1.0) {
+                leftFrontPower  /= max;
+                rightFrontPower /= max;
+                leftBackPower   /= max;
+                rightBackPower  /= max;
+            }
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             // Send telemetry message to signify robot running;
             telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
