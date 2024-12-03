@@ -18,12 +18,13 @@ public class KarstenEACController extends EACControlScheme {
                 if (GamePadHandler.GamepadButtons.BACK.detect(gamePadHandler.getGamePad2())){
                     if(!controlEACDelay){
                         controlEAC = !controlEAC;
+                        controlEACDelay = true;
+                        return true;
                     }
-                    controlEACDelay = true;
                 } else {
                     controlEACDelay = false;
                 }
-                return controlEAC;
+                return false;
             }
         };
     }

@@ -7,60 +7,60 @@ import java.util.concurrent.Callable;
 
 public class KarstenSpecimenController extends SpecimenControlScheme {
     @Override
-    public Callable specimenGrab() {
-        return new Callable() {
+    public Callable<Boolean> specimenGrab() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.A.detect(gamePadHandler.getGamePad2()) && !eacControlScheme.controlEAC);
             }
         };
     }
 
     @Override
-    public Callable specimenRelease() {
-        return new Callable() {
+    public Callable<Boolean> specimenRelease() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.B.detect(gamePadHandler.getGamePad2()) && !eacControlScheme.controlEAC);
             }
         };
     }
 
     @Override
-    public Callable specimenForward() {
-        return new Callable() {
+    public Callable<Boolean> specimenForward() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
 
     @Override
-    public Callable specimenBackwards() {
-        return new Callable() {
+    public Callable<Boolean> specimenBackwards() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.DPAD_UP.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
 
     @Override
-    public Callable specimenRaise() {
-        return new Callable() {
+    public Callable<Boolean> specimenRaise() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
 
     @Override
-    public Callable specimenLower() {
-        return new Callable() {
+    public Callable<Boolean> specimenLower() {
+        return new Callable<Boolean>() {
             @Override
-            public Object call() throws Exception {
+            public Boolean call() throws Exception {
                 return (GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };

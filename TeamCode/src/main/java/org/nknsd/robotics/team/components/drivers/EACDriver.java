@@ -20,6 +20,8 @@ public class EACDriver implements NKNComponent {
     private IntakeSpinnerHandler servoHandler;
     private EACControlScheme controlScheme;
 
+    private boolean isInEACState = true;
+
 
     Runnable rotateUp = new Runnable() {
         @Override
@@ -117,6 +119,7 @@ public class EACDriver implements NKNComponent {
         gamePadHandler.addListener2(controlScheme.sampleGrab(), grab, "Sample Grab");
         gamePadHandler.addListener2(controlScheme.sampleRelease(), release, "Sample Release");
         gamePadHandler.addListener2(controlScheme.sampleNeutral(), neutral, "Sample Neutral");
+        gamePadHandler.addListener2(controlScheme.swapEACcontrol(), () -> isInEACState = !isInEACState, "Swap EAC & Specimen");
     }
 
     @Override
@@ -137,9 +140,14 @@ public class EACDriver implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Rot Target", rotationHandler.targetRotationPosition.name());
-        telemetry.addData("Ext Target", extensionHandler.targetPosition().name());
-        telemetry.addData("Servo State", servoHandler.getServoPower());
+//        telemetry.addData("Rot Target", rotationHandler.targetRotationPosition.name());
+//        telemetry.addData("Ext Target", extensionHandler.targetPosition().name());
+//        telemetry.addData("Servo State", servoHandler.getServoPower());
+        if (isInEACState) {
+            telemetry.addData("Arm Controller State", "EAC");
+        } else {
+            telemetry.addData("Arm Controller State", "Specimen");
+        }
     }
 
     public void link(GamePadHandler gamePadHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler servoHandler, EACControlScheme controlScheme) {

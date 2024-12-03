@@ -65,7 +65,7 @@ public class IntakeSpinnerHandler implements NKNComponent {
     public enum HandStates {
         GRIP(-0.3),
         RELEASE(0.25),
-        REST(-0.06),
+        REST(-0.07),
         TRUE_STOP(0);
 
         public final double power;

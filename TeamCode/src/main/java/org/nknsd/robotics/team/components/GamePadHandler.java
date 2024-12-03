@@ -18,54 +18,10 @@ public class GamePadHandler implements NKNComponent {
     private TreeMap<String, Runnable> eventListeners = new TreeMap<String, Runnable>();
     private ArrayList<EventPair> eventListeners2 = new ArrayList<EventPair>();
     private Telemetry telemetry;
-
     private final double TRIGGERDEADZONE = 0.5;
-
-    // Iterates through the eventListeners tree map to call the runnables on a given button
-    private void activateListener(String button, int gamepadNumber, boolean isHeld) {
-        String searchKey = button + ":" + gamepadNumber;
-
-        for (String s : eventListeners.subMap(searchKey, searchKey + ";").keySet()) {
-            // If we're not held, we run either way
-            // same with singular, if we're not singular, we run either way
-            // if either is true, the other must be false to run
-            if (!s.contains(":singular:") || !isHeld) {
-                eventListeners.get(s).run();
-            }
-        }
-    }
     private Gamepad gamePad1;
     private Gamepad gamePad2;
 
-    // Iterates through the buttons of a gamepad and activates the listeners of any functions that are attached
-    public void checkButtons(Gamepad gamepad, int gamepadNumber) {
-        if (gamepadNumber == 1) {
-            for (GamepadButtons button : GamepadButtons.values()) {
-                if (button.detect(gamepad)) {
-                    activateListener(button.name(), gamepadNumber, button.isHeld1); //will activate with isHeld being false ONCE before isHeld = true
-                    button.isHeld1 = true;
-
-                } else {
-                    button.isHeld1 = false;
-
-                }
-            }
-
-        } else {
-            for (GamepadButtons button : GamepadButtons.values()) {
-                if (button.detect(gamepad)) {
-                    activateListener(button.name(), gamepadNumber, button.isHeld2);
-                    button.isHeld2 = true;
-
-                } else {
-                    button.isHeld2 = false;
-
-                }
-            }
-        }
-
-
-    }
 
     private void iterateListeners() {
 //        telemetry.addData("Iterate Triggered", "Yes");
@@ -77,8 +33,8 @@ public class GamePadHandler implements NKNComponent {
 //                    telemetry.addData("Event run", eventListener.name);
                 }
             } catch (Exception e) {
-//                telemetry.addData("Caught an exception!! REALLY BAD!! GET DILLON!! Event Name", eventListener.name);
-//                telemetry.addData("Error", e);
+                telemetry.addData("Caught an exception!! REALLY BAD!! GET DILLON!! Event Name", eventListener.name);
+                telemetry.addData("Error", e);
             }
         }
     }
@@ -216,10 +172,6 @@ public class GamePadHandler implements NKNComponent {
         }
     }
 
-    public boolean detect(GamepadButtons button, Gamepad gamepad) {
-        return button.detect(gamepad);
-    }
-
     public enum GamepadButtons {
         BACK {
             @Override
@@ -288,8 +240,6 @@ public class GamePadHandler implements NKNComponent {
             }
         };
 
-        boolean isHeld1 = false; // Modified by the checkButtons function to store if the button was just pressed or if it has been held down
-        boolean isHeld2 = false; // Having two isHeld variables allows us to seperate the buttons between the gamepads.. probably a better way tho
         public abstract boolean detect(Gamepad gamepad);
     }
 
