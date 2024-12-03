@@ -11,6 +11,7 @@ import org.nknsd.robotics.team.components.RotationHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.AdvancedWheelDriver;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
+import org.nknsd.robotics.team.controlSchemes.reals.KarstenEACController;
 
 import java.util.List;
 
@@ -57,10 +58,16 @@ public class AlternateMovementNKNProgram extends NKNProgram {
         telemetryEnabled.add(eacDriver);
 
 
+        // Controllers
+        KarstenEACController eacController = new KarstenEACController();
+        eacController.link(gamePadHandler);
+        eacController.linkExtensionHandler(extensionHandler);
+
+
         // Link the components to each other
         wheelDriver.link(gamePadHandler, wheelHandler, imuComponent);
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
-        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler);
+        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler, eacController);
     }
 }

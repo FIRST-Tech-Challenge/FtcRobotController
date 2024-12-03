@@ -8,30 +8,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.team.components.ExtensionHandler;
 import org.nknsd.robotics.team.components.GamePadHandler;
+import org.nknsd.robotics.team.components.GamePadHandler.GamepadButtons;
 import org.nknsd.robotics.team.components.IntakeSpinnerHandler;
 import org.nknsd.robotics.team.components.RotationHandler;
-
-import org.nknsd.robotics.team.components.GamePadHandler.GamepadButtons;
+import org.nknsd.robotics.team.controlSchemes.abstracts.EACControlScheme;
 
 public class EACDriver implements NKNComponent {
-    GamePadHandler gamePadHandler;
-    RotationHandler rotationHandler;
-    ExtensionHandler extensionHandler;
-    IntakeSpinnerHandler servoHandler;
+    private GamePadHandler gamePadHandler;
+    private RotationHandler rotationHandler;
+    private ExtensionHandler extensionHandler;
+    private IntakeSpinnerHandler servoHandler;
+    private EACControlScheme controlScheme;
 
-    GamepadButtons rotateUpButton = GamepadButtons.DPAD_UP;
-    GamepadButtons rotateDownButton = GamepadButtons.DPAD_DOWN;
-    GamepadButtons extendButton = GamepadButtons.DPAD_RIGHT;
-    GamepadButtons retractButton = GamepadButtons.DPAD_LEFT;
-    GamepadButtons takeButton = GamepadButtons.A;
-    GamepadButtons releaseButton = GamepadButtons.B;
+    private boolean isInEACState = true;
+
 
     Runnable rotateUp = new Runnable() {
         @Override
         public void run() {
             int nextIndex = rotationHandler.targetRotationPosition.ordinal() + 1;
 
-            if (nextIndex >= RotationHandler.MAX_INDEX_OF_ROTATION_POSITIONS) {return;}
+            if (nextIndex >= RotationHandler.MAX_INDEX_OF_ROTATION_POSITIONS) {
+                return;
+            }
 
             rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.values()[nextIndex]);
         }
@@ -41,21 +40,24 @@ public class EACDriver implements NKNComponent {
         public void run() {
             int prevIndex = rotationHandler.targetRotationPosition.ordinal() - 1;
 
-            if (prevIndex < 0) {return;}
+            if (prevIndex < 0) {
+                return;
+            }
 
             rotationHandler.setTargetRotationPosition(RotationHandler.RotationPositions.values()[prevIndex]);
         }
     };
-
     Runnable extend = new Runnable() {
         @Override
         public void run() {
             boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
             int index = extensionHandler.targetPosition().ordinal();
             while (!done) {
-                index ++;
+                index++;
 
-                if (index >= ExtensionHandler.ExtensionPositions.values().length) {return;}
+                if (index >= ExtensionHandler.ExtensionPositions.values().length) {
+                    return;
+                }
 
                 done = extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[index]);
             }
@@ -67,12 +69,32 @@ public class EACDriver implements NKNComponent {
             boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
             int index = extensionHandler.targetPosition().ordinal();
             while (!done) {
-                index --;
+                index--;
 
-                if (index < 0) {return;}
+                if (index < 0) {
+                    return;
+                }
 
                 done = extensionHandler.gotoPosition(ExtensionHandler.ExtensionPositions.values()[index]);
             }
+        }
+    };
+    Runnable grab = new Runnable() {
+        @Override
+        public void run() {
+            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.GRIP);
+        }
+    };
+    Runnable release = new Runnable() {
+        @Override
+        public void run() {
+            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.RELEASE);
+        }
+    };
+    Runnable neutral = new Runnable() {
+        @Override
+        public void run() {
+            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.REST);
         }
     };
 
@@ -90,10 +112,14 @@ public class EACDriver implements NKNComponent {
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
         // Add event listeners
-        gamePadHandler.addListener(rotateUpButton, 2, "armRotateUp", true, rotateUp);
-        gamePadHandler.addListener(rotateDownButton, 2, "armRotateDown", true, rotateDown);
-        gamePadHandler.addListener(extendButton, 2, "armExtend", true, extend);
-        gamePadHandler.addListener(retractButton, 2, "armRetract", true, retract);
+        gamePadHandler.addListener2(controlScheme.sampleDown(), rotateDown, "Sample Rotate Down");
+        gamePadHandler.addListener2(controlScheme.sampleUp(), rotateUp, "Sample Rotate Up");
+        gamePadHandler.addListener2(controlScheme.sampleExtend(), extend, "Sample Extend");
+        gamePadHandler.addListener2(controlScheme.sampleRetract(), retract, "Sample Retract");
+        gamePadHandler.addListener2(controlScheme.sampleGrab(), grab, "Sample Grab");
+        gamePadHandler.addListener2(controlScheme.sampleRelease(), release, "Sample Release");
+        gamePadHandler.addListener2(controlScheme.sampleNeutral(), neutral, "Sample Neutral");
+        gamePadHandler.addListener2(controlScheme.swapEACcontrol(), () -> isInEACState = !isInEACState, "Swap EAC & Specimen");
     }
 
     @Override
@@ -108,29 +134,27 @@ public class EACDriver implements NKNComponent {
 
     @Override
     public void loop(ElapsedTime runtime, Telemetry telemetry) {
-        if (takeButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.GRIP);
-        } else if (releaseButton.detect(gamePadHandler.getGamePad2())) {
-            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.RELEASE);
-        } else if (extensionHandler.targetPosition() == ExtensionHandler.ExtensionPositions.COLLECT) {
-                servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.GRIP);
-        } else {
-            servoHandler.setServoPower(IntakeSpinnerHandler.HandStates.REST);
-        }
-      }
+
+    }
 
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-        telemetry.addData("Rot Target", rotationHandler.targetRotationPosition.name());
-        telemetry.addData("Ext Target", extensionHandler.targetPosition().name());
-        telemetry.addData("Servo State", servoHandler.getServoPower());
+//        telemetry.addData("Rot Target", rotationHandler.targetRotationPosition.name());
+//        telemetry.addData("Ext Target", extensionHandler.targetPosition().name());
+//        telemetry.addData("Servo State", servoHandler.getServoPower());
+        if (isInEACState) {
+            telemetry.addData("Arm Controller State", "EAC");
+        } else {
+            telemetry.addData("Arm Controller State", "Specimen");
+        }
     }
 
-    public void link(GamePadHandler gamePadHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler servoHandler) {
+    public void link(GamePadHandler gamePadHandler, RotationHandler rotationHandler, ExtensionHandler extensionHandler, IntakeSpinnerHandler servoHandler, EACControlScheme controlScheme) {
         this.gamePadHandler = gamePadHandler;
         this.rotationHandler = rotationHandler;
         this.extensionHandler = extensionHandler;
         this.servoHandler = servoHandler;
+        this.controlScheme = controlScheme;
     }
 }

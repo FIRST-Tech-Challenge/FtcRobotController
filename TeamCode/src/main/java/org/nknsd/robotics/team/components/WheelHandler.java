@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 
-public class WheelHandler implements NKNComponent {
+public class    WheelHandler implements NKNComponent {
     private final String flName = "motorFL"; // We pass in the names of the wheels during construction so that we can change them easier
     private final String frName = "motorFR";
     private final String blName = "motorBL";

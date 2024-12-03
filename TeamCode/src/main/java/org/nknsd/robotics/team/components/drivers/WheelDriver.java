@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.robotics.framework.NKNComponent;
 import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.WheelHandler;
+import org.nknsd.robotics.team.controlSchemes.abstracts.WheelControlScheme;
 
 // Adds events to gamepad to control the wheels
 public class WheelDriver implements NKNComponent {
@@ -19,6 +20,7 @@ public class WheelDriver implements NKNComponent {
     private final GamePadHandler.GamepadSticks turnStick;
     private GamePadHandler gamePadHandler;
     private WheelHandler wheelHandler;
+    private WheelControlScheme controlScheme;
 
     private double moveSpeedMultiplier;
 
@@ -64,8 +66,9 @@ public class WheelDriver implements NKNComponent {
 
     @Override
     public void start(ElapsedTime runtime, Telemetry telemetry) {
-        gamePadHandler.addListener(GamePadHandler.GamepadButtons.RIGHT_BUMPER, 1, "speedUp", true, speedUp);
-        gamePadHandler.addListener(GamePadHandler.GamepadButtons.LEFT_BUMPER, 1, "speedDown", true, speedDown);
+        gamePadHandler.addListener2(controlScheme.gearDown(), speedDown, "Speed Down");
+        gamePadHandler.addListener2(controlScheme.gearUp(), speedUp, "Speed Up");
+        gamePadHandler.addListener2(controlScheme.resetAngle(), () -> {}, "Reset Angle");
     }
 
     @Override
@@ -104,8 +107,9 @@ public class WheelDriver implements NKNComponent {
         telemetry.addData("Raw Speed", moveSpeedMultiplier);
     }
 
-    public void link(GamePadHandler gamePadHandler, WheelHandler wheelHandler) {
+    public void link(GamePadHandler gamePadHandler, WheelHandler wheelHandler, WheelControlScheme controlScheme) {
         this.gamePadHandler = gamePadHandler;
         this.wheelHandler = wheelHandler;
+        this.controlScheme = controlScheme;
     }
 }
