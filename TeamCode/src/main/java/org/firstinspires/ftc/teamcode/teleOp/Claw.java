@@ -1,21 +1,25 @@
 package org.firstinspires.ftc.teamcode.teleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commons.RobotHardware;
 
 public class Claw {
 
     public final RobotHardware robot;
+    public final LinearOpMode opMode;
 
     // Constructor that takes RobotHardware as a parameter
-    public Claw(RobotHardware robot) {
+    public Claw(RobotHardware robot, LinearOpMode opMode) {
         this.robot = robot;
+        this.opMode = opMode;
     }
 
     public void controlClaw(boolean buttonA, boolean buttonY, boolean buttonX, boolean buttonB, boolean rightStickButton, boolean leftBumper, boolean rightBumper) {
             if (buttonA) {
-                setClawPower(1);
+                setClawPower(1,100);
             } else if (buttonY) {
-                setClawPower(-1);
+                setClawPower(-1,100);
             }
 
             if (buttonX) {
@@ -33,25 +37,21 @@ public class Claw {
             }
         }
 
-        private void setClawServo ( double leftPos, double rightPos){
+        public void setClawServo ( double leftPos, double rightPos){
 
             robot.rightClawServo.setPosition(rightPos);
             robot.leftClawServo.setPosition(leftPos);
         }
 
-        private void setClawPower ( double power) {
+        public void setClawPower ( double power, int time) {
             robot.leftClaw.setPower(power);
             robot.rightClaw.setPower(power);
-            try {
-                Thread.sleep(100); // Short pause for smooth movement
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            opMode.sleep(time);
             robot.leftClaw.setPower(0);
             robot.rightClaw.setPower(0);
         }
 
-        private void setClawRotation ( double leftPos, double rightPos){
+        public void setClawRotation ( double leftPos, double rightPos){
             robot.leftRotation.setPosition(leftPos);
             robot.rightRotation.setPosition(rightPos);
         }
