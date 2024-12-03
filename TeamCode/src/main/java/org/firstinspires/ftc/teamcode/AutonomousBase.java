@@ -367,7 +367,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     void autoTiltMotorMoveToTarget(double targetArmAngle )
     {
         // Convert angle to encoder counts
-        int targetEncoderCount = robot.computeEncoderCountsFromAngle(robot.armTiltAngle);
+        int targetEncoderCount = Hardware2025Bot.computeEncoderCountsFromAngle(targetArmAngle);
         // Configure target encoder count
         robot.wormTiltMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode

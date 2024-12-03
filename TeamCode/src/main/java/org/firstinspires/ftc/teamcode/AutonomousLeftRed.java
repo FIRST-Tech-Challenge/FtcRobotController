@@ -312,7 +312,7 @@ public class AutonomousLeftRed extends AutonomousBase {
 
         if( opModeIsActive() ) {
             autoViperMotorMoveToTarget( robot.VIPER_EXTEND_GRAB);
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_BASKET_DEG);
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT1_DEG);
             timeDriveStraight(-DRIVE_SPEED_20,3000);
             do {
                 if( !opModeIsActive() ) break;

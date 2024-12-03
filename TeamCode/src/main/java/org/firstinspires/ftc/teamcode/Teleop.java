@@ -238,7 +238,7 @@ public abstract class Teleop extends LinearOpMode {
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
-            telemetry.addData("Tilt", "%d counts %.1f deg", robot.wormTiltMotorPos, robot.armTiltAngle);
+            telemetry.addData("Tilt", "%d counts %.1f deg %.1f raw deg", robot.wormTiltMotorPos, robot.armTiltAngle, robot.computeRawAngle(robot.armTiltEncoder.getVoltage()));
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.1f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.1f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
@@ -593,8 +593,8 @@ public abstract class Teleop extends LinearOpMode {
     void processTiltControls() {
         // The encoder is backwards from our definition of MAX and MIN. Maybe change the
         // convention in hardware class?
-        boolean safeToManuallyLower = (robot.armTiltAngle < robot.TILT_ANGLE_HW_MIN_DEG);
-        boolean safeToManuallyRaise = (robot.armTiltAngle > robot.TILT_ANGLE_HW_MAX_DEG);
+        boolean safeToManuallyLower = (robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_HW_MIN_DEG);
+        boolean safeToManuallyRaise = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_HW_MAX_DEG);
         double  gamepad2_right_stick = gamepad2.right_stick_y;
         boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.08 );
 
@@ -664,7 +664,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Retract lift to the collection position
-            boolean armRaised = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_RAISED_DEG)? true: false;
+            boolean armRaised = (robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_RAISED_DEG)? true: false;
             // If raised to the basket, do this automatically before lowering
             // (don't want to do it if we use this backing out of submersimble
             if (armRaised) {
@@ -824,7 +824,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.viperMotor.setPower( -0.10 );  // hold power
             }
             // Do we need to further store the robot drivetrain?
-            boolean tiltRetractionIncomplete = (robot.armTiltAngle > robot.TILT_ANGLE_HANG2_DEG)? true : false;
+            boolean tiltRetractionIncomplete = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_HANG2_DEG)? true : false;
             boolean tiltMotorLoadOkay = (robot.wormTiltMotorAmps < 8.5)? true : false;
             if( viperRetractionIncomplete && viperMotorLoadOkay ) {
                 robot.wormTiltMotor.setPower( 0.30 );   // test at lower  power!!!

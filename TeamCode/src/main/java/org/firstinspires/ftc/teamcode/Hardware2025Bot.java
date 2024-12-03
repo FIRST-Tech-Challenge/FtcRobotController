@@ -101,32 +101,37 @@ public class Hardware2025Bot
 
     protected AnalogInput armTiltEncoder   = null;    // US Digital absolute magnetic encoder (MA3)
     public double           armTiltAngle   = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double     armTiltAngleOffset   = 129.0;     // allows us to adjust the 0-360 deg range
-    public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
+    public static final double armTiltAngleOffset = 129.0;     // allows us to adjust the 0-360 deg range
+    public double       turretAngleTarget   = 0.0;     // Automatic movement target angle (degrees)
 
     public int          TILT_ANGLE_HW_MAX   =  3675;  // encoder at maximum rotation UP/BACK (horizontal = -200)
-    public int          TILT_ANGLE_BASKET   =  3675;  // encoder at rotation back to the basket for scoring
-    public int          TILT_ANGLE_RAISED   =  2000;  // encoder at rotation back to the basket for scoring
-    public int          TILT_ANGLE_HANG1    =  1400;  // encoder when preparing for level 2 ascent
-    public int          TILT_ANGLE_HANG2    =   400;   // encoder at the end of level 2 ascent
-    public int          TILT_ANGLE_ZERO     =     0;   // encoder for parking fullyh reset in auto
-    public int          TILT_ANGLE_DRIVE    =   200;   // encoder for parking in auto or driving around
-    public int          TILT_ANGLE_AUTO1    =  2005;  // tilted up for autonomous specimen scoring (above bar)
-    public int          TILT_ANGLE_AUTO2    =  1780;  // tilted up for autonomous specimen scoring (clipped)
-    public int          TILT_ANGLE_HW_MIN   = -2000;  // encoder at maximum rotation DOWN/FWD
+    public int          TILT_ANGLE_BASKET   =  3675;  // 93.8 deg at 3582 encoder at rotation back to the basket for scoring
+    public int          TILT_ANGLE_RAISED   =  2000;  // 54.5 deg encoder at rotation back to the basket for scoring
+    public int          TILT_ANGLE_HANG1    =  1400;  // 40.1 deg encoder when preparing for level 2 ascent
+    public int          TILT_ANGLE_HANG2    =   400;   // 16.4 deg encoder at the end of level 2 ascent
+    public int          TILT_ANGLE_ZERO     =     0;   // 7 deg encoder for parking fullyh reset in auto
+    public int          TILT_ANGLE_DRIVE    =   200;   // 11.8 deg encoder for parking in auto or driving around
+    public int          TILT_ANGLE_AUTO1    =  2005;  // 54.8 deg tilted up for autonomous specimen scoring (above bar)
+    public int          TILT_ANGLE_AUTO2    =  1780;  // 49.6 tilted up for autonomous specimen scoring (clipped)
+    public int          TILT_ANGLE_HW_MIN   = -2000;  // does not exist encoder at maximum rotation DOWN/FWD
 
-    public static double startingTurretAngle = 97.0;
-    public final static double ENCODER_COUNTS_PER_DEG  = 5675.0 / 90.9;
-    public final static double TILT_ANGLE_HW_MAX_DEG   =   38.1;  // encoder at maximum rotation UP/BACK (horizontal = -200)
-    public final static double TILT_ANGLE_BASKET_DEG   =   38.1;  // encoder at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_RAISED_DEG   =   64.9;  // encoder at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_HANG1_DEG    =   74.5;  // encoder when preparing for level 2 ascent
-    public final static double TILT_ANGLE_HANG2_DEG    =   90.6; // encoder at the end of level 2 ascent
-    public final static double TILT_ANGLE_ZERO_DEG     =   97.0; // encoder for parking fullyh reset in auto
-    public final static double TILT_ANGLE_DRIVE_DEG    =   93.8; // encoder for parking in auto or driving around
-    public final static double TILT_ANGLE_AUTO1_DEG    =   64.9; // tilted up for autonomous specimen scoring (above bar)
-    public final static double TILT_ANGLE_AUTO2_DEG    =   68.5; // tilted up for autonomous specimen scoring (clipped)
-    public final static double TILT_ANGLE_HW_MIN_DEG   =  129.0; // encoder at maximum rotation DOWN/FWD
+    // This value is set at init.
+    public static double startingArmTiltAngle = 0.0;
+    // Delta math from -0.1 deg -3891 encoder counts
+    //                  94.4 deg 5 encoder counts
+    //                  94.5 deg 3896 encoder counts range
+    public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
+    public final static double TILT_ANGLE_HW_MAX_DEG   =   95.00;  // encoder at maximum rotation UP/BACK (horizontal = -200)
+    public final static double TILT_ANGLE_BASKET_DEG   =   95.00;  // encoder at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_ASCENT1_DEG  =   93.80;  // encoder at rotation back to the low bar for ascent level 1
+    public final static double TILT_ANGLE_RAISED_DEG   =   54.50;  // encoder at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_HANG1_DEG    =   40.10;  // encoder when preparing for level 2 ascent
+    public final static double TILT_ANGLE_HANG2_DEG    =   16.40; // encoder at the end of level 2 ascent
+    public final static double TILT_ANGLE_ZERO_DEG     =    7.00; // encoder for parking fullyh reset in auto
+    public final static double TILT_ANGLE_DRIVE_DEG    =   11.80; // encoder for parking in auto or driving around
+    public final static double TILT_ANGLE_AUTO1_DEG    =   54.80; // tilted up for autonomous specimen scoring (above bar)
+    public final static double TILT_ANGLE_AUTO2_DEG    =   49.60; // tilted up for autonomous specimen scoring (clipped)
+    public final static double TILT_ANGLE_HW_MIN_DEG   =    0.00; // encoder at maximum rotation DOWN/FWD
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -269,7 +274,7 @@ public class Hardware2025Bot
         wormPanMotor   = hwMap.get(DcMotorEx.class,"WormPan");   // Control Hub port 0
         wormTiltMotor  = hwMap.get(DcMotorEx.class,"WormTilt");  // Control Hub port 1
         armTiltEncoder = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
-        startingTurretAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
+        startingArmTiltAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
 
         wormPanMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -394,6 +399,19 @@ public class Hardware2025Bot
         return correctedAngle;
     } // computeAbsoluteAngle
 
+    public double computeRawAngle( double measuredVoltage )
+    {
+        final double DEGREES_PER_ROTATION = 360.0;  // One full rotation measures 360 degrees
+        final double MAX_MA3_ANALOG_VOLTAGE = 3.3;  // 3.3V maximum analog output
+        // NOTE: when vertical the angle is 38.1deg, when horizontal 129.0 (prior to offset below)
+        double measuredAngle = (measuredVoltage / MAX_MA3_ANALOG_VOLTAGE) * DEGREES_PER_ROTATION;
+        // Correct for the offset angle (see note above)
+        // Enforce that any wrap-around remains in the range of -180 to +180 degrees
+        while( measuredAngle < -180.0 ) measuredAngle += 360.0;
+        while( measuredAngle > +180.0 ) measuredAngle -= 360.0;
+        return measuredAngle;
+    } // computeAbsoluteAngle
+
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE: The absolute magnetic encoders may not be installed with 0deg rotated to the "right" */
     /* rotational angle to put ZERO DEGREES where we want it.  By defining a starting offset, and */
@@ -402,7 +420,7 @@ public class Hardware2025Bot
     /*--------------------------------------------------------------------------------------------*/
     public static int computeEncoderCountsFromAngle( double angle )
     {
-        return (int)((startingTurretAngle - angle) * ENCODER_COUNTS_PER_DEG);
+        return (int)((angle - startingArmTiltAngle) * ENCODER_COUNTS_PER_DEG);
     } // computeEncoderCountsFromAngle
 
     /*--------------------------------------------------------------------------------------------*/

@@ -336,11 +336,11 @@ public class AutonomousRightBlue extends AutonomousBase {
             pos_angle=-5.0;  // angle the bot away from the wall as we herd the final sample
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_60, TURN_SPEED_40, DRIVE_THRU );
             // Go fast to the edge of the observation zone
-            pos_y =  14.0;
+            pos_y =  15.0;
             pos_x -= 3.0;  // end 5" away from the wall
             driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_80, TURN_SPEED_40, DRIVE_THRU );
             // ease into the observation zone (in case we hit the wall, or another robot)
-            timeDriveStraight(-DRIVE_SPEED_20,1500);
+            timeDriveStraight(-DRIVE_SPEED_20,1000);
         } // opModeIsActive
         // If we did any herding, turn off the motors
         if (samplesToHerd > 0) {
