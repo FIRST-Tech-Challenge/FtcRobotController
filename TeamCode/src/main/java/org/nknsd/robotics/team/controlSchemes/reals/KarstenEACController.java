@@ -31,7 +31,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleGrab() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.A.detect(gamepad2) && controlEAC;
             }
         };
@@ -41,7 +41,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleNeutral() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return !(GamePadHandler.GamepadButtons.A.detect(gamepad2) && (GamePadHandler.GamepadButtons.B.detect(gamepad2)) && controlEAC);
             }
         };
@@ -51,7 +51,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleRelease() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.B.detect(gamepad2) && controlEAC;
             }
         };
@@ -61,7 +61,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleUp() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.DPAD_UP.detect(gamepad2) && controlEAC;
             }
         };
@@ -71,7 +71,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleDown() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamepad2) && controlEAC;
             }
         };
@@ -81,7 +81,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleExtend() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamepad2) && controlEAC;
             }
         };
@@ -91,7 +91,7 @@ public class KarstenEACController extends EACControlScheme {
     public Callable<Boolean> sampleRetract() {
         return new Callable<Boolean>() {
             @Override
-            public Boolean call() throws Exception {
+            public Boolean call() {
                 return GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamepad2) && controlEAC;
             }
         };
