@@ -34,12 +34,12 @@ public class IntakeTestTeleOp extends LinearOpMode {
                 }
             }
             runningActions = newActions;
-            if (easyGamepad1.getR1()) {
-                runningActions.add(intake.intakeByColor(true));
-            }
-            if (easyGamepad1.getL1()) {
-                runningActions.add(intake.intakeByColor(false));
-            }
+//            if (easyGamepad1.getR1()) {
+//                runningActions.add(intake.intakeByColor(true));
+//            }
+//            if (easyGamepad1.getL1()) {
+//                runningActions.add(intake.intakeByColor(false));
+//            }
         }
     }
 }

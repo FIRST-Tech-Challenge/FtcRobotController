@@ -15,10 +15,12 @@ import java.util.List;
 
 @TeleOp
 public class EasyGamepadTest extends LinearOpMode {
-    EasyGamepad easyGamepad = new EasyGamepad(gamepad1);
+    private EasyGamepad easyGamepad = new EasyGamepad(gamepad1);
     private Arm arm = new Arm(this, true);
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
+
+    private boolean circleTriggered = false;
 
     public void runOpMode() throws InterruptedException {
         waitForStart();
@@ -31,10 +33,10 @@ public class EasyGamepadTest extends LinearOpMode {
             if (easyGamepad.getButton(GamepadKeys.Button.SQUARE)) {
                 runningActions.add(arm.scoreAction());
             }
-            if (easyGamepad.buttonTriggered(GamepadKeys.Button.TRIANGLE) && easyGamepad.stateJustChangeButton(GamepadKeys.Button.TRIANGLE)) {
+            if (easyGamepad.justPressedButton(GamepadKeys.Button.CIRCLE) && circleTriggered ) {
                 runningActions.add(arm.scoreAction());
             }
-            else if (!easyGamepad.buttonTriggered(GamepadKeys.Button.TRIANGLE) && easyGamepad.stateJustChangeButton(GamepadKeys.Button.TRIANGLE)) {
+            else if (easyGamepad.justPressedButton(GamepadKeys.Button.CIRCLE)) {
                 runningActions.add(arm.scoreAction());
             }
 

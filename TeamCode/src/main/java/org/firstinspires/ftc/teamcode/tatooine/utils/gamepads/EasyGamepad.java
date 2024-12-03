@@ -121,7 +121,7 @@ public class EasyGamepad {
         return triggerValue;
     }
 
-    public boolean stateJustChangeButton(GamepadKeys.Button button) {
+    public boolean justPressedButton(GamepadKeys.Button button) {
         boolean buttonValue;
         switch (button) {
             case CROSS:
@@ -149,7 +149,7 @@ public class EasyGamepad {
         return buttonValue;
     }
 
-    public boolean stateJustChangeStick(GamepadKeys.Stick stick) {
+    public boolean stateChangedStick(GamepadKeys.Stick stick) {
         boolean stickValue;
         switch (stick) {
             case LEFT_STICK_X:
@@ -171,7 +171,7 @@ public class EasyGamepad {
         return stickValue;
     }
 
-    public boolean stateJustChangedTriggered(GamepadKeys.Trigger trigger) {
+    public boolean stateChangedTriggers(GamepadKeys.Trigger trigger) {
         boolean triggerValue;
         switch (trigger) {
             case LEFT_TRIGGER:
@@ -185,44 +185,5 @@ public class EasyGamepad {
                 break;
         }
         return triggerValue;
-    }
-    public boolean buttonTriggered(GamepadKeys.Button button) {
-        boolean buttonValue;
-        switch (button) {
-            case CROSS:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.CROSS) && getButton(GamepadKeys.Button.CROSS) && crossTriggered;
-                break;
-            case CIRCLE:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.CIRCLE) && getButton(GamepadKeys.Button.CIRCLE) && circleTriggered;
-                break;
-            case TRIANGLE:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.TRIANGLE) && getButton(GamepadKeys.Button.TRIANGLE) && triangleTriggered;
-                break;
-            case SQUARE:
-                buttonValue = buttonValue = stateJustChangeButton(GamepadKeys.Button.SQUARE) && getButton(GamepadKeys.Button.SQUARE) && squareTriggered;
-                break;
-            case BACK:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.BACK) && getButton(GamepadKeys.Button.BACK) && backTriggered;
-                break;
-            case START:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.START) && getButton(GamepadKeys.Button.START) && startTriggered;
-                break;
-            case DPAD_UP:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.DPAD_UP) && getButton(GamepadKeys.Button.DPAD_UP) && dPadUpTriggered;
-                break;
-            case DPAD_DOWN:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.DPAD_DOWN) && getButton(GamepadKeys.Button.DPAD_DOWN) && dPadDownTriggered;
-                break;
-            case DPAD_LEFT:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.DPAD_LEFT) && getButton(GamepadKeys.Button.DPAD_LEFT) && dPadLeftTriggered;
-                break;
-            case DPAD_RIGHT:
-                buttonValue = stateJustChangeButton(GamepadKeys.Button.DPAD_RIGHT) && getButton(GamepadKeys.Button.DPAD_RIGHT) && dPadRightTriggered;
-                break;
-            default:
-                buttonValue = false;
-                break;
-        }
-        return buttonValue;
     }
 }
