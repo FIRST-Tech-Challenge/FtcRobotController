@@ -34,6 +34,8 @@ public class TeleopManualV1 extends LinearOpMode {
         Outake outake = new Outake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
+        int target=0;
+
         telemetry.update();
 
         waitForStart();
@@ -74,25 +76,26 @@ public class TeleopManualV1 extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 outake.diffy1(ITDCons.BucketDiffy1);
                 outake.diffy2(ITDCons.BucketDiffy2);
-                outake.moveSlide(ITDCons.BucketTarget);
+                target= ITDCons.BucketTarget;
             }
 
             if (gamepad1.dpad_down) {
                 outake.diffy1(ITDCons.FloorDiffy1);
                 outake.diffy2(ITDCons.FloorDiffy2);
-                outake.moveSlide(0);
+                target=0;
             }
 
             if (gamepad1.dpad_left) {
                 outake.diffy1(ITDCons.WallDiffy1);
                 outake.diffy2(ITDCons.WallDiffy2);
-                outake.moveSlide(0);
+                target=0;
             }
 
             if (gamepad1.dpad_right) {
                 outake.diffy1(ITDCons.SpecimenDiffy1);
                 outake.diffy2(ITDCons.SpecimenDiffy2);
-                outake.moveSlide(ITDCons.SpecimenTarget);
+                target= ITDCons.SpecimenTarget;
+
             }
 
             if(gamepad1.a){
@@ -100,6 +103,8 @@ public class TeleopManualV1 extends LinearOpMode {
             } else if (gamepad1.b) {
                 outake.moveClaw(ITDCons.close);
             }
+
+            outake.moveSlide(target);
 
 
             telemetry.addData("Slide Target", outake.getTarget());
