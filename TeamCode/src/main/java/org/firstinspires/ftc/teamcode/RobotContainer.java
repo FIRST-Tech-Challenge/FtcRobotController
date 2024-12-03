@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
@@ -74,29 +75,17 @@ public class RobotContainer {
     //public static VirtualOdometry odometry;
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
-
     public static PivotingWrist wristRotateServo;
-
-    /**
-     * 0° is in
-     */
+    /** * 0° is in */
     public static FlappyFlappyWrist flappyFlappyWrist;
-
-    /**
-     * 0° is up
-     */
+    /** * 0° is up */
     public static ShoulderJoint shoulderJoint;
-
-    /**
-     * 0° is down
-     */
+    /** * 0° is down */
     public static ElbowJoint elbowJoint;
-
     public static Claw claw;
-
     public static Climb climb;
-
     public static ClawTouchSensor clawTouch;
+    public static Blinkin blinkin;
 
     //Angle of the robot at the start of auto
     public static double RedStartAngle = 90;
@@ -158,16 +147,11 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
 
-
-
         if (isRedAlliance){
             odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
         } else {
             odometry.setCurrentPos(new Pose2d(0.8, 1.6, new Rotation2d(Math.toRadians(BlueStartAngle))));
         }
-
-
-
 
 
 
@@ -238,7 +222,6 @@ public class RobotContainer {
         //drivesystem = new VirtualDriveTrain();
         //frontCamera = new Camera("CamyCamy");
         clawCamera = new ClawCamera("ClawCamera");
-
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
         shoulderJoint = new ShoulderJoint();
@@ -247,9 +230,7 @@ public class RobotContainer {
         claw = new Claw();
         climb = new Climb();
         clawTouch = new ClawTouchSensor();
-
-        // insert other subsystems here
-        // claw = new Claw();
+        blinkin = new Blinkin();
 
         GoToNextDropOff.initializeDestinationDecrement();
     }
