@@ -52,7 +52,7 @@ public class LilyVisionHandler implements NKNComponent {
 
     @Override
     public String getName() {
-        return null;
+        return "Vision Handler";
     }
 
     @Override
