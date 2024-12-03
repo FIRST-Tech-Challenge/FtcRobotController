@@ -6,13 +6,24 @@ import org.nknsd.robotics.team.controlSchemes.abstracts.WheelControlScheme;
 import java.util.concurrent.Callable;
 
 public class CollyWheelController extends WheelControlScheme {
+    private boolean delaySpeedChangesUp = false;
+    private boolean delaySpeedChangesDown = false;
 
     @Override
     public Callable<Boolean> gearUp() {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamepad1);
+                boolean button = GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamePadHandler.getGamePad1());
+
+                if (!delaySpeedChangesUp && button) {
+                    delaySpeedChangesUp = true;
+                    return true;
+                } else if (!button) {
+                    delaySpeedChangesUp = false;
+                }
+
+                return false;
             }
         };
     }
@@ -22,7 +33,16 @@ public class CollyWheelController extends WheelControlScheme {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamepad1);
+                boolean button = GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamePadHandler.getGamePad1());
+
+                if (!delaySpeedChangesDown && button) {
+                    delaySpeedChangesDown = true;
+                    return true;
+                } else if (!button) {
+                    delaySpeedChangesDown = false;
+                }
+
+                return false;
             }
         };
     }
@@ -32,7 +52,7 @@ public class CollyWheelController extends WheelControlScheme {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return GamePadHandler.GamepadButtons.BACK.detect(gamepad1);
+                return GamePadHandler.GamepadButtons.BACK.detect(gamePadHandler.getGamePad1());
             }
         };
     }

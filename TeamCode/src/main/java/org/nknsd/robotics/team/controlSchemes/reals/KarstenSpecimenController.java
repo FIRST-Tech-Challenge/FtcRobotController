@@ -11,7 +11,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.A.detect(gamepad2) && !eacControlScheme.controlEAC);
+                return (GamePadHandler.GamepadButtons.A.detect(gamePadHandler.getGamePad2()) && !eacControlScheme.controlEAC);
             }
         };
     }
@@ -21,7 +21,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.B.detect(gamepad2) && !eacControlScheme.controlEAC);
+                return (GamePadHandler.GamepadButtons.B.detect(gamePadHandler.getGamePad2()) && !eacControlScheme.controlEAC);
             }
         };
     }
@@ -31,7 +31,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamepad2)) && !eacControlScheme.controlEAC;
+                return (GamePadHandler.GamepadButtons.DPAD_DOWN.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
@@ -41,7 +41,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.DPAD_UP.detect(gamepad2)) && !eacControlScheme.controlEAC;
+                return (GamePadHandler.GamepadButtons.DPAD_UP.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
@@ -51,7 +51,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamepad2)) && !eacControlScheme.controlEAC;
+                return (GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }
@@ -61,7 +61,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable() {
             @Override
             public Object call() throws Exception {
-                return (GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamepad2)) && !eacControlScheme.controlEAC;
+                return (GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamePadHandler.getGamePad2())) && !eacControlScheme.controlEAC;
             }
         };
     }

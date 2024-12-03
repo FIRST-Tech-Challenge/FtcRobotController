@@ -13,7 +13,7 @@ public abstract class WheelControlScheme extends NKNControlScheme {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return GamePadHandler.GamepadButtons.Y.detect(gamepad1);
+                return GamePadHandler.GamepadButtons.Y.detect(gamePadHandler.getGamePad1());
             }
         };
     }

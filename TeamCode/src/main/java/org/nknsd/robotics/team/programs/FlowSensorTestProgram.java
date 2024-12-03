@@ -7,6 +7,7 @@ import org.nknsd.robotics.team.components.GamePadHandler;
 import org.nknsd.robotics.team.components.IMUComponent;
 import org.nknsd.robotics.team.components.drivers.WheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
+import org.nknsd.robotics.team.controlSchemes.reals.CollyWheelController;
 
 import java.util.List;
 
@@ -37,6 +38,10 @@ public class FlowSensorTestProgram extends NKNProgram {
         WheelDriver wheelDriver = new WheelDriver(0, 1, 10, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
         components.add(wheelDriver);
         telemetryEnabled.add(wheelDriver);
-        wheelDriver.link(gamePadHandler, wheelHandler);
+
+        CollyWheelController wheelController = new CollyWheelController();
+        wheelController.link(gamePadHandler);
+
+        wheelDriver.link(gamePadHandler, wheelHandler, wheelController);
     }
 }

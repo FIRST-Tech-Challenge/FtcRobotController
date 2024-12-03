@@ -12,6 +12,8 @@ import org.nknsd.robotics.team.components.drivers.AdvancedWheelDriver;
 import org.nknsd.robotics.team.components.WheelHandler;
 import org.nknsd.robotics.team.components.drivers.EACDriver;
 import org.nknsd.robotics.team.components.drivers.WheelDriver;
+import org.nknsd.robotics.team.controlSchemes.reals.CollyWheelController;
+import org.nknsd.robotics.team.controlSchemes.reals.KarstenEACController;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class BasicMovementNKNProgram extends NKNProgram {
         // Misc
         GamePadHandler gamePadHandler = new GamePadHandler();
         components.add(gamePadHandler);
+        //telemetryEnabled.add(gamePadHandler);
 
         WheelHandler wheelHandler = new WheelHandler();
         components.add(wheelHandler);
@@ -58,10 +61,19 @@ public class BasicMovementNKNProgram extends NKNProgram {
         telemetryEnabled.add(eacDriver);
 
 
+        // Controllers
+        CollyWheelController wheelController = new CollyWheelController();
+        wheelController.link(gamePadHandler);
+
+        KarstenEACController eacController = new KarstenEACController();
+        eacController.link(gamePadHandler);
+        eacController.linkExtensionHandler(extensionHandler);
+
+
         // Link the components to each other
-        wheelDriver.link(gamePadHandler, wheelHandler);
+        wheelDriver.link(gamePadHandler, wheelHandler, wheelController);
         rotationHandler.link(potentiometerHandler, extensionHandler);
         extensionHandler.link(rotationHandler);
-        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler);
+        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler, eacController);
     }
 }
