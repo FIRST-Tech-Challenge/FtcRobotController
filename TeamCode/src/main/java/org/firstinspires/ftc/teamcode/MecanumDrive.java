@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.MecanumEncoder;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
@@ -64,31 +65,31 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = .0019789926;//ticks per inch 505.3076;
-        public double lateralInPerTick = 0.0014302178017763932;//.0019789926; //empirical 0.0014302178017763932
+        public double lateralInPerTick = .0019789926;//0.0014302178017763932;//.0019789926; //empirical 0.0014302178017763932
         public double trackWidthTicks = 6934.745424181346; // empirical: 6934.745424181346//actual: 4800.4222;wheel center to center 6821.6526
 
         // feedforward parameters (in tick units)
-        public double kS = 1.0023759217535573;//1.0174751770708461;
-        public double kV = 0.0003481420833892871;//0.0003450079827757681;
-        public double kA = 0.0;
+        public double kS =  0.8083072556174482;//0.080375;//1.0174751770708461;
+        public double kV = 0.0003628692127889575;//0.000200;//0.0003450079827757681;
+        public double kA = 0.00004;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
+        public double maxWheelVel = 60;
         public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxProfileAccel = 40;
 
         // turn profile parameters (in radians)
-        public double maxAngVel = Math.PI; // shared with path
-        public double maxAngAccel = Math.PI;
+        public double maxAngVel = Math.PI*4; // shared with path
+        public double maxAngAccel = Math.PI*3;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double axialGain = 2;
+        public double lateralGain = 4;
+        public double headingGain = 3; // shared with turn
 
-        public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double axialVelGain = .5;
+        public double lateralVelGain = .5;
+        public double headingVelGain = .25; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -244,6 +245,48 @@ public final class MecanumDrive {
         localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+    }
+
+    public void setPowersFeildCentric(PoseVelocity2d powers, double maxPower) {
+        double y = powers.linearVel.y;
+        double x = powers.linearVel.x;
+        double rx = powers.angVel;
+
+
+        double botHeading = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        double rotX = 0.0;
+        double rotY = 0.0;
+
+        // Rotate the movement direction counter to the bot's rotation
+        rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.0;  // Counteract imperfect strafing
+
+        double frontLeftPower = (rotY + rotX + rx);
+        double backLeftPower = (rotY - rotX + rx);
+        double frontRightPower = (rotY - rotX - rx);
+        double backRightPower = (rotY + rotX - rx);
+
+        //scale the powers
+        double scaleFactor = maxPower; //default scale value
+        double maxCalculatedPower =
+                Math.max(
+                        Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                        Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
+                );
+
+        if(maxCalculatedPower > 1.0) {
+            //max calculated power becomes the new scaler
+            scaleFactor = maxCalculatedPower;
+        }
+
+        //scale all the power values
+        leftFront.setPower(frontLeftPower/scaleFactor);
+        leftBack.setPower(backLeftPower/scaleFactor);
+        rightBack.setPower(backRightPower/scaleFactor);
+        rightFront.setPower(frontRightPower/scaleFactor);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {

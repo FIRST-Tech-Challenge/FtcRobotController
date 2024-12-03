@@ -25,6 +25,7 @@ public class Slide {
     public void Init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, motorName);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setDirection(extendMotorDirection == ExtendMotorDirection.Forward ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
     }
 
@@ -48,6 +49,13 @@ public class Slide {
 
     public void MoveTo(double inches, double power) {
         //move to to provided inches
+        int targetTicks = (int) (inches*ticksPerInch);
+        targetTicks = Math.max(0, targetTicks);
+        targetTicks = Math.min(targetTicks, maxTicks);
+        motor.setTargetPosition(targetTicks);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(Math.min(power, maxSpeed));
+
     }
     public  void Stop() {
         //stop the motor
