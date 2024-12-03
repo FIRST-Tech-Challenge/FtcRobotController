@@ -39,7 +39,7 @@ public class SpecimenClawHandler implements NKNComponent {
 
     @Override
     public String getName() {
-        return null;
+        return "SpecimenClawHandler";
     }
 
     @Override
@@ -49,13 +49,13 @@ public class SpecimenClawHandler implements NKNComponent {
 
     @Override
     public void doTelemetry(Telemetry telemetry) {
-
+        // Should add some telemetry
     }
 
     public enum ClawPositions {
         GRIP(0),
-        RELEASE(0.5),
-        ;
+        RELEASE(0.5);
+        
         public final double position;
         ClawPositions(double position) { this.position = position;}
     }
