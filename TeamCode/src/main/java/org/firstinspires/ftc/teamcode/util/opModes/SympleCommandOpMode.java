@@ -26,6 +26,7 @@ public abstract class SympleCommandOpMode extends CommandOpMode {
         while (this.opModeInInit() && !this.isStopRequested()) {
             robotController.initializeLoop();
             SympleGraphDisplay.getInstance().run();
+            this.robotController.getTelemetry().update();
         }
 
         this.waitForStart();
@@ -37,6 +38,7 @@ public abstract class SympleCommandOpMode extends CommandOpMode {
             this.run();
             robotController.run();
             SympleGraphDisplay.getInstance().run();
+            this.robotController.getTelemetry().update();
         }
 
         robotController.postRun();
