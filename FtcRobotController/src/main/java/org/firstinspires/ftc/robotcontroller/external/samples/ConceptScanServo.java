@@ -61,7 +61,7 @@ public class ConceptScanServo extends LinearOpMode {
     Servo   servo;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
-
+//spider ::))
 
     @Override
     public void runOpMode() {

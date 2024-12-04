@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp
 public class MotorIdentifierTeleop extends DriveMethods {
     int testingMotor = 0;
+    double targetClawPosition = 0;
     boolean wasPressed = false;
 
     @Override
@@ -18,7 +19,7 @@ public class MotorIdentifierTeleop extends DriveMethods {
         boolean isPressed = gamepad1.a;
         if (isPressed && !wasPressed) {
             testingMotor = testingMotor + 1;
-            if (testingMotor > 4) {
+            if (testingMotor > 6) {
                 testingMotor = 0;
             }
         }
@@ -38,6 +39,9 @@ public class MotorIdentifierTeleop extends DriveMethods {
         } else if (testingMotor == 3) {
             motor = robot.leftBackDrive;
             name = "leftBack";
+        } else if (testingMotor == 4) {
+            motor = robot.sliderMotor;
+            name = "sliderMotor";
         } else {
             name = "wormGear";
             motor = robot.wormGear;
@@ -45,6 +49,11 @@ public class MotorIdentifierTeleop extends DriveMethods {
 
         double power = -gamepad1.left_stick_y;
         motor.setPower(power);
+//spider ::::-/
+        if (gamepad1.b) {
+            targetClawPosition = targetClawPosition + -gamepad1.right_stick_y * .005;
+            robot.clawServo.setPosition(targetClawPosition);
+        }
 
         if (isPressed && !wasPressed) {
             telemetry.speak(name);
@@ -52,6 +61,8 @@ public class MotorIdentifierTeleop extends DriveMethods {
 
         telemetry.addData("motor", name);
         telemetry.addData("power", "%.1f", power);
+        telemetry.addData("sliderTicks", "%.1f", (double) robot.sliderMotor.getCurrentPosition());
+        telemetry.addData("clawPosition", "%.3f", robot.clawServo.getPosition());
 
         wasPressed = isPressed;
     }

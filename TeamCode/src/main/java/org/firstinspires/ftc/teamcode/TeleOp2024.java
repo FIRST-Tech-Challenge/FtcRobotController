@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
 public class TeleOp2024 extends DriveMethods {
+    boolean wasClawTogglePressed = false;
+
     @Override
     public void init() {
         robot.init(hardwareMap);
@@ -14,6 +16,16 @@ public class TeleOp2024 extends DriveMethods {
     public void loop() {
         Gamepad driver = gamepad1;
         Gamepad operator = gamepad2;
+
+        boolean isClawTogglePressed = operator.b;
+        if (isClawTogglePressed && !wasClawTogglePressed) {
+            if (robot.clawServo.getPosition() == robot.CLAW_OPEN) {
+                robot.clawServo.setPosition(robot.CLAW_CLOSED);
+            } else {
+                robot.clawServo.setPosition(robot.CLAW_OPEN);
+            }
+        }
+
 
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;
@@ -34,5 +46,7 @@ public class TeleOp2024 extends DriveMethods {
         telemetry.addData("Lift","%.1f", opLeftStickY);
 //Lift means wormrote variable, which refers to the rotation of the worm gear
 
+        // let the next frame know if the toggle was pressed
+        wasClawTogglePressed = isClawTogglePressed;
     }
 }
