@@ -233,7 +233,9 @@ public class RobotContainer {
         claw = new Claw();
         climb = new Climb();
         clawTouch = new ClawTouchSensor();
-        blinkin = new Blinkin();
+
+        // insert other subsystems here
+        // claw = new Claw();
 
         GoToNextDropOff.initializeDestinationDecrement();
     }
