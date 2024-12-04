@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.openftc.easyopencv.OpenCvCamera;
-import org.opencv.videoio.VideoCapture;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 
 
@@ -68,10 +69,22 @@ public class AutoOpMode extends LinearOpMode {
         frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
         backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
-        // Initialize video capture
-        webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
-        VideoCapture capture = new VideoCapture(0);
 
+        // Initialize webcam
+        webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                // Start streaming to the phone's display
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Webcam Error", "Error code: " + errorCode);
+                telemetry.update();
+            }
+        });
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
