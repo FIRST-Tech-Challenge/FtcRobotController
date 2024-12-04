@@ -16,10 +16,11 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
-@Autonomous(name="PIDCalibration")
+@Disabled
+//@Autonomous(name="PIDCalibration")
 public class PIDCalibration extends LinearOpMode {
     public static final double learningRateP = 0.05;
     public static final double learningRateI = 0.001;
@@ -31,7 +32,7 @@ public class PIDCalibration extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
-        WheelOdometry wheelOdometry = new WheelOdometry(driveTrain, opModeUtilities, imuModule, 0, 0, Math.toRadians(0));
+        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
 
         waitForStart();
 

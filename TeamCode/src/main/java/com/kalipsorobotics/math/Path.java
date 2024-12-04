@@ -42,20 +42,14 @@ public class Path {
     }
 
     public Optional<Position> lookAhead(Position currentPosition, double radiusInch) {
-        for(int i = currentSearchWayPointIndex; i<numPoints(); i++) {
+        for (int i = currentSearchWayPointIndex; i < numPoints(); i++) {
             if (currentPosition.distanceTo(getPoint(i)) > radiusInch) {
                 Position position = getPoint(i);
                 currentSearchWayPointIndex = i;
                 return Optional.of(position);
             }
         }
-
-        if(Math.abs(currentPosition.getTheta() - getPoint(currentSearchWayPointIndex).getTheta()) < Math.toRadians(4)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(getPoint(currentSearchWayPointIndex));
-        }
-
+        return Optional.empty();
     }
 
     public Position getPoint(int index) {
@@ -66,11 +60,26 @@ public class Path {
         return path.size();
     }
 
+    public Position getLastPoint() {
+        return path.get(path.size() - 1);
+    }
+
     public int numSegments() {
         return numPoints() - 1;
     }
 
     public Segment getSegment(int index) {
         return new Segment(getPoint(index), getPoint(index + 1));
+    }
+
+    public int findIndex(Position position) {
+        for (int i = 0; i < path.size(); i++) {
+
+            if (position == path.get(i)) {
+                return i;
+            }
+
+        }
+        return -1;
     }
 }

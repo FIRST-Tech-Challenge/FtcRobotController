@@ -2,7 +2,7 @@ package com.kalipsorobotics.modules;
 
 import android.util.Log;
 
-import com.kalipsorobotics.math.CalculateTickInches;
+import com.kalipsorobotics.math.MathFunctions;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -56,6 +56,8 @@ public class DriveTrain {
 
        // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
+
+
 
     public void setFLeftPower(double power) { fLeft.setPower(power); }
 
@@ -171,6 +173,26 @@ public class DriveTrain {
 
     public OpModeUtilities getOpModeUtilities() {
         return opModeUtilities;
+    }
+
+
+    public void setPowerWithRangeClippingMinThreshold(double fLeftPower, double fRightPower, double bLeftPower,
+                                                      double bRightPower, double minPowerThreshold) {
+        double biggestPowerAbs = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
+        double scaleFactor = 1;
+
+        //clipping power to -1 and 1 and min power is not 0.2 and -0.2
+        if (biggestPowerAbs > 1) {
+            scaleFactor = 1 / biggestPowerAbs;
+        } else if (biggestPowerAbs < minPowerThreshold) {
+            scaleFactor = (minPowerThreshold / biggestPowerAbs);
+        }
+
+        fLeftPower *= scaleFactor;
+        fRightPower *= scaleFactor;
+        bLeftPower *= scaleFactor;
+        bRightPower *= scaleFactor;
+        setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
     }
 
     /*public void setTestPower(double power) throws InterruptedException {

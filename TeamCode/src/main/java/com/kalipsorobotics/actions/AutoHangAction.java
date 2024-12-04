@@ -1,9 +1,8 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.hang.HangHookAction;
-import com.kalipsorobotics.actions.outtake.AutoBasketAction;
-import com.kalipsorobotics.actions.outtake.AutoSpecimenHangAction;
-import com.kalipsorobotics.math.CalculateTickInches;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
 
 public class AutoHangAction extends Action {
@@ -15,24 +14,24 @@ public class AutoHangAction extends Action {
     HangHookAction hangHookAction;
 
     public AutoHangAction(Outtake outtake) {
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
 
-        moveLSUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(28), outtake);
+        moveLSUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(28));
 
-        waitAction = new WaitAction(4);
-        waitAction.setDependentAction(moveLSUp);
+        waitAction = new WaitAction(400);
+        waitAction.setDependentActions(moveLSUp);
 
-        moveLSDown = new MoveLSAction(CalculateTickInches.inchToTicksLS(-5), outtake);
-        moveLSDown.setDependentAction(waitAction);
+        moveLSDown = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-5));
+        moveLSDown.setDependentActions(waitAction);
 
-        waitActionTwo = new WaitAction(3);
-        waitActionTwo.setDependentAction(moveLSDown);
+        waitActionTwo = new WaitAction(300);
+        waitActionTwo.setDependentActions(moveLSDown);
 
-        pullUp = new MoveLSAction(CalculateTickInches.inchToTicksLS(-20), outtake, 1);
-        pullUp.setDependentAction(waitActionTwo);
+        pullUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-20));
+        pullUp.setDependentActions(waitActionTwo);
 
         hangHookAction = new HangHookAction(outtake);
-        hangHookAction.setDependentAction(waitActionTwo);
+        hangHookAction.setDependentActions(waitActionTwo);
     }
 
     @Override

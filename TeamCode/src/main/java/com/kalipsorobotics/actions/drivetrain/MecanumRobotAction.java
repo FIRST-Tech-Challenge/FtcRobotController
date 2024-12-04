@@ -13,7 +13,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 public class MecanumRobotAction extends DriveTrainAction {
 
     private static final double ERROR_TOLERANCE_IN = 1;
-    private static final double HEADING_ERROR_TOLERANCE_DEG = 2;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
@@ -25,9 +25,10 @@ public class MecanumRobotAction extends DriveTrainAction {
     double thetaOffset;
     double startTime;
     double timeout;
+    double duration;
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         this.pidController = new PIDController(0.051665, 0.013042, 0.000008, "mecanum");
         this.driveTrain = driveTrain;
 
@@ -39,7 +40,6 @@ public class MecanumRobotAction extends DriveTrainAction {
 
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
-        System.out.println(this.getRemainingDistance());
     }
 
     public PIDController getPidController() {
@@ -62,15 +62,16 @@ public class MecanumRobotAction extends DriveTrainAction {
         remainingDistance = targetInches - currentInches;
     }
 
-    private void refreshThetaOffset() {thetaOffset = targetTheta - sparkfunOdometry.countTheta();}
+    private void refreshThetaOffset() {thetaOffset = targetTheta - wheelOdometry.getCurrentImuHeading();}
 
     @Override
     public boolean checkDoneCondition() {
-        System.out.println();
         refreshRemainingDistance();
-        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || (SystemClock.elapsedRealtime() - startTime) / 1000 > 5) {
+        duration = (SystemClock.elapsedRealtime() - startTime) / 1000;
+        if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || duration > timeout) {
             driveTrain.setPower(0); // stop, to be safe
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
+            duration = SystemClock.elapsedRealtime() - startTime;
             Log.d("mecanum", "done");
             return true;
         } else {
@@ -99,23 +100,29 @@ public class MecanumRobotAction extends DriveTrainAction {
         double rotationPower = 0;
 
         if (Math.abs(thetaOffset) > Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) {
-            rotationPower = -thetaOffset * 0.2;
+            rotationPower = thetaOffset * 0.4;
         }
 
         double fLeft = linearPower + rotationPower;
         double fRight = linearPower - rotationPower;
-        double bLeft = linearPower + rotationPower;
-        double bRight = linearPower - rotationPower;
+        double bLeft = linearPower - rotationPower;
+        double bRight = linearPower + rotationPower;
 
         double biggest = MathFunctions.maxAbsValueDouble(fLeft, fRight, bLeft, bRight);
         double smallest = MathFunctions.minAbsValueDouble(fLeft, fRight, bLeft, bRight);
+        double scalingFactor = 1;
 
-        if (smallest < minPower) {
-            fLeft *= (minPower / smallest);
-            fRight *= (minPower / smallest);
-            bLeft *= (minPower / smallest);
-            bRight *= (minPower / smallest);
+        Log.d("mecanum/range", biggest + " " + smallest);
+
+        if (Math.abs(smallest) < minPower) {
+            scalingFactor = minPower / smallest;
         }
+
+        fLeft *= scalingFactor;
+        fRight *= scalingFactor;
+        bLeft *= scalingFactor;
+        bRight *= scalingFactor;
+
         if (biggest > 1) {
             fLeft /= biggest;
             fRight /= biggest;
@@ -125,8 +132,8 @@ public class MecanumRobotAction extends DriveTrainAction {
 
         Log.d("mecanum/linear", String.format("Linear power %f", linearPower));
         Log.d("mecanum/rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
-        Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", -fLeft, fRight, bLeft, -bRight));
+        Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", fLeft, -fRight, -bLeft, bRight));
 
-        driveTrain.setPower(-fLeft, fRight, bLeft, -bRight);
+        driveTrain.setPower(fLeft, -fRight, -bLeft, bRight);
     }
 }

@@ -6,24 +6,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class TestLinkageServo extends LinearOpMode {
-    Servo linkageServo;
+    Servo linkageServo1;
     Servo linkageServo2;
-    double linkagePos = 0.5;
+    double linkagePos = 0.005;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-        linkageServo = hardwareMap.get(Servo.class, "linkageServo");
+        linkageServo1 = hardwareMap.get(Servo.class, "linkageServo1");
         linkageServo2 = hardwareMap.get(Servo.class, "linkageServo2");
-        linkageServo.setPosition(linkagePos);
+        linkageServo1.setPosition(linkagePos);
         linkageServo2.setPosition(linkagePos);
+        linkageServo1.setDirection(Servo.Direction.REVERSE);
 
-        double Speed = 0.5;
+        double Speed = 0.05;
 
         waitForStart();
 
         while (opModeIsActive()) {
-            double servoPos = linkageServo.getPosition();
+            double servoPos = linkageServo1.getPosition();
             double servoPos2 = linkageServo2.getPosition();
 
             if (servoPos != servoPos2) {
@@ -49,7 +50,7 @@ public class TestLinkageServo extends LinearOpMode {
 
 
 
-            linkageServo.setPosition(linkagePos);
+            linkageServo1.setPosition(linkagePos);
             linkageServo2.setPosition(linkagePos);
         }
     }

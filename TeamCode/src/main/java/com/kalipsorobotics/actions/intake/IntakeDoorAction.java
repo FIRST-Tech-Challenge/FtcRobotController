@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class IntakeDoorAction extends KServo {
 
     private Intake intake;
-    private Servo intakeDoorServo;
+    private KServo intakeDoorServo;
     private boolean isClosed = true;
 
     private static final double SERVO_SPEED = 240; // per second
@@ -22,7 +22,7 @@ public class IntakeDoorAction extends KServo {
         super(intakeDoorServo, SERVO_SPEED, SERVO_RANGE, ZERO_POSITION, FLIP_DIRECTION);
     }
     public IntakeDoorAction(Intake intake) {
-        this(intake.getDoorServo());
+        this(intake.getDoorServo().getServo());
         this.intake = intake;
         this.intakeDoorServo = intake.getDoorServo();
     }
@@ -45,7 +45,7 @@ public class IntakeDoorAction extends KServo {
         }
     }
 
-    public Servo getIntakeDoorServo() {
+    public KServo getIntakeDoorServo() {
         return intakeDoorServo;
     }
 

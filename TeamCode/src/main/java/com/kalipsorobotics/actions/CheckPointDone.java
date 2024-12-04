@@ -13,7 +13,7 @@ public class CheckPointDone extends Action {
         this.point = point;
         this.purePursuitAction = purePursuitAction;
         this.sparkfunOdometry = sparkfunOdometry;
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
     }
 
     public double calculateError() {
@@ -22,11 +22,8 @@ public class CheckPointDone extends Action {
 
     @Override
     public boolean checkDoneCondition() {
-        if(purePursuitAction.getHasStarted() && calculateError() < 50) { //TODO add ppa when tests run true
-            return true;
-        } else {
-            return false;
-        }
+        //TODO add ppa when tests run true
+        return purePursuitAction.getHasStarted() && calculateError() < 50;
     }
 
     @Override

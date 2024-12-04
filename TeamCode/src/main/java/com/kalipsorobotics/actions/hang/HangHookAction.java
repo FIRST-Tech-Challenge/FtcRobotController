@@ -4,27 +4,22 @@ import android.util.Log;
 
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAutoAction;
 import com.kalipsorobotics.modules.Outtake;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.kalipsorobotics.utilities.KServo;
 
 public class HangHookAction extends Action {
 
-    Servo hang1, hang2;
+    KServo hang1, hang2;
 
     public HangHookAction(Outtake outtake) {
         this.hang1 = outtake.getHangHook1();
-        this.dependentAction = new DoneStateAction();
+        this.dependentActions.add(new DoneStateAction());
         hang1.setPosition(0.4);
     }
 
     @Override
     public boolean checkDoneCondition() {
-        if (hasStarted) {
-            return true;
-        } else {
-            return false;
-        }
+        return hasStarted;
     }
 
     @Override

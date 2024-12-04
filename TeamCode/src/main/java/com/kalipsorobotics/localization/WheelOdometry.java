@@ -3,10 +3,10 @@ package com.kalipsorobotics.localization;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.IMUModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.math.Velocity;
 
@@ -16,66 +16,105 @@ import com.kalipsorobotics.modules.DriveTrain;
 public class WheelOdometry {
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
-    final static private double TRACK_WIDTH = 273.05;
-    static private final double BACK_DISTANCE_TO_MID = 69.85;
+    final static private double TRACK_WIDTH_MM = 297;
+    //maybe double check BACK Distance
+    static private final double BACK_DISTANCE_TO_MID_ROBOT_MM = -70;
+
+    //200-182 offset compare to line between parallel odo pods
+    //negative if robot center behind parallel wheels
+    //final private static double ROBOT_CENTER_OFFSET_MM = -18;
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
     private final DcMotor backEncoder;
     volatile private Position currentPosition;
     volatile private Velocity currentVelocity;
-    private volatile double prevRightTicks = 0;
-    private volatile double prevLeftTicks = 0;
-    volatile private double prevBackTicks = 0;
+    private volatile double prevRightDistanceMM;
+    private volatile double prevLeftDistanceMM;
+    volatile private double prevBackDistanceMM;
     private volatile long prevTime;
-    private final double MM_TO_INCH = 1/25.4;
+    private volatile double currentImuHeading;
+    private volatile double prevImuHeading;
+//    private final double MM_TO_INCH = 1/25.4;
 
-    public WheelOdometry(DriveTrain driveTrain, OpModeUtilities opModeUtilities, IMUModule imuModule, double xCoordinate,
-                         double yCoordinate, double theta) {
+    public WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule,
+                         double xCoordinate,
+                         double yCoordinate, double thetaDeg) {
         this.opModeUtilities = opModeUtilities;
         this.imuModule = imuModule;
-        this.currentPosition = new Position(xCoordinate, yCoordinate, theta);
+        this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
+        Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
         this.rightEncoder = driveTrain.getRightEncoder();
         this.leftEncoder = driveTrain.getLeftEncoder();
         this.backEncoder = driveTrain.getBackEncoder();
-
+        prevTime = SystemClock.elapsedRealtime();
+        prevImuHeading = getIMUHeading();
+        currentImuHeading = prevImuHeading;
+        prevRightDistanceMM = countRight();
+        prevLeftDistanceMM = countLeft();
+        prevBackDistanceMM = countBack();
     }
 
     private double ticksToMM(double ticks) {
-        final double DEAD_WHEEL_RADIUS = 24;
+        final double DEAD_WHEEL_RADIUS_MM = 24;
         final double TICKS_PER_REV = 2000;
-        final double MM_TO_TICKS = 2.0 * Math.PI * DEAD_WHEEL_RADIUS / TICKS_PER_REV;
-        final double TICKS_TO_MM = 1.0 / MM_TO_TICKS;
-//      final double TICKS_TO_MM = 13.2625995;
+        final double TICKS_TO_MM = 2.0 * Math.PI * DEAD_WHEEL_RADIUS_MM / TICKS_PER_REV;
+
         return ticks * TICKS_TO_MM;
     }
 
     public double countRight() {
-        return ticksToMM(rightEncoder.getCurrentPosition()) * MM_TO_INCH;
+        //corresponds to fRight
+        //direction FORWARD
+        //negative because encoder directions
+        return ticksToMM(rightEncoder.getCurrentPosition());
     }
     public double countLeft() {
-        return ticksToMM(leftEncoder.getCurrentPosition()) * MM_TO_INCH;
-    }
+        //corresponds to fLeft
+        //direction FORWARD
+        //positive because encoder directions
+        return ticksToMM(leftEncoder.getCurrentPosition());}
     public double countBack() {
-        return ticksToMM(-backEncoder.getCurrentPosition()) * MM_TO_INCH;
+        //corresponds to bRight
+        //direction REVERSE
+        //positive because encoder directions
+        return ticksToMM(backEncoder.getCurrentPosition());
     }
 
-    private Velocity calculateRelativeDelta(double rightTicks, double leftTicks, double backTicks) {
-        double deltaRightDistance = rightTicks - prevRightTicks;
-        double deltaLeftDistance = leftTicks - prevLeftTicks;
-        double deltaMecanumDistance = backTicks - prevBackTicks;
+    private Velocity calculateRelativeDelta(double rightDistanceMM, double leftDistanceMM, double backDistanceMM) {
+        double deltaRightDistance = rightDistanceMM - prevRightDistanceMM;
+        double deltaLeftDistance = leftDistanceMM - prevLeftDistanceMM;
+        double deltaMecanumDistance = backDistanceMM - prevBackDistanceMM;
+
+        double encoderDeltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH_MM);
+        double imuDeltaTheta = currentImuHeading - prevImuHeading;
+
+        double arcTanDeltaTheta = Math.atan2(deltaLeftDistance - deltaRightDistance, TRACK_WIDTH_MM);
+
+        //wrapping to normalize theta -pi to pi
+        imuDeltaTheta = MathFunctions.angleWrapRad(imuDeltaTheta);
+
+
+
+        Log.d("purepursaction_debug_odo_wheel_deltaTheta",
+                String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
+                        arcTanDeltaTheta));
+
+        double blendedDeltaTheta = (0.3 * encoderDeltaTheta) + (0.4 * imuDeltaTheta) + (0.3 * arcTanDeltaTheta);
+        double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
-        double deltaTheta = -(deltaRightDistance - deltaLeftDistance) / (TRACK_WIDTH*MM_TO_INCH);
-        double deltaY = -(deltaMecanumDistance - BACK_DISTANCE_TO_MID*MM_TO_INCH * deltaTheta);
-        return new Velocity(
-                deltaX,
-                deltaY,
-                deltaTheta
-        );
+
+
+        double deltaY = (deltaMecanumDistance - BACK_DISTANCE_TO_MID_ROBOT_MM * deltaTheta);
+
+
+        Velocity velocity = new Velocity(deltaX, deltaY, deltaTheta);
+
+        return velocity;
     }
 
     private Velocity linearToArcDelta(Velocity relativeDelta) {
-        if (relativeDelta.getTheta() == 0) {
+        if (Math.abs(relativeDelta.getTheta()) < 1e-4) {
             return relativeDelta;
         }
 
@@ -90,30 +129,36 @@ public class WheelOdometry {
                 +strafeRadius * Math.sin(relativeDelta.getTheta()) + forwardRadius * (1 - Math.cos(relativeDelta.getTheta()));
 
         double relDeltaTheta =
-                MathFunctions.angleWrapRad(relativeDelta.getTheta());
+                relativeDelta.getTheta();
 
         Velocity arcDelta = new Velocity(relDeltaX, relDeltaY, relDeltaTheta);
-        Log.d("odometry", "arcDelta " + arcDelta);
+        if (Math.abs(arcDelta.getTheta()) > 0.01) {
+            Log.d("odometry new arc delta", "arcDelta4" + arcDelta);
+        }
         return arcDelta;
     }
 
     //converts to global
     private Velocity rotate(Velocity relativeDelta, Position previousGlobalPosition) {
-        double newX =
-                relativeDelta.getX() * Math.cos(previousGlobalPosition.getTheta()) - relativeDelta.getY() * Math.sin(previousGlobalPosition.getTheta());
-        double newY =
-                relativeDelta.getY() * Math.cos(previousGlobalPosition.getTheta()) + relativeDelta.getX() * Math.sin(previousGlobalPosition.getTheta());
-//        double newTheta =
-//                MathFunctions.angleWrapRad(relativeDelta.getTheta());
-        double newTheta = getIMUHeading();
+        double sinTheta = Math.sin(previousGlobalPosition.getTheta());
+        double cosTheta = Math.cos(previousGlobalPosition.getTheta());
+
+        double deltaX = relativeDelta.getX();
+        double deltaY = relativeDelta.getY();
+
+        double newX = deltaX * cosTheta - deltaY * sinTheta;
+        double newY = deltaY * cosTheta + deltaX * sinTheta;
+
+        //use blended heading
+        double newTheta = relativeDelta.getTheta();
+
         return new Velocity(newX, newY, newTheta);
     }
 
-    private Position updateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
+    private Position calculateGlobal(Velocity relativeDelta, Position previousGlobalPosition) {
         Velocity globalDelta = rotate(relativeDelta, previousGlobalPosition);
-
+        Log.d("global delta", globalDelta.toString());
         Position position = previousGlobalPosition.add(globalDelta);
-        Log.d("thetavalue", "theta " + position.getTheta());
         return position;
     }
 
@@ -127,35 +172,37 @@ public class WheelOdometry {
     }
 
     public double getIMUHeading() {
-        return imuModule.getIMU().getRobotYawPitchRollAngles().getYaw();
+        return -Math.toRadians(imuModule.getIMU().getRobotYawPitchRollAngles().getYaw());
     }
 
     public Position updatePosition() {
-        double rightTicks = countRight();
-        double leftTicks = countLeft();
-        double backTicks = countBack();
+        double rightDistanceMM = countRight();
+        double leftDistanceMM = countLeft();
+        double backDistanceMM = countBack();
+        currentImuHeading = getIMUHeading();
 
-        Log.d("updatepos", rightTicks + " " + leftTicks + " " + backTicks);
+        Log.d("updatepos", rightDistanceMM + " " + leftDistanceMM + " " + backDistanceMM);
 
         long currentTime = SystemClock.elapsedRealtime();
         double timeElapsed = (currentTime - prevTime) / 1000.;
 
-        Velocity relativeDelta = calculateRelativeDelta(rightTicks, leftTicks, backTicks);
+        Velocity relativeDelta = calculateRelativeDelta(rightDistanceMM, leftDistanceMM, backDistanceMM);
+        Log.d("relativeDelta", relativeDelta.toString());
         relativeDelta = linearToArcDelta(relativeDelta);
 
         currentVelocity = relativeDelta.divide(timeElapsed);
         prevTime = currentTime;
 
-        currentPosition = updateGlobal(relativeDelta, currentPosition);
-        Log.d("currentpos", "current pos " + currentPosition.getTheta());
+        currentPosition = calculateGlobal(relativeDelta, currentPosition);
+        Log.d("currentpos", "current pos " + currentPosition.toString());
 
-        prevRightTicks = rightTicks;
-        prevLeftTicks = leftTicks;
-        prevBackTicks = backTicks;
+        prevRightDistanceMM = rightDistanceMM;
+        prevLeftDistanceMM = leftDistanceMM;
+        prevBackDistanceMM = backDistanceMM;
+
+        prevImuHeading = currentImuHeading;
 
 
-
-        //opModeUtilities.getTelemetry().addData("global", currentPosition.toString());
         return currentPosition;
     }
 
@@ -169,26 +216,9 @@ public class WheelOdometry {
 
     public IMUModule getImuModule() {return imuModule;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public double getCurrentImuHeading() {
+        return this.currentImuHeading;
+    }
 
     public double countX() {
         return (countLeft() + countRight()) / 2;

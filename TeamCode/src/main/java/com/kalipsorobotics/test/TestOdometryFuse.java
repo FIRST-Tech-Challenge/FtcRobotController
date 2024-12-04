@@ -35,7 +35,7 @@ public class TestOdometryFuse  extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap ,this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         OdometrySpark odometrySpark = new OdometrySpark(myOtos, rightFront, rightBack);
-        telemetry.addData("" + odometrySpark.configureOtos(myOtos), "");
+        telemetry.addData(odometrySpark.configureOtos(myOtos), "");
         telemetry.update();
         waitForStart();
 

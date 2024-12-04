@@ -16,7 +16,7 @@ public class DriveAction {
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
 
-    private double[] driveTrainPower = new double[4];
+    private final double[] driveTrainPower = new double[4];
 
     public DriveAction(DriveTrain driveTrain) {
         this.driveTrain = driveTrain;
@@ -30,13 +30,21 @@ public class DriveAction {
     }
 
     public double[] calculatePower(Gamepad gamepad) {
-        double forward = gamepad.left_stick_x;
+        //negative because gamepad y is flip
+        double forward = -gamepad.left_stick_y;
         double turn = gamepad.right_stick_x;
-        double strafe = -gamepad.left_stick_y;
-        double fLeftPower = forward + turn - strafe;
-        double fRightPower = forward - turn + strafe;
-        double bLeftPower = forward + turn + strafe;
-        double bRightPower = forward - turn - strafe;
+        double strafe = gamepad.left_stick_x;
+        double fLeftPower = (forward + strafe + turn);
+        double fRightPower = (forward - strafe - turn);
+        double bLeftPower = (forward - strafe + turn);
+        double bRightPower = (forward + strafe - turn);
+
+//        double fLeftPower = powerX + powerY + powerAngle;
+//        double fRightPower = powerX - powerY - powerAngle;
+//
+//        double bLeftPower = powerX - powerY + powerAngle;
+//        double bRightPower = powerX + powerY - powerAngle;
+
 
         double absMaxPower = MathFunctions.maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
         if (absMaxPower > 1) {

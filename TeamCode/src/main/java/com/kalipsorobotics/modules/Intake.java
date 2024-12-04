@@ -1,5 +1,8 @@
 package com.kalipsorobotics.modules;
 
+import com.kalipsorobotics.utilities.KServo;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -9,23 +12,28 @@ public class Intake {
     private final OpModeUtilities opModeUtilities;
 
     private DcMotor noodleMotor;
-    private Servo intakePivotServo;
-    private Servo doorServo;
-    private Servo linkageServo1, linkageServo2;
+    private KServo intakePivotServo;
+    private KServo doorServo;
+    private KServo linkageServo1, linkageServo2;
+    private ColorSensor colorSensor;
+
 
     public Intake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
-
         setUpHardware();
     }
 
     private void setUpHardware() {
         noodleMotor = opModeUtilities.getHardwareMap().dcMotor.get("intakeNoodleMotor");
-        intakePivotServo = opModeUtilities.getHardwareMap().servo.get("intakePivotServo");
-        doorServo = opModeUtilities.getHardwareMap().servo.get("doorServo");
-        linkageServo1 = opModeUtilities.getHardwareMap().servo.get("linkageServo1");
-        linkageServo2 = opModeUtilities.getHardwareMap().servo.get("linkageServo2");
-
+        intakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakePivotServo"), 60/0.25, 300,
+                0, false);
+        doorServo = new KServo(opModeUtilities.getHardwareMap().servo.get("doorServo"), 60/0.25, 300,
+                0, false);
+        linkageServo1 = new KServo(opModeUtilities.getHardwareMap().servo.get("linkageServo1"), 60/0.25, 300,
+                0, false);
+        linkageServo2 = new KServo(opModeUtilities.getHardwareMap().servo.get("linkageServo2"), 60/0.25, 300,
+                0, false);
+        colorSensor = opModeUtilities.getHardwareMap().colorSensor.get("intakeColorSensor");
 
         noodleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         noodleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -39,20 +47,24 @@ public class Intake {
         return noodleMotor;
     }
 
-    public Servo getIntakePivotServo() {
+    public KServo getIntakePivotServo() {
         return intakePivotServo;
     }
 
-    public Servo getDoorServo() {
+    public KServo getDoorServo() {
         return doorServo;
     }
 
-    public Servo getLinkageServo1() {
+    public KServo getLinkageServo1() {
         return linkageServo1;
     }
 
-    public Servo getLinkageServo2() {
+    public KServo getLinkageServo2() {
         return linkageServo2;
+    }
+
+    public ColorSensor getColorSensor() {
+        return colorSensor;
     }
 }
 

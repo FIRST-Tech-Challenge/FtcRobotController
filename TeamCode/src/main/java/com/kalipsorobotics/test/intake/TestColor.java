@@ -1,6 +1,6 @@
 package com.kalipsorobotics.test.intake;
 
-import com.kalipsorobotics.modules.KColor;
+import com.kalipsorobotics.utilities.KColor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;

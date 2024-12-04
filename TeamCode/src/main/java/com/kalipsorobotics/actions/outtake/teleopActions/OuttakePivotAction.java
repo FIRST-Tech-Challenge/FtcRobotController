@@ -1,6 +1,8 @@
-package com.kalipsorobotics.actions.outtake;
+package com.kalipsorobotics.actions.outtake.teleopActions;
 
+import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //0.925 in
@@ -8,7 +10,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class OuttakePivotAction {
 
     final private Outtake outtake;
-    private final Servo outtakePivotServo;
+    private final KServo outtakePivotServo;
+    public static double OUTTAKE_PIVOT_IN_POS = 1.0;
+    public static double OUTTAKE_PIVOT_OUT_POS = 0.05;
+    public static double OUTTAKE_PIVOT_HALF_POS = 0.5;
+
+    public static double OUTTAKE_PIVOT_WALL_POS = 0.17;
+
 
     private boolean isIn = true;
 
@@ -22,16 +30,18 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
-        setPosition(0.5);
-        setPosition(0.925);
+        setPosition(OUTTAKE_PIVOT_HALF_POS);
+        setPosition(OUTTAKE_PIVOT_IN_POS);
         isIn = true;
-    }
-    public double getPosition() {
-        return outtakePivotServo.getPosition();
     }
 
     public void moveOut() {
-        setPosition(0.0);
+        setPosition(OUTTAKE_PIVOT_OUT_POS);
+        isIn = false;
+    }
+
+    public void moveWall() {
+        setPosition(OUTTAKE_PIVOT_WALL_POS);
         isIn = false;
     }
 

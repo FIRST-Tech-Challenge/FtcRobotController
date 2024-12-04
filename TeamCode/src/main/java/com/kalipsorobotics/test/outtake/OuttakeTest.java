@@ -1,9 +1,9 @@
 package com.kalipsorobotics.test.outtake;
 
-import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.OuttakePigeonAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -34,12 +34,14 @@ public class OuttakeTest extends LinearOpMode {
         while (opModeIsActive()) {
 
 
+//            outtakeSlideAction.moveToPosition(1);
+
             if (-gamepad1.right_stick_y > 0.1) {
                 outtakeSlideAction.setPower(-gamepad1.right_stick_y);
             } else if (-gamepad1.right_stick_y < -0.1) {
                 outtakeSlideAction.setPower(-gamepad1.right_stick_y);
             } else {
-                outtakeSlideAction.idle();
+                //outtakeSlideAction.idle();
             }
 
             if (gamepad1.y) {

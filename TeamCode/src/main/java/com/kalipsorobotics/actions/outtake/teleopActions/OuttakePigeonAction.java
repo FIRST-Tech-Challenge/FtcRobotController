@@ -1,12 +1,15 @@
-package com.kalipsorobotics.actions.outtake;
+package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class OuttakePigeonAction {
 
     private final Outtake outtake;
-    private final Servo outtakePigeonServo;
+    private final KServo outtakePigeonServo;
+
+    final public static double OUTTAKE_PIGEON_IN_POS = 0.524;
 
     private boolean isIn;
     public OuttakePigeonAction(Outtake outtake) {
@@ -19,7 +22,7 @@ public class OuttakePigeonAction {
     }
 
     public void moveIn() {
-        setPosition(0.524);
+        setPosition(OUTTAKE_PIGEON_IN_POS);
         isIn = true;
     }
 

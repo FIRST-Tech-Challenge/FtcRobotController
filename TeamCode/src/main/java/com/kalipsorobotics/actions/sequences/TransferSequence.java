@@ -1,13 +1,15 @@
 package com.kalipsorobotics.actions.sequences;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
+import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.OuttakeSlideAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
+import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -18,18 +20,21 @@ public class TransferSequence {
     OpModeUtilities opModeUtilities;
     Outtake outtake;
     OuttakeSlideAction outtakeSlideAction;
+    OuttakeClawAction outtakeClawAction;
     Intake intake;
     IntakeNoodleAction intakeNoodleAction;
     IntakeDoorAction intakeDoorAction;
     IntakePivotAction intakePivotAction;
-    OuttakeClawAction outtakeClawAction;
     OuttakePivotAction outtakePivotAction;
+    IntakeSequence intakeSequence;
 
 
     public TransferSequence(HardwareMap hardwareMap, OpModeUtilities opModeUtilities, Outtake outtake, Intake intake) {
         this.hardwareMap = hardwareMap;
         this.opModeUtilities = opModeUtilities;
         this.outtake = outtake;
+        this.outtakeClawAction = new OuttakeClawAction(outtake);
+        this.outtakePivotAction = new OuttakePivotAction(outtake);
         this.intake = intake;
         this.outtakeSlideAction = new OuttakeSlideAction(outtake);
         this.intakeDoorAction = new IntakeDoorAction(intake);
@@ -37,18 +42,32 @@ public class TransferSequence {
         this.intakePivotAction = new IntakePivotAction(intake);
         this.outtakeClawAction = new OuttakeClawAction(outtake);
         this.outtakePivotAction = new OuttakePivotAction(outtake);
+        this.intakeSequence = new IntakeSequence(intakePivotAction, new IntakeLinkageAction(intake));
     }
+//    public boolean checkdone(double time, double waitLength) {
+//        if (SystemClock.currentThreadTimeMillis() - time > waitLength) {
+//            return true;
+//        } else  {
+//            return false;
+//        }
+//    }
     public void sequence() {
-        intakeNoodleAction.stop();
-        intakeDoorAction.open();
-        SystemClock.sleep(500);
+        outtakePivotAction.moveOut();
         intakeNoodleAction.run();
-        SystemClock.sleep(800);
-        intakeDoorAction.close();
+        outtakeSlideAction.moveToPosition(300);
+        outtakeClawAction.open();
+        intakeDoorAction.open();
+        outtakeClawAction.open();
+
+        SystemClock.sleep(700);
+
+        outtakeSlideAction.down();
         intakeNoodleAction.stop();
-        SystemClock.sleep(600);
         intakePivotAction.moveDown();
-        SystemClock.sleep(800);
         outtakePivotAction.moveIn();
+        SystemClock.sleep(650);
+        outtakeClawAction.close();
+        //ADD LINEAR SLIDE STUFF
     }
 }
+

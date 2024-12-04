@@ -1,11 +1,15 @@
 package com.kalipsorobotics.math;
 
-public class CalculateTickInches {
+public class CalculateTickPer {
 
     static double ticksPerRevolutionOdometry = 2000;
     static double ticksPerRevolutionLS = 145.1;
     static double lsCircumfMm = 36 * Math.PI;
     static double odoCircumfMm = 48 * Math.PI;
+
+    static final public double MAX_RANGE_LS_TICKS = 2050;
+    static final public double MIN_RANGE_LS_TICKS = -30;
+
 
     static double mmPerInch = 25.4;
 
@@ -30,7 +34,8 @@ public class CalculateTickInches {
     }
 
     public static double mmToTicksLS(double mm) {
-        return (mm * getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
+        //single string going across so tick x2
+        return 2 * (mm * getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
     }
 
     public static double ticksToMmLS(double ticks) {
