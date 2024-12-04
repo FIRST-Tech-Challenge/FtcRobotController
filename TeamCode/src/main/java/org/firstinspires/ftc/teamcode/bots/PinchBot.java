@@ -111,14 +111,15 @@ public class PinchBot extends PivotBot{
         double VERTICAL_PROPORTION = 2;
         double HORIZONTAL_PROPORTION = 2;
 
-        double[] position = detectOne();
-        double x = position[0];
-        double y = position[1];
-        double theta = position[2];
-        moveSlide((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION),0.5); //move slide vertically
-        driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
-        rotate(theta);
-        isOpen = false;
+        // TODO : refactor with new detectOne method
+//        double[] position = detectOne();
+//        double x = position[0];
+//        double y = position[1];
+//        double theta = position[2];
+//        moveSlide((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION),0.5); //move slide vertically
+//        driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
+//        rotate(theta);
+//        isOpen = false;
         //pinchControl();
 
         //slideControl(false, true);

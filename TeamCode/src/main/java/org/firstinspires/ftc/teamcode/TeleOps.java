@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.bots.AutomationBot;
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
 import org.firstinspires.ftc.teamcode.bots.PivotBot;
 import org.firstinspires.ftc.teamcode.bots.PinchBot;
+import org.firstinspires.ftc.teamcode.sample.Sample;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
@@ -64,9 +65,12 @@ public class TeleOps extends LinearOpMode {
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
             robot.scoreSpecimen(gamepad2.a);
 
-            double[] values = robot.detectOne();
+            if (gamepad2.dpad_up) {
+                Sample s = robot.detectOne();
+                telemetry.addData("detected : ", s.toString());
+                telemetry.update();
+            }
 
-            telemetry.addData("angle: ", values[0]);
 
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());
