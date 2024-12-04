@@ -167,7 +167,8 @@ public class RobotContainer {
         }
 
 
-
+        // set up the ButtonSwitcher
+        B
 
 
 
@@ -247,6 +248,8 @@ public class RobotContainer {
         claw = new Claw();
         climb = new Climb();
         clawTouch = new ClawTouchSensor();
+
+
 
         // insert other subsystems here
         // claw = new Claw();
