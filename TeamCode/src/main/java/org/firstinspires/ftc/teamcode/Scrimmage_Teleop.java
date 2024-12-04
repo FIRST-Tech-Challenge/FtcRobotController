@@ -126,6 +126,11 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
         elevator.SetWormAngle(worm.getAngle()); //set this continually so elevator can know how far it can go
 
+        //if the worm state starts to lower and it hits the horizontal extension, let's pull it back
+        if (worm.CurrentState == Worm.WormState.Lowering && elevator.getHorizontalExtension() >= 21) {
+            elevator.retractTwoInches();
+        }
+
         boolean slowDown = driver.getButton(GamepadKeys.Button.Y);
 
         drive.arcadeDrive(slowDown ? driver.getLeftY() * 0.5 : driver.getLeftY(), slowDown ? driver.getLeftX() * 0.5 : driver.getLeftX(), driver.getButton(GamepadKeys.Button.B), false);

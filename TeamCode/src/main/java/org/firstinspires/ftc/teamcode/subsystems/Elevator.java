@@ -55,6 +55,15 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    public void retractTwoInches() {
+        double currentDistance = this.getHorizontalExtension();
+        double targetDistance = currentDistance - 2;
+        while (targetDistance > currentDistance) {
+            this.retract(0.5);
+        }
+        this.brake();
+    }
+
 //    public void extend(int position) {
 //        extendingPosition = position;
 //        extend(0.5);
@@ -117,7 +126,7 @@ public class Elevator extends SubsystemBase {
         return horizontalExtension >= 21;
     }
 
-    private double getHorizontalExtension() {
+    public double getHorizontalExtension() {
         double elevatorDistance = getDistanceInInches();
         double horizontalExtension = (elevatorDistance * Math.abs(Math.cos(Math.toRadians(wormAngle))));
         return horizontalExtension;

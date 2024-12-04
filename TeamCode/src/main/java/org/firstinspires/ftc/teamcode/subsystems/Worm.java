@@ -24,12 +24,12 @@ public class Worm extends SubsystemBase {
     private final InterpLUT angleLookup = new InterpLUT();
     private final AnalogInput pot;
 
-    private enum State {
+    public enum WormState {
         Raising,
         Lowering,
         Stopped
     }
-    private State CurrentState;
+    public WormState CurrentState;
 
     public Worm(HardwareMap hm, Telemetry tm){
         pot = hm.get(AnalogInput.class, "wormpot");
@@ -63,7 +63,7 @@ public class Worm extends SubsystemBase {
         angleLookup.createLUT();
 
         controller = new PIDFController(WORM_PID.p, WORM_PID.i, WORM_PID.d, 0);
-        CurrentState = State.Stopped;
+        CurrentState = WormState.Stopped;
     }
 
 
@@ -78,7 +78,7 @@ public class Worm extends SubsystemBase {
 
     public void raise(double whatPower) {
         telemetry.addData("WormState", "raise");
-        CurrentState = State.Raising;
+        CurrentState = WormState.Raising;
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setPower(whatPower);
     }
@@ -89,13 +89,13 @@ public class Worm extends SubsystemBase {
 
     public void lower(double whatPower) {
         telemetry.addData("WormState", "lower");
-        CurrentState = State.Lowering;
+        CurrentState = WormState.Lowering;
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setPower(whatPower);
     }
 
     public void brake(){
-        CurrentState = State.Stopped;
+        CurrentState = WormState.Stopped;
         motor.setPower(0);
     }
 
