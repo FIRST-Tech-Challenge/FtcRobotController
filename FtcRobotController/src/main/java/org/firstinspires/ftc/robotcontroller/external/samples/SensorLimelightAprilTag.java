@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
+@TeleOp(name = "D&M LL AprilTag", group = "Sensor")
 public class
 SensorLimelightAprilTag extends LinearOpMode {
 

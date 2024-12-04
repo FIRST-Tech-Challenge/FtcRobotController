@@ -1,4 +1,4 @@
-package Tests;
+package org.firstinspires.ftc.teamcode.Tests;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
