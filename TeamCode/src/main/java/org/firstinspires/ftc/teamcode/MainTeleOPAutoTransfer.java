@@ -160,10 +160,10 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
             }
             switch(state) {
                 case INTAKE:
-                    if (gamepad2.b){
+                    if (gamepad2.x){
                         ExtensionTarget = 490;
                     }
-                    else if(gamepad2.y){
+                    else if(gamepad2.b){
                         ExtensionTarget = 1;
                     }
                     if (IntakeLeft.getCurrentPosition() <= 5 && IntakeClaw.getPosition() == .5){
@@ -215,7 +215,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     break;
 
                 case IDLE:
-                    if (gamepad2.a) {
+                    if (gamepad2.y) {
                         TargetLift = 2520;
                         state = State.OUTTAKE;
                     }
@@ -241,7 +241,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     }
                     break;
                 case OUTTAKE:
-                    if (gamepad2.x){
+                    if (gamepad2.a){
                         TargetLift = 750;
                         state = State.INTAKE;
                     }
@@ -264,10 +264,6 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                     break;
 
                 case CLIMB:
-
-                    if (gamepad1.a){
-                        TargetLift = 5;
-                    }
 
                     if (gamepad2.right_trigger >= .75 && TargetLift < MAX_TARGET_LIFT - 10){
                         TargetLift = TargetLift + 10;

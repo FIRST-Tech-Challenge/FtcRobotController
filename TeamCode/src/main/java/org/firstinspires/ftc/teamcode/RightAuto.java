@@ -143,10 +143,19 @@ public class RightAuto extends LinearOpMode {
 
             sleep(1000);
 
-            FrontLeft.setPower(1);
-            FrontRight.setPower(-1);
-            BackLeft.setPower(-1);
-            BackRight.setPower(1);
+            FrontLeft.setPower(-1);
+            FrontRight.setPower(1);
+            BackLeft.setPower(1);
+            BackRight.setPower(-1);
+
+            sleep(3000);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(200);
 
 
             break;
