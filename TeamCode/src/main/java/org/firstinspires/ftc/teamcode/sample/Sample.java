@@ -31,13 +31,13 @@ public class Sample {
             if (llResult.isValid()) {
                 if (llResult.getColorResults().size() == 1) {
                     colorResult = llResult.getColorResults().get(0);
-                    if (colorResult.getTargetCorners().size() > 4) {
+                    if (colorResult.getTargetCorners().size() == 4) {
                         return 1;
                     } else {
-                        return -20 - colorResult.getTargetCorners().size();
+                        return -20000 - colorResult.getTargetCorners().size();
                     }
                 } else {
-                    return -10 - llResult.getColorResults().size();
+                    return -10000 - llResult.getColorResults().size();
                 }
             } else {
                 return -2;
@@ -90,6 +90,9 @@ public class Sample {
 
     /**
      * Calculate the angle (in degree) of the sample based on the target corners
+     *    Up direction is 0 degree
+     *     - left direction is 90 degree
+     *     - right direction is -90 degree
      *
      * @return
      */
@@ -97,15 +100,18 @@ public class Sample {
         List<Double> p1 = colorResult.getTargetCorners().get(0);
         List<Double> p2 = colorResult.getTargetCorners().get(1);
         List<Double> p3 = colorResult.getTargetCorners().get(2);
-        List<Double> p4 = colorResult.getTargetCorners().get(4);
+        List<Double> p4 = colorResult.getTargetCorners().get(3);
         Double edgeP12Length = Math.sqrt(Math.pow(p1.get(0) - p2.get(0), 2) + Math.pow(p1.get(1) - p2.get(1), 2));
         Double edgeP14Length = Math.sqrt(Math.pow(p1.get(0) - p4.get(0), 2) + Math.pow(p1.get(1) - p4.get(1), 2));
         if (edgeP12Length > edgeP14Length) {
             // average of line P12 and P34
-            return (int) Math.toDegrees((Math.atan2(p1.get(1) - p2.get(1), p1.get(0) - p2.get(0)) + Math.atan2(p3.get(1) - p4.get(1), p3.get(0) - p4.get(0))) / 2);
+// DEBUG
+//            System.out.println("p12 degree:" + (-Math.toDegrees(Math.atan2(p1.get(1) - p2.get(1), p1.get(0) - p2.get(0)))-90));
+//            System.out.println("p34 degree:" + (-Math.toDegrees(Math.atan2(p4.get(1) - p3.get(1), p4.get(0) - p3.get(0)))-90));
+            return -90-(int) Math.toDegrees((Math.atan2(p1.get(1) - p2.get(1), p1.get(0) - p2.get(0)) + Math.atan2(p4.get(1) - p3.get(1), p4.get(0) - p3.get(0))) / 2);
         } else {
             // average of line P14 and P23
-            return (int) Math.toDegrees((Math.atan2(p1.get(1) - p4.get(1), p1.get(0) - p4.get(0)) + Math.atan2(p2.get(1) - p3.get(1), p2.get(0) - p3.get(0))) / 2);
+            return -90-(int) Math.toDegrees((Math.atan2(p1.get(1) - p4.get(1), p1.get(0) - p4.get(0)) + Math.atan2(p2.get(1) - p3.get(1), p2.get(0) - p3.get(0))) / 2);
         }
     }
     public String toString() {

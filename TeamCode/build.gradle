@@ -28,6 +28,9 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    implementation 'org.json:json:20210307'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.2'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
