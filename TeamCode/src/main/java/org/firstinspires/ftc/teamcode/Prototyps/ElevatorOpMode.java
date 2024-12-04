@@ -54,8 +54,8 @@ public class ElevatorOpMode extends LinearOpMode {
 
         while (opModeIsActive()) {
             elevator.extend(gamepad1.left_stick_y);
-            if (gamepad1.left_bumper){elevator.rotateForword();}
-            if (gamepad1.right_bumper){elevator.rotateBackword();}
+            if (gamepad1.left_bumper){elevator.rotateBackwards();}
+            if (gamepad1.right_bumper){elevator.rotateForwards();}
 
 }
 }}

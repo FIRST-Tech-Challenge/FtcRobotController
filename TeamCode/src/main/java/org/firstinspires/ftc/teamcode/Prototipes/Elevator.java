@@ -32,7 +32,7 @@ public class Elevator {
         }
     }
     // this function use value (like the gamepad stick) to give the rotation motor power.
-    public void rotateForword(){
+    public void rotateBackwards(){
 //        elevatorArm.setPower(rotation);
         if(elevatorArm.getCurrentPosition()>=ARM_MAX_LIMIT){
             elevatorArm.setTargetPosition(elevatorArm.getCurrentPosition());
@@ -40,7 +40,7 @@ public class Elevator {
         else {elevatorArm.setTargetPosition(elevatorArm.getCurrentPosition()+200);} // todo check real limit numbers
         elevatorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void rotateBackword(){
+    public void rotateForwards(){
 //        elevatorArm.setPower(rotation);
         if(elevatorArm.getCurrentPosition()<=ARM_MIN_LIMIT){
             elevatorArm.setTargetPosition(elevatorArm.getCurrentPosition());

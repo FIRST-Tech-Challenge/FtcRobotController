@@ -33,15 +33,10 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Prototipes.Elevator;
-import org.firstinspires.ftc.teamcode.Prototyps.IntakePrototype;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear OpMode")
 @Disabled
@@ -65,11 +60,7 @@ public class TeleopOpMode extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
         elevator.initElevator();
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         elevator = new Elevator(this);
         wheels = new Wheels(this, imu);
@@ -78,7 +69,8 @@ public class TeleopOpMode extends LinearOpMode {
         elevator.initElevator();
         intake.initIntake();
 
-
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
         waitForStart();
         runtime.reset();
@@ -87,18 +79,16 @@ public class TeleopOpMode extends LinearOpMode {
 
             // Move robot by controller 1
             wheels.driveByJoystickFieldOriented(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-            // rotate intake motor
-            elevator.extend(gamepad1.left_stick_y);
-            if (gamepad1.left_bumper){elevator.rotateForword();}
-            if (gamepad1.right_bumper){elevator.rotateBackword();}
+
+            // Elevator handling
+            elevator.extend(gamepad2.right_trigger);
+            elevator.extend(-gamepad2.left_trigger);
+            if (gamepad2.left_bumper){elevator.rotateBackwards();}
+            if (gamepad2.right_bumper){elevator.rotateForwards();}
 
             if (gamepad2.circle){ intake.collect(1);}
 
             else if (gamepad2.square){intake.collect(-1);}
-
-            elevator.extend(gamepad1.left_stick_y);
-            if (gamepad1.left_bumper){elevator.rotateForword();}
-            if (gamepad1.right_bumper){elevator.rotateBackword();}
 
         }
     }
