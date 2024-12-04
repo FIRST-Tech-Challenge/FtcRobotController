@@ -42,11 +42,9 @@ public class Settings {
         public static class Servo {
             @Config
             public static class Claw {
-                /** Values for open and closed positions on the claw */
-                public static double RIGHT_OPEN = 0.7;
-                public static double RIGHT_CLOSED = 0.4;
-                public static double LEFT_OPEN = 0.55;
-                public static double LEFT_CLOSED = 0.9; // TODO TUNE
+                /** Values for open and closed positions on the outtake claw */
+                public static double OPEN = 0.7;
+                public static double CLOSED = 0.4;
             }
 
             @Config
@@ -54,6 +52,14 @@ public class Settings {
                 public static double HORIZONTAL_POSITION = 0.7;
                 public static double CHAMBER_POSITION = 0.3;
                 public static double VERTICAL_POSITION = 0.1;
+            }
+            @Config
+            public static class Linkage {
+                public static double TRANSFER_POSITION = 0;
+                public static double VERTICAL_POSITION = 0.5;
+                public static double HIGH_BASKET_POSITION = 1.0;
+
+                public static double HIGH_CHAMBER_POSITION = 0.9;
             }
         }
 
@@ -66,14 +72,14 @@ public class Settings {
             public static final String REAR_RIGHT_MOTOR = "rearRight";
 
             // Arm components
-            public static final String EXTENSOR_LEFT = "extensorLeft";
-            public static final String EXTENSOR_RIGHT = "extensorRight";
+            public static final String SLIDE_VERTICAL = "slideVertical";
+            public static final String SLIDE_HORIZONTAL = "slideHorizontal";
             public static final String LINEAR_ACTUATOR = "linearActuator";
             public static final String GECKO_LEFT = "geckoLeft";
             public static final String GECKO_RIGHT = "geckoRight";
             public static final String WRIST = "wrist";
-            public static final String CLAW_LEFT = "clawL";
-            public static final String CLAW_RIGHT = "clawR";
+            public static final String LINKAGE = "linkage";
+            public static final String CLAW = "claw";
             public static final String ACTUATOR = "linearActuator";
         }
 
@@ -89,7 +95,7 @@ public class Settings {
         }
 
         @Config
-        public static class VerticalExtensor {
+        public static class VerticalSlide {
             // Positions in encoder ticks
             // TODO: TUNE
             public static int PICKUP = 0;
@@ -102,7 +108,7 @@ public class Settings {
         }
 
         @Config
-        public static class HorizontalExtensor {
+        public static class HorizontalSlide {
             // Positions in encoder ticks
             // TODO: TUNE
             public static int COLLAPSED = 0;
@@ -307,7 +313,8 @@ public class Settings {
     @Config
     public static class Deploy {
         // Core Mechanisms
-        public static final boolean ARM = true;
+        public static final boolean INTAKE = true;
+        public static final boolean OUTTAKE = true;
         public static final boolean LINEAR_ACTUATOR = true;
 
         // Navigation Systems

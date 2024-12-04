@@ -7,11 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.mechanisms.Intake;
+import org.firstinspires.ftc.teamcode.mechanisms.Outtake;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.LinearActuator;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.systems.Odometry;
-import org.firstinspires.ftc.teamcode.mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 
 import java.util.HashMap;
@@ -33,7 +34,8 @@ public class BaseRobot {
 
     public final Telemetry telemetry;
     public final Logger logger;
-    public Arm arm;
+    public Intake intake;
+    public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
 
@@ -75,8 +77,12 @@ public class BaseRobot {
         motors.put(Settings.Hardware.IDs.REAR_LEFT_MOTOR, rearLeftMotor);
         motors.put(Settings.Hardware.IDs.REAR_RIGHT_MOTOR, rearRightMotor);
 
-        if (Settings.Deploy.ARM) {
-            arm = new Arm(this);
+        if (Settings.Deploy.INTAKE) {
+            intake = new Intake(this);
+        }
+
+        if (Settings.Deploy.OUTTAKE) {
+            outtake = new Outtake(this);
         }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
@@ -154,29 +160,30 @@ public class BaseRobot {
      * Manages arm, claw, and wrist operations
      */
     public void gamepadAuxiliary() {
-        if (Settings.Deploy.ARM) {
-            DynamicInput.ContextualActions actions = input.getContextualActions();
+        DynamicInput.ContextualActions contextualActions = input.getContextualActions();
+        if (Settings.Deploy.INTAKE) {
 
-            if (actions.intakeIn) {
-                arm.intake.intake();
+            if (contextualActions.intakeIn) {
+                intake.geckoWheels.intake();
+            } else if (contextualActions.intakeOut && intake.wrist.position() != Wrist.Position.VERTICAL) {
+                intake.geckoWheels.outtake();
+            } else {
+                intake.geckoWheels.stop();
             }
-            if (actions.intakeOut && arm.wrist.position() != Wrist.Position.VERTICAL) {
-                arm.intake.outtake();
+            if (contextualActions.intakeStop) {
+                intake.geckoWheels.stop();
             }
-            if (actions.intakeStop) {
-                arm.intake.stop();
-            }
-            if (actions.justWristUp) {
-                arm.wrist.cyclePosition();
-            } else if (actions.wristDown) {
-                arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            if (contextualActions.justWristUp) {
+                intake.wrist.cyclePosition();
+            } else if (contextualActions.wristDown) {
+                intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
         }
 
+        // TODO new controller actions for outtake system, also automate everything
+
         if (Settings.Deploy.LINEAR_ACTUATOR) {
             DynamicInput.Actions actions = input.getActions();
-            logger.update("LA extending", String.valueOf(actions.linearActuatorExtend));
-            logger.update("LA retracting", String.valueOf(actions.linearActuatorRetract));
 
             if (actions.linearActuatorExtend) {
                 linearActuator.extend();

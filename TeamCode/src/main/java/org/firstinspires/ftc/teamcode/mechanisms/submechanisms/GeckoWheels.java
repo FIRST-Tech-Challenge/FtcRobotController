@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
-public class GeckoIntake {
+public class GeckoWheels {
     private final CRServo geckoLeft;
     private final CRServo geckoRight;
     private final BaseRobot baseRobot;
 
-    public GeckoIntake(@NonNull BaseRobot baseRobot) {
+    public GeckoWheels(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.geckoLeft = baseRobot.hardwareMap.get(CRServo.class, Settings.Hardware.IDs.GECKO_LEFT);
         this.geckoRight = baseRobot.hardwareMap.get(CRServo.class, Settings.Hardware.IDs.GECKO_RIGHT);

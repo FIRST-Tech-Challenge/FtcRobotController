@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "Meet 3 Auto", group = "Autonomous")
-public class MeetThreeAuto extends LinearOpMode {
+@Autonomous(name = "Meet 4 Auto", group = "Autonomous")
+public class MeetFourAuto extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RED_LEFT;
 
     private static final String[] MENU_OPTIONS = {
@@ -115,7 +115,7 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public void run(StartingPosition sp) {
-        baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
+        baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
         switch (Settings.Deploy.AUTONOMOUS_MODE) {
             case JUST_PARK:
                 baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
@@ -206,11 +206,11 @@ public class MeetThreeAuto extends LinearOpMode {
     public class PlaceChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            baseRobot.arm.intake.outtake();
+            baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
+            baseRobot.intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            baseRobot.intake.geckoWheels.outtake();
             pause(1500);
-            baseRobot.arm.intake.stop();
+            baseRobot.intake.geckoWheels.stop();
             return false;
         }
     }
@@ -222,11 +222,11 @@ public class MeetThreeAuto extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.arm.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            baseRobot.arm.intake.intake();
+            baseRobot.intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
+            baseRobot.intake.geckoWheels.intake();
             pause(1500);
-            baseRobot.arm.wrist.setPosition(Wrist.Position.VERTICAL);
-            baseRobot.arm.intake.stop();
+            baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
+            baseRobot.intake.geckoWheels.stop();
             return false;
         }
     }
@@ -320,8 +320,8 @@ public class MeetThreeAuto extends LinearOpMode {
                         trajectory.build()));
     }
 
-    private TrajectoryActionBuilder getParkingTrajectory(MeetThreeAuto.StartingPosition sp,
-            TrajectoryActionBuilder previousTrajectory) {
+    private TrajectoryActionBuilder getParkingTrajectory(MeetFourAuto.StartingPosition sp,
+                                                         TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get parking trajectory based on starting position
         switch (sp) {
             case RED_LEFT:

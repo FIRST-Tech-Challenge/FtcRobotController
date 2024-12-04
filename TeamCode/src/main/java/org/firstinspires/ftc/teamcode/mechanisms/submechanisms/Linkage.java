@@ -7,20 +7,21 @@ import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
-public class Wrist {
+public class Linkage {
     public static double position = 0;
-    public final Servo wristServo;
-    public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
-    public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
-    public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
+    public final Servo linkageServo;
+    public final double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
+    public final double verticalPos = Settings.Hardware.Servo.Linkage.VERTICAL_POSITION;
+    public final double chamberPos = Settings.Hardware.Servo.Linkage.HIGH_CHAMBER_POSITION;
+    public final double basketPos = Settings.Hardware.Servo.Linkage.HIGH_BASKET_POSITION;
 
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
-    public Wrist(BaseRobot baseRobot) {
+    public Linkage(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        wristServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST);
+        linkageServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.LINKAGE);
     }
 
     public void setPosition(Position newPosition) {
@@ -29,23 +30,29 @@ public class Wrist {
             case VERTICAL:
                 position = verticalPos;
                 break;
+            case BASKET:
+                position = basketPos;
+                break;
             case CHAMBER:
                 position = chamberPos;
                 break;
+            case TRANSFER:
             default:
-                position = horizPos;
+                position = transferPos;
                 break;
         }
-        wristServo.setPosition(position);
+        linkageServo.setPosition(position);
     }
 
     public Position position() {
         if (position == verticalPos) {
             return Position.VERTICAL;
+        } else if (position == basketPos) {
+            return Position.BASKET;
         } else if (position == chamberPos) {
             return Position.CHAMBER;
-        } else if (position == horizPos) {
-            return Position.HORIZONTAL;
+        } else if (position == transferPos) {
+            return Position.TRANSFER;
         } else {
             return Position.UNKNOWN;
         }
@@ -56,17 +63,15 @@ public class Wrist {
         Position nextPosition;
 
         switch (currentPosition) {
-            case HORIZONTAL:
+            case VERTICAL:
                 nextPosition = Position.CHAMBER;
                 break;
-            case VERTICAL:
-                nextPosition = Position.HORIZONTAL;
-                break;
             case CHAMBER:
-                nextPosition = Position.VERTICAL;
+                nextPosition = Position.BASKET;
                 break;
+            case TRANSFER:
             default:
-                nextPosition = Position.HORIZONTAL; // Fallback to HORIZONTAL if unknown
+                nextPosition = Position.VERTICAL;
                 break;
         }
 
@@ -74,9 +79,10 @@ public class Wrist {
     }
 
     public enum Position {
-        HORIZONTAL,
+        TRANSFER,
         VERTICAL,
         CHAMBER,
+        BASKET,
         UNKNOWN,
     }
 
