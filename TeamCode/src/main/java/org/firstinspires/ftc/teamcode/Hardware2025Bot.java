@@ -123,6 +123,7 @@ public class Hardware2025Bot
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
     public final static double TILT_ANGLE_HW_MAX_DEG   =   95.00;  // encoder at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG   =   95.00;  // encoder at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_AUTO_PRE_DEG   =   92.00;  // encoder at rotation back to the basket for scoring
     public final static double TILT_ANGLE_ASCENT1_DEG  =   93.80;  // encoder at rotation back to the low bar for ascent level 1
     public final static double TILT_ANGLE_RAISED_DEG   =   54.50;  // encoder at rotation back to the basket for scoring
     public final static double TILT_ANGLE_HANG1_DEG    =   40.10;  // encoder when preparing for level 2 ascent
@@ -132,6 +133,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_AUTO1_DEG    =   54.80; // tilted up for autonomous specimen scoring (above bar)
     public final static double TILT_ANGLE_AUTO2_DEG    =   49.60; // tilted up for autonomous specimen scoring (clipped)
     public final static double TILT_ANGLE_HW_MIN_DEG   =    0.00; // encoder at maximum rotation DOWN/FWD
+    public final static double TILT_ANGLE_COLLECT_DEG  =    2.00;
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -153,7 +155,8 @@ public class Hardware2025Bot
     // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
     public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    public int          VIPER_EXTEND_AUTO  = 482;    // extend for collecting during auto
+    public int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
+    public int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
     public int          VIPER_EXTEND_HANG1 = 2050;   // extend to this to prepare for level 2 ascent
     public int          VIPER_EXTEND_HANG2 = 500;    // retract to this extension during level 2 ascent
     public int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
@@ -193,6 +196,7 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
     final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
     final public static double WRIST_SERVO_GRAB = 0.860;
+    final public static double WRIST_SERVO_AUTO_SCORE = 0.600;
     final public static double WRIST_SERVO_GRAB_ANGLE = 67.0;
     final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
     final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;

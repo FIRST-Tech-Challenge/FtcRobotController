@@ -331,6 +331,12 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void autoViperMotorMoveToTarget(int targetEncoderCount )
     {
+        autoViperMotorMoveToTarget(targetEncoderCount, 1.0);
+    } // autoViperMotorMoveToTarget
+
+    /*---------------------------------------------------------------------------------*/
+    void autoViperMotorMoveToTarget(int targetEncoderCount, double power)
+    {
         // Configure target encoder count
         robot.viperMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
@@ -339,12 +345,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         boolean directionUpward = (targetEncoderCount > robot.viperMotorPos)? true : false;
         // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
         // power setting, no matter which way the motor must rotate to achieve that target.
-        double motorPower = (directionUpward)? 1.0 : 0.5;
+        double motorPower = (directionUpward)? power : power / 2.0;
         // Begin our timer and start the movement
         autoViperMotorTimer.reset();
         robot.viperMotor.setPower( motorPower );
     } // autoViperMotorMoveToTarget
-
     boolean autoViperMotorMoving() {
         boolean viperMoving = true;
         // Did the movement finish?
