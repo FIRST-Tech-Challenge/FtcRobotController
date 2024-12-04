@@ -250,7 +250,7 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public TrajectoryActionBuilder placeNextSpecimenOnChamber(StartingPosition sp,
-                                                              TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
+            TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, previousTrajectory);
 
         Actions.runBlocking(
@@ -262,7 +262,7 @@ public class MeetThreeAuto extends LinearOpMode {
     }
 
     public TrajectoryActionBuilder placeNextSampleInBasket(StartingPosition sp,
-                                                              TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
+            TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
         TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, previousTrajectory);
 
         Actions.runBlocking(
@@ -381,32 +381,38 @@ public class MeetThreeAuto extends LinearOpMode {
         switch (sp) {
             case RED_LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.heading);
             case RED_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.heading);
             case BLUE_LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.heading);
             case BLUE_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position, Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
     }
 
     private TrajectoryActionBuilder getBasketTrajectory(StartingPosition sp,
-                                                         TrajectoryActionBuilder previousTrajectory) {
+            TrajectoryActionBuilder previousTrajectory) {
         switch (sp) {
             case RED_LEFT:
             case RED_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_BASKET_POSE.position, Settings.Autonomous.FieldPositions.RED_BASKET_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_BASKET_POSE.position,
+                                Settings.Autonomous.FieldPositions.RED_BASKET_POSE.heading);
             case BLUE_LEFT:
             case BLUE_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.position, Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.heading);
+                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.position,
+                                Settings.Autonomous.FieldPositions.BLUE_BASKET_POSE.heading);
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
