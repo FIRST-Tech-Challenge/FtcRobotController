@@ -5,7 +5,7 @@ import org.nknsd.teamcode.controlSchemes.abstracts.SpecimenControlScheme;
 
 import java.util.concurrent.Callable;
 
-public class KarstenSpecimenController extends SpecimenControlScheme {
+public class XandreSpecimenController extends SpecimenControlScheme {
     @Override
     public Callable<Boolean> specimenGrab() {
         return new Callable<Boolean>() {
@@ -72,7 +72,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                boolean button = GamePadHandler.GamepadButtons.RIGHT_BUMPER.detect(gamePadHandler.getGamePad2());
+                boolean button = GamePadHandler.GamepadButtons.DPAD_RIGHT.detect(gamePadHandler.getGamePad2());
 
                 if (!delayRaise && button) {
                     delayRaise = true;
@@ -92,7 +92,7 @@ public class KarstenSpecimenController extends SpecimenControlScheme {
         return new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                boolean button = GamePadHandler.GamepadButtons.LEFT_BUMPER.detect(gamePadHandler.getGamePad2());
+                boolean button = GamePadHandler.GamepadButtons.DPAD_LEFT.detect(gamePadHandler.getGamePad2());
 
                 if (!delayLower && button) {
                     delayLower = true;

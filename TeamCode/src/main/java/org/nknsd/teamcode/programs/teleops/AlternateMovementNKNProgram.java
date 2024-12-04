@@ -1,5 +1,11 @@
 package org.nknsd.teamcode.programs.teleops;
 
+import org.nknsd.teamcode.components.handlers.SpecimenClawHandler;
+import org.nknsd.teamcode.components.handlers.SpecimenExtensionHandler;
+import org.nknsd.teamcode.components.handlers.SpecimenRotationHandler;
+import org.nknsd.teamcode.controlSchemes.reals.KarstenSpecimenController;
+import org.nknsd.teamcode.controlSchemes.reals.XandreSpecimenController;
+import org.nknsd.teamcode.drivers.SpecimenDriver;
 import org.nknsd.teamcode.frameworks.NKNComponent;
 import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.components.handlers.ExtensionHandler;
@@ -48,6 +54,18 @@ public class AlternateMovementNKNProgram extends NKNProgram {
         components.add(intakeSpinnerHandler);
 
 
+        // Specimen Handler
+        SpecimenRotationHandler specimenRotationHandler = new SpecimenRotationHandler();
+        components.add(specimenRotationHandler);
+        telemetryEnabled.add(specimenRotationHandler);
+
+        SpecimenExtensionHandler specimenExtensionHandler = new SpecimenExtensionHandler();
+        components.add(specimenExtensionHandler);
+
+        SpecimenClawHandler specimenClawHandler = new SpecimenClawHandler();
+        components.add(specimenClawHandler);
+
+
         // Driver
         AdvancedWheelDriver wheelDriver = new AdvancedWheelDriver(0, 1, 5, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_Y, GamePadHandler.GamepadSticks.LEFT_JOYSTICK_X, GamePadHandler.GamepadSticks.RIGHT_JOYSTICK_X);
         components.add(wheelDriver);
@@ -57,11 +75,13 @@ public class AlternateMovementNKNProgram extends NKNProgram {
         components.add(eacDriver);
         telemetryEnabled.add(eacDriver);
 
+        SpecimenDriver specimenDriver = new SpecimenDriver();
+        components.add(specimenDriver);
+
 
         // Controllers
         KarstenEACController eacController = new KarstenEACController();
-        eacController.link(gamePadHandler);
-        eacController.linkExtensionHandler(extensionHandler);
+        XandreSpecimenController specimenController = new XandreSpecimenController();
 
 
         // Link the components to each other
@@ -69,5 +89,10 @@ public class AlternateMovementNKNProgram extends NKNProgram {
         rotationHandler.link(potentiometerSensor, extensionHandler);
         extensionHandler.link(rotationHandler);
         eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler, eacController);
+        specimenDriver.link(specimenExtensionHandler, specimenRotationHandler, specimenClawHandler, gamePadHandler, specimenController);
+        eacController.link(gamePadHandler);
+        eacController.linkExtensionHandler(extensionHandler);
+        specimenController.link(gamePadHandler);
+        specimenController.linkSchemes(eacController);
     }
 }

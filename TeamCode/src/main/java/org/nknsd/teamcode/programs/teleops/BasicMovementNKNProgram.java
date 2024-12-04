@@ -1,5 +1,10 @@
 package org.nknsd.teamcode.programs.teleops;
 
+import org.nknsd.teamcode.components.handlers.SpecimenClawHandler;
+import org.nknsd.teamcode.components.handlers.SpecimenExtensionHandler;
+import org.nknsd.teamcode.components.handlers.SpecimenRotationHandler;
+import org.nknsd.teamcode.controlSchemes.reals.KarstenSpecimenController;
+import org.nknsd.teamcode.drivers.SpecimenDriver;
 import org.nknsd.teamcode.frameworks.NKNComponent;
 import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.components.handlers.ExtensionHandler;
@@ -37,17 +42,29 @@ public class BasicMovementNKNProgram extends NKNProgram {
         components.add(imuSensor);
 
 
-        // Arm
-        RotationHandler rotationHandler = new RotationHandler();
-        components.add(rotationHandler);
-        //telemetryEnabled.add(rotationHandler);
+        // Sample Handler
+        RotationHandler sampleRotationHandler = new RotationHandler();
+        components.add(sampleRotationHandler);
+        //telemetryEnabled.add(sampleRotationHandler);
 
-        ExtensionHandler extensionHandler = new ExtensionHandler();
-        components.add(extensionHandler);
-        //telemetryEnabled.add(extensionHandler);
+        ExtensionHandler sampleExtensionHandler = new ExtensionHandler();
+        components.add(sampleExtensionHandler);
+        //telemetryEnabled.add(sampleExtensionHandler);
 
         IntakeSpinnerHandler intakeSpinnerHandler = new IntakeSpinnerHandler();
         components.add(intakeSpinnerHandler);
+
+
+        // Specimen Handler
+        SpecimenRotationHandler specimenRotationHandler = new SpecimenRotationHandler();
+        components.add(specimenRotationHandler);
+        telemetryEnabled.add(specimenRotationHandler);
+
+        SpecimenExtensionHandler specimenExtensionHandler = new SpecimenExtensionHandler();
+        components.add(specimenExtensionHandler);
+
+        SpecimenClawHandler specimenClawHandler = new SpecimenClawHandler();
+        components.add(specimenClawHandler);
 
 
         // Driver
@@ -59,20 +76,29 @@ public class BasicMovementNKNProgram extends NKNProgram {
         components.add(eacDriver);
         telemetryEnabled.add(eacDriver);
 
+        SpecimenDriver specimenDriver = new SpecimenDriver();
+        components.add(specimenDriver);
+
 
         // Controllers
         CollyWheelController wheelController = new CollyWheelController();
-        wheelController.link(gamePadHandler);
-
         KarstenEACController eacController = new KarstenEACController();
-        eacController.link(gamePadHandler);
-        eacController.linkExtensionHandler(extensionHandler);
+        KarstenSpecimenController specimenController = new KarstenSpecimenController();
 
 
         // Link the components to each other
         wheelDriver.link(gamePadHandler, wheelHandler, wheelController);
-        rotationHandler.link(potentiometerSensor, extensionHandler);
-        extensionHandler.link(rotationHandler);
-        eacDriver.link(gamePadHandler, rotationHandler, extensionHandler, intakeSpinnerHandler, eacController);
+        sampleRotationHandler.link(potentiometerSensor, sampleExtensionHandler);
+        sampleExtensionHandler.link(sampleRotationHandler);
+        eacDriver.link(gamePadHandler, sampleRotationHandler, sampleExtensionHandler, intakeSpinnerHandler, eacController);
+        specimenDriver.link(specimenExtensionHandler, specimenRotationHandler, specimenClawHandler, gamePadHandler, specimenController);
+        wheelController.link(gamePadHandler);
+        eacController.link(gamePadHandler);
+        eacController.linkExtensionHandler(sampleExtensionHandler);
+        specimenController.link(gamePadHandler);
+        specimenController.linkSchemes(eacController);
+        // God this code has spiralled into madness
+        // Pages and pages of white text linking things to one another in a cobweb of magic
+        // If I hadn't designed it myself I'd have no clue wtf is going on
     }
 }
