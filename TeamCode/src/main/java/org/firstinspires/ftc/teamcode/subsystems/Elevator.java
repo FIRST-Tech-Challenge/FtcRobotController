@@ -17,14 +17,16 @@ public class Elevator extends SubsystemBase {
     private Telemetry telemetry;
     private DcMotorEx motor;
     private TouchSensor bottomLimit;
-    private boolean extending;
     private boolean isHomed;
-    private int extendingPosition;
-    private boolean retracting;
-    private int retractingPosition;
-
     private double wormAngle;
+    public ElevatorStatus Status;
 
+    public enum ElevatorStatus
+    {
+        Extending,
+        Retracting,
+        Stopped
+    }
 
     public Elevator(HardwareMap hm, Telemetry tm){
         wormAngle = 0; //the value of the worm angle so we can calculate max distance
@@ -33,6 +35,7 @@ public class Elevator extends SubsystemBase {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bottomLimit = hm.get(TouchSensor.class, "Touch");
         telemetry = tm;
+        this.Status = ElevatorStatus.Stopped;
     }
 
     public void SetWormAngle(double angle) {
@@ -49,7 +52,7 @@ public class Elevator extends SubsystemBase {
         if (isExtended()){
             brake();
         } else {
-            extending = true;
+            this.Status = ElevatorStatus.Extending;
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPower(whatPower);
         }
@@ -78,12 +81,10 @@ public class Elevator extends SubsystemBase {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setPower(whatPower);
 
-        retracting = true;
-
         if (isRetracted()){
             brake();
         } else {
-            extending = true;
+            this.Status = ElevatorStatus.Retracting;
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPower(whatPower);
         }
@@ -102,6 +103,7 @@ public class Elevator extends SubsystemBase {
     public void brake(){
         telemetry.addData("ElevatorState", "stop");
         motor.setPower(0);
+        this.Status = ElevatorStatus.Stopped;
     }
 
     public double getDistance(){
@@ -128,8 +130,7 @@ public class Elevator extends SubsystemBase {
 
     public double getHorizontalExtension() {
         double elevatorDistance = getDistanceInInches();
-        double horizontalExtension = (elevatorDistance * Math.abs(Math.cos(Math.toRadians(wormAngle))));
-        return horizontalExtension;
+        return (elevatorDistance * Math.abs(Math.cos(Math.toRadians(wormAngle))));
     }
 
     //this function fires every cycle, at about 50hz, so anything in here will effectively be the default state
@@ -141,6 +142,7 @@ public class Elevator extends SubsystemBase {
         telemetry.addData("ElevatorDistanceInInches", getDistanceInInches());
         telemetry.addData("ElevatorHorizontal", getHorizontalExtension());
         telemetry.addData("IsHomed", isHomed);
+        telemetry.addData("ElevatorStatus", this.Status);
 
 //        if (bottomLimit.isPressed() && !extending && !retracting) {
 //            isHomed = true;

@@ -126,8 +126,8 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
         elevator.SetWormAngle(worm.getAngle()); //set this continually so elevator can know how far it can go
 
-        //if the worm state starts to lower and it hits the horizontal extension, let's pull it back
-        if (worm.CurrentState == Worm.WormState.Lowering && elevator.getHorizontalExtension() >= 21) {
+        //if the worm state starts to lower and it hits the horizontal extension, let's pull it back, unless the elevator is currently moving
+        if (worm.CurrentState == Worm.WormState.Lowering && elevator.getHorizontalExtension() >= 21 && elevator.Status == Elevator.ElevatorStatus.Stopped) {
             elevator.retractTwoInches();
         }
 
