@@ -1,3 +1,6 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Debug;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -17,7 +20,7 @@ public class wristTest extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     initRobot();
     waitForStart();
-    while(opModeIsActive()){
+    while (opModeIsActive()) {
 
       // sets booleans
       if (gamepad1.a) {
@@ -32,14 +35,14 @@ public class wristTest extends LinearOpMode {
         }
       } else lastButton = -1;
       wrist.setPosition(set);
-      telemetry.addData("gamepad: ",-gamepad1.left_stick_y);
+      telemetry.addData("gamepad: ", -gamepad1.left_stick_y);
       telemetry.addData("servo: ", wrist.getPosition());
       telemetry.update();
     }
   }
 
-  public void initRobot(){
-    wrist = hardwareMap.get(Servo.class,"wrist");
+  public void initRobot() {
+    wrist = hardwareMap.get(Servo.class, "wrist");
     wrist.setDirection(Servo.Direction.FORWARD);
     set = 0;
     lastButton = -1;

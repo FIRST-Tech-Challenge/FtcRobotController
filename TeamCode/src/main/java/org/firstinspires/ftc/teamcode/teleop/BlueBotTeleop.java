@@ -26,14 +26,15 @@ public class BlueBotTeleop extends LinearOpMode {
     while (opModeIsActive()) {
       double currentTime = Utils.getTimeSeconds();
       double dt = currentTime - lastTime;
-      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
+      swerve.teleopDrive(
+          -gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
       swerve.periodic();
 
       // game pad 2
       // sets arm
       if (!gamepad2.a) {
-        arm.setSlide(-gamepad2.left_stick_y);
-        arm.setPivot(gamepad2.right_stick_y, gamepad2.left_bumper);
+        arm.setSlide(gamepad2.left_stick_y);
+        arm.setPivot(-gamepad2.right_stick_y, gamepad2.left_bumper);
 
         arm.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
         if (gamepad2.b && !bPressed) {

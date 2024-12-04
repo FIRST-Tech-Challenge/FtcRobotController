@@ -34,17 +34,17 @@ public class CompBotAuto extends LinearOpMode {
     waitForStart();
     // initSlide();
 
-    while(limitSwitch.getState()){
-      pivot.setTargetPosition(pivot.getTargetPosition()-10);
+    while (limitSwitch.getState()) {
+      pivot.setTargetPosition(pivot.getTargetPosition() - 10);
     }
     pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     slide.setTargetPosition(4200);
     slide2.setTargetPosition(4200);
-    pivot.setTargetPosition(650);   //change
+    pivot.setTargetPosition(650); // change
     wrist.setPosition(.35);
-    //telem();
+    // telem();
 
     sleep(3500);
 
@@ -55,7 +55,7 @@ public class CompBotAuto extends LinearOpMode {
     pivot.setTargetPosition(0);
     slide.setTargetPosition(0);
     slide2.setTargetPosition(0);
-    //telem();
+    // telem();
     sleep(3500);
 
     var odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
@@ -65,12 +65,12 @@ public class CompBotAuto extends LinearOpMode {
     odometry.resetHeading(Rotation2d.fromDegrees(120));
   }
 
-  public void telem(){
-    telemetry.addData("slide current: ",slide.getCurrentPosition());
-    telemetry.addData("slide goal: ",slide.getTargetPosition());
-    telemetry.addData("pivot current: ",pivot.getCurrentPosition());
-    telemetry.addData("pivot goal: ",pivot.getTargetPosition());
-    telemetry.addData("wrist current: ",wrist.getPosition());
+  public void telem() {
+    telemetry.addData("slide current: ", slide.getCurrentPosition());
+    telemetry.addData("slide goal: ", slide.getTargetPosition());
+    telemetry.addData("pivot current: ", pivot.getCurrentPosition());
+    telemetry.addData("pivot goal: ", pivot.getTargetPosition());
+    telemetry.addData("wrist current: ", wrist.getPosition());
     telemetry.update();
   }
 

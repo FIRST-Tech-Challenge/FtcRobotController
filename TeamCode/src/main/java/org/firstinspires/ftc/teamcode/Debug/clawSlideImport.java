@@ -3,7 +3,6 @@
 
 package org.firstinspires.ftc.teamcode.Debug;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +15,7 @@ public class clawSlideImport extends LinearOpMode {
   DcMotor slide, pivot, hang;
   // DigitalChannel slideLimit;
 
-  Servo intakeL, wrist,ramp1,ramp2;
+  Servo intakeL, wrist, ramp1, ramp2;
   int limitSlide, limitPivot;
 
   @Override
@@ -39,7 +38,7 @@ public class clawSlideImport extends LinearOpMode {
         wrist.setPosition(0);
       }
 
-      if (gamepad2.dpad_down){
+      if (gamepad2.dpad_down) {
         setClip();
       }
 
@@ -65,7 +64,7 @@ public class clawSlideImport extends LinearOpMode {
     pivot.setPower(.01);
 
     slide.setDirection(DcMotorSimple.Direction.FORWARD);
-    pivot.setDirection(DcMotorSimple.Direction.FORWARD);   //for gray robot try reversing this
+    pivot.setDirection(DcMotorSimple.Direction.FORWARD); // for gray robot try reversing this
 
     limitSlide = 4750;
     limitPivot = 2500;
@@ -85,7 +84,7 @@ public class clawSlideImport extends LinearOpMode {
     hang.setDirection(DcMotorSimple.Direction.FORWARD);
     hang.setPower(.01);
 
-    //ramp
+    // ramp
     ramp1 = hardwareMap.get(Servo.class, "ramp 1");
     ramp2 = hardwareMap.get(Servo.class, "ramp 2");
 
@@ -122,10 +121,10 @@ public class clawSlideImport extends LinearOpMode {
     telemetry.addData("set pivot x 2", x);
   }
 
-  public void setClip(){
-    wrist.setPosition(.2); //needs editing
+  public void setClip() {
+    wrist.setPosition(.2); // needs editing
 
-    //TODO: get proper set slide and set pivot code
+    // TODO: get proper set slide and set pivot code
     setPivot(-1);
     setSlide(1);
 

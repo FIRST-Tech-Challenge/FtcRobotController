@@ -15,8 +15,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
@@ -41,7 +39,7 @@ public class basicTelemBlue extends LinearOpMode {
 
   double pubLength = 0;
 
-  double encoderCountsPerInch = 85;   // needs adjusting
+  double encoderCountsPerInch = 85; // needs adjusting
 
   double encoderCountsPerDegree = 30; // needs adjusting
 
@@ -53,11 +51,8 @@ public class basicTelemBlue extends LinearOpMode {
     initRobot(); // initializes the robot
 
     /**
-     * controls for game pad 1:
-     * right trigger: forwards
-     * left trigger: backwards
-     * right stick x: rotate
-     * left stick x: strafe
+     * controls for game pad 1: right trigger: forwards left trigger: backwards right stick x:
+     * rotate left stick x: strafe
      *
      * <p>controls for game pad 2: left stick y: in and out of arm right stick y: up and down of arm
      * a: constant in changed to out while button is being held while b is being held right stick x:
@@ -122,7 +117,7 @@ public class basicTelemBlue extends LinearOpMode {
 
   public void topBucketPreset() {
     setPivot(90 - 5 * encoderCountsPerDegree);
-    //setSlide();
+    // setSlide();
   }
 
   public void toTopSpecimenRung() {
@@ -139,8 +134,8 @@ public class basicTelemBlue extends LinearOpMode {
 
     // Maps the motor objects to the physical ports
     FLMotor =
-      hardwareMap.get(
-        DcMotor.class, "FLMotor"); // TODO: Run testMotor to figure out which motor is where
+        hardwareMap.get(
+            DcMotor.class, "FLMotor"); // TODO: Run testMotor to figure out which motor is where
     BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
     FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
     BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
@@ -187,8 +182,8 @@ public class basicTelemBlue extends LinearOpMode {
     odo.resetPosAndIMU();
     odo.setOffsets(177.8, 50.8);
     odo.setEncoderDirections(
-      GoBildaPinpointDriver.EncoderDirection.FORWARD,
-      GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        GoBildaPinpointDriver.EncoderDirection.FORWARD,
+        GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     // Init slaw, claw, and pivot
     pivot = hardwareMap.dcMotor.get("pivot");
@@ -238,13 +233,13 @@ public class basicTelemBlue extends LinearOpMode {
 
     if (x == 0)
       x =
-        MathUtil.interpolate(
-          .00125,
-          .005,
-          MathUtil.inverseInterpolate(0, limitSlide, slide.getCurrentPosition()))
-          * Math.sin(
-          Units.degreesToRadians(
-            90 - (pivot.getCurrentPosition() * encoderCountsPerDegree)));
+          MathUtil.interpolate(
+                  .00125,
+                  .005,
+                  MathUtil.inverseInterpolate(0, limitSlide, slide.getCurrentPosition()))
+              * Math.sin(
+                  Units.degreesToRadians(
+                      90 - (pivot.getCurrentPosition() * encoderCountsPerDegree)));
 
     if (x > 0 && slide.getCurrentPosition() > pubLength) {
       x = 0;
@@ -256,11 +251,10 @@ public class basicTelemBlue extends LinearOpMode {
 
   public void slideLimit() {
     pubLength =
-      Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree))
-        * (46 * encoderCountsPerInch);
+        Math.cos(Math.toRadians(pivot.getCurrentPosition() / encoderCountsPerDegree))
+            * (46 * encoderCountsPerInch);
     if (pubLength <= 2950) pubLength = 2950;
-    if(pivot.getCurrentPosition()/encoderCountsPerDegree <= 7.5 )
-      pubLength = limitSlide;
+    if (pivot.getCurrentPosition() / encoderCountsPerDegree <= 7.5) pubLength = limitSlide;
   }
 
   public void setPivot(double x) {
@@ -286,9 +280,9 @@ public class basicTelemBlue extends LinearOpMode {
    * @param x X input
    * @param y Y input
    * @return Returns an array of two doubles,<br>
-   * <p>[0] = R - Magnitude<br>
-   * [1] = Theta Angle of input coordinate.<br>
-   * Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
+   *     <p>[0] = R - Magnitude<br>
+   *     [1] = Theta Angle of input coordinate.<br>
+   *     Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
    * @see #polarToCartesian(double, double)
    */
   public double[] cartesianToPolar(double x, double y) {
@@ -302,12 +296,12 @@ public class basicTelemBlue extends LinearOpMode {
   /**
    * Converts polar coordinates to cartesian not used (yet)
    *
-   * @param r     Magnitude of input coordinate
+   * @param r Magnitude of input coordinate
    * @param theta Angle of input coordinate.<br>
-   *              Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
+   *     Relative to unit circle, where 0deg in is to the right, 90 is up and 180 is left.
    * @return Returns an array of two doubles,<br>
-   * <p>[0] = X<br>
-   * [1] = Y
+   *     <p>[0] = X<br>
+   *     [1] = Y
    * @see #cartesianToPolar(double, double)
    */
   public double[] polarToCartesian(double r, double theta) {
@@ -396,15 +390,9 @@ public class basicTelemBlue extends LinearOpMode {
     rotate(orientation);
   }
 
-  /**
-   * TODO All of this Moves the robot to the detected specimen
-   */
-  public void moveToSpecimen() {
-  }
+  /** TODO All of this Moves the robot to the detected specimen */
+  public void moveToSpecimen() {}
 
-  /**
-   * TODO All of this as well Moves the robot back to the storage area
-   */
-  public void moveToStore() {
-  }
+  /** TODO All of this as well Moves the robot back to the storage area */
+  public void moveToStore() {}
 }
