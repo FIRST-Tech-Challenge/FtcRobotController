@@ -41,6 +41,7 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
                 // folds the wrist in 45
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+
                 // move slide up to get ready for drop off
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 

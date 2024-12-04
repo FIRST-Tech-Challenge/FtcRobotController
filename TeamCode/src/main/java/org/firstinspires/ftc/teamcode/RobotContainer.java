@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePos
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
@@ -126,17 +127,19 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new HighBucketDeposit());
+
+       // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
         driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
 
