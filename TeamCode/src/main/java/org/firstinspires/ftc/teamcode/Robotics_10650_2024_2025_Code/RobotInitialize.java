@@ -33,9 +33,9 @@ public class RobotInitialize {
     // Create servo variables
     public CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
-    Servo parkingServo;
+    public Servo parkingServo;
 
-    Servo pitch;
+    public Servo pitch;
     public Servo clawRoll;
 
 
