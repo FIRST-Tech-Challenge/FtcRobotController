@@ -50,7 +50,7 @@ public class RobotInitialize {
     public DcMotorEx liftPitch; //Makes the lift up and down on a vertical tilt (uses worm gear)
 
     // Create empty gyroscope variable and its settings
-    BHI260IMU gyroScope;
+    public BHI260IMU gyroScope;
     BHI260IMU.Parameters settings;
 
     // A constructor that makes a new instance of
