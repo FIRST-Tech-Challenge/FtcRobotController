@@ -128,4 +128,11 @@ public class RoboActions {
     public void hangPower (double power) {
         hang.move(power);
     }
+
+    public void adjustTurret(double angle){
+        turret.setPosition(angle);
+    }
+    public void resetTurret(){
+        turret.setPosition(0.5);
+    }
 }

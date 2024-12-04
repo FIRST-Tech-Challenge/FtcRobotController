@@ -21,7 +21,7 @@ import java.util.List;
 
 @Autonomous
 @Config
-public class League1Auto extends LinearOpMode {
+public class AutoWithoutPartner extends LinearOpMode {
     public static double xTarget = 10, yTarget = 0, rTarget = 0;
     State currentState = State.DRIVETODEPOSIT;
     Actions currentAction = Actions.PICKUP;
@@ -61,13 +61,9 @@ public class League1Auto extends LinearOpMode {
         while (opModeInInit()) {
             claw.close();
             wrist.intake();
-            actions.resetTurret();
-            if (gp.right_bumper) {
-                parking = PARKING.FAR;
-            }
-            if (gp.left_bumper) {
-                parking = PARKING.NEAR;
-            }
+
+
+            parking = PARKING.NEAR;
 
             gp.update();
             telemetry.addData("Parking: ", parking.name());
@@ -96,7 +92,7 @@ public class League1Auto extends LinearOpMode {
                     actions.preScore();
                     if(timer.milliseconds()>ActionStamp+500){
                         actionToggle=true;
-                        currentAction=Actions.SLIDESEXTEND;
+                        currentAction= Actions.SLIDESEXTEND;
                     }
                     break;
                 case SLIDESEXTEND:
@@ -131,7 +127,7 @@ public class League1Auto extends LinearOpMode {
                     }
                     if (timer.milliseconds() > ActionStamp + 500) {
                         claw.open();
-                        if(currentCycle == 3){
+                        if(currentCycle == 2){
                             actions.adjustTurret(angle);
                         }else{
                             actions.resetTurret();
@@ -219,9 +215,9 @@ public class League1Auto extends LinearOpMode {
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
-                        if(!(currentCycle==4)){
+                        if(!(currentCycle==3)){
                             currentAction = Actions.PICKUP;
-                        } else if (currentCycle==4){
+                        } else if (currentCycle==3){
                             currentAction=Actions.THIRDCYCLEPICKUP;
                         }
                     }
@@ -230,15 +226,12 @@ public class League1Auto extends LinearOpMode {
 
                         timeToggle = true;
                         if (currentCycle == 0) {
-                            currentState = State.PRELOAD;
-                        } else if (currentCycle == 1) {
                             currentState = State.CYCLE1;
-                        } else if (currentCycle == 2) {
+                        } else if (currentCycle == 1) {
                             currentState = State.CYCLE2;
-                        } else if(currentCycle == 3){
+                        } else if (currentCycle == 2) {
                             currentState = State.CYCLE3;
-                        } else if (currentCycle == 4) {
-
+                        } else if (currentCycle == 3) {
                             if (parking == PARKING.NEAR) {
                                 currentState = State.PARKNEAR;
                             } else if (parking == PARKING.FAR) {
@@ -248,21 +241,7 @@ public class League1Auto extends LinearOpMode {
                     }
 
                     break;
-                case PRELOAD:
-                     drive.setTarget(new Pose2d(-2, 7, -90 ));
-                    if (timeToggle) {//to be filled in...
-                        TimeStamp = timer.milliseconds();
-                        timeToggle = false;
-                    }
-                    if (timer.milliseconds() > TimeStamp + 1000) {
-                        currentAction = Actions.INTAKE;
-                    }
-                    if (timer.milliseconds() > TimeStamp + 2500) {
-                        timeToggle = true;
-                        currentState = State.DEPOSIT;
-                        currentCycle++;
-                    }
-                    break;
+
                 case CYCLE1:
                     drive.setTarget(new Pose2d(-9, 22, 0)); //first block
                     if (timeToggle) {//to be filled in...
@@ -307,12 +286,43 @@ public class League1Auto extends LinearOpMode {
                         timeToggle = true;
                         currentState = State.DEPOSIT;
                         currentCycle++;
-
                     }
                     break;
                 case PARKNEAR:
-                    drive.setTarget(new Pose2d(6, 27, -90));
+                    drive.setTarget(new Pose2d(5, 49, 0));
+                    if(timeToggle){
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
+                    }
+                    if (timer.milliseconds() > TimeStamp + 1500) {
+                        timeToggle = true;
+                        currentState=State.HANGINTERMEDIATE;
+                    }
                     break;
+                case HANGINTERMEDIATE:
+                    drive.setTarget(new Pose2d(10, 49, 90));
+                    if(timeToggle){
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
+                    }
+                    if (timer.milliseconds() > TimeStamp + 1500) {
+                        timeToggle = true;
+                        currentState=State.HANG;
+                    }
+                    break;
+                case HANG:
+                    if(timeToggle){
+                        TimeStamp = timer.milliseconds();
+                        timeToggle = false;
+                        actions.hangPower(-1);
+                    }
+                    //time can be changed
+                    if (timer.milliseconds() > TimeStamp + 2000) {
+                        timeToggle = true;
+                        currentState=State.REST;
+                    }
+                    break;
+                    
                 case PARKFAR:
                     drive.setTarget(new Pose2d(6, 27, -90));
                     if (timeToggle) {//to be filled in...
@@ -368,7 +378,7 @@ public class League1Auto extends LinearOpMode {
     }
 
     enum State {
-        DRIVETODEPOSIT, DEPOSIT, PRELOAD, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, PARKFAR, REST
+        DRIVETODEPOSIT, DEPOSIT, CYCLE1, CYCLE2, CYCLE3, PARKNEAR, HANG, PARKFAR, HANGINTERMEDIATE, REST
     }
 
     //(-18, 23.5, 30)
