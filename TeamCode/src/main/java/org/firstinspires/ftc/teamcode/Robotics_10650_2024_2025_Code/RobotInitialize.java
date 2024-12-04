@@ -8,7 +8,6 @@ package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -34,8 +33,7 @@ public class RobotInitialize {
     // Create servo variables
     CRServo intake; // This is a special continuous rotation servo which allows it to act
     // like a motor
-    Servo hangR;
-    Servo hangL;
+    Servo parkingServo;
 
     Servo pitch;
     Servo clawRoll;
@@ -143,13 +141,11 @@ public class RobotInitialize {
         //Manipulator Servos
 
             // Hang on submersible servos
-        hangL = opMode.hardwareMap.get(Servo.class, "hang l");
-        hangL.setPosition(0);
 
 
-        hangR = opMode.hardwareMap.get(Servo.class, "hang r");
+        parkingServo = opMode.hardwareMap.get(Servo.class, "hang r");
         //hangR.setDirection(Servo.Direction.REVERSE);
-        hangR.setPosition(1);
+        parkingServo.setPosition(1);
 
         //Continuous rotation Servo
         intake = opMode.hardwareMap.get(CRServo.class, "intake");
@@ -157,10 +153,10 @@ public class RobotInitialize {
         intake.setPower(0); // Off by default
         intake.setDirection(CRServo.Direction.REVERSE);
         //Regular Servos
-        clawRoll = opMode.hardwareMap.get(Servo.class, "roll");
+        clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
         clawRoll.setPosition(0);
-        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
-        pitch.setPosition(0.0481);
+        pitch = opMode.hardwareMap.get(Servo.class, "roll");
+        pitch.setPosition(0);
 
 //        roll.setDirection(Servo.Direction.FORWARD);
 //        roll.setPosition(0);
