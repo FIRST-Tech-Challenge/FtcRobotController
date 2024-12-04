@@ -52,11 +52,11 @@ public class RedRightExampleRR extends LinearOpMode {
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if(clawSlide.GetExtendedInches() > 18 && clawSlide.GetExtendedInches() < 18.5 ) {
+            if(clawSlide.GetExtendedInches() == 20) { // 18.25
                 return true;
             }
             else {
-                clawSlide.MoveTo(18.25, 1.0);
+                clawSlide.MoveTo(20, 1.0); //18.25
                 return false;
             }
         }
@@ -75,16 +75,17 @@ public class RedRightExampleRR extends LinearOpMode {
             }
         }
     }
+
     public class LiftToHookPosition implements Action {
         private boolean initialized = false;
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if(clawSlide.GetExtendedInches() > 15.25 && clawSlide.GetExtendedInches() < 16.25 ) {
+            if(clawSlide.GetExtendedInches() == 14.75) {
                 return true;
             }
             else {
-                clawSlide.MoveTo(15.75, 1.0);
+                clawSlide.MoveTo(15.0, 1.0);
                 return false;
             }
         }
@@ -93,7 +94,7 @@ public class RedRightExampleRR extends LinearOpMode {
     public void runOpMode()  throws InterruptedException
     {
         // run once when init is pressed
-        drive = new MecanumDrive(this.hardwareMap, new Pose2d(-63, -2, 0));
+        drive = new MecanumDrive(this.hardwareMap, new Pose2d(-63, 2, 0));
         clawSlide.Init(hardwareMap);
         specimanGrabber.Init(hardwareMap);
 
@@ -103,20 +104,31 @@ public class RedRightExampleRR extends LinearOpMode {
 
         // Delcare Trajectory as such
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
-                .stopAndAdd(
-                        new LiftToTopBar()
-                )
-                .lineToX(-31.5)
-                .stopAndAdd(new LiftToHookPosition())
-                .stopAndAdd(new OpenGrabber())
-                .lineToX(-41.5)
-                .strafeTo(new Vector2d(-41.5, -36))
-                .turn(Math.toRadians(180))
-                .lineToX(-9)
-                .strafeTo(new Vector2d(-9, -50))
-                .stopAndAdd(new LiftToHookPosition())
-                .strafeTo(new Vector2d(-58, -50))
-//              .lineToY(-35.5)
+                .stopAndAdd(new LiftToTopBar()) // lift to be ready to hang
+                .lineToX(-31.625) // move forward
+                .stopAndAdd(new LiftToHookPosition()) // lower the lift to hang
+                .waitSeconds(.250)
+                .stopAndAdd(new OpenGrabber()) //open claw
+                .lineToX(-41.5) // backup
+                .strafeTo(new Vector2d(-41.5, -35)) // strafe right
+                .turn(Math.toRadians(180)) // turn 180 degrees
+                .lineToX(-15) // drive backward
+                .strafeTo(new Vector2d(-15, -50)) // strafe left
+                .stopAndAdd(new LiftToBottom()) // lower the lift to the  bottom
+                .strafeTo(new Vector2d(-54, -50)) // move foward toward the wall
+
+
+                //next step
+                .lineToX(-15) // drive backward
+                .strafeTo(new Vector2d(-15, -58)) // strafe left
+                .strafeTo(new Vector2d(-54, -58)) // move foward toward the wall
+                .strafeTo(new Vector2d(-54, -40)) // move right to pickup specimen
+                .strafeTo(new Vector2d(-65, -40))
+                .stopAndAdd(new CloseGrabber())
+                .waitSeconds(.250)
+                .stopAndAdd(new LiftToTopBar())
+                .splineTo(new Vector2d(-31.625, -5), 0)
+
  //               .lineToX(-63)
  //               .stopAndAdd(new CloseGrabber())
  //               .stopAndAdd(new LiftToTopBar())
