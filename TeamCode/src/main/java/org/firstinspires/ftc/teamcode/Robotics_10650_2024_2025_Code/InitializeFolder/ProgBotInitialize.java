@@ -14,14 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-class ProgBotInitialize {
+public class ProgBotInitialize {
 
 
     // Create the empty normal motor variables
-    DcMotorEx fLeft;
-    DcMotorEx bRight;
-    DcMotorEx fRight;
-    DcMotorEx bLeft;
+    public DcMotorEx fLeft;
+    public DcMotorEx bRight;
+    public DcMotorEx fRight;
+    public DcMotorEx bLeft;
 
     // Create the empty lift control variables
 

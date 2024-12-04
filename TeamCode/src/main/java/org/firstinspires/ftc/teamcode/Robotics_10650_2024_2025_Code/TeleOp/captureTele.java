@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder.ProgBotInitialize;
-import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles.ProgBotInitialize;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
