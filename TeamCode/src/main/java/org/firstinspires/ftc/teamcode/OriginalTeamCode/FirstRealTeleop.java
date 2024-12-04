@@ -164,55 +164,69 @@ public class FirstRealTeleop extends LinearOpMode{
                 rightBackDrive.setPower(rightBackPower);
 
             }
+//            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            armRotate.setPower(gamepad2.left_stick_y);
+//            wrist.setPosition(-(gamepad2.right_stick_y));
+//
+//            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//            wrist.setPosition(wristPos);
+//            wristPos += (Math.pow(gamepad2.right_stick_y,3));
+//
+//            if(gamepad2.dpad_up){
+//                linearActuatorRaiser();
+//            } else if(gamepad2.dpad_down){
+//                linearActuatorLower();
+//            }
+//
+//            int spoolPow = 0;
+//            if(gamepad2.dpad_up){
+//                spoolPow = 1;
+//            } else if(gamepad2.dpad_down){
+//                spoolPow = -1;
+//            }
+//
+//            armLifterLeft.setPower(gamepad2.right_stick_x);
+//            armLifterRight.setPower(gamepad2.right_stick_x);
+//
+//
+//            if(isGrabbing){
+//                sampPickUpRight.setPower(1);
+//                sampPickUpLeft.setPower(1);
+//            } else{
+//                sampPickUpRight.setPower(0);
+//                sampPickUpLeft.setPower(0);
+//            }
+//            if (gamepad2.left_bumper){
+//                isGrabbing = !isGrabbing;
+//            }
+//
+//            if(gamepad2.right_bumper){
+//                sampPickUpLeft.setPower(-1);
+//                sampPickUpRight.setPower(-1);
+//            }
+//            spool.setPower(spoolPow);
+
+            //arm rotate
             armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armRotate.setPower(gamepad2.left_stick_y);
-            wrist.setPosition(-(gamepad2.right_stick_y));
 
-            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            wrist.setPosition(wristPos);
-            wristPos += (Math.pow(gamepad2.right_stick_y,3));
-
+            //actuator
             if(gamepad2.dpad_up){
                 linearActuatorRaiser();
             } else if(gamepad2.dpad_down){
                 linearActuatorLower();
             }
 
-            int spoolPow = 0;
-            if(gamepad2.dpad_up){
-                spoolPow = 1;
-            } else if(gamepad2.dpad_down){
-                spoolPow = -1;
-            }
+            //extenders
 
-            armLifterLeft.setPower(gamepad2.right_stick_x);
-            armLifterRight.setPower(gamepad2.right_stick_x);
-
-
-            if(isGrabbing){
-                sampPickUpRight.setPower(1);
-                sampPickUpLeft.setPower(1);
-            } else{
-                sampPickUpRight.setPower(0);
-                sampPickUpLeft.setPower(0);
-            }
-            if (gamepad2.left_bumper){
-                isGrabbing = !isGrabbing;
-            }
-
-            if(gamepad2.right_bumper){
-                sampPickUpLeft.setPower(-1);
-                sampPickUpRight.setPower(-1);
-            }
-            spool.setPower(spoolPow);
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Controls:\nGAMEPAD 2:\nwrist: right stick y\nspool: right stick x\ntoggle grab: left shoulder\nlinear actuator: up/down dpad\narm rotate: left stick y\nGAMEPAD 1\n lateral movement: left stick xy\n, rotate: right stick x","apple");
+           // telemetry.addData("Controls:\nGAMEPAD 2:\nwrist: right stick y\nspool: right stick x\ntoggle grab: left shoulder\nlinear actuator: up/down dpad\narm rotate: left stick y\nGAMEPAD 1\n lateral movement: left stick xy\n, rotate: right stick x","apple");
             telemetry.update();
         }
     }
