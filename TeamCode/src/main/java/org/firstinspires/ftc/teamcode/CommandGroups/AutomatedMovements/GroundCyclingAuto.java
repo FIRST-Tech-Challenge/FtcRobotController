@@ -38,7 +38,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.53, 1.05, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.51, 1.05, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new Pause(0.5),
@@ -47,6 +47,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 new DropToGrab(),
 
+                new Pause(0.25),
 
                 new CloseClaw(),
 
@@ -67,12 +68,14 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.27, 1.05, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new HuntingPos(),
 
                 new DropToGrab(),
+
+                new Pause(0.25),
 
                 new CloseClaw(),
 
@@ -85,18 +88,44 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 new HighBucketDeposit(),
 
-                // pick up left
+
                 new FollowPath(
                         1.0,
                         1.0,
                         0.0,
-                        0.0,
-                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
+                        0.25,
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
                         new ArrayList<Translation2d>() {{ }},
-                      AutoFunctions.redVsBlue(new Pose2d(1.58, 0.27, new Rotation2d(Math.toRadians(0)))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.3, 0.5, new Rotation2d(Math.toRadians(-45)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(50)))),
+
+                // pick up left
+                new FollowPath(
+                        0.5,
+                        0.75,
+                        0.25,
+                        0.0,
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-10))),
+                        new ArrayList<Translation2d>() {{ }},
+                      AutoFunctions.redVsBlue(new Pose2d(1.65, 0.29, new Rotation2d(Math.toRadians(0)))),
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(70)))),
 
-                new DropToGrab(),
+
+                // drops the elbow to 175 degrees for pick up
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+
+                // moves shoulder to 165 degrees so slightly down from hunting pos
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
+
+                // same as in hunting pos moving wrist 45 degrees
+                new Pause(0.25),
+
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+
+                // sets wrist rotate to 150
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(170)),
+
+                new Pause(1.75),
 
                 new CloseClaw(),
 
