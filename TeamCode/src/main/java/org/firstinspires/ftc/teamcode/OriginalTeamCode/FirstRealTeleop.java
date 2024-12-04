@@ -220,7 +220,25 @@ public class FirstRealTeleop extends LinearOpMode{
             }
 
             //extenders
+            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armLifterLeft.setPower(gamepad2.right_stick_x);
+            armLifterRight.setPower(gamepad2.right_stick_x);
 
+            //wrist
+            wrist.setPosition(wristPos);
+            wristPos += (Math.pow(gamepad2.right_stick_y,3));
+
+            //spool
+            int spoolPow = 0;
+            if(gamepad2.left_bumper){
+                spoolPow = 1;
+            } else if(gamepad2.right_bumper){
+                spoolPow = -1;
+            }
+            spool.setPower(spoolPow);
+
+            //grabbers
 
 
             // Show the elapsed game time and wheel power.
