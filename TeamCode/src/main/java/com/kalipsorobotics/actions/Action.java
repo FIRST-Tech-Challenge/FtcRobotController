@@ -35,7 +35,7 @@ public abstract class Action {
     }
 
     //what condition the action needs to fulfill in order to be done
-    public abstract boolean checkDoneCondition();
+    protected abstract boolean checkDoneCondition();
     //motor power, etc
-    public abstract void update();
+    protected abstract void update();
 }

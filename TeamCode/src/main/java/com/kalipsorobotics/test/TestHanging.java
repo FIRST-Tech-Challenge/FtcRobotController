@@ -5,6 +5,7 @@ import com.kalipsorobotics.actions.MoveLSAction;
 import com.kalipsorobotics.actions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.hang.HangHookAction;
+import com.kalipsorobotics.actions.outtake.AutoBasketAction;
 import com.kalipsorobotics.math.CalculateTickInches;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -21,19 +22,14 @@ public class TestHanging extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = new Outtake(opModeUtilities);
 
+        AutoBasketAction autoBasketAction = new AutoBasketAction(outtake);
 
-        AutoHangAction autoHangAction = new AutoHangAction(outtake);
-
-        //HangHookAction hangHookAction = new HangHookAction(outtake);
+        //AutoHangAction autoHangAction = new AutoHangAction(outtake);
 
         waitForStart();
         while (opModeIsActive()) {
-//            moveLSUp.updateCheckDone();
-//            waitAction.updateCheckDone();
-//            moveDown.updateCheckDone();
-
-            autoHangAction.updateCheckDone();
-            //hangHookAction.updateCheckDone();
+            autoBasketAction.updateCheckDone();
+            //autoHangAction.updateCheckDone();
         }
     }
 }
