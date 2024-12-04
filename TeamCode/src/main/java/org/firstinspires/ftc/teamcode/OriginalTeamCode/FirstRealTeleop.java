@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OriginalTeamCode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,6 +31,19 @@ public class FirstRealTeleop extends LinearOpMode{
     CRServo sampPickUpRight = null;
 
 
+    void linearActuatorMover(int i){
+        linearActuator.setTargetPosition(i);
+    }
+
+    void linearActuatorRaiser(){
+        linearActuatorMover(60);
+    }
+
+    void linearActuatorLower(){
+        linearActuatorMover(20);
+    }
+
+
 
     @Override
     public void runOpMode() {
@@ -53,6 +67,11 @@ public class FirstRealTeleop extends LinearOpMode{
         sampPickUpLeft.setDirection(CRServo.Direction.FORWARD);
         sampPickUpRight.setDirection(CRServo.Direction.REVERSE);
 
+        armLifterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        armLifterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        linearActuator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -73,12 +92,13 @@ public class FirstRealTeleop extends LinearOpMode{
         telemetry.update();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        boolean isGrabbing = false;
+        double wristPos = 0;
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            boolean isGrabbing = false;
             double pose = drive.getExternalHeading(); // used for my custom function to drive straight thru the trusses
 
             double slowMode = gamepad1.left_trigger;
@@ -144,22 +164,39 @@ public class FirstRealTeleop extends LinearOpMode{
                 rightBackDrive.setPower(rightBackPower);
 
             }
-
+            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armRotate.setPower(gamepad2.left_stick_y);
-            wrist.setPosition((gamepad2.right_stick_y+1)/2);
-            int linearActuatorPow = 0;
+            wrist.setPosition(-(gamepad2.right_stick_y));
+
+            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            wrist.setPosition(wristPos);
+            wristPos += (Math.pow(gamepad2.right_stick_y,3));
+
             if(gamepad2.dpad_up){
-                linearActuatorPow = 1;
+                linearActuatorRaiser();
             } else if(gamepad2.dpad_down){
-                linearActuatorPow = -1;
+                linearActuatorLower();
             }
-            linearActuator.setPower(linearActuatorPow);
+
+            int spoolPow = 0;
+            if(gamepad2.dpad_up){
+                spoolPow = 1;
+            } else if(gamepad2.dpad_down){
+                spoolPow = -1;
+            }
+
+            armLifterLeft.setPower(gamepad2.right_stick_x);
+            armLifterRight.setPower(gamepad2.right_stick_x);
+
 
             if(isGrabbing){
                 sampPickUpRight.setPower(1);
                 sampPickUpLeft.setPower(1);
             } else{
                 sampPickUpRight.setPower(0);
+                sampPickUpLeft.setPower(0);
             }
             if (gamepad2.left_bumper){
                 isGrabbing = !isGrabbing;
@@ -169,8 +206,7 @@ public class FirstRealTeleop extends LinearOpMode{
                 sampPickUpLeft.setPower(-1);
                 sampPickUpRight.setPower(-1);
             }
-
-            spool.setPower(gamepad2.right_stick_x);
+            spool.setPower(spoolPow);
 
 
             // Show the elapsed game time and wheel power.
