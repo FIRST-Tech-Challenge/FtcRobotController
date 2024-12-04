@@ -1,7 +1,7 @@
 // Program created by: Danny and William
 // Purpose: FTC Robot Software
 
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder;
 
 // Imports all of the necessary FTC libraries and code
 

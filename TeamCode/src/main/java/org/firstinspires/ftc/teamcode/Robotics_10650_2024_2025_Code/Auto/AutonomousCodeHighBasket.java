@@ -2,12 +2,14 @@
 // Purpose: FTC Robot Software
 
 // The file path of the class
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.Auto;
 
 // Import all of the necessary FTC libraries and code
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder.RobotInitialize;
 
 // Create an Autonomous program (Auto) that preselects a TeleOp (controller operated)
 @Autonomous(name = "AutonomousCodeCloserToBasket", preselectTeleOp = "TeleOpCode_RobotCentric")

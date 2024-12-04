@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code;
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

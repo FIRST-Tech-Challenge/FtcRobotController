@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.RobotInitialize;
+import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder.RobotInitialize;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,7 +22,7 @@ public class PlayBackAuto extends LinearOpMode {
         telemetry.addData("Status", "Ready to replay inputs");
         telemetry.update();
         robot = new RobotInitialize(this, true);
-        robot.hangR.setPosition(1);
+        robot.parkingServo.setPosition(1);
 
 
 
@@ -73,7 +73,7 @@ public class PlayBackAuto extends LinearOpMode {
                     telemetry.addData("Start time", startTime);
                     telemetry.addData("Timestamp", timestamp);
                     telemetry.addData("hang r pos", hangRPosition);
-                    telemetry.addData("hang r pos", robot.hangR.getPosition());
+                    telemetry.addData("hang r pos", robot.parkingServo.getPosition());
 
 
                     telemetry.update();
@@ -96,7 +96,7 @@ public class PlayBackAuto extends LinearOpMode {
 
 
 
-                robot.hangR.setPosition(hangRPosition);
+                robot.parkingServo.setPosition(hangRPosition);
 
                 //telemetry.addData("Replaying", "fleft Velocity: %.2f, fright Velocity: %.2f, bleft Velocity: %.2f, bright Velocity %.2f,", strafeVelocity - straightMovementVelocity + turnVelocity, -strafeVelocity - straightMovementVelocity - turnVelocity, (strafeVelocity + straightMovementVelocity - turnVelocity), (-strafeVelocity + straightMovementVelocity + turnVelocity));
                // telemetry.update();

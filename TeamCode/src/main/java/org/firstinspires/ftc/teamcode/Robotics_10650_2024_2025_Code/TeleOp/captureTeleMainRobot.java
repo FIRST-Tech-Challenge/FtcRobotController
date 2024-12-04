@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TextFiles;
+package org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.RobotInitialize;
+import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder.RobotInitialize;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
 
 @TeleOp(name = "COPYRecordDriverInputs", group = "Linear Opmode")
-public class captureTeleCopy extends LinearOpMode {
+public class captureTeleMainRobot extends LinearOpMode {
     RobotInitialize robot;
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
@@ -333,8 +333,8 @@ public class captureTeleCopy extends LinearOpMode {
                         robot.clawRoll.setPosition(0.1606);
                     }
                     if (gamepad1.dpad_left) {
-                        robot.hangR.setPosition(robot.hangR.getPosition()+0.002);
-                        hangRPos = robot.hangR.getPosition();
+                        robot.parkingServo.setPosition(robot.parkingServo.getPosition()+0.002);
+                        hangRPos = robot.parkingServo.getPosition();
 
 
 
@@ -342,8 +342,8 @@ public class captureTeleCopy extends LinearOpMode {
 //                robot.hangL.setPosition(0.0439);
                     }
                     if (gamepad1.dpad_right) {
-                        robot.hangR.setPosition(robot.hangR.getPosition()-0.002);
-                        hangRPos = robot.hangR.getPosition();
+                        robot.parkingServo.setPosition(robot.parkingServo.getPosition()-0.002);
+                        hangRPos = robot.parkingServo.getPosition();
 
 //                robot.hangR.setPosition(0.9611);
 //                robot.hangL.setPosition(0.0439);
