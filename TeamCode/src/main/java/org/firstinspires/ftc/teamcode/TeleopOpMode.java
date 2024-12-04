@@ -83,9 +83,9 @@ public class TeleopOpMode extends LinearOpMode {
             // Move robot by controller 1
             wheels.driveByJoystickFieldOriented(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
             // rotate intake motor
-            elevator.extend(gamepad1.left_stick_y);
-            if (gamepad1.left_bumper){elevator.rotateForword();}
-            if (gamepad1.right_bumper){elevator.rotateBackword();}
+            elevator.extend(gamepad2.left_stick_y);
+            if (gamepad2.left_bumper){elevator.rotateForword();}
+            if (gamepad2.right_bumper){elevator.rotateBackword();}
 
 
 
