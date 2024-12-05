@@ -51,21 +51,21 @@ class SampleTest {
     @org.junit.jupiter.api.Test
     void testValid1() throws IOException, JSONException {
         testWithJsonFile("valid_1.json",
-                "Sample{x=7.7890026335380895, y=-2.812398678830519, d=1.1396787145269092, a=-38, c=Red}");
+                "Sample{x=7.79, y=-2.81, d=1.14, a=-33, whr=1.51, c=Red}");
     }
     @org.junit.jupiter.api.Test
     void testValid2() throws IOException, JSONException {
         testWithJsonFile("valid_2.json",
-                "Sample{x=-11.301597643280246, y=-5.049326353835767, d=1.2806063514362331, a=-79, c=Shared}");
+                "Sample{x=-11.3, y=-5.05, d=1.281, a=-76, whr=3.59, c=Shared}");
     }
     @org.junit.jupiter.api.Test
     void testValid3() throws IOException, JSONException {
         testWithJsonFile("valid_3.json",
-                "Sample{x=2.1398941752225795, y=4.549280178549225, d=0.8141990767695284, a=40, c=Blue}");
+                "Sample{x=2.14, y=4.55, d=0.814, a=33, whr=1.62, c=Blue}");
     }
     @org.junit.jupiter.api.Test
     void testValid4() throws IOException, JSONException {
         testWithJsonFile("valid_4.json",
-                "Sample{x=0.8804047987464685, y=1.5270221743177501, d=0.5545438298536771, a=13, c=Unknown}");
+                "Sample{x=0.88, y=1.53, d=0.555, a=4, whr=1.18, c=Unknown}");
     }
 }

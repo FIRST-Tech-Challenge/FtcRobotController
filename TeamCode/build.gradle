@@ -41,4 +41,5 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'org.locationtech.jts:jts-core:1.18.2'
 }
