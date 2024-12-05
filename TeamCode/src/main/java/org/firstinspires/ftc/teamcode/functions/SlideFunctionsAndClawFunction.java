@@ -1,23 +1,22 @@
 package org.firstinspires.ftc.teamcode.functions;
 
-import android.text.method.Touch;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class SlideFunctions {
+public class SlideFunctionsAndClawFunction {
 
     public DcMotor rightSlideMotor;
     public DcMotor leftSlideMotor;
     public TouchSensor slideSafety;
+    public Servo Claw;
 
-    public SlideFunctions(HardwareMap hardwareMap) {
+    public SlideFunctionsAndClawFunction(HardwareMap hardwareMap) {
 
         rightSlideMotor = hardwareMap.get(DcMotor.class, "right_slide_motor");
         leftSlideMotor = hardwareMap.get(DcMotor.class, "left_slide_motor");
@@ -32,6 +31,8 @@ public class SlideFunctions {
         //everything brakes at 0
         rightSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //'initialize' the Claw
+        Claw = hardwareMap.get(Servo.class, "Claw");
     }
 
 
@@ -59,14 +60,29 @@ public class SlideFunctions {
         telemetry.addData("Left Slide Position", leftSlidePosition);
     }
 
-    public void ArmControl(Gamepad gamepad2, Telemetry telemetry) {
-        double armPower = -gamepad2.right_stick_y;
-        leftSlideMotor.setPower(armPower);
+    public void ClawControl(Gamepad gamepad2, Telemetry telemetry) {
+        boolean ClawOpen = true;
+        telemetry.addData("Is claw open?", ClawOpen);
 
-        int armPosition = leftSlideMotor.getCurrentPosition();
+        boolean clawButtonPressed;
+        // I set this to 0.9 in the small chance that our controller breaks and no one notices
+        // In an ideal world, it should be set to 1
+        if (gamepad2.right_trigger >= 0.9) {
+            clawButtonPressed = true;
+        }
+        else {
+            clawButtonPressed = false;
+        }
 
-        telemetry.addData("Left Slide power","%4.2f", armPower);
-        telemetry.addData("Left Slide Position", armPosition);
+        // This function makes so that the claw is closed by default, opens when the driver pressed the right trigger,
+        // and closes when the driver releases the right trigger. These magic numbers were found out through testing.
+        if (clawButtonPressed) {
+            Claw.setPosition(0.7);
+        }
+        else {
+            Claw.setPosition(0.25);
+        }
+
     }
 
 }
