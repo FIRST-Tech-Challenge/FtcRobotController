@@ -8,6 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.MatchRecorder.MatchLogger;
 
+import java.util.Objects;
+
 public class PincherSubsystem extends SubsystemBase {
 
     ServoEx finger1, finger2;
@@ -38,6 +40,8 @@ public class PincherSubsystem extends SubsystemBase {
     public PincherSubsystem(final ServoEx finger1, final ServoEx finger2) {
         this.finger1 = finger1;
         this.finger2 = finger2;
+        Objects.requireNonNull(finger1);
+        Objects.requireNonNull(finger2);
         finger1.setRange(0, 45, AngleUnit.DEGREES);
         finger2.setRange(0, 45, AngleUnit.DEGREES);
         finger1.setInverted(true); //  Might need to change it to finger2
@@ -50,6 +54,7 @@ public class PincherSubsystem extends SubsystemBase {
     public void locomoteFinger(FingerPositions position) {
         finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
         finger2.turnToAngle(position.getAngle(), position.getAngleUnit());
+
         MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
     }
 

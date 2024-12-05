@@ -81,17 +81,17 @@ public class DriveCommandOpMode extends CommandOpMode {
             pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
             register(pincherSubsystem);
 
-            armerController.getGamepadButton(GamepadKeys.Button.A).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED));
-            armerController.getGamepadButton(GamepadKeys.Button.B).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN));
+            //armerController.getGamepadButton(GamepadKeys.Button.A).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED));
+            //armerController.getGamepadButton(GamepadKeys.Button.B).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN));
             // NOT NEEDED IN GAME! This is for debug purposes only and personal testing
-            armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
+            //armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
         } catch (Exception e) {
             //e.printStackTrace();
             throw new RuntimeException(e);
         }
 
         try {
-            /*DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
+            DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
             uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
             register(uppiesSubsystem);
 
@@ -103,7 +103,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                     .whenReleased(idleCommand);
             armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                     .whenPressed(downCommand)
-                    .whenReleased(idleCommand);*/
+                    .whenReleased(idleCommand);
         } catch (Exception e) {
             //e.printStackTrace();
             throw new RuntimeException(e);
@@ -157,6 +157,18 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("GO GO GO!");
         dbp.send(false);
 
+        while (opModeIsActive()) {
+            if (gamepad2.a) {
+                pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.OPEN);
+                dbp.info("OPEN PINCHER");
+                dbp.send(true);
+            }
+            if (gamepad2.b) {
+                pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.CLOSED);
+                dbp.info("CLOSE PINCHER");
+                dbp.send(true);
+            }
+        }
     }
 
     @Override
