@@ -5,18 +5,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robotics_10650_2024_2025_Code.InitializeFolder.RobotInitialize;
 
-@TeleOp(name = "pid")
-public class pidTele extends LinearOpMode {
+@TeleOp(name = "pidExtender")
+public class pidExtender extends LinearOpMode {
 
     // Run the initialize function
     RobotInitialize robot;
 
     int liftPitchPosition = 0;
     int liftExtenderPosition = 0;
-    double p = 0;
-    double i = 0;
+
+    double p = 2.67;
+    double i = 2.05;
     double d = 0;
-    double f = 0;
+    double f = 3.3;
 
 
     @Override
@@ -51,9 +52,9 @@ public class pidTele extends LinearOpMode {
             robot.liftExtender.setVelocity(0);
         }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
             if (robot.liftExtender.getCurrentPosition() < liftExtenderPosition) {
-                robot.liftExtender.setVelocity(2000); //was 1500
+                robot.liftExtender.setVelocity(5000);
             } else if (robot.liftExtender.getCurrentPosition() >= liftExtenderPosition) {
-                robot.liftExtender.setVelocity(-2000); //was -1500
+                robot.liftExtender.setVelocity(-5000);
             }
             //If no input, make sure the liftExtender motor does not move
         }else {

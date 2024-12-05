@@ -220,7 +220,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 } else if (robot.liftPitch.getCurrentPosition() >= liftPitchPosition) {
                     robot.liftPitch.setVelocity(-2150);
                     if (liftPitchPosition > 1500) {
-                        robot.liftPitch.setVelocity(-2450);
+                        robot.liftPitch.setVelocity(-3000);
                     }
                 }
             } else {
