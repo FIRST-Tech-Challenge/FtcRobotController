@@ -11,7 +11,7 @@ public class MovePivotCommand extends SounderBotCommandBase{
     DeliveryPivot pivot;
     Telemetry telemetry;
     double target;
-    double position;
+    double position, previousPosition = 1000000;
     Motor motor;
     SonicPIDFController pidController;
 
@@ -26,7 +26,7 @@ public class MovePivotCommand extends SounderBotCommandBase{
 
     @Override
     protected boolean isTargetReached() {
-        return Math.abs(target - position) < 40;
+        return Math.abs(target - position) < 40 || position == previousPosition;
     }
 
     @Override
@@ -52,5 +52,7 @@ public class MovePivotCommand extends SounderBotCommandBase{
 
             motor.set(power);
         }
+
+        previousPosition = position;
     }
 }

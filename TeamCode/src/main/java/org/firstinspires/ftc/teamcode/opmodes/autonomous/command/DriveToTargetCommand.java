@@ -25,9 +25,9 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDFController xPid = new SonicPIDFController(0.0015, 0, 0, 0);
+    SonicPIDFController xPid = new SonicPIDFController(0.0025, 0, 0, 0);
 
-    SonicPIDFController yPid = new SonicPIDFController(-0.0018, 0, 0, 0);
+    SonicPIDFController yPid = new SonicPIDFController(-0.0035, 0, 0, 0.02);
 
     SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
@@ -48,7 +48,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     public void doExecute() {
         odo.update();
 
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
 
         if(addTelemetry) {
             telemetry.addData("tx: ", targetX);
@@ -107,23 +107,14 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
             backLeftPower /= max;
             backRightPower /= max;
         }
-
-        if(Math.abs(frontLeftPower) <  minPower) {
-            frontLeftPower = minPower * Math.signum(frontLeftPower);
+        else if (max < minPower) {
+            // Proportionally increase power in all motors until max wheel power is enough
+            double proportion = minPower / max;
+            frontLeftPower *= proportion;
+            frontRightPower *= proportion;
+            backLeftPower *= proportion;
+            backRightPower *= proportion;
         }
-
-        if(Math.abs(frontRightPower) <  minPower) {
-            frontRightPower = minPower * Math.signum(frontRightPower);
-        }
-
-        if(Math.abs(backLeftPower) <  minPower) {
-            backLeftPower = minPower * Math.signum(backLeftPower);
-        }
-
-        if(Math.abs(backRightPower) <  minPower) {
-            backRightPower = minPower * Math.signum(backRightPower);
-        }
-
 
         Log.i(LOG_TAG, String.format("Wheels power: fL: %f, fR: %f, bL: %f, bR: %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower));
 

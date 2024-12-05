@@ -31,7 +31,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
     private IntakeState state;
 
-    private enum IntakeState { Hold, Intake, Outtake }
+    private enum IntakeState { Hold, Intake, Outtake, IntakeAuto }
 
     public RollingIntake(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
@@ -71,7 +71,7 @@ public class RollingIntake extends SonicSubsystemBase {
             }
         }
 
-        if(state == IntakeState.Intake) {
+        if(state == IntakeState.Intake || state == IntakeState.IntakeAuto) {
             //telemetry.addData("State", "Intake");
 
             if(d > 50 || this.isInDeliveryPosition) {
@@ -81,14 +81,20 @@ public class RollingIntake extends SonicSubsystemBase {
                 this.rightServo.setPower(1);
 
             } else {
-                this.leftServo.setPower(-0.2);
-                this.rightServo.setPower(0.2);
-                //telemetry.addData("power",0);
+                if(state == IntakeState.Intake) {
+                    this.leftServo.setPower(-0.2);
+                    this.rightServo.setPower(0.2);
 
-                if (feedback != null) {
-                    feedback.DriverRumbleBlip();
-                    feedback.OperatorRumbleBlip();
+                    if (feedback != null) {
+                        feedback.DriverRumbleBlip();
+                        feedback.OperatorRumbleBlip();
+                    }
+                } else {
+                    this.leftServo.setPower(0);
+                    this.rightServo.setPower(0);
                 }
+
+                state = IntakeState.Hold;
             }
         } else if (state == IntakeState.Outtake) {
             //telemetry.addData("State", "Outtake");
@@ -110,6 +116,11 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         //telemetry.update();
+    }
+
+    public boolean IsSampleIntaken() {
+        double d = GetDepth();
+        return d < 50;
     }
 
     boolean isInDeliveryPosition = false;
@@ -165,15 +176,22 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void IntakeInAuto() {
+        this.state = IntakeState.IntakeAuto;
+    }
+
+    public void OuttakeInAuto() {
+        this.leftServo.setPower(1);
+        this.rightServo.setPower(-1);
+    }
+
+    public void IntakeSlowlyInAuto() {
         this.leftServo.setPower(-1);
         this.rightServo.setPower(1);
     }
 
-    public void OuttakeInAuto() {
-        telemetry.addLine("Trying to outtake");
-        telemetry.update();
-        this.leftServo.setPower(1);
-        this.rightServo.setPower(-1);
+    public void OuttakeSlowlyInAuto() {
+        this.leftServo.setPower(.7);
+        this.rightServo.setPower(-.7);
     }
 
     public void HoldInAuto() {

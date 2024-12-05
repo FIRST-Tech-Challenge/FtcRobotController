@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 public class IntakeCommand extends SounderBotCommandBase {
 
-    private static final long TIME_OUT = 1000; // 1 sec
+    private static final long TIME_OUT = 700; // 1 sec
     boolean expired = false;
     Timer timer = new Timer();
     public IntakeCommand(RollingIntake intake) {
@@ -39,5 +39,10 @@ public class IntakeCommand extends SounderBotCommandBase {
         } else {
             intake.IntakeInAuto();
         }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return expired;
     }
 }

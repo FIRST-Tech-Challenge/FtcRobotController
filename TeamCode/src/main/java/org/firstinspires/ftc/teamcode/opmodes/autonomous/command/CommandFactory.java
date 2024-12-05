@@ -101,9 +101,14 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart);
     }
 
+    public MovePivotCommand pivotToGroundInTakeBegin() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
+    }
+
     public MovePivotCommand pivotToStart() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.StartPositionFromStart);
     }
+
 
     public MovePivotCommand pivotToDelivery() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.DeliveryPositionFromStart);
@@ -121,12 +126,16 @@ public class CommandFactory {
         return new InstantCommand(intake::SetElbowInSpecimenPosition);
     }
 
-    public IntakeCommand intake() {
-        return new IntakeCommand(intake);
+    public SmartIntakeCommand intake() {
+        return new SmartIntakeCommand(intake);
     }
 
-    public OuttakeCommand outtake() {
-        return new OuttakeCommand(intake);
+    public SmartOuttakeCommand outtake() {
+        return new SmartOuttakeCommand(intake);
+    }
+
+    public IntakeFromGround intakeFromGround() {
+        return new IntakeFromGround(intake, pivot);
     }
 
     public RoboticCentricDriveCommand driveRobotCentric(double strafeSpeed, double forwardSpeed, double rotSpeed, long timeToDriveMs) {

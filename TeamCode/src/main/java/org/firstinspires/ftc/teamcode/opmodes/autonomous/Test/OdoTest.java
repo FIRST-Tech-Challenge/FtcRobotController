@@ -14,21 +14,80 @@ public class OdoTest extends CommandAutoOpMode {
         return new ParallelCommandGroup(
                 //commandFactory.WriteTelemetry(),
                 new SequentialCommandGroup(
-                        commandFactory.driveToTarget(200, 0, 0, 0.1),
-                        commandFactory.driveToTarget(450, 250, -45, 0.18),
-                        commandFactory.pivotToDelivery(),
-                        commandFactory.elbowToSpecimenPosition(),
+                        //commandFactory.driveToTarget(200, 0, 0, 0.11),
+                        new ParallelCommandGroup(
+                             commandFactory.driveToTarget(300, 400, -45, .23),
+                             commandFactory.pivotToDelivery(),
+                             commandFactory.elbowToSpecimenPosition()
+                        ),
                         commandFactory.extandSlider(),
-                        commandFactory.driveToTarget(280, 420, -45, 0.1),
-                        commandFactory.waitFor(300),
+                        commandFactory.driveToTarget(180, 520, -45, 0.11),
                         commandFactory.extandSlider(),
+
                         commandFactory.outtake(),
-                        commandFactory.driveToTarget(450, 250, -45, 0.1),
 
-                        commandFactory.collapseSlider(),
-                        commandFactory.pivotToInTake(),
+                        new ParallelCommandGroup(
+                        commandFactory.driveToTarget(500, 300, 0, 0.15),
+                                        commandFactory.collapseSlider()
+                        ),
 
-                        commandFactory.driveToTarget(450, 250, 0, 0.1),
+                        new ParallelCommandGroup(
+                            commandFactory.pivotToGroundInTakeBegin(),
+                            commandFactory.elbowToIntakePosition()
+                        ),
+
+                        commandFactory.intakeFromGround(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.pivotToDelivery()
+                                ),
+
+                        commandFactory.extandSlider(),
+                        commandFactory.driveToTarget(180, 520, -45, 0.15),
+                        commandFactory.extandSlider(),
+
+                        commandFactory.outtake(),
+
+                        new ParallelCommandGroup(
+                        commandFactory.driveToTarget(500, 590, 0, 0.12),
+                                        commandFactory.collapseSlider()
+                        ),
+
+                        new ParallelCommandGroup(
+                                commandFactory.pivotToGroundInTakeBegin(),
+                                commandFactory.elbowToIntakePosition()
+                        ),
+
+                        commandFactory.intakeFromGround(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.pivotToDelivery()
+                        ),
+
+                        commandFactory.extandSlider(),
+                        commandFactory.driveToTarget(180, 520, -45, 0.11),
+                        commandFactory.extandSlider(),
+
+                        commandFactory.outtake(),
+
+                        new ParallelCommandGroup(
+                            commandFactory.driveToTarget(600, 500, 45, 0.12),
+                                commandFactory.collapseSlider()
+                        ),
+
+                        new ParallelCommandGroup(
+                                commandFactory.pivotToGroundInTakeBegin(),
+                                commandFactory.elbowToIntakePosition()
+                        ),
+
+                        commandFactory.intakeFromGround(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.pivotToDelivery()
+                        ),
 
                         commandFactory.pivotToStart()
 
