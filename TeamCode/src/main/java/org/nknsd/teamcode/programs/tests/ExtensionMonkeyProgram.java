@@ -1,15 +1,19 @@
 package org.nknsd.teamcode.programs.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.nknsd.teamcode.frameworks.NKNComponent;
-import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.components.handlers.ExtensionHandler;
 import org.nknsd.teamcode.components.sensors.PotentiometerSensor;
 import org.nknsd.teamcode.components.handlers.RotationHandler;
 import org.nknsd.teamcode.components.testfiles.ExtensionMonkey;
+import org.nknsd.teamcode.frameworks.NKNProgramTrue;
 
 import java.util.List;
 
-public class ExtensionMonkeyProgram extends NKNProgram {
+@TeleOp(name = "Extension Monkey", group="Tests") @Disabled
+public class ExtensionMonkeyProgram extends NKNProgramTrue {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Create pot and arm rotator so that the extensionHandler can be linked to them

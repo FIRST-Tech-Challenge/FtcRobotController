@@ -3,7 +3,7 @@ package org.nknsd.teamcode.frameworks;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.nknsd.teamcode.programs.autos.AutoSkeleton;
+import org.nknsd.teamcode.helperClasses.AutoSkeleton;
 
 public interface NKNAutoStep {
     void link(AutoSkeleton autoSkeleton);

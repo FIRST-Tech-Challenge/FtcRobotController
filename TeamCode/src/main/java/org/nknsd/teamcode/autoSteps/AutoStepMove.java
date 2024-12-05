@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.nknsd.teamcode.frameworks.NKNAutoStep;
-import org.nknsd.teamcode.programs.autos.AutoSkeleton;
+import org.nknsd.teamcode.helperClasses.AutoSkeleton;
 
 public class AutoStepMove implements NKNAutoStep {
     AutoSkeleton autoSkeleton;

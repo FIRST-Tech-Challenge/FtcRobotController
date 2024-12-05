@@ -1,12 +1,13 @@
 package org.nknsd.teamcode.programs.teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.nknsd.teamcode.components.handlers.SpecimenClawHandler;
 import org.nknsd.teamcode.components.handlers.SpecimenExtensionHandler;
 import org.nknsd.teamcode.components.handlers.SpecimenRotationHandler;
 import org.nknsd.teamcode.controlSchemes.reals.KarstenSpecimenController;
 import org.nknsd.teamcode.drivers.SpecimenDriver;
 import org.nknsd.teamcode.frameworks.NKNComponent;
-import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.components.handlers.ExtensionHandler;
 import org.nknsd.teamcode.components.utility.GamePadHandler;
 import org.nknsd.teamcode.components.sensors.IMUSensor;
@@ -18,10 +19,12 @@ import org.nknsd.teamcode.drivers.EACDriver;
 import org.nknsd.teamcode.drivers.WheelDriver;
 import org.nknsd.teamcode.controlSchemes.reals.CollyWheelController;
 import org.nknsd.teamcode.controlSchemes.reals.KarstenEACController;
+import org.nknsd.teamcode.frameworks.NKNProgramTrue;
 
 import java.util.List;
 
-public class BasicMovementNKNProgram extends NKNProgram {
+@TeleOp(name = "Basic OpMode (Robot Oriented)")
+public class BasicMovementNKNProgram extends NKNProgramTrue {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Misc
