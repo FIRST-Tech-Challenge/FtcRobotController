@@ -22,7 +22,6 @@ public class TeleopManualV1 extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        int slideTarget = 0;
 
         double servo1pos = 0.5;
         double servo2pos = 0.5;
