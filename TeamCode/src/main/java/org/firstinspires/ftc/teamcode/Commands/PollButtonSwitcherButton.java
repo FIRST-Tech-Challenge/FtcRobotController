@@ -9,8 +9,13 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.StartingArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.ButtonSwitcher;
@@ -43,19 +48,20 @@ public class PollButtonSwitcherButton extends CommandBase {
             // map the appropriate commands to the buttons
             switch (currentState) {
                 case AUTO_MODE:
+                    //change blinkin to Alliance color
                     // map the auto commands
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new HighBucketDeposit());
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SweepAlliancePieces());
                     break;
                 case MANUAL_MODE:
                     //map the manual commands
                     //probably don't want these specific calls, but you can
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new InstantCommand(() -> shoulderJoint.RotateTo(ShoulderPosition.FLEX.getValue())));
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(() -> shoulderJoint.RotateTo(ShoulderPosition.GROUND.getValue())));
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new InstantCommand(() -> elbowJoint.RotateTo(ElbowPosition.FLEX.getValue())));
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new InstantCommand(() -> elbowJoint.RotateTo(ElbowPosition.GROUND.getValue())));
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
                     break;
             }
         }
