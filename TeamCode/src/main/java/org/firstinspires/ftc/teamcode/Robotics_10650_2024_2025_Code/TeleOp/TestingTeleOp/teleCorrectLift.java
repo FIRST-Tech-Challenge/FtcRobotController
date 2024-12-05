@@ -37,7 +37,7 @@ public class teleCorrectLift extends LinearOpMode{
             telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
             telemetry.addData("extender target pos", liftExtenderPosition);
 
-            telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
+            //telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
             //
             if (liftPitchPosition<=2325&&liftPitchPosition>=-600||
                     (liftPitchPosition>=2325&&gamepad2.left_stick_y > 0)|| // 3200 goes to the
@@ -192,18 +192,18 @@ public class teleCorrectLift extends LinearOpMode{
             }
 
             if (gamepad2.right_bumper){
-                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+0.005);
+                //robot.clawRoll.setPosition(robot.clawRoll.getPosition()+0.005);
                 telemetry.addData("roll is moving", 1);
 
             }
             if (gamepad2.right_trigger>0){
-                robot.clawRoll.setPosition(robot.clawRoll.getPosition()-0.005);
+                //robot.clawRoll.setPosition(robot.clawRoll.getPosition()-0.005);
                 telemetry.addData("roll is moving", 1);
 
             }
 
             telemetry.addData("pitch position", robot.pitch.getPosition());
-            telemetry.addData("roll position", robot.clawRoll.getPosition());
+            //telemetry.addData("roll position", robot.clawRoll.getPosition());
 
 
 

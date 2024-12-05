@@ -180,7 +180,7 @@ public class captureTeleMainRobot extends LinearOpMode {
                     telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
                     telemetry.addData("extender target pos", liftExtenderPosition);
 
-                    telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
+                    //telemetry.addData("claw pitch pos",robot.clawRoll.getPosition());
 
 
                     telemetry.addData("is right stick pressed?", gamepad2.right_stick_button);
@@ -324,13 +324,13 @@ public class captureTeleMainRobot extends LinearOpMode {
                     if(gamepad2.dpad_down){
 
                         clawPitchPos = 0;
-                        robot.clawRoll.setPosition(0);
+                        //robot.clawRoll.setPosition(0);
 
                     }
                     if(gamepad2.dpad_up){
 
                         clawPitchPos = 0.1606;
-                        robot.clawRoll.setPosition(0.1606);
+                        //robot.clawRoll.setPosition(0.1606);
                     }
                     if (gamepad1.dpad_left) {
                         robot.parkingServo.setPosition(robot.parkingServo.getPosition()+0.002);

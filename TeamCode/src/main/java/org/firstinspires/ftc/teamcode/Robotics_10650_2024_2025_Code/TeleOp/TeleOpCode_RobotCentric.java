@@ -33,7 +33,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         //edit this to be valid for the dual mode servo
         //initial position
-        robot.clawRoll.setPosition(0.1606 / 5);
+        //robot.clawRoll.setPosition(0.1606 / 5);
         robot.parkingServo.setPosition(1);
 
         //robot.intake.setPower(0);
@@ -229,7 +229,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
             telemetry.addData("extender target pos", liftExtenderPosition);
 
-            telemetry.addData("claw pitch pos", robot.clawRoll.getPosition());
+            //telemetry.addData("claw pitch pos", robot.clawRoll.getPosition());
             //telemetry.addData("Pitch TargetPos",liftPitchPosition);
 
 //            if (gamepad1.left_bumper) {
@@ -446,12 +446,12 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }
             if (gamepad2.dpad_down) {
 
-                robot.clawRoll.setPosition(0);
+                //robot.clawRoll.setPosition(0);
 
             }
             if (gamepad2.dpad_up) {
 
-                robot.clawRoll.setPosition(0.1606 / 5);
+                //robot.clawRoll.setPosition(0.1606 / 5);
             }
 
             if (gamepad1.dpad_left) {
@@ -477,7 +477,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            }
 
             //edit this to be valid for the dual mode servo
-            robot.clawRoll.setPosition(0.1606 / 5);
+            //robot.clawRoll.setPosition(0.1606 / 5);
         }
 
         if (gamepad2.square) {//slaps it in
@@ -505,7 +505,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         //i=i+Math.round(gamepad2.right_stick_y);
 
-        telemetry.addData("aactual pitchpos", robot.clawRoll.getPosition());
+        //telemetry.addData("aactual pitchpos", robot.clawRoll.getPosition());
         //telemetry.addData("hang l pos", robot.hangL.getPosition());
 
 

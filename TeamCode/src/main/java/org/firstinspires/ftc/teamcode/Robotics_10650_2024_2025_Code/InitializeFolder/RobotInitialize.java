@@ -36,7 +36,7 @@ public class RobotInitialize {
     public Servo parkingServo;
 
     public Servo pitch;
-    public Servo clawRoll;
+    //public Servo clawRoll;
 
 
     // Create the empty normal motor variables
@@ -143,7 +143,7 @@ public class RobotInitialize {
             // Hang on submersible servos
 
 
-        parkingServo = opMode.hardwareMap.get(Servo.class, "hang r");
+        parkingServo = opMode.hardwareMap.get(Servo.class, "parkingServo");
         //hangR.setDirection(Servo.Direction.REVERSE);
         parkingServo.setPosition(1);
 
@@ -153,8 +153,8 @@ public class RobotInitialize {
         intake.setPower(0); // Off by default
         intake.setDirection(CRServo.Direction.REVERSE);
         //Regular Servos
-        clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
-        clawRoll.setPosition(0);
+        /*clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
+        clawRoll.setPosition(0);*/
         pitch = opMode.hardwareMap.get(Servo.class, "roll");
         pitch.setPosition(0);
 

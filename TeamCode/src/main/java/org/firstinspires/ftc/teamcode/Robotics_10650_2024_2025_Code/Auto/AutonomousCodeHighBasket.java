@@ -48,7 +48,7 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
         robot.liftExtender(2702, 800);
         robot.liftPitch(172, 300);
         robot.extake(1000);
-        robot.clawRoll.setPosition(0.3372);
+        //robot.clawRoll.setPosition(0.3372);
         robot.liftPitch(0, 600);
 
         robot.liftExtender(0, 800);
@@ -57,7 +57,7 @@ public class AutonomousCodeHighBasket extends LinearOpMode {
 
         //to park in ascent zone
         robot.newTurnFunction(-90);
-        robot.clawRoll.setPosition(0);
+        //robot.clawRoll.setPosition(0);
         robot.strafeR(340, 500); //Adjust this
         robot.goStraight(1780, 500);
         robot.newTurnFunction(-180);

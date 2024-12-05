@@ -92,7 +92,7 @@ public class PlayBackAuto extends LinearOpMode {
                 robot.liftPitch.setVelocity(pitchVelocity);
 
                 robot.intake.setPower(intakeVelocity);
-                robot.clawRoll.setPosition(clawPosition);
+                //robot.clawRoll.setPosition(clawPosition);
 
 
 
