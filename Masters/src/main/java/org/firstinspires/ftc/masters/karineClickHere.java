@@ -19,6 +19,8 @@ public class karineClickHere extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
+        double reducer = 0.7;
+
         int sheepSoundID = hardwareMap.appContext.getResources().getIdentifier("pig", "raw", hardwareMap.appContext.getPackageName());
 
         if (sheepSoundID != 0)
@@ -72,10 +74,10 @@ public class karineClickHere extends LinearOpMode {
                 rightRearPower /= max;
             }
 
-            frontLeft.setPower(leftFrontPower);
-            backLeft.setPower(leftRearPower);
-            frontRight.setPower(rightFrontPower);
-            backRight.setPower(rightRearPower);
+            frontLeft.setPower(leftFrontPower*reducer);
+            backLeft.setPower(leftRearPower*reducer);
+            frontRight.setPower(rightFrontPower*reducer);
+            backRight.setPower(rightRearPower*reducer);
 
             boolean isX = false;
             if (sheepFound && (isX = gamepad1.x) && !wasX) {
