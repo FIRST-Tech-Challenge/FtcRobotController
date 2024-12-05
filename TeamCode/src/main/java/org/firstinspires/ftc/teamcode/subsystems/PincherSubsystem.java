@@ -47,7 +47,8 @@ public class PincherSubsystem extends SubsystemBase {
         Objects.requireNonNull(finger2);
         finger1.setRange(0, 45, AngleUnit.DEGREES);
         finger2.setRange(0, 45, AngleUnit.DEGREES);
-        //finger2.setInverted(true); //  Might need to change it to finger2
+        finger2.setInverted(true); //  Might need to change it to finger2
+        finger1.setInverted(true); //  Might need to change it to finger1
         // MIGHT cause errors
         locomoteFinger(FingerPositions.ZERO);
     }

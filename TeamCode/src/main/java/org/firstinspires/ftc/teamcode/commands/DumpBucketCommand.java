@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.subsystems.BucketSubsystem;
 import java.util.Set;
 
 public class DumpBucketCommand extends CommandBase {
+    private final Action action;
+    private final Set<Subsystem> requirements;
+    private boolean finished = false;
 
     // After X seconds, move the bucket back to the original position
     public static final double DUMP_RETRACT_TIME = 1.25d;
@@ -24,7 +27,22 @@ public class DumpBucketCommand extends CommandBase {
     public DumpBucketCommand(BucketSubsystem bucketSubsystem) {
         this.bucketSubsystem = bucketSubsystem;
         this.elapsedTime = new ElapsedTime();
+        this.action = null;
+        this.requirements = null;
         addRequirements(bucketSubsystem);
+    }
+
+    public DumpBucketCommand(Action action, Set<Subsystem> requirements) {
+        this.action = action;
+        this.requirements = requirements;
+    }
+
+    @Override
+    public void execute() {
+        TelemetryPacket packet = new TelemetryPacket();
+        action.preview(packet.fieldOverlay());
+        finished = !action.run(packet);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Config
 @Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
 public class Blue extends LinearOpMode {
-    int visionOutputPosition = 1;
+    int visionOutputPosition = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
