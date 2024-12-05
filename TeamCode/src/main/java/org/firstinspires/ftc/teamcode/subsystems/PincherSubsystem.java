@@ -37,6 +37,9 @@ public class PincherSubsystem extends SubsystemBase {
         }
     }
 
+    int finger1Offset = 0;
+    int finger2Offset = 0;
+
     public PincherSubsystem(final ServoEx finger1, final ServoEx finger2) {
         this.finger1 = finger1;
         this.finger2 = finger2;
@@ -44,7 +47,7 @@ public class PincherSubsystem extends SubsystemBase {
         Objects.requireNonNull(finger2);
         finger1.setRange(0, 45, AngleUnit.DEGREES);
         finger2.setRange(0, 45, AngleUnit.DEGREES);
-        finger1.setInverted(true); //  Might need to change it to finger2
+        //finger2.setInverted(true); //  Might need to change it to finger2
         // MIGHT cause errors
         locomoteFinger(FingerPositions.ZERO);
     }
@@ -52,8 +55,13 @@ public class PincherSubsystem extends SubsystemBase {
     double lastPower = Double.MIN_VALUE;
 
     public void locomoteFinger(FingerPositions position) {
-        finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
-        finger2.turnToAngle(position.getAngle(), position.getAngleUnit());
+        //finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
+        //finger2.turnToAngle(position.getAngle(), position.getAngleUnit());
+
+        double angleScale = position.getAngle() / 45d;
+
+        finger1.setPosition(angleScale);
+        finger2.setPosition(angleScale);
 
         MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
     }
