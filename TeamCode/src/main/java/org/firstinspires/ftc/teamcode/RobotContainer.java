@@ -25,7 +25,9 @@ import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 
+import org.firstinspires.ftc.teamcode.Commands.PollButtonSwitcherButton;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
+import org.firstinspires.ftc.teamcode.Subsystems.ButtonSwitcher;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
@@ -88,6 +90,9 @@ public class RobotContainer {
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
 
+    public static ButtonSwitcher buttonSwitcher;
+
+
     //Angle of the robot at the start of auto
     public static double RedStartAngle = 90;
     public static double BlueStartAngle = -90;
@@ -106,6 +111,8 @@ public class RobotContainer {
 
         // set drivetrain default command to manual driving mode
         drivesystem.setDefaultCommand(new ManualDrive());
+
+        buttonSwitcher.setDefaultCommand(new PollButtonSwitcherButton(buttonSwitcher));
 
         // bind commands to buttons
         // bind gyro reset to back button.
@@ -234,6 +241,8 @@ public class RobotContainer {
         climb = new Climb();
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
+        buttonSwitcher = new ButtonSwitcher();
+
 
         GoToNextDropOff.initializeDestinationDecrement();
     }
