@@ -31,7 +31,7 @@ public class RightSideAuto extends SequentialCommandGroup {
         // start pos (0.25, 1.6, -90) on field
         addCommands (
                 // sets the starting position
-                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(-0.22, 1.55, new Rotation2d(Math.toRadians(-90))))),
+                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(new Pose2d(-0.22, 1.57, new Rotation2d(Math.toRadians(-90))))),
                 //makes sure the claw is closed
                 new CloseClaw(),
 
