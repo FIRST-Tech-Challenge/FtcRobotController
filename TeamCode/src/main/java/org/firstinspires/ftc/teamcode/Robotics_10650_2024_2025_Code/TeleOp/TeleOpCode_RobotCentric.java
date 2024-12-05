@@ -436,22 +436,14 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 telemetry.addData("intake power", robot.intake.getPower());
             }
 
-            if (gamepad2.dpad_left) {
-                robot.pitch.setPosition(0);
-            }
-
-            if (gamepad2.dpad_right) {
-
-                robot.pitch.setPosition(0.0481);
-            }
             if (gamepad2.dpad_down) {
 
-                //robot.clawRoll.setPosition(0);
+                robot.pitch.setPosition(0);
 
             }
             if (gamepad2.dpad_up) {
 
-                //robot.clawRoll.setPosition(0.1606 / 5);
+                robot.pitch.setPosition(0.1606/5);
             }
 
             if (gamepad1.dpad_left) {

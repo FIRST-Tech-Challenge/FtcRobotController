@@ -155,7 +155,7 @@ public class RobotInitialize {
         //Regular Servos
         /*clawRoll = opMode.hardwareMap.get(Servo.class, "pitch");
         clawRoll.setPosition(0);*/
-        pitch = opMode.hardwareMap.get(Servo.class, "roll");
+        pitch = opMode.hardwareMap.get(Servo.class, "pitch");
         pitch.setPosition(0);
 
 //        roll.setDirection(Servo.Direction.FORWARD);
