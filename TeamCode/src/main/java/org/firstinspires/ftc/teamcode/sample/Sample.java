@@ -13,7 +13,7 @@ import java.util.List;
 public class Sample {
     public static final float targetTx = 0.2f;
     public static final float targetTy = 0.2f;
-    public static final float targetArea = 15.0f;
+    public static final float targetArea = 40.0f;
     public static final int redSamplePipeline = 1;
     public static final int blueSamplePipeline = 2;
     public static final int sharedSamplePipeline = 0;
@@ -70,6 +70,13 @@ public class Sample {
             default:
                 return "Unknown";
         }
+    }
+    public double getX() {
+        return Math.round(llResult.getTx() * 100.0) / 100.0;
+    }
+
+    public double getY() {
+        return Math.round(llResult.getTy() * 100.0) / 100.0;
     }
     public double getDeltaX() {
         return Math.round((llResult.getTx() - targetTx) * 100.0) / 100.0;
@@ -213,8 +220,8 @@ public class Sample {
         int result = isLLResultValid();
         if (result > 0) {
             return "Sample{" +
-                    "x=" + getDeltaX() +
-                    ", y=" + getDeltaY() +
+                    "x=" + getX() +
+                    ", y=" + getY() +
                     ", d=" + getDistance() +
                     ", a=" + getSampleAngle() +
                     ", whr=" + getSampleWHRatio() +
