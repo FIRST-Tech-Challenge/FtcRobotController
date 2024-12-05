@@ -79,7 +79,7 @@ SensorLimelightAprilTag extends LinearOpMode {
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
 
 
-                if (result.isValid() && robotYaw==0) {
+                if (result.isValid()) {
                         double x = (100/(botpose_mt2.getPosition().x)) - 33; //inches
                         double y = (botpose_mt2.getPosition().y - 1.2) * 39.37; //inches
                         telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
