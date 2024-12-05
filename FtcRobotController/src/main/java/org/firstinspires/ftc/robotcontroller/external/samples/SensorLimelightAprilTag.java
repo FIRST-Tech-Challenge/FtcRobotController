@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class
 SensorLimelightAprilTag extends LinearOpMode {
 
+
     private Limelight3A limelight;
     IMU imu;
 
@@ -30,12 +31,6 @@ SensorLimelightAprilTag extends LinearOpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
-
-        // First, tell Limelight which way your robot is facing
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
-        limelight.updateRobotOrientation(robotYaw);
-        telemetry.addData("Yaw", robotYaw);
 
 
         /*
@@ -57,29 +52,43 @@ SensorLimelightAprilTag extends LinearOpMode {
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
 
+
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            double robotYaw = Math.round(orientation.getYaw(AngleUnit.DEGREES)) ;
+            limelight.updateRobotOrientation(robotYaw);
+            telemetry.addData("Yaw", robotYaw);
+
+            telemetry.update();
+
+
             LLResult result = limelight.getLatestResult();
 
 
-            if (result != null && result.isValid()) {
-                double tx = result.getTx(); // How far left or right the target is (degrees)
+            if (result != null) {
+
+                /*double tx = result.getTx(); // How far left or right the target is (degrees)
                 double ty = result.getTy(); // How far up or down the target is (degrees)
                 double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
                 telemetry.addData("Target X", tx* (3.14159 / 180.0));
-                telemetry.addData("Target Y", ty* (3.14159 / 180.0));
+                telemetry.addData("Target Y", ty* (3.14159 / 180.0));// meters
                 telemetry.addData("Target Area", ta);
+                LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+*/
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
-                if (botpose_mt2 != null) {
-                    double x = (botpose_mt2.getPosition().x - 1.2)* 39.37; //inches
-                    double y = (botpose_mt2.getPosition().y - 1.2)* 39.37; //inches
-                    telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+
+
+                if (result.isValid() && robotYaw==0) {
+                        double x = (100/(botpose_mt2.getPosition().x)) - 33; //inches
+                        double y = (botpose_mt2.getPosition().y - 1.2) * 39.37; //inches
+                        telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
             } else {
                 telemetry.addData("Limelight", "No Targets");
             }
-            telemetry.update();
 
+            telemetry.update();
 
         }
         limelight.stop();
