@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.Test;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,6 +10,10 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
 
 @Autonomous
 public class OdoTest extends CommandAutoOpMode {
+
+    boolean hold1End = false;
+    boolean hold2End = false;
+    boolean hold3End = false;
     @Override
     protected Command createCommand() {
         return new ParallelCommandGroup(
@@ -20,11 +25,11 @@ public class OdoTest extends CommandAutoOpMode {
                              commandFactory.pivotToDelivery(),
                              commandFactory.elbowToSpecimenPosition()
                         ),
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(),
                         commandFactory.driveToTarget(180, 520, -45, 0.11),
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(() -> hold1End),
 
-                        commandFactory.outtake(),
+                        commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
 
                         new ParallelCommandGroup(
                         commandFactory.driveToTarget(500, 300, 0, 0.15),
@@ -43,11 +48,11 @@ public class OdoTest extends CommandAutoOpMode {
                                 commandFactory.pivotToDelivery()
                                 ),
 
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(),
                         commandFactory.driveToTarget(180, 520, -45, 0.15),
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(() -> hold2End),
 
-                        commandFactory.outtake(),
+                        commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true)),
 
                         new ParallelCommandGroup(
                         commandFactory.driveToTarget(500, 590, 0, 0.12),
@@ -66,11 +71,11 @@ public class OdoTest extends CommandAutoOpMode {
                                 commandFactory.pivotToDelivery()
                         ),
 
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(),
                         commandFactory.driveToTarget(180, 520, -45, 0.11),
-                        commandFactory.extandSlider(),
+                        commandFactory.extendSlider(() -> hold3End),
 
-                        commandFactory.outtake(),
+                        commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
 
                         new ParallelCommandGroup(
                             commandFactory.driveToTarget(600, 500, 45, 0.12),

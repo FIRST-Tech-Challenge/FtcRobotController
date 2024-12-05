@@ -5,17 +5,14 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
-import com.google.common.util.concurrent.Uninterruptibles;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.drivetrain.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
-
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
 public class CommandFactory {
@@ -81,8 +78,12 @@ public class CommandFactory {
         return new TurnAngleAbsoluteCommand(driveTrain, telemetry, angleInDegrees);
     }
 
-    public MoveSliderCommand extandSlider() {
+    public MoveSliderCommand extendSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition);
+    }
+
+    public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
     }
 
     public MoveSliderCommand collapseSlider() {
