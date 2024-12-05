@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class IntakeAction extends Action {
     OpModeUtilities opModeUtilities;
     Intake intake;
-    IntakeLinkageAction intakeLinkageAction;
+    //IntakeLinkageAction intakeLinkageAction;
     IntakePivotAction intakePivotAction;
     IntakeDoorAction intakeDoorAction;
     IntakeNoodleAction intakeNoodleAction;
@@ -26,10 +26,10 @@ public class IntakeAction extends Action {
 
         this.opModeUtilities = opModeUtilities;
         this.intake = intake;
-        this.intakeLinkageAction = new IntakeLinkageAction(intake);
+        //this.intakeLinkageAction = new IntakeLinkageAction(intake);
         this.intakePivotAction = new IntakePivotAction(intake);
         this.intakeDoorAction = new IntakeDoorAction(intake);
-        this.intakeNoodleAction = new IntakeNoodleAction(intake);
+        this.intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         this.colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
     }
     @Override
@@ -37,15 +37,15 @@ public class IntakeAction extends Action {
         return false;
     }
     public void slideTo(double position) {
-        intakeLinkageAction.moveIntakeSlide(position);
+        //intakeLinkageAction.moveIntakeSlide(position);
         Log.d("intake slide", "slide has been moved to " + position);
     }
     public void extendSlide() {
-        intakeLinkageAction.extend();
+        //intakeLinkageAction.extend();
         Log.d("intake slide", "slide has extended");
     }
     public void retractSlide() {
-        intakeLinkageAction.retract();
+        //intakeLinkageAction.retract();
         Log.d("intake slide", "slide has retracted");
     }
     public void noodleCycle(boolean isRed, double seconds) {
@@ -64,12 +64,12 @@ public class IntakeAction extends Action {
         intakePivotAction.togglePosition();
     }
     public void IntakeEngage() {
-        intakeLinkageAction.extend();
+        //intakeLinkageAction.extend();
         sleep(1200);
         intakePivotAction.moveDown();
     }
     public void IntakeUnengage() {
-        intakeLinkageAction.retract();
+        //intakeLinkageAction.retract();
         intakePivotAction.moveDown();
     }
     public void transferToPlate() {

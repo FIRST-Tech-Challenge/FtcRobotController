@@ -16,7 +16,10 @@ public class IntakeDoorAction extends KServo {
     private static final double SERVO_SPEED = 240; // per second
     private static final double SERVO_RANGE = 300;
     public static final boolean FLIP_DIRECTION = false;
-    public static final double ZERO_POSITION = 45;
+    public static final double ZERO_POSITION = 0;
+
+    static public final double INTAKE_DOOR_OPEN_POS = 0.5;
+    static public final double INTAKE_DOOR_CLOSE_POS = 0.15;
 
     private IntakeDoorAction(Servo intakeDoorServo) {
         super(intakeDoorServo, SERVO_SPEED, SERVO_RANGE, ZERO_POSITION, FLIP_DIRECTION);
@@ -28,12 +31,12 @@ public class IntakeDoorAction extends KServo {
     }
 
     public void open() {
-        intakeDoorServo.setPosition(0.5);
+        intakeDoorServo.setPosition(INTAKE_DOOR_OPEN_POS);
         isClosed = false;
     }
 
     public void close() {
-        intakeDoorServo.setPosition(0.15);
+        intakeDoorServo.setPosition(INTAKE_DOOR_CLOSE_POS);
         isClosed = true;
     }
 

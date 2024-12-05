@@ -8,7 +8,12 @@ public class CalculateTickPer {
     static double odoCircumfMm = 48 * Math.PI;
 
     static final public double MAX_RANGE_LS_TICKS = 2050;
+    //put real values
+    final public static double MAX_RANGE_INTAKE_TICKS = degToTicksIntakeLS(90);
     static final public double MIN_RANGE_LS_TICKS = -30;
+    final static public double MIN_RANGE_INTAKE_TICKS = 0;
+
+    static final public double TICK_PER_DEGREE = 537.7 / 360;
 
 
     static double mmPerInch = 25.4;
@@ -31,6 +36,11 @@ public class CalculateTickPer {
 
     public static double ticksToInchesDriveTrain(double ticks) {
         return (ticksToMmDriveTrain(ticks / mmPerInch));
+    }
+
+    public static double degToTicksIntakeLS(double deg) {
+        double tick = deg * TICK_PER_DEGREE;
+        return tick;
     }
 
     public static double mmToTicksLS(double mm) {

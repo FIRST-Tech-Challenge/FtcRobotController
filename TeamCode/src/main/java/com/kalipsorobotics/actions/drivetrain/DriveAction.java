@@ -1,10 +1,9 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.drivetrain;
 
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class DriveAction {

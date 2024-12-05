@@ -1,7 +1,8 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.AutoActions;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.utilities.KServo;
 
 public class KServoAutoAction extends Action {

@@ -11,7 +11,6 @@ public class LinkageServoAction {
 
     public LinkageServoAction(Intake intake) {
         this.intake = intake;
-        linkageServo = intake.getLinkageServo1();
     }
 
     public void goToPosition(double position) {

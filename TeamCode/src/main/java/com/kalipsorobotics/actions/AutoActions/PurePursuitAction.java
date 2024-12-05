@@ -1,8 +1,10 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.AutoActions;
 
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PidNav;
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.math.Path;

@@ -2,7 +2,7 @@
 //
 //import com.kalipsorobotics.actions.Action;
 //import com.kalipsorobotics.actions.DoneStateAction;
-//import com.kalipsorobotics.actions.KServoAutoAction;
+//import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
 //import com.kalipsorobotics.actions.WaitAction;
 //import com.kalipsorobotics.modules.Outtake;
 //import com.kalipsorobotics.utilities.KServo;

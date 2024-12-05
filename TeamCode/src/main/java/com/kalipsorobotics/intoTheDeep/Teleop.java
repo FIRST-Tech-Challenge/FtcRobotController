@@ -4,7 +4,7 @@ package com.kalipsorobotics.intoTheDeep;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.kalipsorobotics.actions.DriveAction;
+import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
@@ -208,10 +208,11 @@ public class Teleop extends LinearOpMode {
 
 package com.kalipsorobotics.intoTheDeep;
 
-import com.kalipsorobotics.actions.DriveAction;
-import com.kalipsorobotics.actions.KActionSet;
+import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
+
+import com.kalipsorobotics.actions.drivetrain.DriveAction;
+import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
-import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
@@ -237,14 +238,13 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        KActionSet teleopActionSet = new KActionSet();
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         DriveAction driveAction = new DriveAction(driveTrain);
         Intake intake = new Intake(opModeUtilities);
-        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
+        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
         IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
-        IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
+        //IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
@@ -255,7 +255,9 @@ public class Teleop extends LinearOpMode {
         SpecimenWallReady specimenWallReady = null;
         // Targer should always be 0
         MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
-        MoveLSAction maintainGlobalPos = new MoveLSAction(outtake, 0);
+        MoveLSAction maintainOuttakeGlobalPos = new MoveLSAction(outtake, 0);
+        MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
 //        MoveLSAction.globalLinearSlideMaintainTicks);
 
 
@@ -274,7 +276,10 @@ public class Teleop extends LinearOpMode {
         boolean isRed = true;
         boolean takeInYellow = false;
 
-        intakeLinkageAction.retract();
+        //intakeLinkageAction.retract();
+
+
+
         intakePivotAction.moveUp();
         intakeDoorAction.close();
 
@@ -359,12 +364,15 @@ public class Teleop extends LinearOpMode {
             }
 
             //intake slides manual
-            if (-gamepad2.right_stick_y != 0) {
+            /*if (-gamepad2.right_stick_y != 0) {
                 intakeLinkageAction.control(gamepad2.right_stick_y);
+            }*/
+            if (-gamepad2.right_stick_y != 0) {
+                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
             }
 
-
-            maintainGlobalPos.update();
+            maintainOuttakeGlobalPos.update();
+            maintainIntakeGlobalPos.update();
 /*
 
 

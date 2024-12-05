@@ -1,12 +1,10 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import android.os.SystemClock;
 import android.util.Log;
 
-import com.kalipsorobotics.actions.DriveAction;
+import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
-import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -15,14 +13,10 @@ import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
-import com.kalipsorobotics.actions.sequences.IntakeSequence;
-import com.kalipsorobotics.actions.sequences.TransferSequence;
-import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.modules.RevLED;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,10 +32,9 @@ public class ScrimmageTeleop extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         DriveAction driveAction = new DriveAction(driveTrain);
         Intake intake = new Intake(opModeUtilities);
-        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
+        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
         IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
-        IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
@@ -67,7 +60,6 @@ public class ScrimmageTeleop extends LinearOpMode {
         boolean isRed = true;
         boolean takeInYellow = false;
 
-        intakeLinkageAction.retract();
         intakePivotAction.moveUp();
         intakeDoorAction.close();
 
@@ -109,7 +101,6 @@ public class ScrimmageTeleop extends LinearOpMode {
 
             //manual control intake slide
             if (gamepad2.left_stick_y != 0 && gamepad2.left_stick_y != 0.1) {
-                intakeLinkageAction.control(gamepad2.left_stick_y);
             }
 
 

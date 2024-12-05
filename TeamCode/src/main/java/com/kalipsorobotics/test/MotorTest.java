@@ -1,8 +1,6 @@
 package com.kalipsorobotics.test;
 
-import android.util.Log;
-
-import com.kalipsorobotics.actions.DriveAction;
+import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -10,8 +8,6 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class MotorTest extends LinearOpMode {
