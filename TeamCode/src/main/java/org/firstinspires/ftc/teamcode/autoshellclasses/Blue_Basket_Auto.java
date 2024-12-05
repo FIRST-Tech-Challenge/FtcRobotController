@@ -146,7 +146,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         // JOSHUANOTE: This is where you put the final set of actions.
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
                         driveToClearance,
-                        _ViperArmActions.MoveToHighBasket(),
+                        _ViperArmActions.MoveArmToHighBasket(),
+                        _ViperArmActions.MoveViperToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait,
                         driveToDrop,
@@ -154,7 +155,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait,
                         driveToBackAway,
                         _WristClawActions.WristUp(),
-                        _ViperArmActions.MoveToHome(),
+                        _ViperArmActions.MoveArmToHome(),
+                        _ViperArmActions.MoveViperToHome(),
                         downWait,
                         driveToSample1,
                         _WristClawActions.WristDown(),
@@ -163,7 +165,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         closeWait,
                         _WristClawActions.WristUp(),
                         driveToClearance1,
-                        _ViperArmActions.MoveToHighBasket(),
+                        _ViperArmActions.MoveArmToHighBasket(),
+                        _ViperArmActions.MoveViperToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait1,
                         driveToDrop1,
@@ -171,7 +174,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait1,
                         driveToBackAway1,
                         _WristClawActions.WristUp(),
-                        _ViperArmActions.MoveToHighBasket(),
+                        _ViperArmActions.MoveArmToHome(),
+                        _ViperArmActions.MoveViperToHome(),
                         downWait1,
                         driveToSample2,
                         _WristClawActions.WristDown(),
@@ -180,7 +184,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         closeWait1,
                         _WristClawActions.WristUp(),
                         driveToClearance2,
-                        _ViperArmActions.MoveToHighBasket(),
+                        _ViperArmActions.MoveArmToHighBasket(),
+                        _ViperArmActions.MoveViperToHighBasket(),
                         _WristClawActions.WristDown(),
                         testingWait2,
                         driveToDrop2,
@@ -188,8 +193,9 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         clawOpenWait2,
                         driveToBackAway2,
                         _WristClawActions.WristUp(),
-                        _ViperArmActions.MoveToHome()
-                )
+                        _ViperArmActions.MoveArmToHome(),
+                        _ViperArmActions.MoveViperToHome()
+                        )
         );
         while(opModeIsActive()) {
             // _leftFront.setPower(0.3);
