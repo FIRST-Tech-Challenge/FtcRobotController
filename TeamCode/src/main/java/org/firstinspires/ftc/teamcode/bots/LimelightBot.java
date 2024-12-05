@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.sample.Sample;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LimelightBot extends GyroBot {
+public class LimelightBot extends PinchBot {
 
     public LLResult result = null;
     public Pose3D botpose = null;
@@ -33,6 +33,27 @@ public class LimelightBot extends GyroBot {
         super(opMode);
     }
 
+    public void pickup(boolean isBlueAlliance, boolean includeSharedSample) {
+        Sample sample = detectOne(isBlueAlliance, includeSharedSample);
+        // rotate to the sample orientation
+        rotateToAngle(sample.getSampleAngle());
+        double xThreshold = 0.5;
+        double yThreshold = 0.5;
+        if (sample.getDeltaX() < xThreshold && sample.getDeltaY() < yThreshold) {
+            // sample is close enough, pick it up
+            // open the pinch
+            openPinch();
+            // TODO : lower the pivot
+            // close the pinch at a future time
+            closePinchInTime(2000);
+            // TODO : raise the pivot at a future time
+        }
+        else{
+            // sample is not close enough, move to the sample
+            // TODO : extend/retract the slide based on delta Y
+            // TODO : move the robot sideways based on delta X
+        }
+    }
     public Sample detectOne() {
         return detectOne(false, false);
     }
