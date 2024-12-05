@@ -92,6 +92,8 @@ public class TeleopManualV1 extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper) {
+                outake.diffy1(ITDCons.ReleaseDiffy1);
+                outake.diffy2(ITDCons.ReleaseDiffy2);
                 target= ITDCons.ReleaseTarget;
 
             }

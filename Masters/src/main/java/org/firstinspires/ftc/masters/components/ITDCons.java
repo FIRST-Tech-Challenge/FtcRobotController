@@ -14,7 +14,7 @@ public class ITDCons {
     public static double liftDown = 0.1;
 
     public static double open = 0.35;
-    public static double close = 0.7;
+    public static double close = 0.75;
 
     public static double FloorDiffy1 = .27;
     public static double FloorDiffy2 = .34;
@@ -31,6 +31,8 @@ public class ITDCons {
     public static int SpecimenTarget = 32000;
 
     public static int ReleaseTarget = 28000;
+    public static double ReleaseDiffy1 = .085;
+    public static double ReleaseDiffy2 = .505;
 
 
 }
