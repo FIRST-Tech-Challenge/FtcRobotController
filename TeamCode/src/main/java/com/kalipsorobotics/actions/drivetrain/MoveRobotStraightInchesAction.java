@@ -39,7 +39,6 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
-        double duration;
     }
 
     public PIDController getPidController() {
@@ -69,7 +68,6 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     @Override
     public boolean checkDoneCondition() {
         refreshRemainingDistance();
-        Log.d("straight", "current error is " + remainingDistance);
         duration = (SystemClock.elapsedRealtime() - startTime) / 1000;
         if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || duration > timeout) {
             driveTrain.setPower(0);
@@ -85,7 +83,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     public void update() {
         double minPower = 0.15;
 
-        this.currentInches = wheelOdometry.countLeft();
+        this.currentInches = wheelOdometry.countLeft() / 25.4;
         refreshRemainingDistance();
         refreshThetaOffset();
 
@@ -126,9 +124,9 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
             bRight /= biggest;
         }
 
-        Log.d("straight/linear", String.format("Linear power %f", linearPower));
-        Log.d("straight/rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
-        Log.d("ILC motor powers", String.format("fLeft %f fRight %f bLeft %f bRight %f", fLeft, fRight, bLeft, bRight));
+        Log.d("straight/powers/linear", String.format("Linear power %f", linearPower));
+        Log.d("straight/powers/rotation", String.format("Theta offset %f, Rotation Power %f", thetaOffset, rotationPower));
+        Log.d("straight/powers/all", String.format("fLeft %f fRight %f bLeft %f bRight %f", fLeft, fRight, bLeft, bRight));
 
         driveTrain.setPower(fLeft, fRight, bLeft, bRight);
     }

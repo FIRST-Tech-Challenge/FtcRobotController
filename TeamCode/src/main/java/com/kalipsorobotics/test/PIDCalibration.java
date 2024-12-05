@@ -19,8 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
-//@Autonomous(name="PIDCalibration")
+@Autonomous(name="PIDCalibration")
 public class PIDCalibration extends LinearOpMode {
     public static final double learningRateP = 0.05;
     public static final double learningRateI = 0.001;
@@ -45,7 +44,7 @@ public class PIDCalibration extends LinearOpMode {
         double prevTime = SystemClock.elapsedRealtime();
 
         while (opModeIsActive()) {
-            sparkfunOdometry.updatePosition();
+            wheelOdometry.updatePosition();
             action.updateCheckDone();
             if (action.getIsDone()) {
                 i++;
