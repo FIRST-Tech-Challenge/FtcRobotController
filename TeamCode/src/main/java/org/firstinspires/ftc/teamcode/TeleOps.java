@@ -73,7 +73,10 @@ public class TeleOps extends LinearOpMode {
                 telemetry.addData("detected : ", s.toString());
                 telemetry.update();
             }
-
+            if (gamepad2.right_bumper) {
+                // TODO : decide on Alliance
+                robot.pickup(true, true);
+            }
 
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());

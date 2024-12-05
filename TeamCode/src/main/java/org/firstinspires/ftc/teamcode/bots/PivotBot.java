@@ -30,7 +30,11 @@ public class PivotBot extends OdometryBot {
     private TimerTask pivotTimerTask;
 
     // Slide motor constants
-    private final int maximumSlide = 2400;
+    private final int maximumSlidePos = 2400;
+    private final int searchSlidePos = 150;
+    private final int specimenSlidePos = 1000;
+    private final int highBucketSlidePos = 1500;
+    private final int lowBucketSlidePos = 800;
 
     public int slideTarget = 110;
 
@@ -55,6 +59,7 @@ public class PivotBot extends OdometryBot {
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setPower(0);
 
+        // TODO
         pivotMotor.setTargetPosition(pivotTarget);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotPower = 0.5;
@@ -92,7 +97,7 @@ public class PivotBot extends OdometryBot {
             pivotMotor.setPower(0);
 
         }
-        if (slideTarget > 0 && slideTarget < maximumSlide + 100){
+        if (slideTarget > 0 && slideTarget < maximumSlidePos + 100){
 
             slideMotor.setTargetPosition(slideTarget);
             slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -108,8 +113,8 @@ public class PivotBot extends OdometryBot {
     }
     public void slideControl(boolean up, boolean down) {
         if (up) {
-            if (slideMotor.getCurrentPosition() < maximumSlide) {
-                slideTarget = slideMotor.getCurrentPosition() + ((maximumSlide - slideMotor.getCurrentPosition()) / 10);
+            if (slideMotor.getCurrentPosition() < maximumSlidePos) {
+                slideTarget = slideMotor.getCurrentPosition() + ((maximumSlidePos - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
@@ -143,25 +148,25 @@ public class PivotBot extends OdometryBot {
     public void pivotTo(int pos, @Deprecated double power){
         pivotTarget = pos;
     }
-    public void pivotSearchPos(){
+    public void pivotToSearchPos(){
         pivotTarget = searchPivotPos;
     }
-    public void pivotPickupPos(){
+    public void pivotToPickupPos(){
         pivotTarget = pickupPivotPos;
     }
-    public void pivotPickupUpPos(){
+    public void pivotToPickupUpPos(){
         pivotTarget = pickupUpPivotPos;
     }
-    public void pivotSpecimenPos(){
+    public void pivotToSpecimenPos(){
         pivotTarget = specimenPivotPos;
     }
 
-    public void pivotUpPosInTime(int time){
+    public void pivotToUpPosInTime(int time){
         pivotTimer.cancel();
         pivotTimerTask = new TimerTask() {
             @Override
             public void run() {
-                pivotPickupUpPos();
+                pivotToPickupUpPos();
             }
         };
         pivotTimer.schedule(pivotTimerTask, time);
@@ -170,6 +175,20 @@ public class PivotBot extends OdometryBot {
     public void moveSlide(int pos, @Deprecated double power){
         slideTarget = pos;
     }
+
+    public void moveSlideToSearchPos(){
+        slideTarget = searchSlidePos;
+    }
+    public void moveSlideToSpecimenPos(){
+        slideTarget = specimenSlidePos;
+    }
+    public void moveSlideToHighBucketPos(){
+        slideTarget = highBucketSlidePos;
+    }
+    public void moveSlideToLowBucketPos(){
+        slideTarget = lowBucketSlidePos;
+    }
+
 
 
 }

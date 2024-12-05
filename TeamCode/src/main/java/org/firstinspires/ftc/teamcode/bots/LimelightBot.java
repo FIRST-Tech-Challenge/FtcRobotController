@@ -39,22 +39,33 @@ public class LimelightBot extends PinchBot {
         rotateToAngle(sample.getSampleAngle());
         double xThreshold = 0.5;
         double yThreshold = 0.5;
-        if (sample.getDeltaX() < xThreshold && sample.getDeltaY() < yThreshold) {
+        boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
+        boolean isYCloseEnough = Math.abs(sample.getDeltaY() ) < yThreshold;
+        if (isXCloseEnough && isYCloseEnough) {
             // sample is close enough, pick it up
             // open the pinch
             openPinch();
             // lower the pivot
-            pivotPickupPos();
+            pivotToPickupPos();
             // close the pinch at a future time
             closePinchInTime(2000);
             // raise the pivot at a future time
-            pivotUpPosInTime(3000);
+            pivotToUpPosInTime(3000);
         }
         else{
             // sample is not close enough, move to the sample
-            pivotSearchPos();
-            // TODO : extend/retract the slide based on delta Y
-            // TODO : move the robot sideways based on delta X
+            pivotToSearchPos();
+            if (!isYCloseEnough) {
+                // extend/retract the slide based on delta Y
+                boolean extendSlide= sample.getDeltaY() > 0;
+                slideControl(extendSlide, !extendSlide);
+            }
+            if (!isXCloseEnough) {
+                // move the robot sideways based on delta X
+                int direction = sample.getDeltaX() > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+                double distance = sample.getDeltaX() * 0.5;
+                driveStraightByDistance(direction, distance, 0.3);
+            }
         }
     }
     public Sample detectOne() {
