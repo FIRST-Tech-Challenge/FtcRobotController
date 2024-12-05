@@ -62,6 +62,9 @@ public class Slide {
         motor.setTargetPosition(0);
         motor.setPower(0);
     }
+    public void resetEncoder() {
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
 }
 

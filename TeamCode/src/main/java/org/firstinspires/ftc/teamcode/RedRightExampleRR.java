@@ -128,6 +128,7 @@ public class RedRightExampleRR extends LinearOpMode {
                 .waitSeconds(.250)
                 .stopAndAdd(new LiftToTopBar())
                 .splineTo(new Vector2d(-31.625, -5), 0)
+                .lineToX(-32)
 
  //               .lineToX(-63)
  //               .stopAndAdd(new CloseGrabber())

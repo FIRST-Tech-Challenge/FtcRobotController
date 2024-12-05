@@ -29,9 +29,9 @@ public class Pincher {
     }
     public void GoToDrivePosition() {
         // make arm ready to pickup sample/specimen
-        axis1.setPosition(0.3);
-        axis2.setPosition(0.3);
-        pinch.setPosition(0.0);//close
+        axis1.setPosition(0.0);
+        axis2.setPosition(0.0);
+        pinch.setPosition(0.1);//close
     }
     public void Pickup() {
         // bring arm wrist up so we can drive without issues
@@ -39,7 +39,6 @@ public class Pincher {
         axis2.setPosition(1);
     }
     public void DropOff() {
-        // bring arm wrist up to main claw to transfer
         axis1.setPosition(0.3);
         axis2.setPosition(0.3);
     }
