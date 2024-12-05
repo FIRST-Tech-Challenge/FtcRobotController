@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -67,8 +68,10 @@ public class ServosNDrive extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
-    public static final double MID_SERVO   =  0.5 ;
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
 
+    public static final double MID_SERVO   =  0.5 ;
 
     @Override
     public void runOpMode() {
@@ -96,14 +99,16 @@ public class ServosNDrive extends LinearOpMode {
         clawPivot = hardwareMap.get(Servo.class, "1");
         wrist  = hardwareMap.get(Servo.class, "2");
         intakeElbow = hardwareMap.get(Servo.class, "3");
+        outtakeClaw  = hardwareMap.get(Servo.class, "4");
+        outtakeElbow = hardwareMap.get(Servo.class, "5");
 
         clawPivot.setPosition(MID_SERVO);
         clawPivot.setPosition(MID_SERVO);
         wrist.setPosition(MID_SERVO);
         intakeElbow.setPosition(MID_SERVO);
 
-        slide1.setPosition(1);
-        slide2.setPosition(0);
+        //slide1.setPosition(1);
+        //slide2.setPosition(0);
 
         telemetry.update();
 
@@ -113,12 +118,15 @@ public class ServosNDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            previousGamepad1.copy(currentGamepad1);
+            currentGamepad1.copy(gamepad1);
+
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial   = -currentGamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  currentGamepad1.left_stick_x;
+            double yaw     =  currentGamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -143,6 +151,32 @@ public class ServosNDrive extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
+
+            //all servo stuff
+
+            if (currentGamepad1.a && previousGamepad1.a) {
+                outtakeClaw.setPosition(.5);
+            } else if(currentGamepad1.a && !previousGamepad1.a){
+                outtakeClaw.setPosition(1);
+            }
+
+            if (currentGamepad1.b && previousGamepad1.b){
+                intakeClaw.setPosition(.46);
+            } else if (currentGamepad1.b && !previousGamepad1.b) {
+                intakeClaw.setPosition(.9);
+            }
+
+            if (currentGamepad1.x && previousGamepad1.x){
+                outtakeElbow.setPosition(.7);
+            } else if (currentGamepad1.x && !previousGamepad1.x) {
+                outtakeElbow.setPosition(.5);
+            }
+
+            if (currentGamepad1.y && previousGamepad1.y){
+                intakeElbow.setPosition(.0);
+            } else if (currentGamepad1.y && !previousGamepad1.y) {
+                intakeElbow.setPosition(.5);
+            }
 
             // Send telemetry message to signify robot running;
             telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
