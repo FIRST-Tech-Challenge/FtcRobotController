@@ -8,11 +8,13 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
 import java.util.ArrayList;
 
@@ -41,10 +43,10 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         1.2,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-0.12, 0.750, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
+                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.750, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
                 // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
                 new InstantCommand(()-> {

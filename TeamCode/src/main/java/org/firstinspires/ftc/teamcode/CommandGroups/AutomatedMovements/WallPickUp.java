@@ -47,7 +47,7 @@ public class WallPickUp extends SequentialCommandGroup {
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(35)),
 
                 // folds the elbow in 270
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(260)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(265)),
 
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(100)),
@@ -68,7 +68,7 @@ public class WallPickUp extends SequentialCommandGroup {
                         0.0,
                         new Rotation2d(Math.toRadians(90.0)),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.2, 1.44, new Rotation2d(Math.toRadians(90.0))),
+                        new Pose2d(-1.2, 1.42, new Rotation2d(Math.toRadians(90.0))),
                         new Rotation2d(Math.toRadians(-90.0))
                 ),
 

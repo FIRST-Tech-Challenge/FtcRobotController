@@ -47,7 +47,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 new DropToGrab(),
 
-                new Pause(0.25),
+                new Pause(0.5),
 
                 new CloseClaw(),
 
@@ -75,7 +75,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 new DropToGrab(),
 
-                new Pause(0.25),
+                new Pause(0.5),
 
                 new CloseClaw(),
 
@@ -118,7 +118,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
 
                 // same as in hunting pos moving wrist 45 degrees
-                new Pause(0.25),
+                new Pause(0.35),
 
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
 
