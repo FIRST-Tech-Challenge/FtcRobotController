@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.bots.GyroBot;
+import org.firstinspires.ftc.teamcode.bots.HangBot;
 import org.firstinspires.ftc.teamcode.bots.AutomationBot;
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
 import org.firstinspires.ftc.teamcode.bots.PivotBot;
@@ -16,8 +18,7 @@ import org.firstinspires.ftc.teamcode.sample.Sample;
 
 @TeleOp(name = "Drive")
 public class TeleOps extends LinearOpMode {
-    private AutomationBot robot = new AutomationBot(this);
-
+    private HangBot robot = new HangBot(this);
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -49,6 +50,8 @@ public class TeleOps extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
+
+
             telemetry.setMsTransmissionInterval(11);
 
             robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
@@ -64,7 +67,7 @@ public class TeleOps extends LinearOpMode {
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
             robot.scoreSpecimen(gamepad2.a);
-
+            robot.hang(gamepad2.b);
             if (gamepad2.dpad_up) {
                 Sample s = robot.detectOne();
                 telemetry.addData("detected : ", s.toString());
@@ -84,6 +87,7 @@ public class TeleOps extends LinearOpMode {
                 telemetry.addData("ERROR", "Pivot is out of Range");
 
             }
+            telemetry.addData("hang position", robot.getCurrentPositionString());
 
             telemetry.update();
 
