@@ -9,10 +9,12 @@ import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
 import com.kalipsorobotics.actions.drivetrain.MecanumRobotAction;
 import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
+import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
+import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -33,15 +35,17 @@ public class PIDCalibration extends LinearOpMode {
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
 
-        waitForStart();
-
         DriveTrainAction action = new MecanumRobotAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
         PIDController globalController = action.getPidController();
+
+        MoveIntakeLSAction maintainIntake = new MoveIntakeLSAction(new Intake(opModeUtilities), 0);
 
         int i = 0;
         double accumulatedError = 0.;
         double prevError = 0;
         double prevTime = SystemClock.elapsedRealtime();
+
+        waitForStart();
 
         while (opModeIsActive()) {
             wheelOdometry.updatePosition();
@@ -55,7 +59,6 @@ public class PIDCalibration extends LinearOpMode {
                 accumulatedError += Math.abs(error);
                 double errorRate = (error - prevError) / (currentTime - prevTime);
 
-                Log.d(tag, sparkfunOdometry.getCurrentPosition().toString());
                 Log.d(tag, String.format("Error %f, Accumulated error %f, Error rate %f", error, accumulatedError, errorRate));
 
                 double deltaKP = learningRateP * error;
@@ -67,6 +70,7 @@ public class PIDCalibration extends LinearOpMode {
                 globalController.chKd(deltaKD);
 
                 sleep(1000);  // should be safe I think
+                maintainIntake.update();
                 action = new MecanumRobotAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
                 action.setPidController(globalController);
 
@@ -75,7 +79,6 @@ public class PIDCalibration extends LinearOpMode {
                 prevError = error;
                 prevTime = currentTime;
 
-//                        Log.d(tag, errorLog.toString());
 //                        Log.d(tag, String.format("Kp increased by learning rate %f * error %f = %f", learningRateP, error, deltaKP));
 //                        Log.d(tag, String.format("Ki increased by learning rate %f * accumulated error %f = %f", learningRateI, accumulatedError, deltaKI));
 //                        Log.d(tag, String.format("Kd increased by learning rate %f * error rate %f = %f", learningRateD, errorRate, deltaKD));

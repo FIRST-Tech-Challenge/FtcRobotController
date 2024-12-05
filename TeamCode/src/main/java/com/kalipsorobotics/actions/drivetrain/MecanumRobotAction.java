@@ -12,7 +12,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class MecanumRobotAction extends DriveTrainAction {
 
-    private static final double ERROR_TOLERANCE_IN = 1;
+    private static final double ERROR_TOLERANCE_IN = 0.2;
     private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
@@ -29,7 +29,7 @@ public class MecanumRobotAction extends DriveTrainAction {
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.051665, 0.013042, 0.000008, "mecanum");
+        this.pidController = new PIDController(0.02, 0, 0, "mecanum");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
