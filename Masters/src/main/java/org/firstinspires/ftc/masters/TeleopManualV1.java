@@ -66,13 +66,6 @@ public class TeleopManualV1 extends LinearOpMode {
                 intake.intakeLift(ITDCons.liftUp);
             }
 
-//            if (gamepad1.right_bumper){
-//                slideTarget = slideTarget + 5;
-//            } else if (gamepad1.left_bumper) {
-//                slideTarget = slideTarget - 5;
-//            }
-//            outake.moveSlide(slideTarget);
-
             if (gamepad1.dpad_up) {
                 outake.diffy1(ITDCons.BucketDiffy1);
                 outake.diffy2(ITDCons.BucketDiffy2);
@@ -98,10 +91,15 @@ public class TeleopManualV1 extends LinearOpMode {
 
             }
 
+            if (gamepad1.left_bumper) {
+                target= ITDCons.ReleaseTarget;
+
+            }
+
             if(gamepad1.a){
-                outake.moveClaw(ITDCons.open);
+                outake.openClaw();
             } else if (gamepad1.b) {
-                outake.moveClaw(ITDCons.close);
+                outake.closeClaw();
             }
 
             outake.moveSlide(target);

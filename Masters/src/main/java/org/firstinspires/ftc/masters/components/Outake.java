@@ -71,8 +71,12 @@ public class Outake implements Component{
         elbow2.setPosition(pos);
     }
 
-    public void moveClaw(double pos) {
-        fingers.setPosition(pos);
+    public void openClaw() {
+        fingers.setPosition(ITDCons.open);
+    }
+
+    public void closeClaw() {
+        fingers.setPosition(ITDCons.close);
     }
 
     public void moveSlide(int target) {

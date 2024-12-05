@@ -8,27 +8,29 @@ public class ITDCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public static double zero = 0;
-    public static double slideInit = 0.4;
+    public static double slideInit = 0.5;
     public static double liftInit = 0.9;
     public static double liftUp = 0.9;
     public static double liftDown = 0.1;
 
-    public static double open = 0.6;
-    public static double close = 1;
+    public static double open = 0.35;
+    public static double close = 0.7;
 
-    public static double FloorDiffy1 = .17;
-    public static double FloorDiffy2 = .65;
+    public static double FloorDiffy1 = .27;
+    public static double FloorDiffy2 = .34;
 
-    public static double WallDiffy1 = .27;
-    public static double WallDiffy2 = .34;
+    public static double WallDiffy1 = .065;
+    public static double WallDiffy2 = .645;
 
     public static double BucketDiffy1 = .58;
     public static double BucketDiffy2 = .65;
     public static int BucketTarget = 50000;
 
-    public static double SpecimenDiffy1 = .015;
-    public static double SpecimenDiffy2 = .815;
-    public static int SpecimenTarget = 18800;
+    public static double SpecimenDiffy1 = .065;
+    public static double SpecimenDiffy2 = .645;
+    public static int SpecimenTarget = 32000;
+
+    public static int ReleaseTarget = 28000;
 
 
 }
