@@ -63,27 +63,16 @@ SensorLimelightAprilTag extends LinearOpMode {
 
             LLResult result = limelight.getLatestResult();
 
-
-            if (result != null) {
-
-                /*double tx = result.getTx(); // How far left or right the target is (degrees)
-                double ty = result.getTy(); // How far up or down the target is (degrees)
-                double ta = result.getTa(); // How big the target looks (0%-100% of the image)
-
-                telemetry.addData("Target X", tx* (3.14159 / 180.0));
-                telemetry.addData("Target Y", ty* (3.14159 / 180.0));// meters
-                telemetry.addData("Target Area", ta);
-                LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-*/
+            if (result != null && result.isValid()) {
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
 
-
-                if (result.isValid()) {
+                if (botpose_mt2 != null) {
                         double x = (100/(botpose_mt2.getPosition().x)) - 33; //inches
                         double y = (botpose_mt2.getPosition().y - 1.2) * 39.37; //inches
                         telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
+
             } else {
                 telemetry.addData("Limelight", "No Targets");
             }
