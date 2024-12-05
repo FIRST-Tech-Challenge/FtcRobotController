@@ -90,7 +90,7 @@ public class RollingIntake extends SonicSubsystemBase {
                     if (feedback != null) {
                         feedback.DriverRumbleBlip();
                         feedback.OperatorRumbleBlip();
-                    }
+
                 } else {
                     this.leftServo.setPower(0);
                     this.rightServo.setPower(0);
