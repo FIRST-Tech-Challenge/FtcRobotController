@@ -64,7 +64,6 @@ public class OmniDrive {
         // why is telemetry white and not purple idk
         telemetry.addData("Front left/right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        telemetry.update();
     }
 
 }

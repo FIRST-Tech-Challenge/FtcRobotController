@@ -45,9 +45,11 @@ public class SlideFunctions {
         int leftSlidePosition = leftSlideMotor.getCurrentPosition();
 
         //slide safety
-        if ((rightSlidePosition >= 1000) && (slidePower > 0) || slideSafety.isPressed() && slidePower < 0){
+        // Gleb here, this works compeltely off of encoder values because the touch sensor is not setup properly yet.
+        if ((rightSlidePosition <= -22850) && slidePower > 0 || (rightSlidePosition >= -100) && slidePower < 0) {
             slidePower = 0;
-        } 
+            telemetry.addData("Slide Safety is working", slideSafety);
+        }
 
         rightSlideMotor.setPower(slidePower * slidePowerConst);
         leftSlideMotor.setPower(slidePower * slidePowerConst);
