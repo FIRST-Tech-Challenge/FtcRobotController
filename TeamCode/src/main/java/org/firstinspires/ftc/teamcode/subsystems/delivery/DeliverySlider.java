@@ -34,6 +34,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private boolean isTeleop = true;
 
+    public static double recordedPosition;
+
     private Supplier<Boolean> pivotLowEnoughSupplier;
 
     public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
@@ -91,10 +93,14 @@ public class DeliverySlider extends SonicSubsystemBase {
         currentTarget = ExtendLimit + 50;
     }
 
-
-    public void MoveToDeliveryPosition() {
+    public void MoveToDeliverySpecimanPosition() {
         SetAuto();
-        currentTarget = -450;//BasketDeliveryPosition - 50;
+        currentTarget = -450;
+    }
+
+    public void MoveToDeliverySamplePosition() {
+        SetAuto();
+        currentTarget = BasketDeliveryPosition - 50;
     }
 
     public void MoveToCollapsedPosition() {
@@ -104,6 +110,7 @@ public class DeliverySlider extends SonicSubsystemBase {
     @Override
     public void periodic() {
         double position = motor.encoder.getPosition();
+        recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
         boolean addTelemetry = false;

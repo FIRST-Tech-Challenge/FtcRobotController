@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
+import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
@@ -103,7 +104,7 @@ public class MainTeleop extends OpModeTemplate {
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
-                .whenHeld(new InstantCommand(deliverySlider::MoveToDeliveryPosition, deliverySlider));
+                .whenHeld(new InstantCommand(deliverySlider::MoveToDeliverySamplePosition, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X)
                 .whenHeld(new InstantCommand(deliverySlider::MoveToCollapsedPosition, deliverySlider));
@@ -117,7 +118,7 @@ public class MainTeleop extends OpModeTemplate {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ParallelCommandGroup(
                                 new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot),
-                                new InstantCommand(deliverySlider::MoveToDeliveryPosition, deliverySlider),
+                                new InstantCommand(deliverySlider::MoveToDeliverySpecimanPosition, deliverySlider),
                                 new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake)
                 ));
 
