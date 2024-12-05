@@ -7,20 +7,33 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.HardwareMap;
         import com.qualcomm.robotcore.util.ElapsedTime;
 
+        import java.util.Timer;
+        import java.util.TimerTask;
+
 public class PivotBot extends OdometryBot {
 
     ElapsedTime timer = new ElapsedTime();
 
 
-    private int maximumPivot = 1300;
-    private int minumimPivot = -100;
-    private int maximumSlide = 2400;
+    // Pivot motor constants
+    private final int maximumPivotPos = 1300;
+    private final int minumimPivotPos = -100;
+    private final int searchPivotPos = 150;
+    private final int pickupPivotPos = 50;
+    private final int pickupUpPivotPos = 200;
+    private final int specimenPivotPos = 500;
     public boolean pivotOutOfRange = false;
+    public int pivotTarget = 100;
+    public double pivotPower = 0.7;
+    // Pivot timmer
+    private Timer pivotTimer = new Timer();
+    private TimerTask pivotTimerTask;
+
+    // Slide motor constants
+    private final int maximumSlide = 2400;
 
     public int slideTarget = 110;
-    public int pivotTarget = 100;
 
-    public double pivotPower = 0.7;
 
     public DcMotorEx pivotMotor = null;
     public DcMotorEx slideMotor = null;
@@ -61,17 +74,16 @@ public class PivotBot extends OdometryBot {
 
     protected void onTick() {
 
-
         super.onTick();
 
-        if (pivotTarget > minumimPivot - 100 && pivotTarget < maximumPivot + 100){
+        if (pivotTarget > minumimPivotPos - 100 && pivotTarget < maximumPivotPos + 100){
 
             pivotOutOfRange = false;
 
             pivotMotor.setTargetPosition(pivotTarget);
             pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//            pivotPower = 0.3 + ((Math.abs(pivotTarget - pivotMotor.getCurrentPosition()) / maximumPivot) * 0.5);
+            // TODO : PID control for the pivot motor
             pivotMotor.setPower(0.6);
 
         } else {
@@ -80,10 +92,19 @@ public class PivotBot extends OdometryBot {
             pivotMotor.setPower(0);
 
         }
+        if (slideTarget > 0 && slideTarget < maximumSlide + 100){
 
-        slideMotor.setTargetPosition(slideTarget);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.5);
+            slideMotor.setTargetPosition(slideTarget);
+            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // TODO : PID control for the slide motor
+            slideMotor.setPower(0.5);
+
+        } else {
+
+            slideMotor.setPower(0);
+
+        }
     }
     public void slideControl(boolean up, boolean down) {
         if (up) {
@@ -103,25 +124,15 @@ public class PivotBot extends OdometryBot {
     }
 
     public void pivotControl(boolean up, boolean down){
-//        if (slideMotor.getCurrentPosition() < 200) {
-//            if (up) {
-//                pivotTarget = maximumPivot;
-//                pivotPower = 0.6;
-//            }
-//            if (down) {
-//                pivotTarget = minumimPivot;
-//                pivotPower = 0.6;
-//            }
-//        }
         if (up) {
-            if (pivotMotor.getCurrentPosition() < maximumPivot) {
-                pivotTarget = pivotMotor.getCurrentPosition() + ((maximumPivot - pivotMotor.getCurrentPosition()) / 10);
+            if (pivotMotor.getCurrentPosition() < maximumPivotPos) {
+                pivotTarget = pivotMotor.getCurrentPosition() + ((maximumPivotPos - pivotMotor.getCurrentPosition()) / 10);
                 pivotMotor.setTargetPosition(pivotTarget);
                 pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }
         if (down) {
-            if (pivotMotor.getCurrentPosition() > minumimPivot) {
+            if (pivotMotor.getCurrentPosition() > minumimPivotPos) {
                 pivotTarget = pivotMotor.getCurrentPosition() - (pivotMotor.getCurrentPosition() / 10);
                 pivotMotor.setTargetPosition(pivotTarget);
                 pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -129,20 +140,36 @@ public class PivotBot extends OdometryBot {
         }
     }
 
-    public void pivotTo(int pos, double power){
-        pivotMotor.setTargetPosition(pos);
-        pivotMotor.setPower(power);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void pivotTo(int pos, @Deprecated double power){
+        pivotTarget = pos;
+    }
+    public void pivotSearchPos(){
+        pivotTarget = searchPivotPos;
+    }
+    public void pivotPickupPos(){
+        pivotTarget = pickupPivotPos;
+    }
+    public void pivotPickupUpPos(){
+        pivotTarget = pickupUpPivotPos;
+    }
+    public void pivotSpecimenPos(){
+        pivotTarget = specimenPivotPos;
     }
 
-    public void moveSlide(int pos, double power){
-        slideMotor.setTargetPosition(pos);
-        slideMotor.setPower(power);
-        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void pivotUpPosInTime(int time){
+        pivotTimer.cancel();
+        pivotTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                pivotPickupUpPos();
+            }
+        };
+        pivotTimer.schedule(pivotTimerTask, time);
+    }
+
+    public void moveSlide(int pos, @Deprecated double power){
+        slideTarget = pos;
     }
 
 
-    }
-
-
+}

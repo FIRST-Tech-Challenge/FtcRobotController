@@ -20,9 +20,9 @@ public class PinchBot extends PivotBot{
 
     private double rotateServoPos;
 
-    private double rotateServoInitialPos = 0.8;
-    private double rotateServoMax = 0.93;
-    private double rotateServoMin = 0.63;
+    private final double rotateServoInitialPos = 0.8;
+    private final double rotateServoMax = 0.93;
+    private final double rotateServoMin = 0.63;
 
     private Timer pinchTimer = new Timer();
     private TimerTask pinchTimerTask;
@@ -95,7 +95,7 @@ public class PinchBot extends PivotBot{
         pinchTimer.cancel();
     }
 
-
+    @Deprecated
     public void autoPinch(){
         if(isOpen){
             closePinch();
@@ -132,7 +132,7 @@ public class PinchBot extends PivotBot{
      */
     public void rotateToAngle(int angle){ //5216 - 4706
         assert angle >= -90 && angle <= 90 : "Angle must be between -90 and 90 degrees";
-        double relativeAngle = (angle + 90) / 180;
+        double relativeAngle = (angle + 90) / 180.0;
         double pos = relativeAngle * (rotateServoMax - rotateServoMin) + rotateServoMin;
         rotateToPos(pos);
     }

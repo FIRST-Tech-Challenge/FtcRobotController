@@ -43,13 +43,16 @@ public class LimelightBot extends PinchBot {
             // sample is close enough, pick it up
             // open the pinch
             openPinch();
-            // TODO : lower the pivot
+            // lower the pivot
+            pivotPickupPos();
             // close the pinch at a future time
             closePinchInTime(2000);
-            // TODO : raise the pivot at a future time
+            // raise the pivot at a future time
+            pivotUpPosInTime(3000);
         }
         else{
             // sample is not close enough, move to the sample
+            pivotSearchPos();
             // TODO : extend/retract the slide based on delta Y
             // TODO : move the robot sideways based on delta X
         }
