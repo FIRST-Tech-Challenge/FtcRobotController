@@ -20,6 +20,7 @@ public class ViperSlide {
 
     private Servo leftBucket;
     private Servo rightBucket;
+    private Servo bucketFlap;
 
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
@@ -39,6 +40,7 @@ public class ViperSlide {
 
         leftBucket = hardwareMap.get(Servo.class, "leftBucket");
         rightBucket = hardwareMap.get(Servo.class, "rightBucket");
+        bucketFlap = hardwareMap.get(Servo.class, "bucketFlapServo");
 
         leftViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -66,7 +68,9 @@ public class ViperSlide {
             Boolean resetEncoders,
             Boolean hold,
             Boolean bucketRest,
-            Boolean bucketScore
+            Boolean bucketScore,
+            Boolean openBucket,
+            Boolean closeBucket
     ) {
         // Move Viper
         if (retractSpeed != 0) {
@@ -97,6 +101,17 @@ public class ViperSlide {
         }
         else if(bucketRest) {
             bucketRest();
+        }
+
+        if(openBucket) {
+            openBucket();
+            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+            telemetry.addData("Bucket Flap Position", "open");
+        }
+        else if(closeBucket) {
+            closeBucket();
+            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+            telemetry.addData("Bucket Flap Position", "closed");
         }
     }
 
@@ -199,12 +214,25 @@ public class ViperSlide {
         rightBucket.setPosition(rightPosition);
     }
 
+    public void setBucketFlapPosition(double position) {
+        bucketFlap.setPosition(position);
+        telemetry.addData("Bucket Flap Position", position);
+    }
+
     public void bucketRest() {
         setBucketPosition(1, 0);
     }
 
     public void bucketScore() {
         setBucketPosition(.49, .51);
+    }
+
+    public void openBucket() {
+        setBucketFlapPosition(1);
+    }
+
+    public void closeBucket() {
+        setBucketFlapPosition(0.75);
     }
 
 

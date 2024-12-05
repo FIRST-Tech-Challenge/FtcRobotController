@@ -99,14 +99,14 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad1.left_trigger         // 1/4 speed
             );
 
-            viperSlide.checkInputs(
-                    gamepad2.left_trigger,        // retract
-                    gamepad2.right_trigger,       // extend
-                    gamepad2.guide,               // reset encoders
-                    gamepad2.a,                   // hold viper position
-                    gamepad2.y,                   // bucket rest
-                    gamepad2.x                    // bucket score
-            );
+//            viperSlide.checkInputs(
+//                    gamepad2.left_trigger,        // retract
+//                    gamepad2.right_trigger,       // extend
+//                    gamepad2.guide,               // reset encoders
+//                    gamepad2.a,                   // hold viper position
+//                    gamepad2.y,                   // bucket rest
+//                    gamepad2.x                    // bucket score
+//            );
 
             hSlide.checkInputs(
                     gamepad1.right_bumper,        // extend
