@@ -16,7 +16,7 @@ public class Drive {
     private DcMotor leftRear;
     private DcMotor rightRear;
     private IMU imu;
-
+//itamar is a sausage, dor is bolony, sahar is pastame, dagan is salame, lior is katef bakar
     private Telemetry telemetry;
     public Drive(HardwareMap hardwareMap, Telemetry telemetryGet) {
         leftFront = hardwareMap.get(DcMotor.class, "leftMotor");
