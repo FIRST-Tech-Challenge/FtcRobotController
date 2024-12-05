@@ -136,19 +136,12 @@ public class RightAuto extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
 
-            FrontLeft.setPower(1);
-            FrontRight.setPower(1);
-            BackLeft.setPower(1);
-            BackRight.setPower(1);
+            FrontLeft.setPower(-.5);
+            FrontRight.setPower(.5);
+            BackLeft.setPower(.5);
+            BackRight.setPower(.5);
 
-            sleep(1000);
-
-            FrontLeft.setPower(-1);
-            FrontRight.setPower(1);
-            BackLeft.setPower(1);
-            BackRight.setPower(-1);
-
-            sleep(3000);
+            sleep(5000);
 
             FrontLeft.setPower(0);
             FrontRight.setPower(0);
@@ -156,7 +149,6 @@ public class RightAuto extends LinearOpMode {
             BackRight.setPower(0);
 
             sleep(200);
-
 
             break;
             //Drive To Submersible
