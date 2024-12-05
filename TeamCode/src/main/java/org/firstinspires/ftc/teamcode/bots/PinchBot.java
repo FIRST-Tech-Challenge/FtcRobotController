@@ -1,27 +1,31 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.*;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.SerialNumber;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PinchBot extends PivotBot{
 
+    @Deprecated
     private boolean isOpen = false;
+    @Deprecated
     private boolean specimenReady = false;
 
     public Servo pinch;
 
     public Servo rotate;
 
-    private double servoPos;
+    private double rotateServoPos;
 
+    private double rotateServoInitialPos = 0.8;
+    private double rotateServoMax = 0.93;
+    private double rotateServoMin = 0.63;
 
-    private double servoMax = 0.93;
-    private double servoMin = 0.63;
+    private Timer pinchTimer = new Timer();
+    private TimerTask pinchTimerTask;
     public PinchBot(LinearOpMode opMode) {
         super(opMode);
     }
@@ -32,77 +36,120 @@ public class PinchBot extends PivotBot{
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
 
-        pinch.setPosition(0.7);
-        rotate.setPosition(0.5);
+        openPinch();
+        rotateToPos(rotateServoInitialPos);
     }
 
     protected void onTick() {
         super.onTick();
 
-        rotate.setPosition(servoPos);
+        rotate.setPosition(rotateServoPos);
     }
+
+    public void openPinch(){
+        isOpen = true;
+        pinch.setPosition(0.7);
+    }
+
+    public void closePinch(){
+        isOpen = false;
+        pinch.setPosition(1);
+    }
+
+    /**
+     * Schedules the pinch servo to close after a specified time.
+     * @param time The delay in milliseconds before closing the pinch.
+     */
+    public void closePinchInTime(int time){
+        // cancel the previous timer if it exists
+        pinchTimer.cancel();
+        pinchTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                closePinch();
+            }
+        };
+        pinchTimer.schedule(pinchTimerTask, time);
+    }
+
+    /**
+     * Schedules the pinch servo to open after a specified time.
+     * @param time The delay in milliseconds before opening the pinch.
+     */
+    public void openPinchInTime(int time){
+        // cancel the previous timer if it exists
+        pinchTimer.cancel();
+        pinchTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                openPinch();
+            }
+        };
+        pinchTimer.schedule(pinchTimerTask, time);
+    }
+
+    /**
+     * Cancels the pinch timer if it is running.
+     */
+    public void cancelPinchTimer(){
+        pinchTimer.cancel();
+    }
+
 
     public void autoPinch(){
         if(isOpen){
-            isOpen = false;
-            pinch.setPosition(0.7);
+            closePinch();
         }
         if(!isOpen){
-            isOpen = true;
-            pinch.setPosition(1);
+            openPinch();
         }
     }
     public void pinchControl(boolean open, boolean close){
 
         if (open) {
-
-            isOpen = true;
-            pinch.setPosition(0.7);
-
+            openPinch();
         }
         if (close) {
-
-            isOpen = false;
-            pinch.setPosition(1);
-
+            closePinch();
         }
     }
-    public void rotate(double angle){ //5216 - 4706
-        double maxAnglePos = 0.1;
-        double minAnglePos = 0;
-        if(angle>maxAnglePos){
-            angle = maxAnglePos;
-        }
-        if(angle<minAnglePos){
-            angle = minAnglePos;
-        }
 
-        double servoPos = (angle/90)*maxAnglePos;
-        rotate.setPosition(servoPos);
+    private void rotateToPos(double pos){
+        if (pos > rotateServoMax) {
+            pos = rotateServoMax;
+        }
+        if (pos < rotateServoMin) {
+            pos = rotateServoMin;
+        }
+        rotateServoPos = pos;
+        rotate.setPosition(rotateServoPos);
+    }
+
+    /**
+     * Rotates the pinch servo to a specified angle (in degrees).
+     * The angle must be between -90 to 90 degrees.
+     * @param angle
+     */
+    public void rotateToAngle(int angle){ //5216 - 4706
+        assert angle >= -90 && angle <= 90 : "Angle must be between -90 and 90 degrees";
+        double relativeAngle = (angle + 90) / 180;
+        double pos = relativeAngle * (rotateServoMax - rotateServoMin) + rotateServoMin;
+        rotateToPos(pos);
     }
 
     public void rotateControl(boolean left, boolean right){
 
-
+        double pos = rotateServoPos;
         if(left){
-            servoPos -= 0.01;
+            pos -= 0.01;
         }
         if(right){
-            servoPos += 0.01;
+            pos += 0.01;
         }
+        rotateToPos(pos);
 
-        if (servoPos > servoMax) {
-
-            servoPos = servoMax;
-
-        }
-
-        if (servoPos < servoMin) {
-
-            servoPos = servoMin;
-
-        }
     }
+    @Deprecated
     public void pickUp(boolean button){
         // use horizontalDistance() to move robot and verticalDistance() to move slide
         // figure out how to find angle and use rotate(angle)
