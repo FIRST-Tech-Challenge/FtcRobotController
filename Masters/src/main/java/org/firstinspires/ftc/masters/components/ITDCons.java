@@ -28,9 +28,9 @@ public class ITDCons {
 
     public static double SpecimenDiffy1 = .065;
     public static double SpecimenDiffy2 = .645;
-    public static int SpecimenTarget = 32000;
+    public static int SpecimenTarget = 28000;
 
-    public static int ReleaseTarget = 28000;
+    public static int ReleaseTarget = 26000;
     public static double ReleaseDiffy1 = .085;
     public static double ReleaseDiffy2 = .505;
 
