@@ -1,8 +1,9 @@
 package org.nknsd.teamcode.programs.autos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import org.nknsd.teamcode.frameworks.NKNAutoStep;
 import org.nknsd.teamcode.frameworks.NKNComponent;
-import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.autoSteps.AutoStepAbsoluteControl;
 import org.nknsd.teamcode.autoSteps.AutoStepChangeMaxSpeed;
 import org.nknsd.teamcode.autoSteps.AutoStepExtendArm;
@@ -19,11 +20,14 @@ import org.nknsd.teamcode.components.sensors.PotentiometerSensor;
 import org.nknsd.teamcode.components.handlers.RotationHandler;
 import org.nknsd.teamcode.components.handlers.WheelHandler;
 import org.nknsd.teamcode.components.utility.AutoHeart;
+import org.nknsd.teamcode.frameworks.NKNProgramTrue;
+import org.nknsd.teamcode.helperClasses.AutoSkeleton;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class BasketAuto extends NKNProgram {
+@Autonomous(name = "Score Samples in Basket (GOOD)")
+public class BasketAuto extends NKNProgramTrue {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Step List

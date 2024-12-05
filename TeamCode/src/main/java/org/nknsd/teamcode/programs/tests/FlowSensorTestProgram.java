@@ -1,17 +1,20 @@
 package org.nknsd.teamcode.programs.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.nknsd.teamcode.frameworks.NKNComponent;
-import org.nknsd.teamcode.frameworks.NKNProgram;
 import org.nknsd.teamcode.components.sensors.FlowSensor;
 import org.nknsd.teamcode.components.utility.GamePadHandler;
 import org.nknsd.teamcode.components.sensors.IMUSensor;
 import org.nknsd.teamcode.drivers.WheelDriver;
 import org.nknsd.teamcode.components.handlers.WheelHandler;
 import org.nknsd.teamcode.controlSchemes.reals.CollyWheelController;
+import org.nknsd.teamcode.frameworks.NKNProgramTrue;
 
 import java.util.List;
 
-public class FlowSensorTestProgram extends NKNProgram {
+@TeleOp(name = "Flow Sensor Test", group="Tests")
+public class FlowSensorTestProgram extends NKNProgramTrue {
     @Override
     public void createComponents(List<NKNComponent> components, List<NKNComponent> telemetryEnabled) {
         // Gamepad Handler

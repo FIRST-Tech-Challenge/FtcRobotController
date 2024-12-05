@@ -14,8 +14,6 @@ public abstract class NKNProgramTrue extends OpMode {
     private final List<NKNComponent> enabledTelemetryList = new LinkedList<>();
     private final ElapsedTime runtime = new ElapsedTime();
     private final long TELEMETRY_DELAY = 200;
-    // Whatever program is attached here will be loaded with all its glorious components
-    private final NKNProgram program = new EACmonkeyProgram();
     // We use these two to delay telemetry outputs to ~200 milliseconds
     //Time counters are in milliseconds
     private long lastTelemetryCall = 0;
@@ -68,20 +66,20 @@ public abstract class NKNProgramTrue extends OpMode {
         }
 
         if (runtime.now(TimeUnit.MILLISECONDS) - TELEMETRY_DELAY > lastTelemetryCall) {
-            for (NKNComponent component:componentList){
-                if (isInTelemetryEnabledList(component)) {
-                    component.doTelemetry(telemetry);
-                }
-            }
-            telemetry.update();
-            lastTelemetryCall = runtime.now(TimeUnit.MILLISECONDS);
+            doTelemetry();
         }
     }
 
     // Runs once every ~500 milliseconds
     // ONLY calls for components to do telemetry
     public void doTelemetry() {
-        program.doTelemetry(telemetry);
+        for (NKNComponent component:componentList){
+            if (isInTelemetryEnabledList(component)) {
+                component.doTelemetry(telemetry);
+            }
+        }
+        telemetry.update();
+        lastTelemetryCall = runtime.now(TimeUnit.MILLISECONDS);
     }
 
     // Code to run ONCE after the driver hits STOP
