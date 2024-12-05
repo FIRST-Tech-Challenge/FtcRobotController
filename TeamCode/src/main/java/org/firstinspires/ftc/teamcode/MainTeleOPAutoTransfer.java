@@ -23,7 +23,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
     private int ExtensionTarget = 0;                // The Extension target position
 
     private double LiftPower = .9;                  // The Power set to the lift
-    private double ExtensionPower = .75;            // The Power set to the extension
+    private double ExtensionPower = .5;            // The Power set to the extension
 
     private int precision = 2;                                  // chassis motor power reduction factor 1
     private boolean IntakeClawClosed = false;                   // claw holder variable
@@ -199,7 +199,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                         TargetLift = 480;
                     }
                     else {
-                        TargetLift = 950;
+                        TargetLift = 800;
                     }
                     if(LeftLift.getCurrentPosition() < 484){
                         OuttakeClawClosed = true;
@@ -281,7 +281,7 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                 TargetLift = MAX_TARGET_LIFT;
                 state = State.CLIMB;
             }
-            if(LeftLift.getCurrentPosition() >= 1000 && LeftLift.getCurrentPosition() <= MAX_TARGET_LIFT - 5){
+            if(LeftLift.getCurrentPosition() >= 800 && LeftLift.getCurrentPosition() <= MAX_TARGET_LIFT - 5){
                 OuttakeV4B.setPosition(0);
                 OuttakeWrist.setPosition(.7);
             }
@@ -297,10 +297,10 @@ public class MainTeleOPAutoTransfer extends LinearOpMode {
                 }
                 else{
                     if (gamepad1.left_trigger > 0){
-                        V4Bpos = 0.4*(1-(gamepad1.left_trigger)); //Control for variable virtual four bar height when in INTAKE state
+                        V4Bpos = 0.5*(1-(gamepad1.left_trigger)); //Control for variable virtual four bar height when in INTAKE state
                     }
                     else {
-                        V4Bpos = .4;}
+                        V4Bpos = .5;}
                     Flex = .63;
                 }
 
