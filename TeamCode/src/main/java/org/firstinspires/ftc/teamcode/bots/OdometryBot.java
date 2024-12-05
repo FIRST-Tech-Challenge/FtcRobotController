@@ -11,7 +11,7 @@ import com.stormbots.MiniPID;
 
 import java.io.OutputStreamWriter;
 
-public class OdometryBot extends PinchBot {
+public class OdometryBot extends GyroBot {
     // Wheel diameters in mm
     final double VERTICAL_WHEEL_DIAMETER = 32; // Vertical wheel diameter
     final double HORIZONTAL_WHEEL_DIAMETER = 48; // Horizontal wheel diameter

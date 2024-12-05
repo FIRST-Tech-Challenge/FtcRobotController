@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode.bots;
         import com.qualcomm.robotcore.hardware.HardwareMap;
         import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class PivotBot extends LimelightBot {
+public class PivotBot extends OdometryBot {
 
     ElapsedTime timer = new ElapsedTime();
 

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class AutomationBot extends PinchBot{
+public class AutomationBot extends LimelightBot{
     private boolean specimenReady = false;
     private boolean bucketReady = false;
 
