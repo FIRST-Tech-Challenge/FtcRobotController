@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Devices {
-
         final double CLAW_OPEN = .864;
-        final double CLAW_CLOSED = .95;
+        final double CLAW_CLOSED = 1;
 
         final double MAX_SLIDER_TICKS = 2961;
         final double MAX_SLIDER_INCHES = 26.25;
@@ -21,6 +20,7 @@ public class Devices {
         DcMotorEx rightBackDrive;
         DcMotorEx leftBackDrive;
         Servo clawServo;
+        
     public void init(HardwareMap hwmap) {
 
         wormGear = hwmap.get(DcMotorEx.class, "wormGear");

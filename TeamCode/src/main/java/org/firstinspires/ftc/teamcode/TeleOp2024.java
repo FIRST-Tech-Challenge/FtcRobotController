@@ -42,7 +42,9 @@ public class TeleOp2024 extends DriveMethods {
         telemetry.addData("Lateral","%.1f", driveLeftStickX);
         telemetry.addData("Yaw","%.1f", driveRightStickX);
 
-        omniOp(opLeftStickY);
+        robot.wormGear.setPower(opLeftStickY);
+        robot.sliderMotor.setPower(0.75 * opRightStickY);
+
         telemetry.addData("Lift","%.1f", opLeftStickY);
 //Lift means wormrote variable, which refers to the rotation of the worm gear
 
