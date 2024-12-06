@@ -70,7 +70,6 @@ public class TeleOps extends LinearOpMode {
             robot.hang(gamepad2.b);
             // limelight test
             if (gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up) {
-                robot.inAutoPickup = false;
                 robot.openPinch();
                 robot.rotateToVerticalPos();
                 robot.pivotToSearchPos();
