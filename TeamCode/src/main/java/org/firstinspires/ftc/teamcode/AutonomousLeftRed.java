@@ -331,8 +331,11 @@ public class AutonomousLeftRed extends AutonomousBase {
             // update all our status
             performEveryLoop();
         } while( autoTiltMotorMoving() );
-        robot.geckoServo.setPower( 1.0 );
         autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_BASKET_DEG);
+        // Try swinging the intake back to see if it increases our scoring. Might move to after arm movement
+        robot.geckoServo.setPower( 1.0 );
+        robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_SAFE);
+        robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_SAFE);
         do {
             if( !opModeIsActive() ) break;
             // wait for lift/tilt to finish...
