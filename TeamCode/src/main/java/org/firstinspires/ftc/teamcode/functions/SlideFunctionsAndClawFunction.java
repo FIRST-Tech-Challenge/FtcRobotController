@@ -50,7 +50,7 @@ public class SlideFunctionsAndClawFunction {
 
         //slide safety
         // Gleb here, this works compeltely off of encoder values because the touch sensor is not setup properly yet.
-        if ((rightSlidePosition <= -22850) && slidePower > 0 || (rightSlidePosition >= -100) && slidePower < 0) {
+        if ((rightSlidePosition <= -6000) && slidePower > 0 || (rightSlidePosition >= -100) && slidePower < 0) {
             slidePower = 0;
             telemetry.addData("Slide Safety is working", slideSafety);
         }
@@ -90,15 +90,13 @@ public class SlideFunctionsAndClawFunction {
 
     public void WristControl(Gamepad gamepad2, Telemetry telemetry) {
         telemetry.addData("Here's the line for the wrist", Wrist.getPosition());
-        if (gamepad2.left_trigger >= 0.9) {
+        if (gamepad2.y) {
             double Current = Wrist.getPosition();
-            if (Current == 1) {
+            if (Current >= 1) {
                 Wrist.setPosition(0.25);
-            }
-            else if (Current == 0.25) {
+            } else if (Current <= 0.25) {
                 Wrist.setPosition(0.6);
-            }
-            else if (Current == 0.6) {
+            } else if ((Current >= 0.25) && (Current <= 1)) {
                 Wrist.setPosition(1);
             }
         }
