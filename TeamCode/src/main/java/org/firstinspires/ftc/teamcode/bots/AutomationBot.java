@@ -48,7 +48,7 @@ public class AutomationBot extends LimelightBot{
 
             }
 
-            if (getPivotPosition() >= //specimenSlidePosition -100 && getPivotPosition() <= specimentSlidePosition + 100) {
+            if (getPivotPosition() >= specimenSlidePos -100 && getPivotPosition() <= specimenSlidePos + 100) {
                 timer.reset();
                 while (timer.milliseconds() < 1000) {
                     // Wait before moving the slide
@@ -69,12 +69,12 @@ public class AutomationBot extends LimelightBot{
     }
     public void scoreBucket(boolean input){
         if (input) {
-            if (getPivotPosition() <= minimumPivotPos + 100 && getPivotPosition() >= minimumPivotPos -50 ) {
+            if (getPivotPosition() <= minumimPivotPos + 100 && getPivotPosition() >= minumimPivotPos -50 ) {
                 timer.reset(); // Reset the timer
                 while (timer.milliseconds() < 1000) {
                     // Allow other tasks to run, like telemetry updates
                 }
-                pivotToBucketPos();
+                pivotToHighBucketPos();
 
 
                 timer.reset(); // Reset the timer again
@@ -82,11 +82,11 @@ public class AutomationBot extends LimelightBot{
                     // Wait another second
                 }
 
-                moveSlideToBucketPos();
+                moveSlideToHighBucketPos();
 
             }
 
-            if (getPivotPosition() >= bucketSlidePosition -100 && getPivotPosition() <= bucketSlidePosition + 100) {
+            if (getPivotPosition() >= highBucketSlidePos -100 && getPivotPosition() <= highBucketSlidePos + 100) {
 
 
                 timer.reset();
