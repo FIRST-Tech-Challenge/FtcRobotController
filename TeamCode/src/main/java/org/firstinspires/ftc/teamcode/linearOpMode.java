@@ -88,9 +88,9 @@ public class linearOpMode extends LinearOpMode {
 
       // drive train controls
       double y = -gamepad1.left_stick_y;
-      double x = gamepad1.left_stick_x;
+      double x = gamepad1.left_stick_x * 1.1;
       double turn = gamepad1.right_stick_x;
-      
+
       // input: theta and power
       // theta is where we want the direction the robot to go
       // power is (-1) to 1 scale where increasing power will cause the engines to go faster
@@ -101,17 +101,17 @@ public class linearOpMode extends LinearOpMode {
       // max variable allows to use the motors at its max power with out disabling it
       double max = Math.max(Math.abs(sin), Math.abs(cos));
 
-      double leftFront = power * cos / max + turn;
-      double rightFront = power * cos / max - turn;
-      double leftRear = power * sin / max + turn;
-      double rightRear = power * sin / max - turn;
+      double frontLeftPower = power * cos / max + turn;
+      double frontRightPower = power * cos / max - turn;
+      double backLeftPower = power * sin / max + turn;
+      double backRightPower = power * sin / max - turn;
 
       // Prevents the motors exceeding max power thus motors will not seize and act sporadically
       if ((power + Math.abs(turn)) > 1) {
-        leftFront /= power + turn;
-        rightFront /= power - turn;
-        leftRear /= power + turn;
-        rightRear /= power - turn;
+        frontLeftPower /= power + turn;
+        frontRightPower /= power - turn;
+        backLeftPower /= power + turn;
+        backRightPower /= power - turn;
       }
 
       // if A on the controller is pressed it will check if the claw is closed
@@ -129,10 +129,10 @@ public class linearOpMode extends LinearOpMode {
       }
 
       // Power to the wheels
-      frontLeftMotor.setPower(leftFront);
-      backLeftMotor.setPower(leftRear);
-      frontRightMotor.setPower(rightFront);
-      backRightMotor.setPower(rightRear);
+      frontLeftMotor.setPower(frontLeftPower);
+      backLeftMotor.setPower(backLeftPower);
+      frontRightMotor.setPower(frontRightPower);
+      backRightMotor.setPower(backRightPower);
 
       // Power to the arm
       slideAbduction.setPower(slideAbdPower);

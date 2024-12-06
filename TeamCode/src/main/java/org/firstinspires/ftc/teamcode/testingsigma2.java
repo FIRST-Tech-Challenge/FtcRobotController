@@ -6,11 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-
-
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -39,7 +35,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  */
 
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-public class AutoOpMode extends LinearOpMode {
+public class testingsigma2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftMotor = null, backLeftMotor = null;
@@ -59,7 +55,6 @@ public class AutoOpMode extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double DRIVE_SPEED = 0.6;
     static final double TURN_SPEED = 0.5;
-    private OpenCvCamera webcam;
 
     @Override
     public void runOpMode() {
@@ -69,23 +64,6 @@ public class AutoOpMode extends LinearOpMode {
         frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
         backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
-
-        // Initialize webcam
-        webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                // Start streaming to the phone's display
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                telemetry.addData("Webcam Error", "Error code: " + errorCode);
-                telemetry.update();
-            }
-        });
-
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -150,7 +128,6 @@ public class AutoOpMode extends LinearOpMode {
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
-
             // Determine new target position, and pass to motor controller
             newLeftFrontTarget = frontLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newLeftBackTarget = backLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
@@ -186,8 +163,7 @@ public class AutoOpMode extends LinearOpMode {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftFrontTarget, newLeftBackTarget, newRightFrontTarget, newRightBackTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d",
-                        frontLeftMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition(),backRightMotor.getCurrentPosition() );
+                telemetry.addData("Currently at",  " at %7d :%7d", frontLeftMotor.getCurrentPosition(), backLeftMotor.getCurrentPosition(), frontRightMotor.getCurrentPosition(),backRightMotor.getCurrentPosition() );
                 telemetry.update();
             }
 
@@ -205,6 +181,12 @@ public class AutoOpMode extends LinearOpMode {
             backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
+
         }
+    }
+
+    // TODO SCORE BASKET
+    public static void setArmPos(double position) {
+
     }
 }
