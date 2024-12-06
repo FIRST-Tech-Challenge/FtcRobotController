@@ -25,9 +25,8 @@ public class OdoTest extends CommandAutoOpMode {
                              commandFactory.pivotToDelivery(),
                              commandFactory.elbowToSpecimenPosition()
                         ),
-                        commandFactory.extendSlider(),
-                        commandFactory.driveToTarget(180, 520, -45, 0.11),
                         commandFactory.extendSlider(() -> hold1End),
+                        commandFactory.driveToTarget(180, 520, -45, 0.11),
 
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
 
@@ -48,9 +47,8 @@ public class OdoTest extends CommandAutoOpMode {
                                 commandFactory.pivotToDelivery()
                                 ),
 
-                        commandFactory.extendSlider(),
-                        commandFactory.driveToTarget(180, 520, -45, 0.15),
                         commandFactory.extendSlider(() -> hold2End),
+                        commandFactory.driveToTarget(180, 520, -45, 0.15),
 
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true)),
 
@@ -71,9 +69,8 @@ public class OdoTest extends CommandAutoOpMode {
                                 commandFactory.pivotToDelivery()
                         ),
 
-                        commandFactory.extendSlider(),
-                        commandFactory.driveToTarget(180, 520, -45, 0.11),
                         commandFactory.extendSlider(() -> hold3End),
+                        commandFactory.driveToTarget(180, 520, -45, 0.11),
 
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
 
