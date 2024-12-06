@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class AutomationBot extends LimelightBot{
-    private boolean specimenReady = false;
-    private boolean bucketReady = false;
+
 
     public AutomationBot(LinearOpMode opMode) {
         super(opMode);
@@ -18,23 +17,6 @@ public class AutomationBot extends LimelightBot{
 
     public void init(HardwareMap hardwareMap){
         super.init(hardwareMap);
-        pivotMotor = hwMap.get(DcMotorEx.class, "Pivot Motor");
-        pivotMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivotMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setPower(pivotPower);
-
-        slideMotor = hwMap.get(DcMotorEx.class, "slide");
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideMotor.setPower(0);
-
-        pivotMotor.setTargetPosition(pivotTarget);
-        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivotPower = 0.5;
 
 
     }
@@ -45,12 +27,16 @@ public class AutomationBot extends LimelightBot{
     }
     public void scoreSpecimen(boolean input) {
         if (input) {
-            if (!specimenReady) {
+            if (getPivotPosition() <= 150 && getPivotPosition() >= 50 ) {
                 timer.reset(); // Reset the timer
                 while (timer.milliseconds() < 1000) {
                     // Allow other tasks to run, like telemetry updates
                 }
-                pivotTo(1250, 0.5);
+                pivotToSpecimenPos();
+
+                timer.reset();
+                while (timer.milliseconds() < 1000){}
+                //rotateToPos(0);
 
 
                 timer.reset(); // Reset the timer again
@@ -58,29 +44,63 @@ public class AutomationBot extends LimelightBot{
                     // Wait another second
                 }
 
-                moveSlide(1000, 0.5);
+                moveSlideToSpecimenPos();
 
-                specimenReady = true;
             }
 
-            if (specimenReady) {
+            if (getPivotPosition() >= //specimenSlidePosition -100 && getPivotPosition() <= specimentSlidePosition + 100) {
                 timer.reset();
                 while (timer.milliseconds() < 1000) {
                     // Wait before moving the slide
                 }
 
-                moveSlide(300, 0.5);
+                //moveSlideToSpecimenScorePos();
 
                 timer.reset();
-                while (timer.milliseconds() < 2000) {
+                while (timer.milliseconds() < 500) {
                     // Wait for 2 seconds before pinching
                 }
 
-                autoPinch();
-                specimenReady = false;
+                openPinch();
+                slideTarget = 100;
+                pivotTarget = 100;
             }
         }
     }
+    public void scoreBucket(boolean input){
+        if (input) {
+            if (getPivotPosition() <= minimumPivotPos + 100 && getPivotPosition() >= minimumPivotPos -50 ) {
+                timer.reset(); // Reset the timer
+                while (timer.milliseconds() < 1000) {
+                    // Allow other tasks to run, like telemetry updates
+                }
+                pivotToBucketPos();
+
+
+                timer.reset(); // Reset the timer again
+                while (timer.milliseconds() < 5000) {
+                    // Wait another second
+                }
+
+                moveSlideToBucketPos();
+
+            }
+
+            if (getPivotPosition() >= bucketSlidePosition -100 && getPivotPosition() <= bucketSlidePosition + 100) {
+
+
+                timer.reset();
+                while (timer.milliseconds() < 500) {
+                    // Wait for 2 seconds before pinching
+                }
+                openPinch();
+
+            }
+        }
+    }
+    
+        
+
 
 
 
