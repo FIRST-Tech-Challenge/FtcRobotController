@@ -115,6 +115,8 @@ public class RobotContainer {
         // set drivetrain default command to manual driving mode
         drivesystem.setDefaultCommand(new ManualDrive());
 
+        // set claw default command
+        claw.setDefaultCommand(new ToggleClaw());
 
         // bind commands to buttons
         // bind gyro reset to back button.
@@ -166,8 +168,6 @@ public class RobotContainer {
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
 
-
-        new ToggleClaw().schedule();
 
 //        if (isRedAlliance){
 //            odometry.setCurrentPos(new Pose2d(0, 0, new Rotation2d(Math.toRadians(RedStartAngle))));
