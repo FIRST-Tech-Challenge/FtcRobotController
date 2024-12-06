@@ -124,9 +124,15 @@ public class ConceptAprilTagEasy extends LinearOpMode {
 
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
+            limelight = hardwareMap.get(Limelight3A.class, "Limelight 3A");
+            limelight.pipelineSwitch(0);
+            //limelight.start();
+            limelight.getStatus();
+
+            //visionPortal = VisionPortal.easyCreateWithDefaults(
                 //hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
-                    (CameraName) (hardwareMap.get(Limelight3A.class,"limelight")), aprilTag);
+                 //   (CameraName) (hardwareMap.get(Limelight3A.class,"limelight")), aprilTag);
+            visionPortal = VisionPortal.easyCreateWithDefaults(((CameraName) hardwareMap.get("limelight")),aprilTag);
         } else {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                 BuiltinCameraDirection.BACK, aprilTag);
