@@ -28,16 +28,9 @@ public class IntakeFromGround extends SounderBotCommandBase {
 
     @Override
     public void doExecute() {
-
-    }
-
-    @Override
-    public boolean isFinished() {
-        if(isTargetReached()) {
+        if (isTargetReached()) {
             intake.HoldInAuto();
-            return true;
+            finished = true;
         }
-
-        return false;
     }
 }

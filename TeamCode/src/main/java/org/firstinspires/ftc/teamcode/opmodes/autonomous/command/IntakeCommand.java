@@ -36,13 +36,10 @@ public class IntakeCommand extends SounderBotCommandBase {
     public void doExecute() {
         if (isTargetReached()) {
             intake.HoldInAuto();
+            finished = true;
         } else {
             intake.IntakeInAuto();
         }
     }
 
-    @Override
-    public boolean isFinished() {
-        return expired;
-    }
 }

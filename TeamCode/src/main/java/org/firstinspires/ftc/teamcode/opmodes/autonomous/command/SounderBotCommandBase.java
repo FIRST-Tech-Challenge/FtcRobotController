@@ -14,7 +14,7 @@ public abstract class SounderBotCommandBase extends CommandBase {
     long startTime = -1;
 
     @Override
-    public boolean isFinished() {
+    public final boolean isFinished() {
         return finished;
     }
 

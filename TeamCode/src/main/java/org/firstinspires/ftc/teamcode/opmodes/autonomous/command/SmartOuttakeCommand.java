@@ -23,15 +23,9 @@ public class SmartOuttakeCommand extends SounderBotCommandBase {
     @Override
     public void doExecute() {
         intake.Intake();
-    }
-
-    @Override
-    public boolean isFinished() {
-        if(!intake.IsSampleIntaken()) {
+        if (isTargetReached()) {
             intake.Hold();
-            return true;
+            finished = true;
         }
-
-        return false;
     }
 }

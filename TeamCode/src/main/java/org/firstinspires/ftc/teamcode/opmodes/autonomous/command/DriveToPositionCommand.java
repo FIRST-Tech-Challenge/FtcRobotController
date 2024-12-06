@@ -226,16 +226,14 @@ public class DriveToPositionCommand extends SounderBotCommandBase {
 
         drive.driveRobotCentric(yOutput, xOutput, rotOutput);
 
+        if (isTargetReached()) {
+            finished = true;
+        }
         updateTelemetry(currentX, currentY, currentHeading, xError, yError, rotError, xOutput, yOutput, rotOutput);
     }
 
     @Override
     protected boolean isTargetReached() {
-        return false;
-    }
-
-    @Override
-    public boolean isFinished() {
         double currentX = odo.getPosX();
         double currentY = odo.getPosY();
         double currentHeading = odo.getHeading();
