@@ -29,7 +29,7 @@ public class BlueTeleop extends CommandOpMode {
         // ---------- autonomous command ----------
 
         // add autonomous command to scheduler and run it
-        new StartingArmStowHigh().schedule();
+        //new StartingArmStowHigh().schedule();
 
     }
 

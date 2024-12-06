@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
@@ -135,13 +136,15 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
+        //driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
         //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new HighBucketDeposit());
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SweepAlliancePieces());
 
        // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
