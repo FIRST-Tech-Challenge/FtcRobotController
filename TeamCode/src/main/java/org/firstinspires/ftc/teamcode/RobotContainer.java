@@ -274,4 +274,8 @@ public class RobotContainer {
         }
     }
 
+    public static boolean isRedAlliance() {
+        return isRedAlliance;
+    }
+
 }

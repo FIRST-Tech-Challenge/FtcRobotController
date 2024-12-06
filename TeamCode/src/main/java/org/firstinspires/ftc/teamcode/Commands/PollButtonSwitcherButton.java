@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.RobotContainer.shoulderJoint;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
@@ -48,7 +49,14 @@ public class PollButtonSwitcherButton extends CommandBase {
             // map the appropriate commands to the buttons
             switch (currentState) {
                 case AUTO_MODE:
-                    //change blinkin to Alliance color
+                    //change blinkin to Alliance colour
+                    if(RobotContainer.isRedAlliance()){
+                        RobotContainer.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+                    }else{
+                        RobotContainer.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+                    }
+
+
                     // map the auto commands
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
@@ -56,6 +64,7 @@ public class PollButtonSwitcherButton extends CommandBase {
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SweepAlliancePieces());
                     break;
                 case MANUAL_MODE:
+                    RobotContainer.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                     //map the manual commands
                     //probably don't want these specific calls, but you can
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
