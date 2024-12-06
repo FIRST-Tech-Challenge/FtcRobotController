@@ -34,7 +34,7 @@ public class Hardware2025Bot
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
     protected BNO055IMU imu    = null;
     public double imuHeadingAngle = 0.0;
-    public double    imuTiltAngle = 0.0;
+    public double imuTiltAngle    = 0.0;
 
     //====== GOBILDA PINPOINT ODOMETRY COMPUTER ======
     GoBildaPinpointDriver odom;
@@ -148,7 +148,7 @@ public class Hardware2025Bot
     public double       viperMotorSetPwr = 0.0;     // requested power setting
     public double       viperMotorPwr    = 0.0;     // current power setting
 
-    public ElapsedTime  viperSlideTimer    = new ElapsedTime();
+    public ElapsedTime  viperSlideTimer  = new ElapsedTime();
     public ElapsedTime  wormTiltTimer    = new ElapsedTime();
 
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?

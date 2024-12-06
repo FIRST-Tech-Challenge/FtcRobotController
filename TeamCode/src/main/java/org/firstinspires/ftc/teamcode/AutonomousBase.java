@@ -350,6 +350,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         autoViperMotorTimer.reset();
         robot.viperMotor.setPower( motorPower );
     } // autoViperMotorMoveToTarget
+
     boolean autoViperMotorMoving() {
         boolean viperMoving = true;
         // Did the movement finish?
