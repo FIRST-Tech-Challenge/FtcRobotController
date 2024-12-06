@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
 import java.util.ArrayList;
 
@@ -37,17 +38,17 @@ public class WallPickUp extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(90.0)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
+
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(35)),
 
                 // folds the elbow in 270
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(265)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(266)),
 
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(100)),
@@ -61,16 +62,16 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 new Pause(0.25),
 
+
                 new FollowPath(
                         1.0,
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.2, 1.42, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.42, new Rotation2d(Math.toRadians(90.0)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new CloseClaw(),
 
