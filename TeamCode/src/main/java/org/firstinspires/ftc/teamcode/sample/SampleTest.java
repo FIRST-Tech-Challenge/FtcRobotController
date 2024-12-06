@@ -37,7 +37,7 @@ class SampleTest {
         MockLLResult llResult = new MockLLResult(json);
 
         // Create Sample instance
-        Sample sample = new Sample(llResult);
+        Sample sample = new Sample(llResult, 0.0, 0.0);
 
         // Perform assertions
         assertEquals(expected, sample.toString());
