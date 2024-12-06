@@ -18,7 +18,7 @@ public class BasketReadyAction extends KActionSet {
         this.addAction(raiseSlides);
 
         KServoAutoAction outtakePivotActionOpen = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_OUT_POS);
+                OuttakePivotAction.OUTTAKE_PIVOT_BASKET_POS);
         outtakePivotActionOpen.setName("outtakePivotActionOpen");
         this.addAction(outtakePivotActionOpen);
     }

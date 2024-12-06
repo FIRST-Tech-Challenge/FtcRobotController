@@ -26,7 +26,7 @@ public class SpecimenHangReady extends KActionSet {
         this.addAction(outtakePivotActionOpen);
         //outtakePivotActionOpen.setDependantActions(outtakePivotActionOpenHalf);
 
-        MoveLSAction raiseSlides = new MoveLSAction(outtake, 440);
+        MoveLSAction raiseSlides = new MoveLSAction(outtake, 500);
         raiseSlides.setName("raiseSlides");
         this.addAction(raiseSlides);
 

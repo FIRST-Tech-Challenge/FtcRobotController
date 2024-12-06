@@ -41,8 +41,8 @@ public class RedAutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intake, outtake);
         initAuto.setName("initAuto");
 
-        int outtakeXPos = -350;
-        int outtakeYPos = 900;
+        int outtakeXPos = -175;
+        int outtakeYPos = 1075;
 
         //================begin of first specimen====================
         WaitAction waitAtStart = new WaitAction(300);
@@ -96,7 +96,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(moveToSample1/*TODO intake*/);
+        moveToBasket1.setDependentActions(moveToSample1);
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket1);
@@ -122,7 +122,7 @@ public class RedAutoBasket extends LinearOpMode {
         //===============start of second basket===============
         PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample2.setName("moveToSample2");
-        moveToSample2.setDependentActions(outtakeDownReady1);
+        moveToSample2.setDependentActions(outtakeDownReady2);
         //move basket to sample 2
         moveToSample2.addPoint(-620, 950, 180);
         redAutoBasket.addAction(moveToSample2);

@@ -38,10 +38,14 @@ public class MoveLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.15;
+        double lowestPower = 0.2;
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.3;
+            lowestPower = 0.25;
+        }
+
+        if (globalLinearSlideMaintainTicks > 1900) {
+            lowestPower = 0.34;
         }
 
         if (Math.abs(power) < lowestPower) {

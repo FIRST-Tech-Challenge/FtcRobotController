@@ -15,6 +15,8 @@ public class OuttakePivotAction {
     public static double OUTTAKE_PIVOT_OUT_POS = 0.05;
     public static double OUTTAKE_PIVOT_HALF_POS = 0.5;
 
+    final static public double OUTTAKE_PIVOT_BASKET_POS = 0.2;
+
     public static double OUTTAKE_PIVOT_WALL_POS = 0.17;
 
 
