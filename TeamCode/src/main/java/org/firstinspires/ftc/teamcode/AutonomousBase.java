@@ -276,7 +276,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
       telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 100" );
+        telemetry.addData(">","version 102" );
         telemetry.update();
     } // processAutonomousInitMenu
 
@@ -677,7 +677,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = leftWall ? drivePower : -drivePower;
-                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), robot.MIN_STRAFE_POW), maxPower), drivePower);
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), Hardware2025Bot.MIN_STRAFE_POW), maxPower), drivePower);
                 fl = -drivePower + rotatePower;
                 fr = drivePower - rotatePower;
                 bl = drivePower + rotatePower;

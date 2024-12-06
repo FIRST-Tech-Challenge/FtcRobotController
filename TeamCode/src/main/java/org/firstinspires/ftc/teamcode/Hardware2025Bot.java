@@ -98,6 +98,8 @@ public class Hardware2025Bot
     public double       wormTiltMotorAmpsPk = 0.0;    // peak power draw (Amps) 312rpm = 9.2A @ 12V
     public double       wormTiltMotorSetPwr = 0.0;    // requested power setting
     public double       wormTiltMotorPwr    = 0.0;    // current power setting
+    public double       WORM_TILT_VIPER_TO_BASKET_DEG= 45.0;   // angle at when the viper motor starts extending when going to basket
+    public double       WORM_TILT_VIPER_FROM_BASKET_DEG  = 80; // angle at when the viper motor starts extending from the basket
 
     protected AnalogInput armTiltEncoder   = null;    // US Digital absolute magnetic encoder (MA3)
     public double           armTiltAngle   = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
@@ -121,19 +123,20 @@ public class Hardware2025Bot
     //                  94.4 deg 5 encoder counts
     //                  94.5 deg 3896 encoder counts range
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
-    public final static double TILT_ANGLE_HW_MAX_DEG   =   95.00;  // encoder at maximum rotation UP/BACK (horizontal = -200)
-    public final static double TILT_ANGLE_BASKET_DEG   =   95.00;  // encoder at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_AUTO_PRE_DEG   =   92.00;  // encoder at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_ASCENT1_DEG  =   93.80;  // encoder at rotation back to the low bar for ascent level 1
-    public final static double TILT_ANGLE_RAISED_DEG   =   54.50;  // encoder at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_HANG1_DEG    =   40.10;  // encoder when preparing for level 2 ascent
-    public final static double TILT_ANGLE_HANG2_DEG    =   16.40; // encoder at the end of level 2 ascent
-    public final static double TILT_ANGLE_ZERO_DEG     =    7.00; // encoder for parking fullyh reset in auto
-    public final static double TILT_ANGLE_DRIVE_DEG    =   11.80; // encoder for parking in auto or driving around
-    public final static double TILT_ANGLE_AUTO1_DEG    =   54.80; // tilted up for autonomous specimen scoring (above bar)
-    public final static double TILT_ANGLE_AUTO2_DEG    =   49.60; // tilted up for autonomous specimen scoring (clipped)
-    public final static double TILT_ANGLE_HW_MIN_DEG   =    0.00; // encoder at maximum rotation DOWN/FWD
-    public final static double TILT_ANGLE_COLLECT_DEG  =    2.00;
+    public final static double TILT_ANGLE_HW_MAX_DEG      = 95.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
+    public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 92.00; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_ASCENT1_DEG     = 93.80; // Arm at rotation back to the low bar for ascent level 1
+    public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
+    public final static double TILT_ANGLE_RAISED_DEG      = 54.50; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_HANG1_DEG       = 40.10; // Arm when preparing for level 2 ascent
+    public final static double TILT_ANGLE_HANG2_DEG       = 16.40; // Arm at the end of level 2 ascent
+    public final static double TILT_ANGLE_ZERO_DEG        =  7.00; // Arm for parking fully reset in auto
+    public final static double TILT_ANGLE_DRIVE_DEG       = 11.80; // Arm for parking in auto or driving around
+    public final static double TILT_ANGLE_AUTO1_DEG       = 54.80; // Arm tilted up for autonomous specimen scoring (above bar)
+    public final static double TILT_ANGLE_AUTO2_DEG       = 49.60; // Arm tilted up for autonomous specimen scoring (clipped)
+    public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
+    public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect at ground level
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -146,25 +149,31 @@ public class Hardware2025Bot
     public double       viperMotorPwr    = 0.0;     // current power setting
 
     public ElapsedTime  viperSlideTimer    = new ElapsedTime();
+    public ElapsedTime  wormTiltTimer    = new ElapsedTime();
+
     public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
     public boolean      viperMotorBusy     = false;
+    public boolean      wormTiltMotorAutoMove = false;  // have we commanded an automatic lift movement?
+    public boolean      wormTiltMotorBusy     = false;
     public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to EXTEND viper slide
     public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current extension
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to RETRACT viper slide
 
     // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
     // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
-    public int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    public int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
-    public int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
-    public int          VIPER_EXTEND_HANG1 = 2050;   // extend to this to prepare for level 2 ascent
-    public int          VIPER_EXTEND_HANG2 = 500;    // retract to this extension during level 2 ascent
-    public int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
-    public int          VIPER_EXTEND_AUTO1 = 1400;   // raised to where the specimen hook is above the high bar
-    public int          VIPER_EXTEND_AUTO2 =  980;   // retract to clip the specimen to the bar
-    public int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
-    public int          VIPER_EXTEND_FULL1 = 2000;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
-    public int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
+    final public static int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
+    final public static int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
+    final public static int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
+    final public static int          VIPER_EXTEND_HANG1 = 2050;   // extend to this to prepare for level 2 ascent
+    final public static int          VIPER_EXTEND_HANG2 = 500;    // retract to this extension during level 2 ascent
+    final public static int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
+    final public static int          VIPER_EXTEND_SECURE=  350;   // Intake is tucked into robot to be safe
+    final public static int          VIPER_EXTEND_SAFE  =  750;   // Intake is far enough it can safely swing
+    final public static int          VIPER_EXTEND_AUTO1 = 1400;   // raised to where the specimen hook is above the high bar
+    final public static int          VIPER_EXTEND_AUTO2 =  850;   // retract to clip the specimen to the bar
+    final public static int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
+    final public static int          VIPER_EXTEND_FULL1 = 2000;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
+    final public static int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
 //  public double       liftMotorPID_i     =  0.000; //  Raise i = integral
@@ -609,6 +618,55 @@ public class Hardware2025Bot
     /* startViperSlideExtension()                                                                 */
     /* NOTE: Comments online say the firmware that executes the motor RUN_TO_POSITION logic want  */
     /* the setup commands in this order: setTargetPosition(), setMode(), setPower().              */
+
+    public void startWormTilt(double targetArmAngle)
+    {   // Convert angle to encoder counts
+        int targetEncoderCount = computeEncoderCountsFromAngle(targetArmAngle);
+        // Range-check the target
+        if( targetArmAngle < TILT_ANGLE_HW_MIN_DEG) targetEncoderCount = computeEncoderCountsFromAngle(TILT_ANGLE_HW_MIN_DEG);
+        if( targetArmAngle > TILT_ANGLE_HW_MAX_DEG ) targetEncoderCount = computeEncoderCountsFromAngle(TILT_ANGLE_HW_MAX_DEG);
+
+        wormTiltMotor.setTargetPosition( targetEncoderCount );
+        wormTiltMotor.setMode( DcMotor.RunMode.RUN_TO_POSITION );
+
+        wormTiltMotor.setPower(0.8);
+        wormTiltTimer.reset();
+        wormTiltMotorAutoMove = true;
+        wormTiltMotorBusy = true;
+    } // startWormTilt
+    public void processWormTilt(){
+        // Has the automatic movement reached its destination?.
+        if( wormTiltMotorAutoMove ) {
+            if (!wormTiltMotor.isBusy()) {
+                wormTiltMotorBusy = false;
+                // Timeout reaching destination.
+            } else if (wormTiltTimer.milliseconds() > 5000) {
+                wormTiltMotorBusy = false;
+                //telemetry.addData("processViperSlideExtension", "Movement timed out.");
+                //telemetry.addData("processViperSlideExtension", "Position: %d", viperMotor.getCurrentPosition());
+                //telemetry.update();
+                //telemetrySleep();
+            }
+        }
+    } // processWormTilt
+
+    public void abortWormTilt()
+    {
+        // Have we commanded an AUTOMATIC lift movement that we need to terminate so we
+        // can return to MANUAL control?  (NOTE: we don't care here whether the AUTOMATIC
+        // movement has finished yet; MANUAL control immediately overrides that action.
+        if( wormTiltMotorAutoMove ) {
+            // turn off the auto-movement power, but don't go to ZERO POWER or
+            // the weight of the lift will immediately drop it back down.
+            wormTiltMotor.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
+            wormTiltMotor.setPower( 0.0 );
+//         liftMoveState = LiftMoveActivity.IDLE;
+//         liftStoreState = LiftStoreActivity.IDLE;
+            wormTiltMotorAutoMove = false;
+            wormTiltMotorBusy = false;
+        }
+    } // abortWormTilt
+
     public void startViperSlideExtension(int targetEncoderCount )
     {
         // Range-check the target
