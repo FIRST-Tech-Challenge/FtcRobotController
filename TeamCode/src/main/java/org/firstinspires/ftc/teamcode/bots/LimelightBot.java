@@ -46,8 +46,6 @@ public class LimelightBot extends PinchBot {
         if (sample == null) {
             return;
         }
-        // rotate to the sample orientation
-        rotateToAngle(sample.getSampleAngle());
         double xThreshold = 2;
         double yThreshold = 2;
         boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
@@ -55,6 +53,8 @@ public class LimelightBot extends PinchBot {
         if (isXCloseEnough && isYCloseEnough) {
             // sample is close enough, pick it up
             inAutoPickup = true;
+            // rotate to the sample orientation
+            rotateToAngle(sample.getSampleAngle());
             // open the pinch
             openPinch();
             // lower the pivot
