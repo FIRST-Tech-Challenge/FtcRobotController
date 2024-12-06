@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 
 @TeleOp
-public class HatredAndDepression2 extends LinearOpMode {
+public class AnimosityAndMortification extends LinearOpMode {
     //variables
     static double tgtPower = 0;
     static double tgtPower2 = 0;
@@ -13,8 +13,12 @@ public class HatredAndDepression2 extends LinearOpMode {
     static private DcMotor BLW;
     static private DcMotor FRW;
     static private DcMotor BRW;
-    static private DcMotor ArmL;
-    static private DcMotor ArmR;
+    static private DcMotor ScissorLiftR;
+    static private DcMotor ScissorLiftL;
+    static private Servo ServoR;
+    static private Servo ServoL;
+    static private CRServo ArmRaise;
+    static private double ServoPos = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,8 +26,11 @@ public class HatredAndDepression2 extends LinearOpMode {
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         BRW = hardwareMap.get(DcMotor.class, "BRW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
-        ArmL = hardwareMap.get(DcMotor.class, "ArmL");
-        ArmR = hardwareMap.get(DcMotor.class, "ArmR");
+        ScissorLiftR = hardwareMap.get(DcMotor.class, "ScissorLiftR"); // change config if needed
+        ScissorLiftL = hardwareMap.get(DcMotor.class, "ScissorLiftL");
+        ServoR = hardwareMap.get(Servo.class, "ServoR");
+        ServoL = hardwareMap.get(Servo.class, "ServoL");
+        ArmRaise = hardwareMap.get(CRServo.class, "ArmRaise");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
@@ -34,10 +41,11 @@ public class HatredAndDepression2 extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             telemetry.update();
-            tgtPower = this.gamepad1.left_stick_y;
-            tgtPower2 = this.gamepad1.left_stick_x;
 
-            // FLW is the only right moving wheel :(
+            tgtPower = this.gamepad1.left_stick_y/1.4;
+            tgtPower2 = this.gamepad1.left_stick_x/1.4;
+
+            // FLW is the only right moving wheel :(`
             if(gamepad1.left_stick_y > 0.3 || gamepad1.left_stick_y < -0.3) {
                 //forward and backwards
                 FLW.setPower(tgtPower);
@@ -97,15 +105,27 @@ public class HatredAndDepression2 extends LinearOpMode {
                 disablePowerWheels();
             }
 
-            //arm
+            // scissor lift
+            // enter real values once you get to test
             if(gamepad1.right_stick_y > 0.5){
-                ArmL.setPower(0.5);
-                ArmR.setPower(-0.5);
+                ScissorLiftL.setPower(0.5);
+                ScissorLiftR.setPower(-0.5);
             }else if(gamepad1.right_stick_y < -0.5) {
-                ArmL.setPower(-0.5);
-                ArmR.setPower(0.5);
+                ScissorLiftL.setPower(-0.5);
+                ScissorLiftR.setPower(0.5);
             }else {
                 disableArmMotors();
+            }
+
+            if (gamepad1.a) {
+                telemetry.addData("Baller", "baller");
+                ArmRaise.setDirection(DcMotorSimple.Direction.FORWARD);
+                ArmRaise.setPower(1);
+            } else if (gamepad1.b) {
+                ArmRaise.setDirection(DcMotorSimple.Direction.REVERSE);
+                ArmRaise.setPower(1);
+            } else {
+                disableScissorMovement();
             }
             updatePhoneConsole();
         }
@@ -119,8 +139,12 @@ public class HatredAndDepression2 extends LinearOpMode {
     }
 
     public static void disableArmMotors()   {
-        ArmL.setPower(0);
-        ArmR.setPower(0);
+        ScissorLiftL.setPower(0);
+        ScissorLiftR.setPower(0);
+    }
+
+    public static void disableScissorMovement()   {
+        ArmRaise.setPower(0);
     }
 
     public void updatePhoneConsole() {
@@ -130,10 +154,13 @@ public class HatredAndDepression2 extends LinearOpMode {
         telemetry.addData("BLW Power:", BLW.getPower());
         telemetry.addData("FRW Power:", FRW.getPower());
         telemetry.addData("BRW Power:", BRW.getPower());
-        telemetry.addData("ArmL Power:", ArmL.getPower());
-        telemetry.addData("ArmR Power:", ArmR.getPower());
+        telemetry.addData("ScissorLiftL Power:", ScissorLiftL.getPower());
+        telemetry.addData("ScissorLiftR Power:", ScissorLiftR.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
+        telemetry.addData("Arm Raise Power Value:", ArmRaise.getPower());
+        telemetry.addData("Arm Raise Direction:", ArmRaise.getDirection());
+
         telemetry.update();
     }
 }
