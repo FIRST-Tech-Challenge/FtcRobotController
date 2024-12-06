@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions.outtake;
 
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.KServoAutoAction;
+import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.modules.Outtake;

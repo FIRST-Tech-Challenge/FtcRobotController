@@ -2,19 +2,19 @@ package com.kalipsorobotics.actions.sequences;
 
 import android.os.SystemClock;
 
-import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
+//import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.modules.Intake;
 
 public class IntakeSequence {
     IntakePivotAction intakePivotAction;
-    IntakeLinkageAction intakeLinkageAction;
+    //IntakeLinkageAction intakeLinkageAction;
     double timeBefore;
 
-    public IntakeSequence(IntakePivotAction intakePivotAction, IntakeLinkageAction intakeLinkageAction) {
+    public IntakeSequence(IntakePivotAction intakePivotAction) {
         this.intakePivotAction = intakePivotAction;
-        this.intakeLinkageAction = intakeLinkageAction;
+        //this.intakeLinkageAction = intakeLinkageAction;
         timeBefore = System.currentTimeMillis();
     }
     public void setUpCheckDone() {
@@ -30,11 +30,11 @@ public class IntakeSequence {
         }
     }
     public void extend() {
-        intakeLinkageAction.extend();
+        //intakeLinkageAction.extend();
         intakePivotAction.moveDown();
     }
     public void retract() {
-        intakeLinkageAction.retract();
+        //intakeLinkageAction.retract();
         intakePivotAction.togglePosition();
     }
 }

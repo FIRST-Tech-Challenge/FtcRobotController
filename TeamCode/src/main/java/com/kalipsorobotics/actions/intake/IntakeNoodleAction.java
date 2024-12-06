@@ -2,24 +2,33 @@ package com.kalipsorobotics.actions.intake;
 
 import static org.firstinspires.ftc.robotcore.external.JavaUtil.colorToHue;
 
+import com.kalipsorobotics.actions.Action;
+import com.kalipsorobotics.actions.WaitAction;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.modules.Intake;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class IntakeNoodleAction {
+public class IntakeNoodleAction extends Action {
 
     Intake intake;
 
     DcMotor intakeNoodleMotor;
     ColorSensor colorSensor;
 
-    public IntakeNoodleAction(Intake intake) {
+    private boolean isRun = false;
+
+    WaitAction runTime;
+
+    public IntakeNoodleAction(Intake intake, double runtime, boolean isRun) {
         this.intake = intake;
         this.intakeNoodleMotor = intake.getNoodleMotor();
         this.colorSensor = intake.getColorSensor();
         colorSensor.enableLed(false);
+        this.isRun = isRun;
+        this.runTime = new WaitAction(runtime);
     }
 
 
@@ -34,11 +43,11 @@ public class IntakeNoodleAction {
         } else return false;
     }
 
-    /*
+/*
     YELLOW: R:2372 G:4803 B:5166
     BLUE: same as yellow
     RED:
-     */
+*/
 
     public double blue() {
         return colorToHue(colorSensor.blue());
@@ -57,5 +66,28 @@ public class IntakeNoodleAction {
     }
     public void stop() {
         intakeNoodleMotor.setPower(0);
+    }
+
+    @Override
+    public boolean checkDoneCondition() {
+        return isDone;
+    }
+
+    @Override
+    public void update() {
+        if (isDone) {
+            return;
+        }
+
+        runTime.update();
+
+        if (isRun) {
+            run();
+        } else {
+            stop();
+        }
+
+        isDone = runTime.updateCheckDone();
+
     }
 }

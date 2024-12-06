@@ -1,9 +1,9 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import com.kalipsorobotics.actions.InitAuto;
+import com.kalipsorobotics.actions.AutoActions.InitAuto;
+import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.AutoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.KServoAutoAction;
-import com.kalipsorobotics.actions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.OuttakeDownReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;

@@ -11,6 +11,9 @@ public class IntakePivotAction {
     final private Intake intake;
     private final KServo intakePivotServo;
 
+    public static final double INTAKE_PIVOT_DOWN_POS = 0.80;
+    public static final double INTAKE_PIVOT_UP_POS = 0.55;
+
     private boolean isDown = true;
 
     public IntakePivotAction(Intake intake) {
@@ -23,12 +26,12 @@ public class IntakePivotAction {
     }
 
     public void moveDown() {
-        setPosition(0.8);
+        setPosition(INTAKE_PIVOT_DOWN_POS);
         isDown = true;
     }
 
     public void moveUp() {
-        setPosition(0.55);
+        setPosition(INTAKE_PIVOT_UP_POS);
         isDown = false;
     }
 

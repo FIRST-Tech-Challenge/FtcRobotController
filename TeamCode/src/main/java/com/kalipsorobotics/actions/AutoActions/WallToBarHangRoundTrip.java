@@ -1,5 +1,7 @@
-package com.kalipsorobotics.actions;
+package com.kalipsorobotics.actions.AutoActions;
 
+import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;

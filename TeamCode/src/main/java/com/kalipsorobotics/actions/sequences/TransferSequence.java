@@ -4,7 +4,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
-import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
@@ -38,11 +37,11 @@ public class TransferSequence {
         this.intake = intake;
         this.outtakeSlideAction = new OuttakeSlideAction(outtake);
         this.intakeDoorAction = new IntakeDoorAction(intake);
-        this.intakeNoodleAction = new IntakeNoodleAction(intake);
+        this.intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         this.intakePivotAction = new IntakePivotAction(intake);
         this.outtakeClawAction = new OuttakeClawAction(outtake);
         this.outtakePivotAction = new OuttakePivotAction(outtake);
-        this.intakeSequence = new IntakeSequence(intakePivotAction, new IntakeLinkageAction(intake));
+        this.intakeSequence = new IntakeSequence(intakePivotAction);
     }
 //    public boolean checkdone(double time, double waitLength) {
 //        if (SystemClock.currentThreadTimeMillis() - time > waitLength) {
@@ -59,13 +58,12 @@ public class TransferSequence {
         intakeDoorAction.open();
         outtakeClawAction.open();
 
-        SystemClock.sleep(700);
+
 
         outtakeSlideAction.down();
         intakeNoodleAction.stop();
         intakePivotAction.moveDown();
         outtakePivotAction.moveIn();
-        SystemClock.sleep(650);
         outtakeClawAction.close();
         //ADD LINEAR SLIDE STUFF
     }

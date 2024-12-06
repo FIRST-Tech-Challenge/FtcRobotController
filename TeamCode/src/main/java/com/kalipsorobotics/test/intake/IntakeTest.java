@@ -1,7 +1,6 @@
 package com.kalipsorobotics.test.intake;
 
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
-import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,10 +16,9 @@ public class IntakeTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Intake intake = new Intake(opModeUtilities);
-        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake);
+        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
         IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
-        IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
 
 
         double pivotPosition = 0.5;
@@ -59,10 +57,8 @@ public class IntakeTest extends LinearOpMode {
 
             if (gamepad1.dpad_up) {
                 linkagePosition = linkagePosition + linkageSpeed;
-                intakeLinkageAction.moveIntakeSlide(linkagePosition);
             } else if (gamepad1.dpad_down) {
                 linkagePosition = linkagePosition - linkageSpeed;
-                intakeLinkageAction.moveIntakeSlide(linkagePosition);
             }
 
             telemetry.addData("doorPosition", doorPosition);
