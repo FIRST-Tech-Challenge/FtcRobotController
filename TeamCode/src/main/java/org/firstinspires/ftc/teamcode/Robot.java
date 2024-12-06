@@ -2,13 +2,13 @@
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import static org.firstinspires.ftc.teamcode.constants.*;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import static org.firstinspires.ftc.teamcode.Util.Constants.*;
+import static org.firstinspires.ftc.teamcode.Util.IDs.*;
 
-@TeleOp
+  @TeleOp
 public class Robot extends OpMode {
 
-    Drivetrain drivetrain = new Drivetrain();
+    org.firstinspires.ftc.teamcode.Subsystem.Drivetrain drivetrain = new org.firstinspires.ftc.teamcode.Subsystem.Drivetrain();
 
     Shoulder shoulder = new Shoulder();
     Slides slides = new Slides();
@@ -30,23 +30,22 @@ public class Robot extends OpMode {
 
     @Override
     public void loop() {
+    this.drivetrain.mechanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+
+    this.shoulder.runArmMotor(gamepad2.left_stick_y);
         
-    drivetrain.loop(gamepad1.left_stick_y,gamepad1.right_stick_x, gamepad1.left_stick_x);
+    this.slides.slidePower(gamepad2.right_stick_y);
         
-    this.shoulder.runArmMotor(gamepad1.left_stick_y);
-        
-    this.slides.slidePower(gamepad1.right_stick_y);
-        
-    if (gamepad1.a) {
-            claw.setServoClawPos(openClawValue);
+    if (gamepad2.a) {
+            claw.setServoClawPos(OPEN_CLAW_VALUE);
         } else {
-            claw.setServoClawPos(closedClawValue);
+            claw.setServoClawPos(CLOSED_CLAW_VAULE);
         }
 
-        if (gamepad1.b) {
-            wrist.setServoWristPos(openWristValue);
+        if (gamepad2.b) {
+            wrist.setServoWristPos(OPEN_WRIST_VALUE);
         } else {
-            wrist.setServoWristPos(closedWristValue);
+            wrist.setServoWristPos(CLOSED_WRIST_VALUE);
         }
     }
 }
