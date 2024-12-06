@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters.components;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,10 +12,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Init {
 
-    private final DcMotor leftFrontMotor;
-    private final DcMotor rightFrontMotor;
-    private final DcMotor leftRearMotor;
-    private final DcMotor rightRearMotor;
+    private final DcMotorEx leftFrontMotor;
+    private final DcMotorEx rightFrontMotor;
+    private final DcMotorEx leftRearMotor;
+    private final DcMotorEx rightRearMotor;
 
     private final Servo fingers;
     private final Servo elbow1, elbow2;
@@ -29,10 +30,10 @@ public class Init {
 
     public Init(HardwareMap hardwareMap) {
         // Read from the hardware maps
-        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("backRight");
+        leftFrontMotor = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftRearMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
+        rightRearMotor = hardwareMap.get(DcMotorEx.class, "backRight");
 
         // Reset the encoder values
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -89,10 +90,10 @@ public class Init {
 
     }
 
-    public DcMotor getLeftFrontMotor(){return leftFrontMotor;}
-    public DcMotor getRightFrontMotor(){return rightFrontMotor;}
-    public DcMotor getLeftRearMotor(){return leftRearMotor;}
-    public DcMotor getRightRearMotor(){return rightRearMotor;}
+    public DcMotorEx getLeftFrontMotor(){return leftFrontMotor;}
+    public DcMotorEx getRightFrontMotor(){return rightFrontMotor;}
+    public DcMotorEx getLeftRearMotor(){return leftRearMotor;}
+    public DcMotorEx getRightRearMotor(){return rightRearMotor;}
 
     public DcMotor getWheelMotor(){return wheelMotor;}
     public Servo getSlideServo1(){return slideServo1;}
