@@ -51,7 +51,7 @@ import java.util.Locale;
  *
  *  https://ftc-docs.firstinspires.org/camera-calibration
  *
- * In Android Studio, copy this class into your "teamcode" folder with a new name.
+ * In Android Studio, copy this class into your "masters" folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  *
  * In OnBot Java, use "Add File" to add this OpMode from the list of Samples.

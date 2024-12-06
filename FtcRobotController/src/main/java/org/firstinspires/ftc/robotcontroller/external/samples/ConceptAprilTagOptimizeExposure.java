@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  * This can be done directly from a RC phone screen (if you are using an external Webcam), but for a Control Hub you must either plug an
  * HDMI monitor into the Control Hub HDMI port, or use an external viewer program like ScrCpy (https://scrcpy.org/)
  *
- * Use Android Studio to Copy this Class, and Paste it into the TeamCode/src/main/java/org/firstinspires/ftc/teamcode folder.
+ * Use Android Studio to Copy this Class, and Paste it into the masters/src/main/java/org/firstinspires/ftc/masters folder.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
