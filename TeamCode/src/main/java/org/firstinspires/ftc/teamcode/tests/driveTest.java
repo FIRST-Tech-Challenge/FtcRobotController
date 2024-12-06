@@ -54,7 +54,7 @@ public class driveTest extends OpMode {
     }
     @Override
     public void loop() {
-        SwerveDrive.loop();
+        SwerveDrive.loop(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x);
         SwerveDrive.setPID(P, I, D, dP, dI, dD);
         SwerveDrive.getTelemetry(telemetry2);
         telemetry.update();
