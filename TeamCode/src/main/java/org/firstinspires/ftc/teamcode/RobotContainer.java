@@ -115,7 +115,7 @@ public class RobotContainer {
         //driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> odometry.setCurrentPos(AutoFunctions.redVsBlue(
-        new Pose2d(0.24, 0.76, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
+        new Pose2d(0.16, 0.76, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
 
