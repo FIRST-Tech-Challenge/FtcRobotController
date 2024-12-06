@@ -18,11 +18,11 @@ public class PivotBot extends OdometryBot {
     // Pivot motor constants
     public final int maximumPivotPos = 1300;
     public final int minumimPivotPos = -100;
-    private final int searchPivotPos = 150;
-    private final int pickupPivotPos = 50;
-    private final int pickupUpPivotPos = 200;
-    public final int specimenPivotPos = 500;
-    public final int highBucketPivotPos = 1000;
+    private final int searchPivotPos = 250; // tested
+    private final int pickupPivotPos = 135; // tested
+    private final int pickupUpPivotPos = 400;
+    public final int specimenPivotPos = 900;
+    public final int highBucketPivotPos = 1200;
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 100;
     public double pivotPower = 0.7;
@@ -32,7 +32,7 @@ public class PivotBot extends OdometryBot {
 
     // Slide motor constants
     public final int maximumSlidePos = 2400;
-    public final int searchSlidePos = 150;
+    public final int searchSlidePos = 350;
     public final int specimenSlidePos = 1000;
     public final int highBucketSlidePos = 1500;
     public final int lowBucketSlidePos = 800;
@@ -112,6 +112,9 @@ public class PivotBot extends OdometryBot {
 
         }
     }
+    public void slideByDelta(int delta){
+        slideTarget += delta;
+    }
     public void slideControl(boolean up, boolean down) {
         if (up) {
             if (slideMotor.getCurrentPosition() < maximumSlidePos) {
@@ -166,7 +169,6 @@ public class PivotBot extends OdometryBot {
     }
 
     public void pivotToUpPosInTime(int time){
-        pivotTimer.cancel();
         pivotTimerTask = new TimerTask() {
             @Override
             public void run() {
@@ -174,6 +176,9 @@ public class PivotBot extends OdometryBot {
             }
         };
         pivotTimer.schedule(pivotTimerTask, time);
+    }
+    public void cancelPivotTimer(){
+        pivotTimer.cancel();
     }
 
     public void moveSlide(int pos, @Deprecated double power){

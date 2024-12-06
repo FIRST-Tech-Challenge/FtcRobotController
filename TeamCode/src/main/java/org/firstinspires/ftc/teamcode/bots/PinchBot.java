@@ -20,10 +20,13 @@ public class PinchBot extends PivotBot{
 
     private double rotateServoPos;
 
-    private final double rotateServoInitialPos = 0.8;
-    private final double rotateServoMax = 0.93;
-    private final double rotateServoMin = 0.63;
+    public final double rotateServoInitialPos = 0.80;
+    public final double rotateServoMax = 0.80;
+    public final double rotateServoMin = 0.46;
+    public final double rotateVerticalPos = 0.63;
 
+    public final double pinchOpenPos = 0.78;
+    public final double pinchClosePos = 0.65;
     private Timer pinchTimer = new Timer();
     private TimerTask pinchTimerTask;
     public PinchBot(LinearOpMode opMode) {
@@ -48,12 +51,12 @@ public class PinchBot extends PivotBot{
 
     public void openPinch(){
         isOpen = true;
-        pinch.setPosition(0.7);
+        pinch.setPosition(pinchOpenPos);
     }
 
     public void closePinch(){
         isOpen = false;
-        pinch.setPosition(1);
+        pinch.setPosition(pinchClosePos);
     }
 
     /**
@@ -61,8 +64,6 @@ public class PinchBot extends PivotBot{
      * @param time The delay in milliseconds before closing the pinch.
      */
     public void closePinchInTime(int time){
-        // cancel the previous timer if it exists
-        pinchTimer.cancel();
         pinchTimerTask = new TimerTask() {
             @Override
             public void run() {
@@ -77,8 +78,6 @@ public class PinchBot extends PivotBot{
      * @param time The delay in milliseconds before opening the pinch.
      */
     public void openPinchInTime(int time){
-        // cancel the previous timer if it exists
-        pinchTimer.cancel();
         pinchTimerTask = new TimerTask() {
             @Override
             public void run() {
@@ -114,7 +113,7 @@ public class PinchBot extends PivotBot{
         }
     }
 
-    private void rotateToPos(double pos){
+    public void rotateToPos(double pos){
         if (pos > rotateServoMax) {
             pos = rotateServoMax;
         }
@@ -124,6 +123,12 @@ public class PinchBot extends PivotBot{
         rotateServoPos = pos;
         rotate.setPosition(rotateServoPos);
     }
+    public void rotateToInitialPos(){
+        rotateToPos(rotateServoInitialPos);
+    }
+    public void rotateToVerticalPos(){
+        rotateToPos(rotateVerticalPos);
+    }
 
     /**
      * Rotates the pinch servo to a specified angle (in degrees).
@@ -132,7 +137,7 @@ public class PinchBot extends PivotBot{
      */
     public void rotateToAngle(int angle){ //5216 - 4706
         assert angle >= -90 && angle <= 90 : "Angle must be between -90 and 90 degrees";
-        double relativeAngle = (angle + 90) / 180.0;
+        double relativeAngle = (-angle + 90) / 180.0;
         double pos = relativeAngle * (rotateServoMax - rotateServoMin) + rotateServoMin;
         rotateToPos(pos);
     }
