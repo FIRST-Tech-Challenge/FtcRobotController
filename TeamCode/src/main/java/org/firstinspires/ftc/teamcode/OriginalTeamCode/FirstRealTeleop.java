@@ -31,19 +31,25 @@ public class FirstRealTeleop extends LinearOpMode{
     CRServo sampPickUpRight = null;
 
 
-    void linearActuatorMover(int i){
-        linearActuator.setTargetPosition(i);
-    }
-
-    void linearActuatorRaiser(){
-        linearActuatorMover(60);
-    }
-
-    void linearActuatorLower(){
-        linearActuatorMover(20);
+    double actuatorPos = 0;
+    double armRotPos = 0;
+    void linearActuatorMover(){
+        linearActuator.setTargetPosition((int)actuatorPos);
+        linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
+    void controlBothGrabbers(int i){
+        sampPickUpLeft.setPower(i);
+        sampPickUpRight.setPower(i);
+    }
+    double armPos = 0;
+    void controlBothArmExtenders(){
+        armLifterLeft.setTargetPosition((int)armPos);
+        armLifterRight.setTargetPosition(-(int)armPos);
+        armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
     @Override
     public void runOpMode() {
@@ -68,7 +74,9 @@ public class FirstRealTeleop extends LinearOpMode{
         sampPickUpRight.setDirection(CRServo.Direction.REVERSE);
 
         armLifterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        armLifterRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        armLifterRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         linearActuator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -94,11 +102,40 @@ public class FirstRealTeleop extends LinearOpMode{
 
         boolean isGrabbing = false;
         double wristPos = 0;
+        armLifterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armLifterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        armLifterRight.setPower(1);
+        armLifterLeft.setPower(1);
+        linearActuator.setPower(1);
+        armRotate.setPower(1);
+
+        armLifterLeft.setTargetPosition((int)armPos);
+        armLifterRight.setTargetPosition((int)armPos);
+        linearActuator.setTargetPosition((int)actuatorPos);
+        armRotate.setTargetPosition((int)armRotPos);
+
+        armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            linearActuatorMover();
+            controlBothArmExtenders();
+//
+//            linearActuator.setTargetPosition((int)actuatorPos);
+//            linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            armLifterLeft.setTargetPosition((int)armPos);
+//            armLifterRight.setTargetPosition((int)armPos);
+//            armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             double pose = drive.getExternalHeading(); // used for my custom function to drive straight thru the trusses
 
             double slowMode = gamepad1.left_trigger;
@@ -209,25 +246,27 @@ public class FirstRealTeleop extends LinearOpMode{
 //            spool.setPower(spoolPow);
 
             //arm rotate
-            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            armRotate.setPower(gamepad2.left_stick_y);
+            armRotate.setTargetPosition(0);
+            armRotPos += -gamepad2.left_stick_y;
 
             //actuator
             if(gamepad2.dpad_up){
-                linearActuatorRaiser();
+                actuatorPos += 10;
+//                linearActuator.setPower(1);
             } else if(gamepad2.dpad_down){
-                linearActuatorLower();
+                actuatorPos += -10;
+//                linearActuator.setPower(-1);
             }
 
             //extenders
-            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            armLifterLeft.setPower(gamepad2.right_stick_x);
-            armLifterRight.setPower(gamepad2.right_stick_x);
+            armPos += gamepad2.left_trigger*25 + -gamepad2.right_trigger*25;
+//            armLifterLeft.setPower(gamepad2.right_stick_y);
+//            armLifterRight.setPower(gamepad2.right_stick_y);
 
-            //wrist
-            wrist.setPosition(wristPos);
-            wristPos += (Math.pow(gamepad2.right_stick_y,3));
+//            //wrist
+            wrist.setPosition((wristPos+1)/2);
+            if(gamepad2.right_stick_y != 0){
+            wristPos = gamepad2.right_stick_y*gamepad2.right_stick_y*gamepad2.right_stick_y;}
 
             //spool
             int spoolPow = 0;
@@ -239,12 +278,23 @@ public class FirstRealTeleop extends LinearOpMode{
             spool.setPower(spoolPow);
 
             //grabbers
+            if(gamepad2.x){
+//                controlBothGrabbers(1);
+                sampPickUpLeft.setPower(1);
+                sampPickUpRight.setPower(1);
+            } else if (gamepad2.a) {
+//                controlBothGrabbers(-1);
+                sampPickUpRight.setPower(-1);
+                sampPickUpLeft.setPower(-1);
+            }
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-           // telemetry.addData("Controls:\nGAMEPAD 2:\nwrist: right stick y\nspool: right stick x\ntoggle grab: left shoulder\nlinear actuator: up/down dpad\narm rotate: left stick y\nGAMEPAD 1\n lateral movement: left stick xy\n, rotate: right stick x","apple");
+            telemetry.addData("Controls:\nGAMEPAD 2:\narm extend: l/r trigger\nwrist: right stick y\nspool: lb/rb x\ngrab open: a\ngrab close: b\nlinear actuator: up/down dpad\narm rotate: left stick y\nGAMEPAD 1\n lateral movement: left stick xy\n, rotate: right stick x","");
+            telemetry.addData("Linear Actuator Curr Pos: ", actuatorPos);
+            telemetry.addData("ARm rot Curr Pos: ", armRotate.getCurrentPosition());
             telemetry.update();
         }
     }
