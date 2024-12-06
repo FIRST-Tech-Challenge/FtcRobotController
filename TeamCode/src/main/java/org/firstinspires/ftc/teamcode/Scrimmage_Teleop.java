@@ -136,6 +136,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
         drive.arcadeDrive(slowDown ? driver.getLeftY() * 0.5 : driver.getLeftY(), slowDown ? driver.getLeftX() * 0.5 : driver.getLeftX(), driver.getButton(GamepadKeys.Button.B), false);
 
-        worm.setPower(driver.getRightY());
+        //invert the power to match the up and down motion
+        worm.setPower(-driver.getRightY());
     }
 }
