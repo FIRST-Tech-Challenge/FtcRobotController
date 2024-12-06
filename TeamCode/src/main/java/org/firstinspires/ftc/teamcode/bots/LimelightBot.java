@@ -35,6 +35,9 @@ public class LimelightBot extends PinchBot {
 
     public void pickup(boolean isBlueAlliance, boolean includeSharedSample) {
         Sample sample = detectOne(isBlueAlliance, includeSharedSample);
+        if (sample == null) {
+            return;
+        }
         // rotate to the sample orientation
         rotateToAngle(sample.getSampleAngle());
         double xThreshold = 0.5;
