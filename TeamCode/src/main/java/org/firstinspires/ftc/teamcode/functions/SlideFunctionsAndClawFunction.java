@@ -15,6 +15,7 @@ public class SlideFunctionsAndClawFunction {
     public DcMotor leftSlideMotor;
     public TouchSensor slideSafety;
     public Servo Claw;
+    public Servo Wrist;
 
     public SlideFunctionsAndClawFunction(HardwareMap hardwareMap) {
 
@@ -33,6 +34,8 @@ public class SlideFunctionsAndClawFunction {
         leftSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //'initialize' the Claw
         Claw = hardwareMap.get(Servo.class, "Claw");
+        //'initialise' the Wrist
+        Wrist = hardwareMap.get(Servo.class, "Wrist");
     }
 
 
@@ -77,12 +80,28 @@ public class SlideFunctionsAndClawFunction {
         // This function makes so that the claw is closed by default, opens when the driver pressed the right trigger,
         // and closes when the driver releases the right trigger. These magic numbers were found out through testing.
         if (clawButtonPressed) {
-            Claw.setPosition(0.7);
-        }
-        else {
             Claw.setPosition(0.25);
         }
+        else {
+            Claw.setPosition(0.7);
+        }
 
+    }
+
+    public void WristControl(Gamepad gamepad2, Telemetry telemetry) {
+        telemetry.addData("Here's the line for the wrist", Wrist.getPosition());
+        if (gamepad2.left_trigger >= 0.9) {
+            double Current = Wrist.getPosition();
+            if (Current == 1) {
+                Wrist.setPosition(0.25);
+            }
+            else if (Current == 0.25) {
+                Wrist.setPosition(0.6);
+            }
+            else if (Current == 0.6) {
+                Wrist.setPosition(1);
+            }
+        }
     }
 
 }

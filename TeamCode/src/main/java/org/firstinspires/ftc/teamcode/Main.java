@@ -32,6 +32,7 @@ public class Main extends LinearOpMode {
             OmniFunction.OmniUpdate(gamepad1,telemetry);
             SlidesAndClaw.SlideControl(gamepad2, telemetry);
             SlidesAndClaw.ClawControl(gamepad2, telemetry);
+            SlidesAndClaw.WristControl(gamepad2, telemetry);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
