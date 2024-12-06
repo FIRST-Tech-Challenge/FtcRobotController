@@ -51,7 +51,12 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
                 new InstantCommand(()-> {
                     Pose2d position = RobotContainer.odometry.getCurrentPos();
-                    Pose2d correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
+                    Pose2d correctedPosition;
+                    if(RobotContainer.isRedAlliance)
+                        correctedPosition = new Pose2d(position.getX(), -0.755, position.getRotation());
+                    else
+                        correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
+
                     RobotContainer.odometry.setCurrentPos(correctedPosition);
                 }),
 

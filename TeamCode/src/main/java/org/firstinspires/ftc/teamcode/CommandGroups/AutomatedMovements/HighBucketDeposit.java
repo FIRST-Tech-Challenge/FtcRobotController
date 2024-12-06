@@ -37,7 +37,7 @@ public class HighBucketDeposit extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.43, 1.37, new Rotation2d(Math.toRadians(45)))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.46, 1.40, new Rotation2d(Math.toRadians(45)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135)))),
 
                 //new Pause(1),
@@ -48,7 +48,7 @@ public class HighBucketDeposit extends SequentialCommandGroup {
 
                 new BackDepositePose(),
 
-                new Pause(0.75),
+                new Pause(0.85),
 
                 new OpenClaw(),
 
