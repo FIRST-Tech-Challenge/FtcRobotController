@@ -159,10 +159,10 @@ public class RemoteControl extends LinearOpMode {
 
             // Control the claw
             if (gamepad1.right_bumper && claw_position < CLAW_MAX) {
-                claw_position += 0.02;
+                claw_position += 0.08;
             }
             if (gamepad1.left_bumper && claw_position > CLAW_MIN) {
-                claw_position -= 0.015;
+                claw_position -= 0.025;
             }
             claw.setPosition(claw_position);
 
