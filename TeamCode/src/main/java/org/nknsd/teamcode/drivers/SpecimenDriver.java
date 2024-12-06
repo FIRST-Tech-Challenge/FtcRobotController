@@ -89,6 +89,13 @@ public class SpecimenDriver implements NKNComponent {
             }
         }
     };
+    Runnable goToRestingAfterRelease = new Runnable(){
+
+        @Override
+        public void run() {
+            specimenRotationHandler.goToPosition(SpecimenRotationHandler.SpecimenRotationPositions.MIDDLE);
+        }
+    };
     Runnable grip = new Runnable() {
         @Override
         public void run() {
@@ -120,6 +127,7 @@ public class SpecimenDriver implements NKNComponent {
         gamePadHandler.addListener2(controlScheme.specimenRelease(), release, "Specimen Release");
         gamePadHandler.addListener2(controlScheme.specimenRaise(), specimenExtend, "Specimen Extend");
         gamePadHandler.addListener2(controlScheme.specimenLower(), specimenRetract, "Specimen Lower");
+        gamePadHandler.addListener2(controlScheme.goToRestingAfterRelease(), goToRestingAfterRelease,"Go To Resting After Release");
     }
 
     @Override

@@ -11,9 +11,11 @@ import org.nknsd.teamcode.frameworks.NKNComponent;
 public class SpecimenClawHandler implements NKNComponent {
     private final String clawName = "specimenClaw";
     private Servo servo;
+    public ClawPositions clawPosition;
 
     public void setClawPosition(ClawPositions clawPositions) {
         servo.setPosition(clawPositions.position);
+        clawPosition = clawPositions;
     }
 
     @Override
