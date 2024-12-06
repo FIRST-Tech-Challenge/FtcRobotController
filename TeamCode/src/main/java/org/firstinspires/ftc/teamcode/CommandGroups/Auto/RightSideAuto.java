@@ -9,6 +9,8 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep1;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep2;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
@@ -40,34 +42,6 @@ public class RightSideAuto extends SequentialCommandGroup {
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
                 new SpecimenPlacePos(),
-//                // folds the elbow in 270
-//                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(255)),
-//                //powers shoulder
-//                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
-//
-//                new Pause(1.49),
-//
-//
-//                // lifts the shoulder up 90+-60 degrees
-//                // lifts the shoulder up to 135 degrees
-//                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(135)),
-//
-//                // folds the wrist in 0
-//                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(15)),
-//
-//                // powers the wrist and moves it to straight position
-//                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
-
-
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(-90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-0.25, 1.0, new Rotation2d(Math.toRadians(-90.0))),
-//                        new Rotation2d(Math.toRadians(-90))),
 
                 //Place specimen
                 new PlaceSpecimenAddOffset(),
@@ -88,83 +62,9 @@ public class RightSideAuto extends SequentialCommandGroup {
 
                 new Pause(0.5),
 
-                //sweep 1
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-0.85, 1.1, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
+                new Sweep1(),
 
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(-90.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-0.85, 0.3, new Rotation2d(Math.toRadians(-90.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        new Rotation2d(Math.toRadians(180.0)),
-                        new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-1.15, 0.3, new Rotation2d(Math.toRadians(180.0))),
-                        new Rotation2d(Math.toRadians(-90.0))
-                ),
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-1.15, 1.35, new Rotation2d(Math.toRadians(90.0))),
-//                        new Rotation2d(Math.toRadians(-90.0))
-//                ),
-
-//                // Sweep 2
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(-90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-1.15, 0.3, new Rotation2d(Math.toRadians(-90.0))),
-//                        new Rotation2d(Math.toRadians(-90.0))
-//                ),
-//
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(180.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-1.45, 0.3, new Rotation2d(Math.toRadians(180.0))),
-//                        new Rotation2d(Math.toRadians(-90.0))
-//
-//                ),
-//
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(-1.45, 1.35, new Rotation2d(Math.toRadians(90.0))),
-//                        new Rotation2d(Math.toRadians(-90.0))
-//                ),
+                //new Sweep2(),
 
                 new WallPickUp(),
 

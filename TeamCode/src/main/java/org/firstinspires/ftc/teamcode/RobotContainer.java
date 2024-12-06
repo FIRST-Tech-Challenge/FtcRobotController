@@ -148,7 +148,7 @@ public class RobotContainer {
 
        // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new FullClimb());
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
 
         // Controls the claw using bumpers
         // left = close

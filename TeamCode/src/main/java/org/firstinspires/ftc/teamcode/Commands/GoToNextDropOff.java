@@ -191,7 +191,11 @@ public class GoToNextDropOff extends CommandBase {
             rotationRate = 0.0;
 
         // decrement destination for next time
-        x_dest_decrement +=0.05;
+        if(RobotContainer.isRedAlliance)
+            x_dest_decrement -=0.05;
+        else
+            x_dest_decrement +=0.05;
+
     }
 
     // This method is called periodically while command is active

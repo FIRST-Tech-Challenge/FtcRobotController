@@ -106,9 +106,9 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.25,
                         0.0,
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-10))),
-                        new ArrayList<Translation2d>() {{ }},
+                      new ArrayList<Translation2d>() {{ }},
                       AutoFunctions.redVsBlue(new Pose2d(1.66, 0.28, new Rotation2d(Math.toRadians(0)))),
-                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(70)))),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(60)))),
 
 
                 // drops the elbow to 175 degrees for pick up
@@ -118,14 +118,14 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
 
                 // same as in hunting pos moving wrist 45 degrees
-                new Pause(0.35),
+                new Pause(0.25),
 
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
 
                 // sets wrist rotate to 150
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(170)),
 
-                new Pause(1.75),
+                new Pause(1.45),
 
                 new CloseClaw(),
 

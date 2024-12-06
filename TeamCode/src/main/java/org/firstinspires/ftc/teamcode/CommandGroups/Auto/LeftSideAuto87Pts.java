@@ -6,10 +6,12 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.GroundCyclingAuto;
 import org.firstinspires.ftc.teamcode.Commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
@@ -52,7 +54,21 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                 // pickup all three and cycling in high bucket
                 new GroundCyclingAuto(),
 
+
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(125)),
+
+                // folds the elbow in 270
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(250)),
+
+                // folds the wrist in 0
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
+
+                // powers the wrist and moves it to straight position
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
+
+                new OpenClaw(),
                 // move to park position
+
                 new FollowPath(
                         2.0,
                         1.0,
@@ -60,8 +76,9 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(0.7, 0.3, new Rotation2d(Math.toRadians(-180)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))))
+                        AutoFunctions.redVsBlue(new Pose2d(0.6, 0.25, new Rotation2d(Math.toRadians(-180)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-180))))
+
 
 //                new FollowPath(
 //                        2.0,
