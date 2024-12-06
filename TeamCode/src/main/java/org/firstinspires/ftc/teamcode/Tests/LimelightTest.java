@@ -20,8 +20,6 @@ LimelightTest extends LinearOpMode {
 
     private Limelight3A limelight;
     IMU imu;
-
-    @Override
     public void runOpMode() throws InterruptedException
     {
         imu = hardwareMap.get(IMU.class, "imu");
