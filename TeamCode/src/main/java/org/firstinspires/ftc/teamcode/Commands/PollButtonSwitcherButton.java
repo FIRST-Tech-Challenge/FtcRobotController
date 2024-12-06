@@ -58,7 +58,7 @@ public class PollButtonSwitcherButton extends CommandBase {
 
 
                     // map the auto commands
-                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
+                    RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.A).whileHeld(new WallPickUp());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
                     RobotContainer.driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SweepAlliancePieces());
