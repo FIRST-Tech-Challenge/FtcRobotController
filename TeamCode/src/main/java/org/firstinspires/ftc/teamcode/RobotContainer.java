@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
@@ -43,6 +44,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 //import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
@@ -118,7 +120,10 @@ public class RobotContainer {
         // bind gyro reset to back button.
         // Note: since reset is very simple command, we can just use 'InstandCommand'
         // instead of creating a full command, just to run one line of java code.
-        driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
+        //driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
+
+        driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> odometry.setCurrentPos(AutoFunctions.redVsBlue(
+        new Pose2d(0.16, 0.76, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
 
@@ -138,13 +143,15 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
+        //driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
         //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new HighBucketDeposit());
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SweepAlliancePieces());
 
        // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 

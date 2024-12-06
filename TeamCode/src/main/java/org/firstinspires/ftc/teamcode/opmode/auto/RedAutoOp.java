@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
-@Autonomous(name="Red Auto", group="OpMode")
+@Autonomous(name="Red Auto", group="OpMode", preselectTeleOp="Red TeleOp")
 @Disabled
 public class RedAutoOp extends CommandOpMode {
 

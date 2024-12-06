@@ -30,7 +30,7 @@ public class RedTeleop extends CommandOpMode {
         // ---------- autonomous command ----------
 
         // add autonomous command to scheduler and run it
-        new StartingArmStowHigh().schedule();
+        //new StartingArmStowHigh().schedule();
     }
 
     // Run Op Mode. Is called after user presses play button
