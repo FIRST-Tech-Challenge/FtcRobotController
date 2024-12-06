@@ -31,14 +31,6 @@ LimelightTest extends LinearOpMode {
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
 
-        // First, tell Limelight which way your robot is facing
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
-        limelight.updateRobotOrientation(robotYaw);
-
-        /*
-         * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
-         */
         limelight.start();
 
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -55,6 +47,12 @@ LimelightTest extends LinearOpMode {
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
 
+            // First, tell Limelight which way your robot is facing
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            double robotYaw = orientation.getYaw(AngleUnit.DEGREES);
+            limelight.updateRobotOrientation(robotYaw);
+
+
             LLResult result = limelight.getLatestResult();
 
 
@@ -69,8 +67,8 @@ LimelightTest extends LinearOpMode {
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
                 if (botpose_mt2 != null) {
-                    double x = botpose_mt2.getPosition().x;
-                    double y = botpose_mt2.getPosition().y;
+                    double x = (100/(botpose_mt2.getPosition().x)) - 33; //inches
+                    double y = (botpose_mt2.getPosition().y - 1.2) * 39.37; //inches
                     telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
             } else {
