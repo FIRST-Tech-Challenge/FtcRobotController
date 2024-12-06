@@ -53,7 +53,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
         worm = new Worm(hardwareMap, telemetry);
         grabber = new Grabber(hardwareMap, telemetry);
         wrist = new Wrist(hardwareMap, telemetry);
-        wrist.Goto(0);
+
         climber = new Climber(hardwareMap, telemetry);
         climber.Goto(0);
 
@@ -116,7 +116,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
 
         driver.getGamepadButton(GamepadKeys.Button.A).toggleWhenActive(new GrabberPickupToggleCommand(grabber));
-        driver.getGamepadButton(GamepadKeys.Button.X).toggleWhenActive(new GrabberDropToggleCommand(grabber));
+        driver.getGamepadButton(GamepadKeys.Button.B).toggleWhenActive(new GrabberDropToggleCommand(grabber));
     }
 
     @Override
@@ -134,7 +134,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
 
         boolean slowDown = driver.getButton(GamepadKeys.Button.Y);
 
-        drive.arcadeDrive(slowDown ? driver.getLeftY() * 0.5 : driver.getLeftY(), slowDown ? driver.getLeftX() * 0.5 : driver.getLeftX(), driver.getButton(GamepadKeys.Button.B), false);
+        drive.arcadeDrive(slowDown ? driver.getLeftY() * 0.5 : driver.getLeftY(), slowDown ? driver.getLeftX() * 0.5 : driver.getLeftX(), driver.getButton(GamepadKeys.Button.X), false);
 
         //invert the power to match the up and down motion
         worm.setPower(-driver.getRightY());

@@ -14,15 +14,17 @@ public class Wrist extends SubsystemBase {
     private Telemetry tm;
     public boolean Active = false;
     private int CurrentAngle;
-    private int MinimumAngle = -50;
-    private int MaximumAngle = 50;
+    private int MinimumAngle = -10;
+    private int MaximumAngle = 150;
     private int Speed = 1; //default speed is 1
 
 
     public Wrist(HardwareMap hardwareMap, Telemetry telemetry){
         tm = telemetry;
         //TODO: fix this name from config
-        servo = new SimpleServo(hardwareMap, "wrist", MinimumAngle, MaximumAngle);
+        servo = new SimpleServo(hardwareMap, "wrist", -150, 150);
+        servo.setPosition(1);
+        CurrentAngle = 150;
         servo.setInverted(false);
         //setAngle(0);
     }
