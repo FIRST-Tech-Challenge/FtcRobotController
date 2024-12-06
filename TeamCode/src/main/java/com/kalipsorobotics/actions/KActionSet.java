@@ -18,7 +18,7 @@ public class KActionSet extends Action {
             return;
         }
         for (Action a : actions) {
-            if (a.dependantActionsDone()) {
+            if (a.dependentActionsDone()) {
                 Log.d("action set log", "executing " + a);
                 a.updateCheckDone();
             }
@@ -35,12 +35,12 @@ public class KActionSet extends Action {
         isDone = true;
         return isDone;
     }
-    public void printWithDependantActions() {
+    public void printWithDependentActions() {
         Log.d("action dependancies", "Start Action Set");
-        super.printWithDependantActions();
+        super.printWithDependentActions();
 
         for (Action a : actions) {
-            a.printWithDependantActions();
+            a.printWithDependentActions();
         }
         Log.d("action dependancies", "End Action Set");
 

@@ -27,6 +27,7 @@ public class MoveLSAction extends Action {
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
     final double targetTicks;
     private double currentTicks;
+
     public MoveLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
@@ -74,8 +75,7 @@ public class MoveLSAction extends Action {
         } else {
             currentTargetTicks = this.targetTicks;
         }
-
-
+        
         //soft stop for low and high
         if (currentTargetTicks > MAX_RANGE_LS_TICKS) {
             currentTargetTicks = MAX_RANGE_LS_TICKS;

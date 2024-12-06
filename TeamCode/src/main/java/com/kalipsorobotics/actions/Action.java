@@ -64,7 +64,7 @@ public abstract class Action {
 
     }
 
-    public boolean dependantActionsDone() {
+    public boolean dependentActionsDone() {
         for (Action a : dependentActions) {
             if (!a.isDone) {
                 return false;
@@ -102,7 +102,7 @@ public abstract class Action {
         this.name = name;
     }
 
-    public void printWithDependantActions() {
+    public void printWithDependentActions() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.name);
         stringBuilder.append("--->");

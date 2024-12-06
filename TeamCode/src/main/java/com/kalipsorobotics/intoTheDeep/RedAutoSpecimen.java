@@ -139,7 +139,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         initAuto.updateCheckDone();
 
-        redAutoSpecimen.printWithDependantActions();
+        redAutoSpecimen.printWithDependentActions();
         waitForStart();
         while (opModeIsActive()) {
 
