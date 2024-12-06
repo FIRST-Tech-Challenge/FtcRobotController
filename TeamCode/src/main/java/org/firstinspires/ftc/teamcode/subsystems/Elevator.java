@@ -59,18 +59,15 @@ public class Elevator extends SubsystemBase {
     }
 
     public void retractTwoInches() {
-        double currentDistance = this.getHorizontalExtension();
-        double targetDistance = currentDistance - 2;
-        while (targetDistance > currentDistance) {
+        double targetDistance = this.getHorizontalExtension() - 2;
+        telemetry.addData("Retract Target", targetDistance);
+        telemetry.addData("Retract Current", this.getHorizontalExtension());
+        while (targetDistance > this.getHorizontalExtension()) {
             this.retract(0.5);
         }
+        telemetry.addData("Attempting to retract Elevator", "complete");
         this.brake();
     }
-
-//    public void extend(int position) {
-//        extendingPosition = position;
-//        extend(0.5);
-//    }
 
     public void retract(){
         retract(-0.5);
@@ -125,7 +122,7 @@ public class Elevator extends SubsystemBase {
         //wormAngle
          // Changes angle to radians as java uses them by default
         double horizontalExtension = getHorizontalExtension();
-        return horizontalExtension >= 21;
+        return horizontalExtension >= 19;
     }
 
     public double getHorizontalExtension() {
