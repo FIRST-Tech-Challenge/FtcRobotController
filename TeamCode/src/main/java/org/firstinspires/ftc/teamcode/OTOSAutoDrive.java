@@ -91,7 +91,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 500) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 12, 45, 1.5);  // Go to basket
+        driveToLoc(10, 11, 45, 1.5);  // Go to basket
         sleep(500);
         setClaw(CLAW_MAX);                                          // Drop second block
         
@@ -113,14 +113,14 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(300);
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(26, 13, -10, 1);
+        driveToLoc(26, 11, -10, 1);
         setViper(VIPER_GROUND);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
         driveToLoc(26, 17, -10, 1);  // Move forward to get block
         setClaw(CLAW_MIN);                                          // Grab fourth block
-        driveToLoc(25, 12, -10);
+        driveToLoc(24, 12, -10);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 800) { sleep(10); }
         setViper(VIPER_MAX);
@@ -135,7 +135,10 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MIN);
         driveToLoc(50, 5, 0); // todo: og xtarget is 55
         setAscentStick(ASCENT_MAX);
+        driveToLoc(50, -7, 180); // This midpoint used to slow robot down
+        sleep(100);
         driveToLoc(50, -12, 180);
+        sleep(300);
         RobotLog.vv("Rockin'", "End program");
         claw.close();                                               // Release tension on the claw
         // End of autonomous program
