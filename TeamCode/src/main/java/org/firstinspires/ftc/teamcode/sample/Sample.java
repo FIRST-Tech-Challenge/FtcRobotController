@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sample {
-    public static final float targetTx = 0.2f;
-    public static final float targetTy = 0.2f;
+    protected double targetTx;
+    protected double targetTy;
     public static final float targetArea = 40.0f;
     public static final int redSamplePipeline = 1;
     public static final int blueSamplePipeline = 2;
@@ -22,8 +22,10 @@ public class Sample {
     public LLResultTypes.ColorResult colorResult;
 
     // constructor
-    public Sample(LLResult llResult) {
+    public Sample(LLResult llResult, double targetTx, double targetTy) {
         this.llResult = llResult;
+        this.targetTx = targetTx;
+        this.targetTy = targetTy;
     }
 
     /**
@@ -220,8 +222,8 @@ public class Sample {
         int result = isLLResultValid();
         if (result > 0) {
             return "Sample{" +
-                    "x=" + getX() +
-                    ", y=" + getY() +
+                    "x=" + getDeltaX() +
+                    ", y=" + getDeltaY() +
                     ", d=" + getDistance() +
                     ", a=" + getSampleAngle() +
                     ", whr=" + getSampleWHRatio() +
