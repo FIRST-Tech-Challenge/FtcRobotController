@@ -5,6 +5,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.MIN_RANGE_LS_TICKS;
 
 import android.util.Log;
 
+import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.math.CalculateTickPer;
@@ -18,36 +19,31 @@ public class MoveOuttakeLSAction extends Action {
         Down, SPECIMEN, BASKET
     }
 
+
     Outtake outtake;
 
     private static double globalLinearSlideMaintainTicks = 0;
     DcMotor linearSlide1, linearSlide2;
     final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
-    double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
+    private final PidNav pidOuttakeLS;
     final double targetTicks;
     private double currentTicks;
-
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
+        double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
+        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0.00001, 0);
         this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
-        if(targetTicks > MAX_RANGE_LS_TICKS) {
-            Log.e("Outtake_LS", "target out of range, target: " + targetTicks + ", max: " + MAX_RANGE_LS_TICKS);
-        }
         this.dependentActions.add(new DoneStateAction());
     }
 
     private double calculatePower(double targetError) {
-        double power = targetError * P_CONSTANT;
-        double lowestPower = 0.2;
+        double power = pidOuttakeLS.getPower(targetError);
+        double lowestPower = 0.15;
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.25;
-        }
-
-        if (globalLinearSlideMaintainTicks > 1900) {
-            lowestPower = 0.4;
+            lowestPower = 0.3;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -81,6 +77,7 @@ public class MoveOuttakeLSAction extends Action {
         } else {
             currentTargetTicks = this.targetTicks;
         }
+
 
         //soft stop for low and high
         if (currentTargetTicks > MAX_RANGE_LS_TICKS) {
