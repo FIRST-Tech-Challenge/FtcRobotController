@@ -13,13 +13,13 @@ public class BasketReadyAction extends KActionSet {
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);
 
-        MoveLSAction raiseSlides = new MoveLSAction(outtake, 1093);
+        MoveOuttakeLSAction raiseSlides = new MoveOuttakeLSAction(outtake, 1093);
         raiseSlides.setName("raiseSlides");
         this.addAction(raiseSlides);
 
-        KServoAutoAction outtakePivotActionOpen = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_BASKET_POS);
-        outtakePivotActionOpen.setName("outtakePivotActionOpen");
-        this.addAction(outtakePivotActionOpen);
+        KServoAutoAction outtakePivotActionUp = new KServoAutoAction(outtake.getOuttakePivotServo(),
+                OuttakePivotAction.OUTTAKE_PIVOT_HALF_POS);
+        outtakePivotActionUp.setName("outtakePivotActionUp");
+        this.addAction(outtakePivotActionUp);
     }
 }
