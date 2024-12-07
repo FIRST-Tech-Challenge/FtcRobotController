@@ -27,10 +27,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * @version 2.0, 11/28/2024
  */
 
-//@Autonomous(name = "AutonPedro", group = "Autos")
-public class AutonPedroSpecimens extends OpMode {
+@Autonomous(name = "AutonPedro", group = "Autos")
+public class AutonPedroSpecimens extends LinearOpMode{
 
-    protected AutomationBot robot; //= new AutomationBot(this);
+    protected AutomationBot robot = new AutomationBot(this);
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
@@ -316,23 +316,8 @@ public class AutonPedroSpecimens extends OpMode {
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
-    public void loop() {
+    public void runOpMode() throws InterruptedException {
 
-        // These loop the movements of the robot
-        follower.update();
-        autonomousPathUpdate();
-
-        // Feedback to Driver Hub
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.update();
-    }
-
-    /** This method is called once at the init of the OpMode. **/
-    @Override
-    public void init() {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
 
@@ -342,22 +327,22 @@ public class AutonPedroSpecimens extends OpMode {
         follower.setStartingPose(startPose);
 
         buildPaths();
-    }
-
-    /** This method is called continuously after Init while waiting for "play". **/
-    @Override
-    public void init_loop() {}
-
-    /** This method is called once at the start of the OpMode.
-     * It runs all the setup actions, including building paths and starting the path system **/
-    @Override
-    public void start() {
+        waitForStart();
         opmodeTimer.resetTimer();
         setPathState(0);
-    }
+        while (isStarted() == true) {
 
-    /** We do not use this because everything should automatically disable **/
-    @Override
-    public void stop() {
+            // These loop the movements of the robot
+            follower.update();
+            autonomousPathUpdate();
+
+            // Feedback to Driver Hub
+            telemetry.addData("path state", pathState);
+            telemetry.addData("x", follower.getPose().getX());
+            telemetry.addData("y", follower.getPose().getY());
+            telemetry.addData("heading", follower.getPose().getHeading());
+            telemetry.update();
+        }
+
     }
 }
