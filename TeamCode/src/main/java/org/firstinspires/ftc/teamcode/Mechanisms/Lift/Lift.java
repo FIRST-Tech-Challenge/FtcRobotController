@@ -26,7 +26,7 @@ public class Lift {
     FeedForward feedForward;
     PID pid;
     double motorPower;
-    int currentPosition;
+    public int currentPosition;
     public DcMotorAdvanced liftMotorLeft;
     public DcMotorAdvanced liftMotorRight;
     Encoder encoder;

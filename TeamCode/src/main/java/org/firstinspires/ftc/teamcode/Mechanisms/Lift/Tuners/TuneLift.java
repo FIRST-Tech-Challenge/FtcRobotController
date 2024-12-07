@@ -26,13 +26,8 @@ public class TuneLift extends LinearOpMode {
         Lift lift = new Lift(hardwareMap, new Battery(hardwareMap));
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
-        telemetry.addLine("Looptime [ms]: " + 0);
-        telemetry.addLine("X [in]: " + 0);
-        telemetry.addLine("Y [in]: " + 0);
-        telemetry.addLine("Theta [deg]: " + 0);
-        telemetry.addLine("XVelocity [in/s]: "+0);
-        telemetry.addLine("YVelocity [in/s]: "+0);
-        telemetry.addLine("angularVelocity [rad/s]: "+0);
+        telemetry.addLine("Height [in]: " + 0);
+        telemetry.addLine("Velocity [in/s]: "+0);
         telemetry.update();
         waitForStart();
 
@@ -44,6 +39,7 @@ public class TuneLift extends LinearOpMode {
                                 new Action() {
                                     @Override
                                     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                                        telemetryPacket.addLine("Height: " +lift.currentPosition);
                                         telemetryPacket.addLine("Velocity: " +lift.liftMotorLeft.getVelocity());
                                         return true;
                                     }
