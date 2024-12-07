@@ -144,7 +144,7 @@ public class Mekanism {
     }
     telemetry.addData("pivot current pos", pivot.getCurrentPosition());
 
-    x *= .75;
+    x *= .5;
     pivot.setPower(x);
   }
 

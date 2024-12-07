@@ -109,7 +109,7 @@ public class Swerve {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpoint, Module.maxDriveSpeedMetersPerSec * speedMult);
 
-    maxErrorDeg = 0.5;
+    maxErrorDeg = 0;
     for (int i = 0; i < 4; i++) {
       maxErrorDeg = Math.max(modules[i].run(setpoint[i]), maxErrorDeg);
     }
@@ -189,24 +189,22 @@ public class Swerve {
 
   private static final class Module {
     private static final double conversionFactor;
-
-    String pos = "";
     static final double maxDriveSpeedMetersPerSec;
     static final double maxSteerSpeedRadPerSec;
 
+    static {
       // TODO figure this shit out(mostly done)
-      static double countsPerRevolution = 537.7;
-      static double gearRatio = 1.1;
-      static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
-      static double maxMotorVelocity = 436.0 / 60.0;
+      double countsPerRevolution = 537.7;
+      double gearRatio = 1.1;
+      double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
+      double maxMotorVelocity = 436.0 / 60.0;
 
-      static {
-        conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
-        maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
+      conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
+      maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
 
-        double maxSpeedSecondsPer60Degrees = .14 * .863;
-        maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
-      }
+      double maxSpeedSecondsPer60Degrees = .14 * .863;
+      maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
+    }
 
     final DcMotorEx driveMotor;
     final Servo steerServo;
@@ -226,22 +224,19 @@ public class Swerve {
     Module(OpMode opMode, int id) {
 
       steerPID = new PIDController(kp, ki, kd);
+      String pos;
       switch (id) {
         case 0 -> {
           pos = "FL";
-          countsPerRevolution = 537.0;
         }
         case 1 -> {
           pos = "FR";
-          countsPerRevolution = 537.7;
         }
         case 2 -> {
           pos = "BL";
-          countsPerRevolution = 538.0;
         }
         case 3 -> {
           pos = "BR";
-          countsPerRevolution = 537.0;
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
@@ -272,7 +267,6 @@ public class Swerve {
       driveMotor.setPower(
           driveFeedforward.calculate(state.speedMetersPerSecond)
               + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
-      telemetry.addData("motor speed: ",driveMotor.getPower());
 
       var errorDeg = state.angle.minus(servoPos).getDegrees();
       telemetry.addData("Swerve/Module " + id + "/Angle error (Deg)", errorDeg);
