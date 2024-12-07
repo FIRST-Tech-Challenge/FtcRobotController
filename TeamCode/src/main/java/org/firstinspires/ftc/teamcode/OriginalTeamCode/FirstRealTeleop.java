@@ -36,7 +36,7 @@ public class FirstRealTeleop extends LinearOpMode{
 
     double actuatorPos = 0;
     double armRotPos = 0;
-    double wristPos = 0.5;
+    double wristPos = 1;
     void linearActuatorMover(){
         linearActuator.setTargetPosition((int)actuatorPos);
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -269,19 +269,19 @@ public class FirstRealTeleop extends LinearOpMode{
             }
 
             //extenders
-            armPos += gamepad2.left_trigger*25 + -gamepad2.right_trigger*25;
+            armPos += gamepad2.left_trigger*75 + -gamepad2.right_trigger*75;
 //            armLifterLeft.setPower(gamepad2.right_stick_y);
 //            armLifterRight.setPower(gamepad2.right_stick_y);
 
 //            //wrist
-            if(gamepad2.dpad_left){
-                wristPos = 0.5;}
-//            if(gamepad2.right_stick_y > 0.1 && wristPos <= 1){
-//                wristPos += 0.05;
-//            } else if (gamepad2.right_stick_y < -0.1 && wristPos >= -1) {
-//                wristPos -= 0.05;
-//            }
-            wrist.setPosition(-wristPos);
+//            if(gamepad2.dpad_left){
+//                wristPos = 0.5;}
+            if(gamepad2.right_stick_y > 0.1 && wristPos <= 1){
+                wristPos += 0.01;
+            } else if (gamepad2.right_stick_y < -0.1 && wristPos >= 0) {
+                wristPos -= 0.01;
+            }
+            wrist.setPosition(wristPos);
 
             //spool
             int spoolPow = 0;
@@ -310,6 +310,8 @@ public class FirstRealTeleop extends LinearOpMode{
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            telemetry.addData("Wrist set pos",wrist.getPosition());
+            telemetry.addData("Wrist wanted set pos", wrist.getPosition());
             telemetry.update();
         }
     }
