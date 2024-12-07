@@ -127,7 +127,6 @@ public class Lift {
     }
     public Action manualControl(double power) {
         return new Action() {
-            double power;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 checkLimit();
