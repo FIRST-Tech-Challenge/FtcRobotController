@@ -27,19 +27,20 @@ public class Lift {
     PID pid;
     double motorPower;
     int currentPosition;
-    DcMotorAdvanced liftMotorLeft;
-    DcMotorAdvanced liftMotorRight;
+    public DcMotorAdvanced liftMotorLeft;
+    public DcMotorAdvanced liftMotorRight;
     Encoder encoder;
     TouchSensor limiter;
-    public static double kA=0.12;
-    public static double kV=0.13;
-    public static double kS=0.067;
-    public static double kP = 0.25;
+    public static double kA=0;
+    public static double kV=0;
+    public static double kS=0;
+    public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
     double spoolRadius =  0.702; // [in]
     int ticksPerRev = 1024;
     public static double maxAcceleration = 50.0;
+    public static double maxDeceleration = 50.0;
     public static double maxVelocity = 60;
     boolean reverse;
     public static double maxVoltage = 12.5;
@@ -97,7 +98,7 @@ public class Lift {
 
         reverse = !(targetHeight - currentPosition >= 0);
 
-        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxAcceleration, reverse);
+        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
 
         // When you call getPos from the motion profile, you're getting a distance NOT a target. How 
         // can you solve this? Hint: add two things.
