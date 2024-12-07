@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class nematocyst {
-    private DcMotorEx pivot;
-    private DcMotorEx slideMotor;
+    private DcMotor pivot;
+    private DcMotor slideMotor;
     private Servo claw;
     private Servo wrist;
     double pivotPower;
@@ -45,8 +45,8 @@ public class nematocyst {
         opMode = OM;
     }
     public void init(String pivotName, String slideName, String wristName, String clawName) {
-        slideMotor = opMode.hardwareMap.get(DcMotorEx.class, slideName);
-        pivot = opMode.hardwareMap.get(DcMotorEx.class, pivotName);
+        slideMotor = opMode.hardwareMap.get(DcMotor.class, slideName);
+        pivot = opMode.hardwareMap.get(DcMotor.class, pivotName);
         claw = opMode.hardwareMap.get(Servo.class, clawName);
         wrist = opMode.hardwareMap.get(Servo.class, wristName);
 //        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

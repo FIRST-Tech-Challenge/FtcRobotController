@@ -34,7 +34,7 @@ public class SwerveDrive {
     public ElapsedTime timer;
     SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveDriveKinematics kinematics; // FTCLIB FOR AUTO
-    public static double inPerTick = (7.421/2)/537.7;
+    public static double metersPerTick = 0.0001297;
     voltageToAngleConstants angleGetter;
     gamepadToVectors vectorGetter;
     PIDController[] anglePID;
@@ -90,8 +90,8 @@ public class SwerveDrive {
 
         motorTimer = new ElapsedTime();
         for (int i = 0; i < driveMotors.length; i++) {
+            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()- lastDriveEncoders[i], motorTimer);
             lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
-            driveSpeeds[i] = getVelocity(lastDriveEncoders[i], motorTimer);
         }
         targetADPairList.ensureCapacity(4);
         targetADPairList.add(new Pair<>(0.0, 0.0));
@@ -162,7 +162,7 @@ public class SwerveDrive {
     public double getVelocity(int tickChange, ElapsedTime timer) {
         double timeChange = timer.seconds();
         double ticksPerSecond = tickChange/timeChange;
-        return inPerTick * ticksPerSecond;
+        return metersPerTick * ticksPerSecond;
     }
     public void loop(double x, double y, double rx) {
         angles = angleGetter.getBigPulleyAngles();
@@ -207,6 +207,8 @@ public class SwerveDrive {
             anglePowers[i] = angleOutput;
             drivePowers[i] = speedOutput;
             states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(angles[i]));
+            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()- lastDriveEncoders[i], motorTimer);
+            lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
 
             // reset the last position and time for velocity calcs
         }
@@ -247,6 +249,10 @@ public class SwerveDrive {
         t.addData("offsetFR", angleGetter.offsets[1]);
         t.addData("offsetBL", angleGetter.offsets[2]);
         t.addData("offsetBR", angleGetter.offsets[3]);
+        t.addData("FLVelocity", driveSpeeds[0]);
+        t.addData("FRVelocity", driveSpeeds[1]);
+        t.addData("BLVelocity", driveSpeeds[2]);
+        t.addData("BRVelocity", driveSpeeds[3]);
         t.update();
     }
 }

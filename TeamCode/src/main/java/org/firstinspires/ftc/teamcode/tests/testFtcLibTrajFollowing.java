@@ -85,9 +85,9 @@ public class testFtcLibTrajFollowing extends OpMode {
         xDiff = trajPose.getX() - now.getX();
         yDiff = trajPose.getY() - now.getY();
         degDiff = trajPose.getRotation().getDegrees() - now.getRotation().getDegrees();
-        rotPower = Math.signum(degDiff);
+        rotPower = Math.signum(degDiff) * degDiff;
         if (gamepad1.a) { eStop = true;}
-        if (!eStop) { drive.loop(xDiff, yDiff,rotPower); }
+        if (!eStop) { drive.loop(xDiff/100000000, yDiff/1000000,rotPower/2); }
         else {
             t2.addLine("Stopped");
             telemetry.addLine("Stopped");
