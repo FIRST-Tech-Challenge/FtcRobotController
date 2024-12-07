@@ -36,8 +36,10 @@ public class PinpointDrive extends MecanumDrive {
 //        public double yOffset = -6.6142;
 //        public double xOffset = .4511;
 //        public double yOffset = -.0288; //5.25;
-          public double xOffset = 0.0288;
-          public double yOffset = 0.4511; //5.25;
+//          public double xOffset = 0.0288;
+//          public double yOffset = -0.4511; //5.25;
+        public double xOffset = 0.2163536055238626;
+        public double yOffset = -1.0117115597703905;
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -57,7 +59,7 @@ public class PinpointDrive extends MecanumDrive {
         you move the robot to the left.
          */
         public GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
-        public GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+        public GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
     }
 
     public static Params PARAMS2 = new Params();
