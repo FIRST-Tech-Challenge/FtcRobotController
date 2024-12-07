@@ -278,9 +278,9 @@ public class OdometryBot extends GyroBot {
         twist = twistPID.getOutput(thetaDEG, targetTheta);
         double rawDriveAngle = Math.toDegrees(Math.atan2(xTarget - xBlue, yTarget - yBlue));
         driveAngle = -(rawDriveAngle - thetaDEG);
-        magnitude = Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/5000, 0))*2);
-        if (Math.abs(distanceToTarget) < 8000) {
-            magnitude = Math.max(0.2, Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/1500, 0))));
+        magnitude = Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/1250, 0))*1.5);
+        if (Math.abs(distanceToTarget) < 2000) {
+            magnitude = Math.max(0.2, Math.min(1.0, Math.abs(drivePID.getOutput(distanceToTarget/500, 0))));
         }
         if (xBlue > xTarget) {
             distanceToTarget = - Math.sqrt(Math.pow(xBlue - xTarget, 2) + Math.pow(yBlue - yTarget, 2));

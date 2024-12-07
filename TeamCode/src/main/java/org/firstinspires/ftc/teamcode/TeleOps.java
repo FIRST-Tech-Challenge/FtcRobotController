@@ -68,7 +68,7 @@ public class TeleOps extends LinearOpMode {
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 //            robot.scoreSpecimen(gamepad2.y);
 //            robot.hang(gamepad2.b);
-            // limelight test
+            // limelight detection check
             if (gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up) {
                 robot.inAutoPickup = false;
                 robot.openPinch();
@@ -100,6 +100,12 @@ public class TeleOps extends LinearOpMode {
                 }
 //                telemetry.addData("limelight", robot.limelight.getConnectionInfo());
                 telemetry.addData("limelight.status", robot.limelight.getStatus());
+            }
+            if (gamepad2.a){
+                robot.strafing(5, 0.6);
+            }
+            if (gamepad2.b){
+                robot.strafing(5, 0.6);
             }
             if (gamepad2.left_bumper){
                 robot.pickup(true, true, true, telemetry);

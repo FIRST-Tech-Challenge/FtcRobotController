@@ -180,10 +180,10 @@ public class FourWheelDriveBot extends BotBot{
         leftRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
 //        print(String.format("Starting at leftFront: %7d, rightFront:%7d, leftRear:%7d, rightRear:%7d",
@@ -530,5 +530,27 @@ public class FourWheelDriveBot extends BotBot{
                 rightRear.getCurrentPosition()));
     }
 
+    public void strafing(double distance, double power){
+        int target = (int)(distance * CENTIMETER_TO_DRIVING_MOTOR_CONVERSION_RATE);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setPower(power);
+        rightFront.setPower(power);
+        leftRear.setPower(power);
+        rightRear.setPower(power);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        leftFront.setTargetPosition(leftFront.getCurrentPosition() - target);
+        rightFront.setTargetPosition(rightFront.getCurrentPosition() + target);
+        leftRear.setTargetPosition(leftRear.getCurrentPosition() + target);
+        rightRear.setTargetPosition(rightRear.getCurrentPosition() - target);
+
+    }
 }
 
