@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.bots;
 
 import android.content.Context;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.stormbots.MiniPID;
+
+import org.firstinspires.ftc.teamcode.AutonPedroSpecimens;
 
 import java.io.OutputStreamWriter;
 
@@ -78,7 +79,7 @@ public class OdometryBot extends GyroBot {
 
     OutputStreamWriter odometryWriter;
 
-    public OdometryBot(LinearOpMode opMode) {
+    public OdometryBot(AutonPedroSpecimens opMode) {
         super(opMode);
     }
 
