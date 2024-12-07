@@ -57,8 +57,8 @@ public class teleop extends OpMode {
         sensors = new Sensors();
         sensors.init(this);
 
-        //mechanisms = new Mechanisms();
-        //mechanisms.init(this);
+        mechanisms = new Mechanisms();
+        mechanisms.init(this);
 
         fileRead = new FileRead();
         fileRead.init(this);
@@ -84,15 +84,16 @@ public class teleop extends OpMode {
 
         if (testingActive) {
             driveTrain.runTesting();
-           // mechanisms.runTesting();
+            mechanisms.runTesting();
+            mechanisms.servotesting();
         }
         else {
-            //mechanisms.setOutTakeLift();
-            //mechanisms.setInTakeLift();
+            mechanisms.setOutTakeLift();
+            mechanisms.setInTakeLift();
             mechanisms.setInTakeClawGrab();
             mechanisms.setInTakeFlip();
-            //mechanisms.setOutTakeFlip();
-            //mechanisms.setOutTakeClawGrab();
+            mechanisms.setOutTakeFlip();
+            mechanisms.setOutTakeClawGrab();
             mechanisms.setInTakeRotator();
 
             fileRead.readFile();

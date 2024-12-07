@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 public class Mechanisms {
 
     ElapsedTime totalTime = new ElapsedTime();
@@ -32,24 +34,26 @@ public class Mechanisms {
 
 
     // Mechanism stuff
-    double CLOSED_OT_POS = 0;
-    double OPEN_OT_POS = .5;
-    double clawInc = 0;
-    double lastClawTime;
-    double UP_OT_FLIP_POS = 0;
-    double DOWN_OT_FLIP_POS = 1;
-    double UP_OT_PIVOT_POS = 1;
-    double DOWN_OT_PIVOT_POS = 0;
+    public static double CLOSED_OT_POS = 0;
+    public static double OPEN_OT_POS = .5;
+    public static double clawInc = 0;
+    public static double lastClawTime;
+    public static double UP_OT_FLIP_POS = 0;
+    public static double DOWN_OT_FLIP_POS = 1;
+    public static double UP_OT_PIVOT_POS = 1;
+    public static double DOWN_OT_PIVOT_POS = 0;
 
-    double PERP_IT_POS = 0;
-    double PAR_IT_POS = .33;
-    double CLOSED_IT_POS = 1;
-    double OPEN_IT_POS = .76;
-    double UP_IT_FLIP_POS = .7;
-    double DOWN_IT_FLIP_POS = .42;
-    double MID_IT_FLIP_POS = .5;
-    double OUT_IT_FLIP_POS = 0;
-    double OUT_DOWN_IT_FLIP_POS = .26;
+    public static double PERP_IT_POS = 0;
+    public static double PAR_IT_POS = .33;
+    public static double CLOSED_IT_POS = 1;
+    public static double OPEN_IT_POS = .76;
+    public static double UP_IT_FLIP_POS = .7;
+    public static double DOWN_IT_FLIP_POS = .42;
+    public static double MID_IT_FLIP_POS = .5;
+    public static double OUT_IT_FLIP_POS = 0;
+    public static double OUT_DOWN_IT_FLIP_POS = .26;
+
+    ElapsedTime intakeToTransfer = new ElapsedTime();
 
     // backright drivetrain motor port 0 control
     // backleft drivetrain motor port 1 control
@@ -62,7 +66,7 @@ public class Mechanisms {
 
 
 
-    boolean upPivotOT = true;
+    public static boolean upPivotOT = true;
     double pivotTimeOT = 0;
 
     OpMode master;
@@ -81,6 +85,10 @@ public class Mechanisms {
         outTakePivotRight = opMode.hardwareMap.servo.get("otpr");
         outTakePivotLeft = opMode.hardwareMap.servo.get("otpl");
 
+        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
+        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
         // Intake lift
         //inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
@@ -94,12 +102,6 @@ public class Mechanisms {
         inTakeRotator = opMode.hardwareMap.servo.get("itr"); // port
         inTakeClaw = opMode.hardwareMap.servo.get(("itc")); // port
 
-
-        // Expansion hub servos
-        //outTakeLargePivotExpansion = opMode.hardwareMap.servo.get(("otse"));
-        //outTakeLargePivotControl = opMode.hardwareMap.servo.get(("otsc"));
-        //outTakeClawPivot = opMode.hardwareMap.servo.get(("otcp"));
-        //outTakeClaw = opMode.hardwareMap.servo.get(("otc"));
 
         master = opMode;
     }
@@ -165,24 +167,28 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeFlip(){
-        if (master.gamepad2.dpad_up)
+        if (master.gamepad2.dpad_up) {
             intakePivotL.setPosition(UP_IT_FLIP_POS);
             intakePivotR.setPosition(UP_IT_FLIP_POS);
+        }
 
-        if (master.gamepad2.dpad_down)
+        if (master.gamepad2.dpad_down) {
             intakePivotR.setPosition(DOWN_IT_FLIP_POS);
             intakePivotL.setPosition(DOWN_IT_FLIP_POS);
+        }
         if (master.gamepad2.dpad_left)
         {
             intakePivotR.setPosition(MID_IT_FLIP_POS);
             intakePivotL.setPosition(MID_IT_FLIP_POS);
         }
-        if (master.gamepad2.x)
+        if (master.gamepad2.x) {
             intakePivotR.setPosition(OUT_IT_FLIP_POS);
             intakePivotL.setPosition(OUT_IT_FLIP_POS);
-        if (master.gamepad2.y)
+        }
+        if (master.gamepad2.y) {
             intakePivotR.setPosition(OUT_DOWN_IT_FLIP_POS);
             intakePivotL.setPosition(OUT_DOWN_IT_FLIP_POS);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -207,20 +213,32 @@ public class Mechanisms {
     }
     //////////////////////////////////////////////////////////////////////////////
     public void transfer() throws InterruptedException{
-        intakePivotL.setPosition(1); // pos of intake so that it is lifted
-        intakePivotR.setPosition(1); // pos of intake so that it is lifted
-        master.wait(200);
-        // move intake to transfer here
-        master.wait(2);
-        intakePivotL.setPosition(0); // pos of intake when it is in the transfer position
-        intakePivotR.setPosition(0); // pos of intake when it is in the transfer position
-        master.wait(200);
-        outTakeFlip.setPosition(0); // we move the outtake claw so that it is in a position where it can move past the slides
-        outTakePivotRight.setPosition(0); // pos of outtake when it is in the transfer position
-        outTakePivotLeft.setPosition(0); // pos of outtake when it is in the transfer position
-        master.wait(200);
-        outTakePivotRight.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
-        outTakePivotLeft.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
+        if (intakeToTransfer.milliseconds() > 0 && intakeToTransfer.milliseconds() < 200)
+        {
+            intakePivotL.setPosition(0);
+            intakePivotR.setPosition(0);
+        }
+        if (intakeToTransfer.milliseconds() > 200 && intakeToTransfer.milliseconds() < 400)
+        {
+            intakePivotL.setPosition(1); // pos of intake so that it is lifted
+            intakePivotR.setPosition(1);
+        }
+        if (intakeToTransfer.milliseconds() > 400 && intakeToTransfer.milliseconds() < 600)
+        {
+            intakePivotL.setPosition(0); // pos of intake when it is in the transfer position
+            intakePivotR.setPosition(0);
+        }
+        if (intakeToTransfer.milliseconds() > 600 && intakeToTransfer.milliseconds() < 800)
+        {
+            outTakeFlip.setPosition(0);
+            intakePivotL.setPosition(0); // pos of intake so that it is lifted
+            intakePivotR.setPosition(0);
+        }
+        if (intakeToTransfer.milliseconds() > 800 && intakeToTransfer.milliseconds() < 1000)
+        {
+            outTakePivotRight.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
+            outTakePivotLeft.setPosition(0);
+        }
     }
     //////////////////////////////////////////////////////////////////////////////
     public void slidePosHigh() {
@@ -231,7 +249,7 @@ public class Mechanisms {
     //////////////////////////////////////////////////////////////////////////////
     public void servotesting() {
         double rotatorConstant = 0.0;
-        if (master.gamepad1.x == true) {
+        if (master.gamepad1.x) {
             rotatorConstant += 0.1;
             intakePivotL.setPosition(rotatorConstant);
             intakePivotR.setPosition(rotatorConstant);
