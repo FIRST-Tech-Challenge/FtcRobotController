@@ -39,10 +39,11 @@ public class OdoTest extends CommandAutoOpMode {
                         // Sample #1
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
 
-                        commandFactory.driveToTarget(455, 320, 0, 0.13),
-                        commandFactory.collapseSlider(),
+                        commandFactory.driveToTarget(430, 320, 0, 0.13),
 
                         new ParallelCommandGroup(
+                                commandFactory.collapseSlider(),
+
                             commandFactory.pivotToGroundInTakeBegin(),
                             commandFactory.elbowToIntakePosition()
                         ),
@@ -52,20 +53,22 @@ public class OdoTest extends CommandAutoOpMode {
                         new ParallelCommandGroup(
                                 commandFactory.elbowToSpecimenPosition(),
                                 commandFactory.pivotToDelivery()
+
                                 ),
 
                         commandFactory.extendSlider(),
+
                         commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
                         commandFactory.extendSlider(),
 
                         // Sample #2
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
 
-                        commandFactory.driveToTarget(440, 610, 0, 0.1)),
-                        commandFactory.collapseSlider(),
+                        commandFactory.driveToTarget(400, 610, 0, 0.1)),
 
 
                         new ParallelCommandGroup(
+                                commandFactory.collapseSlider(),
                                 commandFactory.pivotToGroundInTakeBegin(),
                                 commandFactory.elbowToIntakePosition()
                         ),
@@ -81,16 +84,38 @@ public class OdoTest extends CommandAutoOpMode {
                         commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
                         commandFactory.extendSlider(),
 
+
                         // Sample #3
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
 
-                        commandFactory.driveToTarget(600, 320, -45, 0.1, 200),
+                        commandFactory.driveToTarget(440, 540, 35, 0.1),
+
                         commandFactory.collapseSlider(),
 
                         new ParallelCommandGroup(
-                                commandFactory.pivotToStart(),
-                        commandFactory.driveToTarget(1400, -10, -45, 0.1, 100)
+                                commandFactory.pivotToGroundInTakeBegin(),
+                                commandFactory.elbowToIntakePosition()
+                        ),
 
+                        commandFactory.intakeFromGround(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.pivotToDelivery()
+
+                        ),
+
+                        commandFactory.extendSlider(),
+
+                        commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
+                        commandFactory.extendSlider(),
+
+                        // Sample #3
+                        commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
+
+
+                        new ParallelCommandGroup(
+                                commandFactory.pivotToStart()
                     )
                 )
         );

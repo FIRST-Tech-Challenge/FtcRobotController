@@ -18,12 +18,12 @@ public class IntakeFromGround extends SounderBotCommandBase {
     public void initialize() {
         intake.IntakeInAuto();
         sleep(300);
-        pivot.getMotor().set(-.3);
+        pivot.getMotor().set(-.4);
     }
 
     @Override
     protected boolean isTargetReached() {
-        return intake.IsSampleIntaken() || DeliveryPivot.recordedPosition < DeliveryPivot.IntakePositionFromStart - 500;
+        return intake.IsSampleIntaken() || DeliveryPivot.recordedPosition < DeliveryPivot.IntakePositionFromStart - 400;
     }
 
     @Override
