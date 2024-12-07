@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.bots;
 
 import android.content.Context;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -79,7 +80,7 @@ public class OdometryBot extends GyroBot {
 
     OutputStreamWriter odometryWriter;
 
-    public OdometryBot(AutonPedroSpecimens opMode) {
+    public OdometryBot(LinearOpMode opMode) {
         super(opMode);
     }
 

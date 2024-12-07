@@ -14,7 +14,7 @@ public class HangBot extends AutomationBot {
     private DcMotorEx hangMotor1 = null;
     private DcMotorEx hangMotor2 = null;
 
-    public static int hangTarget = 1000;
+    public static int hangTarget = 600;
     public static double hangPower = 1.0;
     private boolean hangReady = false;
 
@@ -44,6 +44,10 @@ public class HangBot extends AutomationBot {
                 hangReady = true;
                 hangMotor2.setPower(hangPower);
                 hangMotor1.setPower(hangPower);
+            } else {
+                hangReady = false;
+                hangMotor2.setPower(hangPower);
+                hangMotor1.setPower(hangPower);
             }
             if (!hangReady) {
                 hangMotor1.setTargetPosition(0);
@@ -60,6 +64,7 @@ public class HangBot extends AutomationBot {
                 hangMotor2.setTargetPosition(hangTarget);
                 hangMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
     }
     public HangBot(LinearOpMode opMode) {
         super(opMode);
