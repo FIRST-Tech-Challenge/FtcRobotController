@@ -55,8 +55,8 @@ public class Outake implements Component{
         target = 0;
 
         fingers.setPosition(ITDCons.close);
-        elbow1.setPosition(.5);
-        elbow2.setPosition(.5);
+        elbow1.setPosition(ITDCons.diffyInit);
+        elbow2.setPosition(ITDCons.diffyInit);
 
     }
 

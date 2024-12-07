@@ -12,8 +12,6 @@ public class diffyTest extends LinearOpMode {
         Servo servo1 = hardwareMap.servo.get("elbow1");
         Servo servo2 = hardwareMap.servo.get("elbow2");
 
-
-
         double servo1pos = 0.5;
         double servo2pos = 0.5;
 
@@ -44,8 +42,17 @@ public class diffyTest extends LinearOpMode {
                 servo2pos += 0.01;
             }
 
+            if (gamepad1.a){
+                servo1pos = 1;
+                servo2pos = 1;
+            }
+
             servo1.setPosition(servo1pos);
             servo2.setPosition(servo2pos);
+
+            telemetry.addData("servo1",servo1pos);
+            telemetry.addData("servo2", servo2pos);
+            telemetry.update();
 
         }
     }

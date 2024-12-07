@@ -15,6 +15,8 @@ public class ITDCons {
     public static double liftUp = 0.9;
     public static double liftDown = 0.1;
 
+    public static double diffyInit = 1;
+
     public static double open = 0.35;
     public static double close = 0.75;
 
