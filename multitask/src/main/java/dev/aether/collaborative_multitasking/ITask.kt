@@ -49,7 +49,7 @@ interface ITask {
         return task
     }
 
-    fun then(task: ITask): ITask {
+    fun <T: ITask> then(task: T): T {
         task waitsFor this
         task.register()
         return task
@@ -61,7 +61,7 @@ interface ITask {
     }
 }
 
-abstract class TaskWithWaitFor() : ITask {
+abstract class TaskWithChaining() : ITask {
 
     private var waitFor: MutableSet<ITask> = mutableSetOf()
 
@@ -78,7 +78,7 @@ abstract class TaskWithWaitFor() : ITask {
     }
 }
 
-abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor(), ITask {
+abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithChaining(), ITask {
     final override var state = State.NotStarted
     final override var myId: Int? = null
     override var name: String = "unnamed task"
@@ -95,7 +95,7 @@ abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor
         if (state == newState) return
         when (newState) {
             State.Starting -> startedAt = scheduler.getTicks()
-            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - (startedAt ?: 0)} ticks)")
+            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - startedAt} ticks)")
             else -> {}
         }
         state = newState
@@ -123,3 +123,32 @@ abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor
 
     override val daemon: Boolean = false
 }
+
+abstract class ConsumingTaskTemplate<T>(scheduler: Scheduler) : TaskTemplate(scheduler),
+    ITaskConsumer<T> {
+    private val typedUpstreams: MutableList<ITaskWithResult<T>> = mutableListOf()
+
+    override fun upstreamTyped(provider: ITaskWithResult<T>) {
+        typedUpstreams.add(provider)
+    }
+
+    protected val weakResult: T?
+        get() = nullableFindReadyUpstream(typedUpstreams)
+    protected val result: T
+        get() = findReadyUpstream(typedUpstreams)
+}
+
+private fun <T> nullableFindReadyUpstream(providers: List<ITaskWithResult<T>>): T? {
+    var result: T? = null
+    for (item in providers) {
+        item.getResultMaybe().let {
+            if (result != null) throw IllegalStateException("More than one upstream result is available")
+            result = it
+        }
+    }
+    return result
+}
+
+private fun <T> findReadyUpstream(providers: List<ITaskWithResult<T>>): T =
+    nullableFindReadyUpstream(providers)
+        ?: throw IllegalStateException("No upstream results available yet")
