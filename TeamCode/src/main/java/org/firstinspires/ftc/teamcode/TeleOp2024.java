@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
 public class TeleOp2024 extends DriveMethods {
     boolean wasClawTogglePressed = false;
+    double sliderPosition = robot.MIN_SLIDER_TICKS;
 
     @Override
     public void init() {
         robot.init(hardwareMap);
+
+        robot.sliderMotor.setPower(.5);
+        robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class TeleOp2024 extends DriveMethods {
         double driveRightStickX = driver.right_stick_x;
 
         double opLeftStickY = -operator.left_stick_y;
-        double opRightStickY = operator.right_stick_y;
+        double opRightStickY = -operator.right_stick_y;
         double opLeftStickX = operator.left_stick_x;
         double opRightStickX = operator.right_stick_x;
 
@@ -43,7 +48,15 @@ public class TeleOp2024 extends DriveMethods {
         telemetry.addData("Yaw","%.1f", driveRightStickX);
 
         robot.wormGear.setPower(opLeftStickY);
-        robot.sliderMotor.setPower(0.75 * opRightStickY);
+
+        sliderPosition = sliderPosition + 10.0 * opRightStickY;
+        if (sliderPosition > robot.MAX_SLIDER_TICKS) {
+            sliderPosition = robot.MAX_SLIDER_TICKS;
+        }
+        if (sliderPosition < robot.MIN_SLIDER_TICKS) {
+            sliderPosition = robot.MIN_SLIDER_TICKS;
+        }
+        robot.sliderMotor.setTargetPosition((int) sliderPosition);
 
         telemetry.addData("Lift","%.1f", opLeftStickY);
 //Lift means wormrote variable, which refers to the rotation of the worm gear
