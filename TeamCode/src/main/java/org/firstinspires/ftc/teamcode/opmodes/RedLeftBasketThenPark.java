@@ -35,7 +35,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
-        Claw claw = new Claw(hardwareMap);
+     //   Claw claw = new Claw(hardwareMap);
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
@@ -156,38 +156,38 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 
     }
 
-    public class Claw {
-        private Servo claw;
+//    public class Claw {
+  //      private Servo claw;
 
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
-        }
+  //      public Claw(HardwareMap hardwareMap) {
+    //        claw = hardwareMap.get(Servo.class, "claw");
+      //  }
 
-        public class CloseClaw implements Action {
+  //      public class CloseClaw implements Action {
 
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.5);
-                return false;
-            }
-        }
+   //         @Override
+    //        public boolean run(@NonNull TelemetryPacket packet) {
+      //          claw.setPosition(0.5);
+        //        return false;
+          //  }
+    //    }
+//
+//        public Action closeClaw() {
+//            return new CloseClaw();
+//        }
+//
+//        public class OpenClaw implements Action {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                claw.setPosition(0.2);
+//                return false;
+//            }
+//        }
 
-        public Action closeClaw() {
-            return new CloseClaw();
-        }
-
-        public class OpenClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.2);
-                return false;
-            }
-        }
-
-        public Action openClaw() {
-            return new CloseClaw();
-        }
-    }
+//        public Action openClaw() {
+  //          return new CloseClaw();
+    //    }
+  //  }
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
