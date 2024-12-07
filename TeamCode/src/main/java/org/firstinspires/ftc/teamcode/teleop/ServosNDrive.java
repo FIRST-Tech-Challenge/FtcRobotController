@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.teleop.Values;
 /*
  * This OpMode executes a POV Game style Teleop for a direct drive robot
  * The code is structured as a LinearOpMode
@@ -47,31 +46,29 @@ import org.firstinspires.ftc.teamcode.teleop.Values;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="all da servos and Drive", group="Linear OpMode")
+@TeleOp(name = "all da servos and Drive", group = "Linear OpMode")
 //@Disabled
 public class ServosNDrive extends LinearOpMode {
 
+    public static final double MID_SERVO = 0.5;
     /* Declare OpMode members. */
-    public Servo    intakeClaw    = null;
-    public Servo    clawPivot   = null;
-    public Servo    wrist   = null;
-    public Servo    intakeElbow = null;
-
-    public Servo    outtakeClaw = null;
-    public Servo    outtakeElbow = null;
-
-    public Servo    slide1 = null;
-    public Servo    slide2 = null;
-
+    public Servo intakeClaw = null;
+    public Servo clawPivot = null;
+    public Servo wrist = null;
+    public Servo intakeElbow = null;
+    public Servo outtakeClaw = null;
+    public Servo outtakeElbow = null;
+    public Servo intakeSlide1 = null;
+    public Servo intakeSlide2 = null;
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
+    private DcMotor outtakeSlide1;
+    private DcMotor outtakeSlide2;
+    private final int[] slidePosition = {0};
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
-    Gamepad currentGamepad1 = new Gamepad();
-    Gamepad previousGamepad1 = new Gamepad();
-
-    public static final double MID_SERVO =  0.5 ;
 
     @Override
     public void runOpMode() {
@@ -80,8 +77,8 @@ public class ServosNDrive extends LinearOpMode {
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "Motor0");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "Motor1");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "Motor0");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "Motor1");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "Motor2");
         rightBackDrive = hardwareMap.get(DcMotor.class, "Motor3");
 
@@ -91,19 +88,34 @@ public class ServosNDrive extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Define and initialize ALL installed servos.
-        intakeClaw  = hardwareMap.get(Servo.class, "0");
+        intakeClaw = hardwareMap.get(Servo.class, "0");
         clawPivot = hardwareMap.get(Servo.class, "1");
-        wrist  = hardwareMap.get(Servo.class, "2");
+        wrist = hardwareMap.get(Servo.class, "2");
         intakeElbow = hardwareMap.get(Servo.class, "3");
-        outtakeClaw  = hardwareMap.get(Servo.class, "4");
+        outtakeClaw = hardwareMap.get(Servo.class, "4");
+
+        //todo servo slides servo config name
+        //intakeSlide1 = hardwareMap.get(Servo.class, "");
+        //intakeSlide2 = hardwareMap.get(Servo.class, "");
+
+        // slide motors
+
+        //todo define slides motor config name
+        //outtakeSlide1 = hardwareMap.get(DcMotor.class, "");
+        //outtakeSlide2 = hardwareMap.get(DcMotor.class, "");
+        outtakeSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
         //outtakeElbow = hardwareMap.get(Servo.class, "5");
 
         clawPivot.setPosition(MID_SERVO);
         wrist.setPosition(MID_SERVO);
         intakeElbow.setPosition(MID_SERVO);
 
-        //slide1.setPosition(1);
-        //slide2.setPosition(0);
+        //todo set resting positions for intake slides
+        //intakeSlide1.setPosition();
+        //intakeSlide2.setPosition();
 
         telemetry.update();
 
@@ -119,16 +131,16 @@ public class ServosNDrive extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -currentGamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  currentGamepad1.left_stick_x;
-            double yaw     =  currentGamepad1.right_stick_x;
+            double axial = -currentGamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = currentGamepad1.left_stick_x;
+            double yaw = currentGamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
+            double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -137,10 +149,10 @@ public class ServosNDrive extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
             }
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
@@ -149,21 +161,19 @@ public class ServosNDrive extends LinearOpMode {
 
             //all servo stuff
 
-
-
-            if (currentGamepad1.circle && previousGamepad1.circle){
+            if (currentGamepad1.circle && previousGamepad1.circle) {
                 intakeClaw.setPosition(Values.intakeclawClose);
             } else if (currentGamepad1.circle && !previousGamepad1.circle) {
                 intakeClaw.setPosition(Values.intakeClawOpen);
             }
 
-            if (currentGamepad1.cross && previousGamepad1.cross){
+            if (currentGamepad1.cross && previousGamepad1.cross) {
                 intakeElbow.setPosition(Values.intakeElbowDown);
             } else if (currentGamepad1.cross && !previousGamepad1.cross) {
                 intakeElbow.setPosition(Values.intakeElbowUp);
             }
 
-            if (currentGamepad1.square && previousGamepad1.square){
+            if (currentGamepad1.square && previousGamepad1.square) {
                 outtakeElbow.setPosition(Values.outtakeElbowDown);
             } else if (currentGamepad1.square && !previousGamepad1.square) {
                 outtakeElbow.setPosition(Values.outtakeElbowUp);
@@ -171,18 +181,64 @@ public class ServosNDrive extends LinearOpMode {
 
             if (currentGamepad1.triangle && previousGamepad1.triangle) {
                 outtakeClaw.setPosition(.5);
-            } else if(currentGamepad1.triangle && !previousGamepad1.triangle){
+            } else if (currentGamepad1.triangle && !previousGamepad1.triangle) {
                 outtakeClaw.setPosition(1);
             }
+            if (currentGamepad1.left_bumper && previousGamepad1.left_bumper) {
+                //todo intake slide code in
+            }
+            if (currentGamepad1.left_bumper && previousGamepad1.left_bumper) {
+                //todo intake slide code out
+            }
 
-            // Send telemetry message to signify robot running;
-            /*telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
-            telemetry.addData("Intake yaw",  "%.2f", wrist);
-            telemetry.addData("Intake big rotate",  "%.2f", intakeElbow.getPosition());
-            telemetry.addData("outtake Claw",  "%.2f", outtakeClaw.getPosition());
-            telemetry.addData("outtake rotate",  "%.2f", outtakeElbow.getPosition());
-            telemetry.update();*/
+            //slide outtake stuff
 
+            if ((currentGamepad1.left_trigger != 0 && previousGamepad1.left_trigger != 0) || (currentGamepad1.right_trigger != 0 && previousGamepad1.right_trigger != 0)) {
+
+                if (currentGamepad1.right_trigger > 0) {
+                    outtakeClaw.setPosition(Values.outtakeClawClose);
+                    slidePosition[0] += (int) (20 * currentGamepad1.right_trigger);
+                }
+
+                // Move Slide Down
+                if (currentGamepad1.left_trigger > 0 && slidePosition[0] > -2300) {
+                    slidePosition[0] -= (int) (20 * currentGamepad1.left_trigger);
+                }
+
+                // Additional controls...
+
+                // Ensure slides stay within bounds
+                if (slidePosition[0] < 0) {
+                    slidePosition[0] = 0;
+                }
+
+                if (slidePosition[0] > Values.slideMax) {
+                    slidePosition[0] = Values.slideMax;
+                }
+                moveSlides(slidePosition[0], 1);
+            }
+
+            //todo telemetry
+            //Send telemetry message to signify robot running
+
+            //telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
+            //telemetry.addData("Intake yaw",  "%.2f", wrist);
+            //telemetry.addData("Intake big rotate",  "%.2f", intakeElbow.getPosition());
+            //telemetry.addData("outtake Claw",  "%.2f", outtakeClaw.getPosition());
+            //telemetry.addData("outtake rotate",  "%.2f", outtakeElbow.getPosition());
+            //telemetry.update();
         }
+    }
+
+    //methods
+    private void moveSlides(int distance, double velocity) {
+        outtakeSlide1.setTargetPosition(-distance);
+        outtakeSlide2.setTargetPosition(distance);
+
+        outtakeSlide1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        outtakeSlide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        outtakeSlide1.setPower(velocity);
+        outtakeSlide2.setPower(velocity);
     }
 }
