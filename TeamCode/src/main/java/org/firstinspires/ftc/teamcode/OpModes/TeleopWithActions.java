@@ -75,15 +75,15 @@ public class TeleopWithActions extends OpMode {
             }
         }
         if(gamepad1.left_bumper){
-            if (!runningActions.contains(intake.motorIntake(Intake.intakeState.OUTTAKE))) {
-                runningActions.add(intake.motorIntake(Intake.intakeState.INTAKE));
+            if (!runningActions.contains(robot.intakeMove(Intake.intakeState.OUTTAKE))) {
+                runningActions.add(robot.intakeMove(Intake.intakeState.INTAKE));
             }
         } else if(gamepad1.right_bumper){
-            if (!runningActions.contains(intake.motorIntake(Intake.intakeState.INTAKE))) {
-                runningActions.add(intake.motorIntake(Intake.intakeState.OUTTAKE));
+            if (!runningActions.contains(robot.intakeMove(Intake.intakeState.INTAKE))) {
+                runningActions.add(robot.intakeMove(Intake.intakeState.OUTTAKE));
             }
         } else {
-            runningActions.add(intake.motorIntake(Intake.intakeState.STOP));
+            runningActions.add(robot.intakeMove(Intake.intakeState.STOP));
         }
         if(gamepad1.circle){
             if (!runningActions.contains(arm.servoArm(Arm.armState.RETRACT))) {

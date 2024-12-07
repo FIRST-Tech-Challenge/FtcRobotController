@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Pivot;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot.pivotState;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -10,8 +8,9 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
+import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 @Config
 public class Pivot {
@@ -21,7 +20,6 @@ public class Pivot {
 
     public static double pivotDown = 0;
     public static double pivotUp = 0.5;
-    public pivotState pivotPos = pivotState.UP;
     public Pivot(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.pivotLeft = hardwareMap.get(Servo.class, "pivotLeft");
@@ -29,29 +27,22 @@ public class Pivot {
 
     }
 
-    public enum pivotState {
-        UP, //spins to close servo, should only be closed enough to hold piece
-        DOWN   //spins to have nearly fully open servo
-    }
     public ElapsedTime timer = new ElapsedTime();
-    public Action flippyFlip(){
+    public Action flippyFlip(Intake.intakeState intakePos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                double timeLastUpdate = timer.seconds();
-                if (timeLastUpdate > 0.5) {
-                    if (pivotPos == pivotState.DOWN) {
-                        pivotLeft.setPosition(pivotUp);
-                        pivotRight.setPosition(pivotUp);
-                        pivotPos = pivotState.UP;
-                    }
-                    else if (pivotPos == pivotState.UP) {
+                    if (intakePos== Intake.intakeState.INTAKE) {
                         pivotLeft.setPosition(pivotDown);
                         pivotRight.setPosition(pivotDown);
-                        pivotPos = pivotState.DOWN;
                     }
-                    timer.reset();
-                }
+                    else if (intakePos == Intake.intakeState.OUTTAKE) {
+                        pivotLeft.setPosition(pivotDown);
+                        pivotRight.setPosition(pivotDown);
+                    } else if (intakePos == Intake.intakeState.STOP){
+                        pivotLeft.setPosition(pivotUp);
+                        pivotRight.setPosition(pivotUp);
+                    }
                 return false;
             }
         };
