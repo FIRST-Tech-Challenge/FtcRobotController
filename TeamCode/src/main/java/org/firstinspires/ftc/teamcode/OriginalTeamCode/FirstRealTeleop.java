@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class FirstRealTeleop extends LinearOpMode{
 
     // Declare OpMode members for each of the 4 motors.
+
+    final int ASCENT_UP = 12440;
+    final int ASCENT_DOWN = 1000;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -33,6 +36,7 @@ public class FirstRealTeleop extends LinearOpMode{
 
     double actuatorPos = 0;
     double armRotPos = 0;
+    double wristPos = 0.5;
     void linearActuatorMover(){
         linearActuator.setTargetPosition((int)actuatorPos);
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -101,7 +105,6 @@ public class FirstRealTeleop extends LinearOpMode{
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         boolean isGrabbing = false;
-        double wristPos = 0;
         armLifterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armLifterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -116,7 +119,6 @@ public class FirstRealTeleop extends LinearOpMode{
         armLifterRight.setTargetPosition((int)armPos);
         linearActuator.setTargetPosition((int)actuatorPos);
         armRotate.setTargetPosition((int)armRotPos);
-
         armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -246,15 +248,23 @@ public class FirstRealTeleop extends LinearOpMode{
 //            spool.setPower(spoolPow);
 
             //arm rotate
-            armRotate.setTargetPosition(0);
-            armRotPos += -gamepad2.left_stick_y;
-
+            armRotate.setTargetPosition((int)armRotPos);
+            double armRotChange = gamepad2.left_stick_y * gamepad2.left_stick_y * gamepad2.left_stick_y * 75;
+            if(armRotate.getCurrentPosition() + armRotChange > -2200) {
+                armRotPos += armRotChange;
+            }
+            if( armRotate.getCurrentPosition() <-2200){
+                armRotate.setPower(0.25);
+                armRotPos = -2100;
+            } else{
+                armRotate.setPower(1);
+            }
             //actuator
             if(gamepad2.dpad_up){
-                actuatorPos += 10;
+                actuatorPos = ASCENT_UP;
 //                linearActuator.setPower(1);
             } else if(gamepad2.dpad_down){
-                actuatorPos += -10;
+                actuatorPos = ASCENT_DOWN;
 //                linearActuator.setPower(-1);
             }
 
@@ -264,9 +274,14 @@ public class FirstRealTeleop extends LinearOpMode{
 //            armLifterRight.setPower(gamepad2.right_stick_y);
 
 //            //wrist
-            wrist.setPosition((wristPos+1)/2);
-            if(gamepad2.right_stick_y != 0){
-            wristPos = gamepad2.right_stick_y*gamepad2.right_stick_y*gamepad2.right_stick_y;}
+            if(gamepad2.dpad_left){
+                wristPos = 0.5;}
+//            if(gamepad2.right_stick_y > 0.1 && wristPos <= 1){
+//                wristPos += 0.05;
+//            } else if (gamepad2.right_stick_y < -0.1 && wristPos >= -1) {
+//                wristPos -= 0.05;
+//            }
+            wrist.setPosition(-wristPos);
 
             //spool
             int spoolPow = 0;
@@ -286,15 +301,15 @@ public class FirstRealTeleop extends LinearOpMode{
 //                controlBothGrabbers(-1);
                 sampPickUpRight.setPower(-1);
                 sampPickUpLeft.setPower(-1);
+            } else {
+                sampPickUpLeft.setPower(0);
+                sampPickUpRight.setPower(0);
             }
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Controls:\nGAMEPAD 2:\narm extend: l/r trigger\nwrist: right stick y\nspool: lb/rb x\ngrab open: a\ngrab close: b\nlinear actuator: up/down dpad\narm rotate: left stick y\nGAMEPAD 1\n lateral movement: left stick xy\n, rotate: right stick x","");
-            telemetry.addData("Linear Actuator Curr Pos: ", actuatorPos);
-            telemetry.addData("ARm rot Curr Pos: ", armRotate.getCurrentPosition());
             telemetry.update();
         }
     }
