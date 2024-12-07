@@ -219,11 +219,11 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-    double kp = 6, ki = 0, kd = 0.1;
+    double kp = 3, ki = 0.1, kd = 0.1;
 
     Module(OpMode opMode, int id) {
 
-      steerPID = new PIDController(6, 0, 0.1);
+      steerPID = new PIDController(kp, ki, kd);
       String pos;
       switch (id) {
         case 0 -> {
