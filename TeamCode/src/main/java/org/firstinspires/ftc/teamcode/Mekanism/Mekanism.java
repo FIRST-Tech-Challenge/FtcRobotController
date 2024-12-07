@@ -103,7 +103,7 @@ public class Mekanism {
     telemetry.addData("slide current pos", slide.getCurrentPosition()); // needs adjusting
     // TODO: Tuning is very vibes based because this value is very wrong
     double encoderCountsPerDegree = 30;
-    /*          // because 2 motors now so not needed
+    // TODO: Tune it because we now have 2 motors instead of 1
     if (x == 0)
       x =
           // kG math
@@ -117,7 +117,6 @@ public class Mekanism {
               * Math.sin(
                   Units.degreesToRadians(
                       90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
-     */
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
@@ -130,10 +129,12 @@ public class Mekanism {
                         Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
                     1e-6), // Prevent divide by 0
             46 * encoderCountsPerInch); // Limit extension
-    // TODO: test if removal is better than having this
+    // TODO: test if removal is better than current code
+    /*
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
+    */
 
     slide.setPower(x);
     slide2.setPower(x);
@@ -169,6 +170,10 @@ public class Mekanism {
 
     pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     pivot.setPower(.00);
   }
 
