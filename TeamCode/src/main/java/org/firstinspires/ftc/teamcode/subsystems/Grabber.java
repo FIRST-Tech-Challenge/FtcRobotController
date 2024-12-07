@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
@@ -22,7 +25,14 @@ public class Grabber extends SubsystemBase {
     }
 
 
-    public void scoreBasket() {}
+    public void scoreBasket() {
+        drop();
+        try {
+            wait(500);
+        } catch (InterruptedException e) {
+            //throw new RuntimeException(e);
+        }
+    }
     public void pickup() {
         servo.setPower(1.0);
     }
