@@ -56,10 +56,9 @@ dependencies {
 }
 
 dependencies {
-    //disabled fo now
-    /*implementation 'com.google.ai.edge.litert:litert-support-api:1.0.1'
-    implementation 'org.tensorflow:tensorflow-lite:2.12.0'  // TensorFlow Lite runtime
-    implementation 'org.tensorflow:tensorflow-lite-support:2.12.0'  // For support utilities (e.g., FileUtil)
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.12.0'  // Optional: for GPU acceleration (if needed)
-*/
+    implementation 'com.google.ai.edge.litert:litert-support-api:1.0.1'
+    implementation 'com.google.ai.edge.litert:litert:1.0.1'
+//    implementation 'com.google.ai.edge.litert:litert:1.0.1'
+//    implementation 'com.google.ai.edge.litert:litert-support-api:1.0.1'
+//    implementation 'androidx.room:room-compiler:2.6.1'
 }

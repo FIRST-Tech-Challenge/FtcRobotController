@@ -45,14 +45,7 @@ public class DriveTrain {
         leftEncoder = bLeft;
         backEncoder = fRight;
 
-        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        resetWheelOdom();
 
        // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
@@ -194,6 +187,19 @@ public class DriveTrain {
         bRightPower *= scaleFactor;
         setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
     }
+
+    public void resetWheelOdom() {
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+
 
     /*public void setTestPower(double power) throws InterruptedException {
         getTestMotorDeleteLater().setPower(power);

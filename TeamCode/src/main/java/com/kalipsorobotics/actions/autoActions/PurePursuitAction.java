@@ -62,7 +62,7 @@ public class PurePursuitAction extends Action {
         this.dependentActions.add(new DoneStateAction());
     }
 
-    public void addPoint(int x, int y, double headingDeg) {
+    public void addPoint(double x, double y, double headingDeg) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg)));
         Log.d("purepursaction", "added point " + x + ", " + y);
     }

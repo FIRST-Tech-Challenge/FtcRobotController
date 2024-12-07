@@ -1,13 +1,17 @@
-/*
+
 package com.kalipsorobotics.tensorflow;
+
 import androidx.annotation.CallSuper;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.support.common.FileUtil;
+
 import java.nio.ByteBuffer;
 
+@TeleOp
 public class TensorflowDetection extends LinearOpMode {
         private Interpreter tflite;
 
@@ -56,4 +60,3 @@ public class TensorflowDetection extends LinearOpMode {
         }
 
 }
-*/

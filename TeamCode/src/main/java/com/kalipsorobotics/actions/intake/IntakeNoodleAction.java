@@ -16,7 +16,7 @@ public class IntakeNoodleAction extends Action {
     DcMotor intakeNoodleMotor;
     ColorSensor colorSensor;
 
-    private boolean isRun = false;
+    private boolean isRun;
 
     WaitAction runTimeMS;
 
