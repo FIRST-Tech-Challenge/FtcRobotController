@@ -22,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
+import dev.aether.collaborative_multitasking.ResolveReject;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
-import dev.aether.collaborative_multitasking.Task;
 import dev.aether.collaborative_multitasking.TaskTemplate;
+import dev.aether.collaborative_multitasking.TaskWithResultTemplate;
 import dev.aether.collaborative_multitasking.ext.While;
 import kotlin.jvm.functions.Function0;
 
@@ -94,6 +96,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         /// If you hold this lock, you have exclusive control over the Lift (by proxy of this task.)
         public final SharedResource CONTROL = new SharedResource("LiftBackgroundTask" + (++INSTANCE_COUNT));
+        private final Set<SharedResource> provides = Set.of(CONTROL);
 
         private static final Set<SharedResource> requires = Set.of(Locks.VerticalSlide);
         private final Scheduler scheduler;
@@ -163,6 +166,40 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         public boolean isManualAdjustModeEnabled() {
             return manualAdjustMode;
+        }
+
+        public TaskWithResultTemplate<Boolean> moveTo(int target, int range, double maxDuration) {
+            TaskWithResultTemplate<Boolean> result;
+            if (maxDuration > 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
+                private ElapsedTime t;
+
+                @Override
+                @NotNull
+                public Set<SharedResource> requirements() {
+                    return provides;
+                }
+
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                    t.reset();
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    if (t.time() >= maxDuration) {
+                        setResult(false);
+                        return true;
+                    }
+                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
+                        setResult(true);
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            else throw new IllegalStateException();
+            return result;
         }
     }
 

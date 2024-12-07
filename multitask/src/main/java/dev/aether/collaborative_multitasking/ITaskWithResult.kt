@@ -2,6 +2,11 @@ package dev.aether.collaborative_multitasking
 
 import dev.aether.collaborative_multitasking.TaskTemplate
 
+enum class ResolveReject {
+    RESOLVE,
+    REJECT
+}
+
 interface ITaskWithResult<T> : ITask {
     fun getResultMaybe(): T?
     fun getResult(): T = getResultMaybe() ?: throw IllegalStateException("No result was available")
@@ -31,6 +36,8 @@ abstract class TaskWithResultTemplate<T>(scheduler: Scheduler) : TaskTemplate(sc
             result = value
         } else throw IllegalStateException("A result was already assigned to this task")
     }
+
+    override fun hasResult(): Boolean = result != null
 
     override fun getResultMaybe(): T? = result
 

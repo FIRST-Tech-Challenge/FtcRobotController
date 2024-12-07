@@ -46,7 +46,7 @@ typealias Runnable = () -> Unit
 
 class Task(
     override var scheduler: Scheduler,
-): TaskWithWaitFor() {
+): TaskWithChaining() {
     override var state: State = State.NotStarted
         private set
 
