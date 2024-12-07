@@ -79,7 +79,7 @@ public class Swerve {
             ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
-  double maxErrorDeg = 0.5;
+  double maxErrorDeg = 0.75;
 
   public void drive(ChassisSpeeds speeds, double dt) {
     var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
@@ -221,7 +221,7 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-    double kp = 6, ki = 0.1, kd = 0.1;
+    double kp = 5, ki = 0.1, kd = 0.1;
 
     Module(OpMode opMode, int id) {
 
