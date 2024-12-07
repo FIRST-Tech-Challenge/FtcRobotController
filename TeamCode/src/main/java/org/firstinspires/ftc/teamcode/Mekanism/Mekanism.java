@@ -103,6 +103,7 @@ public class Mekanism {
     telemetry.addData("slide current pos", slide.getCurrentPosition()); // needs adjusting
     // TODO: Tuning is very vibes based because this value is very wrong
     double encoderCountsPerDegree = 30;
+    /*          // because 2 motors now so not needed
     if (x == 0)
       x =
           // kG math
@@ -116,6 +117,7 @@ public class Mekanism {
               * Math.sin(
                   Units.degreesToRadians(
                       90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
+     */
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
