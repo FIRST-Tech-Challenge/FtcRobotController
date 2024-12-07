@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import java.util.Locale;
 
 
-@TeleOp
+@TeleOp(name = "! Teleop")
 @Config
 public class OneDriverLynx extends LinearOpMode {
     public double inchesPerSecond = 66.67;

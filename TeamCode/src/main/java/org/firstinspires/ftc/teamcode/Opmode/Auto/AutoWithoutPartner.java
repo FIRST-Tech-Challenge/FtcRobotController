@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 
 import java.util.List;
 
-@Autonomous
+@Autonomous(name = "4 cycle")
 @Config
 public class AutoWithoutPartner extends LinearOpMode {
     public static double xTarget = 10, yTarget = 0, rTarget = 0;
