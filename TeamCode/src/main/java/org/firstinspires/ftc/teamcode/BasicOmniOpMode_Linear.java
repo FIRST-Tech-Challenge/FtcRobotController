@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.RobotHardware;
 
 import org.firstinspires.ftc.robotcore.internal.opengl.models.SolidCylinder;
 
@@ -71,6 +72,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
+    private RobotHardware robot = new RobotHardware(this);
+
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -121,6 +124,9 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            robot.driveRobot();
+            robot.drivelift();
+            robot.displayTelemetry();
 
             long nowNs = runtime.nanoseconds();
             long lastLoopDurationNs = nowNs - lastLoopStartNs;
@@ -202,4 +208,5 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             telemetry.update();
         }
-    }}
+    }
+}
