@@ -21,6 +21,8 @@ public class Grabber extends SubsystemBase {
         tm.addData("happy", "happy");
     }
 
+
+    public void scoreBasket() {}
     public void pickup() {
         servo.setPower(1.0);
     }

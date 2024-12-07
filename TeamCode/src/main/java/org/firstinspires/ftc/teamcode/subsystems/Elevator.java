@@ -130,6 +130,8 @@ public class Elevator extends SubsystemBase {
         return (elevatorDistance * Math.abs(Math.cos(Math.toRadians(wormAngle))));
     }
 
+    public void scoreBasket() {}
+
     //this function fires every cycle, at about 50hz, so anything in here will effectively be the default state
     @Override
     public void periodic() {
