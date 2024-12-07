@@ -19,12 +19,13 @@ public class Wrist extends SubsystemBase {
     private int Speed = 1; //default speed is 1
 
 
-    public Wrist(HardwareMap hardwareMap, Telemetry telemetry){
+    public Wrist(HardwareMap hardwareMap, Telemetry telemetry, boolean isAuto){
         tm = telemetry;
-        //TODO: fix this name from config
         servo = new SimpleServo(hardwareMap, "wrist", -150, 150);
-        servo.setPosition(1);
-        CurrentAngle = 150;
+        if (!isAuto) {
+            servo.setPosition(1);
+            CurrentAngle = 150;
+        }
         servo.setInverted(false);
         //setAngle(0);
     }

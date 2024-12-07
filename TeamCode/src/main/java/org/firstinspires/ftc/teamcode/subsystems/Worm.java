@@ -108,6 +108,20 @@ public class Worm extends SubsystemBase {
         }
     }
 
+    public void goToAngle(double angle) {
+        if (getAngle() > angle) {
+            while (getAngle() > angle) {
+                this.lower(0.5);
+            }
+            this.brake();
+        } else {
+            while (getAngle() > angle) {
+                this.raise(0.5);
+            }
+            this.brake();
+        }
+    }
+
     public double getDistance(){
         return motor.getCurrentPosition();
     }
