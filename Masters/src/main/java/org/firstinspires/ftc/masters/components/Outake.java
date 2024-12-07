@@ -60,6 +60,10 @@ public class Outake implements Component{
 
     }
 
+    public void setPID(double p){
+        controller.setP(p);
+    }
+
 //    public void slidePower(double power) {
 //        extension1.setPower(power);
 //        extension2.setPower(power);
@@ -98,6 +102,12 @@ public class Outake implements Component{
 
     public int getExtensionPos(){
         return extension2.getCurrentPosition();
+    }
+
+    public void init(){
+        elbow1.setPosition(ITDCons.diffyInit);
+        elbow2.setPosition(ITDCons.diffyInit);
+
     }
 
 
