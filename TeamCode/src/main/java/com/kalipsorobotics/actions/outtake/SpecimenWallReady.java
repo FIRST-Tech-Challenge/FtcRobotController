@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions.outtake;
 
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
@@ -14,7 +14,7 @@ public class SpecimenWallReady extends KActionSet {
         waitOneSec.setName("waitOneSec");
         this.addAction(waitOneSec);
 
-        MoveLSAction lowerSlidesZero = new MoveLSAction(outtake, 0);
+        MoveOuttakeLSAction lowerSlidesZero = new MoveOuttakeLSAction(outtake, 0);
         lowerSlidesZero.setName("lowerSlidesZero");
         lowerSlidesZero.setDependentActions(waitOneSec);
         this.addAction(lowerSlidesZero);

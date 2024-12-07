@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions.outtake;
 
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.modules.Outtake;
@@ -26,7 +26,7 @@ public class SpecimenHangReady extends KActionSet {
         this.addAction(outtakePivotActionOpen);
         //outtakePivotActionOpen.setDependantActions(outtakePivotActionOpenHalf);
 
-        MoveLSAction raiseSlides = new MoveLSAction(outtake, 500);
+        MoveOuttakeLSAction raiseSlides = new MoveOuttakeLSAction(outtake, 440);
         raiseSlides.setName("raiseSlides");
         this.addAction(raiseSlides);
 

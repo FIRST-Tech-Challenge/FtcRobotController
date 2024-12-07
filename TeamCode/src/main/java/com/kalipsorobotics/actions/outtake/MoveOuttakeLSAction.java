@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.modules.Outtake;
 
-public class MoveLSAction extends Action {
+public class MoveOuttakeLSAction extends Action {
 
     public enum Position {
          Down, SPECIMEN, BASKET
@@ -27,8 +27,7 @@ public class MoveLSAction extends Action {
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
     final double targetTicks;
     private double currentTicks;
-
-    public MoveLSAction(Outtake outtake, double targetMM) {
+    public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -38,14 +37,10 @@ public class MoveLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.2;
+        double lowestPower = 0.15;
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.25;
-        }
-
-        if (globalLinearSlideMaintainTicks > 1900) {
-            lowestPower = 0.34;
+            lowestPower = 0.3;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -79,7 +74,8 @@ public class MoveLSAction extends Action {
         } else {
             currentTargetTicks = this.targetTicks;
         }
-        
+
+
         //soft stop for low and high
         if (currentTargetTicks > MAX_RANGE_LS_TICKS) {
             currentTargetTicks = MAX_RANGE_LS_TICKS;

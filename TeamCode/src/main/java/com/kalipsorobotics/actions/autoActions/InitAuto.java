@@ -1,4 +1,4 @@
-package com.kalipsorobotics.actions.AutoActions;
+package com.kalipsorobotics.actions.autoActions;
 
 //import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.KActionSet;

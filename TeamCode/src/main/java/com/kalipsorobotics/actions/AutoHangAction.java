@@ -1,37 +1,37 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.hang.HangHookAction;
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.Outtake;
 
 public class AutoHangAction extends Action {
-    MoveLSAction moveLSUp;
+    MoveOuttakeLSAction moveLSUp;
     WaitAction waitAction;
-    MoveLSAction moveLSDown;
+    MoveOuttakeLSAction moveLSDown;
     WaitAction waitActionTwo;
-    MoveLSAction pullUp;
+    MoveOuttakeLSAction pullUp;
     HangHookAction hangHookAction;
 
     public AutoHangAction(Outtake outtake) {
         this.dependentActions.add(new DoneStateAction());
 
-        moveLSUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(28));
+        moveLSUp = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(28));
 
         waitAction = new WaitAction(400);
-        waitAction.setDependentActions(moveLSUp);
+        waitAction.setDependantActions(moveLSUp);
 
-        moveLSDown = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-5));
-        moveLSDown.setDependentActions(waitAction);
+        moveLSDown = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(-5));
+        moveLSDown.setDependantActions(waitAction);
 
         waitActionTwo = new WaitAction(300);
-        waitActionTwo.setDependentActions(moveLSDown);
+        waitActionTwo.setDependantActions(moveLSDown);
 
-        pullUp = new MoveLSAction(outtake, CalculateTickPer.inchToTicksLS(-20));
-        pullUp.setDependentActions(waitActionTwo);
+        pullUp = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(-20));
+        pullUp.setDependantActions(waitActionTwo);
 
         hangHookAction = new HangHookAction(outtake);
-        hangHookAction.setDependentActions(waitActionTwo);
+        hangHookAction.setDependantActions(waitActionTwo);
     }
 
     @Override

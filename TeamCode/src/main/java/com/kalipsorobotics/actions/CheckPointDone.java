@@ -1,6 +1,6 @@
 package com.kalipsorobotics.actions;
 
-import com.kalipsorobotics.actions.AutoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.math.Position;
 

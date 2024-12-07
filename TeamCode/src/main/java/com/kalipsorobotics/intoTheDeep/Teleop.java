@@ -211,11 +211,12 @@ package com.kalipsorobotics.intoTheDeep;
 import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
 
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
+import com.kalipsorobotics.actions.intake.IntakeTransferAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
@@ -254,12 +255,12 @@ public class Teleop extends LinearOpMode {
         SpecimenHangReady specimenHangReady = null;
         SpecimenWallReady specimenWallReady = null;
         // Targer should always be 0
-        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
-        MoveLSAction maintainOuttakeGlobalPos = new MoveLSAction(outtake, 0);
+        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveOuttakeLSAction maintainOuttakeGlobalPos = new MoveOuttakeLSAction(outtake, 0);
         MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
 //        MoveLSAction.globalLinearSlideMaintainTicks);
-
+        IntakeTransferAction intakeTransferAction = null;
 
         boolean prevGamePadY = false;
         boolean prevGamePadX = false;
@@ -306,7 +307,7 @@ public class Teleop extends LinearOpMode {
 
             //outtake manual LS
             if (gamepad2.left_stick_y != 0) {
-                MoveLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
+                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
             }
 
 
@@ -315,7 +316,7 @@ public class Teleop extends LinearOpMode {
                 specimenHangReady = new SpecimenHangReady(outtake);
                 specimenHangReady.setName("specimenHangReady");
             }
-            if (specimenHangReady != null) {
+            if (specimenHangReady != null && !(gamepad2.left_stick_y != 0)) {
                 specimenHangReady.update();
             }
 
@@ -361,6 +362,15 @@ public class Teleop extends LinearOpMode {
                 intakeDoorAction.open();
             } else {
                 intakeDoorAction.close();
+            }
+
+            //transfer
+            if (gamepad2.b) {
+                intakeTransferAction = new IntakeTransferAction(intake, outtake);
+                intakeTransferAction.setName("intakeTransferAction");
+            }
+            if (intakeTransferAction != null && !(gamepad2.right_stick_y != 0)) {
+                intakeTransferAction.update();
             }
 
             //intake slides manual

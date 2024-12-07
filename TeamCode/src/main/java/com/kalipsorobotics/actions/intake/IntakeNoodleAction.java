@@ -4,12 +4,10 @@ import static org.firstinspires.ftc.robotcore.external.JavaUtil.colorToHue;
 
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.WaitAction;
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.modules.Intake;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeNoodleAction extends Action {
 
@@ -20,15 +18,15 @@ public class IntakeNoodleAction extends Action {
 
     private boolean isRun = false;
 
-    WaitAction runTime;
+    WaitAction runTimeMS;
 
-    public IntakeNoodleAction(Intake intake, double runtime, boolean isRun) {
+    public IntakeNoodleAction(Intake intake, double runtimeMS, boolean isRun) {
         this.intake = intake;
         this.intakeNoodleMotor = intake.getNoodleMotor();
         this.colorSensor = intake.getColorSensor();
         colorSensor.enableLed(false);
         this.isRun = isRun;
-        this.runTime = new WaitAction(runtime);
+        this.runTimeMS = new WaitAction(runtimeMS);
     }
 
 
@@ -79,7 +77,7 @@ public class IntakeNoodleAction extends Action {
             return;
         }
 
-        runTime.update();
+        runTimeMS.update();
 
         if (isRun) {
             run();
@@ -87,7 +85,7 @@ public class IntakeNoodleAction extends Action {
             stop();
         }
 
-        isDone = runTime.updateCheckDone();
+        isDone = runTimeMS.updateCheckDone();
 
     }
 }

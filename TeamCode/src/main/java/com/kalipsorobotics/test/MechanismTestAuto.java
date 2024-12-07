@@ -4,7 +4,8 @@ import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.intake.IntakeReadyAction;
+import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -27,7 +28,7 @@ public class MechanismTestAuto extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveLSAction maintenanceLS = new MoveLSAction(outtake, 0
+        MoveOuttakeLSAction maintenanceLS = new MoveOuttakeLSAction(outtake, 0
         );
 
         KServoAutoAction outtakePivotActionIn = new KServoAutoAction(outtake.getOuttakePivotServo(),
@@ -39,16 +40,17 @@ public class MechanismTestAuto extends LinearOpMode {
 
         InitAuto initAuto = new InitAuto(intake, outtake);
 
-        MoveLSAction moveLSAction = new MoveLSAction(outtake, 400);
+        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 400);
 
         WaitAction waitAction = new WaitAction(3000);
-        waitAction.setDependentActions(moveLSAction);
+        waitAction.setDependantActions(moveOuttakeLSAction);
 
-        MoveLSAction moveLSAction2 = new MoveLSAction(outtake, 200);
-        moveLSAction2.setDependentActions(waitAction);
+        MoveOuttakeLSAction moveOuttakeLSAction2 = new MoveOuttakeLSAction(outtake, 200);
+        moveOuttakeLSAction2.setDependantActions(waitAction);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
 
+        IntakeReadyAction intakeReadyAction = new IntakeReadyAction();
         //BasketReadyAction basketReadyAction = new BasketReadyAction();
 
         while (opModeInInit()) {
@@ -66,9 +68,9 @@ public class MechanismTestAuto extends LinearOpMode {
             }
             if (gamepad1.x) {
                 redAutoSpecimen.clear();
-                redAutoSpecimen.addAction(moveLSAction);
+                redAutoSpecimen.addAction(moveOuttakeLSAction);
                 redAutoSpecimen.addAction(waitAction);
-                redAutoSpecimen.addAction(moveLSAction2);
+                redAutoSpecimen.addAction(moveOuttakeLSAction2);
                 telemetry.addLine("done Move Ls");
                 telemetry.update();
             }
@@ -80,7 +82,7 @@ public class MechanismTestAuto extends LinearOpMode {
             }
         }
 
-        redAutoSpecimen.printWithDependentActions();
+        redAutoSpecimen.printWithDependantActions();
         waitForStart();
         while (opModeIsActive()) {
             maintenanceLS.update();

@@ -2,7 +2,7 @@ package com.kalipsorobotics.test.autoMovement;
 
 import android.util.Log;
 
-import com.kalipsorobotics.actions.AutoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;

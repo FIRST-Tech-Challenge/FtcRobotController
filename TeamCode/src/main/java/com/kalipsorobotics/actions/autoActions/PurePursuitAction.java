@@ -1,4 +1,4 @@
-package com.kalipsorobotics.actions.AutoActions;
+package com.kalipsorobotics.actions.autoActions;
 
 import android.util.Log;
 

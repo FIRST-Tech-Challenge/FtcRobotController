@@ -1,13 +1,13 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import com.kalipsorobotics.actions.AutoActions.InitAuto;
+import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.AutoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.AutoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.AutoActions.WallToBarHangRoundTrip;
+import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -32,9 +32,9 @@ public class RedAutoSpecimen extends LinearOpMode {
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         // Target can always be 0 because Hung said so
-        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
+        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
 //                MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
 
@@ -58,7 +58,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         specimenHangReady1.setName("hangSpecimenReady1");
         redAutoSpecimen.addAction(specimenHangReady1);
 
-        MoveLSAction lowerSlidesHalf1 = new MoveLSAction(outtake, 200);
+        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 200);
         lowerSlidesHalf1.setName("lowerSlidesHalf1");
         lowerSlidesHalf1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(lowerSlidesHalf1);

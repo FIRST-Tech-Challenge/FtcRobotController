@@ -2,7 +2,7 @@ package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import android.util.Log;
 
-import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.modules.Outtake;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,7 +12,7 @@ public class OuttakeSlideAction {
     private final OuttakePivotAction outtakePivotAction;
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;
-    MoveLSAction moveLSAction;
+    MoveOuttakeLSAction moveOuttakeLSAction;
     int stage = 0;
 
     public OuttakeSlideAction(Outtake outtake) {
@@ -64,16 +64,16 @@ public class OuttakeSlideAction {
     }
 
     public void moveToPosition(int target) {
-        if (moveLSAction != null && !moveLSAction.checkDoneCondition()) {
+        if (moveOuttakeLSAction != null && !moveOuttakeLSAction.checkDoneCondition()) {
             return;
         }
-        moveLSAction = new MoveLSAction(this.outtake, target);
-        moveLSAction.updateCheckDone();
+        moveOuttakeLSAction = new MoveOuttakeLSAction(this.outtake, target);
+        moveOuttakeLSAction.updateCheckDone();
 
     }
 
     public void updateCheckDone() {
-        moveLSAction.updateCheckDone();
+        moveOuttakeLSAction.updateCheckDone();
     }
 
 
