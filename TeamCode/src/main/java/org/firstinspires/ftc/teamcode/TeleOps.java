@@ -65,6 +65,9 @@ public class TeleOps extends LinearOpMode {
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 //            robot.scoreSpecimen(gamepad2.y);
+            robot.readySpecimenPos(gamepad2.a, true);
+            robot.scoreSpecimenSimple(gamepad2.b);
+
             robot.hang(gamepad2.x);
 
             if (gamepad1.y) {
@@ -75,7 +78,7 @@ public class TeleOps extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper){
-                robot.pickup(true, true, false, telemetry);
+                robot.pickup(true, true, true, telemetry);
             }
             else if (gamepad1.right_bumper){
                 robot.pickup(false, true, false, telemetry);

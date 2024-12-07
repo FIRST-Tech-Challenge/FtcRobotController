@@ -64,6 +64,7 @@ public class HangBot extends AutomationBot {
                 hangMotor2.setTargetPosition(hangTarget);
                 hangMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
+
     }
     public HangBot(LinearOpMode opMode) {
         super(opMode);
