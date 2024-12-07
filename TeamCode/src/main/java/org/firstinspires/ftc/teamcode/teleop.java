@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -30,10 +31,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // teleop, not the specific "buttons doing what" stuff, but deciding what should and shouldn't run
 // based off of input from the specific classes.
 @TeleOp(name = "TeleOp", group = "Teleops")
+@Config
 public class teleop extends OpMode {
 
     // Testing
-    boolean testingActive = false;
+    public static boolean testingActive = false;
     double lastTestTime = 0;
 
     ElapsedTime totalTime = new ElapsedTime();
