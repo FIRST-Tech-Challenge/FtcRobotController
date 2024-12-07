@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,13 +22,12 @@ import java.util.List;
 public class TuneManualControl extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
 //    private List<Action> runningActions = new ArrayList<>();
-    List<Action> newActions = new ArrayList<>();
-    HardwareMap hardwareMap;
 
+    @Override
     public void runOpMode() {
         Battery battery = new Battery(hardwareMap);
         Lift lift = new Lift(hardwareMap, battery);
-
+        waitForStart();
         while (opModeIsActive()) {
 //            for (Action action : runningActions) {
 //                action.preview(packet.fieldOverlay());
@@ -37,10 +35,10 @@ public class TuneManualControl extends LinearOpMode {
 //                    newActions.add(lift.manualControl());
 //                }
 //            }
-
-            TelemetryPacket packet = new TelemetryPacket();
-            lift.manualControl().run(packet);
-            dash.sendTelemetryPacket(packet);
+            Actions.runBlocking(lift.manualControl(gamepad1.left_stick_y));
+            //TelemetryPacket packet = new TelemetryPacket();
+            //lift.manualControl().run(packet);
+            //dash.sendTelemetryPacket(packet);
         }
     }
 

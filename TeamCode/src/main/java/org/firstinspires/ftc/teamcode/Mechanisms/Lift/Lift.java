@@ -125,16 +125,15 @@ public class Lift {
             }
         };
     }
-    public Action manualControl() {
+    public Action manualControl(double power) {
         return new Action() {
-
+            double power;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 checkLimit();
-                liftMotorLeft.setPower(gamepad1.left_stick_y);
-                liftMotorRight.setPower(gamepad1.left_stick_y);
+                liftMotorLeft.setPower(power);
+                liftMotorRight.setPower(power);
                 currentPosition = encoder.getCurrentPosition();
-                packet.put("lift position", currentPosition);
                 return false;
             }
         };

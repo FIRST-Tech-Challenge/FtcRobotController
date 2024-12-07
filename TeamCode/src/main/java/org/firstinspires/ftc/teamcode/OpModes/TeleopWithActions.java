@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
@@ -17,6 +20,9 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Config
+@TeleOp
 public class TeleopWithActions extends OpMode {
 
     private FtcDashboard dash = FtcDashboard.getInstance();
@@ -72,7 +78,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.add(arm.servoArm());
         }
         if(gamepad2.left_stick_y != 0){
-            runningActions.add(lift.manualControl());
+            runningActions.add(lift.manualControl(gamepad1.left_stick_y));
         }
         if(gamepad2.right_stick_y >= 0){
         }

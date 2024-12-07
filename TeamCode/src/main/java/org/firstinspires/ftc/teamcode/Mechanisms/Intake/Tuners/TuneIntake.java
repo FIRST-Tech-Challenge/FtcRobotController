@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Mechanisms.Intake.Tuners;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,17 +20,17 @@ public class TuneIntake extends LinearOpMode {
     public void runOpMode(){
         battery = new Battery(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap, battery);
-        DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "lfm");
-        Servo intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         waitForStart();
         while (opModeIsActive()){
             if (gamepad1.a) {
                 intake.setPower(speed);
-                intakeServo.setPosition(0.5);
+                intakeServo.setPower(-1);
             }
             if (gamepad1.b){
                 intake.setPower(-speed*.4);
-                intakeServo.setPosition(-0.5);
+                intakeServo.setPower(1);
             }
         }
     }

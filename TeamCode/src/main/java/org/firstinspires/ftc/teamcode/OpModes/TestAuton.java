@@ -27,8 +27,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
  * BETTER THAN PRINTING ONTO THE PHONE VIA FTC SDK
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
-@Config
-@Autonomous(name = "Test Auton", group = "Autonomous")
 public class TestAuton extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
