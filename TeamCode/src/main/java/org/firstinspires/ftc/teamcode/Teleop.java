@@ -77,6 +77,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
+    boolean clipStarted          = false; // Reminder to shut off the collector
     boolean enableOdometry       = true; // Process/report odometry updates?
 
     double   curX, curY, curAngle;
@@ -217,12 +218,11 @@ public abstract class Teleop extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
-//          processPanAndTilt();
-            processPanControls();
+//          processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
             processCollectorControls();
-//          processLevel2Ascent();
+            processLevel2Ascent();
             performEveryLoopTeleop();
 
             // Compute current cycle time
@@ -255,8 +255,8 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void performEveryLoopTeleop() {
-       robot.processViperSlideExtension();
-       robot.processWormTilt();
+        robot.processViperSlideExtension();
+        robot.processWormTilt();
         processHoverArm();
         processSecureArm();
         processScoreArm();
@@ -297,7 +297,7 @@ public abstract class Teleop extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineControlSpeed = 0.30;
+        double fineControlSpeed = 0.20;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
         if( gamepad1.dpad_up ) {
@@ -534,28 +534,6 @@ public abstract class Teleop extends LinearOpMode {
     } // processDriverCentricDriveMode
     
     /*---------------------------------------------------------------------------------*/
-    void processPanAndTilt() {
-
-        // Pan movement
-        if(Math.abs(gamepad2.left_stick_x) > 0.20) {
-            double panPower = (gamepad2.left_stick_x > 0.0)? 0.10 : -0.10;
-            robot.wormPanMotor.setPower(panPower);
-        }
-        else {
-            robot.wormPanMotor.setPower(0.0);
-        }
-
-        // Tilt movement
-        if(Math.abs(gamepad2.left_stick_y) > 0.05) {
-            double tiltPower = (gamepad2.left_stick_y > 0.0)? 0.30 : -0.30;
-            robot.wormTiltMotor.setPower(tiltPower);
-        }
-        else {
-            robot.wormTiltMotor.setPower(0.0);
-        }
-    } // processPanAndTilt
-
-    /*---------------------------------------------------------------------------------*/
     void processPanControls() {
         boolean safeToManuallyLeft  = (robot.wormPanMotorPos > robot.PAN_ANGLE_HW_MIN);
         boolean safeToManuallyRight = (robot.wormPanMotorPos < robot.PAN_ANGLE_HW_MAX);
@@ -665,13 +643,33 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {
-            // Retract lift to the collection position
+            // Retract lift to the SAMPLE collection position
             startHoverArm();
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
             startSecureArm();
+        }
+        // Check for gamepad2 TRIANGLE being actively pressed
+        else if( gamepad2_triangle_now )
+        {
+            // If this is the first time, reset any prior movement
+            if( !liftTweaked) {
+                terminateAutoArmMovements();
+                robot.abortViperSlideExtension();
+                robot.geckoServo.setPower( -0.75 ); // collector on (firm grip)
+            }
+            // Retract viper arm to hook a specimen
+            robot.viperMotor.setPower( -1.0  );
+            liftTweaked = true;
+            clipStarted = true;
+        }
+        // Check for ON-to-OFF toggle of the gamepad2 TRIANGLE
+        else if( !gamepad2_triangle_now && gamepad2_triangle_last )
+        {
+            robot.geckoServo.setPower( 0.0 ); // collector off (we're clipped)
+            clipStarted = false;
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
@@ -723,20 +721,11 @@ public abstract class Teleop extends LinearOpMode {
         {
             robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_COLLECT_DEG);
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
-        // - rotates the wrist/elbow to the horizontal transport position
-        // TO DO: check tilt motor for safe height above floor for wrist rotation!
-        if( gamepad2_triangle_now && !gamepad2_triangle_last)
-        {
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_SAFE);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_SAFE);
-        }
         // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
         // - rotates the wrist/elbow to the vertical init position
         if( gamepad2_square_now && !gamepad2_square_last )
         {
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN_DEG);
         }
         // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
         // - right enables the collector intake servo in FORWARD/collect mode
@@ -786,6 +775,7 @@ public abstract class Teleop extends LinearOpMode {
                 // First instance of BOTH gamepad1 left/right bumpers initiates ascent prep
                 if( gamepad1_l_bumper_now && gamepad1_r_bumper_now )
                 {
+                    terminateAutoArmMovements();
                     robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
                     robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
                     ascent2telem = true; // start monitoring motor powers
@@ -794,23 +784,42 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_SETUP:
                 // Send TILT motor to hang position
-                robot.wormTiltMotor.setTargetPosition( Hardware2025Bot.computeEncoderCountsFromAngle(Hardware2025Bot.TILT_ANGLE_HANG1_DEG) );
-                robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
-                robot.wormTiltMotor.setPower( 0.90 );
+                robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT1_DEG);
                 // Send LIFT motor to hang position
-                robot.viperMotor.setTargetPosition( Hardware2025Bot.VIPER_EXTEND_HANG1 );
-                robot.viperMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
-                robot.viperMotor.setPower( 0.90 );
+                robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG1 );
                 ascent2state = ASCENT_STATE_MOVING;
                 break;
             case ASCENT_STATE_MOVING :
-                boolean tiltReady  = (Math.abs(robot.armTiltAngle - Hardware2025Bot.TILT_ANGLE_HANG1_DEG) < 0.2)? true:false;
-                boolean viperReady = (Math.abs(robot.viperMotorPos - Hardware2025Bot.VIPER_EXTEND_HANG1) < 20)? true:false;
+                if( !robot.viperMotorBusy && !robot.wormTiltMotorBusy ) {
+                    // Ready for phase 2
+                    ascent2state = ASCENT_STATE_READY;
+                }
                 break;
             case ASCENT_STATE_READY :
+                if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
+                    robot.geckoServo.setPower( 0.0 );  // we accidentally turn this on
+                    //=== METHOD 1 ===
+                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, robot.VIPER_RAISE_POWER, robot.VIPER_RAISE_POWER );
+                    //=== METHOD 2 ===
+//                  robot.viperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                  robot.viperMotor.setPower(-1.00);
+                    //================
+                    ascent2state = ASCENT_STATE_LEVEL2;
+                }
                 break;
 
             case ASCENT_STATE_LEVEL2 :
+                if( !robot.viperMotorBusy  ) {
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
+                    ascent2state = ASCENT_STATE_IDLE;
+                }
+                //=== METHOD 2 ===
+//              if( robot.viperMotor.getCurrentPosition() < Hardware2025Bot.VIPER_EXTEND_HANG2  ) {
+//                  robot.viperMotor.setPower(-0.80);
+//                  robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
+//                  ascent2state = ASCENT_STATE_IDLE;
+//              }
+                //================
                 break;
         } // switch()
 
@@ -823,22 +832,6 @@ public abstract class Teleop extends LinearOpMode {
                robot.wormTiltMotorAmps, robot.wormTiltMotorAmpsPk );
             telemetry.addData("Pan Motor", "%.1f Amp (%.1f peak)", 
                robot.wormPanMotorAmps, robot.wormPanMotorAmpsPk );
-            // Do we need to further retract viper slide motor?            
-            boolean viperRetractionIncomplete = (robot.viperMotorPos > Hardware2025Bot.VIPER_EXTEND_HANG2)? true : false;
-            boolean viperMotorLoadOkay = (robot.viperMotorAmps < 8.5)? true : false;
-            if( viperRetractionIncomplete && viperMotorLoadOkay ) {
-                robot.viperMotor.setPower( -1.0 );
-            } else {
-                robot.viperMotor.setPower( -0.10 );  // hold power
-            }
-            // Do we need to further store the robot drivetrain?
-            boolean tiltRetractionIncomplete = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_HANG2_DEG)? true : false;
-            boolean tiltMotorLoadOkay = (robot.wormTiltMotorAmps < 8.5)? true : false;
-            if( viperRetractionIncomplete && viperMotorLoadOkay ) {
-                robot.wormTiltMotor.setPower( 0.30 );   // test at lower  power!!!
-            } else {
-                robot.wormTiltMotor.setPower( 0.0 );  // worm reverse torque holds motor
-            }
         } // ascent2started
 
     }  // processLevel2Ascent
@@ -1055,6 +1048,7 @@ public abstract class Teleop extends LinearOpMode {
             terminateAutoArmMovements();
             robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG);
             scoreArmSpecState = Score_Arm_Spec_Steps.ROTATING_ARM;
+            robot.geckoServo.setPower(-0.3);
         }
     }
     public void processScoreArmSpec() {
@@ -1079,6 +1073,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case POSITION_INTAKE:
                 if(!robot.viperMotorBusy && !robot.wormTiltMotorBusy && scoreSpecTimer.milliseconds() >= 500) {
+                    robot.geckoServo.setPower(0.0);
                     scoreArmSpecState = Score_Arm_Spec_Steps.IDLE;
                 }
                 break;

@@ -269,14 +269,17 @@ public abstract class AutonomousBase extends LinearOpMode {
         } // switch()
 
         // Update our telemetry
+        performEveryLoop();
         telemetry.addData("Start Delay",  "%d sec %s", startDelaySec, ((initMenuSelected==1)? "<-":"  ") );
         telemetry.addData("Park Delay", "%d sec %s", parkDelaySec, ((initMenuSelected==2)? "<-":"  ") );
         telemetry.addData("Specimen Preload", "%s %s",((scorePreloadSpecimen)? "yes":"no"), ((initMenuSelected==3)? "<-":"  ") );
         telemetry.addData("Only Park", "%s %s",((onlyPark)? "yes":"no"), ((initMenuSelected==4)? "<-":"  ") );
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
-      telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData(">","version 102" );
+        telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
+        telemetry.addData("Odometry","x=%.2f y=%.2f angle=%.2f",
+                robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, robotOrientationRadians );
+        telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu
 
@@ -284,8 +287,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     // Resets odometry starting position and angle to zero accumulated encoder counts
     public void resetGlobalCoordinatePosition(){
 //      robot.odom.resetPosAndIMU();
-        robotGlobalXCoordinatePosition = 0.0;
-        robotGlobalYCoordinatePosition = 0.0;
+        robotGlobalXCoordinatePosition = 0.0;  // This will get overwritten the first time
+        robotGlobalYCoordinatePosition = 0.0;  // we call robot.odom.update()!
         robotOrientationRadians        = 0.0;
     } // resetGlobalCoordinatePosition
 
@@ -372,6 +375,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void autoTiltMotorMoveToTarget(double targetArmAngle )
     {
+        autoTiltMotorMoveToTarget( targetArmAngle, 0.80 );
+    } // autoTiltMotorMoveToTarget
+
+    void autoTiltMotorMoveToTarget(double targetArmAngle, double power )
+    {
         // Convert angle to encoder counts
         int targetEncoderCount = Hardware2025Bot.computeEncoderCountsFromAngle(targetArmAngle);
         // Configure target encoder count
@@ -380,7 +388,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.wormTiltMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
         // Begin our timer and start the movement
         autoTiltMotorTimer.reset();
-        robot.wormTiltMotor.setPower( 0.80 );
+        robot.wormTiltMotor.setPower( power );
     } // autoTiltMotorMoveToTarget
 
     boolean autoTiltMotorMoving() {

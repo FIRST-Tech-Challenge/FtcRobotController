@@ -125,8 +125,9 @@ public class Hardware2025Bot
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
     public final static double TILT_ANGLE_HW_MAX_DEG      = 95.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 92.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_ASCENT1_DEG     = 93.80; // Arm at rotation back to the low bar for ascent level 1
+    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
+    public final static double TILT_ANGLE_ASCENT2_DEG     = 48.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_RAISED_DEG      = 54.50; // Arm at rotation back to the basket for scoring
     public final static double TILT_ANGLE_HANG1_DEG       = 40.10; // Arm when preparing for level 2 ascent
@@ -136,7 +137,8 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_AUTO1_DEG       = 54.80; // Arm tilted up for autonomous specimen scoring (above bar)
     public final static double TILT_ANGLE_AUTO2_DEG       = 49.60; // Arm tilted up for autonomous specimen scoring (clipped)
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
-    public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect at ground level
+    public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect samples at ground level
+    public final static double TILT_ANGLE_SPECIMEN_DEG    =  4.60; // Arm to collect specimens at ground level
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -164,8 +166,8 @@ public class Hardware2025Bot
     final public static int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     final public static int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
     final public static int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
-    final public static int          VIPER_EXTEND_HANG1 = 2050;   // extend to this to prepare for level 2 ascent
-    final public static int          VIPER_EXTEND_HANG2 = 500;    // retract to this extension during level 2 ascent
+    final public static int          VIPER_EXTEND_HANG1 = 1100;   // extend to this to prepare for level 2 ascent
+    final public static int          VIPER_EXTEND_HANG2 =  430;   // retract to this extension during level 2 ascent
     final public static int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
     final public static int          VIPER_EXTEND_SECURE=  350;   // Intake is tucked into robot to be safe
     final public static int          VIPER_EXTEND_SAFE  =  750;   // Intake is far enough it can safely swing
@@ -320,12 +322,14 @@ public class Hardware2025Bot
 
         elbowServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
         elbowServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
-        elbowServo.setPosition(ELBOW_SERVO_INIT);
 
         wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
         wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
-        wristServo.setPosition(WRIST_SERVO_INIT);
 
+        if( isAutonomous ) {
+            elbowServo.setPosition(ELBOW_SERVO_INIT);
+            wristServo.setPosition(WRIST_SERVO_INIT);
+        }
         geckoServo = hwMap.crservo.get("GeckoServo");           // servo port 2 (Expansion Hub)
         geckoServo.setPower(0.0);
 
@@ -347,6 +351,9 @@ public class Hardware2025Bot
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         odom.resetPosAndIMU();
+
+        elbowServo.setPosition(ELBOW_SERVO_INIT);
+        wristServo.setPosition(WRIST_SERVO_INIT);
     } // resetEncoders
 
     /*--------------------------------------------------------------------------------------------*/
@@ -669,6 +676,11 @@ public class Hardware2025Bot
 
     public void startViperSlideExtension(int targetEncoderCount )
     {
+        startViperSlideExtension(targetEncoderCount, VIPER_RAISE_POWER, -VIPER_LOWER_POWER);
+    } // startViperSlideExtension
+
+    public void startViperSlideExtension(int targetEncoderCount, double raisePower, double lowerPower)
+    {
         // Range-check the target
         if( targetEncoderCount < VIPER_EXTEND_ZERO  ) targetEncoderCount = VIPER_EXTEND_ZERO;
         if( targetEncoderCount > VIPER_EXTEND_FULL2 ) targetEncoderCount = VIPER_EXTEND_FULL2;
@@ -680,7 +692,7 @@ public class Hardware2025Bot
         boolean directionUpward = (targetEncoderCount > viperMotorPos)? true : false;
         // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
         // power setting, no matter which way the motor must rotate to achieve that target.
-        double motorPower = (directionUpward)? VIPER_RAISE_POWER : -VIPER_LOWER_POWER;
+        double motorPower = (directionUpward)? raisePower : lowerPower;
         viperMotor.setPower( motorPower );
         viperSlideTimer.reset();
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
