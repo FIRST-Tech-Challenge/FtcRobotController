@@ -35,7 +35,6 @@ public class Arm {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                double timeLastUpdate = timer.seconds();
                     if (armPos == armState.RETRACT) {
                         servoArmLeft.setPosition(armExtend);
                         servoArmRight.setPosition(armExtend);
