@@ -11,8 +11,8 @@ public class Devices {
         final double CLAW_CLOSED = 1.05;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
-        final double MAX_SLIDER_TICKS = 2961;
-        final double MAX_SLIDER_INCHES = 26.25;
+        final double MAX_SLIDER_TICKS = 2735.4;
+        final double MAX_SLIDER_INCHES = 24.25;
 
         DcMotorEx wormGear;
         DcMotorEx sliderMotor;

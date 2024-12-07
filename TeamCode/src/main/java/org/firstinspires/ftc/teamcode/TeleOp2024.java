@@ -8,13 +8,17 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class TeleOp2024 extends DriveMethods {
     boolean wasClawTogglePressed = false;
     double sliderPosition = robot.MIN_SLIDER_TICKS;
+    boolean isClawOpen = true;
 
     @Override
     public void init() {
         robot.init(hardwareMap);
 
-        robot.sliderMotor.setPower(.5);
+        robot.sliderMotor.setPower(1);
         robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.clawServo.setPosition(robot.CLAW_OPEN);
+
+
     }
 
     @Override
@@ -24,10 +28,12 @@ public class TeleOp2024 extends DriveMethods {
 
         boolean isClawTogglePressed = operator.b;
         if (isClawTogglePressed && !wasClawTogglePressed) {
-            if (robot.clawServo.getPosition() == robot.CLAW_OPEN) {
+            if (isClawOpen) {
                 robot.clawServo.setPosition(robot.CLAW_CLOSED);
+                isClawOpen = false;
             } else {
                 robot.clawServo.setPosition(robot.CLAW_OPEN);
+                isClawOpen = true;
             }
         }
 
