@@ -121,7 +121,7 @@ public abstract class Robot extends LinearOpMode {
                     (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
             
             double  curPos     = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double  Lift_Power = (curPos < (height + 100) && curPos > (height - 100)) ? 0 : curPos > height ? -1 : 1;
+            double  Lift_Power = (curPos < (height + 70) && curPos > (height - 70)) ? 0 : curPos > height ? -1 : 1;
 
             LiftPower(Lift_Power);
 
@@ -142,7 +142,7 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
             telemetry.update();
-            if (Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power ==0 ) {
+            if (Math.abs(Vx) <= 0.1 && Math.abs(Vy) <= 0.1 && Math.abs(r) <= 0.1 && Lift_Power ==0 ) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;

@@ -14,7 +14,7 @@ public class Controller {
         this.Ki = Ki;
         this.Kd = Kd;
         this.Kf = Kf;
-        this.baseSpeed = Range.clip(Math.abs(baseSpeed), 0, 0.5);
+        this.baseSpeed = Range.clip(Math.abs(baseSpeed), 0, 1);
         Setpoint = Dt = Error = Integral = Derivative = LastTime = LastError = 0;
         this.ErrorTolerance = Math.abs(errorTolerance);
     }
