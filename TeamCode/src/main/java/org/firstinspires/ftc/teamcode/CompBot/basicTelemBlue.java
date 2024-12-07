@@ -9,7 +9,6 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -133,9 +132,7 @@ public class basicTelemBlue extends LinearOpMode {
   public void initRobot() {
 
     // Maps the motor objects to the physical ports
-    FLMotor =
-        hardwareMap.get(
-            DcMotor.class, "FLMotor"); // TODO: Run testMotor to figure out which motor is where
+    FLMotor = hardwareMap.get(DcMotor.class, "FLMotor");
     BLMotor = hardwareMap.get(DcMotor.class, "BLMotor");
     FRMotor = hardwareMap.get(DcMotor.class, "FRMotor");
     BRMotor = hardwareMap.get(DcMotor.class, "BRMotor");
