@@ -50,7 +50,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class ServosNDrive extends LinearOpMode {
 
-    public static final double MID_SERVO = 0.5;
     /* Declare OpMode members. */
     public Servo intakeClaw = null;
     public Servo clawPivot = null;
@@ -109,9 +108,9 @@ public class ServosNDrive extends LinearOpMode {
 
         //outtakeElbow = hardwareMap.get(Servo.class, "5");
 
-        clawPivot.setPosition(MID_SERVO);
-        wrist.setPosition(MID_SERVO);
-        intakeElbow.setPosition(MID_SERVO);
+        clawPivot.setPosition(Values.MID_SERVO);
+        wrist.setPosition(Values.MID_SERVO);
+        intakeElbow.setPosition(Values.MID_SERVO);
 
         //todo set resting positions for intake slides
         //intakeSlide1.setPosition();
