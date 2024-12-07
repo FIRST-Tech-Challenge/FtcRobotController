@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import android.graphics.Color;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -34,6 +35,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
@@ -61,9 +64,11 @@ import java.util.List;
  */
 
 
-@TeleOp(name = "Concept: Vision Color-Locator", group = "Concept")
+@TeleOp(name = "Concept: Vision Color-Locator cammmmm", group = "Concept")
 public class ConceptVisionColorLocator extends LinearOpMode
+
 {
+    double angle = 0;
     @Override
     public void runOpMode()
     {
@@ -110,9 +115,10 @@ public class ConceptVisionColorLocator extends LinearOpMode
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
+                .setRoi(ImageRegion.entireFrame())  // search central 1/4 of camera view
                 .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .setBlurSize(5)
+                .setBoxFitColor(Color.CYAN)// Smooth the transitions between different colors in image
                 .build();
 
         /*
@@ -144,6 +150,7 @@ public class ConceptVisionColorLocator extends LinearOpMode
             // Read the current list
             List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
 
+
             /*
              * The list of Blobs can be filtered to remove unwanted Blobs.
              *   Note:  All contours will be still displayed on the Stream Preview, but only those that satisfy the filter
@@ -165,6 +172,11 @@ public class ConceptVisionColorLocator extends LinearOpMode
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
              */
             ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            if (blobs.isEmpty())
+            {
+                continue;
+            }
+            ColorBlobLocatorProcessor.Blob blob = blobs.get(0);
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -174,17 +186,54 @@ public class ConceptVisionColorLocator extends LinearOpMode
              *     ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
              */
 
-            telemetry.addLine(" Area Density Aspect  Center");
 
-            // Display the size (area) and center location for each Blob.
-            for(ColorBlobLocatorProcessor.Blob b : blobs)
+            double count = 0;
+
+
+            Point[] pt = new Point[4];
+            blob.getBoxFit().points(pt);
+
+            Rect bbox = blob.getBoxFit().boundingRect();
+            double h1 = bbox.height;
+            double w1 = bbox.width;
+
+            Rect rect = new Rect(
+                    new Point(bbox.x, bbox.y),
+                    new Point(bbox.x + bbox.width / 2.0 , bbox.y + bbox.height / 2.0)
+                    );
+
+            if (w1 / h1 >= 7.0/3.0 * 0.9){
+                angle = 0;
+            }
+            else if (w1/ h1 <= 3.0/7.0 * 1.1)
             {
-                RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
-                telemetry.addLine(String.valueOf(boxFit.angle));
+                angle = 90;
+            }
+            else {
+                angle = Math.toDegrees( Math.atan2(h1,w1));
             }
 
+            blob.getBoxFit().set();
+
+            for (Point p : pt){
+                if (p.inside(rect)){
+                    count++;
+                }
+            }
+
+            if (count > 1){
+                angle = -angle;
+            }
+
+
+            for (Point p : pt)
+            {
+                telemetry.addLine(p.toString());
+            }
+
+
+
+            telemetry.addData("angle thisss", angle);
             telemetry.update();
             sleep(50);
         }
