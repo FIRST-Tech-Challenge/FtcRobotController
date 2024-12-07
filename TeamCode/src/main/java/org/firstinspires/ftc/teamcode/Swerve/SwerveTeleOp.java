@@ -23,7 +23,7 @@ public class SwerveTeleOp extends LinearOpMode {
 
     waitForStart();
     while (opModeIsActive()) {
-      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,.01);
       swerve.periodic();
       telemetry.update();
     }

@@ -79,7 +79,7 @@ public class Swerve {
             ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
-  double maxErrorDeg = 0;
+  double maxErrorDeg = 1;
 
   public void drive(ChassisSpeeds speeds, double dt) {
     var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);

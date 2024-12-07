@@ -36,7 +36,7 @@ public class BlueBotTeleop extends LinearOpMode {
         arm.setSlide(gamepad2.left_stick_y);
         arm.setPivot(-gamepad2.right_stick_y, gamepad2.left_bumper);
 
-        arm.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
+        arm.runIntake(gamepad2.right_trigger > .5, gamepad2.left_trigger > .5);
         if (gamepad2.b && !bPressed) {
           arm.toggleWrist();
         }
