@@ -37,13 +37,7 @@ public class LimelightBot extends PinchBot {
         super(opMode);
     }
 
-    public void pivotToUpPosInTime(int time, boolean turnOffAutoPickFlag){
-        pivotToUpPosInTime(time);
-        if (turnOffAutoPickFlag) {
-            inAutoPickup = false;
-        }
-    }
-    public void pickup(boolean isBlueAlliance, boolean includeSharedSample, Telemetry telemetry) {
+    public void pickup(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
         if (inAutoPickup){
             // already in auto pickup mode
             return;
@@ -64,11 +58,11 @@ public class LimelightBot extends PinchBot {
             // open the pinch
             openPinch();
             // lower the pivot
-            pivotToPickupPos();
+            pivotToPickupPos(isSpecimen);
             // close the pinch at a future time
             closePinchInTime(500);
             // raise the pivot at a future time and also reset the auto pickup mode
-            pivotToUpPosInTime(1000, true);
+            pivotToUpPosInTime(1000);
         }
         else{
             // sample is not close enough, move to the sample
