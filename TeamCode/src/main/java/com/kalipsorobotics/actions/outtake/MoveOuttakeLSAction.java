@@ -33,8 +33,11 @@ public class MoveOuttakeLSAction extends Action {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
-        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0.00001, 0);
+        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0 /*0.00001*/, 0);
         this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
+        if (targetTicks >= MAX_RANGE_LS_TICKS) {
+            Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
+        }
         this.dependentActions.add(new DoneStateAction());
     }
 

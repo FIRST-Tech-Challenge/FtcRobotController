@@ -12,7 +12,7 @@ public class PidNav {
     private double D;
 
     private double errorIntegral = 0;
-    private double lastTime = SystemClock.elapsedRealtimeNanos();
+    private double lastTime = System.currentTimeMillis();
     private double lastError = 0;
 
     public PidNav(double P, double I, double D){
@@ -22,10 +22,10 @@ public class PidNav {
     }
 
     public double getPower(double error){
-        double currentTime = SystemClock.elapsedRealtimeNanos();
+        double currentTime = System.currentTimeMillis();
         double deltaTime = currentTime - lastTime;
 
-        errorIntegral += error * deltaTime;
+        errorIntegral += error * (deltaTime/100);
         double errorDerivative = (error - lastError)/deltaTime;
 
         lastTime = currentTime;

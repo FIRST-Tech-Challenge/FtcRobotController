@@ -37,13 +37,20 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 400);
+        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 800);
+        moveOuttakeLSAction.setName("moveOuttakeLSAction");
 
         WaitAction waitAction = new WaitAction(3000);
         waitAction.setDependentActions(moveOuttakeLSAction);
+        waitAction.setName("waitAction");
 
         MoveOuttakeLSAction moveOuttakeLSAction2 = new MoveOuttakeLSAction(outtake, 200);
         moveOuttakeLSAction2.setDependentActions(waitAction);
+        moveOuttakeLSAction2.setName("moveOuttakeLSAction2");
+
+        WaitAction waitAction2 = new WaitAction(3000);
+        waitAction2.setDependentActions(moveOuttakeLSAction2);
+        waitAction2.setName("waitAction2");
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
 
@@ -67,6 +74,7 @@ public class MechanismTestAuto extends LinearOpMode {
                 redAutoSpecimen.addAction(moveOuttakeLSAction);
                 redAutoSpecimen.addAction(waitAction);
                 redAutoSpecimen.addAction(moveOuttakeLSAction2);
+                redAutoSpecimen.addAction(waitAction2);
                 telemetry.addLine("done Move Ls");
                 telemetry.update();
             }
