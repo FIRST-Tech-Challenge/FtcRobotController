@@ -134,6 +134,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveOutBasket1.setName("moveOutBasket1");
         moveOutBasket1.setDependentActions(openClaw1);
         moveOutBasket1.addPoint(outtakeXPos - 300, outtakeYPos - 300, -135);
+        redAutoBasket.addAction(moveOutBasket1);
 
         OuttakeDownReady outtakeDownReady2 = new OuttakeDownReady(outtake);
         outtakeDownReady2.setName("outtakeDownReady2");
@@ -182,6 +183,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveOutBasket2.setName("moveOutBasket2");
         moveOutBasket2.setDependentActions(openClaw2);
         moveOutBasket2.addPoint(outtakeXPos - 300, outtakeYPos - 300, -135);
+        redAutoBasket.addAction(moveOutBasket2);
 
         OuttakeDownReady outtakeDownReady3 = new OuttakeDownReady(outtake);
         outtakeDownReady3.setName("outtakeDownReady3");
