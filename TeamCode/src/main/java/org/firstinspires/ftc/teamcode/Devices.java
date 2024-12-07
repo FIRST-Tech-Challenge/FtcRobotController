@@ -21,6 +21,9 @@ public class Devices {
 //        final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
+        /** This is the angle that the arm starts each match */
+        final double STARTING_ANGLE = -20;
+
         final double MAX_SAFE_SLIDER_TICKS = 2900; // needs to be tested
 
         DcMotorEx wormGear;
@@ -60,7 +63,7 @@ public class Devices {
     }
 
     double wormGearAngle() {
-        return wormGearTicks() / ARM_ANGLE_TICKS_PER_DEGREE;
+        return (wormGearTicks() / ARM_ANGLE_TICKS_PER_DEGREE) + STARTING_ANGLE;
     }
 
     double wormGearRadians() {

@@ -61,7 +61,7 @@ public class TeleOp2024 extends DriveMethods {
             wormGearPower = 0;
         }
 
-        if (robot.wormGearAngle() < 0 && wormGearPower < 0) {
+       if (robot.wormGearAngle() < robot.STARTING_ANGLE && wormGearPower < 0) {
             wormGearPower = 0;
         }
 
