@@ -299,7 +299,6 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             //=========DRIVER==========
             driveAction.move(gamepad1);
 
@@ -414,7 +413,7 @@ public class Teleop extends LinearOpMode {
                 MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(0.5) * -gamepad2.right_stick_y);
             }
 
-
+            wheelOdometry.updatePosition();
             maintainOuttakeGlobalPos.update();
             maintainIntakeGlobalPos.update();
 /*
