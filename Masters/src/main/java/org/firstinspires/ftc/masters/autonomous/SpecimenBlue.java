@@ -47,11 +47,11 @@ public class SpecimenBlue extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Trajectory start= driveTrain.trajectoryBuilder(startPose,false)
-                .lineTo(new Vector2d(-8.5,20))
+                .lineTo(new Vector2d(-8.5,25))
                 .build();
 
         Trajectory toPark = driveTrain.trajectoryBuilder(start.end(), false)
-                .lineToConstantHeading(new Vector2d(-72,50))
+                .lineToConstantHeading(new Vector2d(-72,72))
                 .build();
 
 
@@ -91,8 +91,9 @@ public class SpecimenBlue extends LinearOpMode {
                         outake.openClaw();
                         currentState= State.SUBMERSIBLE_TO_PARK;
                         driveTrain.followTrajectoryAsync(toPark);
+                        outake.diffy1(ITDCons.TransDiffy1);
+                        outake.diffy2(ITDCons.TransDiffy2);
                         target=0;
-                        outake.init();
                     }
                     break;
 

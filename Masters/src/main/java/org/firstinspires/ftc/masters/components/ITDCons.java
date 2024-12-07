@@ -17,6 +17,9 @@ public class ITDCons {
 
     public static double diffyInit = 1;
 
+    public static double TransDiffy1 = .43;
+    public static double TransDiffy2 = .91;
+
     public static double open = 0.35;
     public static double close = 0.75;
 
