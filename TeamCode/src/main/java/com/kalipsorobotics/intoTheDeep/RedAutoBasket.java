@@ -6,6 +6,7 @@ import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeDownReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
@@ -39,6 +40,10 @@ public class RedAutoBasket extends LinearOpMode {
         MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
 //                MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
+
+        MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(-10);
+        MoveIntakeLSAction maintainIntakeLS= new MoveIntakeLSAction(intake, -10);
+        maintainIntakeLS.setName("maintainIntakeLS");
 
         InitAuto initAuto = new InitAuto(intake, outtake);
         initAuto.setName("initAuto");
@@ -120,16 +125,21 @@ public class RedAutoBasket extends LinearOpMode {
         openClaw1.setName("openClaw1");
         openClaw1.setDependentActions(outtakePivotActionOut1);
         redAutoBasket.addAction(openClaw1);
-
-        OuttakeDownReady outtakeDownReady2 = new OuttakeDownReady(outtake);
-        outtakeDownReady2.setName("outtakeDownReady2");
-        outtakeDownReady2.setDependentActions(openClaw1);
-        redAutoBasket.addAction(outtakeDownReady2);
         //===============end of first basket===============
 
 
 
         //===============start of second basket===============
+        PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
+        moveOutBasket1.setName("moveOutBasket1");
+        moveOutBasket1.setDependentActions(openClaw1);
+        moveOutBasket1.addPoint(outtakeXPos - 300, outtakeYPos - 300, -135);
+
+        OuttakeDownReady outtakeDownReady2 = new OuttakeDownReady(outtake);
+        outtakeDownReady2.setName("outtakeDownReady2");
+        outtakeDownReady2.setDependentActions(moveOutBasket1);
+        redAutoBasket.addAction(outtakeDownReady2);
+
         PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(outtakeDownReady2);
@@ -163,21 +173,26 @@ public class RedAutoBasket extends LinearOpMode {
         openClaw2.setName("openClaw2");
         openClaw2.setDependentActions(outtakePivotActionOut2);
         redAutoBasket.addAction(openClaw2);
-
-        OuttakeDownReady outtakeDownReady3 = new OuttakeDownReady(outtake);
-        outtakeDownReady3.setName("outtakeDownReady3");
-        outtakeDownReady3.setDependentActions(openClaw2);
-        redAutoBasket.addAction(outtakeDownReady3);
         //===============end of second basket===============
 
 
 
         //===============start of third basket===============
+        PurePursuitAction moveOutBasket2 = new PurePursuitAction(driveTrain,wheelOdometry);
+        moveOutBasket2.setName("moveOutBasket2");
+        moveOutBasket2.setDependentActions(openClaw2);
+        moveOutBasket2.addPoint(outtakeXPos - 300, outtakeYPos - 300, -135);
+
+        OuttakeDownReady outtakeDownReady3 = new OuttakeDownReady(outtake);
+        outtakeDownReady3.setName("outtakeDownReady3");
+        outtakeDownReady3.setDependentActions(moveOutBasket2);
+        redAutoBasket.addAction(outtakeDownReady3);
+
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample3.setName("moveToSample3");
-        moveToSample3.setDependentActions(moveToBasket2);
+        moveToSample3.setDependentActions(outtakeDownReady2);
         //move basket to sample 3
-        moveToSample3.addPoint(-930, 1010, 90);
+        moveToSample3.addPoint(-620, 950, 180);
         redAutoBasket.addAction(moveToSample3);
 
 
@@ -243,6 +258,7 @@ public class RedAutoBasket extends LinearOpMode {
 
             wheelOdometry.updatePosition();
             maintainLS.update();
+            maintainIntakeLS.update();
 
             redAutoBasket.updateCheckDone();
 

@@ -13,9 +13,9 @@ public class BasketReadyAction extends KActionSet {
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);
 
-        MoveOuttakeLSAction raiseSlides = new MoveOuttakeLSAction(outtake, 1093);
-        raiseSlides.setName("raiseSlides");
-        this.addAction(raiseSlides);
+        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, 800);
+        raiseSlidesBasket.setName("raiseSlidesBasket");
+        this.addAction(raiseSlidesBasket);
 
         KServoAutoAction outtakePivotActionUp = new KServoAutoAction(outtake.getOuttakePivotServo(),
                 OuttakePivotAction.OUTTAKE_PIVOT_HALF_POS);

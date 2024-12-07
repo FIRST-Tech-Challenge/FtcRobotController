@@ -38,6 +38,7 @@ public class Intake {
         linkageServo2 = new KServo(opModeUtilities.getHardwareMap().servo.get("linkageServo2"), 60/0.25, 300,
                 0, false);
         linkageMotor = opModeUtilities.getHardwareMap().dcMotor.get("intakeLinkage");
+
         colorSensor = opModeUtilities.getHardwareMap().colorSensor.get("intakeColorSensor");
 
         noodleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

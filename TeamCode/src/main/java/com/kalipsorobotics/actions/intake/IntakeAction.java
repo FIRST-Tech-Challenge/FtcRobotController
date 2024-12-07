@@ -32,6 +32,7 @@ public class IntakeAction extends Action {
         this.intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         this.colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
     }
+
     @Override
     public boolean checkDoneCondition() {
         return false;

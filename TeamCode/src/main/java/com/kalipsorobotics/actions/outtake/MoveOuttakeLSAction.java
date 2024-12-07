@@ -15,9 +15,8 @@ import com.kalipsorobotics.modules.Outtake;
 public class MoveOuttakeLSAction extends Action {
 
     public enum Position {
-         Down, SPECIMEN, BASKET
+        Down, SPECIMEN, BASKET
     }
-
 
     Outtake outtake;
 
@@ -27,20 +26,28 @@ public class MoveOuttakeLSAction extends Action {
     double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
     final double targetTicks;
     private double currentTicks;
+
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
         this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
+        if(targetTicks > MAX_RANGE_LS_TICKS) {
+            Log.e("Outtake_LS", "target out of range, target: " + targetTicks + ", max: " + MAX_RANGE_LS_TICKS);
+        }
         this.dependentActions.add(new DoneStateAction());
     }
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.15;
+        double lowestPower = 0.2;
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.3;
+            lowestPower = 0.25;
+        }
+
+        if (globalLinearSlideMaintainTicks > 1900) {
+            lowestPower = 0.4;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -74,7 +81,6 @@ public class MoveOuttakeLSAction extends Action {
         } else {
             currentTargetTicks = this.targetTicks;
         }
-
 
         //soft stop for low and high
         if (currentTargetTicks > MAX_RANGE_LS_TICKS) {

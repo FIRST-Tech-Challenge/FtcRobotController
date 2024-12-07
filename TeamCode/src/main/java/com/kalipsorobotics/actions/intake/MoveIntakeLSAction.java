@@ -20,7 +20,7 @@ public class MoveIntakeLSAction extends Action {
     Intake intake;
     private static double globalIntakeSlideMaintainTicks = 0;
     DcMotor intakeSlideMotor;
-    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.degToTicksIntakeLS(2);
+    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.degToTicksIntakeLS(1);
     private final double P_CONSTANT = 5 * (1 / CalculateTickPer.degToTicksIntakeLS(90));
     final double targetTicks;
     private double currentTicks;
@@ -94,8 +94,8 @@ public class MoveIntakeLSAction extends Action {
         }
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
-            if (globalIntakeSlideMaintainTicks < 0) {
-                power = 0;
+            if (globalIntakeSlideMaintainTicks <= 0) {
+                power = -0.2;
             }
         }
         Log.d("Intake_LS", String.format(
