@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Autonomous(name = "AutonPedro", group = "Autos")
 public class AutonPedroSpecimens extends LinearOpMode{
-
+    protected boolean isBlue = false;
     protected AutomationBot robot = new AutomationBot(this);
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -227,6 +227,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
                     /* Grab Sample */
+                    robot.pickup(isBlue, false, true, telemetry);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     follower.followPath(scoreFromObservation, true);
                     setPathState(7);
@@ -245,6 +246,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
             case 8:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
+                    robot.pickup(isBlue, false, true, telemetry);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
                     follower.followPath(scoreFromObservation,true);
                     setPathState(9);
@@ -263,6 +265,8 @@ public class AutonPedroSpecimens extends LinearOpMode{
             case 10:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
+                    robot.pickup(isBlue, false, true, telemetry);
+
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
                     follower.followPath(scoreFromObservation,true);
                     setPathState(11);
@@ -281,6 +285,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
             case 12:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
+                    robot.pickup(isBlue, false, true, telemetry);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
                     follower.followPath(scoreFromObservation,true);
                     setPathState(13);
@@ -300,7 +305,6 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(scoreFromObservation,true);
                     setPathState(-1);
                 }
                 break;
