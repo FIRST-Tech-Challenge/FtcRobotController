@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class FileRead {
+public class
+FileRead {
     // File reading stuff
     File file;
     Scanner scan;

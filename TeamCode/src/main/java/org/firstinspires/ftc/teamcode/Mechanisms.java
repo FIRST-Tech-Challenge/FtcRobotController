@@ -9,20 +9,27 @@ public class Mechanisms {
 
     ElapsedTime totalTime = new ElapsedTime();
 
-    // Servos and motors for outtake/intake.
-    DcMotor outTakeLift;
+    // outake lift right
+    DcMotor outTakeLiftRight;
+    // outake lift left
+    DcMotor outTakeLiftLeft;
 
-
-    Servo outTakeLargePivotExpansion;
-    Servo outTakeLargePivotControl;
+    // outtake servos
+    Servo outTakePivotRight;
+    Servo outTakePivotLeft;
     Servo outTakeClawPivot;
     Servo outTakeClaw;
+    Servo outTakeFlip;
 
+    // intake lifts
     DcMotor inTakeLift;
+
+    // intake servos
     Servo inTakeClaw;
-    Servo inTakeFlipControl;
-    Servo inTakeFlipExpansion;
+    Servo intakeFlipR;
+    Servo intakeFlipL;
     Servo inTakeRotator;
+
 
 
     // Mechanism stuff
@@ -45,6 +52,16 @@ public class Mechanisms {
     double OUT_IT_FLIP_POS = 0;
     double OUT_DOWN_IT_FLIP_POS = .26;
 
+    // backright drivetrain motor port 0 control
+    // backleft drivetrain motor port 1 control
+    // frontleft drivetrain motor port 1 expansion
+    // frontright drivetrain motor port 0 expansion
+    // outtake lift right motor port 2 control
+    // intakeflipleft servo 1 control
+    // intake claw servo 2 control
+    // intake rotator servo 3 control
+
+
 
     boolean upPivotOT = true;
     double pivotTimeOT = 0;
@@ -53,10 +70,18 @@ public class Mechanisms {
 
     public void init(OpMode opMode)
     {
-        //outTakeLift = opMode.hardwareMap.dcMotor.get("otl");
-        //outTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //outTakeClaw = opMode.hardwareMap.servo.get(("otc"));
-        //outTakeFlip = opMode.hardwareMap.servo.get(("otf"));
+        // outtake lifts
+        outTakeLiftRight = opMode.hardwareMap.dcMotor.get("otr");
+        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outTakeLiftLeft = opMode.hardwareMap.dcMotor.get("otl");
+        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // outtake servos
+        outTakeClaw = opMode.hardwareMap.servo.get(("otc"));
+        outTakeFlip = opMode.hardwareMap.servo.get(("otf"));
+        outTakePivotRight = opMode.hardwareMap.servo.get("otpr");
+        outTakePivotLeft = opMode.hardwareMap.servo.get("otpl");
+
 
         // Intake lift
         //inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
@@ -65,10 +90,10 @@ public class Mechanisms {
         //inTakeFlipControl.getController().pwmEnable();
 
         // Control hub servos
-        inTakeFlipControl = opMode.hardwareMap.servo.get(("itfc")); // port 0
-        inTakeFlipExpansion = opMode.hardwareMap.servo.get("itfe"); // port 1
-        inTakeRotator = opMode.hardwareMap.servo.get("itr"); // port 2
-        inTakeClaw = opMode.hardwareMap.servo.get(("itc")); // port 3
+        intakeFlipL = opMode.hardwareMap.servo.get(("itfl")); // port
+        intakeFlipR = opMode.hardwareMap.servo.get(("itfr")); // port
+        inTakeRotator = opMode.hardwareMap.servo.get("itr"); // port
+        inTakeClaw = opMode.hardwareMap.servo.get(("itc")); // port
 
 
         // Expansion hub servos
@@ -82,7 +107,8 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeLift(){
-        outTakeLift.setPower(master.gamepad2.left_stick_y);
+        outTakeLiftRight.setPower(master.gamepad2.left_stick_y);
+        outTakeLiftLeft.setPower(master.gamepad2.left_stick_y);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -106,9 +132,9 @@ public class Mechanisms {
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeFlip(){
         if (master.gamepad2.left_trigger > .1)
-            outTakeLargePivotControl.setPosition(DOWN_OT_FLIP_POS);
+            outTakePivotRight.setPosition(DOWN_OT_FLIP_POS);
         if (master.gamepad2.right_trigger > .1)
-            outTakeLargePivotControl.setPosition(UP_OT_FLIP_POS);
+            outTakePivotLeft.setPosition(UP_OT_FLIP_POS);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -141,17 +167,23 @@ public class Mechanisms {
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeFlip(){
         if (master.gamepad2.dpad_up)
-            inTakeFlipExpansion.setPosition(UP_IT_FLIP_POS);
+            intakeFlipR.setPosition(UP_IT_FLIP_POS);
+            intakeFlipL.setPosition(UP_IT_FLIP_POS);
+
         if (master.gamepad2.dpad_down)
-            inTakeFlipExpansion.setPosition(DOWN_IT_FLIP_POS);
+            intakeFlipR.setPosition(DOWN_IT_FLIP_POS);
+            intakeFlipL.setPosition(DOWN_IT_FLIP_POS);
         if (master.gamepad2.dpad_left)
         {
-            inTakeFlipExpansion.setPosition(MID_IT_FLIP_POS);
+            intakeFlipR.setPosition(MID_IT_FLIP_POS);
+            intakeFlipL.setPosition(MID_IT_FLIP_POS);
         }
         if (master.gamepad2.x)
-            inTakeFlipExpansion.setPosition(OUT_IT_FLIP_POS);
+            intakeFlipR.setPosition(OUT_IT_FLIP_POS);
+            intakeFlipL.setPosition(OUT_IT_FLIP_POS);
         if (master.gamepad2.y)
-            inTakeFlipExpansion.setPosition(OUT_DOWN_IT_FLIP_POS);
+            intakeFlipR.setPosition(OUT_DOWN_IT_FLIP_POS);
+            intakeFlipL.setPosition(OUT_DOWN_IT_FLIP_POS);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -174,6 +206,22 @@ public class Mechanisms {
             inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
     }
+    //////////////////////////////////////////////////////////////////////////////
+    public void transfer() throws InterruptedException{
+        intakeFlipL.setPosition(1); // pos of intake so that it is lifted
+        intakeFlipR.setPosition(1); // pos of intake so that it is lifted
+        master.wait(200);
+        // move intake to transfer here
+        master.wait(2);
+        intakeFlipL.setPosition(0); // pos of intake when it is in the transfer position
+        intakeFlipR.setPosition(0); // pos of intake when it is in the transfer position
+        master.wait(200);
+        outTakePivotRight.setPosition(0); // pos of outtake when it is in the transfer position
+        outTakePivotLeft.setPosition(0); // pos of outtake when it is in the transfer position
+        master.wait(200);
+        outTakePivotRight.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
+        outTakePivotLeft.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     public void runTesting()
@@ -186,13 +234,15 @@ public class Mechanisms {
         if (master.gamepad2.b)
         {
             //grab
-            inTakeFlipExpansion.setPosition(.3);
+            intakeFlipL.setPosition(.3);
+            intakeFlipR.setPosition(.3);
             //inTakeFlipControl.getController().setServoPosition();
         }
         if (master.gamepad2.dpad_up)
         {
             //put in transfer
-            inTakeFlipExpansion.setPosition(.5);
+            intakeFlipL.setPosition(.5);
+            intakeFlipR.setPosition(.5);
         }
         if (master.gamepad2.dpad_down)
         {
@@ -205,7 +255,8 @@ public class Mechanisms {
         }
         if (master.gamepad2.x)
         {
-            inTakeFlipExpansion.setPosition(.7);
+            intakeFlipL.setPosition(.7);
+            intakeFlipR.setPosition(.7);
         }
         if (master.gamepad2.y)
         {
@@ -213,15 +264,18 @@ public class Mechanisms {
         }
         if (master.gamepad2.left_bumper)
         {
-            outTakeLift.setPower(.8);
+            outTakeLiftLeft.setPower(.8);
+            outTakeLiftRight.setPower(.8);
         }
         else if (master.gamepad2.right_bumper)
         {
-            outTakeLift.setPower(-.8);
+            outTakeLiftLeft.setPower(-.8);
+            outTakeLiftRight.setPower(-.8);
         }
         else
         {
-            outTakeLift.setPower(0);
+            outTakeLiftLeft.setPower(0);
+            outTakeLiftRight.setPower(0);
         }
         if (master.gamepad2.left_trigger > .1)
         {
