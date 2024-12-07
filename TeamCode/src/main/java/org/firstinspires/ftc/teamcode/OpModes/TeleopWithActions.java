@@ -72,7 +72,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.add(arm.servoArm());
         }
         if(gamepad2.left_stick_y != 0){
-            runningActions.add(lift.moveLift());
+            runningActions.add(lift.manualControl());
         }
         if(gamepad2.right_stick_y >= 0){
         }

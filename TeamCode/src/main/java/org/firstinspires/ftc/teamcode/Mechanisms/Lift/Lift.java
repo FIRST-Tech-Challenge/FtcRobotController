@@ -55,7 +55,7 @@ public class Lift {
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.liftMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         this.liftMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,15 +125,17 @@ public class Lift {
             }
         };
     }
-    public Action moveLift() {
-        int initialPos = currentPosition;
+    public Action manualControl() {
         return new Action() {
+
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 checkLimit();
                 liftMotorLeft.setPower(gamepad1.left_stick_y);
                 liftMotorRight.setPower(gamepad1.left_stick_y);
-                return gamepad1.left_stick_y != 0;
+                currentPosition = encoder.getCurrentPosition();
+                packet.put("lift position", currentPosition);
+                return false;
             }
         };
     }
