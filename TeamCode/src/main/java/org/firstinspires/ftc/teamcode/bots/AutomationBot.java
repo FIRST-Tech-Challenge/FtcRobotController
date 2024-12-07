@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class AutomationBot extends LimelightBot{
 
@@ -32,7 +28,7 @@ public class AutomationBot extends LimelightBot{
                 while (timer.milliseconds() < 1000) {
                     // Allow other tasks to run, like telemetry updates
                 }
-                pivotToSpecimenPos();
+                pivotToSpecimenHighPos();
 
                 timer.reset();
                 while (timer.milliseconds() < 1000){}
@@ -44,11 +40,11 @@ public class AutomationBot extends LimelightBot{
                     // Wait another second
                 }
 
-                moveSlideToSpecimenPos();
+                moveSlideToHighSpecimenPos();
 
             }
 
-            if (getPivotPosition() >= specimenSlidePos -100 && getPivotPosition() <= specimenSlidePos + 100) {
+            if (getPivotPosition() >= specimenHighSlidePos -100 && getPivotPosition() <= specimenHighSlidePos + 100) {
                 timer.reset();
                 while (timer.milliseconds() < 1000) {
                     // Wait before moving the slide
@@ -67,6 +63,65 @@ public class AutomationBot extends LimelightBot{
             }
         }
     }
+
+    /**
+     * This method will prepare the robot to score a specimen (raise pivot arm, extend slide to a certain position)
+     * @param input - boolean to determine if the robot should prepare to score a specimen
+     * @param aimHigh - boolean to determine if the robot should aim high or low chamber
+     */
+    public void readySpecimenPos(boolean input, boolean aimHigh) {
+        if (input) {
+            rotateToVerticalPos();
+            if (aimHigh) {
+                pivotToSpecimenHighPos();
+                moveSlideToHighSpecimenPos();
+            } else {
+                pivotToSpecimenLowPos();
+                moveSlideToLowSpecimenPos();
+            }
+        }
+    }
+
+    /**
+     * This method will score a specimen (slide down a little, open pinch)
+     * @param input
+     */
+    public void scoreSpecimenSimple(boolean input) {
+        if (input) {
+            moveSlideByDelta(-100);
+            openPinchInTime(300);
+        }
+    }
+
+    /**
+     * This method will prepare the robot to score a basket (raise pivot arm, extend slide to a certain position)
+     * @param input - boolean to determine if the robot should prepare to score a basket
+     * @param aimHigh - boolean to determine if the robot should aim high or low basket
+     */
+    public void readyBucketPos(boolean input, boolean aimHigh) {
+        if (input) {
+            rotateToVerticalPos();
+            if (aimHigh) {
+                pivotToHighBasketPos();
+                moveSlideToHighBucketPos();
+            } else {
+                pivotToLowBasketPos();
+                moveSlideToLowBucketPos();
+            }
+        }
+    }
+    /**
+     * This method will score a bucket (pivot arm a little, open pinch, pivot arm up)
+     * @param input - boolean to determine if the robot should score a bucket
+     */
+    public void scoreBucketSimple(boolean input) {
+        if (input) {
+            pivotByDelta(-50);
+            openPinchInTime(100);
+            pivotByDelteInTime(100, 300);
+        }
+    }
+
     public void scoreBucket(boolean input){
         if (input) {
             if (getPivotPosition() <= minumimPivotPos + 100 && getPivotPosition() >= minumimPivotPos -50 ) {
@@ -74,7 +129,7 @@ public class AutomationBot extends LimelightBot{
                 while (timer.milliseconds() < 1000) {
                     // Allow other tasks to run, like telemetry updates
                 }
-                pivotToHighBucketPos();
+                pivotToHighBasketPos();
 
 
                 timer.reset(); // Reset the timer again
