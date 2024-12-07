@@ -75,10 +75,9 @@ public class LimelightBot extends PinchBot {
             }
             if (!isXCloseEnough) {
                 // move the robot sideways based on delta X
-                double distance = sample.getDeltaX() * 0.1;
-                if (telemetry != null) telemetry.addData("DRIVE -------------->", distance);
-                // TODO : need different method to drive sideways
-                strafing(distance, 0.2);
+                double power = sample.getDeltaX() * 0.1;
+                if (telemetry != null) telemetry.addData("DRIVE --------------> power :", power);
+                strafing(power);
             }
         }
     }

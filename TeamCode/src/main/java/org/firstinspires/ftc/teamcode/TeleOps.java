@@ -102,10 +102,10 @@ public class TeleOps extends LinearOpMode {
                 telemetry.addData("limelight.status", robot.limelight.getStatus());
             }
             if (gamepad2.a){
-                robot.strafing(5, 0.6);
+                robot.strafing(0.1);
             }
             if (gamepad2.b){
-                robot.strafing(5, 0.6);
+                robot.strafing(-0.1);
             }
             if (gamepad2.left_bumper){
                 robot.pickup(true, true, true, telemetry);

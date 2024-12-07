@@ -530,26 +530,16 @@ public class FourWheelDriveBot extends BotBot{
                 rightRear.getCurrentPosition()));
     }
 
-    public void strafing(double distance, double power){
-        int target = (int)(distance * CENTIMETER_TO_DRIVING_MOTOR_CONVERSION_RATE);
+    public void strafing(double power){
 
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFront.setPower(power);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setPower(-power);
         rightFront.setPower(power);
         leftRear.setPower(power);
-        rightRear.setPower(power);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        leftFront.setTargetPosition(leftFront.getCurrentPosition() - target);
-        rightFront.setTargetPosition(rightFront.getCurrentPosition() + target);
-        leftRear.setTargetPosition(leftRear.getCurrentPosition() + target);
-        rightRear.setTargetPosition(rightRear.getCurrentPosition() - target);
+        rightRear.setPower(-power);
 
     }
 }
