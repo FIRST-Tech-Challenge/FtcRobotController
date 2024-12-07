@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.MovePivotRelativelyCommand;
 import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
@@ -127,6 +128,10 @@ public class MainTeleop extends OpModeTemplate {
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(deliverySlider::ResetEncoder, deliverySlider));
+
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
+                    .whenPressed(new MovePivotRelativelyCommand(deliveryPivot, MovePivotRelativelyCommand.Direction.ToPickup, DeliveryPivot.DeliveryPositionFromStart - 200, telemetry)
+                            .andThen(new InstantCommand(deliveryPivot::resetEncoder, deliveryPivot)));
 
         //driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //        .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));

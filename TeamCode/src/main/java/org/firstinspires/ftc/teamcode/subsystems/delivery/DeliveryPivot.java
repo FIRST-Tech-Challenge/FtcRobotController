@@ -263,4 +263,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
     public SonicPIDFController getPidController() {
         return pidController;
     }
+
+    public void resetEncoder() {
+        motor.resetEncoder();
+    }
 }
