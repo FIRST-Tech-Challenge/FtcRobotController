@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -54,7 +55,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Rosie Auto Drive By Time", group="Robot")
+@Autonomous(name="Rosies Auto Drive By Time", group="Robot")
 public class DefaultAuto extends LinearOpMode {
 
    /* Declare OpMode members. */
@@ -84,8 +85,8 @@ public class DefaultAuto extends LinearOpMode {
       // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
       leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
       leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-      rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-      rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+      rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+      rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
       // Send telemetry message to signify robot waiting;
       telemetry.addData("Status", "Ready to run");
