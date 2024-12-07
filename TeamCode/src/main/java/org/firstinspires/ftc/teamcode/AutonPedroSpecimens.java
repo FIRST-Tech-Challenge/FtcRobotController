@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.bots.AutomationBot;
@@ -26,10 +27,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "AutonPedro", group = "Autos")
+//@Autonomous(name = "AutonPedro", group = "Autos")
 public class AutonPedroSpecimens extends OpMode {
 
-    protected AutomationBot robot = new AutomationBot(this);
+    protected AutomationBot robot; //= new AutomationBot(this);
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 

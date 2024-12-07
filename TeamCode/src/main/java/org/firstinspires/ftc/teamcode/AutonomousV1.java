@@ -23,8 +23,7 @@ public class AutonomousV1 extends LinearOpMode {
 
         waitForStart();
 
-//        odometryBot.driveToCoordinate(-10000,10000,0,500,1,true);
-//        odometryBot.waitForCoordinateDrive();
-        odometryBot.sleep(10000000);
+        odometryBot.driveToCoordinate(5000,-10000,0,500,1,true);
+        odometryBot.waitForCoordinateDrive();
     }
 }

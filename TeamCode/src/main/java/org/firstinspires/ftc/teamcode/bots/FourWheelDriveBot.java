@@ -180,10 +180,10 @@ public class FourWheelDriveBot extends BotBot{
         leftRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
 //        print(String.format("Starting at leftFront: %7d, rightFront:%7d, leftRear:%7d, rightRear:%7d",
@@ -530,5 +530,17 @@ public class FourWheelDriveBot extends BotBot{
                 rightRear.getCurrentPosition()));
     }
 
+    public void strafing(double power){
+
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setPower(-power);
+        rightFront.setPower(power);
+        leftRear.setPower(power);
+        rightRear.setPower(-power);
+
+    }
 }
 
