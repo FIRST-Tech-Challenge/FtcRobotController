@@ -22,14 +22,24 @@ public class TuneIntake2 extends LinearOpMode {
         // Wait for the start button
         waitForStart();
 
-        // Run the intake motor and set the servo for a certain duration (autonomous action)
-        if (opModeIsActive()) {
-            intake.setPower(speed);        // Run the intake forward
-            intakeServo.setPosition(0.5);  // Set the servo to the "engage" position
-            sleep((long)(intakeDuration * 1000));  // Run for the specified duration (in milliseconds)
-
-            intake.setPower(0);            // Stop the intake motor
-            intakeServo.setPosition(0);    // Reset the servo position (disengage)
+        while (opModeIsActive()) {
+            while(gamepad1.circle){
+                intake.setPower(0.5);
+            }
+            if(gamepad1.cross){
+                intake.setPower(0);
+            }
         }
+
+
+        // Run the intake motor and set the servo for a certain duration (autonomous action)
+//        if (opModeIsActive()) {
+//            intake.setPower(speed);        // Run the intake forward
+//            intakeServo.setPosition(0.5);  // Set the servo to the "engage" position
+//            sleep((long)(intakeDuration * 1000));  // Run for the specified duration (in milliseconds)
+//
+//            intake.setPower(0);            // Stop the intake motor
+//            intakeServo.setPosition(0);    // Reset the servo position (disengage)
+//        }
     }
 }

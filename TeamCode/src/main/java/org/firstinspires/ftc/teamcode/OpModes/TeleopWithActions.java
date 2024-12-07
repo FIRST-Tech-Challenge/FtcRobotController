@@ -60,10 +60,10 @@ public class TeleopWithActions extends OpMode {
             runningActions.add(claw.servoClaw());
         }
         if(gamepad1.left_bumper){
-            runningActions.add(intake.intake());
+            runningActions.add(intake.motorIntake());
         }
         if(gamepad1.right_bumper){
-            runningActions.add(intake.outtake());
+            runningActions.add(intake.motorIntake());
         }
         if(gamepad1.circle){
             runningActions.add(arm.servoArm());
@@ -74,7 +74,9 @@ public class TeleopWithActions extends OpMode {
         if(gamepad2.left_stick_y != 0){
             runningActions.add(lift.moveLift());
         }
-            runningActions.add(intake.intake());
+        if(gamepad2.right_stick_y >= 0){
+        }
+
         // updated based on gamepads
         runningActions.add(
                 drivetrain.manualControl()
