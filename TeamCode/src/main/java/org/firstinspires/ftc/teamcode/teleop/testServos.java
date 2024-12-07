@@ -45,16 +45,16 @@ public class testServos extends LinearOpMode {
             servo2.setPosition(right);
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw", "%2f,", left);
-            telemetry.addData("left",  "%.2f", servo1.getPosition());
-            telemetry.addData("right", "%.2f", servo2.getPosition());
-
+            telemetry.addData("claw", "%.1f,", left);
+            telemetry.addData("left",  "%.1f", servo1.getPosition());
+            telemetry.addData("right", "%.1f", servo2.getPosition());
+            telemetry.addData("right, gamepad", "%.1f", gamepad1.right_stick_y);
+            telemetry.addData("right, gamepad", "%.1f", gamepad1.left_stick_y);
 
             // Pace this loop so jaw action is reasonable speed.
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
-
         }
     }
 }

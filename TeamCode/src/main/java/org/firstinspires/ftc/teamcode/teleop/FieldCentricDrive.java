@@ -24,7 +24,7 @@ public class FieldCentricDrive extends LinearOpMode {
     protected MecanumDrive drive;
     private double  yMultiplier = 1;
     private IMU imu;
-    private Pose2d startingPos = new Pose2d(0,0,90);
+    private Pose2d startingPos = new Pose2d(0,0,Math.toRadians(90));
 
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad currentGamepad2 = new Gamepad();
@@ -36,7 +36,7 @@ public class FieldCentricDrive extends LinearOpMode {
     public void runOpMode() {
         // region Hardware Initialization
 
-        imu = hardwareMap.get(IMU.class, "imu2");
+        imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters myIMUparameters;
 
         myIMUparameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -63,8 +63,7 @@ public class FieldCentricDrive extends LinearOpMode {
             YawPitchRollAngles robotOrientation;
             robotOrientation = imu.getRobotYawPitchRollAngles();
             Vector2d input = new Vector2d(-currentGamepad1.left_stick_x * yMultiplier,
-                    currentGamepad1.left_stick_y * yMultiplier);
-                    //.rota
+                    currentGamepad1.left_stick_y * yMultiplier);//.times(Math.toRadians(poseEstimate.heading.));
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());

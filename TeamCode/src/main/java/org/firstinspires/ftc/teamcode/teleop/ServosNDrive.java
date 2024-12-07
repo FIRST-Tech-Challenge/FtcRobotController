@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.teleop.Values;
 /*
  * This OpMode executes a POV Game style Teleop for a direct drive robot
  * The code is structured as a LinearOpMode
@@ -71,14 +71,10 @@ public class ServosNDrive extends LinearOpMode {
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
 
-    public static final double MID_SERVO   =  0.5 ;
+    public static final double MID_SERVO =  0.5 ;
 
     @Override
     public void runOpMode() {
-        double intakeClawPos;
-        double clawPivotPos;
-        double wristPos;
-        double intakeElbowPos;
 
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -100,9 +96,8 @@ public class ServosNDrive extends LinearOpMode {
         wrist  = hardwareMap.get(Servo.class, "2");
         intakeElbow = hardwareMap.get(Servo.class, "3");
         outtakeClaw  = hardwareMap.get(Servo.class, "4");
-        outtakeElbow = hardwareMap.get(Servo.class, "5");
+        //outtakeElbow = hardwareMap.get(Servo.class, "5");
 
-        clawPivot.setPosition(MID_SERVO);
         clawPivot.setPosition(MID_SERVO);
         wrist.setPosition(MID_SERVO);
         intakeElbow.setPosition(MID_SERVO);
@@ -154,37 +149,39 @@ public class ServosNDrive extends LinearOpMode {
 
             //all servo stuff
 
-            if (currentGamepad1.a && previousGamepad1.a) {
+
+
+            if (currentGamepad1.circle && previousGamepad1.circle){
+                intakeClaw.setPosition(Values.intakeclawClose);
+            } else if (currentGamepad1.circle && !previousGamepad1.circle) {
+                intakeClaw.setPosition(Values.intakeClawOpen);
+            }
+
+            if (currentGamepad1.cross && previousGamepad1.cross){
+                intakeElbow.setPosition(Values.intakeElbowDown);
+            } else if (currentGamepad1.cross && !previousGamepad1.cross) {
+                intakeElbow.setPosition(Values.intakeElbowUp);
+            }
+
+            if (currentGamepad1.square && previousGamepad1.square){
+                outtakeElbow.setPosition(Values.outtakeElbowDown);
+            } else if (currentGamepad1.square && !previousGamepad1.square) {
+                outtakeElbow.setPosition(Values.outtakeElbowUp);
+            }
+
+            if (currentGamepad1.triangle && previousGamepad1.triangle) {
                 outtakeClaw.setPosition(.5);
-            } else if(currentGamepad1.a && !previousGamepad1.a){
+            } else if(currentGamepad1.triangle && !previousGamepad1.triangle){
                 outtakeClaw.setPosition(1);
             }
 
-            if (currentGamepad1.b && previousGamepad1.b){
-                intakeClaw.setPosition(.46);
-            } else if (currentGamepad1.b && !previousGamepad1.b) {
-                intakeClaw.setPosition(.9);
-            }
-
-            if (currentGamepad1.x && previousGamepad1.x){
-                outtakeElbow.setPosition(.7);
-            } else if (currentGamepad1.x && !previousGamepad1.x) {
-                outtakeElbow.setPosition(.5);
-            }
-
-            if (currentGamepad1.y && previousGamepad1.y){
-                intakeElbow.setPosition(.0);
-            } else if (currentGamepad1.y && !previousGamepad1.y) {
-                intakeElbow.setPosition(.5);
-            }
-
             // Send telemetry message to signify robot running;
-            telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
+            /*telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
             telemetry.addData("Intake yaw",  "%.2f", wrist);
             telemetry.addData("Intake big rotate",  "%.2f", intakeElbow.getPosition());
             telemetry.addData("outtake Claw",  "%.2f", outtakeClaw.getPosition());
             telemetry.addData("outtake rotate",  "%.2f", outtakeElbow.getPosition());
-            telemetry.update();
+            telemetry.update();*/
 
         }
     }
