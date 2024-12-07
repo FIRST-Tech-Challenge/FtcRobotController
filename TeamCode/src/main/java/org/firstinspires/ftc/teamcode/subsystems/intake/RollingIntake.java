@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.intake;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -125,7 +124,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
             if (DeliveryPivot.recordedPosition > 1000 && DeliverySlider.recordedPosition < -2200) {
                 telemetry.addLine("Toggling wrist...");
-                SetElbowInSpecimenPosition();
+                SetElbowInSampleDeliveryPosition();
             }
 
             this.leftServo.setPower(0);
@@ -146,12 +145,16 @@ public class RollingIntake extends SonicSubsystemBase {
         this.isInDeliveryPosition = isInDeliveryPosition;
     }
 
-    public void SetElbowInSpecimenPosition() {
-        this.elbowServo.setPosition(0);
+    public void SetElbowInSpecimenDeliveryPosition() {
+        this.elbowServo.setPosition(.3);
+    }
+
+    public void SetElbowInSampleDeliveryPosition() {
+        this.elbowServo.setPosition(.19);
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.45);
+        this.elbowServo.setPosition(.5);
     }
 
     public void SetElbowInInStart() {
@@ -162,7 +165,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
     public void ToggleElbowPosition() {
         if(isElbowInIntake) {
-            SetElbowInSpecimenPosition();
+            SetElbowInSampleDeliveryPosition();
         } else {
             SetElbowInIntakePosition();
         }

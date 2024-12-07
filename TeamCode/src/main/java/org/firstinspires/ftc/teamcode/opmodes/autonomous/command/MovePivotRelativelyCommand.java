@@ -56,6 +56,6 @@ public class MovePivotRelativelyCommand extends SounderBotCommandBase {
     protected boolean isTargetReached() {
         int currentPosition = pivot.getMotor().getCurrentPosition();
         int delta = Math.abs(currentPosition - startPosition);
-        return Math.abs(delta - distanceToMove) < 10;
+        return Math.abs(delta - distanceToMove) < 40;
     }
 }

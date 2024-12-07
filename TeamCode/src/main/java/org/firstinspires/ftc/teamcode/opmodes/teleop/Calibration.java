@@ -47,7 +47,7 @@ public class Calibration extends OpModeTemplate {
                 .whenHeld(new InstantCommand(deliveryPivot::Calibrate, deliveryPivot));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.B)
-                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake));
+                .whenHeld(new InstantCommand(rollingIntake::SetElbowInSampleDeliveryPosition, rollingIntake));
 
         // Register all subsystems
         register(deliveryPivot, deliverySlider, driveTrain, rollingIntake, feedback);

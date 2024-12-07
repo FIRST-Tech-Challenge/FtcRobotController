@@ -95,7 +95,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliverySpecimanPosition() {
         SetAuto();
-        currentTarget = -375;
+        currentTarget = -400;
     }
 
     public void MoveToDeliverySamplePosition() {

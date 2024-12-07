@@ -29,7 +29,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int DeliveryPositionFromStart = 1500; //CHANGED
 
-    public static int IntakePositionFromStart = -1025;
+    public static int IntakePositionFromStart = -900;
 
     private int SampleIntakePositionFromStart = -1490;
 
@@ -140,7 +140,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public void AutoToStart() {
         SetAuto();
-        this.currentTarget = 0;
+        this.currentTarget =100;
     }
 
     double previousPosition = -1000000.0;

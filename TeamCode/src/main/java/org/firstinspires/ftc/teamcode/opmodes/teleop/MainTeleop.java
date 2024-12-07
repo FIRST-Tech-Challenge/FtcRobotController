@@ -120,7 +120,7 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new ParallelCommandGroup(
                                 new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot),
                                 new InstantCommand(deliverySlider::MoveToDeliverySpecimanPosition, deliverySlider),
-                                new InstantCommand(rollingIntake::SetElbowInSpecimenPosition, rollingIntake)
+                                new InstantCommand(rollingIntake::SetElbowInSpecimenDeliveryPosition, rollingIntake)
                 ));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -130,8 +130,9 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(deliverySlider::ResetEncoder, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                    .whenPressed(new MovePivotRelativelyCommand(deliveryPivot, MovePivotRelativelyCommand.Direction.ToPickup, DeliveryPivot.DeliveryPositionFromStart - 200, telemetry)
+                    .whenPressed(new MovePivotRelativelyCommand(deliveryPivot, MovePivotRelativelyCommand.Direction.ToPickup, deliveryPivot.DeliveryPositionFromStart - 400, telemetry)
                             .andThen(new InstantCommand(deliveryPivot::resetEncoder, deliveryPivot)));
+
 
         //driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //        .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));

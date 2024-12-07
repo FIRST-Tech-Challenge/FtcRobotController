@@ -129,7 +129,7 @@ public class CommandFactory {
     }
 
     public InstantCommand elbowToSpecimenPosition() {
-        return new InstantCommand(intake::SetElbowInSpecimenPosition);
+        return new InstantCommand(intake::SetElbowInSampleDeliveryPosition);
     }
 
     public SmartIntakeCommand intake() {
