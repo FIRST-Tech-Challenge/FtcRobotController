@@ -275,7 +275,7 @@ public class Teleop extends LinearOpMode {
         //CHANGE ACCORDING TO ALLIANCE
 
         boolean isRed = true;
-        boolean takeInYellow = false;
+        boolean takeInYellow = true;
 
         //intakeLinkageAction.retract();
 
@@ -313,10 +313,12 @@ public class Teleop extends LinearOpMode {
 
             //outtake hang ready
             if (gamepad2.dpad_up) {
-                specimenHangReady = new SpecimenHangReady(outtake);
-                specimenHangReady.setName("specimenHangReady");
+                if (specimenHangReady == null || specimenHangReady.checkDoneCondition()) {
+                    specimenHangReady = new SpecimenHangReady(outtake);
+                    specimenHangReady.setName("specimenHangReady");
+                }
             }
-            if (specimenHangReady != null && !(gamepad2.left_stick_y != 0)) {
+            if (specimenHangReady != null && (gamepad2.left_stick_y == 0)) {
                 specimenHangReady.update();
             }
 
@@ -357,28 +359,27 @@ public class Teleop extends LinearOpMode {
                 intakePivotAction.moveDown();
             }
 
-            //intake door
-            if (gamepad2.x) {
-                intakeDoorAction.open();
+            //intake door + transfer
+            if (gamepad2.b) {
+                if (!(isTransferRunning(intakeTransferAction))) {
+                    intakeTransferAction = new IntakeTransferAction(intake, outtake);
+                    intakeTransferAction.setName("intakeTransferAction");
+                }
             } else {
-                intakeDoorAction.close();
+                if (gamepad2.x) {
+                    intakeDoorAction.open();
+                } else if (!(isTransferRunning(intakeTransferAction))) {
+                    intakeDoorAction.close();
+                }
             }
 
-            //transfer
-            if (gamepad2.b) {
-                intakeTransferAction = new IntakeTransferAction(intake, outtake);
-                intakeTransferAction.setName("intakeTransferAction");
-            }
-            if (intakeTransferAction != null && !(gamepad2.right_stick_y != 0)) {
+            if (intakeTransferAction != null  && (gamepad2.right_stick_y == 0)) {
                 intakeTransferAction.update();
             }
 
-            //intake slides manual
-            /*if (-gamepad2.right_stick_y != 0) {
-                intakeLinkageAction.control(gamepad2.right_stick_y);
-            }*/
+
             if (-gamepad2.right_stick_y != 0) {
-                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
+                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(0.5) * -gamepad2.right_stick_y);
             }
 
             maintainOuttakeGlobalPos.update();
@@ -503,7 +504,10 @@ public class Teleop extends LinearOpMode {
         }
 
         return false;
+    }
 
+    private boolean isTransferRunning(IntakeTransferAction intakeTransferAction) {
+        return intakeTransferAction != null && !intakeTransferAction.checkDoneCondition();
     }
 
 }

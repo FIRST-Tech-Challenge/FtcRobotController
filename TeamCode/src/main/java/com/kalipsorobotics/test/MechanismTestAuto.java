@@ -37,8 +37,6 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        InitAuto initAuto = new InitAuto(intake, outtake);
-
         MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 400);
 
         WaitAction waitAction = new WaitAction(3000);
@@ -61,7 +59,6 @@ public class MechanismTestAuto extends LinearOpMode {
             }
             if (gamepad1.b) {
                 redAutoSpecimen.clear();
-                redAutoSpecimen.addAction(initAuto);
                 telemetry.addLine("done auto init");
                 telemetry.update();
             }
