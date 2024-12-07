@@ -53,7 +53,19 @@ public class TeleOp2024 extends DriveMethods {
         telemetry.addData("Lateral","%.1f", driveLeftStickX);
         telemetry.addData("Yaw","%.1f", driveRightStickX);
 
-        robot.wormGear.setPower(opLeftStickY);
+        double wormGearPower = opLeftStickY;
+        telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
+
+        // don't allow the worm gear to go up beyond the max limit
+        if (robot.wormGearAngle() > 95 && wormGearPower > 0) {
+            wormGearPower = 0;
+        }
+
+        if (robot.wormGearAngle() < 0 && wormGearPower < 0) {
+            wormGearPower = 0;
+        }
+
+        robot.wormGear.setPower(wormGearPower);
 
         sliderPosition = sliderPosition + 10.0 * opRightStickY;
         if (sliderPosition > robot.MAX_HORIZONTAL_SLIDER_TICKS) {

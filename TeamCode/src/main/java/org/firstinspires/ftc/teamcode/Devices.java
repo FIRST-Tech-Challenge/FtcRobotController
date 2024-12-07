@@ -10,7 +10,7 @@ public class Devices {
         final double CLAW_OPEN = .864;
         final double CLAW_CLOSED = 1.05;
 
-        final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
+        final double MIN_SLIDER_TICKS = 10; // chosen just to be saf
 
     /**
      *  This is the maximum length the slider is allowed to be in order
@@ -22,7 +22,6 @@ public class Devices {
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
         final double MAX_SAFE_SLIDER_TICKS = 2900; // needs to be tested
-    
 
         DcMotorEx wormGear;
         DcMotorEx sliderMotor;
