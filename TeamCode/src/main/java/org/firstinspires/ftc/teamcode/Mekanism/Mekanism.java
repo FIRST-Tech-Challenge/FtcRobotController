@@ -120,6 +120,7 @@ public class Mekanism {
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
+    // TODO: see if even be needed
     // Prevent divide by 0
     double pubLength =
         Math.min(
@@ -129,12 +130,6 @@ public class Mekanism {
                         Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
                     1e-6), // Prevent divide by 0
             46 * encoderCountsPerInch); // Limit extension
-    // TODO: test if removal is better than current code
-    /*
-    if (slide.getCurrentPosition() > pubLength) {
-      x = -.5;
-    }
-    */
 
     slide.setPower(x);
     slide2.setPower(x);

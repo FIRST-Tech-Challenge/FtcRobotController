@@ -37,7 +37,7 @@ public class BlueBotTeleop extends LinearOpMode {
                 // TODO: figure out a better way to do this
                 if(gamepad2.left_bumper){
                     arm.setSlide(-2);
-                    sleep(5000);
+                    sleep(1000);
                 }
                 else
                     arm.setSlide(-gamepad2.left_stick_y);
