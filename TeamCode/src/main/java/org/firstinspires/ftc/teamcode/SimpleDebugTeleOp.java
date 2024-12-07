@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp
 public class SimpleDebugTeleOp extends DriveMethods {
 
-    final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
-
     boolean useRightStick = false;
 
     @Override
@@ -43,7 +41,7 @@ public class SimpleDebugTeleOp extends DriveMethods {
         // "%.1f" is a percentage of a float, truncating after more than the tenths place.
         telemetry.addData("position", "%7d", robot.wormGear.getCurrentPosition());
         // "%7d" is a percentage of an integer, truncating after more than seven digits.
-        double degrees = robot.wormGear.getCurrentPosition()/ARM_ANGLE_TICKS_PER_DEGREE;
+        double degrees = robot.wormGear.getCurrentPosition()/robot.ARM_ANGLE_TICKS_PER_DEGREE;
 
         telemetry.addData("tickAngles", "%.1f", degrees);
     }

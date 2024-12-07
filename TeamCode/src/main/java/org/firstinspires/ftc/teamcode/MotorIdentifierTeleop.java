@@ -49,7 +49,7 @@ public class MotorIdentifierTeleop extends DriveMethods {
 
         double power = -gamepad1.left_stick_y;
         motor.setPower(power);
-//spider ::::-/
+
         if (gamepad1.b) {
             targetClawPosition = targetClawPosition + -gamepad1.right_stick_y * .005;
             robot.clawServo.setPosition(targetClawPosition);

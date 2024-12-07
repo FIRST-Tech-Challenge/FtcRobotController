@@ -56,8 +56,8 @@ public class TeleOp2024 extends DriveMethods {
         robot.wormGear.setPower(opLeftStickY);
 
         sliderPosition = sliderPosition + 10.0 * opRightStickY;
-        if (sliderPosition > robot.MAX_SLIDER_TICKS) {
-            sliderPosition = robot.MAX_SLIDER_TICKS;
+        if (sliderPosition > robot.MAX_HORIZONTAL_SLIDER_TICKS) {
+            sliderPosition = robot.MAX_HORIZONTAL_SLIDER_TICKS;
         }
         if (sliderPosition < robot.MIN_SLIDER_TICKS) {
             sliderPosition = robot.MIN_SLIDER_TICKS;

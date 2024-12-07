@@ -11,8 +11,18 @@ public class Devices {
         final double CLAW_CLOSED = 1.05;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
-        final double MAX_SLIDER_TICKS = 2735.4;
-        final double MAX_SLIDER_INCHES = 24.25;
+
+    /**
+     *  This is the maximum length the slider is allowed to be in order
+     *  to fit within the required dimensions, when the slider is pointed
+     *  horizontally.
+     */
+        final double MAX_HORIZONTAL_SLIDER_TICKS = 2735.4;
+//        final double MAX_SLIDER_INCHES = 24.25;
+        final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
+
+        final double MAX_SAFE_SLIDER_TICKS = 2900; // needs to be tested
+    
 
         DcMotorEx wormGear;
         DcMotorEx sliderMotor;
@@ -45,4 +55,24 @@ public class Devices {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+
+    double wormGearTicks() {
+        return wormGear.getCurrentPosition();
+    }
+
+    double wormGearAngle() {
+        return wormGearTicks() / ARM_ANGLE_TICKS_PER_DEGREE;
+    }
+
+    double wormGearRadians() {
+        return Math.toRadians(wormGearAngle());
+    }
+
+    double maxLegalSliderLength() {
+        return MAX_HORIZONTAL_SLIDER_TICKS / Math.cos(wormGearRadians());
+    }
+
+
+
+
 }
