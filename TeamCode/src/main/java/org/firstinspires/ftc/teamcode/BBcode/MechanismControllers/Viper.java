@@ -4,14 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.BBcode.TelemetryHelper;
+
 public class Viper {
     OpMode _opMode;
     DcMotorEx _viperMotor;
     DcMotorEx _armMotor;
     public Viper (OpMode opMode)
     {
+        TelemetryHelper telemetryHelper = new TelemetryHelper(opMode);
         _opMode = opMode;
         _viperMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
+        telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
         _armMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "armMotor");
     }
     //--------------------------
@@ -21,13 +25,14 @@ public class Viper {
     int halfExtend = 9;
     int specimenhangExtend = 7;
     int shortExtend = 3;
+    int closedExtend = 0;
     //--------------------------
 
     public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
     public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
-
+    public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
 
     public void ViperMotorCustom(double lengthInches, double power)
     {
