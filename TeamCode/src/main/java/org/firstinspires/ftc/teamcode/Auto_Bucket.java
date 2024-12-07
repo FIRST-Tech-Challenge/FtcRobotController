@@ -33,7 +33,7 @@ public class Auto_Bucket extends Robot {
 
     private void keep() {
 
-        SetServoPos(0.9, LJ, RJ);
+        SetServoPos(0.9, RJ);
         SetServoPos(0, Claw);
         SetServoPos(0.6, Ll, Rl);
         SetServoPos(0.8, LA, RA);
@@ -48,38 +48,39 @@ public class Auto_Bucket extends Robot {
         SetServoPos(0, LA, RA);
         SetServoPos(0.12, RC);
         SetServoPos(0, ADL, ADR);
-        SetServoPos(0.9, LJ, RJ);
+        SetServoPos(0.9, RJ);
 
          On = false;
 
-        sleep(750);
+        sleep(800);
         SetServoPos(0, Claw);
         SetServoPos(0, LA, RA);
-        SetServoPos(0.67, LJ, RJ);
+        SetServoPos(0.67, RJ);
 
     }
     private void drop() {
 
-        SetServoPos(0, LJ, RJ);
+        SetServoPos(0, RJ);
         sleep(900);
-        SetServoPos(1, LJ, RJ);
+        SetServoPos(1, RJ);
 
         On = true;
 
     }
-//    private void Turn(double degs, double stopSecond) {
-//        double rads = Math.toRadians(degs);
-//        while (opModeIsActive()) {
-//            double yaw   = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//            double error =  WrapRads(rads - yaw);
-//            double r     =  AtTargetRange(error, 0, Math.toRadians(30)) ? 0.2 : 0.6;
-//            if (error < 0) r = -r;
-//            MovePower(r, -r, r,-r);
-//
-//            if (AtTargetRange(error, 0, 0.05)) break;
-//        }
-//        Break(stopSecond);
-//    }
+    private void Turn(double degs, double stopSecond) {
+        double rads = Math.toRadians(degs);
+        while (opModeIsActive()) {
+            double yaw   = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double error =  WrapRads(rads - yaw);
+            double r     =  AtTargetRange(error, 0, Math.toRadians(30)) ? 0.2 : 0.6;
+            if (error < 0) r = -r;
+            MovePower(r, -r, r,-r);
+
+            if (AtTargetRange(error, 0, 0.05)) break;
+        }
+        Break(stopSecond);
+    }
+
     public void runOpMode() {
         Init();
         while (!(RS.isPressed())){
@@ -87,60 +88,62 @@ public class Auto_Bucket extends Robot {
             LiftPower(power);
         }
         LiftPower(0);
+        SetServoPos(0.67, RJ);
         LL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Posx = 0;
+        Posy = 0;
 
         WaitForStart();
 
         if (opModeIsActive()) {
-            SetServoPos(0.9, LJ, RJ);
 
-            move(-0.9, 0.52, 205.0, new double[]{0.2, 0.1, 0.2},
-                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.1, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+            move(-0.91, 0.43, 215.0, new double[]{0.3, 0.2, 0.25},
+                    new double[]{2.4, 0.0008, 0.09, 0.0}, new double[]{0.1, 0.4, 0.04, 0.0}, new double[]{0.2, 0.2, 0.07, 0.0}, 0.0001,High_Basket);
 
             drop();
 
-            move(-0.59, 0.62, 180.0, new double[]{0.1, 0.1, 0.1},
-                    new double[]{1.5, 0.00001, 0.1, 0.0}, new double[]{0.1, 0.009, 0.01, 0.0}, new double[]{0.1, 0.007, 0.01, 0.0}, 0.0001,0);
+            move(-0.5, 0.6, 180.0, new double[]{0.2, 0.2, 0.2},
+                    new double[]{3.0, 0.0006, 0.12, 0.0}, new double[]{0.25, 0.4, 0.07, 0.0}, new double[]{0.35, 0.2, 0.1, 0.0}, 0.0001,0);
 
             keep();
 
-            move(-0.95, 0.53, 210.0, new double[]{0.2, 0.1, 0.1},
-                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+            move(-0.91, 0.43, 215.0, new double[]{0.3, 0.2, 0.25},
+                    new double[]{2.47, 0.0008, 0.09, 0.0}, new double[]{0.1, 0.4, 0.04, 0.0}, new double[]{0.2, 0.2, 0.07, 0.0}, 0.0001,High_Basket);
 
 
             drop();
 
-            move(-0.89, 0.62, 178.0, new double[]{0.25, 0.1, 0.2},
-                    new double[]{1.5, 0.00001, 0.01, 0.0}, new double[]{0.1, 0.01, 0.025, 0.0}, new double[]{0.1, 0.01, 0.03, 0.0}, 0.0001, 0);
+            move(-0.935, 0.6, 180.0, new double[]{0.2, 0.2, 0.2},
+                    new double[]{3.0, 0.0006, 0.12, 0.0}, new double[]{0.25, 0.4, 0.07, 0.0}, new double[]{0.35, 0.2, 0.1, 0.0}, 0.0001, 0);
 
             keep();
 
-            move(-0.95, 0.53, 210.0, new double[]{0.25, 0.1, 0.25},
-                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
-
+            move(-0.91, 0.43, 215.0, new double[]{0.3, 0.2, 0.25},
+                    new double[]{2.47, 0.0008, 0.09, 0.0}, new double[]{0.1, 0.4, 0.04, 0.0}, new double[]{0.2, 0.2, 0.07, 0.0}, 0.0001,High_Basket);
 
             drop();
 
-            move(-0.69, 0.79, 143.0, new double[]{0.2, 0.1, 0.2},
-                    new double[]{1.3, 0.00001, 0.015, 0.0}, new double[]{0.1, 0.007, 0.01, 0.0}, new double[]{0.10, 0.007, 0.01, 0.0}, 0.0001, 0);
+            move(-0.765, 0.75, 143.0, new double[]{0.2, 0.2, 0.2},
+                    new double[]{3.0, 0.0006, 0.12, 0.0}, new double[]{0.25, 0.4, 0.07, 0.0}, new double[]{0.35, 0.2, 0.1, 0.0}, 0.0001, 0);
 
             SetServoPos(0.9, RC);
             keep();
 
-            move(-0.95, 0.53, 210.0, new double[]{0.25, 0.1, 0.25},
-                    new double[]{1.5, 0.01, 0.09, 0.0}, new double[]{0.15, 0.01, 0.01, 0.0}, new double[]{0.15, 0.01, 0.001, 0.0}, 0.0001,High_Basket);
+            move(-0.91, 0.4, 215.0, new double[]{0.3, 0.2, 0.25},
+                    new double[]{2.43, 0.0006, 0.09, 0.0}, new double[]{0.1, 0.4, 0.04, 0.0}, new double[]{0.2, 0.2, 0.07, 0.0}, 0.0001,High_Basket);
 
 
             drop();
 
-            move( 0.45, 2.25, 90.0, new double[]{0.2, 0.2, 0.2},
-                    new double[]{1.6, 0.01, 0.2, 0.0}, new double[]{0.07, 0.008, 0.01, 0.0}, new double[]{0.2, 0.01, 0.01, 0.0}, 0.0001, 650);
+            move( 0.5, 2.25, 90.0, new double[]{0.2, 0.2, 0.2},
+                    new double[]{2.8, 0.0006, 0.12, 0.0}, new double[]{0.2, 0.4, 0.04, 0.0}, new double[]{0.45, 0.2, 0.12, 0.0}, 0.0001, 650);
 
-            SetServoPos(0, LJ, RJ); // 0.55
+            SetServoPos(0, RJ);
+
 
             sleep(1000);
 

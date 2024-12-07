@@ -92,13 +92,13 @@ public  class Tele extends Robot {
         }
 
         if (RT_Press ) {
-            SetServoPos(0.68, LJ, RJ);
+            SetServoPos(0.68, RJ);
             SetServoPos(0, Claw);
         }
 
         if (LT_Press) {
             SetServoPos(0.2, LA, RA);
-            SetServoPos(0.9, LJ, RJ);
+            SetServoPos(0.9, RJ);
 
             BisON = false;
         }
@@ -144,32 +144,8 @@ public  class Tele extends Robot {
         }
         On_Lift = false;
 
-
-
     }
 
-//    private void Claw() {
-//        boolean cl = gamepad1.right_stick_button;
-//        double LT = gamepad1.left_trigger;
-//        boolean LT_Press = LT > 0.25;
-//        if (!(cl)) {
-//            R_Pressed = false;
-//            return;
-//        }
-//        if (R_Pressed) return;
-//        R_Pressed = true;
-//        if (!RisON && !ITisOn || LT_Press) {
-//            SetServoPos(0.08, LA, RA);
-//            SetServoPos(0.68, LJ, RJ);
-//            SetServoPos(0, Claw);
-//
-//            RisON = true;
-//            return;
-//        }
-//        SetServoPos(0, LA, RA);
-//        SetServoPos(1, LJ, RJ);
-//        RisON = false;
-//    }
 
     private void Drop() {
         boolean dp = gamepad1.b;
@@ -181,11 +157,11 @@ public  class Tele extends Robot {
         B_Pressed = true;
         if (!BisON ) {
             SetServoPos(0.2, LA, RA);
-            SetServoPos(0, LJ, RJ);
+            SetServoPos(0, RJ);
             BisON = true;
             return;
         }
-        SetServoPos(0.9, LJ, RJ);
+        SetServoPos(0.9, RJ);
         BisON = false;
     }
 
@@ -232,14 +208,12 @@ public  class Tele extends Robot {
         if (tp_Pressed) return;
         tp_Pressed = true;
         if (!ITisOn) {
-            SetServoPos(0.9, LJ, RJ);
+            SetServoPos(0.9, RJ);
             SetServoPos(0, Claw);
             SetServoPos(0.6, Ll, Rl);
             SetServoPos(0.67, LA, RA);
             SetServoPos(0.55, ADL, ADR);
 
-            AdjustClaw();
-            Lowerclaw();
             ITisOn = true;
             return;
         }
@@ -250,7 +224,7 @@ public  class Tele extends Robot {
         SetServoPos(0, LA, RA);
         SetServoPos(0.12, RC);
         SetServoPos(0, ADL, ADR);
-        SetServoPos(0.9, LJ, RJ);
+        SetServoPos(0.9, RJ);
         ITisOn = false;
     }
     private void FrontarmP() {
@@ -299,6 +273,7 @@ public  class Tele extends Robot {
                 Lowerclaw();
                 AdjustClaw();
                 FrontarmP();
+
 
 //                telemetry.addData("XYH", "%6f cm %6f cm", Posx, Posy);
                 telemetry.addData("LRM", "%6d  %6d %6d", left_encoder_pos, right_encoder_pos, center_encoder_pos);
