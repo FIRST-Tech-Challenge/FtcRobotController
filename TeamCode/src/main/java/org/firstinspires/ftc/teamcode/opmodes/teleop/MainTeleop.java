@@ -35,7 +35,7 @@ public class MainTeleop extends OpModeTemplate {
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
         deliverySlider.setPivotLowEnoughSupplier(deliveryPivot::lowEnoughToLimitSlider);
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
-        //HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
+        HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
 
         driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
@@ -134,13 +134,14 @@ public class MainTeleop extends OpModeTemplate {
         //driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
         //        .whenPressed(new InstantCommand(driveTrain::AlignTy, driveTrain));
 
-        //driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
-        //        .whenHeld(new InstantCommand(hangingArm::collapse, hangingArm))
-        //        .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
+        driverGamepad.getGamepadButton(GamepadKeys.Button.Y)
+                .whenHeld(new InstantCommand(hangingArm::collapse, hangingArm))
+                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
 
-        //driverGamepad.getGamepadButton(GamepadKeys.Button.X)
-        //        .whenHeld(new InstantCommand(hangingArm::extend, hangingArm))
-        //        .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
+        driverGamepad.getGamepadButton(GamepadKeys.Button.X)
+                .whenHeld(new InstantCommand(hangingArm::extend, hangingArm))
+                .whenReleased(new InstantCommand(hangingArm::hold, hangingArm));
+
         // DRIVER Actions
 
         // Drivetrain speed

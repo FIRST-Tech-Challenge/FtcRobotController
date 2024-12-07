@@ -40,12 +40,20 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     double holdingPower = 0;
 
+    boolean resetEncoder = false;
+
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target) {
+        this(slider, telemetry, target, false);
+    }
+
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder) {
         this.slider = slider;
         this.telemetry = telemetry;
         this.target = target;
         this.motor = slider.getMotor();
         this.pidController = slider.getPidController();
+        this.resetEncoder = resetEncoder;
+
         addRequirements(slider);
     }
 
@@ -64,6 +72,10 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                 motor.set(0);
                 finished = true;
                 telemetry.addLine("Done");
+
+                if(resetEncoder) {
+                    this.slider.ResetEncoder();
+                }
             } else {
                 if (holdPosition == Integer.MIN_VALUE) {
                     holdPosition = motor.getCurrentPosition();
@@ -75,7 +87,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                     finished = true;
                 } else {
                     telemetry.addLine("holding slider...");
-                    if (Math.abs(holdPosition - motor.getCurrentPosition()) < 10) {
+                    if (Math.abs(holdPosition - motor.getCurrentPosition()) < 50) {
                         motor.set(0);
                     } else {
                         motor.set(holdingPower);
@@ -104,7 +116,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     @Override
     protected boolean isTargetReached() {
-        return Math.abs(target - position) < 70;
+        return Math.abs(target - position) < 100;
     }
 
     @Override

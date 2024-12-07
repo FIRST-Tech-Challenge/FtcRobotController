@@ -79,21 +79,29 @@ public class RollingIntake extends SonicSubsystemBase {
             if(d > 50 || this.isInDeliveryPosition) {
                 telemetry.addData("power", 1);
 
-                this.leftServo.setPower(-1);
-                this.rightServo.setPower(1);
+                if(state == IntakeState.Intake) {
+                    this.leftServo.setPower(-1);
+                    this.rightServo.setPower(1);
+                } else if(state == IntakeState.IntakeAuto) {
+                    this.leftServo.setPower(-.35);
+                    this.rightServo.setPower(.35);
+                }
 
             } else {
-                this.leftServo.setPower(-0.2);
-                this.rightServo.setPower(0.2);
+                if(state == IntakeState.Intake) {
+                    this.leftServo.setPower(-0.3);
+                    this.rightServo.setPower(0.3);
+                } else {
+                    this.leftServo.setPower(0);
+                    this.rightServo.setPower(0);
+                }
+
                 //telemetry.addData("power",0);
 
-                    if (feedback != null) {
-                        feedback.DriverRumbleBlip();
-                        feedback.OperatorRumbleBlip();
-                } else {
-                        this.leftServo.setPower(0);
-                        this.rightServo.setPower(0);
-                    }
+                if (feedback != null) {
+                    feedback.DriverRumbleBlip();
+                    feedback.OperatorRumbleBlip();
+                }
 
                 state = IntakeState.Hold;
             }

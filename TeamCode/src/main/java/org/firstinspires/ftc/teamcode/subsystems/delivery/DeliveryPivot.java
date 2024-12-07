@@ -109,12 +109,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public void RotateTowardsIntakeSlowly() {
         SetTelop();
-        motor.set(-.4);
+        motor.set(-.5);
     }
 
     public void RotateTowardsDeliverySlowly() {
         SetTelop();
-        motor.set(.4);
+        motor.set(.5);
     }
 
     public void HoldArm() {

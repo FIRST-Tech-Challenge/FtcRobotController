@@ -59,7 +59,12 @@ public class CommandFactory {
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower);
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 20);
+    }
+
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance) {
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, distanceTolerance);
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading) {
@@ -87,7 +92,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand collapseSlider() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true);
     }
 
     public TurnAngleRelativeCommand turnAngleRelative(double angleInDegrees) {

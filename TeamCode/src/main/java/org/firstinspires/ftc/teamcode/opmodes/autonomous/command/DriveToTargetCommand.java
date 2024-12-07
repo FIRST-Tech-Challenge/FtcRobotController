@@ -25,13 +25,17 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDFController xPid = new SonicPIDFController(0.0025, 0, 0, 0);
+    SonicPIDFController xPid = new SonicPIDFController(0.0023, 0, 0, 0);
 
-    SonicPIDFController yPid = new SonicPIDFController(-0.0035, 0, 0, 0.02);
+    SonicPIDFController yPid = new SonicPIDFController(-0.0033, 0, 00, 0.02);
 
     SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
+        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 20);
+    }
+
+    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance) {
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;
@@ -39,6 +43,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         this.targetY = targetY;
         this.targetHeading = Math.toRadians(targetHeading);
         this.minPower = minPower;
+        this.distanceTolerance = distanceTolerance;
 
         addRequirements(driveTrain);
     }
