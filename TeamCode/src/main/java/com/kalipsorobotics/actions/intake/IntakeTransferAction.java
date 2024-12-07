@@ -31,23 +31,23 @@ public class IntakeTransferAction extends KActionSet {
                 IntakePivotAction.INTAKE_PIVOT_UP_POS);
         intakePivotUp.setName("intakePivotUp");
         this.addAction(intakePivotUp);
-        setDependantActions(moveIntakeLSIn);
+        setDependentActions(moveIntakeLSIn);
 
         IntakeNoodleAction intakeNoodleActionRun = new IntakeNoodleAction(intake, 200, true);
         intakeNoodleActionRun.setName("intakeNoodleActionRun");
         this.addAction(intakeNoodleActionRun);
-        intakeNoodleActionRun.setDependantActions(intakePivotUp);
+        intakeNoodleActionRun.setDependentActions(intakePivotUp);
 
         KServoAutoAction intakeDoorOpen = new KServoAutoAction(intake.getDoorServo(),
                 IntakeDoorAction.INTAKE_DOOR_OPEN_POS);
         intakeDoorOpen.setName("intakeDoorOpen");
         this.addAction(intakeDoorOpen);
-        intakeDoorOpen.setDependantActions(intakePivotUp);
+        intakeDoorOpen.setDependentActions(intakePivotUp);
 
         MoveOuttakeLSAction moveOuttakeLSDown = new MoveOuttakeLSAction(outtake, 0);
         moveOuttakeLSDown.setName("moveOuttakeLSDown");
         this.addAction(moveOuttakeLSDown);
-        moveOuttakeLSDown.setDependantActions(intakeDoorOpen);
+        moveOuttakeLSDown.setDependentActions(intakeDoorOpen);
 
     }
 

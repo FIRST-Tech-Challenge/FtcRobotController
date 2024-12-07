@@ -19,19 +19,19 @@ public class AutoHangAction extends Action {
         moveLSUp = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(28));
 
         waitAction = new WaitAction(400);
-        waitAction.setDependantActions(moveLSUp);
+        waitAction.setDependentActions(moveLSUp);
 
         moveLSDown = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(-5));
-        moveLSDown.setDependantActions(waitAction);
+        moveLSDown.setDependentActions(waitAction);
 
         waitActionTwo = new WaitAction(300);
-        waitActionTwo.setDependantActions(moveLSDown);
+        waitActionTwo.setDependentActions(moveLSDown);
 
         pullUp = new MoveOuttakeLSAction(outtake, CalculateTickPer.inchToTicksLS(-20));
-        pullUp.setDependantActions(waitActionTwo);
+        pullUp.setDependentActions(waitActionTwo);
 
         hangHookAction = new HangHookAction(outtake);
-        hangHookAction.setDependantActions(waitActionTwo);
+        hangHookAction.setDependentActions(waitActionTwo);
     }
 
     @Override
