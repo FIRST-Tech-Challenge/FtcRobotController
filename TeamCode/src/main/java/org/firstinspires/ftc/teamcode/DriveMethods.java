@@ -37,7 +37,7 @@ public abstract class DriveMethods extends OpMode {
 //        robot.rightBackDrive.setPower(rightBackPower);
 
         boolean slowMode = gamepad1.right_bumper;
-        double SLOW_MODE_SPEED = .45;
+        double SLOW_MODE_SPEED = .15;
 
         if (slowMode) {
             robot.leftFrontDrive.setPower(SLOW_MODE_SPEED * leftFrontPower);
