@@ -21,7 +21,7 @@ public class MoveIntakeLSAction extends Action {
     private static double globalIntakeSlideMaintainTicks = 0;
     DcMotor intakeSlideMotor;
     final double ERROR_TOLERANCE_TICKS = CalculateTickPer.degToTicksIntakeLS(2);
-    private final double P_CONSTANT = (1 / CalculateTickPer.degToTicksIntakeLS(40 * 3));
+    private final double P_CONSTANT = 5 * (1 / CalculateTickPer.degToTicksIntakeLS(90));
     final double targetTicks;
     private double currentTicks;
     public MoveIntakeLSAction(Intake intake, double targetDeg) {
@@ -33,7 +33,7 @@ public class MoveIntakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.05;
+        double lowestPower = 0.2;
 //
 //        if (globalIntakeSlideMaintainTicks > degToTicksIntakeLS(3)) {
 //            lowestPower = 0.1;
@@ -44,6 +44,7 @@ public class MoveIntakeLSAction extends Action {
         }
 
         return  power;
+
     }
 
     @Override
@@ -84,7 +85,7 @@ public class MoveIntakeLSAction extends Action {
         double power = calculatePower(targetErrorTicks);
 
         if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS) && !isDone) {
-            Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
+            Log.d("Intake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                             "targetTicks=%.3f, " +
                             "currentTicks=%.3f, ",
                     this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
@@ -97,7 +98,7 @@ public class MoveIntakeLSAction extends Action {
                 power = 0;
             }
         }
-        Log.d("Outtake_LS", String.format(
+        Log.d("Intake_LS", String.format(
                 "Setting power, targetErrorTicks=%.3f, errorTolerance=%.3f, currentTargetTicks=%.3f" +
                         "currentTicks=%.3f, " +
                         "power=%.3f",

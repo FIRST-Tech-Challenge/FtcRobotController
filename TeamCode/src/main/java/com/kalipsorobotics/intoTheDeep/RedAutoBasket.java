@@ -94,6 +94,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample1.addPoint(-620, 820, 180);
         redAutoBasket.addAction(moveToSample1);
 
+
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
@@ -102,6 +103,7 @@ public class RedAutoBasket extends LinearOpMode {
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket1);
+
 
         BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
         basketReady1.setName("basketReady1");
@@ -135,6 +137,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.addPoint(-620, 950, 180);
         redAutoBasket.addAction(moveToSample2);
 
+
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
@@ -143,6 +146,7 @@ public class RedAutoBasket extends LinearOpMode {
         //move sample 2 to basket
         moveToBasket2.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket2);
+
 
         BasketReadyAction basketReady2 = new BasketReadyAction(outtake);
         basketReady2.setName("basketReady2");
@@ -176,6 +180,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample3.addPoint(-930, 1010, 90);
         redAutoBasket.addAction(moveToSample3);
 
+
         //TODO INTAKE ACTION
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
@@ -184,6 +189,7 @@ public class RedAutoBasket extends LinearOpMode {
         //move sample 1 to basket
         moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket3);
+
 
         BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
         basketReady3.setName("basketReady3");

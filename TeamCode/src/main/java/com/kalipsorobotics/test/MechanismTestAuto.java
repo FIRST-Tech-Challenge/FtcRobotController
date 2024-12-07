@@ -1,10 +1,8 @@
 package com.kalipsorobotics.test;
 
-import com.kalipsorobotics.actions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.KServoAutoAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.intake.IntakeReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
@@ -38,19 +36,16 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        InitAuto initAuto = new InitAuto(intake, outtake);
-
         MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 400);
 
         WaitAction waitAction = new WaitAction(3000);
-        waitAction.setDependantActions(moveOuttakeLSAction);
+        waitAction.setDependentActions(moveOuttakeLSAction);
 
         MoveOuttakeLSAction moveOuttakeLSAction2 = new MoveOuttakeLSAction(outtake, 200);
-        moveOuttakeLSAction2.setDependantActions(waitAction);
+        moveOuttakeLSAction2.setDependentActions(waitAction);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
 
-        IntakeReadyAction intakeReadyAction = new IntakeReadyAction();
         //BasketReadyAction basketReadyAction = new BasketReadyAction();
 
         while (opModeInInit()) {
@@ -62,7 +57,6 @@ public class MechanismTestAuto extends LinearOpMode {
             }
             if (gamepad1.b) {
                 redAutoSpecimen.clear();
-                redAutoSpecimen.addAction(initAuto);
                 telemetry.addLine("done auto init");
                 telemetry.update();
             }
@@ -82,7 +76,7 @@ public class MechanismTestAuto extends LinearOpMode {
             }
         }
 
-        redAutoSpecimen.printWithDependantActions();
+        redAutoSpecimen.printWithDependentActions();
         waitForStart();
         while (opModeIsActive()) {
             maintenanceLS.update();
