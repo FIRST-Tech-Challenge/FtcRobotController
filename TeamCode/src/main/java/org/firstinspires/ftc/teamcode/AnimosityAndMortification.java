@@ -18,7 +18,7 @@ public class AnimosityAndMortification extends LinearOpMode {
     static private Servo ServoR;
     static private Servo ServoL;
     static private CRServo ArmRaise;
-    static private double ServoPos = 0;
+    static private boolean servoOpen = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -118,12 +118,15 @@ public class AnimosityAndMortification extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                telemetry.addData("Baller", "baller");
-                ArmRaise.setDirection(DcMotorSimple.Direction.FORWARD);
-                ArmRaise.setPower(1);
-            } else if (gamepad1.b) {
-                ArmRaise.setDirection(DcMotorSimple.Direction.REVERSE);
-                ArmRaise.setPower(1);
+                if (servoOpen) {
+                    ServoR.setPosition(1); // change these values later
+                    ServoL.setPosition(1);
+                    servoOpen = false;
+                } else {
+                    ServoR.setPosition(0);
+                    ServoL.setPosition(0);
+                    servoOpen = true;
+                }
             } else {
                 disableScissorMovement();
             }
