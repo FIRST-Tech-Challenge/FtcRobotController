@@ -4,14 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.BBcode.TelemetryHelper;
+
 public class Viper {
     OpMode _opMode;
     DcMotorEx _viperMotor;
     DcMotorEx _armMotor;
     public Viper (OpMode opMode)
     {
+        TelemetryHelper telemetryHelper = new TelemetryHelper(opMode);
         _opMode = opMode;
         _viperMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
+        telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
         _armMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "armMotor");
     }
     //--------------------------
