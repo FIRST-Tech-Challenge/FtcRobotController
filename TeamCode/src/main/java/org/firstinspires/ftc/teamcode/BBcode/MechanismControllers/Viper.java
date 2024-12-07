@@ -25,13 +25,14 @@ public class Viper {
     int halfExtend = 9;
     int specimenhangExtend = 7;
     int shortExtend = 3;
+    int closedExtend = 0;
     //--------------------------
 
     public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
     public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
-
+    public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
 
     public void ViperMotorCustom(double lengthInches, double power)
     {

@@ -79,7 +79,7 @@ public class MainTeleOp extends LinearOpMode{
         if ((gamepad.left_trigger > 0 && gamepad.dpad_down) || (desiredViperState == ViperState.Closed && arm.get_armMotor().getCurrentPosition()>1300) ) {
             wristClaw.WristUp();
             desiredViperState = ViperState.Closed;
-            viper.ExtendShort(1);
+            viper.ExtendClosed(1);
             arm.MoveToHome();
         }
 
