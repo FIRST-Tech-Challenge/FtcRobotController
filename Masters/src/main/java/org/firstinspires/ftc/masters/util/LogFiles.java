@@ -18,7 +18,6 @@ import org.firstinspires.ftc.ftccommon.external.WebHandlerRegistrar;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.drive.SampleTankDrive;
 import org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer;
 
 import java.io.File;
@@ -74,15 +73,15 @@ public final class LogFiles {
         public double mecHeadingD = SampleMecanumDrive.HEADING_PID.kD;
         public double mecLateralMultiplier = SampleMecanumDrive.LATERAL_MULTIPLIER;
 
-        public double tankAxialP = SampleTankDrive.AXIAL_PID.kP;
-        public double tankAxialI = SampleTankDrive.AXIAL_PID.kI;
-        public double tankAxialD = SampleTankDrive.AXIAL_PID.kD;
-        public double tankCrossTrackP = SampleTankDrive.CROSS_TRACK_PID.kP;
-        public double tankCrossTrackI = SampleTankDrive.CROSS_TRACK_PID.kI;
-        public double tankCrossTrackD = SampleTankDrive.CROSS_TRACK_PID.kD;
-        public double tankHeadingP = SampleTankDrive.HEADING_PID.kP;
-        public double tankHeadingI = SampleTankDrive.HEADING_PID.kI;
-        public double tankHeadingD = SampleTankDrive.HEADING_PID.kD;
+//        public double tankAxialP = SampleTankDrive.AXIAL_PID.kP;
+//        public double tankAxialI = SampleTankDrive.AXIAL_PID.kI;
+//        public double tankAxialD = SampleTankDrive.AXIAL_PID.kD;
+//        public double tankCrossTrackP = SampleTankDrive.CROSS_TRACK_PID.kP;
+//        public double tankCrossTrackI = SampleTankDrive.CROSS_TRACK_PID.kI;
+//        public double tankCrossTrackD = SampleTankDrive.CROSS_TRACK_PID.kD;
+//        public double tankHeadingP = SampleTankDrive.HEADING_PID.kP;
+//        public double tankHeadingI = SampleTankDrive.HEADING_PID.kI;
+//        public double tankHeadingD = SampleTankDrive.HEADING_PID.kD;
 
         public double trackingTicksPerRev = StandardTrackingWheelLocalizer.TICKS_PER_REV;
         public double trackingWheelRadius = StandardTrackingWheelLocalizer.WHEEL_RADIUS;

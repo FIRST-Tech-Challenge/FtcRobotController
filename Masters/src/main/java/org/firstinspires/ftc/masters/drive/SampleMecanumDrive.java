@@ -96,12 +96,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                org.firstinspires.ftc.masters.drive.DriveConstants.LOGO_FACING_DIR, org.firstinspires.ftc.masters.drive.DriveConstants.USB_FACING_DIR));
-        imu.initialize(parameters);
+
 
         Init init = new Init(hardwareMap);
+        imu= init.getImu();
 
 
         leftFront = init.getLeftFrontMotor();

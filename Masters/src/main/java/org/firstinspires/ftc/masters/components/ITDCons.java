@@ -9,6 +9,8 @@ public class ITDCons {
 
     public static double zero = 0;
     public static double slideInit = 0.5;
+    public static double slideOut=0.4;
+    public static double slideIn =0.5;
     public static double liftInit = 0.9;
     public static double liftUp = 0.9;
     public static double liftDown = 0.1;

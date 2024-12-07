@@ -43,9 +43,9 @@ public class TeleopManualV1 extends LinearOpMode {
 
             driveTrain.driveNoMultiplier(gamepad1, DriveTrain.RestrictTo.XYT);
 
-            if (gamepad1.right_stick_y > 0.1){
+            if (gamepad1.right_stick_y > 0.5){
                 intake.retractSlide();
-            } else if (gamepad1.right_stick_y < -0.1) {
+            } else if (gamepad1.right_stick_y < -0.5) {
                 intake.extendSlide();
             }
 
@@ -91,12 +91,12 @@ public class TeleopManualV1 extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper) {
-                if (target>100) {
-                    target = target - 100;
-                }
-//                outake.diffy1(ITDCons.ReleaseDiffy1);
-//                outake.diffy2(ITDCons.ReleaseDiffy2);
-//                target= ITDCons.ReleaseTarget;
+//                if (target>100) {
+//                    target = target - 100;
+//                }
+                outake.diffy1(ITDCons.ReleaseDiffy1);
+                outake.diffy2(ITDCons.ReleaseDiffy2);
+                target= ITDCons.ReleaseTarget;
 
             }
 

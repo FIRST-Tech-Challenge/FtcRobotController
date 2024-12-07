@@ -54,13 +54,16 @@ public class Intake {
     }
 
     public void retractSlide() {
-        extensionPosition = Math.max(extensionPosition - 0.001, .35);
+      //  extensionPosition = Math.max(extensionPosition - 0.001, .35);
+
+        extensionPosition= ITDCons.slideIn;
         slideServo1.setPosition(extensionPosition);
         slideServo2.setPosition(extensionPosition);
     }
 
     public void extendSlide() {
-        extensionPosition = Math.min(extensionPosition + 0.001, .5);
+//        extensionPosition = /*Math.min(extensionPosition + 0.001, .5);
+        extensionPosition= ITDCons.slideOut;
         slideServo1.setPosition(extensionPosition);
         slideServo2.setPosition(extensionPosition);
     }
