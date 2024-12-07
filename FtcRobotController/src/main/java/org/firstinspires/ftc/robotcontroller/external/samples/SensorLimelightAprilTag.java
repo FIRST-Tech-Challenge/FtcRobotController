@@ -64,6 +64,8 @@ SensorLimelightAprilTag extends LinearOpMode {
                 telemetry.addData("Target X", tx);
                 telemetry.addData("Target Y", ty);
                 telemetry.addData("Target Area", ta);
+                telemetry.addData("Yaw", robotYaw);
+
 
                 Pose3D botpose_mt2 = result.getBotpose_MT2();
                 if (botpose_mt2 != null) {

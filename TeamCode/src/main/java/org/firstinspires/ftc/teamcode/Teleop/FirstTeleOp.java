@@ -60,17 +60,17 @@ public class FirstTeleOp extends LinearOpMode {
 
             telemetry.update();
 
-            private  void openClaw() {
+            /*private  void openClaw;() {
                 inClaw.setPosition(CLAW_OPEN);
-                hasSample = false;
+                hasSample = false;*/
             }
 
-            private void closeClaw() {
-                inClaw.setPosition(CLAW_CLOSE);
-                hasSample = true;
-            }
+           // private void closeClaw;() {
+               // inClaw.setPosition(CLAW_CLOSE);
+              //  hasSample = true;
+           // }
 
 
         }
     }
-}
+
