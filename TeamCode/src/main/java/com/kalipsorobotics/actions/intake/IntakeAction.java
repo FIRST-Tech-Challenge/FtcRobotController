@@ -10,34 +10,40 @@ import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.KColor;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class IntakeAction extends Action {
-    OpModeUtilities opModeUtilities;
-    Intake intake;
-    //IntakeLinkageAction intakeLinkageAction;
-    IntakePivotAction intakePivotAction;
-    IntakeDoorAction intakeDoorAction;
-    IntakeNoodleAction intakeNoodleAction;
+    DcMotor intakeMotor;
     ColorDetector colorDetector;
-    HardwareMap hardwareMap;
 
-    public IntakeAction(OpModeUtilities opModeUtilities, Intake intake) {
+    public IntakeAction(Intake intake) {
+        this.intakeMotor = intake.getNoodleMotor();
+        this.colorDetector = new ColorDetector(intake.getOpModeUtilities(), intake.getOpModeUtilities().getHardwareMap());
+    }
 
-        this.opModeUtilities = opModeUtilities;
-        this.intake = intake;
-        //this.intakeLinkageAction = new IntakeLinkageAction(intake);
-        this.intakePivotAction = new IntakePivotAction(intake);
-        this.intakeDoorAction = new IntakeDoorAction(intake);
-        this.intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
-        this.colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
+    @Override
+    public void update() {
+        if (isDone) {
+            return;
+        }
+        if(colorDetector.detectColor() == KColor.Color.YELLOW) {
+            intakeMotor.setPower(0);
+            isDone = true;
+        } else if(colorDetector.detectColor() == KColor.Color.NONE) {
+            intakeMotor.setPower(1);
+        }
+        super.update();
     }
 
     @Override
     public boolean checkDoneCondition() {
-        return false;
+        return isDone;
     }
-    public void slideTo(double position) {
+
+
+    /*public void slideTo(double position) {
         //intakeLinkageAction.moveIntakeSlide(position);
         Log.d("intake slide", "slide has been moved to " + position);
     }
@@ -79,5 +85,5 @@ public class IntakeAction extends Action {
         sleep(900);
         intakeDoorAction.close();
         intakePivotToggle();
-    }
+    }*/
 }
