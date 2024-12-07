@@ -130,6 +130,7 @@ public class Mekanism {
                         Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
                     1e-6), // Prevent divide by 0
             46 * encoderCountsPerInch); // Limit extension
+    // TODO: test if removal is better than having this
     if (slide.getCurrentPosition() > pubLength) {
       x = -.5;
     }
