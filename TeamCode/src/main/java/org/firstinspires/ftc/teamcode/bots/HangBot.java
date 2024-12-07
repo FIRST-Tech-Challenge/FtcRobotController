@@ -14,7 +14,7 @@ public class HangBot extends AutomationBot {
     private DcMotorEx hangMotor1 = null;
     private DcMotorEx hangMotor2 = null;
 
-    public static int hangTarget = 1000;
+    public static int hangTarget = 830;
     public static double hangPower = 1.0;
     private boolean hangReady = false;
 
@@ -40,8 +40,12 @@ public class HangBot extends AutomationBot {
 
     public void hang(boolean button) {
         if (button) {
-            if (hangMotor1.getCurrentPosition() < hangTarget - 50) {
+            if (hangMotor1.getCurrentPosition() < hangTarget - 250) {
                 hangReady = true;
+                hangMotor2.setPower(hangPower);
+                hangMotor1.setPower(hangPower);
+            } else {
+                hangReady = false;
                 hangMotor2.setPower(hangPower);
                 hangMotor1.setPower(hangPower);
             }

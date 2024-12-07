@@ -25,7 +25,7 @@ public class PinchBot extends PivotBot{
     public final double rotateServoMin = 0.46;
     public final double rotateVerticalPos = 0.63;
 
-    public final double pinchOpenPos = 0.78;
+    public final double pinchOpenPos = 0.74;
     public final double pinchClosePos = 0.65;
     private Timer pinchTimer = new Timer();
     private TimerTask pinchTimerTask;

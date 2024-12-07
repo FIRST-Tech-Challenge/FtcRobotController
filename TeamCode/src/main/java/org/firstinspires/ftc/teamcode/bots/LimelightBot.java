@@ -51,6 +51,7 @@ public class LimelightBot extends PinchBot {
         boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
         boolean isYCloseEnough = Math.abs(sample.getDeltaY() ) < yThreshold;
         if (isXCloseEnough && isYCloseEnough) {
+            strafing(0);
             // sample is close enough, pick it up
             inAutoPickup = true;
             // rotate to the sample orientation
@@ -75,9 +76,17 @@ public class LimelightBot extends PinchBot {
             }
             if (!isXCloseEnough) {
                 // move the robot sideways based on delta X
+                // double power = sample.getDeltaX() * 0.1;
+                // if (telemetry != null) telemetry.addData("DRIVE --------------> power :", power);
+                //strafing(-power);
+
                 double power = sample.getDeltaX() * 0.1;
                 if (telemetry != null) telemetry.addData("DRIVE --------------> power :", power);
-                strafing(power);
+                if (power > 0.2) {
+                    strafing(-0.3);
+                } else if (power < -0.2) {
+                    strafing(0.3);
+                }
             }
         }
     }

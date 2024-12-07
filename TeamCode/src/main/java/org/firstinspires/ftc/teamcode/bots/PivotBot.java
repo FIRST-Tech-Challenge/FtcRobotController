@@ -122,6 +122,7 @@ public class PivotBot extends OdometryBot {
                 slideTarget = slideMotor.getCurrentPosition() + ((maximumSlidePos - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
         if (down) {
@@ -129,8 +130,11 @@ public class PivotBot extends OdometryBot {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
+
+        //make pivot same
     }
 
     public void pivotControl(boolean up, boolean down){
@@ -203,6 +207,10 @@ public class PivotBot extends OdometryBot {
         slideTarget = lowBucketSlidePos;
     }
 
-
+    public void relatePivotToSlide(){
+        pivotTarget = Math.round((slideMotor.getCurrentPosition() / -23) + 245);
+        pivotMotor.setTargetPosition(pivotTarget);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
 }
