@@ -14,8 +14,8 @@ public class teleopDrive extends OpMode {
     private String TESTBOT = "24342-RC";
     private Telemetry.Item telPathDebug = null;
     private MecanumEncoder drive = new MecanumEncoder(this);
-    private Slide intakeSlide = new Slide("intakeslide", Slide.ExtendMotorDirection.Forward, 1300, 1.0, 114.28);
-    private Slide clawSlide = new Slide("clawslide", Slide.ExtendMotorDirection.Reverse, 4500, 1.0,114.28);
+    private Slide intakeSlide = new Slide("intakeslide", "", Slide.ExtendMotorDirection.Forward, 1300, 1.0, 114.28);
+    private Slide clawSlide = new Slide("clawslide", "", Slide.ExtendMotorDirection.Reverse, 4500, 1.0,114.28);
     private String wifiSsid = "";
 
     public void processClawArmUpDown() {

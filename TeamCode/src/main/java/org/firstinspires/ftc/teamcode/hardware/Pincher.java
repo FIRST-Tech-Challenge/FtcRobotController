@@ -25,13 +25,11 @@ public class Pincher {
         // make arm ready to give sample/specimen to main claw
         axis1.setPosition(1);
         axis2.setPosition(1);
-        pinch.setPosition(0.5);//open
     }
     public void GoToDrivePosition() {
         // make arm ready to pickup sample/specimen
         axis1.setPosition(0.0);
         axis2.setPosition(0.0);
-        pinch.setPosition(0.1);//close
     }
     public void Pickup() {
         // bring arm wrist up so we can drive without issues
@@ -47,7 +45,7 @@ public class Pincher {
         isOpen = false;
     }
     public void PincherOpen() {
-        pinch.setPosition(0.5);
+        pinch.setPosition(1);
         isOpen = true;
     }
 }
