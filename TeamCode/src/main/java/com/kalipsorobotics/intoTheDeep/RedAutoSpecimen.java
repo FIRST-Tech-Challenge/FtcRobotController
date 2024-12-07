@@ -78,7 +78,6 @@ public class RedAutoSpecimen extends LinearOpMode {
         specimenWallReady.setName("specimenWallReady");
         specimenWallReady.setDependentActions(lowerSlidesHalf1);
         redAutoSpecimen.addAction(specimenWallReady);
-
         //===============end of first specimen===============
 
 

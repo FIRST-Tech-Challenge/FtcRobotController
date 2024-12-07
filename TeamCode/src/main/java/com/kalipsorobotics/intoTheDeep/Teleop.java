@@ -210,7 +210,9 @@ package com.kalipsorobotics.intoTheDeep;
 
 import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
 
+import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
+import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
 import com.kalipsorobotics.actions.intake.IntakeTransferAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
@@ -223,9 +225,11 @@ import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
+import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
+import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -240,12 +244,15 @@ public class Teleop extends LinearOpMode {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+        IMUModule imuModule = new IMUModule(opModeUtilities);
+        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         DriveAction driveAction = new DriveAction(driveTrain);
+        MoveWallTeleOp moveWallTeleOp = null;
+        AngleLockTeleOp angleLockTeleOp = null;
         Intake intake = new Intake(opModeUtilities);
         IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
         IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
         IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
-        //IntakeLinkageAction intakeLinkageAction = new IntakeLinkageAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
@@ -254,22 +261,21 @@ public class Teleop extends LinearOpMode {
         ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
         SpecimenHangReady specimenHangReady = null;
         SpecimenWallReady specimenWallReady = null;
-        // Targer should always be 0
+        // Target should always be 0
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         MoveOuttakeLSAction maintainOuttakeGlobalPos = new MoveOuttakeLSAction(outtake, 0);
         MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
-//        MoveLSAction.globalLinearSlideMaintainTicks);
         IntakeTransferAction intakeTransferAction = null;
 
-        boolean prevGamePadY = false;
-        boolean prevGamePadX = false;
-        boolean prevGamePadB = false;
-        boolean prevGamePadA = false;
-        boolean prevDpadLeft = false;
-        boolean prevDpadUp = false;
-        boolean prevDpadRight = false;
-        boolean prevDpadDown = false;
+        boolean prevGamePad2Y = false;
+        boolean prevGamePad2X = false;
+        boolean prevGamePad2B = false;
+        boolean prevGamePad2A = false;
+        boolean prevDpadLeft2 = false;
+        boolean prevDpadUp2 = false;
+        boolean prevDpadRight2 = false;
+        boolean prevDpadDown2 = false;
         boolean retracted = true;
 
         //CHANGE ACCORDING TO ALLIANCE
@@ -293,8 +299,34 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //Drive
+
+            //=========DRIVER==========
             driveAction.move(gamepad1);
+
+            if (gamepad1.dpad_up) {
+                driveTrain.resetWheelOdom();
+            }
+
+            if (gamepad1.a) {
+                if (moveWallTeleOp == null || moveWallTeleOp.checkDoneCondition()) {
+                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
+                    moveWallTeleOp.setName("moveWallTeleOp");
+                }
+            }
+            if (moveWallTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
+                moveWallTeleOp.update();
+            }
+
+            if (gamepad1.y) {
+                if (angleLockTeleOp == null || angleLockTeleOp.checkDoneCondition()) {
+                    angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
+                    angleLockTeleOp.setName("angleLockTeleOp");
+                }
+            }
+            if (angleLockTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
+                angleLockTeleOp.update();
+            }
+
 
             //================OUTTAKE================
 
@@ -353,9 +385,9 @@ public class Teleop extends LinearOpMode {
             }
 
             //intake pivot
-            if (gamepad2.y && !prevGamePadY) {
+            if (gamepad2.y && !prevGamePad2Y) {
                 intakePivotAction.moveUp();
-            } else if (gamepad2.a && !prevGamePadA) {
+            } else if (gamepad2.a && !prevGamePad2A) {
                 intakePivotAction.moveDown();
             }
 
@@ -381,6 +413,7 @@ public class Teleop extends LinearOpMode {
             if (-gamepad2.right_stick_y != 0) {
                 MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(0.5) * -gamepad2.right_stick_y);
             }
+
 
             maintainOuttakeGlobalPos.update();
             maintainIntakeGlobalPos.update();
@@ -420,7 +453,7 @@ public class Teleop extends LinearOpMode {
             //===============Outtake================
 
             //outtake pivot
-            if (gamepad2.y && !prevGamePadY) {
+            if (gamepad2.y && !prevGamePad2Y) {
                 outtakePivotAction.togglePosition();
             }
             //outtake linear slides manual
@@ -474,10 +507,10 @@ public class Teleop extends LinearOpMode {
             prevDpadLeft = gamepad2.dpad_left;
             prevDpadRight = gamepad2.dpad_right;
             prevDpadDown = gamepad2.dpad_down;
-            prevGamePadA = gamepad2.a;
+            prevGamePad2A = gamepad2.a;
             prevGamePadB = gamepad2.b;
             prevGamePadX = gamepad2.x;
-            prevGamePadY = gamepad2.y;
+            prevGamePad2Y = gamepad2.y;
 
             teleopActionSet.updateCheckDone();
 
