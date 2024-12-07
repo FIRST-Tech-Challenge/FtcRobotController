@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -34,8 +32,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Grabber;
 import org.firstinspires.ftc.teamcode.subsystems.Worm;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 
-@TeleOp(name="Scrimmage: TeleOp", group="Scrimmage")
-public class Scrimmage_Teleop extends CommandOpMode {
+@TeleOp(name="TeleOp", group="000Real")
+public class Teleop extends CommandOpMode {
 
     private Elevator elevator;
     private Worm worm;
@@ -52,7 +50,7 @@ public class Scrimmage_Teleop extends CommandOpMode {
         elevator = new Elevator(hardwareMap, telemetry);
         worm = new Worm(hardwareMap, telemetry);
         grabber = new Grabber(hardwareMap, telemetry);
-        wrist = new Wrist(hardwareMap, telemetry);
+        wrist = new Wrist(hardwareMap, telemetry, true);
 
         climber = new Climber(hardwareMap, telemetry);
         climber.Goto(0);

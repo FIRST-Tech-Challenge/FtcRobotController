@@ -36,7 +36,7 @@ public class Test_Elevator extends CommandOpMode {
         elevator = new Elevator(hardwareMap, telemetry);
         worm = new Worm(hardwareMap, telemetry);
         grabber = new Grabber(hardwareMap, telemetry);
-        wrist = new Wrist(hardwareMap, telemetry);
+        wrist = new Wrist(hardwareMap, telemetry, false);
 
         GamepadEx driver = new GamepadEx(gamepad1);
         //driver.getGamepadButton(GamepadKeys.Button.A).whileHeld(new RunCommand(elevator::extend, elevator)) ;
