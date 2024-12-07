@@ -17,7 +17,7 @@ public class Devices {
      *  to fit within the required dimensions, when the slider is pointed
      *  horizontally.
      */
-        final double MAX_HORIZONTAL_SLIDER_TICKS = 2735.4;
+        final double MAX_HORIZONTAL_SLIDER_TICKS = 2660;
 //        final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 

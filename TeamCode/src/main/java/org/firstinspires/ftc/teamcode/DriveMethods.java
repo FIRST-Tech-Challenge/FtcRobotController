@@ -31,10 +31,25 @@ public abstract class DriveMethods extends OpMode {
             rightBackPower  /= max;
         }
 
-        robot.leftFrontDrive.setPower(leftFrontPower);
-        robot.rightFrontDrive.setPower(rightFrontPower);
-        robot.leftBackDrive.setPower(leftBackPower);
-        robot.rightBackDrive.setPower(rightBackPower);
+//        robot.leftFrontDrive.setPower(leftFrontPower);
+//        robot.rightFrontDrive.setPower(rightFrontPower);
+//        robot.leftBackDrive.setPower(leftBackPower);
+//        robot.rightBackDrive.setPower(rightBackPower);
+
+        boolean slowMode = gamepad1.right_bumper;
+        double SLOW_MODE_SPEED = .45;
+
+        if (slowMode) {
+            robot.leftFrontDrive.setPower(SLOW_MODE_SPEED * leftFrontPower);
+            robot.rightFrontDrive.setPower(SLOW_MODE_SPEED * rightFrontPower);
+            robot.leftBackDrive.setPower(SLOW_MODE_SPEED * leftBackPower);
+            robot.rightBackDrive.setPower(SLOW_MODE_SPEED * rightBackPower);
+        } else {
+            robot.leftFrontDrive.setPower(leftFrontPower);
+            robot.rightFrontDrive.setPower(rightFrontPower);
+            robot.leftBackDrive.setPower(leftBackPower);
+            robot.rightBackDrive.setPower(rightBackPower);
+        }
     }
     public void omniOp(double wormrote) {
         robot.wormGear.setPower(wormrote);
