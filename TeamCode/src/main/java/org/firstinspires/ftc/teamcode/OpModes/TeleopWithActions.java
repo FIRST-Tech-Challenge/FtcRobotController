@@ -58,7 +58,7 @@ public class TeleopWithActions extends OpMode {
         }
         // updated based on gamepads
         runningActions.add(
-                drivetrain.drive()
+                drivetrain.manualControl()
         );
         // update running actions
         List<Action> newActions = new ArrayList<>();

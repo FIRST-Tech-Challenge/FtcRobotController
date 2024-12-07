@@ -244,7 +244,7 @@ public class Drivetrain {
             }
         };
     }
-    public Action drive(){
+    public Action manualControl(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -264,7 +264,7 @@ public class Drivetrain {
                 double[] compensated_twist = {r * x, r * y, (r / (l + w)) * rx};
                 double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(rx), 1.0);
                 setPower(inverseKinematics(compensatedTwist).scale(1/denominator));
-                return true;
+                return false;
             }
         };
     }
