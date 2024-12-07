@@ -79,7 +79,7 @@ public class Swerve {
             ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
-  double maxErrorDeg = 0;
+  double maxErrorDeg = 1;
 
   public void drive(ChassisSpeeds speeds, double dt) {
     var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
@@ -224,19 +224,19 @@ public class Swerve {
       switch (id) {
         case 0 -> {
           pos = "FL";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(3, 0.1, 0.1);
         }
         case 1 -> {
           pos = "FR";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(3, 0.1, 0.1);
         }
         case 2 -> {
           pos = "BL";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(3, 0.1, 0.1);
         }
         case 3 -> {
           pos = "BR";
-          steerPID = new PIDController(6, 0.1, 0.1);
+          steerPID = new PIDController(3, 0.1, 0.1);
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
