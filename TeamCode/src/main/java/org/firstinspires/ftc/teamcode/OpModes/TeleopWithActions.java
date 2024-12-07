@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
@@ -27,6 +28,7 @@ public class TeleopWithActions extends OpMode {
     Arm arm;
     Claw claw;
     Extension extension;
+    Intake intake;
     Lift lift;
     Battery battery;
     @Override
@@ -39,6 +41,7 @@ public class TeleopWithActions extends OpMode {
         Claw claw = new Claw(hardwareMap);
         Extension extension = new Extension(hardwareMap);
         Lift lift = new Lift(hardwareMap, battery);
+        Intake intake = new Intake(hardwareMap);
     }
 
     @Override
@@ -56,6 +59,22 @@ public class TeleopWithActions extends OpMode {
         if(gamepad2.right_bumper){
             runningActions.add(claw.servoClaw());
         }
+        if(gamepad1.left_bumper){
+            runningActions.add(intake.intake());
+        }
+        if(gamepad1.right_bumper){
+            runningActions.add(intake.outtake());
+        }
+        if(gamepad1.circle){
+            runningActions.add(arm.servoArm());
+        }
+        if(gamepad1.cross){
+            runningActions.add(arm.servoArm());
+        }
+        if(gamepad2.left_stick_y != 0){
+            runningActions.add(lift.moveLift());
+        }
+            runningActions.add(intake.intake());
         // updated based on gamepads
         runningActions.add(
                 drivetrain.drive()
