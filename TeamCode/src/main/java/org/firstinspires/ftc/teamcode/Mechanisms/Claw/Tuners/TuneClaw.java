@@ -21,7 +21,7 @@ public class TuneClaw extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad2.y){
-                Actions.runBlocking(claw.servoClaw());
+                Actions.runBlocking(claw.servoClaw(CLOSE));
             }
         }
     }

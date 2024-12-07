@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -26,7 +27,7 @@ import java.util.List;
 public class TeleopWithActions extends OpMode {
 
     private FtcDashboard dash = FtcDashboard.getInstance();
-    private List<Action> runningActions = new ArrayList<>();
+    private HashSet<Action> runningActions = new HashSet<>();
 
     Drivetrain drivetrain = null;
     FtcDashboard dashboard;
@@ -54,41 +55,58 @@ public class TeleopWithActions extends OpMode {
     public void loop() {
         TelemetryPacket packet = new TelemetryPacket();
         if(gamepad1.right_trigger > 0){
-            runningActions.add(extension.servoExtension());
+            if (!runningActions.contains(extension.servoExtension(Extension.extensionState.RETRACT))) {
+                runningActions.add(extension.servoExtension(Extension.extensionState.EXTEND));
+            }
         }
         if(gamepad1.left_trigger > 0){
-            runningActions.add(extension.servoExtension());
+            if (!runningActions.contains(extension.servoExtension(Extension.extensionState.EXTEND))) {
+                runningActions.add(extension.servoExtension(Extension.extensionState.RETRACT));
+            }
         }
         if(gamepad2.left_bumper){
-            runningActions.add(claw.servoClaw());
+            if (!runningActions.contains(claw.servoClaw(Claw.clawState.CLOSE))) {
+                runningActions.add(claw.servoClaw(Claw.clawState.OPEN));
+            }
         }
         if(gamepad2.right_bumper){
-            runningActions.add(claw.servoClaw());
+            if (!runningActions.contains(claw.servoClaw(Claw.clawState.OPEN))) {
+                runningActions.add(claw.servoClaw(Claw.clawState.CLOSE));
+            }
         }
         if(gamepad1.left_bumper){
-            runningActions.add(intake.motorIntake());
-        }
-        if(gamepad1.right_bumper){
-            runningActions.add(intake.motorIntake());
+            if (!runningActions.contains(intake.motorIntake(Intake.intakeState.OUTTAKE))) {
+                runningActions.add(intake.motorIntake(Intake.intakeState.INTAKE));
+            }
+        } else if(gamepad1.right_bumper){
+            if (!runningActions.contains(intake.motorIntake(Intake.intakeState.INTAKE))) {
+                runningActions.add(intake.motorIntake(Intake.intakeState.OUTTAKE));
+            }
+        } else {
+            runningActions.add(intake.motorIntake(Intake.intakeState.STOP));
         }
         if(gamepad1.circle){
-            runningActions.add(arm.servoArm());
+            if (!runningActions.contains(arm.servoArm(Arm.armState.RETRACT))) {
+                runningActions.add(arm.servoArm(Arm.armState.EXTEND));
+            }
         }
         if(gamepad1.cross){
-            runningActions.add(arm.servoArm());
+            if (!runningActions.contains(arm.servoArm(Arm.armState.EXTEND))) {
+                runningActions.add(arm.servoArm(Arm.armState.RETRACT));
+            }
         }
         if(gamepad2.left_stick_y != 0){
             runningActions.add(lift.manualControl(gamepad1.left_stick_y));
         }
-        if(gamepad2.right_stick_y >= 0){
-        }
+        //if(gamepad2.right_stick_y >= 0){
+        //}
 
         // updated based on gamepads
         runningActions.add(
-                drivetrain.manualControl()
+                drivetrain.manualControl(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
         );
         // update running actions
-        List<Action> newActions = new ArrayList<>();
+        HashSet<Action> newActions = new HashSet<>();
         for (Action action : runningActions) {
             action.preview(packet.fieldOverlay());
             if (action.run(packet)) {

@@ -244,13 +244,13 @@ public class Drivetrain {
             }
         };
     }
-    public Action manualControl(){
+    public Action manualControl(double ly, double lx, double rX){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                double y = -gamepad1.left_stick_y;
-                double x = gamepad1.left_stick_x;
-                double rx = -gamepad1.right_stick_x;
+                double y = -ly;
+                double x = lx;
+                double rx = -rX;
 
 //                        if(gamepad2.right_stick_y > 0){
 //                            runningActions.add(arm.servoArm());

@@ -21,7 +21,7 @@ public class TuneArm extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.a){
-                Actions.runBlocking(arm.servoArm());
+                Actions.runBlocking(arm.servoArm(Arm.armState.EXTEND));
             }
         }
     }

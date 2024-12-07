@@ -33,7 +33,7 @@ public class Lift {
     TouchSensor limiter;
     public static double kA=0;
     public static double kV=0;
-    public static double kS=0;
+    public static double kS=0.1;
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
@@ -129,10 +129,8 @@ public class Lift {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                checkLimit();
-                liftMotorLeft.setPower(power);
-                liftMotorRight.setPower(power);
-                currentPosition = encoder.getCurrentPosition();
+                liftMotorLeft.setPower(power-kS);
+                liftMotorRight.setPower(power-kS);
                 return false;
             }
         };

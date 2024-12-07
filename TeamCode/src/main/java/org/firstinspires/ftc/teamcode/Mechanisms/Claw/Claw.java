@@ -28,22 +28,16 @@ public class Claw {
         OPEN   //spins to have nearly fully open servo
     }
     public ElapsedTime timer = new ElapsedTime();
-    public Action servoClaw(){
+    public Action servoClaw(clawState clawPos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                double timeLastUpdate = timer.seconds();
-                if (timeLastUpdate > 0.5) {
                     if (clawPos == clawState.OPEN) {
                         clawServo.setPosition(clawClosed);
-                        clawPos = clawState.CLOSE;
                     }
                     else if (clawPos == clawState.CLOSE) {
                         clawServo.setPosition(clawOpen);
-                        clawPos = clawState.OPEN;
                     }
-                    timer.reset();
-                }
                 // servo parameter -1, 0   0, 1
                 return false;
             }

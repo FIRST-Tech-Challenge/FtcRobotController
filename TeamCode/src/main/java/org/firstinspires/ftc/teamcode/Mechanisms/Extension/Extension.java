@@ -30,24 +30,18 @@ public class Extension {
         EXTEND   //push extension forward
     }
     public ElapsedTime timer = new ElapsedTime();
-    public Extension.extensionState extendoPos = Extension.extensionState.RETRACT;
-    public Action servoExtension() {
+    public Action servoExtension(extensionState extendoPos) {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
                 double timeLastUpdate = timer.seconds();
-                if (timeLastUpdate > 0.5) {
                     if (extendoPos == extensionState.RETRACT) {
                         servoExtendLeft.setPosition(extendPos+leftOffset);
                         servoExtendRight.setPosition(extendPos);
-                        extendoPos = Extension.extensionState.EXTEND;
                     } else if (extendoPos == Extension.extensionState.EXTEND) {
                         servoExtendLeft.setPosition(retractPos+leftOffset);
                         servoExtendRight.setPosition(retractPos);
-                        extendoPos = Extension.extensionState.RETRACT;
                     }
-                    timer.reset();
-                }
                 return false;
             }
         };

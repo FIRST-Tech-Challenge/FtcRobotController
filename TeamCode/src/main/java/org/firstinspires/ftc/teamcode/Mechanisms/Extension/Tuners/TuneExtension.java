@@ -18,7 +18,7 @@ public class TuneExtension extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.x){
-                Actions.runBlocking(extension.servoExtension());
+                Actions.runBlocking(extension.servoExtension(Extension.extensionState.EXTEND));
             }
         }
     }

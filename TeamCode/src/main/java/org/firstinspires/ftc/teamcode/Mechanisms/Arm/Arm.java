@@ -31,26 +31,20 @@ public class Arm {
         RETRACT,    // pulls arm in
         EXTEND      // pushes arm out
     }
-    public armState armPos = armState.RETRACT;
-    public Action servoArm(){
+    public Action servoArm(armState armPos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
                 double timeLastUpdate = timer.seconds();
-                if (timeLastUpdate > 0.5) {
                     if (armPos == armState.RETRACT) {
                         servoArmLeft.setPosition(armExtend);
                         servoArmRight.setPosition(armExtend);
                         servoWrist.setPosition(wristExtend);
-                        armPos = armState.EXTEND;
                     } else if (armPos == armState.EXTEND) {
                         servoArmLeft.setPosition(armRetract);
                         servoArmRight.setPosition(armRetract);
                         servoWrist.setPosition(wristRetract);
-                        armPos = armState.RETRACT;
                     }
-                    timer.reset();
-                }
                 return false;
             }
         };
