@@ -52,7 +52,7 @@ public class MecanumDrivetrain {
         Gamepad gamepad1 = _opMode.gamepad1;
         //drive inputs
         drive = gamepad1.left_stick_y;
-        turn = Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (turnEasingYIntercept * (gamepad1.right_stick_x / Math.abs(gamepad1.right_stick_x)));
+        turn = Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (Math.signum(gamepad1.right_stick_x * -1) * turnEasingYIntercept);
         strafe = gamepad1.left_stick_x * -1;
         if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
 
