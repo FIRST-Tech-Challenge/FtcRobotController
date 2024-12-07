@@ -67,7 +67,7 @@ public class TeleOps extends LinearOpMode {
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 //            robot.scoreSpecimen(gamepad2.y);
-//            robot.hang(gamepad2.b);
+            robot.hang(gamepad2.x);
             // limelight detection check
             if (gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up) {
                 robot.inAutoPickup = false;
