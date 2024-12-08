@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
 
-@Autonomous(name = "Test Command auton")
+//@Autonomous(name = "Test Command auton")
 public class CommandAutoOpModeTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {

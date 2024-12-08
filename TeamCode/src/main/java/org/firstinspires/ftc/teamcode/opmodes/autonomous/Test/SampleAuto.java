@@ -32,13 +32,13 @@ public class SampleAuto extends CommandAutoOpMode {
 
                         ),
 
-                        commandFactory.driveToTarget(180, 520, -45, 0.1, 100),
+                        commandFactory.driveToTarget(160, 520, -45, 0.1, 1, 50),
                         commandFactory.extendSlider(),
 
                         // Sample #1
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
 
-                        commandFactory.driveToTarget(430, 320, 0, 0.13),
+                        commandFactory.driveToTarget(430, 320, 0, 0.13, 1, 20),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSlider(),
@@ -57,13 +57,14 @@ public class SampleAuto extends CommandAutoOpMode {
 
                         commandFactory.extendSlider(),
 
-                        commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
+
+                        commandFactory.driveToTarget(180, 520, -45, 0.1, 1, 100),
                         commandFactory.extendSlider(),
 
                         // Sample #2
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
 
-                        commandFactory.driveToTarget(400, 610, 0, 0.1)),
+                        commandFactory.driveToTarget(400, 610, 0, 0.1, 1, 30)),
 
 
                         new ParallelCommandGroup(
@@ -80,14 +81,14 @@ public class SampleAuto extends CommandAutoOpMode {
                         ),
 
                         commandFactory.extendSlider(),
-                        commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
+                        commandFactory.driveToTarget(180, 520, -45, 0.1, 1, 100),
                         commandFactory.extendSlider(),
 
 
                         // Sample #3
                         commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
 
-                        commandFactory.driveToTarget(440, 540, 35, 0.1),
+                        commandFactory.driveToTarget(440, 540, 35, 0.1, 1, 30),
 
                         commandFactory.collapseSlider(),
 
@@ -98,24 +99,26 @@ public class SampleAuto extends CommandAutoOpMode {
 
                         commandFactory.intakeFromGround(),
 
-                        new ParallelCommandGroup(
-                                commandFactory.elbowToSpecimenPosition(),
-                                commandFactory.pivotToDelivery()
+                        commandFactory.pivotToStart()
 
-                        ),
-
-                        commandFactory.extendSlider(),
-
-                        commandFactory.driveToTarget(180, 520, -45, 0.1, 150),
-                        commandFactory.extendSlider(),
-
-                        // Sample #3
-                        commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
-
-
-                        new ParallelCommandGroup(
-                                commandFactory.pivotToStart()
-                    )
+//                        new ParallelCommandGroup(
+//                                commandFactory.elbowToSpecimenPosition(),
+//                                commandFactory.pivotToDelivery()
+//
+//                        ),
+//
+//                        commandFactory.extendSlider(),
+//
+//                        commandFactory.driveToTarget(180, 520, -45, 0.1, 1, 150),
+//                        commandFactory.extendSlider(),
+//
+//                        // Sample #3
+//                        commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
+//
+//
+//                        new ParallelCommandGroup(
+//                                commandFactory.pivotToStart()
+//                    )
                 )
         );
     }

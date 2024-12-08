@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.SleeperCommand;
 
-@Autonomous
+//@Autonomous
 public class TimeoutTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {

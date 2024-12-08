@@ -17,7 +17,7 @@ public class IntakeFromGround extends SounderBotCommandBase {
     @Override
     public void initialize() {
         intake.IntakeInAuto();
-        sleep(300);
+        sleep(200);
         pivot.getMotor().set(-.4);
     }
 
