@@ -107,6 +107,9 @@ public class MecanumTeleOp extends LinearOpMode {
             servoMoves();
             twist();
             lift(hardware);
+            if(gamepad1.x){
+                transfer(hardware);
+            }
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
             }
@@ -369,17 +372,67 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        hardware.arm.setTargetPosition(170);
+        hardware.arm.setTargetPosition(90);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(0);
         maintainHeightTicks = 0;
         sleep(500);
-        hardware.wrist.setPosition(1.0);
+        hardware.wrist.setPosition(1);
+        sleep(500);
+        hardware.claw.setPosition(0.02); // TBD
         sleep(500);
         hardware.twist.setPosition(0.17);
         sleep(500);
-        hardware.claw.setPosition(0.02); // TBD
-//        sleep(5000);
-        armTargetPosDeg = 87.58;
+        hardware.arm.setTargetPosition(145);
+        sleep(500);
+        hardware.claw.setPosition(0.55);
+        sleep(500);
+        hardware.wrist.setPosition(0.5);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(300);
+        sleep(500);
+        hardware.arm.setTargetPosition(0);
+        sleep(500);
+        hardware.verticalSlide.setTargetPosition(0);
+        sleep(500);
+        armTargetPosDeg = 0;
+    }
+    private void transfer(Hardware hardware){
+        //hardware.arm.setPower(-0.5);
+        hardware.verticalSlide.setTargetPosition(900);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks = 900;
+        sleep(500);
+        hardware.arm.setTargetPosition(-63);//This is in ticks
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.5);
+        armTargetPosDeg=-30;//(752 ticks /360 degrees)
+        sleep(500);
+        hardware.wrist.setPosition(0.9);
+        sleep(2000);
+        hardware.claw.setPosition(0.02);
+        sleep(2000);
+        hardware.verticalSlide.setTargetPosition(735);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks = 735;
+        sleep(2000);
+        hardware.claw.setPosition(0.55);
+        sleep(1000);
+        hardware.wrist.setPosition(0.45);
+        hardware.arm.setTargetPosition(0);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.5);
+        armTargetPosDeg=0;
+        sleep(1000);
+        hardware.verticalSlide.setTargetPosition(0);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks = 0;
+
+        //To-Do: open horizontal claw
+
+
     }
 }
