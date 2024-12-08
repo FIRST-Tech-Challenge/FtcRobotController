@@ -34,7 +34,7 @@ public class MoveIntakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.2;
+        double lowestPower = 0.05;
 //
 //        if (globalIntakeSlideMaintainTicks > degToTicksIntakeLS(3)) {
 //            lowestPower = 0.1;
@@ -95,8 +95,8 @@ public class MoveIntakeLSAction extends Action {
         }
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
-            if (globalIntakeSlideMaintainTicks <= degToTicksIntakeLS(2)) {
-                power = 0;
+            if ((globalIntakeSlideMaintainTicks >= MIN_RANGE_INTAKE_TICKS) && (globalIntakeSlideMaintainTicks <= 0)) {
+                power = -0.15;
             }
         }
         Log.d("Intake_LS", String.format(
