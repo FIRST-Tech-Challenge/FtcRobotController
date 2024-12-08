@@ -29,6 +29,17 @@ public class Settings {
         public static double default_autonomous_speed = 0.38;
     }
 
+    @Config
+    public static class Calibration {
+        /**
+         * Multiplier applied to strafe movements to compensate for mechanical
+         * differences
+         */
+        public static double headingTolerance = 0.02;
+        public static Vector2d spacialTolerance = new Vector2d(0.5, 0.5);
+        public static double CALIBRATION_APPROXIMATION_COEFFICIENT = 0;
+    }
+
     // Hardware settings
     @Config
     public static class Hardware {

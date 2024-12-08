@@ -54,6 +54,9 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    public double SPACIAL_CORRECTION = 0;
+    public double HEADING_CORRECTION = 0;
+
     public static class Params {
         // IMU orientation
         // ! tuned 11/21, see
@@ -67,9 +70,9 @@ public final class MecanumDrive {
         public double trackWidthTicks = 1337.159661277221;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.8389693259771525;
-        public double kV = 0.004238392941167217;
-        public double kA = 0.0005;
+        public static double kS = 0.8389693259771525;
+        public static double kV = 0.004238392941167217;
+        public static double kA = 0.0005;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 70;

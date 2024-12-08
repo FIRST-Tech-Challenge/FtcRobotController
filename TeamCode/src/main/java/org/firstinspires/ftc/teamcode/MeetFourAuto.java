@@ -37,8 +37,11 @@ public class MeetFourAuto extends LinearOpMode {
 
     private FtcDashboard dashboard;
 
+    public AdaptiveCalibration adaptiveCalibration;
+
     @Override
     public void runOpMode() {
+        adaptiveCalibration = AdaptiveCalibration.getInstance();
         DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2,
                 Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
         baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
@@ -109,6 +112,7 @@ public class MeetFourAuto extends LinearOpMode {
         }
 
         roadRunner = new MecanumDrive(hardwareMap, initialPose);
+        adaptiveCalibration.initialize(roadRunner);
         waitForStart();
 
         run(startingPosition);
@@ -130,6 +134,7 @@ public class MeetFourAuto extends LinearOpMode {
             case CHAMBER:
                 TrajectoryActionBuilder previousChamberTrajectory = gameLoopSetup(sp, PlacementHeight.CHAMBER_HIGH);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
+                    adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(), roadRunner);
                     previousChamberTrajectory = gameLoop(sp, previousChamberTrajectory, PlacementHeight.CHAMBER_HIGH);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
@@ -140,6 +145,7 @@ public class MeetFourAuto extends LinearOpMode {
             case BASKET:
                 TrajectoryActionBuilder previousBasketTrajectory = gameLoopSetup(sp, PlacementHeight.BASKET_HIGH);
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
+                    adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(), roadRunner);
                     previousBasketTrajectory = gameLoop(sp, previousBasketTrajectory, PlacementHeight.BASKET_HIGH);
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
