@@ -69,12 +69,12 @@ public class LimeLightTesting extends LinearOpMode {
                 // Access BotPose information
                 botpose = result.getBotpose();
                 targetFound = true;
+                telemetry.addData("BotPose", botpose);
             }
             else {
                 telemetry.addData("Limelight", "No data available");
                 targetFound = false;
             }
-            telemetry.update();
             if (gamepad1.left_bumper && targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
