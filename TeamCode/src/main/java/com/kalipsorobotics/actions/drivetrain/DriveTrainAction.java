@@ -10,5 +10,9 @@ public abstract class DriveTrainAction extends Action {
 
     public abstract double getTarget();
 
+    public abstract double getDuration();
+
+    public abstract double getOvershoot();
+
     public abstract void setPidController(PIDController controller);
 }

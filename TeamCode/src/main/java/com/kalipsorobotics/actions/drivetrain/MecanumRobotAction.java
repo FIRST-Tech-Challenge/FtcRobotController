@@ -12,24 +12,29 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class MecanumRobotAction extends DriveTrainAction {
 
-    private static final double ERROR_TOLERANCE_IN = 0.2;
+    private static final double ERROR_TOLERANCE_IN = 0.4;
     private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
     PIDController pidController;
+
     double targetInches;
     double currentInches;
     double remainingDistance;
+
     double targetTheta;
     double thetaOffset;
+
     double startTime;
     double timeout;
     double duration;
 
+    double overshoot;
+
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.02, 0, 0, "mecanum");
+        this.pidController = new PIDController(0.2, 0, 0, "mecanum");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
@@ -58,8 +63,19 @@ public class MecanumRobotAction extends DriveTrainAction {
         return targetInches;
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
+    public double getOvershoot() {
+        return overshoot;
+    }
+
     private void refreshRemainingDistance() {
         remainingDistance = targetInches - currentInches;
+        if (Math.signum(remainingDistance) != Math.signum(targetInches)) {
+            overshoot = Math.abs(currentInches);
+        }
     }
 
     private void refreshThetaOffset() {thetaOffset = targetTheta - wheelOdometry.getCurrentImuHeading();}

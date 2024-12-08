@@ -11,24 +11,29 @@ import com.kalipsorobotics.math.MathFunctions;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class MoveRobotStraightInchesAction extends DriveTrainAction {
-    private static final double ERROR_TOLERANCE_IN = 0.2;
-    private static final double HEADING_ERROR_TOLERANCE_DEG = 2;
+    private static final double ERROR_TOLERANCE_IN = 0.5;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 3;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
     PIDController pidController;
+
     double targetInches;
     double currentInches;
     double remainingDistance;
+
     double targetTheta;
     double thetaOffset;
+
     double startTime;
     double timeout;
     double duration;
 
+    double overshoot = 0.;
+
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.326535, 0.007260, 0.000027, "straight");
+        this.pidController = new PIDController(0.02, 0, 0, "straight");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
@@ -57,8 +62,19 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         return targetInches;
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
+    public double getOvershoot() {
+        return overshoot;
+    }
+
     private void refreshRemainingDistance() {
         remainingDistance = targetInches - currentInches;
+        if (Math.signum(remainingDistance) != Math.signum(targetInches)) {
+            overshoot = Math.abs(currentInches);
+        }
     }
 
     private void refreshThetaOffset() {
@@ -81,7 +97,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
     @Override
     public void update() {
-        double minPower = 0.15;
+        double minPower = 0.1;
 
         this.currentInches = wheelOdometry.countLeft() / 25.4;
         refreshRemainingDistance();

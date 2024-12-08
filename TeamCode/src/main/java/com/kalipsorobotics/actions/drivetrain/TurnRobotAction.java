@@ -18,13 +18,17 @@ public class TurnRobotAction extends DriveTrainAction {
     PIDController controller;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
+
     double targetDegrees;
     double currentHeading;
     double ERROR_TOLERANCE = 0.5; // degrees
     double remainingDegrees;
+
     double startTime;
     double timeout;
     double duration;
+
+    double overshoot;
 
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -59,8 +63,17 @@ public class TurnRobotAction extends DriveTrainAction {
         return Math.toDegrees(wheelOdometry.getCurrentImuHeading());
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
+    public double getOvershoot() {
+        return overshoot;
+    }
+
     private void refreshError() {
-        remainingDegrees = MathFunctions.angleWrapDeg(targetDegrees - currentHeading);
+        remainingDegrees = targetDegrees - currentHeading;
+        // todo overshoot & anglewrap
     }
 
     @Override

@@ -66,6 +66,30 @@ public class PIDController {
         return Kd += delta;
     }
 
+    public double setKp(double val) {
+        return Kp = val;
+    }
+
+    public double setKi(double val) {
+        return Ki = val;
+    }
+
+    public double setKd(double val) {
+        return Kd = val;
+    }
+
+    public double getKp() {
+        return Kp;
+    }
+
+    public double getKi() {
+        return Ki;
+    }
+
+    public double getKd() {
+        return Kd;
+    }
+
     public String getName() {
         return name;
     }
