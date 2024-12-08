@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 
 @TeleOp
 public class TensorflowDetection extends LinearOpMode {
+    private static final String TFOD_MODEL_ASSET = "robotv2_model.tflite";
         private Interpreter tflite;
 
         @Override
@@ -23,7 +24,7 @@ public class TensorflowDetection extends LinearOpMode {
                 //FileUtil.loadmappedFile = method to read the model from the assets folder, and loading into the thing called 'ByteBuffer'
                 //We use bytebuffer because TFlite model is loaded into mem as a bytebuffer thing
                 //hardwaremap to access context and laod model
-                ByteBuffer modelFile = FileUtil.loadMappedFile(hardwareMap.appContext, "robotv2_model.tflite");
+                ByteBuffer modelFile = FileUtil.loadMappedFile(hardwareMap.appContext, TFOD_MODEL_ASSET);
                 tflite = new Interpreter(modelFile);
             } catch (Exception e) {
                 telemetry.addData("Error", "Failed to load TensorFlow Lite model");
