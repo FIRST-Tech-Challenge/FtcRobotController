@@ -239,10 +239,15 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
-public class Teleop extends LinearOpMode {
+public class RedTeleop extends LinearOpMode {
+
+
+
+    boolean isRed = true;
+    boolean takeInYellow = true;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -285,8 +290,6 @@ public class Teleop extends LinearOpMode {
 
         //CHANGE ACCORDING TO ALLIANCE
 
-        boolean isRed = true;
-        boolean takeInYellow = false;
 
         //intakeLinkageAction.retract();
 
