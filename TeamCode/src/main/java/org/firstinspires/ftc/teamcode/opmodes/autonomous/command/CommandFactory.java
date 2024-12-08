@@ -59,12 +59,15 @@ public class CommandFactory {
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 20);
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
 
-
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, distanceTolerance);
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, distanceTolerance);
+    }
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance);
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading) {
@@ -89,6 +92,14 @@ public class CommandFactory {
 
     public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
+    }
+
+    public MoveSliderCommand extendSliderToSpeciment() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition);
+    }
+
+    public MoveSliderCommand extendSliderToDeliverSpeciman() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition-600);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -118,6 +129,11 @@ public class CommandFactory {
 
     public MovePivotCommand pivotToDelivery() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.DeliveryPositionFromStart);
+    }
+
+    public MovePivotCommand pivotToSpecimenDelivery() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.StartPositionFromStart - 55);
+
     }
 
     public InstantCommand stopDriveTrain() {

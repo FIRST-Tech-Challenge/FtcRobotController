@@ -26,6 +26,8 @@ public class DeliverySlider extends SonicSubsystemBase {
     public static int BasketDeliveryPosition = -2300;
     public static int CollapsedPosition = -90;
 
+    public static int StartPosition = -400;
+
     private int ExtendLimit = -1100;
 
     private int currentTarget = 0;
@@ -95,7 +97,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliverySpecimanPosition() {
         SetAuto();
-        currentTarget = -400;
+        currentTarget = StartPosition;
     }
 
     public void MoveToDeliverySamplePosition() {

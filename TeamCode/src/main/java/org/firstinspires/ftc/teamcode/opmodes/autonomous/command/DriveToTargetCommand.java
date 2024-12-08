@@ -16,6 +16,8 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     private static final String LOG_TAG = DriveToTargetCommand.class.getSimpleName();
     double minPower = 0.15;
 
+    double maxPower = 1.0;
+
     double distanceTolerance = 20;
 
     AutoMecanumDriveTrain driveTrain;
@@ -32,10 +34,10 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
-        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 20);
+        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double distanceTolerance) {
+    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;
@@ -43,6 +45,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         this.targetY = targetY;
         this.targetHeading = Math.toRadians(targetHeading);
         this.minPower = minPower;
+        this.maxPower = maxPower;
         this.distanceTolerance = distanceTolerance;
 
         addRequirements(driveTrain);
@@ -105,12 +108,12 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
                         Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))
                     );
 
-        if (max > 1.0) {
+        if (max > maxPower) {
             // Normalize to 0..1 motor power range
-            frontLeftPower /= max;
-            frontRightPower /= max;
-            backLeftPower /= max;
-            backRightPower /= max;
+            frontLeftPower = maxPower * frontLeftPower / max ;
+            frontRightPower = maxPower * frontRightPower / max;
+            backLeftPower = maxPower * backLeftPower / max;
+            backRightPower = maxPower * backRightPower / max;
         }
         else if (max < minPower) {
             // Proportionally increase power in all motors until max wheel power is enough
