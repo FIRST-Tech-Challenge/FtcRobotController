@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
@@ -118,6 +120,10 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart);
     }
 
+    public MovePivotCommand pivotToSpecimenInTake() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 250);
+    }
+
     public MovePivotCommand pivotToGroundInTakeBegin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
     }
@@ -142,6 +148,10 @@ public class CommandFactory {
 
     public SingleRunCommand elbowToIntakePosition() {
         return new SingleRunCommand(intake::SetElbowInIntakePosition);
+    }
+
+    public SingleRunCommand elbowToDeliveryPosition() {
+        return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
     }
 
     public SingleRunCommand elbowToSpecimenPosition() {
