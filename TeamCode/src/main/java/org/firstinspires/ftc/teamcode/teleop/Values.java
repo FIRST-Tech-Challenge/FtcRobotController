@@ -20,4 +20,9 @@ public class Values {
 
     public static final double MID_SERVO   =  0.5 ;
 
+    public static double slide1in = 0;
+    public static double slide2in = 1;
+    public static double slide1out = .75;
+    public static double slide2out = .25;
+
 }

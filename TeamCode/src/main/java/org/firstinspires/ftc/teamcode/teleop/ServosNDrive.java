@@ -71,15 +71,20 @@ public class ServosNDrive extends LinearOpMode {
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
 
-    public static final double MID_SERVO =  0.5 ;
+    private void slidesOut () {
+        slide1.setPosition(Values.slide1out);
+        slide2.setPosition(Values.slide2out);
+    }
+    private void slidesIn () {
+        slide1.setPosition(Values.slide1in);
+        slide2.setPosition(Values.slide2in);
+    }
 
     @Override
     public void runOpMode() {
 
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "Motor0");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "Motor1");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "Motor2");
@@ -95,15 +100,15 @@ public class ServosNDrive extends LinearOpMode {
         clawPivot = hardwareMap.get(Servo.class, "1");
         wrist  = hardwareMap.get(Servo.class, "2");
         intakeElbow = hardwareMap.get(Servo.class, "3");
-        outtakeClaw  = hardwareMap.get(Servo.class, "4");
-        //outtakeElbow = hardwareMap.get(Servo.class, "5");
+        slide2  = hardwareMap.get(Servo.class, "4");
+        slide1 = hardwareMap.get(Servo.class, "5");
 
-        clawPivot.setPosition(MID_SERVO);
-        wrist.setPosition(MID_SERVO);
-        intakeElbow.setPosition(MID_SERVO);
+        clawPivot.setPosition(Values.MID_SERVO);
+        wrist.setPosition(Values.MID_SERVO);
+        intakeElbow.setPosition(Values.MID_SERVO);
 
-        //slide1.setPosition(1);
-        //slide2.setPosition(0);
+        slide1.setPosition(Values.slide1in);
+        slide2.setPosition(Values.slide2in);
 
         telemetry.update();
 
@@ -149,39 +154,58 @@ public class ServosNDrive extends LinearOpMode {
 
             //all servo stuff
 
-
-
-            if (currentGamepad1.circle && previousGamepad1.circle){
-                intakeClaw.setPosition(Values.intakeclawClose);
-            } else if (currentGamepad1.circle && !previousGamepad1.circle) {
-                intakeClaw.setPosition(Values.intakeClawOpen);
+            //horizontal slides in N out
+            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+                if(slide1.getPosition() != Values.slide1in){
+                    slidesIn();
+                }
+                else if(slide1.getPosition() != Values.slide1out){
+                    slidesOut();
+                }
             }
 
-            if (currentGamepad1.cross && previousGamepad1.cross){
-                intakeElbow.setPosition(Values.intakeElbowDown);
-            } else if (currentGamepad1.cross && !previousGamepad1.cross) {
-                intakeElbow.setPosition(Values.intakeElbowUp);
+            //intake open N close
+            if (currentGamepad1.circle && !previousGamepad1.circle){
+                if(intakeClaw.getPosition() == Values.intakeClawOpen){
+                    intakeClaw.setPosition(Values.intakeclawClose);
+                }
+                else if (intakeClaw.getPosition() == Values.intakeclawClose) {
+                    intakeClaw.setPosition(Values.intakeClawOpen);
+                }
+            }
+            //intake wrist
+            if (currentGamepad1.square && !previousGamepad1.square){
+                if(wrist.getPosition() == Values.wristUp) {
+                    wrist.setPosition(Values.wristDown);
+                }
+                else if (wrist.getPosition() == Values.wristDown) {
+                    wrist.setPosition(Values.wristUp);
+                }
+            }
+            //intake elbow
+            if (currentGamepad1.cross && !previousGamepad1.cross){
+                if(intakeElbow.getPosition() == Values.intakeElbowUp) {
+                    intakeElbow.setPosition(Values.intakeElbowDown);
+                }
+                else if (intakeElbow.getPosition() == Values.intakeElbowDown) {
+                    intakeElbow.setPosition(Values.intakeElbowUp);
+                }
+            }
+            //pivot!
+            if (currentGamepad1.dpad_left) {
+                clawPivot.setPosition(clawPivot .getPosition() - 0.1);
+            } else if (currentGamepad1.dpad_right) {
+                clawPivot.setPosition(clawPivot .getPosition() + 0.1);
+            } else if (currentGamepad1.left_bumper) {
+                clawPivot.setPosition(Values.MID_SERVO);
             }
 
-            if (currentGamepad1.square && previousGamepad1.square){
-                outtakeElbow.setPosition(Values.outtakeElbowDown);
-            } else if (currentGamepad1.square && !previousGamepad1.square) {
-                outtakeElbow.setPosition(Values.outtakeElbowUp);
-            }
-
-            if (currentGamepad1.triangle && previousGamepad1.triangle) {
-                outtakeClaw.setPosition(.5);
-            } else if(currentGamepad1.triangle && !previousGamepad1.triangle){
-                outtakeClaw.setPosition(1);
-            }
-
-            // Send telemetry message to signify robot running;
-            /*telemetry.addData("Intake Claw",  "%.2f", intakeClaw.getPosition());
-            telemetry.addData("Intake yaw",  "%.2f", wrist);
-            telemetry.addData("Intake big rotate",  "%.2f", intakeElbow.getPosition());
-            telemetry.addData("outtake Claw",  "%.2f", outtakeClaw.getPosition());
-            telemetry.addData("outtake rotate",  "%.2f", outtakeElbow.getPosition());
-            telemetry.update();*/
+            //Send telemetry message to signify robot running;
+            telemetry.addData("Intake Claw (circle)",  "%.02f", intakeClaw.getPosition());
+            telemetry.addData("Intake pitch angle (square)",  "%.02f", wrist);
+            telemetry.addData("Intake big rotate (cross)",  "%.02f", intakeElbow.getPosition());
+            telemetry.addData("slides (dpad up)",  "%.02f, %.02f", slide1.getPosition(), slide2.getPosition());
+            telemetry.update();
 
         }
     }

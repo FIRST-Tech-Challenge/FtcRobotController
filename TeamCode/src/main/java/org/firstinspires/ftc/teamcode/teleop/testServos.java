@@ -15,7 +15,8 @@ public class testServos extends LinearOpMode {
     public Servo    servo1    = null;
     public Servo    servo2   = null;
 
-    double clawOffset = 0;
+    double clawOffset1 = 0;
+    double clawOffset2= 0;
     private ElapsedTime runtime = new ElapsedTime();
     public static final double MID_SERVO   =  0.5 ;
 
@@ -25,13 +26,15 @@ public class testServos extends LinearOpMode {
         double left;
         double right;
 
-
+        clawOffset1 = MID_SERVO;
+        clawOffset2 = MID_SERVO;
         // Define and initialize ALL installed servos.
-        servo1  = hardwareMap.get(Servo.class, "2");
-        servo2 = hardwareMap.get(Servo.class, "3");
+        servo1  = hardwareMap.get(Servo.class, "5");
+        servo2 = hardwareMap.get(Servo.class, "4");
         servo1.setPosition(MID_SERVO);
         servo2.setPosition(MID_SERVO);
-        //
+        //servo1.setPosition(MID_SERVO);
+        //        servo2.setPosition(MID_SERVO);
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
@@ -39,17 +42,19 @@ public class testServos extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            left = gamepad1.left_stick_y;
-            right = gamepad1.right_stick_y;
+            clawOffset1 = clawOffset1 +(-gamepad1.left_stick_y)*0.3;
+            clawOffset2 = clawOffset2 +(-gamepad1.right_stick_y)*0.3;
+            left = clawOffset1;
+            right = clawOffset2;
             servo1.setPosition(left);
             servo2.setPosition(right);
 
             // Send telemetry message to signify robot running;
-            telemetry.addData("claw", "%.1f,", left);
-            telemetry.addData("left",  "%.1f", servo1.getPosition());
-            telemetry.addData("right", "%.1f", servo2.getPosition());
-            telemetry.addData("right, gamepad", "%.1f", gamepad1.right_stick_y);
-            telemetry.addData("right, gamepad", "%.1f", gamepad1.left_stick_y);
+            telemetry.addData("claw", "%.01f,", left);
+            telemetry.addData("left",  "%.01f", servo1.getPosition());
+            telemetry.addData("right", "%.01f", servo2.getPosition());
+            telemetry.addData("right, gamepad", "%.01f", gamepad1.right_stick_y);
+            telemetry.addData("right, gamepad", "%.01f", gamepad1.left_stick_y);
 
             // Pace this loop so jaw action is reasonable speed.
             // Show the elapsed game time and wheel power.
