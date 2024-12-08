@@ -107,8 +107,6 @@
 //        //* later we need to do more than display telemetry - exit main OpMode loop at some point (refer to site)
 //
 
-
-
 //           // end for() loop )
 //
 //    }
