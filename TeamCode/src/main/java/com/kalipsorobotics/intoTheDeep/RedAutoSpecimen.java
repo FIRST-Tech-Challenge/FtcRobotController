@@ -41,7 +41,6 @@ public class RedAutoSpecimen extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intake, outtake);
         initAuto.setName("initAuto");
 
-
         //================begin of first specimen====================
         WaitAction waitAtStart = new WaitAction(300);
         waitAtStart.setName("waitAtStart");
@@ -136,7 +135,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
 
 
-        initAuto.updateCheckDone();
+        initAuto.update();
 
         redAutoSpecimen.printWithDependentActions();
         waitForStart();
@@ -146,6 +145,8 @@ public class RedAutoSpecimen extends LinearOpMode {
             maintainLS.update();
 
             redAutoSpecimen.updateCheckDone();
+
+            initAuto.update();
 
         }
 
