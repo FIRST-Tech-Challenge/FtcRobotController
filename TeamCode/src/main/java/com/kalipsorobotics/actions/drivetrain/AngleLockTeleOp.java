@@ -10,7 +10,7 @@ public class AngleLockTeleOp extends KActionSet {
     public AngleLockTeleOp(DriveTrain driveTrain, WheelOdometry wheelOdometry) {
         PurePursuitAction lockAngle = new PurePursuitAction(driveTrain, wheelOdometry);
         lockAngle.setName("lockAngle");
-        lockAngle.addPoint(wheelOdometry.getCurrentPosition().getX(), wheelOdometry.getCurrentPosition().getY(), 0);
+        lockAngle.addPoint(wheelOdometry.getCurrentPosition().getX(), wheelOdometry.getCurrentPosition().getY(), 0.1);
         this.addAction(lockAngle);
     }
 

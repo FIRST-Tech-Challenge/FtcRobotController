@@ -10,8 +10,8 @@ public class MoveWallTeleOp extends KActionSet {
     public MoveWallTeleOp(DriveTrain driveTrain, WheelOdometry wheelOdometry) {
         PurePursuitAction moveToWall = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToWall.setName("moveToWall");
-        moveToWall.addPoint(-150, 0, -180);
-        moveToWall.addPoint(0, 0, -180);
+        moveToWall.addPoint(-205, 0, -180);
+        moveToWall.addPoint(-55, 0, -180);
         this.addAction(moveToWall);
     }
 

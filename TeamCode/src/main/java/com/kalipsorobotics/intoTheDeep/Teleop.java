@@ -210,6 +210,8 @@ package com.kalipsorobotics.intoTheDeep;
 
 import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
 
+import android.util.Log;
+
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
@@ -235,6 +237,7 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -245,7 +248,7 @@ public class Teleop extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, -180);
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
         AngleLockTeleOp angleLockTeleOp = null;
@@ -302,29 +305,53 @@ public class Teleop extends LinearOpMode {
             //=========DRIVER==========
             driveAction.move(gamepad1);
 
+            //RESET POS
             if (gamepad1.dpad_up) {
                 driveTrain.resetWheelOdom();
+                wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
             }
 
             if (gamepad1.a) {
-                if (moveWallTeleOp == null || moveWallTeleOp.checkDoneCondition()) {
+                Log.d("gampad1",
+                        "gamepad1.y" + gamepad1.y + "   moveWallCondition  " + (moveWallTeleOp == null || moveWallTeleOp.getIsDone()));
+                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()) {
                     moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
                     moveWallTeleOp.setName("moveWallTeleOp");
                 }
             }
-            if (moveWallTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
-                moveWallTeleOp.update();
-            }
 
             if (gamepad1.y) {
-                if (angleLockTeleOp == null || angleLockTeleOp.checkDoneCondition()) {
+                Log.d("gampad1",
+                        "gamepad1.y" + gamepad1.y + "   angle lock condition  " + (angleLockTeleOp == null || angleLockTeleOp.getIsDone()));
+
+                if (angleLockTeleOp == null || angleLockTeleOp.getIsDone()) {
                     angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
                     angleLockTeleOp.setName("angleLockTeleOp");
                 }
             }
-            if (angleLockTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
-                angleLockTeleOp.update();
+
+            if (isGamePadDriveJoystickZero()) {
+
+                if (angleLockTeleOp != null) {
+                    angleLockTeleOp.update();
+                }
+
+                if (moveWallTeleOp != null) {
+                    moveWallTeleOp.update();
+                }
+
+            } else {  //Manual control override
+
+
+                if (angleLockTeleOp != null) {
+                    angleLockTeleOp.setIsDone(true);
+                }
+                if (moveWallTeleOp != null) {
+                    moveWallTeleOp.setIsDone(true);
+                }
+
             }
+
 
 
             //================OUTTAKE================
@@ -344,7 +371,7 @@ public class Teleop extends LinearOpMode {
 
             //outtake hang ready
             if (gamepad2.dpad_up) {
-                if (specimenHangReady == null || specimenHangReady.checkDoneCondition()) {
+                if (specimenHangReady == null || specimenHangReady.getIsDone()) {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
                 }
@@ -539,7 +566,13 @@ public class Teleop extends LinearOpMode {
     }
 
     private boolean isTransferRunning(IntakeTransferAction intakeTransferAction) {
-        return intakeTransferAction != null && !intakeTransferAction.checkDoneCondition();
+        return intakeTransferAction != null && !intakeTransferAction.getIsDone();
+    }
+
+    private boolean isGamePadDriveJoystickZero() {
+        boolean isGamePadDriveJoystickZero =
+                ((gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0));
+        return isGamePadDriveJoystickZero;
     }
 
 }
