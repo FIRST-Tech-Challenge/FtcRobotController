@@ -57,12 +57,12 @@ public class RedAutoSpecimen extends LinearOpMode {
         specimenHangReady1.setName("hangSpecimenReady1");
         redAutoSpecimen.addAction(specimenHangReady1);
 
-        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 200);
+        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 280);
         lowerSlidesHalf1.setName("lowerSlidesHalf1");
         lowerSlidesHalf1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(lowerSlidesHalf1);
 
-        WaitAction waitAfterHang = new WaitAction(500);
+        WaitAction waitAfterHang = new WaitAction(200);
         waitAfterHang.setName("waitAfterHang");
         waitAfterHang.setDependentActions(lowerSlidesHalf1);
         redAutoSpecimen.addAction(waitAfterHang);
@@ -86,7 +86,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setDependentActions(waitAfterHang);
         //first sample to depot
-        moveFloorSamples.addPoint( -620, -475, -90);
+        moveFloorSamples.addPoint( -620, -500, -90);
         moveFloorSamples.addPoint(-1330, -500, -180);
         moveFloorSamples.addPoint(-1330, -800, -180);// before push
         moveFloorSamples.addPoint(-130, -800, -180);

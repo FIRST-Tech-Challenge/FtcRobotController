@@ -52,6 +52,10 @@ public class PidNav {
         D = d;
     }
 
+    public void setErrorIntegral(double errorIntegral) {
+        this.errorIntegral = errorIntegral;
+    }
+
     @Override
     public String toString() {
         return "PidNav{" +

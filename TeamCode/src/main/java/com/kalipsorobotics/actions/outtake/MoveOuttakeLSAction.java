@@ -33,7 +33,7 @@ public class MoveOuttakeLSAction extends Action {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
-        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0 /*0.00001*/, 0);
+        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0, 0);
         this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
         if (targetTicks >= MAX_RANGE_LS_TICKS) {
             Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
@@ -43,10 +43,18 @@ public class MoveOuttakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
-        double lowestPower = 0.15;
+        double lowestPower = 0.1;
+
+        if (globalLinearSlideMaintainTicks > 200) {
+            lowestPower = 0.1;
+        }
+
+        if (globalLinearSlideMaintainTicks > 400) {
+            lowestPower = 0.2;
+        }
 
         if (globalLinearSlideMaintainTicks > 1800) {
-            lowestPower = 0.3;
+            lowestPower = 0.5;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -66,7 +74,7 @@ public class MoveOuttakeLSAction extends Action {
 
         if(!hasStarted) {
             setGlobalLinearSlideMaintainTicks(targetTicks);
-            Log.d("Outtake_LS", "set global to" + globalLinearSlideMaintainTicks);
+            Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
             hasStarted = true;
         }
 
@@ -134,4 +142,9 @@ public class MoveOuttakeLSAction extends Action {
     public double getCurrentTicks() {
         return currentTicks;
     }
+
+    public void setI() {
+        pidOuttakeLS.setErrorIntegral(0);
+    }
+
 }
