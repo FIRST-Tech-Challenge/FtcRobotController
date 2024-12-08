@@ -51,7 +51,6 @@ import org.firstinspires.ftc.teamcode.teleop.Values;
 //@Disabled
 public class ServosNDrive extends LinearOpMode {
 
-    public static final double MID_SERVO = 0.5;
     /* Declare OpMode members. */
     public Servo    intakeClaw    = null;
     public Servo    clawPivot   = null;
@@ -104,9 +103,9 @@ public class ServosNDrive extends LinearOpMode {
         slide2  = hardwareMap.get(Servo.class, "4");
         slide1 = hardwareMap.get(Servo.class, "5");
 
-        clawPivot.setPosition(MID_SERVO);
-        wrist.setPosition(MID_SERVO);
-        intakeElbow.setPosition(MID_SERVO);
+        clawPivot.setPosition(Values.MID_SERVO);
+        wrist.setPosition(Values.MID_SERVO);
+        intakeElbow.setPosition(Values.MID_SERVO);
 
         slide1.setPosition(Values.slide1in);
         slide2.setPosition(Values.slide2in);
