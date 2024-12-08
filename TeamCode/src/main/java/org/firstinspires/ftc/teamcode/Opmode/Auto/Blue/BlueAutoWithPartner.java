@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Opmode.Auto;
+package org.firstinspires.ftc.teamcode.Opmode.Auto.Blue;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -19,9 +19,9 @@ import org.firstinspires.ftc.teamcode.Usefuls.Gamepad.stickyGamepad;
 
 import java.util.List;
 
-@Autonomous(name = "5 cycle")
+@Autonomous(name = "5 cycle - blue")
 @Config
-public class League1Auto extends LinearOpMode {
+public class BlueAutoWithPartner extends LinearOpMode {
     public static double xTarget = 10, yTarget = 0, rTarget = 0;
     State currentState = State.DRIVETODEPOSIT;
     Actions currentAction = Actions.PICKUP;
@@ -96,7 +96,7 @@ public class League1Auto extends LinearOpMode {
                     actions.preScore();
                     if(timer.milliseconds()>ActionStamp+500){
                         actionToggle=true;
-                        currentAction=Actions.SLIDESEXTEND;
+                        currentAction= Actions.SLIDESEXTEND;
                     }
                     break;
                 case SLIDESEXTEND:
@@ -222,7 +222,7 @@ public class League1Auto extends LinearOpMode {
                         if(!(currentCycle==4)){
                             currentAction = Actions.PICKUP;
                         } else if (currentCycle==4){
-                            currentAction=Actions.THIRDCYCLEPICKUP;
+                            currentAction= Actions.THIRDCYCLEPICKUP;
                         }
                     }
 
@@ -328,7 +328,7 @@ public class League1Auto extends LinearOpMode {
                     if (timer.milliseconds() > TimeStamp + 4000) {
                         drive.setTarget(new Pose2d(76, 49, -33));
                         timeToggle = true;
-                        currentState=State.REST;
+                        currentState= State.REST;
                     }
 
                     break;
