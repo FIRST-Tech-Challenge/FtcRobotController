@@ -10,10 +10,22 @@
 
 
 // Custom definitions may go here
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://www.matthewo.tech/maven/'
+        }
+    }
+    dependencies {
+        classpath 'org.team11260:fast-load-plugin:0.1.2'
+    }
+}
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.team11260.fast-load-plugin'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -22,7 +34,23 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
-
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+    maven {
+        url = 'https://repo.dairy.foundation/releases'
+    }
+    maven{
+        url = 'https://www.matthewo.tech/maven/'
+    }
+}
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "com.acmerobotics.roadrunner:core:1.0.0"
+    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
+    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
+    implementation "page.j5155.roadrunner:ftc-otos:0.1.1+0.1.14"
+    implementation 'org.team11260:fast-load:0.1.2'
+
 }
