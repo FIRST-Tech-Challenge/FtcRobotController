@@ -155,12 +155,12 @@ public class MainTeleOp extends LinearOpMode{
             //Drive code
             drivetrain.Drive();
 
-            handleGamepad1(arm,viper);
-            handleGamepad2(arm,viper,wristClaw);
-            if (arm.getIsHome())
-            {
-                arm.Stop();
-            }
+//            handleGamepad1(arm,viper);
+//            handleGamepad2(arm,viper,wristClaw);
+//            if (arm.getIsHome())
+//            {
+//                arm.Stop();
+//            }
             telemetry.update();
             //Manual viper code (commented out)
 //            if (Math.abs((gamepad2.right_stick_y)) > 0.2 )
