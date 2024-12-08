@@ -43,12 +43,12 @@ public class TeleopWithActions extends OpMode {
         robot = new Robot(hardwareMap);
         dashboard = FtcDashboard.getInstance();
         drivetrain = robot.drivetrain;
-        Battery battery = new Battery(hardwareMap);
-        Arm arm = new Arm(hardwareMap);
-        Claw claw = new Claw(hardwareMap);
-        Extension extension = new Extension(hardwareMap);
-        Lift lift = new Lift(hardwareMap, battery);
-        Intake intake = new Intake(hardwareMap);
+        battery = new Battery(hardwareMap);
+        arm = new Arm(hardwareMap);
+        claw = new Claw(hardwareMap);
+        extension = new Extension(hardwareMap);
+        lift = new Lift(hardwareMap, battery);
+        intake = new Intake(hardwareMap);
     }
 
     @Override
@@ -95,15 +95,16 @@ public class TeleopWithActions extends OpMode {
                 runningActions.add(arm.servoArm(Arm.armState.RETRACT));
             }
         }
-        if(gamepad2.left_stick_y != 0){
-            runningActions.add(lift.manualControl(gamepad1.left_stick_y));
+        if(gamepad2.left_stick_y > 0.2 || gamepad2.left_stick_y < -0.2){
+            runningActions.add(lift.manualControl(gamepad2.left_stick_y));
+        } else {
+            runningActions.add(lift.manualControl(0));
         }
         //if(gamepad2.right_stick_y >= 0){
         //}
-
         // updated based on gamepads
         runningActions.add(
-                drivetrain.manualControl(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x)
+                drivetrain.manualControl(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
         );
         // update running actions
         HashSet<Action> newActions = new HashSet<>();

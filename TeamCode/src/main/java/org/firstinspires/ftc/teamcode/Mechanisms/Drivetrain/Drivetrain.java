@@ -248,7 +248,7 @@ public class Drivetrain {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                double y = -ly;
+                double y = ly;
                 double x = lx;
                 double rx = -rX;
 
@@ -257,11 +257,11 @@ public class Drivetrain {
 //                        }
                 SimpleMatrix compensatedTwist = new SimpleMatrix(
                         new double[][]{
-                                new double[]{r * x, r * y},
+                                new double[]{r * x},
+                                new double[] {r * y},
                                 new double[]{(r / (l + w)) * rx},
                         }
                 );
-                double[] compensated_twist = {r * x, r * y, (r / (l + w)) * rx};
                 double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(rx), 1.0);
                 setPower(inverseKinematics(compensatedTwist).scale(1/denominator));
                 return false;

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
@@ -24,7 +25,7 @@ public class TunePivot extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad2.y){
-                Actions.runBlocking(pivot.flippyFlip(Robot.intakeMechState.STOP));
+                Actions.runBlocking(pivot.flippyFlip(Intake.intakeState.OUTTAKE));
             }
         }
     }
