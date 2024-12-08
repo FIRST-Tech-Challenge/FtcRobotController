@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.simple.SimpleMatrix;
@@ -20,13 +21,10 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTrack
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 /**
- * THIS IS AN AUTONOMOUS OPMODE WE WILL USE TO TEST
- * YOUR DRIVETRAIN'S MOTOR DIRECTIONS.
- * MAKE SURE YOU ADD THE @CONFIG AT THE TOP OF ALL
- * YOUR TUNING/TESTING OPMODES. FTC DASHBOARD IS
- * BETTER THAN PRINTING ONTO THE PHONE VIA FTC SDK
- * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
+ * FE!N FE!N FE!N
  */
+@Config
+@Autonomous(name = "AUTON PARK AUTON PARK", group = "AAAAAAAAA")
 public class TestAuton extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
@@ -43,14 +41,7 @@ public class TestAuton extends LinearOpMode {
         ElapsedTime looptime = new ElapsedTime();
         SimpleMatrix desiredPose = new SimpleMatrix(
                 new double [][]{
-                        new double[]{24},
                         new double[]{0},
-                        new double[]{0}
-                }
-        );
-        SimpleMatrix desiredPoseTwo = new SimpleMatrix(
-                new double [][]{
-                        new double[]{48},
                         new double[]{-24},
                         new double[]{0}
                 }
@@ -68,9 +59,6 @@ public class TestAuton extends LinearOpMode {
             new ParallelAction(
                 new SequentialAction(
                 drivetrain.goToPose(desiredPose),
-
-                drivetrain.goToPose(desiredPoseTwo),
-
                 drivetrain.stopMotors()
                 ),
                 drivetrain.updateTelemetry(telemetry)

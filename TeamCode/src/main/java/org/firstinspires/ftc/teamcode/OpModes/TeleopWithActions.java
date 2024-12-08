@@ -100,7 +100,7 @@ public class TeleopWithActions extends OpMode {
         //}
         // updated based on gamepads
         runningActions.add(
-                drivetrain.manualControl(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
+                drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
         );
         // update running actions
         HashSet<Action> newActions = new HashSet<>();

@@ -29,7 +29,7 @@ public class ZeroServos extends LinearOpMode {
         servoArmRight = hardwareMap.get(Servo.class, "armLeft");
         //pivotLeft = hardwareMap.get(Servo.class, "pivotLeft");
         //pivotRight = hardwareMap.get(Servo.class, "pivotRight");
-        //clawServo = hardwareMap.get(Servo.class, "clawServo");
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
         //servoExtendLeft = hardwareMap.get(Servo.class, "leftExtension");
         //servoExtendRight = hardwareMap.get(Servo.class, "rightExtension");
         waitForStart();
@@ -40,7 +40,7 @@ public class ZeroServos extends LinearOpMode {
             //servoWrist.setPosition(0.5);
             //pivotRight.setPosition(0.5);
             //pivotLeft.setPosition(0.5);
-            //clawServo.setPosition(0.5);
+            clawServo.setPosition(0.5);
             //servoExtendLeft.setPosition(0.025);
             //servoExtendRight.setPosition(0);
         }

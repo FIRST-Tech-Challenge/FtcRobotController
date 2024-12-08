@@ -16,7 +16,7 @@ public class Extension {
     HardwareMap hardwareMap;
     Servo servoExtendLeft;
     Servo servoExtendRight;
-    public static double extendPos = -0.1;
+    public static double extendPos = 0;
     public static double retractPos = 0.27;
     public static double leftOffset = 0.025;
     public Extension(HardwareMap hardwareMap) {
