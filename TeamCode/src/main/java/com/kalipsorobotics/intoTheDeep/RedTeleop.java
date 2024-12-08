@@ -245,8 +245,8 @@ public class RedTeleop extends LinearOpMode {
 
 
 
-    boolean isRed = true;
-    boolean takeInYellow = true;
+    protected boolean isRed = true;
+    protected boolean takeInYellow = true;
 
 
     @Override
