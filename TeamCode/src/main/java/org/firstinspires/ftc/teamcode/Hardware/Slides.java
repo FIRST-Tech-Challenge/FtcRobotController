@@ -52,15 +52,15 @@ public class Slides {
     }
 
     public void floorIntake() {
-        setTargetSlidesPosition(0);
+        setTargetSlidesPosition(0.25);
     }
 
     public void preScore() {
-        setTargetSlidesPosition(2);
+        setTargetSlidesPosition(2.25);
     }
 
     public void score() {
-        setTargetSlidesPosition(30);
+        setTargetSlidesPosition(29);
     }
 
     public void update() {
