@@ -6,6 +6,8 @@ import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.intake.IntakeAction;
+import com.kalipsorobotics.actions.intake.IntakeReadyAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeDownReady;
@@ -99,12 +101,21 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample1.addPoint(-620, 820, 180);
         redAutoBasket.addAction(moveToSample1);
 
-
         //TODO INTAKE ACTION
+
+        IntakeReadyAction intakeReady1 = new IntakeReadyAction(10, intake, outtake);
+        intakeReady1.setName("intakeReady1");
+        intakeReady1.setDependentActions(moveToSample1);
+        redAutoBasket.addAction(intakeReady1);
+
+        IntakeAction intake1 = new IntakeAction(intake);
+        intake1.setName("intake1");
+        intake1.setDependentActions(intakeReady1);
+        redAutoBasket.addAction(intake1);
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(moveToSample1);
+        moveToBasket1.setDependentActions(intake1);
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket1);
@@ -151,13 +162,22 @@ public class RedAutoBasket extends LinearOpMode {
 
         //TODO INTAKE ACTION
 
+        IntakeReadyAction intakeReady2 = new IntakeReadyAction(10, intake, outtake);
+        intakeReady2.setName("intakeReady2");
+        intakeReady2.setDependentActions(moveToSample2);
+        redAutoBasket.addAction(intakeReady2);
+
+        IntakeAction intake2 = new IntakeAction(intake);
+        intake2.setName("intake2");
+        intake2.setDependentActions(intakeReady2);
+        redAutoBasket.addAction(intake2);
+
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket2.setName("moveToBasket2");
-        moveToBasket2.setDependentActions(moveToSample2/*TODO intake*/);
+        moveToBasket2.setDependentActions(intake2);
         //move sample 2 to basket
         moveToBasket2.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket2);
-
 
         BasketReadyAction basketReady2 = new BasketReadyAction(outtake);
         basketReady2.setName("basketReady2");
@@ -197,16 +217,24 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample3.addPoint(-620, 950, 180);
         redAutoBasket.addAction(moveToSample3);
 
-
         //TODO INTAKE ACTION
+
+        IntakeReadyAction intakeReady3 = new IntakeReadyAction(10, intake, outtake);
+        intakeReady3.setName("intakeReady3");
+        intakeReady3.setDependentActions(moveToSample3);
+        redAutoBasket.addAction(intakeReady3);
+
+        IntakeAction intake3 = new IntakeAction(intake);
+        intake3.setName("intake3");
+        intake3.setDependentActions(intakeReady3);
+        redAutoBasket.addAction(intake3);
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket3.setName("moveToBasket3");
-        moveToBasket3.setDependentActions(moveToSample3/*TODO intake*/);
+        moveToBasket3.setDependentActions(intake3);
         //move sample 1 to basket
         moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket3);
-
 
         BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
         basketReady3.setName("basketReady3");
