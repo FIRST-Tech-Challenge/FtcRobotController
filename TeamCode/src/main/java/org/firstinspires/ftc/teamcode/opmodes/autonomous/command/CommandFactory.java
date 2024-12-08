@@ -136,16 +136,16 @@ public class CommandFactory {
 
     }
 
-    public InstantCommand stopDriveTrain() {
-        return new InstantCommand(driveTrain::stop, driveTrain);
+    public SingleRunCommand stopDriveTrain() {
+        return new SingleRunCommand(driveTrain::stop, driveTrain);
     }
 
-    public InstantCommand elbowToIntakePosition() {
-        return new InstantCommand(intake::SetElbowInIntakePosition);
+    public SingleRunCommand elbowToIntakePosition() {
+        return new SingleRunCommand(intake::SetElbowInIntakePosition);
     }
 
-    public InstantCommand elbowToSpecimenPosition() {
-        return new InstantCommand(intake::SetElbowInSampleDeliveryPosition);
+    public SingleRunCommand elbowToSpecimenPosition() {
+        return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
     }
 
     public SmartIntakeCommand intake() {
