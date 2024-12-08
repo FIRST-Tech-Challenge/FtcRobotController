@@ -30,7 +30,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         specimenHangReady.setDependentActions(waitAtWall);
         this.addAction(specimenHangReady);
 
-        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 200);
+        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 280);
         lowerSlidesHalf.setName("lowerSlidesHalf");
         lowerSlidesHalf.setDependentActions(specimenHangReady, moveWallToBar);
         this.addAction(lowerSlidesHalf);

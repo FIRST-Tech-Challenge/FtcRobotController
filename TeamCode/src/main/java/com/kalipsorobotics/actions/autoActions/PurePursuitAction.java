@@ -136,7 +136,7 @@ public class PurePursuitAction extends Action {
         } else {
             Position lastPoint = path.getLastPoint();
 
-            if ((lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
+            if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
                 driveTrain.setPower(0);
                 Log.d("purepursaction_debug_follow", "done");
                 isDone = true;

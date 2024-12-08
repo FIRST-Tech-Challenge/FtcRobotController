@@ -1,5 +1,7 @@
 package com.kalipsorobotics.modules;
 
+import android.util.Log;
+
 import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,6 +21,7 @@ public class Outtake {
 
     public Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
+        Log.d("Outtake_LS", "init Outtake");
         setUpHardware();
     }
 

@@ -209,6 +209,9 @@ public class Teleop extends LinearOpMode {
 package com.kalipsorobotics.intoTheDeep;
 
 import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
+import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
+
+import android.util.Log;
 
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
@@ -235,6 +238,8 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
@@ -245,7 +250,7 @@ public class Teleop extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, -180);
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
         AngleLockTeleOp angleLockTeleOp = null;
@@ -281,7 +286,7 @@ public class Teleop extends LinearOpMode {
         //CHANGE ACCORDING TO ALLIANCE
 
         boolean isRed = true;
-        boolean takeInYellow = true;
+        boolean takeInYellow = false;
 
         //intakeLinkageAction.retract();
 
@@ -299,33 +304,56 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             //=========DRIVER==========
             driveAction.move(gamepad1);
 
+            //RESET POS
             if (gamepad1.dpad_up) {
                 driveTrain.resetWheelOdom();
+                wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
             }
 
             if (gamepad1.a) {
-                if (moveWallTeleOp == null || moveWallTeleOp.checkDoneCondition()) {
+                Log.d("gampad1",
+                        "gamepad1.y" + gamepad1.y + "   moveWallCondition  " + (moveWallTeleOp == null || moveWallTeleOp.getIsDone()));
+                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()) {
                     moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
                     moveWallTeleOp.setName("moveWallTeleOp");
                 }
             }
-            if (moveWallTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
-                moveWallTeleOp.update();
-            }
 
             if (gamepad1.y) {
-                if (angleLockTeleOp == null || angleLockTeleOp.checkDoneCondition()) {
+                Log.d("gampad1",
+                        "gamepad1.y" + gamepad1.y + "   angle lock condition  " + (angleLockTeleOp == null || angleLockTeleOp.getIsDone()));
+
+                if (angleLockTeleOp == null || angleLockTeleOp.getIsDone()) {
                     angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
                     angleLockTeleOp.setName("angleLockTeleOp");
                 }
             }
-            if (angleLockTeleOp != null && (gamepad1.left_stick_y == 0) && (gamepad1.right_stick_x == 0)) {
-                angleLockTeleOp.update();
+
+            if (isGamePadDriveJoystickZero()) {
+
+                if (angleLockTeleOp != null) {
+                    angleLockTeleOp.update();
+                }
+
+                if (moveWallTeleOp != null) {
+                    moveWallTeleOp.update();
+                }
+
+            } else {  //Manual control override
+
+
+                if (angleLockTeleOp != null) {
+                    angleLockTeleOp.setIsDone(true);
+                }
+                if (moveWallTeleOp != null) {
+                    moveWallTeleOp.setIsDone(true);
+                }
+
             }
+
 
 
             //================OUTTAKE================
@@ -342,25 +370,49 @@ public class Teleop extends LinearOpMode {
                 MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
             }
 
+            if (gamepad2.left_stick_button) {
+                CalculateTickPer.MIN_RANGE_LS_TICKS = -1800;
+            }
+
+            if (gamepad2.left_trigger > 0.99) {
+                outtake.getLinearSlide1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                outtake.getLinearSlide1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                CalculateTickPer.MIN_RANGE_LS_TICKS = outtake.getLinearSlide1().getCurrentPosition() - mmToTicksLS(25);
+            }
+
+
 
             //outtake hang ready
             if (gamepad2.dpad_up) {
-                if (specimenHangReady == null || specimenHangReady.checkDoneCondition()) {
+                if (specimenHangReady == null || specimenHangReady.getIsDone()) {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
                 }
             }
-            if (specimenHangReady != null && (gamepad2.left_stick_y == 0)) {
-                specimenHangReady.update();
+
+            if (isGamePadOuttakeJoystickZero()) {
+
+                if (specimenHangReady != null) {
+                    specimenHangReady.update();
+                }
+
+            } else {
+
+                if (specimenHangReady != null) {
+                    specimenHangReady.setIsDone(true);
+                }
+
             }
 
-//            if (gamepad2.dpad_down) {
-//                specimenWallReady = new SpecimenWallReady(outtake);
-//                specimenWallReady.setName("specimenWallReady");
-//            }
-//            if (specimenWallReady != null) {
-//                specimenWallReady.update();
-//            }
+
+/*
+            if (gamepad2.dpad_down) {
+                specimenWallReady = new SpecimenWallReady(outtake);
+                specimenWallReady.setName("specimenWallReady");
+            }
+            if (specimenWallReady != null) {
+                specimenWallReady.update();
+            }*/
 
 
             if (gamepad2.dpad_down) {
@@ -411,10 +463,10 @@ public class Teleop extends LinearOpMode {
 
 
             if (-gamepad2.right_stick_y != 0) {
-                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(0.5) * -gamepad2.right_stick_y);
+                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
             }
 
-
+            wheelOdometry.updatePosition();
             maintainOuttakeGlobalPos.update();
             maintainIntakeGlobalPos.update();
 /*
@@ -540,7 +592,19 @@ public class Teleop extends LinearOpMode {
     }
 
     private boolean isTransferRunning(IntakeTransferAction intakeTransferAction) {
-        return intakeTransferAction != null && !intakeTransferAction.checkDoneCondition();
+        return intakeTransferAction != null && !intakeTransferAction.getIsDone();
+    }
+
+    private boolean isGamePadDriveJoystickZero() {
+        boolean isGamePadDriveJoystickZero =
+                ((gamepad1.left_stick_y == 0) && (gamepad1.left_stick_x == 0) && (gamepad1.right_stick_x == 0));
+        return isGamePadDriveJoystickZero;
+    }
+
+    private boolean isGamePadOuttakeJoystickZero() {
+        boolean isGamePadOuttakeJoystickZero =
+                ((gamepad2.left_stick_y == 0));
+    return isGamePadOuttakeJoystickZero;
     }
 
 }

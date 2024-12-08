@@ -17,6 +17,10 @@ public abstract class Action {
         return isDone;
     }
 
+    public void setIsDone(boolean isDone) {
+        this.isDone = isDone;
+    }
+
     public boolean getHasStarted() {
         return hasStarted;
     }

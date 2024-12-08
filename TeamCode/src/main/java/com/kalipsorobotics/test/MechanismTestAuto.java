@@ -37,7 +37,7 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 800);
+        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 480);
         moveOuttakeLSAction.setName("moveOuttakeLSAction");
 
         WaitAction waitAction = new WaitAction(3000);

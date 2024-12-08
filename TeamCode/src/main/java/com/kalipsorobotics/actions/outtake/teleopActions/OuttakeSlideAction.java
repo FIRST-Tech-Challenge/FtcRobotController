@@ -21,30 +21,11 @@ public class OuttakeSlideAction {
         this.linearSlideMotor1 = outtake.getLinearSlide1();
         this.linearSlideMotor2 = outtake.getLinearSlide2();
     }
-    public void setTargetPos(int position) {
-        linearSlideMotor1.setTargetPosition(position);
-        linearSlideMotor2.setTargetPosition(position);
-    }
-    public void setMode(DcMotor.RunMode mode) {
-        linearSlideMotor1.setMode(mode);
-        linearSlideMotor2.setMode(mode);
-    }
+
     public void setPower(double power) {
         Log.d("outtake slides", "POWER: " + power);
         linearSlideMotor1.setPower(power);
         linearSlideMotor2.setPower(power);
-    }
-    public void setPower2(double power2) {
-        if (power2 > 0) {
-            setTargetPos(getPosition() + 3);
-            setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else if (power2 < 0) {
-            setTargetPos(getPosition() - 3);
-            setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else {
-            setTargetPos(getPosition());
-            stop();
-        }
     }
 
     public void run() {

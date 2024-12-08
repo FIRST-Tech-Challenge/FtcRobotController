@@ -88,17 +88,28 @@ public class ColorDetector {
         }
     }
     public void cycle(boolean isRed, boolean takeInYellow, IntakeNoodleAction intakeNoodleAction) {
-        if (takeInYellow && ((!isRed) && detectRed()) ||
-                (isRed) && detectBlue()) {
-            intakeNoodleAction.reverse();
-            revLED.turnoff();
-        } else if (!takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
-                (isRed) && detectBlue()) {
-            intakeNoodleAction.reverse();
-            revLED.turnoff();
-        } else {
-            intakeNoodleAction.run();
+        if (detectRed() || detectBlue()) {
             revLED.turnOnGreen();
+        } else if (detectYellow()) {
+            revLED.turnOnRed();
+        } else {
+            revLED.turnoff();
         }
+        intakeNoodleAction.run();
+//        if (takeInYellow && ((!isRed) && detectRed()) ||
+//                (isRed) && detectBlue()) { //if wants yellow and blue and sees red OR if wants red and sees blue
+//            intakeNoodleAction.reverse();
+//            revLED.turnOnRed();
+//        } else if (!takeInYellow && ((!isRed) && detectRed()) || (detectYellow()) ||
+//                (isRed) && detectBlue()) { //if does not want yellow and wants blue and sees red OR sees yellow OR wants red and sees blue
+//            intakeNoodleAction.reverse();
+//            revLED.turnOnRed();
+//        } else if (detectColor() == KColor.Color.NONE){ //if no color
+//            intakeNoodleAction.run();
+//            revLED.turnoff();
+//        } else { //
+//            intakeNoodleAction.run();
+//            revLED.turnOnGreen();
+//        }
     }
 }
