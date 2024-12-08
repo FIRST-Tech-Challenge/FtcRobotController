@@ -16,9 +16,11 @@ public class Arm {
     public Servo servoArmLeft;
     Servo servoArmRight;
     public static double armRetract = 1;
-    public static double armExtend = -1;
+    public static double armExtend = 0.25;
+    public static double armSpecimenExtend = -1;
     public static double wristExtend = 1;
-    public static double wristRetract = 0.5;
+    public static double wristRetract = 0.6;
+    public static double wristSpecimenExtend = 0.8;
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -29,21 +31,56 @@ public class Arm {
 
     public enum armState {
         RETRACT,    // pulls arm in
-        EXTEND      // pushes arm out
+        EXTEND,      // pushes arm out
+        SPEC
     }
-    public Action servoArm(armState armPos){
+    armState armPos = armState.RETRACT;
+    ElapsedTime hahaALEX = new ElapsedTime();
+    ElapsedTime hahaALEX2 = new ElapsedTime();
+    public Action servoArm(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
+                    double tiem = hahaALEX.seconds();
+                    if (tiem > .3) {
+                        if (armPos == armState.RETRACT) {
+                            servoArmLeft.setPosition(armExtend);
+                            servoArmRight.setPosition(armExtend);
+                            servoWrist.setPosition(wristExtend);
+                            armPos = armState.EXTEND;
+                            hahaALEX.reset();
+                        } else if (armPos == armState.EXTEND) {
+                            servoArmLeft.setPosition(armRetract);
+                            servoArmRight.setPosition(armRetract);
+                            servoWrist.setPosition(wristRetract);
+                            armPos = armState.RETRACT;
+                            hahaALEX.reset();
+                        }
+                    }
+                return false;
+            }
+        };
+    }
+    public Action servoArmSpec(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet) {
+                double tiem2 = hahaALEX.seconds();
+                if (tiem2 > .3) {
                     if (armPos == armState.RETRACT) {
-                        servoArmLeft.setPosition(armExtend);
-                        servoArmRight.setPosition(armExtend);
-                        servoWrist.setPosition(wristExtend);
-                    } else if (armPos == armState.EXTEND) {
+                        servoArmLeft.setPosition(armSpecimenExtend);
+                        servoArmRight.setPosition(armSpecimenExtend);
+                        servoWrist.setPosition(wristSpecimenExtend);
+                        armPos = armState.SPEC;
+                        hahaALEX.reset();
+                    } else if (armPos == armState.SPEC) {
                         servoArmLeft.setPosition(armRetract);
                         servoArmRight.setPosition(armRetract);
                         servoWrist.setPosition(wristRetract);
+                        armPos = armState.RETRACT;
+                        hahaALEX.reset();
                     }
+                }
                 return false;
             }
         };

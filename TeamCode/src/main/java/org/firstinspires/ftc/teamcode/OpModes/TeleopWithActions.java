@@ -85,17 +85,13 @@ public class TeleopWithActions extends OpMode {
         } else {
             runningActions.add(robot.intakeMove(Intake.intakeState.STOP));
         }
-        if(gamepad1.circle){
-            if (!runningActions.contains(arm.servoArm(Arm.armState.RETRACT))) {
-                runningActions.add(arm.servoArm(Arm.armState.EXTEND));
-            }
+        if(gamepad2.triangle){
+            runningActions.add(arm.servoArm());
         }
-        if(gamepad1.cross){
-            if (!runningActions.contains(arm.servoArm(Arm.armState.EXTEND))) {
-                runningActions.add(arm.servoArm(Arm.armState.RETRACT));
-            }
+        if(gamepad2.cross){
+            runningActions.add(arm.servoArmSpec());
         }
-        if(gamepad2.left_stick_y > 0.2 || gamepad2.left_stick_y < -0.2){
+        if(gamepad2.left_stick_y > 0.2 ||gamepad2.left_stick_y < -0.2){
             runningActions.add(lift.manualControl(gamepad2.left_stick_y));
         } else {
             runningActions.add(lift.manualControl(0));

@@ -249,7 +249,7 @@ public class Drivetrain {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 double y = ly;
-                double x = lx;
+                double x = -lx;
                 double rx = -rX;
 
 //                        if(gamepad2.right_stick_y > 0){
