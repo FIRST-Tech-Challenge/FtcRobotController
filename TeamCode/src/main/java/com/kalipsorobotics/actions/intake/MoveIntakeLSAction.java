@@ -33,7 +33,7 @@ public class MoveIntakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.1;
+        double lowestPower = 0.05;
 //
 //        if (globalIntakeSlideMaintainTicks > degToTicksIntakeLS(3)) {
 //            lowestPower = 0.1;

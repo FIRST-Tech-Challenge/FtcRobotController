@@ -2,6 +2,7 @@ package com.kalipsorobotics.actions.outtake;
 
 import static com.kalipsorobotics.math.CalculateTickPer.MAX_RANGE_LS_TICKS;
 import static com.kalipsorobotics.math.CalculateTickPer.MIN_RANGE_LS_TICKS;
+import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
@@ -45,15 +46,15 @@ public class MoveOuttakeLSAction extends Action {
         double power = pidOuttakeLS.getPower(targetError);
         double lowestPower = 0.1;
 
-        if (globalLinearSlideMaintainTicks > 200) {
+        if (globalLinearSlideMaintainTicks > mmToTicksLS(200)) {
             lowestPower = 0.1;
         }
 
-        if (globalLinearSlideMaintainTicks > 400) {
-            lowestPower = 0.2;
+        if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {
+            lowestPower = 0.25;
         }
 
-        if (globalLinearSlideMaintainTicks > 1800) {
+        if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
             lowestPower = 0.5;
         }
 

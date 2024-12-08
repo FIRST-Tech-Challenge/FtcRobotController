@@ -10,7 +10,7 @@ public class CalculateTickPer {
     static final public double MAX_RANGE_LS_TICKS = 2050;
     //put real values
     final public static double MAX_RANGE_INTAKE_TICKS = degToTicksIntakeLS(90);
-    static final public double MIN_RANGE_LS_TICKS = -30;
+    static public double MIN_RANGE_LS_TICKS = mmToTicksLS(-10);
     final static public double MIN_RANGE_INTAKE_TICKS = degToTicksIntakeLS(-100);
 
     static final public double TICK_PER_DEGREE = 2786.2 / 360;
