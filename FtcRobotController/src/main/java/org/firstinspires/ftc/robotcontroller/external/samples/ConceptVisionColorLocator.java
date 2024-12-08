@@ -27,6 +27,8 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.SortOrder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -63,7 +65,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-
+@Disabled
 @TeleOp(name = "Concept: Vision Color-Locator cammmmm", group = "Concept")
 public class ConceptVisionColorLocator extends LinearOpMode
 
@@ -139,6 +141,8 @@ public class ConceptVisionColorLocator extends LinearOpMode
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
 
+        Servo s = hardwareMap.get(Servo.class, "s");
+
         telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
@@ -187,49 +191,32 @@ public class ConceptVisionColorLocator extends LinearOpMode
              */
 
 
-            double count = 0;
 
+            double prevAngle = angle;
 
             Point[] pt = new Point[4];
             blob.getBoxFit().points(pt);
 
-            Rect bbox = blob.getBoxFit().boundingRect();
-            double h1 = bbox.height;
-            double w1 = bbox.width;
+            double d03 = Math.sqrt((pt[0].x - pt[3].x) * (pt[0].x - pt[3].x) + (pt[0].y - pt[3].y) * (pt[0].y - pt[3].y));
+            double d01 = Math.sqrt((pt[0].x - pt[1].x) * (pt[0].x - pt[1].x) + (pt[0].y - pt[1].y) * (pt[0].y - pt[1].y));
 
-            Rect rect = new Rect(
-                    new Point(bbox.x, bbox.y),
-                    new Point(bbox.x + bbox.width / 2.0 , bbox.y + bbox.height / 2.0)
-                    );
-
-            if (w1 / h1 >= 7.0/3.0 * 0.9){
-                angle = 0;
-            }
-            else if (w1/ h1 <= 3.0/7.0 * 1.1)
-            {
-                angle = 90;
+            if (d03 > d01) {
+                angle = Math.toDegrees(Math.atan((pt[0].y - pt[3].y) / (pt[0].x - pt[3].x)));
             }
             else {
-                angle = Math.toDegrees( Math.atan2(h1,w1));
+                angle = Math.toDegrees(Math.atan((pt[0].y - pt[1].y) / (pt[0].x - pt[1].x)));
+            }
+            if (angle == -90){
+                angle = 90;
             }
 
-            blob.getBoxFit().set();
-
-            for (Point p : pt){
-                if (p.inside(rect)){
-                    count++;
-                }
+            if (Math.abs(angle - prevAngle) < 5) {
+                angle = prevAngle;
             }
-
-            if (count > 1){
-                angle = -angle;
-            }
+            double postion = (angle/180)+0.5;
 
 
-            for (Point p : pt)
-            {
-                telemetry.addLine(p.toString());
-            }
+            s.setPosition(postion);
 
 
 

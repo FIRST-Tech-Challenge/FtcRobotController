@@ -50,5 +50,12 @@ public class MathUtil {
     public static boolean inTolerance(double dp,double cp,double tolerance){
         return Math.abs(dp - cp) > tolerance;
     }
+    public static double optimizeAngle(double angle, double prevAngle) {
+        double delta = angle - prevAngle;
+        if (Math.abs(delta) > 90.0) {
+            angle = (angle + 180) % 360;
+        }
+        return angle;
+    }
 }
 
