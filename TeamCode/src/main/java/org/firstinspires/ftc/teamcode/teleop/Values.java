@@ -25,4 +25,7 @@ public class Values {
     public static double slide1out = .75;
     public static double slide2out = .25;
 
+    public static int slideMax = 2300;
+    public static double velocity = 1.00;
+
 }
