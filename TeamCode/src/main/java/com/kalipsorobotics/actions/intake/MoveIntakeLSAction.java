@@ -2,6 +2,7 @@ package com.kalipsorobotics.actions.intake;
 
 import static com.kalipsorobotics.math.CalculateTickPer.MAX_RANGE_INTAKE_TICKS;
 import static com.kalipsorobotics.math.CalculateTickPer.MIN_RANGE_INTAKE_TICKS;
+import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
 
 import android.util.Log;
 
@@ -20,8 +21,8 @@ public class MoveIntakeLSAction extends Action {
     Intake intake;
     private static double globalIntakeSlideMaintainTicks = 0;
     DcMotor intakeSlideMotor;
-    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.degToTicksIntakeLS(1);
-    private final double P_CONSTANT = 5 * (1 / CalculateTickPer.degToTicksIntakeLS(90));
+    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.degToTicksIntakeLS(0.5);
+    private final double P_CONSTANT = 10 * (1 / CalculateTickPer.degToTicksIntakeLS(90));
     final double targetTicks;
     private double currentTicks;
     public MoveIntakeLSAction(Intake intake, double targetDeg) {
@@ -33,7 +34,7 @@ public class MoveIntakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = targetError * P_CONSTANT;
-        double lowestPower = 0.05;
+        double lowestPower = 0.2;
 //
 //        if (globalIntakeSlideMaintainTicks > degToTicksIntakeLS(3)) {
 //            lowestPower = 0.1;
@@ -94,8 +95,8 @@ public class MoveIntakeLSAction extends Action {
         }
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
-            if (globalIntakeSlideMaintainTicks <= 0) {
-                power = -0.2;
+            if (globalIntakeSlideMaintainTicks <= degToTicksIntakeLS(2)) {
+                power = 0;
             }
         }
         Log.d("Intake_LS", String.format(

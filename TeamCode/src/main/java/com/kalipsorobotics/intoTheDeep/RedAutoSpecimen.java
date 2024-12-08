@@ -57,7 +57,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         specimenHangReady1.setName("hangSpecimenReady1");
         redAutoSpecimen.addAction(specimenHangReady1);
 
-        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 280);
+        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 250);
         lowerSlidesHalf1.setName("lowerSlidesHalf1");
         lowerSlidesHalf1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(lowerSlidesHalf1);

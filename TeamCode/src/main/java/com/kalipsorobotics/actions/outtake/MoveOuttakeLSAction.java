@@ -30,7 +30,7 @@ public class MoveOuttakeLSAction extends Action {
     final double targetTicks;
     private double currentTicks;
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
-        double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 3.0)));
+        double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 5.0)));
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -47,11 +47,11 @@ public class MoveOuttakeLSAction extends Action {
         double lowestPower = 0.1;
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(200)) {
-            lowestPower = 0.1;
+            lowestPower = 0.2;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {
-            lowestPower = 0.25;
+            lowestPower = 0.4;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {

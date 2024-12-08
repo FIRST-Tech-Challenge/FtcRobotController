@@ -14,7 +14,7 @@ public class IntakeTransferAction extends KActionSet {
 //        intakePivotDown.setName("intakePivotDown");
 //        this.addAction(intakePivotDown);
 
-        MoveIntakeLSAction moveIntakeLSIn = new MoveIntakeLSAction(intake, 0);
+        MoveIntakeLSAction moveIntakeLSIn = new MoveIntakeLSAction(intake, -5);
         moveIntakeLSIn.setName("moveIntakeLSIn");
         this.addAction(moveIntakeLSIn);
 

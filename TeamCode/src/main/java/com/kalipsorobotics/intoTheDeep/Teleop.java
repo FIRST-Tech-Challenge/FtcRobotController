@@ -451,14 +451,24 @@ public class Teleop extends LinearOpMode {
                 }
             } else {
                 if (gamepad2.x) {
+                    if (intakeTransferAction != null) {
+                        intakeTransferAction.setIsDone(true);
+                    }
                     intakeDoorAction.open();
+
                 } else if (!(isTransferRunning(intakeTransferAction))) {
                     intakeDoorAction.close();
                 }
             }
 
-            if (intakeTransferAction != null  && (gamepad2.right_stick_y == 0)) {
-                intakeTransferAction.update();
+            if (isGamePadIntakeJoystickZero()) {
+                if (intakeTransferAction != null) {
+                    intakeTransferAction.update();
+                }
+            } else {
+                if (intakeTransferAction != null) {
+                    intakeTransferAction.setIsDone(true);
+                }
             }
 
 
@@ -605,6 +615,12 @@ public class Teleop extends LinearOpMode {
         boolean isGamePadOuttakeJoystickZero =
                 ((gamepad2.left_stick_y == 0));
     return isGamePadOuttakeJoystickZero;
+    }
+
+    private boolean isGamePadIntakeJoystickZero() {
+        boolean isGamePadIntakeJoystickZero =
+                ((gamepad2.right_stick_y == 0));
+        return isGamePadIntakeJoystickZero;
     }
 
 }
