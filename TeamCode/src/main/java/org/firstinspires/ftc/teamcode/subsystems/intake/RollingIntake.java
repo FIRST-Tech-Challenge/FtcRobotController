@@ -76,7 +76,7 @@ public class RollingIntake extends SonicSubsystemBase {
             //telemetry.addData("State", "Intake");
 
             if(d > 50 || this.isInDeliveryPosition) {
-                telemetry.addData("power", 1);
+//                telemetry.addData("power", 1);
 
                 if(state == IntakeState.Intake) {
                     this.leftServo.setPower(-1);
@@ -105,7 +105,7 @@ public class RollingIntake extends SonicSubsystemBase {
                 state = IntakeState.Hold;
             }
         } else if (state == IntakeState.Outtake) {
-            telemetry.addData("State", "Outtake");
+//            telemetry.addData("State", "Outtake");
 
             if(d > 50) {
                 if (feedback != null) {
@@ -118,9 +118,9 @@ public class RollingIntake extends SonicSubsystemBase {
 
         } else {
 
-            telemetry.addData("State", "Hold");
-            telemetry.addData("Pivot", DeliveryPivot.recordedPosition);
-            telemetry.addData("Slider", DeliverySlider.recordedPosition);
+//            telemetry.addData("State", "Hold");
+//            telemetry.addData("Pivot", DeliveryPivot.recordedPosition);
+//            telemetry.addData("Slider", DeliverySlider.recordedPosition);
 
             if (DeliveryPivot.recordedPosition > 1000 && DeliverySlider.recordedPosition < -2200) {
                 telemetry.addLine("Toggling wrist...");
