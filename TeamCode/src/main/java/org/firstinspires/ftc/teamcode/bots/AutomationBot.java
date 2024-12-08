@@ -89,7 +89,7 @@ public class AutomationBot extends LimelightBot{
     public void scoreSpecimenSimple(boolean input) {
         if (input) {
             moveSlideByDelta(-100);
-            openPinchInTime(300);
+            schedule(this::openPinch, 300);
         }
     }
 
@@ -117,8 +117,8 @@ public class AutomationBot extends LimelightBot{
     public void scoreBucketSimple(boolean input) {
         if (input) {
             pivotByDelta(-50);
-            openPinchInTime(100);
-            pivotByDelteInTime(100, 300);
+            schedule(this::openPinch, 100);
+            schedule(()->pivotByDelta(100), 300);
         }
     }
 

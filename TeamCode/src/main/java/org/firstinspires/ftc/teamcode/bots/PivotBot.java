@@ -9,6 +9,9 @@ package org.firstinspires.ftc.teamcode.bots;
 
         import java.util.Timer;
         import java.util.TimerTask;
+        import java.util.concurrent.Executors;
+        import java.util.concurrent.ScheduledExecutorService;
+        import java.util.concurrent.TimeUnit;
 
 public class PivotBot extends OdometryBot {
 
@@ -156,6 +159,7 @@ public class PivotBot extends OdometryBot {
     public void pivotTo(int pos, @Deprecated double power){
         pivotTarget = pos;
     }
+
     public void pivotToSearchPos(){
         pivotTarget = searchPivotPos;
     }
@@ -184,25 +188,7 @@ public class PivotBot extends OdometryBot {
     public void pivotByDelta(int delta){
         pivotTarget += delta;
     }
-    public void pivotByDelteInTime(int delta, int time){
-        pivotTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                pivotTarget += delta;
-            }
-        };
-        pivotTimer.schedule(pivotTimerTask, time);
-    }
 
-    public void pivotToUpPosInTime(int time){
-        pivotTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                pivotToPickupUpPos();
-            }
-        };
-        pivotTimer.schedule(pivotTimerTask, time);
-    }
     public void cancelPivotTimer(){
         pivotTimer.cancel();
     }

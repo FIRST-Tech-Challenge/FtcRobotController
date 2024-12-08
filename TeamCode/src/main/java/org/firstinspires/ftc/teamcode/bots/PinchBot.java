@@ -60,34 +60,6 @@ public class PinchBot extends PivotBot{
     }
 
     /**
-     * Schedules the pinch servo to close after a specified time.
-     * @param time The delay in milliseconds before closing the pinch.
-     */
-    public void closePinchInTime(int time){
-        pinchTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                closePinch();
-            }
-        };
-        pinchTimer.schedule(pinchTimerTask, time);
-    }
-
-    /**
-     * Schedules the pinch servo to open after a specified time.
-     * @param time The delay in milliseconds before opening the pinch.
-     */
-    public void openPinchInTime(int time){
-        pinchTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                openPinch();
-            }
-        };
-        pinchTimer.schedule(pinchTimerTask, time);
-    }
-
-    /**
      * Cancels the pinch timer if it is running.
      */
     public void cancelPinchTimer(){

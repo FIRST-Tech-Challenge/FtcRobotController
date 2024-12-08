@@ -60,9 +60,9 @@ public class LimelightBot extends PinchBot {
             // lower the pivot
             pivotToPickupPos(isSpecimen);
             // close the pinch at a future time
-            closePinchInTime(500);
+            schedule(this::closePinch, 500);
             // raise the pivot at a future time and also reset the auto pickup mode
-            pivotToUpPosInTime(1000);
+            schedule(this::pivotToPickupUpPos, 1000);
         }
         else{
             // sample is not close enough, move to the sample
