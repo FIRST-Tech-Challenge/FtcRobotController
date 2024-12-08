@@ -15,10 +15,10 @@ public class Arm {
     Servo servoWrist;
     public Servo servoArmLeft;
     Servo servoArmRight;
-    public static double armRetract = 0.9;
+    public static double armRetract = 1;
     public static double armExtend = 0.35;
     public static double armSpecimenExtend = -1;
-    public static double wristExtend = 0.9;
+    public static double wristExtend = 1;
     public static double wristRetract = 0.6;
     public static double wristSpecimenExtend = 0.65;
     public ElapsedTime timer = new ElapsedTime();
