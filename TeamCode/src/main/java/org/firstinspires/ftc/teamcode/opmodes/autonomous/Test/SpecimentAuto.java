@@ -34,9 +34,20 @@ public class SpecimentAuto extends CommandAutoOpMode {
                         commandFactory.driveToTarget(700, -600, 0, .05, 1, 100),
                         //push sample 1 to human player
 
-                        commandFactory.driveToTarget(1100, -600, 0, .05, .7, 100),
-                        commandFactory.driveToTarget(1100, -800, 0, .05, .7, 50),
-                        commandFactory.driveToTarget(300, -800, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(1300, -600, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(1300, -900, 0, .05, .5, 50),
+                        commandFactory.driveToTarget(370, -900, 0, .05, .5, 100),
+                        // sample 2
+                        commandFactory.driveToTarget(1300, -900, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(1300, -1100, 0, .05, .5, 50),
+                        commandFactory.driveToTarget(370, -1100, 0, .05, .5, 100),
+                        // sample 3
+                        commandFactory.driveToTarget(1300, -1100, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(1300, -1270, 0, .05, .5, 50),
+                        commandFactory.driveToTarget(370, -1270, 0, .05, .5, 100),
+
+                        commandFactory.driveToTarget(600, -1000, 0, .05, .5, 100),
+
 
                         commandFactory.pivotToStart()
 
