@@ -60,8 +60,9 @@ public class ProgBotInitialize {
         // When a positive or negative value is used
 
 
-        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        fRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -167,6 +168,12 @@ public class ProgBotInitialize {
                 // Change into a function with a parameter, function name: setMotorVelocity
                 // Forwards (+ positive relativeDistance value)
                 setDrivetrainMotorVelocity(Math.abs(velocity));
+//                bLeft.setVelocity(300);
+//                fLeft.setVelocity(250);
+//                bRight.setVelocity(300);
+//                fRight.setVelocity(250);
+
+
 
                 opMode.telemetry.addData("bleft", bLeft.getCurrentPosition());
                 opMode.telemetry.addData("bright", bRight.getCurrentPosition());
