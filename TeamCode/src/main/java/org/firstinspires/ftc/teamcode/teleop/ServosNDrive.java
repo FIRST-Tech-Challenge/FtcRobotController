@@ -157,7 +157,7 @@ public class ServosNDrive extends LinearOpMode {
                     slidePosition[0] += (int) (20 * currentGamepad1.right_trigger);
                 }
                 // Move Slide Down
-                if (currentGamepad1.left_trigger > 0 && slidePosition[0] > 2300) {
+                if (currentGamepad1.left_trigger > 0) {
                     slidePosition[0] -= (int) (20 * currentGamepad1.left_trigger);
                 }
                 //straight up or down
