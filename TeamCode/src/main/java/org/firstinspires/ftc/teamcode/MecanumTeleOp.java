@@ -25,7 +25,7 @@ public class MecanumTeleOp extends LinearOpMode {
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
     double ClawFlipPos = 0.5;
-    double horizontalSlide = 0;
+    double horizontalSlide = 0.1;
 
     @Override
     public void runOpMode() {
@@ -463,10 +463,10 @@ public class MecanumTeleOp extends LinearOpMode {
     }
     public void HSlide(Hardware hardware) {
 
-        if (gamepad1.x && horizontalSlide < 1) {
+        if (gamepad1.y && horizontalSlide < 1) {
             horizontalSlide += 0.01;
         }
-        if (gamepad1.b && horizontalSlide > 0) {
+        if (gamepad1.a && horizontalSlide > 0) {
             horizontalSlide += -0.01;
         }
         hardware.horizontalSlide.setPosition(horizontalSlide);
