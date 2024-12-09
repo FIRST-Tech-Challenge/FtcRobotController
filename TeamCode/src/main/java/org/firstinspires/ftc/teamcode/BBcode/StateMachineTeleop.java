@@ -9,59 +9,26 @@ package org.firstinspires.ftc.teamcode.BBcode;
 //import com.acmerobotics.roadrunner.SequentialAction;
 //import com.acmerobotics.roadrunner.ftc.Actions;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import static java.lang.Math.acos;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
-@TeleOp(name = "StateMachineTeleop")
+@TeleOp(name = "StateMachineTeleOp")
 public class StateMachineTeleOp extends LinearOpMode{
-    enum RobotState {
-        Home,
-        RisingArmSample,
-        ViperExtendFull,
-        WristDump,
+    public enum RobotState{
         HighBasket,
-        WristUp,
-        ViperClosed,
-        ViperRetractedShort,
-        LoweringArm
+        Home,
+        Submersible
     }
 
     RobotState robotState = RobotState.Home;
-
-    ElapsedTime wristTimer = new ElapsedTime();
-
-    final double wristFlipTime = 0.75;
-
-    private void handleGamepad2 (WristClaw wristClaw) {
-
-        //Open Claw
-        if(gamepad2.b) {
-            telemetry.update();
-            wristClaw.OpenClaw();
-        }
-
-        //Close Claw
-        if(gamepad2.x) {
-            telemetry.update();
-            wristClaw.CloseClaw();
-        }
-
-        //Move Claw Up
-        if(gamepad2.y) {
-            wristClaw.WristUp();
-        }
-
-        //Move Claw Down
-        if(gamepad2.a) {
-            wristClaw.WristDown();
-        }
-    }
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -74,101 +41,34 @@ public class StateMachineTeleOp extends LinearOpMode{
         Arm arm = new Arm(this, telemetryHelper);
         Viper viper = new Viper(this);
         WristClaw wristClaw = new WristClaw(this);
-        arm.Reset();
-        viper.StopAndResetEncoder();
-        wristTimer.reset();
-//        wristClaw.WristInit();
-//        wristClaw.CloseClaw();
-
-        //Call the function to initialize telemetry functions
-//        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
         //Where the start button is clicked, put some starting commands after
         waitForStart();
-        arm.MoveToHome();
 
         while(opModeIsActive()){ //while loop for when program is active
-
 
             //Drive code
             drivetrain.Drive();
 
-            handleGamepad2(wristClaw);
-
-            switch (robotState) {
+            switch(robotState) {
                 case Home:
+                    //Handle inputs from gamepad
                     if (gamepad2.left_trigger > 0 && gamepad2.dpad_up) {
-                        arm.MoveToHighBasket();
-                        robotState = RobotState.RisingArmSample;
-                    }
-                    break;
-                case RisingArmSample:
-                    if (arm.getIsArmHighBasketPosition()) {
-                        viper.ExtendFull(1);
-                        robotState = RobotState.ViperExtendFull;
-                    }
-                    else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
-                        arm.MoveToHome();
-                        robotState = RobotState.LoweringArm;
-                    }
-                    break;
-
-                case ViperExtendFull:
-                    if (viper.getIsViperExtendFull()) {
-                        wristClaw.WristDump();
-                        robotState = RobotState.WristDump;
-                        wristTimer.reset();
-                    }
-                    else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
-                        viper.ExtendShort(1);
-                        robotState = RobotState.ViperRetractedShort;
-                    }
-                    break;
-
-                case WristDump:
-                    if (wristTimer.seconds() >= wristFlipTime){
                         robotState = RobotState.HighBasket;
                     }
-                    else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
-                        wristClaw.WristUp();
-                        robotState = RobotState.WristUp;
-                        wristTimer.reset();
-                    }
+                    //left trigger and up dpad switches to HighBasket
                     break;
-
                 case HighBasket:
-                    if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
-                        wristClaw.WristUp();
-                        robotState = RobotState.WristUp;
-                        wristTimer.reset();
+                    //goal
+                    int targetarmposition = 1400;
+                    arm.MoveToHighBasket();
+                    if (arm.get_armMotor().getCurrentPosition() >= targetarmposition) {
+                        viper.ExtendFull(1);
                     }
+
                     break;
-
-                case WristUp:
-                    if (wristTimer.seconds() >= wristFlipTime) {
-                        viper.ExtendShort(1);
-                        robotState = RobotState.ViperRetractedShort;
-                    }
-                    break;
-
-                case ViperRetractedShort:
-                    if (viper.getIsViperRetractedShort()) {
-                        viper.ExtendClosed(0.25);
-                        robotState = RobotState.ViperClosed;
-                    }
-
-                case ViperClosed:
-                    if (viper.getIsViperExtendClosed()) {
-                        arm.MoveToHome();
-                        robotState = RobotState.LoweringArm;
-                    }
-                    break;
-
-                case LoweringArm:
-                    if (arm.getIsArmHomePosition()) {
-                        robotState = RobotState.Home;
-                    }
+                case Submersible:
                     break;
             }
 
