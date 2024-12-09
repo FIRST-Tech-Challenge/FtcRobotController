@@ -42,12 +42,33 @@ public class MoveOuttakeLSAction extends Action {
         this.dependentActions.add(new DoneStateAction());
     }
 
+    public MoveOuttakeLSAction(Outtake outtake, double targetMM, double power) {
+        double P_CONSTANT = power;
+        this.outtake = outtake;
+        linearSlide1 = outtake.linearSlide1;
+        linearSlide2 = outtake.linearSlide2;
+        this.pidOuttakeLS = new PidNav(P_CONSTANT, 0, 0);
+        this.targetTicks = CalculateTickPer.mmToTicksLS(targetMM);
+        if (targetTicks >= MAX_RANGE_LS_TICKS) {
+            Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
+        }
+        this.dependentActions.add(new DoneStateAction());
+    }
+
+    public void setPConstant(double P) {
+        pidOuttakeLS.setP(P);
+    }
+
+    public void setPConstantToDefault() {
+        pidOuttakeLS.setP(1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 5.0)));
+    }
+
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
         double lowestPower = 0.1;
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(200)) {
-            lowestPower = 0.2;
+            lowestPower = 0.3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {

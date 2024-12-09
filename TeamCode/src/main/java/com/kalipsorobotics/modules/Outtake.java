@@ -67,6 +67,7 @@ public class Outtake {
         return outtakePigeonServo;
     }
     public KServo getHangHook1() {return hangHook1;}
+    public KServo getHangHook2() {return hangHook2;}
 
     public OpModeUtilities getOpModeUtilities() {
         return opModeUtilities;

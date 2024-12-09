@@ -50,7 +50,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setDependentActions(lowerSlidesHalf, openClaw);
         moveBarToWall.addPoint(-205, -600, -180);
-        moveBarToWall.addPoint(-55, -600, -180);
+        moveBarToWall.addPoint(-90, -600, -180);
         this.addAction(moveBarToWall);
 
     }

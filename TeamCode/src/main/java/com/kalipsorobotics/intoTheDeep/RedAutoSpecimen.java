@@ -89,22 +89,22 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveFloorSamples.addPoint( -620, -500, -90);
         moveFloorSamples.addPoint(-1330, -500, -180);
         moveFloorSamples.addPoint(-1330, -800, -180);// before push
-        moveFloorSamples.addPoint(-130, -800, -180);
+        moveFloorSamples.addPoint(-240, -800, -180);
 
         //second sample to depot
         moveFloorSamples.addPoint(-1330, -800, -180);
         moveFloorSamples.addPoint(-1330, -1050, -180);// before push
-        moveFloorSamples.addPoint(-130, -1050, -180);
+        moveFloorSamples.addPoint(-240, -1050, -180);
 
         //third sample to depot
         moveFloorSamples.addPoint(-1300, -1050, -180);
         moveFloorSamples.addPoint(-1300, -1175, -180);//before push
-        moveFloorSamples.addPoint(-130, -1175, -180);
+        moveFloorSamples.addPoint(-240, -1175, -180);
         moveFloorSamples.addPoint(-430, -1170, -180);//move back out to avoid sample carry
 
         //wall to depot for specimen
         moveFloorSamples.addPoint(-205, -600, -180);
-        moveFloorSamples.addPoint(-55, -600, -180);
+        moveFloorSamples.addPoint(-90, -600, -180);
         redAutoSpecimen.addAction(moveFloorSamples);
         //==============end of pushing================
 

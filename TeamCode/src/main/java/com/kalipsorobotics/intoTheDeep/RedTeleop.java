@@ -213,9 +213,12 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
+import com.kalipsorobotics.actions.AutoHangAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
+import com.kalipsorobotics.actions.hang.HangHookAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
@@ -277,6 +280,7 @@ public class RedTeleop extends LinearOpMode {
         MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
         IntakeTransferAction intakeTransferAction = null;
+        AutoHangAction autoHangAction = new AutoHangAction(outtake);
 
         boolean prevGamePad2Y = false;
         boolean prevGamePad2X = false;
@@ -287,6 +291,10 @@ public class RedTeleop extends LinearOpMode {
         boolean prevDpadRight2 = false;
         boolean prevDpadDown2 = false;
         boolean retracted = true;
+        boolean hangPressed = false;
+        boolean rightTriggerPressed = false;
+
+        double hangHookPos = 0.5;
 
         //CHANGE ACCORDING TO ALLIANCE
 
@@ -299,7 +307,7 @@ public class RedTeleop extends LinearOpMode {
         intakeDoorAction.close();
 
         outtakeClawAction.close();
-        outtakePivotAction.moveIn();
+        outtakePivotAction.moveWall();
 
         //Pigeon
         outtakePigeonAction.setPosition(OuttakePigeonAction.OUTTAKE_PIGEON_IN_POS);
@@ -314,6 +322,7 @@ public class RedTeleop extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 driveTrain.resetWheelOdom();
                 wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
+                Log.d("teleop_odo", "   reset odometry");
             }
 
             if (gamepad1.a) {
@@ -347,7 +356,6 @@ public class RedTeleop extends LinearOpMode {
 
             } else {  //Manual control override
 
-
                 if (angleLockTeleOp != null) {
                     angleLockTeleOp.setIsDone(true);
                 }
@@ -357,9 +365,49 @@ public class RedTeleop extends LinearOpMode {
 
             }
 
+//            if(gamepad1.left_bumper && gamepad1.right_bumper) {
+//                hangPressed = true;
+//                autoHangAction = new AutoHangAction(outtake);
+//                //hang initiated
+//            }
 
+            if (hangPressed) {
+                if (autoHangAction.getIsDone()) {
+                    hangPressed = false;
+                } else {
+                    autoHangAction.update();
+                    maintainOuttakeGlobalPos.setPConstant(1);
+                    //update hanging if was pressed and not done
+                }
+            }
+
+            if(gamepad1.left_bumper) {
+                hangHookPos += 0.01;
+            }
+
+            if(gamepad1.right_bumper) {
+                hangHookPos -= 0.01;
+            }
+
+            outtake.getHangHook1().setPosition(hangHookPos);
+            telemetry.addData("hanghook pos", hangHookPos);
+            telemetry.update();
+
+            if (gamepad1.dpad_down) {
+                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -1);
+            }
+
+            if(gamepad1.right_trigger == 1) {
+                rightTriggerPressed = true;
+            }
+
+            if(rightTriggerPressed) {
+                outtake.getHangHook1().setPosition(0.5);
+                outtake.getHangHook2().setPosition(0.95);
+            }
 
             //================OUTTAKE================
+
 
             //outtake pivot
             if (gamepad2.dpad_left) {

@@ -256,7 +256,7 @@ public class RedAutoBasket extends LinearOpMode {
         outtakeDownReady4.setName("outtakeDownReady4");
         outtakeDownReady4.setDependentActions(openClaw3);
         redAutoBasket.addAction(outtakeDownReady4);
-//
+
 //        moveToSpecimenBar.addPoint(0, 0, 0);
 //        moveToSpecimenBar.addPoint(-740, -300, 0);
 
