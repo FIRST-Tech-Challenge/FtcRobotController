@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Disabled
 public class PIDCalibration extends LinearOpMode {
-    static double learningRateP = 0.05;
-    static double learningRateI = 0.002;
-    static double learningRateD = 0.02;
+    static double learningRateP = 0.0075;
+    static double learningRateI = 0.000075;
+    static double learningRateD = 0.00075;
     static double learningAdjustmentRate = -0.1;
     static double timeDecay = 0.98;
     static double overshootThreshold = 0.5;
@@ -68,6 +68,8 @@ public class PIDCalibration extends LinearOpMode {
                 double errorRate = totalSetError / totalSetDuration;
 
                 if (i % 2 == 0) {
+                    Log.d(tag, String.format("Prev set duration %f, current set duration %f, total overshoot %f", prevSetDuration, totalSetDuration, totalOvershoot));
+
                     if (totalSetDuration < prevSetDuration) {  // Faster-- decrease learning rates to prevent overly high increases
                         prevSetDuration = totalSetDuration;
                         learningRateP *= Math.exp(learningAdjustmentRate);
@@ -80,7 +82,6 @@ public class PIDCalibration extends LinearOpMode {
                         learningRateD *= Math.exp(-learningAdjustmentRate * Math.max(1.1, Math.sqrt(totalOvershoot)));  // Increase D to dampen faster
                     }
 
-                    Log.d(tag, String.format("Prev set duration %f, current set duration %f, total overshoot %f", prevSetDuration, totalSetDuration, totalOvershoot));
                     Log.d(tag, String.format("Learning rates modified to %f, %f, %f", learningRateP, learningRateI, learningRateD));
 
                     double deltaKP = learningRateP * totalSetError;
@@ -91,9 +92,9 @@ public class PIDCalibration extends LinearOpMode {
                     globalController.chKi(deltaKI);
                     globalController.chKd(deltaKD);
 
-                    globalController.setKp(globalController.chKp(0) * timeDecay);
-                    globalController.setKi(globalController.chKi(0) * timeDecay);
-                    globalController.setKd(globalController.chKd(0) * timeDecay);
+                    globalController.setKp(globalController.chKp(0) * Math.pow(timeDecay, i));
+                    globalController.setKi(globalController.chKi(0) * Math.pow(timeDecay, i));
+                    globalController.setKd(globalController.chKd(0) * Math.pow(timeDecay, i));
 
                     totalSetError = 0;
                     totalSetDuration = 0;

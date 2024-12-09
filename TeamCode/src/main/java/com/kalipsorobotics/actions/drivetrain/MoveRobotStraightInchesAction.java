@@ -12,7 +12,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class MoveRobotStraightInchesAction extends DriveTrainAction {
     private static final double ERROR_TOLERANCE_IN = 0.5;
-    private static final double HEADING_ERROR_TOLERANCE_DEG = 3;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
@@ -33,7 +33,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.02, 0, 0, "straight");
+        this.pidController = new PIDController(0.030096, 0.000088, 0.000698, "straight");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
