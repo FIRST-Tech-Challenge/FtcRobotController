@@ -130,30 +130,6 @@ public class SurvivorCode extends LinearOpMode {
             }
             claw.setPosition(claw_position);
 
-            // Y/Triangle: High basket scoring position.
-            if (gamepad1.y) {
-                setVertical(VERTICAL_MAX, 3000);
-                setViper(VIPER_MAX_TALL, 2000);
-            }
-
-            // A/X button: Complete Retraction- Viper and vertical completely retracted and down
-            if (gamepad1.a) {
-                setViper(VIPER_MIN, 4000);
-                setVertical(VERTICAL_MIN, 700);
-            }
-
-            // X/Square: The viper slide is completely retracted but the vertical is in submersible position.
-            if (gamepad1.x) {
-                setVertical(355, 3000);
-                setViper(0, 1500);
-            }
-
-            // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
-            if (gamepad1.b) {
-                setVertical(355, 1800);
-                setViper(1900, 2000);
-            }
-            // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
         claw.close();
