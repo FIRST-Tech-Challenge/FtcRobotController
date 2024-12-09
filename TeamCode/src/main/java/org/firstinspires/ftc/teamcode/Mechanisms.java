@@ -43,17 +43,19 @@ public class Mechanisms {
     public static double UP_OT_PIVOT_POS = 1;
     public static double DOWN_OT_PIVOT_POS = 0;
 
-    public static double PERP_IT_POS = 0;
+    public static double PERP_IT_POS = .8;
     public static double PAR_IT_POS = .33;
     public static double CLOSED_IT_POS = 1;
     public static double OPEN_IT_POS = .76;
-    public static double UP_IT_FLIP_POS = .7;
-    public static double DOWN_IT_FLIP_POS = .42;
+    public static double MIDDLE_IT_POS = .88;
+    public static double UP_IT_FLIP_POS = 1;
+    public static double DOWN_IT_FLIP_POS = .32;
     public static double MID_IT_FLIP_POS = .5;
-    public static double OUT_IT_FLIP_POS = 0;
-    public static double OUT_DOWN_IT_FLIP_POS = .26;
 
     ElapsedTime intakeToTransfer = new ElapsedTime();
+
+    String ITMacroState = "none";
+    ElapsedTime inTakeAndUpStateTime = new ElapsedTime();
 
     // backright drivetrain motor port 0 control
     // backleft drivetrain motor port 1 control
@@ -138,6 +140,43 @@ public class Mechanisms {
             outTakePivotLeft.setPosition(UP_OT_FLIP_POS);
     }
 
+
+
+    //////////////
+    public void inTakeAndUpMacro()
+    {
+        if (master.gamepad2.x && inTakeAndUpStateTime.milliseconds() > 500)
+        {
+            ITMacroState = "grab";
+            inTakeAndUpStateTime.reset();
+        }
+        if (ITMacroState.equals("grab"))
+        {
+            if (inTakeAndUpStateTime.milliseconds() > 500) {
+                ITMacroState = "upAndRotate";
+                inTakeAndUpStateTime.reset();
+            }
+            inTakeClaw.setPosition(CLOSED_IT_POS);
+        }
+        if (ITMacroState.equals("upAndRotate"))
+        {
+            if (inTakeAndUpStateTime.milliseconds() > 1000) {
+                ITMacroState = "release";
+                inTakeAndUpStateTime.reset();
+            }
+            inTakeRotator.setPosition(PERP_IT_POS);
+            intakePivotL.setPosition(UP_IT_FLIP_POS);
+        }
+        if (ITMacroState.equals("release"))
+        {
+            if (inTakeAndUpStateTime.milliseconds() > 300) {
+                ITMacroState = "none";
+                inTakeAndUpStateTime.reset();
+            }
+            inTakeClaw.setPosition(MIDDLE_IT_POS);
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakePivot(){
         if (master.gamepad2.dpad_right && pivotTimeOT < totalTime.milliseconds() - 500)
@@ -162,32 +201,24 @@ public class Mechanisms {
         if (master.gamepad2.b)
             inTakeClaw.setPosition(OPEN_IT_POS);
         if (master.gamepad2.dpad_right)
-            inTakeClaw.setPosition(.65);
+            inTakeClaw.setPosition(MIDDLE_IT_POS);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeFlip(){
         if (master.gamepad2.dpad_up) {
             intakePivotL.setPosition(UP_IT_FLIP_POS);
-            intakePivotR.setPosition(UP_IT_FLIP_POS);
+           // intakePivotR.setPosition(UP_IT_FLIP_POS);
         }
 
         if (master.gamepad2.dpad_down) {
-            intakePivotR.setPosition(DOWN_IT_FLIP_POS);
+          //  intakePivotR.setPosition(DOWN_IT_FLIP_POS);
             intakePivotL.setPosition(DOWN_IT_FLIP_POS);
         }
         if (master.gamepad2.dpad_left)
         {
-            intakePivotR.setPosition(MID_IT_FLIP_POS);
+          //  intakePivotR.setPosition(MID_IT_FLIP_POS);
             intakePivotL.setPosition(MID_IT_FLIP_POS);
-        }
-        if (master.gamepad2.x) {
-            intakePivotR.setPosition(OUT_IT_FLIP_POS);
-            intakePivotL.setPosition(OUT_IT_FLIP_POS);
-        }
-        if (master.gamepad2.y) {
-            intakePivotR.setPosition(OUT_DOWN_IT_FLIP_POS);
-            intakePivotL.setPosition(OUT_DOWN_IT_FLIP_POS);
         }
     }
 
@@ -246,6 +277,7 @@ public class Mechanisms {
         outTakeLiftRight.setTargetPosition(1);
 
     }
+    /*
     //////////////////////////////////////////////////////////////////////////////
     public void servotesting() {
         double rotatorConstant = 0.0;
@@ -258,6 +290,8 @@ public class Mechanisms {
         }
 
     }
+
+     */
 
     //////////////////////////////////////////////////////////////////////////////
     public void runTesting()
