@@ -280,14 +280,14 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 //determines where the lift pitch goes
                 if (gamepad2.left_stick_y < -0.2) {//going up
 
+                    liftPitchPosition = liftPitchPosition + 40;
+
+                } else if (gamepad2.left_stick_y > 0.2) {//going down
+
                     liftPitchPosition = liftPitchPosition - 35;
                     if (liftPitchPosition > 1500) {
                         liftPitchPosition = liftPitchPosition - 25;
                     }
-
-
-                } else if (gamepad2.left_stick_y > 0.2) {//going down
-                    liftPitchPosition = liftPitchPosition + 40;
 
 
 //                    if (robot.liftPitch.getCurrentPosition()<400) {
