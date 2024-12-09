@@ -85,9 +85,10 @@ public class teleop extends OpMode {
         if (testingActive) {
             driveTrain.runTesting();
             mechanisms.runTesting();
-            mechanisms.servotesting();
+            //mechanisms.servotesting();
         }
         else {
+            mechanisms.inTakeAndUpMacro();
             mechanisms.setOutTakeLift();
             mechanisms.setInTakeLift();
             mechanisms.setInTakeClawGrab();
