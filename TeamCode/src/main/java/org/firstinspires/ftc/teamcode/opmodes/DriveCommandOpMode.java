@@ -87,6 +87,8 @@ public class DriveCommandOpMode extends CommandOpMode {
             //armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
         } catch (Exception e) {
             //e.printStackTrace();
+            dbp.info("ERROR IN PINCHER SYSTEM");
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 
@@ -157,7 +159,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("GO GO GO!");
         dbp.send(false);
 
-        while (opModeIsActive()) {
+        /*while (opModeIsActive()) {
             if (gamepad2.a) {
                 pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.OPEN);
                 dbp.info("OPEN PINCHER");
@@ -170,7 +172,7 @@ public class DriveCommandOpMode extends CommandOpMode {
                 dbp.send(true);
                 telemetry.addData("pincher state", "false");
             }
-        }
+        }*/
 
     }
 

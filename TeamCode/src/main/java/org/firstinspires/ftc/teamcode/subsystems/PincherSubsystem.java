@@ -15,7 +15,7 @@ public class PincherSubsystem extends SubsystemBase {
     ServoEx finger1, finger2;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("FingerSubsystem");
 
-    public static float MAX_ANGLE = 45 / 2f;
+    public static float MAX_ANGLE = 40 / 2f;
 
     public enum FingerPositions {
         ZERO(0, AngleUnit.DEGREES),
@@ -39,9 +39,6 @@ public class PincherSubsystem extends SubsystemBase {
         }
     }
 
-    int finger1Offset = 0;
-    int finger2Offset = 0;
-
     public PincherSubsystem(final ServoEx finger1, final ServoEx finger2) {
         this.finger1 = finger1;
         this.finger2 = finger2;
@@ -49,8 +46,9 @@ public class PincherSubsystem extends SubsystemBase {
         Objects.requireNonNull(finger2);
         finger1.setRange(0, MAX_ANGLE, AngleUnit.DEGREES);
         finger2.setRange(0, MAX_ANGLE, AngleUnit.DEGREES);
-        finger2.setInverted(true); //  Might need to change it to finger2
-        finger1.setInverted(true); //  Might need to change it to finger1
+
+        //finger1.setInverted(true); //  Might need to change it to finger2
+        //finger1.setInverted(true); //  Might need to change it to finger1
         // MIGHT cause errors
         locomoteFinger(FingerPositions.ZERO);
     }
@@ -63,10 +61,22 @@ public class PincherSubsystem extends SubsystemBase {
 
         double angleScale = position.getAngle() / MAX_ANGLE;
 
-        finger1.setPosition(angleScale);
+        finger1.setPosition(1f-angleScale);
         finger2.setPosition(angleScale);
+        //finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
+        //finger2.turnToAngle(position.getAngle(), position.getAngleUnit());
+        //dbp.info("ANGLE: "+angleScale);
+        //dbp.info("POSITION: "+finger1.getPosition()+ ", "+finger2.getPosition());
+        //dbp.info("OBJECT: "+finger1+ ", "+finger2);
+        String debug = "Angle: %f\nTargetPos: %f\nPosition: %f\nPositionName: %s";
+        debug = String.format(debug, position.getAngle(), angleScale, finger1.getPosition(), position.name());
+        dbp.info(debug);
+        dbp.send(true);
 
-        MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
+        //finger1.setPosition(.5f);
+        //finger2.setPosition(.5f);
+
+        // MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
     }
 
 }
