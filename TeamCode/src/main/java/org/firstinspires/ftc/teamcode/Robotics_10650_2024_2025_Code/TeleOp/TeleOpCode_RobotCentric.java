@@ -330,7 +330,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             //Lift PIDF might be able to be tuned more to improve but it does reasonably well currently
             double pitchAngle = robot.liftPitch.getCurrentPosition() * (90) / 2595;
             if (pitchAngle >= 31.25) {
-                maxLifEtxtension = 121 / (Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+                //maxLifEtxtension = 121 / (Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
+                maxLifEtxtension = 470;
+
             } else {
                 maxLifEtxtension = 901;
             }
