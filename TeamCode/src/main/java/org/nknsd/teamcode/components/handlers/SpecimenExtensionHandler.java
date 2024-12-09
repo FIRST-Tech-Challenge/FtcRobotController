@@ -25,15 +25,31 @@ public class SpecimenExtensionHandler implements NKNComponent {
     }
 
     public enum SpecimenExtensionPositions {
-        RESTING(0),
-        SPECIMEN_READY(1950),
-        SPECIMEN_CLIP(2300);
+        RESTING(0) {
+            @Override
+            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
+                return true;
+            }
+        },
+        SPECIMEN_READY(1950){
+            @Override
+            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
+                return (firstClosedPosition != rotationPosition);
+            }
+        },
+        SPECIMEN_CLIP(2300){
+            @Override
+            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
+                return (firstClosedPosition != rotationPosition);
+            }
+        };
 
         final int position;
 
         SpecimenExtensionPositions(int position) {
             this.position = position;
         }
+        abstract boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition);
     }
     
     @Override
@@ -90,11 +106,15 @@ public class SpecimenExtensionHandler implements NKNComponent {
         telemetry.addData("Ext Target Position", motor.getTargetPosition());
         telemetry.addData("Ext State", target.name());
     }
-    public boolean gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions specimenExtensionPosition) {
+    public boolean gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions specimenExtensionPosition, SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
+        if(specimenExtensionPosition.safeToExtend(firstClosedPosition, rotationPosition)) {
             motor.setTargetPosition(specimenExtensionPosition.position);
             target = specimenExtensionPosition;
 
             return true;
+        } else {
+            return false;
+        }
     }
     public void resetEncoder() {
         if (target == SpecimenExtensionPositions.RESTING) {
