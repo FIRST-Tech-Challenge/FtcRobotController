@@ -1,6 +1,7 @@
 package com.kalipsorobotics.tensorflow;
 
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -25,8 +26,8 @@ import java.util.Locale;
  * In OnBot Java, use "Add File" to add this OpMode from the list of Samples.
  */
 
-@TeleOp(name = "Utility: Camera Frame Capture", group = "Utility")
-@Disabled
+@TeleOp
+
 public class UtilityCameraFrameCapture extends LinearOpMode
 {
     /*
@@ -61,16 +62,16 @@ public class UtilityCameraFrameCapture extends LinearOpMode
                     .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                     .build();
         }
-
+        waitForStart();
         while (opModeIsActive())
         {
-                portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
-                capReqTime = System.currentTimeMillis();
-            }
+            portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
+            Log.d("Camera", "writing to CameraFrameCapture. frame count: " + frameCount);
+            capReqTime = System.currentTimeMillis();
+
 
             telemetry.addLine("######## Camera Capture Utility ########");
             telemetry.addLine(String.format(Locale.US, " > Resolution: %dx%d", RESOLUTION_WIDTH, RESOLUTION_HEIGHT));
-            telemetry.addLine(" > Press X (or Square) to capture a frame");
             telemetry.addData(" > Camera Status", portal.getCameraState());
 
             if (capReqTime != 0)
@@ -83,6 +84,8 @@ public class UtilityCameraFrameCapture extends LinearOpMode
                 capReqTime = 0;
             }
             telemetry.update();
-            SystemClock.sleep(5000);
+
+            SystemClock.sleep(1000);
         }
     }
+}
