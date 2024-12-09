@@ -22,11 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.ITaskWithResult;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
-import dev.aether.collaborative_multitasking.ResolveReject;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
@@ -331,16 +329,16 @@ public class MecanumTeleOp2 extends LinearOpMode {
             twist();
             lift(hardware);
             if (gamepad1.x) {
-                transfer(hardware);
+                transfer();
             }
             if (gamepad2.y) {
-                ScoreHighBasket(hardware);
+                ScoreHighBasket();
             }
             if (gamepad2.x) {
-                PickUpYellow(hardware);
+                PickUpYellow();
             }
             if (gamepad2.b) {
-                PickUpSpecimen(hardware);
+                PickUpSpecimen();
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -543,7 +541,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    public void ScoreHighBasket(Hardware hardware) {
+    public void ScoreHighBasket() {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
@@ -567,7 +565,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         maintainHeightTicks = 0;
     }
 
-    public void PickUpYellow(Hardware hardware) {
+    public void PickUpYellow() {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
@@ -595,7 +593,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         sleep(500);
     }
 
-    private void PickUpSpecimen(Hardware hardware) {
+    private void PickUpSpecimen() {
         // Lift --> arm out --> Lift to 0 --> move wrist --> open claw
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
@@ -630,7 +628,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         armTargetPosDeg = 0;
     }
 
-    private void transfer(Hardware hardware) {
+    private void transfer() {
         //hardware.arm.setPower(-0.5);
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
