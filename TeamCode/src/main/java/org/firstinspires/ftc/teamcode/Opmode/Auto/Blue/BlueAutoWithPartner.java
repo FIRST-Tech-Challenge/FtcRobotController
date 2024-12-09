@@ -264,7 +264,7 @@ public class BlueAutoWithPartner extends LinearOpMode {
                     }
                     break;
                 case CYCLE1:
-                    drive.setTarget(new Pose2d(-9, 22, 0)); //first block
+                    drive.setTarget(new Pose2d(-8, 22, 0)); //first block
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;

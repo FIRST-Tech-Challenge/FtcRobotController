@@ -264,7 +264,7 @@ public class RedAutoWithPartner extends LinearOpMode {
                     }
                     break;
                 case CYCLE1:
-                    drive.setTarget(new Pose2d(-9, 22, 0)); //first block
+                    drive.setTarget(new Pose2d(-7, 22, 0)); //first block xprev = -7
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
@@ -279,7 +279,7 @@ public class RedAutoWithPartner extends LinearOpMode {
                     }
                     break;
                 case CYCLE2:
-                    drive.setTarget(new Pose2d(-18, 22, 0)); //second block
+                    drive.setTarget(new Pose2d(-18, 22, 0)); //second block, xprev = -18
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;

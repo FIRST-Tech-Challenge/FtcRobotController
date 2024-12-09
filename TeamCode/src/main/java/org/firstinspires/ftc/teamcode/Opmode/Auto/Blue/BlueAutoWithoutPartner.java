@@ -243,7 +243,7 @@ public class BlueAutoWithoutPartner extends LinearOpMode {
                     break;
 
                 case CYCLE1:
-                    drive.setTarget(new Pose2d(-9, 22, 0)); //first block
+                    drive.setTarget(new Pose2d(-8, 22, 0)); //first block
                     if (timeToggle) {//to be filled in...
                         TimeStamp = timer.milliseconds();
                         timeToggle = false;
@@ -296,7 +296,7 @@ public class BlueAutoWithoutPartner extends LinearOpMode {
                     }
                     if (timer.milliseconds() > TimeStamp + 1500) {
                         timeToggle = true;
-                        currentState= State.HANGINTERMEDIATE;
+                        currentState= State.REST;
                     }
                     break;
                 case HANGINTERMEDIATE:
