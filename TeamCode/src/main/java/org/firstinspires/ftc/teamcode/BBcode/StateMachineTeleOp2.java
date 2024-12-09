@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
 @TeleOp(name = "StateMachineTeleop")
-public class StateMachineTeleOp extends LinearOpMode{
+public class StateMachineTeleOp2 extends LinearOpMode{
     enum RobotState {
         Home,
         RisingArmSample,
