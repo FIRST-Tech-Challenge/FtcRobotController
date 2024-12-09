@@ -256,7 +256,7 @@ class MultitaskScheduler
         return task
     }
 
-    override fun task(t: ITask): ITask {
+    override fun <T : ITask> task(t: T): T {
         t.name = getCaller()
         t.register()
         return t

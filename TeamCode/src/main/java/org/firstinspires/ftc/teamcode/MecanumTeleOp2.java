@@ -43,6 +43,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     double ClawFlipPos = 0.5;
     double horizontalSlide = 0;
 
+    private LiftBackgroundTask liftProxy;
+
     /**
      * How much you need to push the joysticks to stop autonomous code.
      */
@@ -89,6 +91,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private static class LiftBackgroundTask extends TaskTemplate {
         private static final double SPEED = .75;
         private static int INSTANCE_COUNT = 0;
+        private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
+        private static final int MIN_VERTICAL_LIFT_TICKS = 0;
 
         private boolean manualAdjustMode = false;
 
@@ -157,21 +161,25 @@ public class MecanumTeleOp2 extends LinearOpMode {
         public void controlManual(boolean goUp, boolean goDown) {
             if (!manualAdjustMode) {
                 if (goUp || goDown) startManual();
-            } else {
-                if (!(goUp || goDown)) stopManual();
-                return;
             }
+            int currentPosition = lift.getCurrentPosition();
             if (goUp && goDown) {
                 lift.setPower(0);
                 return;
             }
             if (goUp) {
-                lift.setPower(SPEED);
-                return;
+                if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
+                    lift.setPower(SPEED);
+                    return;
+                }
             }
             if (goDown) {
-                lift.setPower(-SPEED);
+                if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
+                    lift.setPower(-SPEED);
+                    return;
+                }
             }
+            stopManual();
         }
 
         public boolean isManualAdjustModeEnabled() {
@@ -267,6 +275,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         // this is the scheduler that will be used during the main program
         scheduler = new MultitaskScheduler();
+        liftProxy = scheduler.task(new LiftBackgroundTask(scheduler, hardware.verticalSlide));
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
@@ -371,7 +380,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     int highBasketTicks = 2180;
 
     // lifts the vertical slides to a target position in ticks
-    private void targetLift(Hardware hardware, int targetPosition) {
+    private void targetLift(int targetPosition) {
 
         hardware.verticalSlide.setTargetPosition(targetPosition);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -390,46 +399,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    int maintainHeightTicks = 0;
-
     private void lift() {
-
-        //Hardware hardware = new Hardware(hardwareMap);
-        int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-
-
-        if (gamepad2.dpad_up && verticalPosition < maxVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(VerticalSlideSpeed);
-            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            maintainHeightTicks = verticalPosition;
-            return;
-        }
-
-        if (gamepad2.dpad_down && verticalPosition > minVerticalLiftTicks) {
-            hardware.verticalSlide.setPower(-VerticalSlideSpeed);
-            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            maintainHeightTicks = verticalPosition;
-            return;
-        }
-
-        /*
-        if (gamepad2.b) {
-            targetLift(hardware, highChamberTicks);
-            maintainHeightTicks = highChamberTicks;
-        }
-        */
+        liftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
 
         if (gamepad2.a) {
-            targetLift(hardware, 0);
-            maintainHeightTicks = 0;
-        }
-        if (verticalPosition < 47 && maintainHeightTicks < 47) {
-            hardware.verticalSlide.setPower(0);
-            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } else {
-            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hardware.verticalSlide.setPower(VerticalSlideSpeed);
-            hardware.verticalSlide.setTargetPosition(maintainHeightTicks);
+            targetLift(0);
         }
     }
 
@@ -551,7 +525,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
-        maintainHeightTicks = highBasketTicks;
         sleep(2000);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
@@ -568,14 +541,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(0);
-        maintainHeightTicks = 0;
     }
 
     public void PickUpYellow() {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
-        maintainHeightTicks = 224;
         sleep(500);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
@@ -586,12 +557,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.claw.setPosition(0.02);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(110);
-        maintainHeightTicks = 25;
         sleep(500);
         hardware.claw.setPosition(0.55);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(200);
-        maintainHeightTicks = 200;
         sleep(500);
         hardware.wrist.setPosition(0.28);
         sleep(500);
@@ -604,14 +573,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
-        maintainHeightTicks = 224;
         sleep(500);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
         hardware.arm.setTargetPosition(90);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(0);
-        maintainHeightTicks = 0;
         sleep(500);
         hardware.wrist.setPosition(1);
         sleep(500);
@@ -640,7 +607,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        maintainHeightTicks = 900;
         sleep(500);
         hardware.arm.setTargetPosition(-63);//This is in ticks
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -654,7 +620,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(735);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        maintainHeightTicks = 735;
         sleep(2000);
         hardware.claw.setPosition(0.55);
         sleep(1000);
@@ -667,7 +632,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        maintainHeightTicks = 0;
 
         //To-Do: open horizontal claw
 
