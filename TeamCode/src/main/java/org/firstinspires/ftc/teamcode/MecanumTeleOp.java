@@ -23,6 +23,9 @@ public class MecanumTeleOp extends LinearOpMode {
     double Wristpos = 0.28;
     double Twistpos = 0.17;
     double VerticalSlideSpeed = 0.75;
+    double ClawFrontPos = 0.5;
+    double ClawFlipPos = 0.5;
+    double horizontalSlide = 0;
 
     @Override
     public void runOpMode() {
@@ -106,7 +109,9 @@ public class MecanumTeleOp extends LinearOpMode {
             wrist();
             servoMoves();
             twist();
+            stepper(hardware);
             lift(hardware);
+            HSlide(hardware);
             if(gamepad1.x){
                 transfer(hardware);
             }
@@ -435,4 +440,37 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
     }
+    private void stepper(Hardware hardware){
+        if(gamepad1.dpad_left) {
+            ClawFrontPos += -0.01;
+        }
+        if(gamepad1.dpad_right){
+            ClawFrontPos += 0.01;
+        }
+        if(gamepad1.dpad_up) {
+            ClawFlipPos += -0.01;
+        }
+        if(gamepad1.dpad_down){
+            ClawFlipPos += 0.01;
+        }
+        hardware.clawFlip.setPosition(ClawFlipPos);
+        hardware.clawFront.setPosition(ClawFrontPos);
+        // clawFront close is 0
+        //clawFront open is 0.27
+
+        telemetry.addData("FrontClawPos", ClawFrontPos);
+        telemetry.addData("FlipClawPos", ClawFlipPos);
+    }
+    public void HSlide(Hardware hardware) {
+
+        if (gamepad1.x && horizontalSlide < 1) {
+            horizontalSlide += 0.01;
+        }
+        if (gamepad1.b && horizontalSlide > 0) {
+            horizontalSlide += -0.01;
+        }
+        hardware.horizontalSlide.setPosition(horizontalSlide);
+    }
+
 }
+
