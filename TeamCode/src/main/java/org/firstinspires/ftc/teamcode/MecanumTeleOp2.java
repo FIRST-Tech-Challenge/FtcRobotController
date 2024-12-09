@@ -31,6 +31,7 @@ import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.TaskWithResultTemplate;
+import dev.aether.collaborative_multitasking.ext.Pause;
 import dev.aether.collaborative_multitasking.ext.While;
 import kotlin.jvm.functions.Function0;
 
@@ -66,6 +67,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private OneShot run(Runnable target) {
         return new OneShot(scheduler, target);
+    }
+
+    private Pause await(double milliseconds) {
+        return new Pause(scheduler, milliseconds / 1000.0);
     }
 
     private While doWhile(Function0<Boolean> condition, Runnable action) {
@@ -188,6 +193,20 @@ public class MecanumTeleOp2 extends LinearOpMode {
             return manualAdjustMode;
         }
 
+        public ITask target(int target) {
+            return new TaskTemplate(scheduler) {
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return true;
+                }
+            };
+        }
+
         public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
             ITaskWithResult<Boolean> result;
             // This version has a timer
@@ -224,7 +243,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                     setResultMaybe(false);
                 }
             };
-            // This version doesn't
+                // This version doesn't
             else result = new TaskWithResultTemplate<Boolean>(scheduler) {
                 @Override
                 @NotNull
@@ -387,6 +406,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(liftProxy.CONTROL);
         return scheduler.task(liftProxy.moveTo(targetPosition, 5, 3.0));
     }
+
     private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
 
     private void lift() {
@@ -517,6 +537,26 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket() {
+        scheduler
+                .task(liftProxy.moveTo(highBasketTicks, 5, 2.0))
+                .then(run(() -> {
+                    hardware.arm.setTargetPosition(222);
+                    hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    hardware.arm.setPower(0.5);
+                }))
+                .then(await(500))
+                .then(run(() -> hardware.wrist.setPosition(0.94)))
+                .then(await(500))
+                .then(run(() -> hardware.claw.setPosition(0.02)))
+                .then(await(500))
+                .then(run(() -> hardware.claw.setPosition(0.55)))
+                .then(await(100))
+                .then(run(() -> hardware.wrist.setPosition(0.28)))
+                .then(await(500))
+                .then(run(() -> hardware.arm.setTargetPosition(0)))
+                .then(await(500))
+                .then(liftProxy.moveTo(0, 5, 2.0))
+                ;
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
@@ -597,7 +637,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
 
-    private void transfer(){
+    private void transfer() {
         //hardware.arm.setPower(-0.5);
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -606,7 +646,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(-63);//This is in ticks
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg=-30;//(752 ticks /360 degrees)
+        armTargetPosDeg = -30;//(752 ticks /360 degrees)
         sleep(500);
         hardware.wrist.setPosition(0.9);
         sleep(2000);
@@ -622,7 +662,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg=0;
+        armTargetPosDeg = 0;
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -632,17 +672,18 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
 
     }
-    private void stepper(){
-        if(gamepad1.dpad_left) {
+
+    private void stepper() {
+        if (gamepad1.dpad_left) {
             ClawFrontPos += -0.01;
         }
-        if(gamepad1.dpad_right){
+        if (gamepad1.dpad_right) {
             ClawFrontPos += 0.01;
         }
-        if(gamepad1.dpad_up) {
+        if (gamepad1.dpad_up) {
             ClawFlipPos += -0.01;
         }
-        if(gamepad1.dpad_down){
+        if (gamepad1.dpad_down) {
             ClawFlipPos += 0.01;
         }
         hardware.clawFlip.setPosition(ClawFlipPos);
@@ -653,6 +694,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         telemetry.addData("FrontClawPos", ClawFrontPos);
         telemetry.addData("FlipClawPos", ClawFlipPos);
     }
+
     public void HSlide() {
 
         if (gamepad1.x && horizontalSlide < 1) {
