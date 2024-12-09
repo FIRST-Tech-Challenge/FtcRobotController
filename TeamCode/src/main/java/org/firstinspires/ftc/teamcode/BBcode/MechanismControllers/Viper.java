@@ -15,6 +15,7 @@ public class Viper {
         TelemetryHelper telemetryHelper = new TelemetryHelper(opMode);
         _opMode = opMode;
         _viperMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "viperMotor");
+        telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
         _armMotor = _opMode.hardwareMap.tryGet(DcMotorEx.class, "armMotor");
         telemetryHelper.initMotorTelemetry( _viperMotor, "VM");
     }
@@ -50,7 +51,7 @@ public class Viper {
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
     public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
-
+    public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
 
     public void ViperMotorCustom(double lengthInches, double power)
     {

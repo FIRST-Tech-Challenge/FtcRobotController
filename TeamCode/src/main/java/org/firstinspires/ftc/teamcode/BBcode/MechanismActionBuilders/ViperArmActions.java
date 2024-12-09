@@ -57,7 +57,7 @@ public class ViperArmActions {
     public class MoveViperToHomeAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _Viper.ExtendShort(1);
+            _Viper.ExtendClosed(1);
             return false;
         }
     }
