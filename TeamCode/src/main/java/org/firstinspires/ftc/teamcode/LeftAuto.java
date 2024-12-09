@@ -31,6 +31,7 @@ import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
+import dev.aether.collaborative_multitasking.Task;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
 import kotlin.Unit;
@@ -197,7 +198,7 @@ public class LeftAuto extends LinearOpMode {
             twist = hardware.twist;
             claw = hardware.claw;
             ITask head = scheduler
-                    .task(that -> {
+                    .task((Task that) -> {
                         that.canStart(() -> this.getState() == State.Ticking);
                         that.isCompleted(() -> true);
                         return Unit.INSTANCE;
@@ -411,16 +412,16 @@ public class LeftAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
-        scheduler.task(new OneShot(scheduler, () -> {
+        scheduler.add(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
             hardware.twist.setPosition(0.17);
         }));
         scheduler
-                .task(moveTo(scheduler, SCORE_HIGH_BASKET))
+                .add(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))

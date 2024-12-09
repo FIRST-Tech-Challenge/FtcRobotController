@@ -281,7 +281,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         telemetry.log().add("Calibrating gyroscope. Don't touch...");
 
-        scheduler.task(doWhile(
+        scheduler.add(doWhile(
                 navxMicro::isCalibrating,
                 () -> {
                     telemetry.addData("Calibrating", "%s", Math.round(timer.seconds()) % 2 == 0 ? "|.." : "..|");
@@ -296,7 +296,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         // this is the scheduler that will be used during the main program
         scheduler = new MultitaskScheduler();
-        liftProxy = scheduler.task(new LiftBackgroundTask(scheduler, hardware.verticalSlide));
+        liftProxy = scheduler.add(new LiftBackgroundTask(scheduler, hardware.verticalSlide));
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
@@ -404,7 +404,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private ITaskWithResult<Boolean> targetLift(int targetPosition) {
         abandonLock(liftProxy.CONTROL);
-        return scheduler.task(liftProxy.moveTo(targetPosition, 5, 3.0));
+        return scheduler.add(liftProxy.moveTo(targetPosition, 5, 3.0));
     }
 
     private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
@@ -538,7 +538,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket() {
         scheduler
-                .task(liftProxy.moveTo(highBasketTicks, 5, 2.0))
+                .add(liftProxy.moveTo(highBasketTicks, 5, 2.0))
                 .then(run(() -> {
                     hardware.arm.setTargetPosition(222);
                     hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -6,7 +6,7 @@ abstract class Scheduler {
     abstract fun task(configure: Task.() -> Unit): Task
 
     /// Add a new ITask to this scheduler.
-    abstract fun <T : ITask> task(t: T): T
+    abstract fun <T : ITask> add(t: T): T
 
     /// Query if a resource is being used.
     open fun isResourceInUse(resource: SharedResource): Boolean = false

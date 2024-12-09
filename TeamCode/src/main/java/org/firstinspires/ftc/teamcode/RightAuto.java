@@ -216,10 +216,10 @@ public class RightAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
-        scheduler.task(new OneShot(scheduler, () -> {
+        scheduler.add(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
             hardware.twist.setPosition(0.17);
@@ -227,7 +227,7 @@ public class RightAuto extends LinearOpMode {
             hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }));
         scheduler
-                .task(moveTo(scheduler, new Pose(6, -40, 0)))
+                .add(moveTo(scheduler, new Pose(6, -40, 0)))
                 .then(new OneShot(scheduler, () -> hardware.wrist.setPosition(0.44)))
                 .then(new Pause(scheduler, 0.500))
                 .then(new OneShot(scheduler, () -> hardware.claw.setPosition(0.02)))
