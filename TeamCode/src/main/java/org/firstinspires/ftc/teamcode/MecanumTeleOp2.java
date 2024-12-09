@@ -39,6 +39,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
     double wristPos = 0.28;
     double twistPos = 0.17;
     double VerticalSlideSpeed = 0.75;
+    double ClawFrontPos = 0.5;
+    double ClawFlipPos = 0.5;
+    double horizontalSlide = 0;
 
     /**
      * How much you need to push the joysticks to stop autonomous code.
@@ -327,7 +330,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
             wrist();
             claw();
             twist();
-            lift(hardware);
+            stepper();
+            lift();
+            HSlide();
+            arm();
+
             if (gamepad1.x) {
                 transfer();
             }
@@ -340,7 +347,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
             if (gamepad2.b) {
                 PickUpSpecimen();
             }
-            arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
             telemetry.addData("Vertical position", verticalPosition);
             telemetry.update();
@@ -379,14 +385,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 hardware.verticalSlide.setPower(0);
                 break;
             }
-            arm(hardware);
+            arm();
         }
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     int maintainHeightTicks = 0;
 
-    private void lift(Hardware hardware) {
+    private void lift() {
 
         //Hardware hardware = new Hardware(hardwareMap);
         int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -454,7 +460,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     static final double spinTickPerRev = 751.8;
 
-    private void arm(Hardware hardware) {
+    private void arm() {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
         // 537.7 ppr
         DcMotor arm = hardware.arm;
@@ -628,7 +634,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
         armTargetPosDeg = 0;
     }
 
-    private void transfer() {
+
+    private void transfer(){
         //hardware.arm.setPower(-0.5);
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -638,7 +645,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(-63);//This is in ticks
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg = -30;//(752 ticks /360 degrees)
+        armTargetPosDeg=-30;//(752 ticks /360 degrees)
         sleep(500);
         hardware.wrist.setPosition(0.9);
         sleep(2000);
@@ -655,7 +662,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg = 0;
+        armTargetPosDeg=0;
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -665,5 +672,36 @@ public class MecanumTeleOp2 extends LinearOpMode {
         //To-Do: open horizontal claw
 
 
+    }
+    private void stepper(){
+        if(gamepad1.dpad_left) {
+            ClawFrontPos += -0.01;
+        }
+        if(gamepad1.dpad_right){
+            ClawFrontPos += 0.01;
+        }
+        if(gamepad1.dpad_up) {
+            ClawFlipPos += -0.01;
+        }
+        if(gamepad1.dpad_down){
+            ClawFlipPos += 0.01;
+        }
+        hardware.clawFlip.setPosition(ClawFlipPos);
+        hardware.clawFront.setPosition(ClawFrontPos);
+        // clawFront close is 0
+        //clawFront open is 0.27
+
+        telemetry.addData("FrontClawPos", ClawFrontPos);
+        telemetry.addData("FlipClawPos", ClawFlipPos);
+    }
+    public void HSlide() {
+
+        if (gamepad1.x && horizontalSlide < 1) {
+            horizontalSlide += 0.01;
+        }
+        if (gamepad1.b && horizontalSlide > 0) {
+            horizontalSlide += -0.01;
+        }
+        hardware.horizontalSlide.setPosition(horizontalSlide);
     }
 }
