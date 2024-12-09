@@ -15,7 +15,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
     // Run the initialize function
     RobotInitialize robot;
 
-    int liftPitchPosition = 0;
+    int liftPitchPosition = 783;
     int liftExtenderPosition = 0;
     double maxLifEtxtension = 0;
     double targetPitchVert = 0;
