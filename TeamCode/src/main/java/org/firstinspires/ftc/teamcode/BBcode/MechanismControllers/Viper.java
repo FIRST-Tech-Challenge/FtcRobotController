@@ -51,7 +51,6 @@ public class Viper {
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
     public void ExtendSpecimenhang(double power) {ViperMotorCustom(specimenhangExtend, power);}
-    public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}
 
     public void ViperMotorCustom(double lengthInches, double power)
     {
