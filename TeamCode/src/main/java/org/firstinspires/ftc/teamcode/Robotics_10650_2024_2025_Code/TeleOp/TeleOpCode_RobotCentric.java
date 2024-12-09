@@ -309,6 +309,14 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 } else if (liftPitchPosition > 2300) {
                     liftPitchPosition = 2300;  //change to max lift xtension
                 }
+               // double targetAngle = liftPitchPosition * (90) / 2595;
+
+
+                if(liftPitchPosition>=908&&robot.liftExtender.getCurrentPosition()>=470){
+                    liftPitchPosition=908;
+                }
+
+                // TODO: Prevent liftPitch from going above a certain amount IF the liftExtender currentPos is not retracted
 
 
                 //1300
@@ -329,6 +337,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             //Bounds on the liftExtender motor
             //Lift PIDF might be able to be tuned more to improve but it does reasonably well currently
             double pitchAngle = robot.liftPitch.getCurrentPosition() * (90) / 2595;
+
+
             if (pitchAngle >= 31.25) {
                 //maxLifEtxtension = 121 / (Math.sin(Math.toRadians(pitchAngle))); // horizontal bound
                 maxLifEtxtension = 470;
