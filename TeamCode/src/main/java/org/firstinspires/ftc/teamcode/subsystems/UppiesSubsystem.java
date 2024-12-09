@@ -64,4 +64,11 @@ public class UppiesSubsystem extends SubsystemBase {
         IDLE
     }
 
+    public void IWantUp() {
+        setUppiesState(UppiesState.UPPIES);
+    }
+
+    public void IWantDown() {
+        setUppiesState(UppiesState.UN_UPPIES);
+    }
 }

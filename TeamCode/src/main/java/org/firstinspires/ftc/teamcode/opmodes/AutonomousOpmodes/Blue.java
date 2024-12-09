@@ -11,6 +11,8 @@ import com.acmerobotics.roadrunner.Pose2d;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+import org.firstinspires.ftc.teamcode.util.AutonomousActions;
+
 @Config
 @Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
 public class Blue extends LinearOpMode {
@@ -45,20 +47,39 @@ public class Blue extends LinearOpMode {
                 .lineToX(47.5)
                 .waitSeconds(3);
 
+        // Trajectories
+
+        AutonomousActions.Pincher pincher = new AutonomousActions.Pincher(hardwareMap);
+
         TrajectoryActionBuilder red = drive.actionBuilder(new Pose2d(7.00, -70.00, Math.toRadians(90.00)))
                 .lineToY(-35) // (7, -25) 90 deg
+                // Put Specimen on rung
+                .afterTime(.5f, pincher.openPincher())
+                .waitSeconds(3)
                 .strafeTo(new Vector2d(50.00, -35.00)) // (50, -35) 90 deg
+                // Grab 1st sample
+                .waitSeconds(3)
                 .strafeToLinearHeading(new Vector2d(50, -60), Math.toRadians(-90)) // (50, -60) -90 deg
+                // Drop off 1st sample
+                .waitSeconds(3)
                 .turnTo(Math.toRadians(90)) // 90 deg
                 .strafeTo(new Vector2d(60, -60.00)) // (60, -60) 90 deg
                 .strafeTo(new Vector2d(60, -35.00)) // (60, -35) 90 deg
+                // Grab 2nd Sample
+                .waitSeconds(3)
                 .strafeToLinearHeading(new Vector2d(60, -60), Math.toRadians(-90)) // (60, -60) -90 deg
+                // Drop off Second Sample
+                .waitSeconds(3)
                 .strafeTo(new Vector2d(48.00, -52.00)) // (48, -52)
+                // Wait for human player to put specimen on wall
+                .waitSeconds(3)
                 .strafeTo(new Vector2d(48, -60)) // (48, -80) -90 deg
+                // Move and pickup specimen
+                .waitSeconds(3)
                 .turnTo(Math.toRadians(90))
-                .strafeTo(new Vector2d(7.00, -35));
-
-
+                .strafeTo(new Vector2d(7.00, -35))
+                // Put specimen on rung
+                .waitSeconds(3);
 
         Action trajectoryActionChosen;
         if (startPosition == 1) {

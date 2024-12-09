@@ -17,4 +17,12 @@ public class BucketSubsystem extends SubsystemBase {
         servo.setPosition(normalPosition ? 0.05 : 1);
     }
 
+    public void dumpBucket() {
+        moveToNormalPosition(false);
+    }
+
+    public void resetBucket() {
+        moveToNormalPosition(true);
+    }
+
 }

@@ -39,6 +39,8 @@ public class PincherSubsystem extends SubsystemBase {
         }
     }
 
+    public FingerPositions currentFingerPosition;
+
     public PincherSubsystem(final ServoEx finger1, final ServoEx finger2) {
         this.finger1 = finger1;
         this.finger2 = finger2;
@@ -73,10 +75,29 @@ public class PincherSubsystem extends SubsystemBase {
         dbp.info(debug);
         dbp.send(true);
 
+        currentFingerPosition = position;
+
         //finger1.setPosition(.5f);
         //finger2.setPosition(.5f);
 
         // MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
+    }
+
+    public void closeFinger() {
+        locomoteFinger(FingerPositions.CLOSED);
+    }
+
+    public void openFinger() {
+        locomoteFinger(FingerPositions.OPEN);
+    }
+
+    public void zeroFinger() {
+        locomoteFinger(FingerPositions.ZERO);
+    }
+
+    public boolean isFingerReady() {
+        double angleScale = currentFingerPosition.getAngle() / MAX_ANGLE;
+        return ((finger1.getAngle() == 1f-angleScale) && (finger2.getAngle() == angleScale));
     }
 
 }
