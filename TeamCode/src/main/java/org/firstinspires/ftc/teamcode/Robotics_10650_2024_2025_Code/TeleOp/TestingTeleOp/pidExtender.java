@@ -36,32 +36,37 @@ public class pidExtender extends LinearOpMode {
 
     public void controllerInput() {
         if ((Math.abs(gamepad2.right_stick_y)>0.2)
-                &&(liftExtenderPosition<=5000)
+                &&(liftExtenderPosition<=9000)
                 &&(liftExtenderPosition>=0)
                 ||(robot.liftExtender.getCurrentPosition()<0&&gamepad2.right_stick_y<0)
-                ||(robot.liftExtender.getCurrentPosition()>5000&&gamepad2.right_stick_y>0)) {
+                ||(robot.liftExtender.getCurrentPosition()>9000&&gamepad2.right_stick_y>0)) {
 
-            liftExtenderPosition = liftExtenderPosition - (int)(30*gamepad2.right_stick_y);
+            liftExtenderPosition = liftExtenderPosition - (int)(70*gamepad2.right_stick_y);
             if(liftExtenderPosition < 0)
                 liftExtenderPosition = 0;
-            if(liftExtenderPosition > 5000)
-                liftExtenderPosition = 5000;
+            if(liftExtenderPosition > 9000)
+                liftExtenderPosition = 9000;
         }
         //Determines if the liftExtender should go up or down based on the controller inputs
         if (liftExtenderPosition<=5&&robot.liftExtender.getCurrentPosition()<=5) {
-            robot.liftExtender.setVelocity(0);
+            robot.liftExtender.setPower(0);
         }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
             if (robot.liftExtender.getCurrentPosition() < liftExtenderPosition) {
-                robot.liftExtender.setVelocity(5000);
+                robot.liftExtender.setPower(.25);
             } else if (robot.liftExtender.getCurrentPosition() >= liftExtenderPosition) {
-                robot.liftExtender.setVelocity(-5000);
+                robot.liftExtender.setPower(-.25);
             }
             //If no input, make sure the liftExtender motor does not move
         }else {
-            robot.liftExtender.setVelocity(1);
+            robot.liftExtender.setPower(0.01);
         }
 
-
+        if (gamepad2.right_trigger == 1){
+            p=0;
+            i=0;
+            d=0;
+            f=0;
+        }
 
         if (gamepad2.dpad_up){
             p += 0.01;
@@ -76,7 +81,7 @@ public class pidExtender extends LinearOpMode {
         if (gamepad2.triangle){
             p -= 0.01;
         }if (gamepad2.cross){
-            i -= 0.01;
+            i -= 0.01; //Avoid negative i value because it damages the motor
         }if (gamepad2.circle){
             d -= 0.01;
         }if (gamepad2.square){
