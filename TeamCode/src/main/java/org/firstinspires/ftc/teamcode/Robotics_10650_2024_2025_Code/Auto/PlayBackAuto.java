@@ -88,7 +88,7 @@ public class PlayBackAuto extends LinearOpMode {
                 robot.fRight.setVelocity(fRightVelocity);
                 robot.bRight.setVelocity(bRightVelocity);
 
-                robot.liftExtender.setVelocity(extenderVelocity);
+                //robot.liftExtender.setVelocity(extenderVelocity);
                 robot.liftPitch.setVelocity(pitchVelocity);
 
                 robot.intake.setPower(intakeVelocity);

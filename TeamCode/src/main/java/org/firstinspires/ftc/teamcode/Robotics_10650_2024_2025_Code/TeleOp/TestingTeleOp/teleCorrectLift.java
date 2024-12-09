@@ -166,19 +166,19 @@ public class teleCorrectLift extends LinearOpMode{
             //Determines if the liftExtender should go up or down based on the controller inputs
             if (liftExtenderPosition<=(5)&&robot.liftExtender.getCurrentPosition()<=(5)&&!gamepad2.right_bumper) {
                 //when down, save power
-                robot.liftExtender.setVelocity(0);
+                //robot.liftExtender.setVelocity(0);
             }else if(Math.abs(robot.liftExtender.getCurrentPosition()-liftExtenderPosition)>25) {
                 //if far from target position
 
                 //next if own or up
                 if (robot.liftExtender.getCurrentPosition() < liftExtenderPosition) {
-                    robot.liftExtender.setVelocity(1500);
+                    //robot.liftExtender.setVelocity(1500);
                 } else if (robot.liftExtender.getCurrentPosition() >= liftExtenderPosition) {
-                    robot.liftExtender.setVelocity(-1500);
+                   // robot.liftExtender.setVelocity(-1500);
                 }
                 //If no input, make sure the liftExtender motor does not move
             }else {
-                robot.liftExtender.setVelocity(1);
+                //robot.liftExtender.setVelocity(1);
             }
 
             if (gamepad2.left_bumper){
