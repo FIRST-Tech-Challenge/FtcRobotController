@@ -19,9 +19,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
+import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.ITaskWithResult;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
@@ -380,30 +382,23 @@ public class MecanumTeleOp2 extends LinearOpMode {
     int highBasketTicks = 2180;
 
     // lifts the vertical slides to a target position in ticks
-    private void targetLift(int targetPosition) {
 
-        hardware.verticalSlide.setTargetPosition(targetPosition);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        ElapsedTime Timer = new ElapsedTime();
-        double timeoutSeconds = 3.0;
-        int allowedErrorTicks = 5;
-        while (Timer.time() < timeoutSeconds) {
-            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-            if (abs(verticalPosition - targetPosition) < allowedErrorTicks) {
-                hardware.verticalSlide.setPower(0);
-                break;
-            }
-            arm();
-        }
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    private ITaskWithResult<Boolean> targetLift(int targetPosition) {
+        abandonLock(liftProxy.CONTROL);
+        return scheduler.task(liftProxy.moveTo(targetPosition, 5, 3.0));
     }
+    private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
 
     private void lift() {
         liftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
 
         if (gamepad2.a) {
-            targetLift(0);
+            if (aButtonTask == null || aButtonTask.getState() != ITask.State.Ticking) {
+                if (aButtonTask != null) {
+                    aButtonTask.requestStop(true);
+                }
+                aButtonTask = targetLift(0);
+            }
         }
     }
 

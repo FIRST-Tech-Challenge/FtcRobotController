@@ -35,7 +35,7 @@ interface ITask {
 
     fun requestStart()
     fun requestStop(cancel: Boolean) {
-        scheduler.filteredStop({ it == this }, cancel)
+        scheduler.filteredStop({ it === this }, cancel)
     }
 
     fun requestStop() = requestStop(true)
