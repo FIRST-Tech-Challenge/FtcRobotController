@@ -33,7 +33,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         //edit this to be valid for the dual mode servo
         //initial position
-        //robot.clawRoll.setPosition(0.1606 / 5);
         robot.parkingServo.setPosition(1);
 
         //robot.intake.setPower(0);
@@ -192,20 +191,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // Gamepad2 configuration
         {
-            {
-//            double liftPower = (gamepad2.right_stick_y);// Extends and retracts the lift
-//            if (Math.abs(liftPower)>.2){
-//                robot.liftExtender.setPower(liftPower);
-//            }
-//            double pitchPower = (gamepad2.left_stick_y);// Extends and retracts the lift
-//            if (Math.abs(pitchPower)>.2){
-//                robot.liftPitch.setPower(pitchPower);
-//            }
-//            int pitchPower;
-//            pitchPower = Math.round(gamepad2.left_stick_y);
-//            //telemetry.addData("pitchPower", pitchPower);
-            }
-
 
 //            if(gamepad2.left_bumper){//emergency button stops all movement (we can change that actual button later)
 //                liftPitchPosition =robot.liftPitch.getCurrentPosition();
@@ -229,22 +214,20 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
             telemetry.addData("extender target pos", liftExtenderPosition);
 
-            //telemetry.addData("claw pitch pos", robot.clawRoll.getPosition());
+
             //telemetry.addData("Pitch TargetPos",liftPitchPosition);
 
 //            if (gamepad1.left_bumper) {
 //                //edit this to be valid for the dual mode servo
-//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ 0.001);
 //            }
 //            if (gamepad1.right_bumper) {
 //                //edit this to be valid for the dual mode servo
-//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- 0.001);
 //            }
 //
 //            if (gamepad2.cross) {
 //                robot.liftExtender(0, 0.3);
 //            }
-            //telemetry.addData("roll", robot.clawRoll.getPosition());
+
 //            int pitchSpeed  = 25;
 //            //telemetry.addData("joystick pos", gamepad2.left_stick_y);
 //            if (gamepad2.right_bumper){
@@ -283,7 +266,6 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("ground mode pitch pos", Math.asin(53.78 / robot.liftExtender.getCurrentPosition()));
 
 //            if (gamepad2.circle){
-//                robot.clawRoll.setPosition(0.1606);
 //                telemetry.addData("ground mode pitch pos", Math.asin(53.78/robot.liftExtender.getCurrentPosition()));
 //
 //
@@ -461,15 +443,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             telemetry.addData("hang r pos", robot.parkingServo.getPosition());
 
 //            if (gamepad2.circle) {
-////                before 2167
+//                before 2167
 //                liftPitchPosition = 2090;
 //
 //                //edit this to be valid for the dual mode servo
-//                robot.clawRoll.setPosition(0.1606);
 //            }
 
             //edit this to be valid for the dual mode servo
-            //robot.clawRoll.setPosition(0.1606 / 5);
         }
 
         if (gamepad2.square) {//slaps it in
@@ -485,19 +465,16 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
         }
         //up pos = 0.3372
 //            if (gamepad2.left_bumper){
-//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()+ (0.0002));
-////            } if (gamepad1.square){
-////                robot.hangL.setPosition(robot.hangL.getPosition()+ (0.002));
+//            } if (gamepad1.square){
+//                robot.hangL.setPosition(robot.hangL.getPosition()+ (0.002));
 //            }
 //            if (gamepad2.right_bumper){
-//                robot.clawRoll.setPosition(robot.clawRoll.getPosition()- (0.0002));
 //            } //if (gamepad1.triangle)
-////                robot.hangL.setPosition(robot.hangL.getPosition()- (0.002));
-////            }
+//              robot.hangL.setPosition(robot.hangL.getPosition()- (0.002));
+//            }
 
         //i=i+Math.round(gamepad2.right_stick_y);
 
-        //telemetry.addData("aactual pitchpos", robot.clawRoll.getPosition());
         //telemetry.addData("hang l pos", robot.hangL.getPosition());
 
 
