@@ -1,7 +1,5 @@
 package dev.aether.collaborative_multitasking
 
-import dev.aether.collaborative_multitasking.TaskTemplate
-
 enum class ResolveReject {
     RESOLVE,
     REJECT
@@ -35,6 +33,10 @@ abstract class TaskWithResultTemplate<T>(scheduler: Scheduler) : TaskTemplate(sc
         if (result == null) {
             result = value
         } else throw IllegalStateException("A result was already assigned to this task")
+    }
+
+    protected fun setResultMaybe(value: T) {
+        if (result == null) result = value
     }
 
     override fun hasResult(): Boolean = result != null

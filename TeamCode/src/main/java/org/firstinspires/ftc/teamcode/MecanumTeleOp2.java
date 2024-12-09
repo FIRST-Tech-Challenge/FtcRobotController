@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 import dev.aether.collaborative_multitasking.ITask;
+import dev.aether.collaborative_multitasking.ITaskWithResult;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.ResolveReject;
@@ -127,6 +128,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
             targetPosition = lift.getCurrentPosition();
         }
 
+        @Override
+        public void invokeOnStart() {
+            commitCurrent();
+            lift.setTargetPosition(targetPosition);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(SPEED);
+        }
+
         private void startManual() {
             // forcibly grab the lock from whatever has it at the moment
             scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
@@ -168,10 +177,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
             return manualAdjustMode;
         }
 
-        public TaskWithResultTemplate<Boolean> moveTo(int target, int range, double maxDuration) {
-            TaskWithResultTemplate<Boolean> result;
+        public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
+            ITaskWithResult<Boolean> result;
+            // This version has a timer
             if (maxDuration > 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
-                private ElapsedTime t;
+                private final ElapsedTime t = new ElapsedTime();
 
                 @Override
                 @NotNull
@@ -197,8 +207,34 @@ public class MecanumTeleOp2 extends LinearOpMode {
                     }
                     return false;
                 }
+
+                @Override
+                public void invokeOnFinish() {
+                    setResultMaybe(false);
+                }
             };
-            else throw new IllegalStateException();
+            // This version doesn't
+            else result = new TaskWithResultTemplate<Boolean>(scheduler) {
+                @Override
+                @NotNull
+                public Set<SharedResource> requirements() {
+                    return provides;
+                }
+
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
+                        setResult(true);
+                        return true;
+                    }
+                    return false;
+                }
+            };
             return result;
         }
     }
