@@ -29,8 +29,8 @@ public class testServos extends LinearOpMode {
         clawOffset1 = MID_SERVO;
         clawOffset2 = MID_SERVO;
         // Define and initialize ALL installed servos.
-        servo1  = hardwareMap.get(Servo.class, "5");
-        servo2 = hardwareMap.get(Servo.class, "4");
+        servo1  = hardwareMap.get(Servo.class, "1");
+        servo2 = hardwareMap.get(Servo.class, "2");
         servo1.setPosition(MID_SERVO);
         servo2.setPosition(MID_SERVO);
         //servo1.setPosition(MID_SERVO);
@@ -42,10 +42,23 @@ public class testServos extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            clawOffset1 = clawOffset1 +(-gamepad1.left_stick_y)*0.3;
-            clawOffset2 = clawOffset2 +(-gamepad1.right_stick_y)*0.3;
-            left = clawOffset1;
-            right = clawOffset2;
+//            clawOffset1 = clawOffset1 +(-gamepad1.left_stick_y)*0.3;
+//            clawOffset2 = clawOffset2 +(gamepad1.right_stick_y)*0.3;
+//            if(gamepad1.dpad_up){
+//                clawOffset1 = (servo1.getPosition()+0.04);
+//            }else if (gamepad1.dpad_down){
+//                    clawOffset1 = (servo1.getPosition()-0.04);
+//            }
+//            if(gamepad1.dpad_right){
+//                clawOffset2 = (servo2.getPosition()+0.04);
+//            }else if (gamepad1.dpad_down){
+//                clawOffset2 = (servo2.getPosition()-0.04);
+//            }
+//
+//            left = clawOffset1;
+//            right = clawOffset2;
+            left = -gamepad1.left_stick_y;
+            right = gamepad1.right_stick_y;
             servo1.setPosition(left);
             servo2.setPosition(right);
 

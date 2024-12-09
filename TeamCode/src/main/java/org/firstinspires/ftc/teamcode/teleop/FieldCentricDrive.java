@@ -63,7 +63,8 @@ public class FieldCentricDrive extends LinearOpMode {
             YawPitchRollAngles robotOrientation;
             robotOrientation = imu.getRobotYawPitchRollAngles();
             Vector2d input = new Vector2d(-currentGamepad1.left_stick_x * yMultiplier,
-                    currentGamepad1.left_stick_y * yMultiplier);//.times(Math.toRadians(poseEstimate.heading.));
+                    currentGamepad1.left_stick_y * yMultiplier).times(Math.toRadians(poseEstimate.heading.toDouble()));
+                    //highly sus code above
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());

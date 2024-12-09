@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.teleop.Values;
@@ -104,10 +105,16 @@ public class ServosNDrive extends LinearOpMode {
         intakeSlide2  = hardwareMap.get(Servo.class, "4");
         intakeSlide1 = hardwareMap.get(Servo.class, "5");
 
+        outtakeElbow = hardwareMap.get(Servo.class, "6");
+        outtakeClaw = hardwareMap.get(Servo.class, "7");
+
         clawPivot.setPosition(Values.MID_SERVO);
         wrist.setPosition(Values.MID_SERVO);
         intakeElbow.setPosition(Values.MID_SERVO);
 
+        //make servo go slower
+//        intakeSlide1.scaleRange(2000, 600);
+//        intakeSlide1.scaleRange(2000, 600);
         intakeSlide1.setPosition(Values.slide1in);
         intakeSlide2.setPosition(Values.slide2in);
 
@@ -184,20 +191,32 @@ public class ServosNDrive extends LinearOpMode {
 
             //horizontal slides in N out
             if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
-                if(intakeSlide1.getPosition() != Values.slide1in){
+                if(intakeSlide1.getPosition() == Values.slide1out){
                     slidesIn();
                 }
-                else if(intakeSlide1.getPosition() != Values.slide1out){
+                else if(intakeSlide1.getPosition() == Values.slide1in){
                     slidesOut();
                 }
+                else{
+                    slidesIn();
+                }
+            }
+            if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+                slideServo(true);
+            } else if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+                slideServo(false);
             }
 
             //intake open N close
+            //don know y its kinda jank
             if (currentGamepad1.circle && !previousGamepad1.circle){
                 if(intakeClaw.getPosition() == Values.intakeClawOpen){
                     intakeClaw.setPosition(Values.intakeclawClose);
                 }
                 else if (intakeClaw.getPosition() == Values.intakeclawClose) {
+                    intakeClaw.setPosition(Values.intakeClawOpen);
+                }
+                else{
                     intakeClaw.setPosition(Values.intakeClawOpen);
                 }
             }
@@ -209,6 +228,9 @@ public class ServosNDrive extends LinearOpMode {
                 else if (wrist.getPosition() == Values.wristDown) {
                     wrist.setPosition(Values.wristUp);
                 }
+                else{
+                    wrist.setPosition(Values.wristDown);
+                }
             }
             //intake elbow
             if (currentGamepad1.cross && !previousGamepad1.cross){
@@ -218,21 +240,38 @@ public class ServosNDrive extends LinearOpMode {
                 else if (intakeElbow.getPosition() == Values.intakeElbowDown) {
                     intakeElbow.setPosition(Values.intakeElbowUp);
                 }
+                else{
+                    intakeElbow.setPosition(Values.intakeElbowUp);
+                }
+            }
+            //outtake
+            if (currentGamepad1.triangle && !previousGamepad1.triangle){
+                if (outtakeElbow.getPosition() != Values.outtakeElbowDown){
+                    outtakeClaw.setPosition(Values.outtakeclawOpen);
+                }else if (outtakeElbow.getPosition() == Values.outtakeElbowDown){
+                    outtakeClaw.setPosition(Values.outtakeClawClose);
+                    sleep(500);
+                    outtakeElbow.setPosition(Values.outtakeElbowUp);
+                }
+                outtakeElbow.setPosition(Values.outtakeElbowDown);
             }
             //pivot!
             if (currentGamepad1.dpad_left) {
-                clawPivot.setPosition(clawPivot .getPosition() - 0.1);
+                clawPivot.setPosition(clawPivot .getPosition() - 0.01);
             } else if (currentGamepad1.dpad_right) {
-                clawPivot.setPosition(clawPivot .getPosition() + 0.1);
-            } else if (currentGamepad1.left_bumper) {
+                clawPivot.setPosition(clawPivot .getPosition() + 0.01);
+            } else if (currentGamepad1.share) {
                 clawPivot.setPosition(Values.MID_SERVO);
             }
 
+
             //Send telemetry message to signify robot running;
             telemetry.addData("Intake Claw (circle)",  "%.02f", intakeClaw.getPosition());
-            telemetry.addData("Intake pitch angle (square)",  "%.02f", wrist);
+            telemetry.addData("Intake pitch angle (square)",  "%.02f", wrist.getPosition());
             telemetry.addData("Intake big rotate (cross)",  "%.02f", intakeElbow.getPosition());
-            telemetry.addData("slides servos 1N2 (dpad up)",  "%.02f, %.02f", intakeSlide1.getPosition(), intakeSlide2.getPosition());
+            telemetry.addLine("outake stuff is triangle");
+            telemetry.addData("slides servos (dpad up, or leftNright bumpy)",  "%.02f, %.02f", intakeSlide1.getPosition(),intakeSlide2.getPosition());
+            telemetry.addData("motor position", outtakeSlide1.getCurrentPosition());
             telemetry.update();
 
         }
@@ -254,5 +293,14 @@ public class ServosNDrive extends LinearOpMode {
 
         outtakeSlide1.setPower(velocity);
         outtakeSlide2.setPower(velocity);
+    }
+    private void slideServo (boolean goingOut) {
+        if (goingOut) {
+            intakeSlide2.setPosition(intakeSlide2.getPosition() + 0.05);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() - 0.05);
+        }else{
+            intakeSlide2.setPosition(intakeSlide2.getPosition() - 0.05);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() + 0.05);
+        }
     }
 }
