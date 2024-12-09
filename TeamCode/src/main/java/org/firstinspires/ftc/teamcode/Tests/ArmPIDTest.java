@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 @TeleOp(name = "Arm PID Test")
 public class ArmPIDTest extends LinearOpMode {
 
@@ -13,15 +18,19 @@ public class ArmPIDTest extends LinearOpMode {
     ElapsedTime elapsedTime;
 
     // PID variables
-    double kp = 1;  // Proportional gain
-    double ki = 1;  // Integral gain
-    double kd = 0;  // Derivative gain
+    public static double kp = 1;  // Proportional gain
+    public static double ki = 1;  // Integral gain
+    public static double kd = 0;  // Derivative gain
 
     double prevError = 0;  // Previous error, used for derivative
     double integral = 0;   // Integral term
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
         motors = new Motors(hardwareMap);
         elapsedTime = new ElapsedTime();
 
@@ -88,6 +97,7 @@ public class ArmPIDTest extends LinearOpMode {
 
             // Telemetry
             telemetry.addData("Setpoint", setPoint);
+            telemetry.addData("Process Value", processValue);
             telemetry.addData("PropGain", kp);
             telemetry.addData("IntegGain", ki);
             telemetry.addData("DerivGain", kd);
@@ -97,6 +107,18 @@ public class ArmPIDTest extends LinearOpMode {
             telemetry.addData("Derivative", derivative);
             telemetry.addData("PID Output", output);
             telemetry.update();
+
+            dashboardTelemetry.addData("Set Point", setPoint);
+            dashboardTelemetry.addData("Process Value", processValue);
+            dashboardTelemetry.addData("PropGain", kp);
+            dashboardTelemetry.addData("IntegGain", ki);
+            dashboardTelemetry.addData("DerivGain", kd);
+            dashboardTelemetry.addData("Arm Position", armPos);
+            dashboardTelemetry.addData("Proportional", proportional);
+            dashboardTelemetry.addData("Integral", integral);
+            dashboardTelemetry.addData("Derivative", derivative);
+            dashboardTelemetry.addData("PID Output", output);
+            dashboardTelemetry.update();
         }
     }
 }
