@@ -33,7 +33,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.030096, 0.000088, 0.000698, "straight");
+        this.pidController = new PIDController(0.0295, 0.000134, 0.0008, "straight");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
