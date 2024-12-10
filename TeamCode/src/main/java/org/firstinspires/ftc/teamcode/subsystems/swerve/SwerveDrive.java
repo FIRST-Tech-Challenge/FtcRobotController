@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.subsystems.swerve;
 import android.util.Pair;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.SwerveDriveKinematics;
@@ -32,22 +33,24 @@ public class SwerveDrive {
     boolean reverse;
     public SwerveDriveOdometry odo;
     public ElapsedTime timer;
-    SwerveModuleState[] states = new SwerveModuleState[4];
+    public SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveDriveKinematics kinematics; // FTCLIB FOR AUTO
-    public static double metersPerTick = 0.0001297;
+    public static double metersPerTick = (0.061*Math.PI)/770;
     voltageToAngleConstants angleGetter;
     gamepadToVectors vectorGetter;
     PIDController[] anglePID;
     PIDController[] drivePID;
     double[] driveSpeeds = new double[4];
+    double[] lastTime = new double[4];
     double[] anglePowers = new double[4];
     double[] drivePowers = new double[4];
-    DcMotor[] driveMotors = new DcMotor[4];
+    public DcMotor[] driveMotors = new DcMotor[4];
     CRServo[] angleMotors = new CRServo[4];
     int[] lastDriveEncoders = new int[4];
-    ElapsedTime motorTimer;
+    public ElapsedTime[] motorTimers = new ElapsedTime[4];
     OptimalAngleCalculator angleFixer;
     double[] angles = new double[4];
+    public Pose2d nowPose;
     IMU imu;
     ArrayList<Pair<Double,Double>> targetADPairList = new ArrayList<>(4); // key = mag, value = direction
     public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD, double driveP, double driveI, double driveD) {
@@ -69,28 +72,30 @@ public class SwerveDrive {
         vectorGetter.ROBOT_LENGTH = length;
         vectorGetter.ROBOT_WIDTH = width;
 
-        driveMotors[0] = hw.get(DcMotor.class, driveNames[0]);
-        driveMotors[1] = hw.get(DcMotor.class, driveNames[1]);
-        driveMotors[2] = hw.get(DcMotor.class, driveNames[2]);
-        driveMotors[3] = hw.get(DcMotor.class, driveNames[3]);
-        angleMotors[0] = hw.get(CRServo.class, angleNames[0]);
-        angleMotors[1] = hw.get(CRServo.class, angleNames[1]);
-        angleMotors[2] = hw.get(CRServo.class, angleNames[2]);
-        angleMotors[3] = hw.get(CRServo.class, angleNames[3]);
+        for (int i = 0; i < driveNames.length; i++) {
+            driveMotors[i] = hw.get(DcMotor.class, driveNames[i]);
+            driveMotors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveMotors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            angleMotors[i] = hw.get(CRServo.class, angleNames[i]);
+        }
+
 //        driveMotors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         imu = hw.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 //CHANGE THESE ONCE ORIENTATION IS KNOW
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
         imu.resetYaw();
         // Adjust the orientation parameters to match your robot
-
-        motorTimer = new ElapsedTime();
         for (int i = 0; i < driveMotors.length; i++) {
-            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()- lastDriveEncoders[i], motorTimer);
+            motorTimers[i] = new ElapsedTime();
+            lastTime[i] = motorTimers[i].nanoseconds();
+        }
+
+        for (int i = 0; i < driveMotors.length; i++) {
+            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()- lastDriveEncoders[i], motorTimers[i], lastTime[i]);
             lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
         }
         targetADPairList.ensureCapacity(4);
@@ -99,12 +104,13 @@ public class SwerveDrive {
         targetADPairList.add(new Pair<>(0.0, 0.0));
         targetADPairList.add(new Pair<>(0.0, 0.0));
         kinematics = new SwerveDriveKinematics(
-                new Translation2d(-0.22, 0.22),
-                new Translation2d(0.22, 0.22),
-                new Translation2d(-0.22, -0.22),
-                new Translation2d(0.22, -0.22));
-        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw()));
+                new Translation2d(inchesToMeters(6.5), inchesToMeters(5.5)),
+                new Translation2d(inchesToMeters(6.5),inchesToMeters(-5.5)),
+                new Translation2d(inchesToMeters(-4.5), inchesToMeters(5.5)),
+                new Translation2d(inchesToMeters(-4.5), inchesToMeters(-5.5)));
+        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(0, 0, new Rotation2d(90)));
         timer = new ElapsedTime();
+        nowPose = new Pose2d();
 
         for (int i = 0; i < driveMotors.length; i++) {
             states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(angles[i]));
@@ -159,10 +165,16 @@ public class SwerveDrive {
         }
 
     }
-    public double getVelocity(int tickChange, ElapsedTime timer) {
-        double timeChange = timer.seconds();
-        double ticksPerSecond = tickChange/timeChange;
-        return metersPerTick * ticksPerSecond;
+    public double getVelocity(int tickChange, ElapsedTime timer, double lastNanoSeconds) {
+        // Problems here - it's returning like 1/100 what it shoul
+        double timeChange = timer.nanoseconds() - lastNanoSeconds;
+        double ticksPerSecond;
+        if (Math.abs(timeChange) > 1E-6) {
+            ticksPerSecond = (tickChange) / timeChange;
+        } else {
+            ticksPerSecond = 0;
+        }
+        return metersPerTick * ticksPerSecond * (1e11); // quick fix for now , x 100 but core issue is unk
     }
     public void loop(double x, double y, double rx) {
         angles = angleGetter.getBigPulleyAngles();
@@ -206,13 +218,14 @@ public class SwerveDrive {
 
             anglePowers[i] = angleOutput;
             drivePowers[i] = speedOutput;
-            states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(angles[i]));
-            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()- lastDriveEncoders[i], motorTimer);
+            driveSpeeds[i] = getVelocity(driveMotors[i].getCurrentPosition()-lastDriveEncoders[i], motorTimers[i], lastTime[i]);
+            lastTime[i] = motorTimers[i].nanoseconds();
             lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
-
+            states[i].speedMetersPerSecond = driveSpeeds[i];
+            states[i].angle = new Rotation2d(Math.toRadians(angles[i]));
             // reset the last position and time for velocity calcs
         }
-        odo.updateWithTime(timer.seconds(), new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw()), states);
+        nowPose = odo.updateWithTime(timer.seconds(), new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), states);
     }
     public void setPID(double ap, double ai, double ad, double dp, double di, double dd) {
         for (PIDController pid : anglePID) {
@@ -254,5 +267,8 @@ public class SwerveDrive {
         t.addData("BLVelocity", driveSpeeds[2]);
         t.addData("BRVelocity", driveSpeeds[3]);
         t.update();
+    }
+    public double inchesToMeters(double inches) {
+        return inches/39.37;
     }
 }
