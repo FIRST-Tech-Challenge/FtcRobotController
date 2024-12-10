@@ -39,6 +39,7 @@ public class AutomationBot extends LimelightBot{
             if (!pivotInSpecimenPosition || !slideInSpecimenPosition) {
 
                 pivotToSpecimenHighPos();
+                rotateToVerticalPos();
                 schedule(this::moveSlideToHighSpecimenPos, 600);
             }
             else{
