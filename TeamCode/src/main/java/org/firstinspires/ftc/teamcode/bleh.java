@@ -59,10 +59,10 @@ public class bleh extends LinearOpMode {
             } else if (gamepad1.left_trigger > .75 && !stop) {
                 new Thread(() -> {
                     try {
-                        FLW.setPower(-.5);
-                        BLW.setPower(.5);
-                        FRW.setPower(.5);
-                        BRW.setPower(.5);
+                        FLW.setPower(-0.5);
+                        BLW.setPower(-0.5);
+                        FRW.setPower(0.5);
+                        BRW.setPower(-0.5);
                         Thread.sleep(210);
                         disablePowerWheels();
 
@@ -78,10 +78,10 @@ public class bleh extends LinearOpMode {
                 new Thread(() -> {
                     try {
 
-                        FLW.setPower(.5);
-                        BLW.setPower(-.5);
-                        FRW.setPower(-.5);
-                        BRW.setPower(-.5);
+                        FLW.setPower(0.5);
+                        BLW.setPower(0.5);
+                        FRW.setPower(-0.5);
+                        BRW.setPower(0.5);
                         Thread.sleep(210);
                         disablePowerWheels();
 

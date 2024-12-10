@@ -26,8 +26,7 @@ public class DetestmentAndWoeRight extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         // Example of controlling movements and then stopping after each step.
-        powerWheels(1000, "right");
-        sleep(1000);
+        powerWheels(1500, "right");
 
         // Stop motors after completing the parking routine
         disablePower();
@@ -41,18 +40,18 @@ public class DetestmentAndWoeRight extends LinearOpMode {
         try {
             switch (direction) {
                 case "forward":
-                    FLW.setPower(-0.5);
-                    BLW.setPower(-0.5);
-                    FRW.setPower(-0.5);
-                    BRW.setPower(0.5);
-                    sleep(miliseconds);
-                    disablePower();
-                    break;
-                case "backward":
                     FLW.setPower(0.5);
                     BLW.setPower(0.5);
                     FRW.setPower(0.5);
                     BRW.setPower(-0.5);
+                    sleep(miliseconds);
+                    disablePower();
+                    break;
+                case "backward":
+                    FLW.setPower(-0.5);
+                    BLW.setPower(-0.5);
+                    FRW.setPower(-0.5);
+                    BRW.setPower(0.5);
                     sleep(miliseconds);
                     disablePower();
                     break;

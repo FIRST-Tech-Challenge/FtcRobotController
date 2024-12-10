@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class DetestmentAndWoeLeft extends LinearOpMode {
+public class DetestmentAndWoeForward extends LinearOpMode {
     static private DcMotor FLW;
     static private DcMotor BLW;
     static private DcMotor FRW;
@@ -26,7 +26,7 @@ public class DetestmentAndWoeLeft extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         // Example of controlling movements and then stopping after each step.
-        powerWheels(1500, "left");
+        powerWheels(600, "forward");
 
         // Stop motors after completing the parking routine
         disablePower();
