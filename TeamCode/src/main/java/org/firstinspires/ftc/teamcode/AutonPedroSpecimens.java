@@ -199,7 +199,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 }
                 break;
             case 2:
-                robot.pivotTo(0,0.5);
+                /*robot.pivotTo(0,0.5);
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(follower.getPose().getX() > (push1Pose.getX() - 1) && follower.getPose().getY() > (push1Pose.getY() - 1)) {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
