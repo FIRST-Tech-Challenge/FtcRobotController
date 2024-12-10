@@ -29,6 +29,11 @@ public class AutomationBot extends LimelightBot{
         pivotInHighBasketPosition = (getPivotPosition() >= highBasketPivotPos - 10) && (getPivotPosition() <= highBasketPivotPos + 10);
         slideInHighBasketPosition = (getSlidePosition() >= highBasketSlidePos - 10) && (getSlidePosition() <= highBasketSlidePos + 10);
     }
+
+    public void goToDefaultPosition(boolean input){
+        pivotTo(minumimPivotPos);
+        moveSlide(minimumSlidePos);
+    }
     public void scoreSpecimen(boolean input) {
         if (input) {
             if (!pivotInSpecimenPosition || !slideInSpecimenPosition) {
@@ -62,58 +67,58 @@ public class AutomationBot extends LimelightBot{
      * @param input - boolean to determine if the robot should prepare to score a specimen
      * @param aimHigh - boolean to determine if the robot should aim high or low chamber
      */
-    public void readySpecimenPos(boolean input, boolean aimHigh) {
-        if (input) {
-            rotateToVerticalPos();
-            if (aimHigh) {
-                pivotToSpecimenHighPos();
-                schedule(this::moveSlideToHighSpecimenPos, 300);
-            } else {
-                pivotToSpecimenLowPos();
-                moveSlideToLowSpecimenPos();
-            }
-        }
-    }
+//    public void readySpecimenPos(boolean input, boolean aimHigh) {
+//        if (input) {
+//            rotateToVerticalPos();
+//            if (aimHigh) {
+//                pivotToSpecimenHighPos();
+//                schedule(this::moveSlideToHighSpecimenPos, 300);
+//            } else {
+//                pivotToSpecimenLowPos();
+//                moveSlideToLowSpecimenPos();
+//            }
+//        }
+//    }
 
     /**
      * This method will score a specimen (slide down a little, open pinch)
      * @param input
      */
-    public void scoreSpecimenSimple(boolean input) {
-        if (input) {
-            moveSlideByDelta(-180);
-            schedule(this::openPinch, 900);
-        }
-    }
+//    public void scoreSpecimenSimple(boolean input) {
+//        if (input) {
+//            moveSlideByDelta(-180);
+//            schedule(this::openPinch, 900);
+//        }
+//    }
 
     /**
      * This method will prepare the robot to score a basket (raise pivot arm, extend slide to a certain position)
      * @param input - boolean to determine if the robot should prepare to score a basket
      * @param aimHigh - boolean to determine if the robot should aim high or low basket
      */
-    public void readyBucketPos(boolean input, boolean aimHigh) {
-        if (input) {
-            rotateToVerticalPos();
-            if (aimHigh) {
-                pivotToHighBasketPos();
-                moveSlideToHighBucketPos();
-            } else {
-                pivotToLowBasketPos();
-                moveSlideToLowBucketPos();
-            }
-        }
-    }
-    /**
-     * This method will score a bucket (pivot arm a little, open pinch, pivot arm up)
-     * @param input - boolean to determine if the robot should score a bucket
-     */
-    public void scoreBucketSimple(boolean input) {
-        if (input) {
-            pivotByDelta(-50);
-            schedule(this::openPinch, 100);
-            schedule(()->pivotByDelta(100), 300);
-        }
-    }
+//    public void readyBucketPos(boolean input, boolean aimHigh) {
+//        if (input) {
+//            rotateToVerticalPos();
+//            if (aimHigh) {
+//                pivotToHighBasketPos();
+//                moveSlideToHighBucketPos();
+//            } else {
+//                pivotToLowBasketPos();
+//                moveSlideToLowBucketPos();
+//            }
+//        }
+//    }
+//    /**
+//     * This method will score a bucket (pivot arm a little, open pinch, pivot arm up)
+//     * @param input - boolean to determine if the robot should score a bucket
+//     */
+//    public void scoreBucketSimple(boolean input) {
+//        if (input) {
+//            pivotByDelta(-50);
+//            schedule(this::openPinch, 100);
+//            schedule(()->pivotByDelta(100), 300);
+//        }
+//    }
 
 
     

@@ -35,6 +35,7 @@ public class PivotBot extends OdometryBot {
 
     // Slide motor constants
     public final int maximumSlidePos = 2400;
+    public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
     public final int specimenHighSlidePos = 685;
     public final int specimenLowSlidePos = 800;
@@ -128,7 +129,7 @@ public class PivotBot extends OdometryBot {
             }
         }
         if (down) {
-            if (slideMotor.getCurrentPosition() > 170) {
+            if (slideMotor.getCurrentPosition() > minimumSlidePos) {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -153,7 +154,7 @@ public class PivotBot extends OdometryBot {
         }
     }
 
-    public void pivotTo(int pos, @Deprecated double power){
+    public void pivotTo(int pos){
         pivotTarget = pos;
     }
 
@@ -190,7 +191,7 @@ public class PivotBot extends OdometryBot {
         pivotTimer.cancel();
     }
 
-    public void moveSlide(int pos, @Deprecated double power){
+    public void moveSlide(int pos){
         slideTarget = pos;
     }
 
