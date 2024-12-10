@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.opmodes.AutonomousOpmodes;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -50,12 +52,17 @@ public class Blue extends LinearOpMode {
         // Trajectories
 
         AutonomousActions.Pincher pincher = new AutonomousActions.Pincher(hardwareMap);
+        AutonomousActions.Uppies uppies = new AutonomousActions.Uppies(hardwareMap);
 
         TrajectoryActionBuilder red = drive.actionBuilder(new Pose2d(7.00, -70.00, Math.toRadians(90.00)))
                 .lineToY(-35) // (7, -25) 90 deg
                 // Put Specimen on rung
-                .afterTime(.5f, pincher.openPincher())
-                .waitSeconds(3)
+                .afterTime(.5f, new SequentialAction(
+                        uppies.iWantUp(),
+                        uppies.iWantDown(),
+                        pincher.openPincher()
+                    )
+                )
                 .strafeTo(new Vector2d(50.00, -35.00)) // (50, -35) 90 deg
                 // Grab 1st sample
                 .waitSeconds(3)
@@ -75,18 +82,18 @@ public class Blue extends LinearOpMode {
                 .waitSeconds(3)
                 .strafeTo(new Vector2d(48, -60)) // (48, -80) -90 deg
                 // Move and pickup specimen
+                .afterTime(.5f, pincher.closePincher())
                 .waitSeconds(3)
                 .turnTo(Math.toRadians(90))
                 .strafeTo(new Vector2d(7.00, -35))
                 // Put specimen on rung
+                .afterTime(.5f, new SequentialAction(
+                                uppies.iWantUp(),
+                                uppies.iWantDown(),
+                                pincher.openPincher()
+                        )
+                )
                 .waitSeconds(3);
-
-        Action trajectoryActionChosen;
-        if (startPosition == 1) {
-            trajectoryActionChosen = tab1.build();
-        } else {
-            trajectoryActionChosen = red.build();
-        }
-        trajectoryActionChosen.run(new TelemetryPacket());
+        Actions.runBlocking(red.build());
     }
 }

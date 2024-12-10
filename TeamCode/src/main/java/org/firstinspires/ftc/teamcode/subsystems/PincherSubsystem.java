@@ -52,7 +52,7 @@ public class PincherSubsystem extends SubsystemBase {
         //finger1.setInverted(true); //  Might need to change it to finger2
         //finger1.setInverted(true); //  Might need to change it to finger1
         // MIGHT cause errors
-        locomoteFinger(FingerPositions.ZERO);
+        //locomoteFinger(FingerPositions.ZERO);
     }
 
     double lastPower = Double.MIN_VALUE;
@@ -76,11 +76,7 @@ public class PincherSubsystem extends SubsystemBase {
         dbp.send(true);
 
         currentFingerPosition = position;
-
-        //finger1.setPosition(.5f);
-        //finger2.setPosition(.5f);
-
-        // MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
+        MatchLogger.getInstance().genericLog("Finger", MatchLogger.FileType.FINGER, position.name());
     }
 
     public void closeFinger() {
@@ -96,6 +92,9 @@ public class PincherSubsystem extends SubsystemBase {
     }
 
     public boolean isFingerReady() {
+        if (currentFingerPosition == null) {
+            return false;
+        }
         double angleScale = currentFingerPosition.getAngle() / MAX_ANGLE;
         return ((finger1.getAngle() == 1f-angleScale) && (finger2.getAngle() == angleScale));
     }

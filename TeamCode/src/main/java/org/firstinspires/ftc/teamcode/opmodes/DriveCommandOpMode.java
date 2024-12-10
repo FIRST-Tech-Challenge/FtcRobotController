@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
@@ -50,20 +52,30 @@ public class DriveCommandOpMode extends CommandOpMode {
 
     private DefaultDrive driveCommand;
 
-    private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriverOP");
+    private final FTCDashboardPackets dbp = new FTCDashboardPackets("TeleOP");
 
     @Override
     public void initialize() {
         driverController = new GamepadEx(gamepad1);
         armerController = new GamepadEx(gamepad2);
 
+        // CONTROL CONFIG
+        GamepadKeys.Button closePincherButton       = GamepadKeys.Button.X;
+        GamepadKeys.Button openPincherButton        = GamepadKeys.Button.Y;
+        GamepadKeys.Button moveUppiesUpButton       = GamepadKeys.Button.DPAD_UP;
+        GamepadKeys.Button moveUppiesDownButton     = GamepadKeys.Button.DPAD_DOWN;
+        GamepadKeys.Button dumpBucketButton         = GamepadKeys.Button.RIGHT_STICK_BUTTON;
+        GamepadKeys.Button retractIntakeButton      = GamepadKeys.Button.DPAD_LEFT;
+        GamepadKeys.Button extendIntakeButton       = GamepadKeys.Button.DPAD_RIGHT;
+        GamepadKeys.Button toggleIntakeSpinButton   = GamepadKeys.Button.LEFT_STICK_BUTTON;
+        GamepadKeys.Button toggleIntakeTiltButton   = GamepadKeys.Button.LEFT_BUMPER;
+        GamepadKeys.Button manualSafetyOverride     = GamepadKeys.Button.BACK;
+
         dbp.createNewTelePacket();
         dbp.info("Initializing drive command op mode...");
         dbp.send(false);
 
         try {
-            // HashMap<RobotHardwareInitializer.Component, DcMotor> driveMotors = RobotHardwareInitializer.initializeDriveMotors(hardwareMap, this);
-            // assert driveMotors != null;
             driveSubsystem = new DriveSubsystem(hardwareMap);
             register(driveSubsystem);
             initializeDriveSuppliers();
@@ -81,13 +93,14 @@ public class DriveCommandOpMode extends CommandOpMode {
             pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
             register(pincherSubsystem);
 
-            armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED));
-            armerController.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN));
-            // NOT NEEDED IN GAME! This is for debug purposes only and personal testing
-            //armerController.getGamepadButton(GamepadKeys.Button.X).whenPressed(new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.ZERO));
+            MovePincherCommand closePincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED);
+            MovePincherCommand openPincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN);
+
+            armerController.getGamepadButton(closePincherButton).whenPressed(closePincher);
+            armerController.getGamepadButton(openPincherButton).whenPressed(openPincher);
         } catch (Exception e) {
-            //e.printStackTrace();
             dbp.info("ERROR IN PINCHER SYSTEM");
+            dbp.error(e);
             dbp.send(true);
             throw new RuntimeException(e);
         }
@@ -100,14 +113,16 @@ public class DriveCommandOpMode extends CommandOpMode {
             SetUppiesCommand idleCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE);
             SetUppiesCommand upCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UPPIES);
             SetUppiesCommand downCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UN_UPPIES);
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+            armerController.getGamepadButton(moveUppiesUpButton)
                     .whenPressed(upCommand)
                     .whenReleased(idleCommand);
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+            armerController.getGamepadButton(moveUppiesDownButton)
                     .whenPressed(downCommand)
                     .whenReleased(idleCommand);
         } catch (Exception e) {
-            //e.printStackTrace();
+            dbp.info("ERROR IN UPPIES SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 
@@ -115,10 +130,14 @@ public class DriveCommandOpMode extends CommandOpMode {
             ServoEx bucketServo = RobotHardwareInitializer.ServoComponent.BUCKET_DUMPER.getEx(hardwareMap, 0, 135);
             bucketSubsystem = new BucketSubsystem(bucketServo);
             register(bucketSubsystem);
-            // R3
-            armerController.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new DumpBucketCommand(bucketSubsystem));
+
+            DumpBucketCommand dumpBucketCommand = new DumpBucketCommand(bucketSubsystem);
+
+            armerController.getGamepadButton(dumpBucketButton).whenPressed(dumpBucketCommand);
         } catch (Exception e) {
-            //e.printStackTrace();
+            dbp.info("ERROR IN BUCKET SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 
@@ -127,11 +146,20 @@ public class DriveCommandOpMode extends CommandOpMode {
             extendoSystem = new ExtendoSystem(motorEx);
             register(extendoSystem);
 
-            ExtendoCommand noMovementCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE);
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD)).whenReleased(noMovementCommand);
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whileHeld(new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD)).whenReleased(noMovementCommand);
+            ExtendoCommand extendCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD);
+            ExtendoCommand retractCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD);
+            ExtendoCommand idleCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE);
+
+            armerController.getGamepadButton(retractIntakeButton)
+                    .whileHeld(retractCommand)
+                    .whenReleased(idleCommand);
+            armerController.getGamepadButton(extendIntakeButton)
+                    .whileHeld(extendCommand)
+                    .whenReleased(idleCommand);
         } catch (Exception e) {
-            //e.printStackTrace();
+            dbp.info("ERROR IN EXTENDING SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 
@@ -140,11 +168,18 @@ public class DriveCommandOpMode extends CommandOpMode {
             ServoEx intakeTilter = RobotHardwareInitializer.ServoComponent.INTAKE_TILTER.getEx(hardwareMap);
             intakeSubsystem = new IntakeSubsystem(intakePower, intakeTilter);
 
-            armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                    .toggleWhenPressed(new TiltIntakeCommand(intakeSubsystem, true), new TiltIntakeCommand(intakeSubsystem, false));
-            armerController.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(new ToggleIntakeCommand(intakeSubsystem));
+            TiltIntakeCommand tiltCommand = new TiltIntakeCommand(intakeSubsystem, true);
+            TiltIntakeCommand untiltCommand = new TiltIntakeCommand(intakeSubsystem, false);
+            ToggleIntakeCommand toggleIntakeState = new ToggleIntakeCommand(intakeSubsystem);
+
+            armerController.getGamepadButton(toggleIntakeTiltButton)
+                    .toggleWhenPressed(tiltCommand, untiltCommand);
+            armerController.getGamepadButton(toggleIntakeSpinButton)
+                    .whenPressed(toggleIntakeState);
         } catch (Exception e) {
-            //e.printStackTrace();
+            dbp.info("ERROR IN INTAKE SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 
@@ -159,21 +194,13 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("GO GO GO!");
         dbp.send(false);
 
-        /*while (opModeIsActive()) {
-            if (gamepad2.a) {
-                pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.OPEN);
-                dbp.info("OPEN PINCHER");
-                dbp.send(true);
-                telemetry.addData("pincher state", "true");
-            }
-            if (gamepad2.b) {
-                pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.CLOSED);
-                dbp.info("CLOSE PINCHER");
-                dbp.send(true);
-                telemetry.addData("pincher state", "false");
-            }
-        }*/
+        armerController.getGamepadButton(manualSafetyOverride).toggleWhenPressed(() -> {
+            UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = false;
+        }, () -> {
+            UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = true;
+        });
 
+        // NOTE: Do not include the opModeIsActive() while loop, as it prevents commands from running
     }
 
     @Override

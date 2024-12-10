@@ -31,6 +31,8 @@ public class AutonomousActions {
                 dbp.send(true);
                 throw new RuntimeException(e);
             }
+
+            pincherSubsystem.closeFinger();
         }
 
         public class OpenPincher implements Action {
@@ -63,6 +65,10 @@ public class AutonomousActions {
                 return !pincherSubsystem.isFingerReady();
             }
         }
+
+        public Action closePincher() {
+            return new ClosePincher();
+        }
     }
 
     public static class Uppies {
@@ -76,6 +82,42 @@ public class AutonomousActions {
                 //e.printStackTrace();
                 throw new RuntimeException(e);
             }
+        }
+
+        public class IWantUp implements Action {
+            private boolean intialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!intialized) {
+                    uppiesSubsystem.IWantUp();
+                    intialized = true;
+                }
+
+                return !uppiesSubsystem.isIdle();
+            }
+        }
+
+        public Action iWantUp() {
+            return new IWantUp();
+        }
+
+        public class IWantDown implements Action {
+            private boolean intialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!intialized) {
+                    uppiesSubsystem.IWantDown();
+                    intialized = true;
+                }
+
+                return !uppiesSubsystem.isIdle();
+            }
+        }
+
+        public Action iWantDown() {
+            return new IWantDown();
         }
     }
 }

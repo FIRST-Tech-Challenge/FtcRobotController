@@ -22,6 +22,7 @@ public class TiltIntakeCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        super.initialize();
         if (tilt) {
             intakeSubsystem.tiltIntake();
         } else {

@@ -14,13 +14,13 @@ public class ToggleIntakeCommand extends CommandBase {
     }
 
     @Override
-    public boolean isFinished() {
-        return true;
-    }
-
-    @Override
     public void initialize() {
         super.initialize();
         intakeSubsystem.toggleIntakeState();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
     }
 }

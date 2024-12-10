@@ -46,43 +46,57 @@ public class MatchLogger {
     }
 
     public MatchLogger() {
-        File dataFolder = getDataFolder();
-        dataFolder.mkdirs();
+        try {
+            File dataFolder = getDataFolder();
+            dataFolder.mkdirs();
 
-        int greatestMatchNumber = 1;
-        File[] listFiles = dataFolder.listFiles();
-        for (int i = 0; i < listFiles.length; i++) {
-            File file = listFiles[i];
-            if (!file.isDirectory()) {
-                continue;
+            int greatestMatchNumber = 1;
+            File[] listFiles = dataFolder.listFiles();
+            for (int i = 0; i < listFiles.length; i++) {
+                File file = listFiles[i];
+                if (!file.isDirectory()) {
+                    continue;
+                }
+                String name = file.getName();
+                if (!name.contains(MATCH_FILE_NAME)) {
+                    // Not a valid match directory
+                    continue;
+                }
+                String matchNumber = name.substring(MATCH_FILE_NAME.length(), name.length() - 1);
+                // TODO: Verify that the substring thing works and doesn't produce an error
+                try {
+                    Integer parsedInteger = Integer.parseInt(matchNumber);
+                    greatestMatchNumber = Math.max(parsedInteger, greatestMatchNumber);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
-            String name = file.getName();
-            if (!name.contains(MATCH_FILE_NAME)) {
-                // Not a valid match directory
-                continue;
-            }
-            String matchNumber = name.substring(MATCH_FILE_NAME.length(), name.length() - 1);
-            // TODO: Verify that the substring thing works and doesn't produce an error
-            try {
-                Integer parsedInteger = Integer.parseInt(matchNumber);
-                greatestMatchNumber = Math.max(parsedInteger, greatestMatchNumber);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+
+            matchNumber = greatestMatchNumber;
+            getMatchFolder().mkdirs();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        matchNumber = greatestMatchNumber;
-        getMatchFolder().mkdirs();
     }
 
     /**
      * @return file object representing the folder where all the match directories will be located
      */
-    public File getDataFolder() {
-        return new File(String.format("%s/FIRST/data/", Environment.getExternalStorageDirectory().getAbsolutePath()));
+    private File getDataFolder() {
+        try {
+            return new File(String.format("%s/FIRST/data/", Environment.getExternalStorageDirectory().getAbsolutePath()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    public File getMatchFolder(int matchNumber) {
-        return new File(getDataFolder()+"/match_"+matchNumber+"/");
+    private File getMatchFolder(int matchNumber) {
+        try {
+            return new File(getDataFolder() + "/match_" + matchNumber + "/");
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     public File getMatchFolder() {
         return getMatchFolder(matchNumber);
@@ -90,27 +104,30 @@ public class MatchLogger {
 
     public void write(String message, FileType...fileTypes) {
         // TODO: Append to the specified files
+        try {
+            for (int i = 0; i < fileTypes.length + 1; i++) {
+                FileType fileType = null;
 
-        for (int i = 0; i < fileTypes.length + 1; i++) {
-            FileType fileType = null;
+                // Always write to verbose file
+                if (i == fileTypes.length) {
+                    fileType = FileType.VERBOSE;
+                } else {
+                    fileType = fileTypes[i];
+                }
 
-            // Always write to verbose file
-            if (i == fileTypes.length) {
-                fileType = FileType.VERBOSE;
-            } else {
-                fileType = fileTypes[i];
+                File textFilePath = new File(getMatchFolder(), fileType.filename);
+                try {
+                    FileOutputStream inputStream = new FileOutputStream(textFilePath, true);
+                    PrintWriter printWriter = new PrintWriter(inputStream);
+                    printWriter.println(message);
+                    printWriter.close();
+                    inputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            File textFilePath = new File(getMatchFolder(), fileType.filename);
-            try {
-                FileOutputStream inputStream = new FileOutputStream(textFilePath, true);
-                PrintWriter printWriter = new PrintWriter(inputStream);
-                printWriter.println(message);
-                printWriter.close();
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         System.out.println(message);
     }
@@ -136,6 +153,9 @@ public class MatchLogger {
         if (relevantVariables == null) {
             return "";
         }
+        if (relevantVariables.length == 0) {
+            return "";
+        }
         String message = "";
         for (int i = 0; i < relevantVariables.length; i++) {
             message += Objects.toString(relevantVariables[i]);
@@ -155,25 +175,33 @@ public class MatchLogger {
     }*/
 
     public void genericLog(String header, FileType fileType, Object...relevantVariables) {
-        String message = String.format("%s: %s", getCalledMethodName(), arrayToString(relevantVariables));
-        write(message, fileType, FileType.VERBOSE);
+        try {
+            String message = String.format("%s: %s", getCalledMethodName(), arrayToString(relevantVariables));
+            write(message, fileType, FileType.VERBOSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getCalledMethodName() {
-        if (REFLECTIONLESS) {
-            return "[reflectionless]";
-        }
-        StackTraceElement[] elements = new Throwable().getStackTrace();
-        if (elements == null || elements.length == 0) {
-            return "[err_no_stacktrace]";
-        }
-        for (int i = 0; i < elements.length; i++) {
-            String calledClassName = elements[i].getClassName();
-            if (calledClassName.equals(getClass().getName())) {
-                continue;
+        try {
+            if (REFLECTIONLESS) {
+                return "[reflectionless]";
             }
-            // It is something other than the MatchLogger, record the method used
-            return String.format("[%s]", elements[i].getMethodName());
+            StackTraceElement[] elements = new Throwable().getStackTrace();
+            if (elements == null || elements.length == 0) {
+                return "[err_no_stacktrace]";
+            }
+            for (int i = 0; i < elements.length; i++) {
+                String calledClassName = elements[i].getClassName();
+                if (calledClassName.equals(getClass().getName())) {
+                    continue;
+                }
+                // It is something other than the MatchLogger, record the method used
+                return String.format("[%s]", elements[i].getMethodName());
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
         }
         return "[err_404]"; // not found
     }
