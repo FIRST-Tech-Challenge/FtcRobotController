@@ -81,6 +81,8 @@ public class AutonPedroSpecimens extends LinearOpMode{
     private final Pose pickupPoseControl = new Pose(47.5,22.1, Math.toRadians(270));
 
     private final Pose pickupPose = new Pose(12.1,40, Math.toRadians(270));
+
+    private final Pose scoreControlPose = new Pose(15,63, Math.toRadians(0));
     private final Pose obsScorePose = new Pose(40, 80, Math.toRadians(0));
 
 
@@ -153,12 +155,12 @@ public class AutonPedroSpecimens extends LinearOpMode{
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scoreFromObservation = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickupPose), new Point(obsScorePose)))
+                .addPath(new BezierCurve(new Point(pickupPose), new Point(scoreControlPose), new Point(obsScorePose)))
                 .setLinearHeadingInterpolation(pickupPose.getHeading(), obsScorePose.getHeading())
                 .build();
 
         readyToScore = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePose), new Point(pickupPose)))
+                .addPath(new BezierCurve(new Point(scorePose),new Point(scoreControlPose), new Point(pickupPose)))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickupPose.getHeading())
                 .build();
 
