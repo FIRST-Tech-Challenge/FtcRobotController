@@ -74,7 +74,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
 
     private final Pose push3ControlPose = new Pose(100, 18, Math.toRadians(0));
 
-    private final Pose push3Pose = new Pose(20, 12, Math.toRadians(0));
+    private final Pose push3Pose = new Pose(20, 14, Math.toRadians(0));
 
     /** Pickup Samples form Human player area */
 
