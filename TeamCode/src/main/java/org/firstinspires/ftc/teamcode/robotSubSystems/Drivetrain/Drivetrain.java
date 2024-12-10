@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.robotSubSystems.Drivetrain;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.Sensors.Gyro;
-import org.firstinspires.ftc.teamcode.Utils.Vector;
 import org.firstinspires.ftc.teamcode.Utils.Angle;
-import org.firstinspires.ftc.teamcode.Utils.PID;
-import org.firstinspires.ftc.teamcode.robotSubSystems.Elevator.Elevator;
+import org.firstinspires.ftc.teamcode.Utils.Vector;
 
 public class Drivetrain {
 
@@ -23,17 +23,20 @@ public class Drivetrain {
         }
 
         //todo: set reverse directions
+        dtMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
         dtMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+        dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
         resetEncoders();
     }
 
     public static void operate(Vector vector, double rotation) {
         drive(
                 slowedVec(
-                        fieldCentric(vector),
-                         Elevator.getElevatorPos()
+                        fieldCentric(vector), 0
+                         //Elevator.getElevatorPos()
                         , 2235,
-                        0.4
+                          0.4
                 ),
                 rotation
         );
