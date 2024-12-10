@@ -3,8 +3,13 @@ package org.firstinspires.ftc.teamcode.bots;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class AutomationBot extends LimelightBot{
 
+
+public class AutomationBot extends LimelightBot{
+    private boolean slideInSpecimenPosition = false;
+    private boolean slideInHighBasketPosition = false;
+    private boolean pivotInSpecimenPosition = false;
+    private boolean pivotInHighBasketPosition = false;
 
     public AutomationBot(LinearOpMode opMode) {
         super(opMode);
@@ -19,47 +24,35 @@ public class AutomationBot extends LimelightBot{
 
     protected void onTick() {
         super.onTick();
-
+        pivotInSpecimenPosition = (getPivotPosition() >= specimenHighPivotPos - 10) && (getPivotPosition() <= specimenHighPivotPos + 10);
+        slideInSpecimenPosition = (getSlidePosition() >= specimenHighSlidePos - 10) && (getSlidePosition() <= specimenHighSlidePos + 10);
+        pivotInHighBasketPosition = (getPivotPosition() >= highBasketPivotPos - 10) && (getPivotPosition() <= highBasketPivotPos + 10);
+        slideInHighBasketPosition = (getSlidePosition() >= highBasketSlidePos - 10) && (getSlidePosition() <= highBasketSlidePos + 10);
     }
     public void scoreSpecimen(boolean input) {
         if (input) {
-            if (getPivotPosition() <= 150 && getPivotPosition() >= 50 ) {
-                timer.reset(); // Reset the timer
-                while (timer.milliseconds() < 1000) {
-                    // Allow other tasks to run, like telemetry updates
-                }
+            if (!pivotInSpecimenPosition || !slideInSpecimenPosition) {
+
                 pivotToSpecimenHighPos();
-
-                timer.reset();
-                while (timer.milliseconds() < 1000){}
-                //rotateToPos(0);
-
-
-                timer.reset(); // Reset the timer again
-                while (timer.milliseconds() < 5000) {
-                    // Wait another second
-                }
-
-                moveSlideToHighSpecimenPos();
+                schedule(this::moveSlideToHighSpecimenPos, 600);
+            }
+            else{
+                moveSlideByDelta(-180);
+                schedule(this::openPinch, 600);
 
             }
+        }
+    }
+    public void scoreBucket(boolean input) {
+        if (input) {
+            if (!pivotInHighBasketPosition || !slideInHighBasketPosition) {
 
-            if (getPivotPosition() >= specimenHighSlidePos -100 && getPivotPosition() <= specimenHighSlidePos + 100) {
-                timer.reset();
-                while (timer.milliseconds() < 1000) {
-                    // Wait before moving the slide
-                }
-
-                //moveSlideToSpecimenScorePos();
-
-                timer.reset();
-                while (timer.milliseconds() < 500) {
-                    // Wait for 2 seconds before pinching
-                }
-
+                pivotToHighBasketPos();
+                schedule(this::moveSlideToHighBucketPos, 1000);
+            }
+            else{
                 openPinch();
-                slideTarget = 100;
-                pivotTarget = 100;
+
             }
         }
     }
@@ -74,7 +67,7 @@ public class AutomationBot extends LimelightBot{
             rotateToVerticalPos();
             if (aimHigh) {
                 pivotToSpecimenHighPos();
-                moveSlideToHighSpecimenPos();
+                schedule(this::moveSlideToHighSpecimenPos, 300);
             } else {
                 pivotToSpecimenLowPos();
                 moveSlideToLowSpecimenPos();
@@ -88,8 +81,8 @@ public class AutomationBot extends LimelightBot{
      */
     public void scoreSpecimenSimple(boolean input) {
         if (input) {
-            moveSlideByDelta(-100);
-            schedule(this::openPinch, 300);
+            moveSlideByDelta(-180);
+            schedule(this::openPinch, 900);
         }
     }
 
@@ -122,37 +115,7 @@ public class AutomationBot extends LimelightBot{
         }
     }
 
-    public void scoreBucket(boolean input){
-        if (input) {
-            if (getPivotPosition() <= minumimPivotPos + 100 && getPivotPosition() >= minumimPivotPos -50 ) {
-                timer.reset(); // Reset the timer
-                while (timer.milliseconds() < 1000) {
-                    // Allow other tasks to run, like telemetry updates
-                }
-                pivotToHighBasketPos();
 
-
-                timer.reset(); // Reset the timer again
-                while (timer.milliseconds() < 5000) {
-                    // Wait another second
-                }
-
-                moveSlideToHighBucketPos();
-
-            }
-
-            if (getPivotPosition() >= highBucketSlidePos -100 && getPivotPosition() <= highBucketSlidePos + 100) {
-
-
-                timer.reset();
-                while (timer.milliseconds() < 500) {
-                    // Wait for 2 seconds before pinching
-                }
-                openPinch();
-
-            }
-        }
-    }
     
         
 
