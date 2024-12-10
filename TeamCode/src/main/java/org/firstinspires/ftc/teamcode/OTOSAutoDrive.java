@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/08/2024, 6:47 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/09/2024, 5:14 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -84,7 +84,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(300);
         setVertical(VERTICAL_MIN);
         driveToLoc(25, -7, -10, 1);
-        driveToLoc(27, -2, -10, 1);  // Move forward to get block
+        driveToLoc(28, -2, -10, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab second block
         //sleep(200);
@@ -101,7 +101,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(300);
         setVertical(VERTICAL_MIN);
         driveToLoc(25, 6, -10, 1);
-        driveToLoc(27, 10, -10, 1);  // Move forward to get block
+        driveToLoc(28, 10, -10, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab third block
         setVertical(VERTICAL_MAX, 1000);
