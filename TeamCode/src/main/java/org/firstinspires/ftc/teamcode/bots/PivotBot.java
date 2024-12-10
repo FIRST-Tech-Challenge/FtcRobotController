@@ -9,9 +9,6 @@ package org.firstinspires.ftc.teamcode.bots;
 
         import java.util.Timer;
         import java.util.TimerTask;
-        import java.util.concurrent.Executors;
-        import java.util.concurrent.ScheduledExecutorService;
-        import java.util.concurrent.TimeUnit;
 
 public class PivotBot extends OdometryBot {
 
@@ -25,9 +22,9 @@ public class PivotBot extends OdometryBot {
     private final int pickupSpecimenPivotPos = 130; // tested
     private final int pickupSamplePivotPos = 120; // tested
     private final int pickupUpPivotPos = 400;
-    public final int specimenHighPivotPos = 900;
+    public final int specimenHighPivotPos = 1196;
     public final int specimenLowPivotPos = 750;
-    public final int highBasketPivotPos = 1200;
+    public final int highBasketPivotPos = 1274;
     public final int lowBasketPivotPos = 1000;
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 100;
@@ -38,10 +35,11 @@ public class PivotBot extends OdometryBot {
 
     // Slide motor constants
     public final int maximumSlidePos = 2400;
+    public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
-    public final int specimenHighSlidePos = 1000;
+    public final int specimenHighSlidePos = 685;
     public final int specimenLowSlidePos = 800;
-    public final int highBucketSlidePos = 1500;
+    public final int highBasketSlidePos = 2309;
     public final int lowBucketSlidePos = 800;
 
     public int slideTarget = 110;
@@ -131,7 +129,7 @@ public class PivotBot extends OdometryBot {
             }
         }
         if (down) {
-            if (slideMotor.getCurrentPosition() > 170) {
+            if (slideMotor.getCurrentPosition() > minimumSlidePos) {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -156,7 +154,7 @@ public class PivotBot extends OdometryBot {
         }
     }
 
-    public void pivotTo(int pos, @Deprecated double power){
+    public void pivotTo(int pos){
         pivotTarget = pos;
     }
 
@@ -193,7 +191,7 @@ public class PivotBot extends OdometryBot {
         pivotTimer.cancel();
     }
 
-    public void moveSlide(int pos, @Deprecated double power){
+    public void moveSlide(int pos){
         slideTarget = pos;
     }
 
@@ -210,7 +208,7 @@ public class PivotBot extends OdometryBot {
         slideTarget += delta;
     }
     public void moveSlideToHighBucketPos(){
-        slideTarget = highBucketSlidePos;
+        slideTarget = highBasketSlidePos;
     }
     public void moveSlideToLowBucketPos(){
         slideTarget = lowBucketSlidePos;
