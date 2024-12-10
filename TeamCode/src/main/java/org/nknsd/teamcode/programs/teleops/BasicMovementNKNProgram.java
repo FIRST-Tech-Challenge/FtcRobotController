@@ -65,9 +65,11 @@ public class BasicMovementNKNProgram extends NKNProgramTrue {
 
         SpecimenExtensionHandler specimenExtensionHandler = new SpecimenExtensionHandler();
         components.add(specimenExtensionHandler);
+        telemetryEnabled.add(sampleExtensionHandler);
 
         SpecimenClawHandler specimenClawHandler = new SpecimenClawHandler();
         components.add(specimenClawHandler);
+        telemetryEnabled.add(specimenClawHandler);
 
 
         // Driver
@@ -93,6 +95,9 @@ public class BasicMovementNKNProgram extends NKNProgramTrue {
         wheelDriver.link(gamePadHandler, wheelHandler, wheelController);
         sampleRotationHandler.link(potentiometerSensor, sampleExtensionHandler);
         sampleExtensionHandler.link(sampleRotationHandler);
+        specimenClawHandler.link(specimenRotationHandler);
+        specimenExtensionHandler.link(specimenClawHandler, specimenRotationHandler);
+
         eacDriver.link(gamePadHandler, sampleRotationHandler, sampleExtensionHandler, intakeSpinnerHandler, eacController);
         specimenDriver.link(specimenExtensionHandler, specimenRotationHandler, specimenClawHandler, gamePadHandler, specimenController);
         wheelController.link(gamePadHandler);

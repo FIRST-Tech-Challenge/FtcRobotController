@@ -75,7 +75,7 @@ public abstract class NKNProgramTrue extends OpMode {
     public void doTelemetry() {
         for (NKNComponent component:componentList){
             if (isInTelemetryEnabledList(component)) {
-                component.doTelemetry(telemetry);
+                //component.doTelemetry(telemetry);
             }
         }
         telemetry.update();

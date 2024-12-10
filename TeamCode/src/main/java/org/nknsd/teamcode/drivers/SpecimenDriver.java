@@ -20,28 +20,21 @@ public class SpecimenDriver implements NKNComponent {
     private SpecimenClawHandler specimenClawHandler;
     private SpecimenControlScheme controlScheme;
 
-    GamePadHandler.GamepadButtons rotateForwardButton = GamePadHandler.GamepadButtons.DPAD_UP;
-    GamePadHandler.GamepadButtons rotateBackwardButton = GamePadHandler.GamepadButtons.DPAD_DOWN;
-    GamePadHandler.GamepadButtons extendButton = GamePadHandler.GamepadButtons.RIGHT_BUMPER;
-    GamePadHandler.GamepadButtons retractButton = GamePadHandler.GamepadButtons.LEFT_BUMPER;
-    GamePadHandler.GamepadButtons grabButton = GamePadHandler.GamepadButtons.A;
-    GamePadHandler.GamepadButtons releaseButton = GamePadHandler.GamepadButtons.B;
-
     Runnable specimenExtend = new Runnable() {
         @Override
         public void run() {
-            if (specimenRotationHandler.targetPosition() != SpecimenRotationHandler.SpecimenRotationPositions.FORWARD) {
-                boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
-                int index = specimenExtensionHandler.targetPosition().ordinal();
-                while (!done) {
-                    index++;
+            telemetry.addData("send", "help");
+            boolean done = false; // Repeat until we either hit the end of the array or we reach a valid extension position
+            int index = specimenExtensionHandler.targetPosition().ordinal();
+            while (!done) {
+                index++;
 
-                    if (index >= SpecimenExtensionHandler.SpecimenExtensionPositions.values().length) {
-                        return;
-                    }
-
-                    done = specimenExtensionHandler.gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions.values()[index]);
+                if (index >= SpecimenExtensionHandler.SpecimenExtensionPositions.values().length) {
+                    return;
                 }
+
+                telemetry.addData("I both hate", "and love programming");
+                done = specimenExtensionHandler.gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions.values()[index]);
             }
         }
     };
@@ -108,9 +101,11 @@ public class SpecimenDriver implements NKNComponent {
             specimenClawHandler.setClawPosition(SpecimenClawHandler.ClawPositions.RELEASE);
         }
     };
+    private Telemetry telemetry;
 
     @Override
     public boolean init(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
+        this.telemetry = telemetry;
         return true;
     }
 

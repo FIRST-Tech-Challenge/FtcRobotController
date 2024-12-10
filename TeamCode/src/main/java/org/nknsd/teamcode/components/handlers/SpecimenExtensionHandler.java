@@ -11,12 +11,15 @@ import org.nknsd.teamcode.frameworks.NKNComponent;
 import java.util.concurrent.TimeUnit;
 
 public class SpecimenExtensionHandler implements NKNComponent {
+    private SpecimenClawHandler clawHandler;
+    private SpecimenRotationHandler rotationHandler;
     private final String extenderName = "motorSpecimenExtend";
     private final boolean doInvertMotor = true;
     private final double motorPower = 1;
-    private DcMotor motor;          // extender motor
+    private DcMotor motor;
     int extenderPrevious = 0;
     private double lastResetAttempt = 200;
+    private Telemetry telemetry;
 
     private SpecimenExtensionPositions target = SpecimenExtensionPositions.RESTING;
 
@@ -25,31 +28,15 @@ public class SpecimenExtensionHandler implements NKNComponent {
     }
 
     public enum SpecimenExtensionPositions {
-        RESTING(0) {
-            @Override
-            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
-                return true;
-            }
-        },
-        SPECIMEN_READY(1950){
-            @Override
-            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
-                return (firstClosedPosition != rotationPosition);
-            }
-        },
-        SPECIMEN_CLIP(2300){
-            @Override
-            boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
-                return (firstClosedPosition != rotationPosition);
-            }
-        };
+        RESTING(0),
+        SPECIMEN_READY(1950),
+        SPECIMEN_CLIP(2300);
 
         final int position;
 
         SpecimenExtensionPositions(int position) {
             this.position = position;
         }
-        abstract boolean safeToExtend(SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition);
     }
     
     @Override
@@ -63,6 +50,8 @@ public class SpecimenExtensionHandler implements NKNComponent {
         motor.setPower(motorPower);
         motor.setTargetPosition(SpecimenExtensionPositions.RESTING.position);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        this.telemetry = telemetry;
 
         return true;
     }
@@ -106,23 +95,34 @@ public class SpecimenExtensionHandler implements NKNComponent {
         telemetry.addData("Ext Target Position", motor.getTargetPosition());
         telemetry.addData("Ext State", target.name());
     }
-    public boolean gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions specimenExtensionPosition, SpecimenRotationHandler.SpecimenRotationPositions firstClosedPosition, SpecimenRotationHandler.SpecimenRotationPositions rotationPosition) {
-        if(specimenExtensionPosition.safeToExtend(firstClosedPosition, rotationPosition)) {
+
+    // There's a return boolean here because it's a copy of the other extension handler's code.
+    // It currently isn't used, but if we want to have skippable extensionPositions values we'll need it
+    public boolean gotoPosition(SpecimenExtensionHandler.SpecimenExtensionPositions specimenExtensionPosition) {
+        // This code sucks. When I eventually get around to fixing things, FIX THIS.
+        // God I am way too busy
+        if (clawHandler.firstClosedPosition == null) {
             motor.setTargetPosition(specimenExtensionPosition.position);
             target = specimenExtensionPosition;
-
+            telemetry.addData("Extension", "Null Success");
             return true;
+
+        } else if (clawHandler.firstClosedPosition != rotationHandler.targetPosition()) {
+            motor.setTargetPosition(specimenExtensionPosition.position);
+            target = specimenExtensionPosition;
+            telemetry.addData("Extension", "Normal Success");
+            return true;
+
         } else {
+            telemetry.addData("Extension", "!!F A I L U R E!!");
             return false;
-        }
-    }
-    public void resetEncoder() {
-        if (target == SpecimenExtensionPositions.RESTING) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
     public SpecimenExtensionPositions targetPosition() {
         return target;
+    }
+
+    public void link(SpecimenClawHandler clawHandler, SpecimenRotationHandler rotationHandler) {
+        this.clawHandler = clawHandler; this.rotationHandler = rotationHandler;
     }
 }

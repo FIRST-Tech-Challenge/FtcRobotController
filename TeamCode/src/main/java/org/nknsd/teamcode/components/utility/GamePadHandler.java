@@ -26,17 +26,19 @@ public class GamePadHandler implements NKNComponent {
     private void iterateListeners() {
 //        telemetry.addData("Iterate Triggered", "Yes");
         for (EventPair eventListener : eventListeners2) {
-//            telemetry.addData("Event Checked", eventListener.name);
+            telemetry.addData("Event Checked", eventListener.name);
             try {
                 if (eventListener.listener.call()) {
                     eventListener.event.run();
-//                    telemetry.addData("Event run", eventListener.name);
+                    telemetry.addData("Event run", eventListener.name);
                 }
             } catch (Exception e) {
                 telemetry.addData("Caught an exception!! REALLY BAD!! GET DILLON!! Event Name", eventListener.name);
                 telemetry.addData("Error", e);
             }
         }
+
+        telemetry.update();
     }
 
     @Override
