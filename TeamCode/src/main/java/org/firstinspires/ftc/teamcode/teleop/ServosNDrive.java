@@ -194,12 +194,12 @@ public class ServosNDrive extends LinearOpMode {
                 if(intakeSlide1.getPosition() == Values.slide1out){
                     slidesIn();
                 }
-                else if(intakeSlide1.getPosition() == Values.slide1in){
+                else if(intakeSlide1.getPosition() == Values.slide1out){
                     slidesOut();
                 }
-                else{
-                    slidesIn();
-                }
+                //else{
+                //    slidesIn();
+                //}
             }
             if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
                 slideServo(true);
@@ -213,36 +213,36 @@ public class ServosNDrive extends LinearOpMode {
                 if(intakeClaw.getPosition() == Values.intakeClawOpen){
                     intakeClaw.setPosition(Values.intakeclawClose);
                 }
-                else if (intakeClaw.getPosition() == Values.intakeclawClose) {
+                else if (intakeClaw.getPosition() != Values.intakeClawOpen) {
                     intakeClaw.setPosition(Values.intakeClawOpen);
                 }
-                else{
-                    intakeClaw.setPosition(Values.intakeClawOpen);
-                }
+               // else{
+               //     intakeClaw.setPosition(Values.intakeClawOpen);
+               // }
             }
             //intake wrist
             if (currentGamepad1.square && !previousGamepad1.square){
                 if(wrist.getPosition() == Values.wristUp) {
                     wrist.setPosition(Values.wristDown);
                 }
-                else if (wrist.getPosition() == Values.wristDown) {
+                else if (wrist.getPosition() != Values.wristUp) {
                     wrist.setPosition(Values.wristUp);
                 }
-                else{
-                    wrist.setPosition(Values.wristDown);
-                }
+                //else{
+                //    wrist.setPosition(Values.wristDown);
+                //}
             }
             //intake elbow
             if (currentGamepad1.cross && !previousGamepad1.cross){
                 if(intakeElbow.getPosition() == Values.intakeElbowUp) {
                     intakeElbow.setPosition(Values.intakeElbowDown);
                 }
-                else if (intakeElbow.getPosition() == Values.intakeElbowDown) {
+                else if (intakeElbow.getPosition() != Values.intakeElbowUp) {
                     intakeElbow.setPosition(Values.intakeElbowUp);
                 }
-                else{
-                    intakeElbow.setPosition(Values.intakeElbowUp);
-                }
+                //else{
+                //    intakeElbow.setPosition(Values.intakeElbowUp);
+                //}
             }
             //outtake
             if (currentGamepad1.triangle && !previousGamepad1.triangle){
