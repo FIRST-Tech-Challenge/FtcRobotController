@@ -269,7 +269,7 @@ public class ServosNDrive extends LinearOpMode {
             telemetry.addData("Intake Claw (circle)",  "%.02f", intakeClaw.getPosition());
             telemetry.addData("Intake pitch angle (square)",  "%.02f", wrist.getPosition());
             telemetry.addData("Intake big rotate (cross)",  "%.02f", intakeElbow.getPosition());
-            telemetry.addLine("outake stuff is triangle");
+            telemetry.addData("outake stuff is triangle", "%.02f",outtakeElbow.getPosition(), outtakeClaw.getPosition());
             telemetry.addData("slides servos (dpad up, or leftNright bumpy)",  "%.02f, %.02f", intakeSlide1.getPosition(),intakeSlide2.getPosition());
             telemetry.addData("motor position", outtakeSlide1.getCurrentPosition());
             telemetry.update();
