@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 @Config
 @TeleOp(name = "PrimaryOpMode")
 public class PrimaryOpMode extends LinearOpMode {
+
 
     public static class Params {
         public double speedMult = 1;
@@ -34,6 +36,9 @@ public class PrimaryOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+
+        CRServo rightServo = hardwareMap.get(CRServo.class, "rightServo");
+        CRServo leftServo = hardwareMap.get(CRServo.class, "leftServo");
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
@@ -165,6 +170,20 @@ public class PrimaryOpMode extends LinearOpMode {
             else
                 elevator.ChangePower(0);
 
+            boolean isClawDown = false;
+
+            if(gamepad1.b){
+                if(isClawDown){
+                    setClawPower(0.5f, rightServo, leftServo);
+                    isClawDown = !isClawDown;
+                }
+                else{
+                    setClawPower(-0.5f, rightServo,leftServo);
+                    isClawDown = !isClawDown;
+                }
+            }
+
+
 
             /* ##################################################
                      Applying the Calculations to the Motors
@@ -198,7 +217,10 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.update();
         }
     }
-
+    public void setClawPower(float power, CRServo rightServo, CRServo leftServo){
+        rightServo.setPower(power);
+        leftServo.setPower(power);
+    }
     // ChatGPT says:
     // -------------
     /**
@@ -216,4 +238,6 @@ public class PrimaryOpMode extends LinearOpMode {
         }
         return previousAngle + delta;
     }
+
+
 }
