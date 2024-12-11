@@ -68,6 +68,13 @@ public class teleop extends OpMode {
 
     }
 
+    // Driver 2 Controls:
+    // a - Clamp intake claw fully
+    // x - Intake to outtake macro
+    // leftstick up and down - move slides up and down respectively
+    // rightstick up and down - move slides up and down respectively
+    // b - move outtake to transfer pos
+
     ////////////////////////////////////////////////////////////////////////////////
     @Override
     public void loop() {
@@ -89,6 +96,7 @@ public class teleop extends OpMode {
         }
         else {
             mechanisms.UpMacroAndTransfer();
+            mechanisms.outtakeToTransfer();
             mechanisms.setOutTakeLift();
             mechanisms.setInTakeLift();
             mechanisms.setInTakeClawGrab();

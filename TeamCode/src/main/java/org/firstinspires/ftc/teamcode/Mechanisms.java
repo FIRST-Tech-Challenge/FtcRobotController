@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Mechanisms {
 
     ElapsedTime totalTime = new ElapsedTime();
+    ElapsedTime outtakeTransferPos = new ElapsedTime();
 
     // outake lift right
     DcMotor outTakeLiftRight;
@@ -133,6 +134,28 @@ public class Mechanisms {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
+    public void outtakeToTransfer() {
+        if (master.gamepad2.b) {
+            outTakeFlip.setPosition(1); // tbd
+            if (outtakeTransferPos.milliseconds() > 300) {
+                outTakePivotLeft.setPosition(1); // tbd
+                outtakeTransferPos.reset();
+            }
+            if (outtakeTransferPos.milliseconds() > 100) {
+                outTakeFlip.setPosition(1); // tbd
+                outtakeTransferPos.reset();
+            }
+            if (outtakeTransferPos.milliseconds() > 100) {
+                outTakeClaw.setPosition(1); // tbd
+                outtakeTransferPos.reset();
+            }
+            if (outtakeTransferPos.milliseconds() > 100) {
+                inTakeClaw.setPosition(OPEN_IT_POS);
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+
     public void setOutTakeFlip(){
         if (master.gamepad2.left_trigger > .1)
             outTakePivotRight.setPosition(DOWN_OT_FLIP_POS);
@@ -160,10 +183,11 @@ public class Mechanisms {
             ITMacroState = "clawup";
             inTakeAndUpStateTime.reset();
         }
+        outTakeClaw.setPosition(OPEN_OT_POS);
         if (ITMacroState.equals("clawup"))
         {
             if (inTakeAndUpStateTime.milliseconds() > 800) {
-                ITMacroState = "moveToTransfer";
+                ITMacroState = "intakeMoveToTransfer";
                 inTakeAndUpStateTime.reset();
             }
             if (intakeToTransfer.milliseconds() > 200)
@@ -173,7 +197,7 @@ public class Mechanisms {
             intakePivotL.setPosition(MID_IT_FLIP_POS);
             inTakeRotator.setPosition(PERP_IT_POS);
         }
-        if (ITMacroState.equals("moveToTransfer"))
+        if (ITMacroState.equals("intakeMoveToTransfer"))
         {
             if (inTakeAndUpStateTime.milliseconds() > 300) {
                 ITMacroState = "outtaketransferpos";
@@ -182,15 +206,22 @@ public class Mechanisms {
             inTakeClaw.setPosition(CLOSED_IT_POS);
             intakePivotL.setPosition(UP_IT_FLIP_POS);
         }
-        /*
         if (ITMacroState.equals("outtaketransferpos"))
         {
             if (inTakeAndUpStateTime.milliseconds() > 300) {
                 ITMacroState = "outtakecloseclaw";
                 inTakeAndUpStateTime.reset();
             }
-            outTakeFlip.setPosition(//idk);
-            outTakePivotLeft.setPosition(//idk);
+            if (inTakeAndUpStateTime.milliseconds() > 300)
+            {
+                outTakeFlip.setPosition(1); //tbd
+                inTakeAndUpStateTime.reset();
+            }
+            if (inTakeAndUpStateTime.milliseconds() > 200)
+            {
+                outTakePivotLeft.setPosition(1); //tbd
+                inTakeAndUpStateTime.reset();
+            }
         }
         if (ITMacroState.equals("outtakecloseclaw"))
         {
@@ -206,9 +237,16 @@ public class Mechanisms {
             if (inTakeAndUpStateTime.milliseconds() > 300) {
                 inTakeAndUpStateTime.reset();
             }
-            outTakeFlip.setPosition(//idk);
-            outTakePivotLeft.setPosition(//idk);
-        }*/
+            if (inTakeAndUpStateTime.milliseconds() > 300)
+            {
+                outTakeFlip.setPosition(1); //tbd
+                inTakeAndUpStateTime.reset();
+            }
+            if (inTakeAndUpStateTime.milliseconds() > 300)
+            {
+                outTakePivotLeft.setPosition(1); //tbd
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +307,7 @@ public class Mechanisms {
         inTakeLift.setPower(master.gamepad2.right_stick_y);
         if (master.gamepad2.left_trigger > .1)
         {
-            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if (master.gamepad2.right_trigger > .1)
         {
