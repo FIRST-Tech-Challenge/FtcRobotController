@@ -34,6 +34,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.GoBuilda.GoBuildaDriveToPoint;
+import org.firstinspires.ftc.teamcode.GoBuilda.GoBuildaPinpointDriver;
+
+import java.util.Locale;
+
 /*
  * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
  * Please read the explanations in that Sample about how to use this class definition.
@@ -53,34 +61,37 @@ import com.qualcomm.robotcore.util.Range;
  *
  */
 
-public class RobotHardware {
+public class TT_RobotHardware {
 
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private DcMotor leftFrontDrive   = null;
-    private DcMotor leftBackDrive   = null;
-    private DcMotor rightFrontDrive   = null;
-    private DcMotor rightBackDrive   = null;
+    private DcMotor leftFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor rightBackDrive = null;
 
+    public GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    public GoBuildaDriveToPoint nav; //OpMode member for the point-to-point navigation class
     private DcMotor leftLift = null;  //  Used to control the left back drive wheel
     private DcMotor rightLift = null;  //  Used to control the left back drive wheel
 
+    private ScaledServo   extensionServo = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
+    public static final double MID_SERVO = 0.5;
+    public static final double HAND_SPEED = 0.02;  // sets rate to move servo
+    public static final double ARM_UP_POWER = 0.45;
+    public static final double ARM_DOWN_POWER = -0.45;
     public int liftHeight = 0;
-    public int liftHeightMax = 100;
+    public int liftHeightMax = 1500;
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
     public double effectivePower = 0;
     public double liftPowerMax = .5;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
-    public RobotHardware(LinearOpMode opmode) {
+    public TT_RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
@@ -90,20 +101,35 @@ public class RobotHardware {
      * <p>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
-    public void init()    {
+    public void init() {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
-        leftFrontDrive  = myOpMode.hardwareMap.get(DcMotor.class, "Left Front");
-        leftBackDrive  = myOpMode.hardwareMap.get(DcMotor.class, "Left Back");
+        leftFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "Left Front");
+        leftBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "Left Back");
         rightFrontDrive = myOpMode.hardwareMap.get(DcMotor.class, "Right Front");
         rightBackDrive = myOpMode.hardwareMap.get(DcMotor.class, "Right Back");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftLift = myOpMode.hardwareMap.get(DcMotor.class, "left lift");
         rightLift = myOpMode.hardwareMap.get(DcMotor.class, "right lift");
@@ -112,33 +138,48 @@ public class RobotHardware {
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift.setTargetPosition(0);
-        leftLift.setTargetPosition(0);
+        liftHeight = leftLift.getCurrentPosition();
+        rightLift.setTargetPosition(liftHeight);
+        leftLift.setTargetPosition(liftHeight);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        odo = myOpMode.hardwareMap.get(GoBuildaPinpointDriver.class, "odo");
+        odo.setOffsets(-115.0, -160.0); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setEncoderResolution(GoBuildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBuildaPinpointDriver.EncoderDirection.FORWARD, GoBuildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+
+        nav = new GoBuildaDriveToPoint(myOpMode);
+        nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
+
+        extensionServo = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension",0.0, 1.0);
+
         myOpMode.telemetry.addData(">", "Hardware Initialized");
+        myOpMode.telemetry.addData("X offset", odo.getXOffset());
+        myOpMode.telemetry.addData("Y offset", odo.getYOffset());
+        myOpMode.telemetry.addData("Device Scalar", odo.getYawScalar());
         myOpMode.telemetry.update();
     }
 
     public void drivelift() {
-        int liftHeightMax = 2200;
-        int liftHeightMin = 25;
-        int liftSafetyThreshold = 500;
-        double liftPowerMax = 1;
-        int liftHeight;
-        double effectivePower = 0;
 
 
+        if (myOpMode.gamepad1.a) {
+            raiseLift();
+        } else if (myOpMode.gamepad1.b) {
+            lowerLift();
+        }
     }
+
     // Lift
     public void raiseLift() {
-        liftHeight = liftHeight + 50;
+        liftHeight = liftHeight + 5;
         liftHeight = setLiftPosition(liftHeight);
     }
 
     public void lowerLift() {
-        liftHeight = liftHeight - 50;
+        liftHeight = liftHeight - 5;
         liftHeight = setLiftPosition(liftHeight);
     }
 
@@ -173,24 +214,29 @@ public class RobotHardware {
         rightLift.setPower(effectivePower);
         leftLift.setTargetPosition(position);
         rightLift.setTargetPosition(position);
+
+        myOpMode.telemetry.addData("Lift", "Lift Height: %4d",liftHeight);
+
         return position;
 
     }
 
-        public void driveRobot() {
+    public void driveRobot() {
+
+        odo.update();
         double max;
 
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = -myOpMode.gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral =  myOpMode.gamepad1.left_stick_x;
-        double yaw     =  myOpMode.gamepad1.right_stick_x;
+        double axial = -myOpMode.gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = myOpMode.gamepad1.left_stick_x;
+        double yaw = myOpMode.gamepad1.right_stick_x;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = axial + lateral + yaw;
+        double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
@@ -198,18 +244,22 @@ public class RobotHardware {
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
-        max *= 2.0;
+        max *= 1.5;
 
         if (max > 1.0) {
-            leftFrontPower  /= max;
+            leftFrontPower /= max;
             rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
         }
-        setDrivePower(leftFrontPower,rightFrontPower,  leftBackPower,  rightBackPower);
+        setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+        myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+        Pose2D pos = odo.getPosition();
+        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+        myOpMode.telemetry.addData("Position", data);
     }
 
-    public void setDrivePower(double leftFront, double rightFront,double leftBack, double rightBack) {
+    public void setDrivePower(double leftFront, double rightFront, double leftBack, double rightBack) {
         // Output the values to the motor drives.
         leftFrontDrive.setPower(leftFront);
         rightFrontDrive.setPower(rightFront);
@@ -217,21 +267,18 @@ public class RobotHardware {
         rightBackDrive.setPower(rightBack);
     }
 
-    public void displayTelemetry()
-    {
+    public void setDrivePower() {
+        // Output the values to the motor drives.
+        leftFrontDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_FRONT));
+        rightFrontDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_FRONT));
+        leftBackDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_BACK));
+        rightBackDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_BACK));
+    }
+
+    public void displayTelemetry() {
         try {
-            //   Drive Train;  LF #### LB #### RF #### RB ####
-            //   Lift:         L Enc ### L Pow ###  R Enc ### R Pow ###
-
-            myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition() , leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            myOpMode.telemetry.addData("lift", "Hardware Initialized");
-            //myOpMode.telemetry.addData(servo.name, servo.getTelemetry);
             myOpMode.telemetry.update();
-
-        }
-        catch(Exception ex) {
-
-        }
+        } catch (Exception ex) {        }
     }
 
     /**
@@ -240,7 +287,7 @@ public class RobotHardware {
      * @param power driving power (-1.0 to 1.0)
      */
     //public void setArmPower(double power) {
-      //  armMotor.setPower(power);
+    //  armMotor.setPower(power);
     //}
 
     /**
@@ -250,7 +297,7 @@ public class RobotHardware {
      */
     public void setHandPositions(double offset) {
         offset = Range.clip(offset, -0.5, 0.5);
-      //  leftHand.setPosition(MID_SERVO + offset);
-      //  rightHand.setPosition(MID_SERVO - offset);
+        //  leftHand.setPosition(MID_SERVO + offset);
+        //  rightHand.setPosition(MID_SERVO - offset);
     }
 }
