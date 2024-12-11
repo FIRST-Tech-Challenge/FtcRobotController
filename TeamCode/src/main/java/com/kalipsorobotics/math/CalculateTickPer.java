@@ -3,11 +3,11 @@ package com.kalipsorobotics.math;
 public class CalculateTickPer {
 
     static double ticksPerRevolutionOdometry = 2000;
-    static double ticksPerRevolutionLS = 145.1;
+    static double ticksPerRevolutionLS = 145.1 * 2;
     static double lsCircumfMm = 36 * Math.PI;
     static double odoCircumfMm = 48 * Math.PI;
 
-    static final public double MAX_RANGE_LS_TICKS = 2050;
+    static final public double MAX_RANGE_LS_TICKS = 2050 * 2;
     //put real values
     final public static double MAX_RANGE_INTAKE_TICKS = degToTicksIntakeLS(60);
     static public double MIN_RANGE_LS_TICKS = mmToTicksLS(-10);

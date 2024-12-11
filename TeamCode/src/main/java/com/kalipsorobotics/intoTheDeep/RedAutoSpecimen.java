@@ -49,7 +49,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-785, 300, 0);
+        moveToSpecimenBar.addPoint(-745, 300, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoSpecimen.addAction(moveToSpecimenBar);
 
@@ -57,7 +57,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         specimenHangReady1.setName("hangSpecimenReady1");
         redAutoSpecimen.addAction(specimenHangReady1);
 
-        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 250);
+        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 225);
         lowerSlidesHalf1.setName("lowerSlidesHalf1");
         lowerSlidesHalf1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(lowerSlidesHalf1);
@@ -126,11 +126,11 @@ public class RedAutoSpecimen extends LinearOpMode {
         //===============end of third specimen===========
 
         //===============start of fourth specimen==============
-        WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 525);
-        wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
-        wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
-        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
+//        WallToBarHangRoundTrip wallToBarHangRoundTrip4 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
+//                outtake, 525);
+//        wallToBarHangRoundTrip4.setName("wallToBarHangRoundTrip4");
+//        wallToBarHangRoundTrip4.setDependentActions(wallToBarHangRoundTrip3);
+//        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
         //================end of specimen 4================
 
 

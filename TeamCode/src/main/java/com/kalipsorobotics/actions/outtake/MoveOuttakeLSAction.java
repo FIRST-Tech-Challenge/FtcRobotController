@@ -20,17 +20,18 @@ public class MoveOuttakeLSAction extends Action {
         Down, SPECIMEN, BASKET
     }
 
-
     Outtake outtake;
 
     private static double globalLinearSlideMaintainTicks = 0;
     DcMotor linearSlide1, linearSlide2;
-    final double ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
+    private double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
     final double targetTicks;
     private double currentTicks;
+    private static double overridePower = 0;
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
-        double P_CONSTANT = (1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 5.0)));
+        ERROR_TOLERANCE_TICKS =  CalculateTickPer.mmToTicksLS(5);
+        double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -42,8 +43,9 @@ public class MoveOuttakeLSAction extends Action {
         this.dependentActions.add(new DoneStateAction());
     }
 
-    public MoveOuttakeLSAction(Outtake outtake, double targetMM, double power) {
-        double P_CONSTANT = power;
+    public MoveOuttakeLSAction(Outtake outtake, double targetMM, double p) {
+        ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
+        double P_CONSTANT = p;
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -143,6 +145,9 @@ public class MoveOuttakeLSAction extends Action {
                         "power=%.3f",
                 targetErrorTicks, ERROR_TOLERANCE_TICKS, currentTargetTicks,
                 currentTicks, power));
+        if (overridePower != 0) {
+            power = overridePower;
+        }
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
     }
@@ -167,6 +172,10 @@ public class MoveOuttakeLSAction extends Action {
 
     public void setI() {
         pidOuttakeLS.setErrorIntegral(0);
+    }
+
+    public static void setOverridePower(double power) {
+        overridePower = power;
     }
 
 }

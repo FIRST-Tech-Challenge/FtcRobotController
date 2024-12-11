@@ -19,6 +19,12 @@ public class Outtake {
     public KServo hangHook1;
     public KServo hangHook2;
 
+    public static final double HOOK1_HANG_POS = 0.487;
+    public static final double HOOK2_HANG_POS = 0.75;
+
+    public static final double HOOK1_DOWN_POS = 0.555;
+    public static final double HOOK2_DOWN_POS = 0.35;
+
     public Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         Log.d("Outtake_LS", "init Outtake");
@@ -47,8 +53,8 @@ public class Outtake {
         linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearSlide1.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearSlide2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public DcMotor getLinearSlide1() {

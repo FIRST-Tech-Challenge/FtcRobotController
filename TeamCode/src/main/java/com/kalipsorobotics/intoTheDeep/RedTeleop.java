@@ -293,8 +293,11 @@ public class RedTeleop extends LinearOpMode {
         boolean retracted = true;
         boolean hangPressed = false;
         boolean rightTriggerPressed = false;
+        boolean leftTriggerPressed = false;
+        boolean gp2DPadPressed = false;
 
-        double hangHookPos = 0.5;
+        double hangStartPosition;
+
 
         //CHANGE ACCORDING TO ALLIANCE
 
@@ -308,6 +311,9 @@ public class RedTeleop extends LinearOpMode {
 
         outtakeClawAction.close();
         outtakePivotAction.moveWall();
+
+        outtake.getHangHook1().setPosition(Outtake.HOOK1_DOWN_POS);
+        outtake.getHangHook2().setPosition(Outtake.HOOK2_DOWN_POS);
 
         //Pigeon
         outtakePigeonAction.setPosition(OuttakePigeonAction.OUTTAKE_PIGEON_IN_POS);
@@ -365,11 +371,11 @@ public class RedTeleop extends LinearOpMode {
 
             }
 
-//            if(gamepad1.left_bumper && gamepad1.right_bumper) {
-//                hangPressed = true;
-//                autoHangAction = new AutoHangAction(outtake);
-//                //hang initiated
-//            }
+            if(gamepad1.left_bumper && gamepad1.right_bumper) {
+                hangPressed = true;
+                autoHangAction = new AutoHangAction(outtake);
+                //hang initiated
+            }
 
             if (hangPressed) {
                 if (autoHangAction.getIsDone()) {
@@ -381,30 +387,47 @@ public class RedTeleop extends LinearOpMode {
                 }
             }
 
-            if(gamepad1.left_bumper) {
-                hangHookPos += 0.01;
+            if(gamepad1.x) {
+                //MoveOuttakeLSAction.setOverridePower(-0.4);
+                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
+            } else {
+                MoveOuttakeLSAction.setOverridePower(0);
             }
-
-            if(gamepad1.right_bumper) {
-                hangHookPos -= 0.01;
-            }
-
-            outtake.getHangHook1().setPosition(hangHookPos);
-            telemetry.addData("hanghook pos", hangHookPos);
-            telemetry.update();
 
             if (gamepad1.dpad_down) {
-                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -1);
+                if (!gp2DPadPressed) {
+                    outtake.getHangHook1().setPosition(0.5);
+                    outtake.getHangHook2().setPosition(0.65);
+                    gp2DPadPressed = true;
+                }
+
+
+                //MoveOuttakeLSAction.setOverridePower(-0.85);
+                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
+
+            } else {
+                MoveOuttakeLSAction.setOverridePower(0);
             }
 
             if(gamepad1.right_trigger == 1) {
                 rightTriggerPressed = true;
             }
+            if(gamepad1.left_trigger == 1) {
+                leftTriggerPressed = true;
+            }
 
             if(rightTriggerPressed) {
-                outtake.getHangHook1().setPosition(0.5);
-                outtake.getHangHook2().setPosition(0.95);
+                outtake.getHangHook1().setPosition(Outtake.HOOK1_HANG_POS);
+                outtake.getHangHook2().setPosition(Outtake.HOOK2_HANG_POS);
+                rightTriggerPressed = false;
             }
+
+            if(leftTriggerPressed) {
+                outtake.getHangHook1().setPosition(Outtake.HOOK1_DOWN_POS);
+                outtake.getHangHook2().setPosition(Outtake.HOOK2_DOWN_POS);
+                leftTriggerPressed = false;
+            }
+
 
             //================OUTTAKE================
 

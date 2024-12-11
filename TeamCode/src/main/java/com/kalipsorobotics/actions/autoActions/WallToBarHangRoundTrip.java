@@ -22,7 +22,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         PurePursuitAction moveWallToBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveWallToBar.setName("moveWallToBar");
         moveWallToBar.setDependentActions(waitAtWall);
-        moveWallToBar.addPoint(-770, hangPosY, 0);
+        moveWallToBar.addPoint(-745, hangPosY, 0);
         this.addAction(moveWallToBar);
 
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
