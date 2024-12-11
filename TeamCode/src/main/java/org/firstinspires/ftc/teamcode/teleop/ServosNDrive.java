@@ -107,6 +107,8 @@ public class ServosNDrive extends LinearOpMode {
 
         outtakeElbow = hardwareMap.get(Servo.class, "6");
         outtakeClaw = hardwareMap.get(Servo.class, "7");
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
 
         clawPivot.setPosition(Values.MID_SERVO);
         wrist.setPosition(Values.MID_SERVO);

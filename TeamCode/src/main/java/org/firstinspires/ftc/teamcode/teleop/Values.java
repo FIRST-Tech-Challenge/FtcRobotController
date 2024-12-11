@@ -4,13 +4,13 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Values {
     public static double intakeClawOpen = .7;
-    public static double intakeclawClose = 1;
+    public static double intakeclawClose = .9;
     public static double clawPivotPos = .5;
 
     public static double wristDown = .25;
     public static double wristUp = .6;
 
-    public static double intakeElbowDown = .7;
+    public static double intakeElbowDown = 1;
     public static double intakeElbowUp = .2;
 
     public static double outtakeElbowDown = .7;
