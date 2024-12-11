@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,6 +40,7 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
+    public LazyImu imu;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -55,6 +58,8 @@ public class BaseRobot {
         this.input = input;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
+        this.imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Initialize and configure the motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
         frontRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
@@ -134,6 +139,7 @@ public class BaseRobot {
      * Handles boost/brake modifiers and applies power to drive system
      */
     public void gamepadPrimary() {
+
         DynamicInput.Movements directions = input.getMovements();
         DynamicInput.Actions actions = input.getActions();
 
@@ -180,7 +186,14 @@ public class BaseRobot {
             }
         }
 
-        // TODO new controller actions for outtake system, also automate everything
+        if (Settings.Deploy.OUTTAKE) {
+            if (contextualActions.extendHorizontal) {
+                outtake.verticalSlide.extend();
+            }
+            if (contextualActions.retractHorizontal) {
+                outtake.verticalSlide.retract();
+            }
+        }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
             DynamicInput.Actions actions = input.getActions();

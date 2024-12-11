@@ -249,8 +249,8 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendExtensor = GamepadButton.B;
-        public GamepadButton retractExtensor = GamepadButton.X;
+        public GamepadButton extendHorizontal = GamepadButton.B;
+        public GamepadButton retractHorizontal = GamepadButton.X;
         public final GamepadButton groundExtensor = GamepadButton.A;
         public final GamepadButton ceilingExtensor = GamepadButton.Y;
 
@@ -393,8 +393,8 @@ public class Settings {
             }, new DefaultGamepadSettings() {
                 {
                     // Customize sub gamepad settings
-                    buttonMapping.extendExtensor = GamepadButton.Y;
-                    buttonMapping.retractExtensor = GamepadButton.A;
+                    buttonMapping.extendHorizontal = GamepadButton.Y;
+                    buttonMapping.retractHorizontal = GamepadButton.A;
                     trigger_threshold = 0.2;
                 }
             });

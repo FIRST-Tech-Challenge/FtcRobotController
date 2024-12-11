@@ -92,7 +92,7 @@ public class DynamicInput {
     }
 
     public static class Actions {
-        public final boolean extendExtensor, retractExtensor, groundExtensor, ceilingExtensor, extensorBusy;
+        public final boolean extendHorizontal, retractHorizontal, groundExtensor, ceilingExtensor, extensorBusy;
         public final boolean intakeIn, intakeOut, intakeStop;
         public final boolean wristUp, wristDown;
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorCeiling;
@@ -101,11 +101,11 @@ public class DynamicInput {
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
-            this.extendExtensor = getButtonState(subCtrl, subSettings.buttonMapping.extendExtensor);
-            this.retractExtensor = getButtonState(subCtrl, subSettings.buttonMapping.retractExtensor);
+            this.extendHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.extendHorizontal);
+            this.retractHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.retractHorizontal);
             this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
             this.ceilingExtensor = getButtonState(subCtrl, subSettings.buttonMapping.ceilingExtensor);
-            this.extensorBusy = extendExtensor || retractExtensor || groundExtensor;
+            this.extensorBusy = extendHorizontal || retractHorizontal || groundExtensor;
             this.intakeIn = getButtonState(subCtrl, subSettings.buttonMapping.intakeIn);
             this.intakeOut = getButtonState(subCtrl, subSettings.buttonMapping.intakeOut);
             this.intakeStop = getButtonState(subCtrl, subSettings.buttonMapping.intakeStop);
@@ -137,8 +137,8 @@ public class DynamicInput {
                 boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevCeiling, boolean prevWrist) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
 
-            this.justExtendExtensor = extendExtensor && !prevExtend;
-            this.justRetractExtensor = retractExtensor && !prevRetract;
+            this.justExtendExtensor = extendHorizontal && !prevExtend;
+            this.justRetractExtensor = retractHorizontal && !prevRetract;
             this.justGroundExtensor = groundExtensor && !prevGround;
             this.justCeilingExtensor = ceilingExtensor && !prevCeiling;
             this.justWristUp = wristUp && !prevWrist;
@@ -161,8 +161,8 @@ public class DynamicInput {
                 prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevWrist);
 
         // Update previous states
-        prevExtendExtensor = actions.extendExtensor;
-        prevRetractExtensor = actions.retractExtensor;
+        prevExtendExtensor = actions.extendHorizontal;
+        prevRetractExtensor = actions.retractHorizontal;
         prevGroundExtensor = actions.groundExtensor;
         prevCeilingExtensor = actions.ceilingExtensor;
         prevWrist = actions.wristUp;
