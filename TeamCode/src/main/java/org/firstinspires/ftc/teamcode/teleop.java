@@ -88,7 +88,7 @@ public class teleop extends OpMode {
             //mechanisms.servotesting();
         }
         else {
-            mechanisms.inTakeAndUpMacro();
+            mechanisms.UpMacroAndTransfer();
             mechanisms.setOutTakeLift();
             mechanisms.setInTakeLift();
             mechanisms.setInTakeClawGrab();
