@@ -37,8 +37,9 @@ public class PrimaryOpMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        CRServo rightServo = hardwareMap.get(CRServo.class, "rightServo");
-        CRServo leftServo = hardwareMap.get(CRServo.class, "leftServo");
+        CRServo rightClawArmServo = hardwareMap.get(CRServo.class, "rightClawArmServo");
+        CRServo leftClawArmServo = hardwareMap.get(CRServo.class, "leftClawArmServo");
+        CRServo clawServo = hardwareMap.get(CRServo.class, "clawServo");
         // Declare our motors
         // Make sure your ID's match your configuration
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
@@ -170,18 +171,31 @@ public class PrimaryOpMode extends LinearOpMode {
             else
                 elevator.ChangePower(0);
 
-            boolean isClawDown = false;
+            boolean isClawArmDown = false;
+            boolean isClawClosed = false;
 
             if(gamepad1.b){
-                if(isClawDown){
-                    setClawPower(0.5f, rightServo, leftServo);
-                    isClawDown = !isClawDown;
+                if(isClawArmDown){
+                    setClawArmPower(0.5f, rightClawArmServo, leftClawArmServo);
+                    isClawArmDown = !isClawArmDown;
                 }
                 else{
-                    setClawPower(-0.5f, rightServo,leftServo);
-                    isClawDown = !isClawDown;
+                    setClawArmPower(-0.5f, rightClawArmServo,leftClawArmServo);
+                    isClawArmDown = !isClawArmDown;
                 }
             }
+
+            if(gamepad1.a){
+                if(!isClawClosed){
+                    setClawPower(0.5f, clawServo);
+                    isClawClosed = !isClawClosed;
+                }
+                else{
+                    setClawPower(-0.5f, clawServo);
+                    isClawClosed = !isClawClosed;
+                }
+            }
+
 
 
 
@@ -217,10 +231,11 @@ public class PrimaryOpMode extends LinearOpMode {
             telemetry.update();
         }
     }
-    public void setClawPower(float power, CRServo rightServo, CRServo leftServo){
+    public void setClawArmPower(float power, CRServo rightServo, CRServo leftServo){
         rightServo.setPower(power);
         leftServo.setPower(power);
     }
+    public void setClawPower(float power, CRServo clawServo){ clawServo.setPower(power); }
     // ChatGPT says:
     // -------------
     /**
