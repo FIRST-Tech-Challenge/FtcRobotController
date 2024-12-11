@@ -20,7 +20,7 @@ public class PivotBot extends OdometryBot {
     public final int minumimPivotPos = -100;
     private final int searchPivotPos = 250; // tested
     private final int pickupSpecimenPivotPos = 130; // tested
-    private final int pickupSamplePivotPos = 120; // tested
+    private final int pickupSamplePivotPos = 60; // tested
     private final int pickupUpPivotPos = 400;
     public final int specimenHighPivotPos = 1196;
     public final int specimenLowPivotPos = 750;
@@ -37,7 +37,7 @@ public class PivotBot extends OdometryBot {
     public final int maximumSlidePos = 2400;
     public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
-    public final int specimenHighSlidePos = 685;
+    public final int specimenHighSlidePos = 1274;
     public final int specimenLowSlidePos = 800;
     public final int highBasketSlidePos = 2309;
     public final int lowBucketSlidePos = 800;
@@ -165,15 +165,22 @@ public class PivotBot extends OdometryBot {
     public void pivotToSearchPos(){
         pivotTarget = searchPivotPos;
     }
-    public void pivotToPickupPos(boolean isSpecimen){
-        if (isSpecimen){
-            pivotTarget = pickupSpecimenPivotPos;
-        } else {
-            pivotTarget = pickupSamplePivotPos;
-        }
+//    public void pivotToPickupPos(boolean isSpecimen){
+//        if (isSpecimen){
+//            pivotTarget = pickupSpecimenPivotPos;
+//        } else {
+//            pivotTarget = pickupSamplePivotPos;
+//        }
+//    }
+    public void pivotToPickupPosSpecimen(){
+        pivotTarget = pickupSpecimenPivotPos;
+    }
+    public void pivotToPickupPosSample(){
+        pivotTarget = pickupSamplePivotPos;
     }
     public void pivotToPickupUpPos(){
-        pivotTarget = pickupUpPivotPos;
+        //pivotTarget = pickupUpPivotPos;
+        relatePivotToSlide();
     }
     public void pivotToSpecimenHighPos(){
         pivotTarget = specimenHighPivotPos;

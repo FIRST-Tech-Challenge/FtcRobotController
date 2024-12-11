@@ -90,7 +90,7 @@ public class LimelightTestTeleOps extends LinearOpMode {
             if (gamepad2.b){
                 robot.strafing(-0.1);
             }
-            if (gamepad2.left_bumper){
+            /*if (gamepad2.left_bumper){
                 robot.pickup(true, true, false, telemetry);
             }
             else if (gamepad2.right_bumper){
@@ -100,7 +100,7 @@ public class LimelightTestTeleOps extends LinearOpMode {
                         gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
                         gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
 
-            }
+            }*/
 //            if (gamepad2.x) {
 //                robot.rotateToVerticalPos();
 //            }
