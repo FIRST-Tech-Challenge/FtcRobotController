@@ -313,6 +313,9 @@ public class OdometryBot extends GyroBot {
         double xTarget = xBlue + distance * CENTIMETER_TO_DRIVING_MOTOR_CONVERSION_RATE;
         driveToCoordinate(xTarget, yBlue, thetaDEG, 500, 0.1, false);
     }
+    public void stopCoordinateDrive(){
+        isCoordinateDriving = false;
+    }
     /**
      * Wait for odometry drive to stop (target reached).
      */
