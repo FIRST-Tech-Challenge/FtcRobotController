@@ -48,25 +48,25 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d outer_sample_pickup_position = new Vector2d(46, 43);
         Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
         double sample_pickup_heading = Math.toRadians(-90);
-        Vector2d inner_sample_pickup_position = new Vector2d(58, 47.5);
+        Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
         double inner_sample_pickup_heading = Math.toRadians(-50);
 
         Action trajectory, wristPickUp1, wristPickUp2, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, grabWait2, closeWait2, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, wristUpWait1, wristUpWait2, wristUpWait3, armUpWait1, armUpWait2, armUpWait3, viperDownWait1, viperDownWait2, viperDownWait3, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2, driveToSample3;
 
 
-        trajectory = ActionBuilder.BlueBasket(drive::actionBuilder);
-
-        driveToClearance = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
-                .build();
-
-        driveToClearance1 = drive.actionBuilder(new Pose2d(outer_sample_pickup_position.x,outer_sample_pickup_position.y,sample_pickup_heading))
-                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
-                .build();
-
-        driveToClearance2 = drive.actionBuilder(new Pose2d(middle_sample_pickup_position.x,middle_sample_pickup_position.y,sample_pickup_heading))
-                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
-                .build();
+//        trajectory = ActionBuilder.BlueBasket(drive::actionBuilder);
+//
+//        driveToClearance = drive.actionBuilder(drive.pose)
+//                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
+//                .build();
+//
+//        driveToClearance1 = drive.actionBuilder(new Pose2d(outer_sample_pickup_position.x,outer_sample_pickup_position.y,sample_pickup_heading))
+//                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
+//                .build();
+//
+//        driveToClearance2 = drive.actionBuilder(new Pose2d(middle_sample_pickup_position.x,middle_sample_pickup_position.y,sample_pickup_heading))
+//                .strafeToLinearHeading(basket_clear_position, basket_clear_heading)
+//                .build();
 
         driveToDrop = drive.actionBuilder(new Pose2d(basket_clear_position.x,basket_clear_position.y,basket_clear_heading))
                 .splineTo(drop_position, drop_heading)
@@ -80,17 +80,17 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .splineTo(drop_position, drop_heading)
                 .build();
 
-        driveToBackAway = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
-                .lineToXConstantHeading(basket_clear_position.x)
-                .build();
+//        driveToBackAway = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
+//                .lineToXConstantHeading(basket_clear_position.x)
+//                .build();
 
-        driveToBackAway1 = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
-                .lineToXConstantHeading(basket_clear_position.x)
-                .build();
+        //driveToBackAway1 = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
+        //        .lineToXConstantHeading(basket_clear_position.x)
+         //       .build();
 
-        driveToBackAway2 = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
-                .lineToXConstantHeading(basket_clear_position.x)
-                .build();
+        //driveToBackAway2 = drive.actionBuilder(new Pose2d(drop_position.x,drop_position.y,drop_heading))
+        //        .lineToXConstantHeading(basket_clear_position.x)
+        //        .build();
 
         driveToSample1 = drive.actionBuilder(new Pose2d(drop_position.x, drop_position.y,drop_heading))
                 .splineTo(outer_sample_pickup_position, sample_pickup_heading)
