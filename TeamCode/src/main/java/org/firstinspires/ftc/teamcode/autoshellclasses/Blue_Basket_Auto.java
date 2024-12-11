@@ -48,8 +48,10 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d outer_sample_pickup_position = new Vector2d(46, 43);
         Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
         double sample_pickup_heading = Math.toRadians(-90);
+        Vector2d inner_sample_pickup_position = new Vector2d(58, 47.5);
+        double inner_sample_pickup_heading = Math.toRadians(-50);
 
-        Action trajectory, wristPickUp1, wristPickUp2, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, wristUpWait1, wristUpWait2, wristUpWait3, armUpWait1, armUpWait2, armUpWait3, viperDownWait1, viperDownWait2, viperDownWait3, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2;
+        Action trajectory, wristPickUp1, wristPickUp2, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, grabWait2, closeWait2, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, wristUpWait1, wristUpWait2, wristUpWait3, armUpWait1, armUpWait2, armUpWait3, viperDownWait1, viperDownWait2, viperDownWait3, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2, driveToSample3;
 
 
         trajectory = ActionBuilder.BlueBasket(drive::actionBuilder);
@@ -90,12 +92,16 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .lineToXConstantHeading(basket_clear_position.x)
                 .build();
 
-        driveToSample1 = drive.actionBuilder(new Pose2d(basket_clear_position.x, drop_position.y,drop_heading))
+        driveToSample1 = drive.actionBuilder(new Pose2d(drop_position.x, drop_position.y,drop_heading))
                 .splineTo(outer_sample_pickup_position, sample_pickup_heading)
                 .build();
 
-        driveToSample2 = drive.actionBuilder(new Pose2d(basket_clear_position.x, drop_position.y,drop_heading))
+        driveToSample2 = drive.actionBuilder(new Pose2d(drop_position.x, drop_position.y,drop_heading))
                 .splineTo(middle_sample_pickup_position, sample_pickup_heading)
+                .build();
+
+        driveToSample3 = drive.actionBuilder(new Pose2d(drop_position.x, drop_position.y,drop_heading))
+                .splineTo(inner_sample_pickup_position, inner_sample_pickup_heading)
                 .build();
 
         viperDownWait1 = drive.actionBuilder(drive.pose)
@@ -166,6 +172,13 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .waitSeconds(.5)
                 .build();
         closeWait1 = drive.actionBuilder(drive.pose)
+                .waitSeconds(.5)
+                .build();
+
+        grabWait2 = drive.actionBuilder(drive.pose)
+                .waitSeconds(.5)
+                .build();
+        closeWait2 = drive.actionBuilder(drive.pose)
                 .waitSeconds(.5)
                 .build();
 
@@ -242,7 +255,13 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         wristUpWait3,
                         _ViperArmActions.MoveViperToHome(),
                         viperDownWait3,
-                        _ViperArmActions.MoveArmToHome()
+                        _ViperArmActions.MoveArmToHome(),
+                        driveToSample3,
+                        _WristClawActions.WristDown(),
+                        grabWait2,
+                        _WristClawActions.CloseClaw(),
+                        closeWait2,
+                        _WristClawActions.WristUp()
                         )
         );
         while(opModeIsActive()) {
