@@ -40,6 +40,7 @@ public class LimelightBot extends PinchBot {
 
     public void pickup(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry, ElapsedTime scanTimer) {
         scanTimer.reset();
+        stopCoordinateDrive();
 
         if (inAutoPickup){
             // already in auto pickup mode
@@ -54,9 +55,11 @@ public class LimelightBot extends PinchBot {
         boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
         boolean isYCloseEnough = Math.abs(sample.getDeltaY() ) < yThreshold;
 
-        int delta = (int)Math.round(sample.getDeltaY() * 5);
+        int delta = (int)Math.round(sample.getDeltaY() * 7);
         if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
         slideByDelta(delta);
+
+        startCoordinateDrive();
 
         double distance = sample.getDeltaX() * -3;
         if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
@@ -68,6 +71,9 @@ public class LimelightBot extends PinchBot {
         // open the pinch
         openPinch();
         // lower the pivot
+
+        schedule(this::stopCoordinateDrive, 1000);
+
         if (isSpecimen) {
             schedule(this::pivotToPickupPosSpecimen, 1000);
         }
