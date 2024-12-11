@@ -89,7 +89,7 @@ public class AutoOpMode extends LinearOpMode {
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg dzrives may require direction flips
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -124,8 +124,14 @@ public class AutoOpMode extends LinearOpMode {
 //        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 //        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
+
+
+        //drive foward
         encoderDrive(DRIVE_SPEED,   24,24, 2 );
+        //turn right
         encoderDrive(TURN_SPEED,   12, -12, 4.0);
+        //drive foward
+        encoderDrive(DRIVE_SPEED,   24,24, 2 );
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
