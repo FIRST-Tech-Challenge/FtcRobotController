@@ -36,12 +36,13 @@ public class Mechanisms {
     // Mechanism stuff
     public static double CLOSED_OT_POS = 0;
     public static double OPEN_OT_POS = .5;
-    public static double clawInc = 0;
     public static double lastClawTime;
     public static double UP_OT_FLIP_POS = 0;
     public static double DOWN_OT_FLIP_POS = 1;
     public static double UP_OT_PIVOT_POS = 1;
     public static double DOWN_OT_PIVOT_POS = 0;
+    public static double OT_CLAW_GRAB = 1;
+    public static double OT_CLAW_RELEASE = 0;
 
     public static double PERP_IT_POS = .82;
     public static double PAR_IT_POS = .33;
@@ -116,19 +117,16 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeClawGrab(){
-        if (master.gamepad2.x && lastClawTime < totalTime.milliseconds() - 500)
+        if (master.gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
         {
             lastClawTime = totalTime.milliseconds();
-            clawInc += .1;
-            outTakeClaw.setPosition(clawInc);
-            outTakeClaw.setDirection(Servo.Direction.REVERSE);
+            outTakeClaw.setPosition(OT_CLAW_GRAB);
         }
         //outTakeClaw.setPosition(CLOSED_OT_POS);
         if (master.gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
         {
             lastClawTime = totalTime.milliseconds();
-            clawInc -= .1;
-            outTakeClaw.setPosition(clawInc);
+            outTakeClaw.setPosition(OT_CLAW_RELEASE);
         }
     }
 
