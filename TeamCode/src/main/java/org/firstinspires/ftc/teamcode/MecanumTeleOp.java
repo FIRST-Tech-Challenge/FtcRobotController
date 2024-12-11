@@ -24,7 +24,7 @@ public class MecanumTeleOp extends LinearOpMode {
     double Twistpos = 0.17;
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
-    double ClawFlipPos = 0.5;
+    double ClawFlipPos = 1.0;
     double horizontalSlide = 0.1;
 
     @Override
@@ -123,6 +123,9 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             if(gamepad2.b){
                 PickUpSpecimen(hardware);
+            }
+            if(gamepad1.right_trigger>0.5){
+                Horizontalpick(hardware);
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -470,7 +473,28 @@ public class MecanumTeleOp extends LinearOpMode {
             horizontalSlide += -0.01;
         }
         hardware.horizontalSlide.setPosition(horizontalSlide);
+        telemetry.addData("Horizontal Position",hardware.horizontalSlide.getPosition());
     }
-
+        public void Horizontalpick(Hardware hardware){
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        double frontopen = 0.33;
+        double frontclose = 0.07;
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.horizontalSlide.setPosition(hslideout);
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        sleep(500);
+        hardware.clawFront.setPosition(frontopen);
+        sleep(500);
+        hardware.clawFront.setPosition(frontclose);
+        ClawFrontPos = frontclose;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipup);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        sleep(500);
+        }
 }
 
