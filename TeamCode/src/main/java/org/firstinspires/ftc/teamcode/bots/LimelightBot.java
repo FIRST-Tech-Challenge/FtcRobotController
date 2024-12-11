@@ -61,9 +61,9 @@ public class LimelightBot extends PinchBot {
             // lower the pivot
             pivotToPickupPos(isSpecimen);
             // close the pinch at a future time
-            closePinchInTime(500);
+            schedule(this::closePinch, 500);
             // raise the pivot at a future time and also reset the auto pickup mode
-            pivotToUpPosInTime(1000);
+            schedule(this::pivotToPickupUpPos, 1000);
         }
         else{
             // sample is not close enough, move to the sample
@@ -76,17 +76,9 @@ public class LimelightBot extends PinchBot {
             }
             if (!isXCloseEnough) {
                 // move the robot sideways based on delta X
-                // double power = sample.getDeltaX() * 0.1;
-                // if (telemetry != null) telemetry.addData("DRIVE --------------> power :", power);
-                //strafing(-power);
-
-                double power = sample.getDeltaX() * 0.1;
-                if (telemetry != null) telemetry.addData("DRIVE --------------> power :", power);
-                if (power > 0.2) {
-                    strafing(-0.3);
-                } else if (power < -0.2) {
-                    strafing(0.3);
-                }
+                double distance = sample.getDeltaX() * 0.5;
+                if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
+                strafing(distance);
             }
         }
     }

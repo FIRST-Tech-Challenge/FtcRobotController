@@ -64,10 +64,10 @@ public class TeleOps extends LinearOpMode {
             robot.slideControl(gamepad1.dpad_right, gamepad1.dpad_left);
             robot.pinchControl(gamepad1.a, gamepad1.b);
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
-//            robot.scoreSpecimen(gamepad2.y);
-            robot.readySpecimenPos(gamepad2.a, true);
+//            robot.readySpecimenPos(gamepad2.a, true);
             robot.scoreSpecimenSimple(gamepad2.b);
-
+            robot.scoreSpecimen(gamepad2.y);
+            robot.scoreBucket(gamepad2.a);
             robot.hang(gamepad2.x);
 
             if (gamepad1.y) {

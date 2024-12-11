@@ -13,6 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class BotBot {
 
@@ -81,6 +84,7 @@ public class BotBot {
     }
 
     public void close(){
+        shutdownTimer();
         try {
             RobotLog.d("onLoopWriter.close");
             onLoopWriter.close();
@@ -105,5 +109,15 @@ public class BotBot {
     public void sleep(int milliseconds){
         sleep(milliseconds, "default sleep");
     }
+
+    private final ScheduledExecutorService timer = Executors.newScheduledThreadPool(5);
+
+    public void schedule(Runnable task, long delay){
+        timer.schedule(task, delay, TimeUnit.MILLISECONDS);
+    }
+    public void shutdownTimer(){
+        timer.shutdown();
+    }
+
 }
 
