@@ -57,7 +57,7 @@ public class LimelightBot extends PinchBot {
 
         int delta = (int)Math.round(sample.getDeltaY() * 7);
         if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
-        slideByDelta(delta);
+        moveSlideByDelta(delta);
 
         startCoordinateDrive();
 
@@ -107,7 +107,7 @@ public class LimelightBot extends PinchBot {
                 // extend/retract the slide based on delta Y
                 int delta = (int)Math.round(sample.getDeltaY() * 5);
                 if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
-                slideByDelta(delta);
+                moveSlideByDelta(delta);
                 scanTimer.reset();
             }
             if (!isXCloseEnough && scanTimer.time() > 0.25) {
@@ -121,6 +121,39 @@ public class LimelightBot extends PinchBot {
         }*/
     }
 
+    /**
+     * Pickup method without strafe the robot,
+     *  given the pinch arm is installed in the center of rotation arm, we can calculate the center of pinch arm with detected sample angle
+     *  the pinch arm center is in a range of error, we can pinch
+     * @param isBlueAlliance
+     * @param includeSharedSample
+     * @param isSpecimen
+     * @param telemetry
+     */
+    public void pickup2(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
+        if (inAutoPickup){
+            // already in auto pickup mode
+            return;
+        }
+        Sample sample = detectOne(isBlueAlliance, includeSharedSample, telemetry);
+        if (sample == null || sample.isLLResultValid() < 0) {
+            // no sample found, do nothing
+            telemetry.addData("Sample not found : ", sample);
+            return;
+        }
+        Sample.OptimalDeltaY result = sample.calculateOptimalDeltaY(10.0);
+        if (result.isReachable){
+            // rotate to angle
+            rotateToAngle(result.rotationAngle);
+            // adjust slide
+            moveSlideByDelta(result.deltaY);
+        }
+        else{
+            // do nothing, the sample is not reachable
+            telemetry.addData("Sample is not reachable : ", result.toString());
+        }
+
+    }
     public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample, Telemetry telemetry) {
         List<Integer> pipelines = new ArrayList<>();
         if (includeSharedSample) {
