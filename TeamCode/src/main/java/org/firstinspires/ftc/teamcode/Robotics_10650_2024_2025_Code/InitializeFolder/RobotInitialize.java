@@ -29,6 +29,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 public class RobotInitialize {
 
     // Initialization Phase
+    public int liftPitchPosition;
 
     // Create servo variables
     public CRServo intake; // This is a special continuous rotation servo which allows it to act
@@ -141,6 +142,17 @@ public class RobotInitialize {
         //Manipulator Servos
 
             // Hang on submersible servos
+
+        if (Math.abs(liftPitch.getCurrentPosition() - liftPitchPosition) > 50) {
+            if (liftPitch.getCurrentPosition() < liftPitchPosition) {
+                liftPitch.setVelocity(2150);
+            } else if (liftPitch.getCurrentPosition() >= liftPitchPosition) {
+                liftPitch.setVelocity(-2150);
+
+            }
+        } else {
+            liftPitch.setVelocity(0);
+        }
 
 
         parkingServo = opMode.hardwareMap.get(Servo.class, "parkingServo");
