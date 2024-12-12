@@ -29,7 +29,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 public class RobotInitialize {
 
     // Initialization Phase
-    public int liftPitchPosition;
+    public int liftPitchPosition =783;
 
     // Create servo variables
     public CRServo intake; // This is a special continuous rotation servo which allows it to act
@@ -135,24 +135,27 @@ public class RobotInitialize {
 
         if (isAuto) {
             liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
-            liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
         }
             liftPitch.setZeroPowerBehavior(BRAKE);
+        liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
 
         //Manipulator Servos
 
             // Hang on submersible servos
 
-        if (Math.abs(liftPitch.getCurrentPosition() - liftPitchPosition) > 50) {
+        while(!opMode.opModeIsActive()&&Math.abs(liftPitch.getCurrentPosition() - liftPitchPosition) > 50) {
             if (liftPitch.getCurrentPosition() < liftPitchPosition) {
-                liftPitch.setVelocity(2150);
+                liftPitch.setVelocity(300);
             } else if (liftPitch.getCurrentPosition() >= liftPitchPosition) {
-                liftPitch.setVelocity(-2150);
+                liftPitch.setVelocity(-300);
 
             }
-        } else {
-            liftPitch.setVelocity(0);
+            opMode.telemetry.addData(" pitch curent pos",liftPitch.getCurrentPosition());
+            opMode.telemetry.addData("pitch target pos", liftPitchPosition);
         }
+        liftPitch.setVelocity(0);
+
+
 
 
         parkingServo = opMode.hardwareMap.get(Servo.class, "parkingServo");
