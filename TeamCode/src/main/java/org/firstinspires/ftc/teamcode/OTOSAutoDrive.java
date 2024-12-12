@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/09/2024, 5:14 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/11/2024, 2:03 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -83,8 +83,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(25, -7, -10, 1);
-        driveToLoc(28, -2, -10, 1);  // Move forward to get block
+        driveToLoc(23, -7, -20, 1);
+        driveToLoc(25, -2, -20, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab second block
         //sleep(200);
@@ -107,7 +107,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 700) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(9, 12, 45, 1.5);  // Go to basket
+        driveToLoc(7, 12, 45, 1.5);  // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop third block
         sleep(300);
@@ -124,7 +124,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 800) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(8, 12, 45, 1.5);  // Go to basket
+        driveToLoc(6, 11, 45, 1.5);  // Go to basket
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
 
