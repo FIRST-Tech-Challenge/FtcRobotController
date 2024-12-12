@@ -18,14 +18,14 @@ public class PinchBot extends PivotBot{
 
     public Servo rotate;
 
-    private double rotateServoPos;
+    private double rotateServoPos; //0.66 - 0.3
 
-    public final double rotateServoInitialPos = 0.80;
-    public final double rotateServoMax = 0.80;
-    public final double rotateServoMin = 0.46;
-    public final double rotateVerticalPos = 0.63;
+    public final double rotateServoInitialPos = 0.66;
+    public final double rotateServoMax = 0.66;
+    public final double rotateServoMin = 0.33;
+    public final double rotateVerticalPos = 0.52;
 
-    public final double pinchOpenPos = 0.78;
+    public final double pinchOpenPos = 0.82;
     public final double pinchClosePos = 0.65;
     private Timer pinchTimer = new Timer();
     private TimerTask pinchTimerTask;
@@ -39,7 +39,7 @@ public class PinchBot extends PivotBot{
         pinch = hardwareMap.get(Servo.class, "pinch");
         rotate = hardwareMap.get(Servo.class, "rotate");
 
-        openPinch();
+        closePinch();
         rotateToPos(rotateServoInitialPos);
     }
 

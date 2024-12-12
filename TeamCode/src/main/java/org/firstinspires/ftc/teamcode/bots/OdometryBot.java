@@ -48,7 +48,7 @@ public class OdometryBot extends GyroBot {
     final double hDiameter = 2841; //diameter of horizontal encoder: 82*2/606 = hD/10500
     final double leftX = -(diameter/2); //135mm
     final double rightX = (diameter/2); //170mm
-    final double hY = -(hDiameter/2); //135mm
+    final double hY = -(hDiameter); //135mm
 
     double vLOffset, vROffset, hOffset = 0;
 
