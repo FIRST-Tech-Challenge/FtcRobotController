@@ -10,16 +10,17 @@ public class AutonomousRobot extends RobotHardware {
     private final DcMotor[] motors = new DcMotor[4];
 
     // Odometers (Encoders for localization)
-    private final Odometer odometer;
+    private Odometer odometer;
 
-    private final Telemetry telemetry;
+    private Telemetry telemetry;
 
-    // Constructor
-    public AutonomousRobot(HardwareMap hardwareMap, Telemetry telemetry) {
-
-        this.init(hardwareMap);
+    public void init (HardwareMap hardwareMap, Telemetry telemetry){
         this.telemetry = telemetry;
-
+        telemetry.addLine("preInit ");
+        telemetry.update();
+        super.init(hardwareMap);
+        telemetry.addLine("initializing");
+        telemetry.update();
         motors[0] = this.frontLeftMotor;
         motors[1] = this.frontRightMotor;
         motors[2] = this.backLeftMotor;
@@ -51,13 +52,26 @@ public class AutonomousRobot extends RobotHardware {
         double deltaX = targetX - currentX;
         double deltaY = targetY - currentY;
 
-        telemetry.addLine("Before while");
-        telemetry.update();
         // Basic control loop (ideal for a simpler task, may want to use PID control for more accuracy)
         while (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
             double angleToTarget = Math.atan2(deltaY, deltaX); // Angle to the target
             double distanceToTarget = Math.hypot(deltaX, deltaY); // Distance to target
 
+            // Simple drive control: move forward towards the target
+            drive(0.5, 0.5);  // Set robot to move forward at half power
+
+            // Update position and recalculate deltas
+            odometer.update();
+            currentPosition = odometer.getPosition();
+            currentX = currentPosition[0];
+            currentY = currentPosition[1];
+
+            deltaX = targetX - currentX;
+            deltaY = targetY - currentY;
         }
+
+        // Stop the robot once we reach the target
+        drive(0, 0);
+
     }
 }

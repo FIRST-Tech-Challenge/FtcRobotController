@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Odometer {
     private DcMotor frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
 
@@ -10,9 +12,9 @@ public class Odometer {
     private double heading = 0;
 
     // Encoder constants
-    private static final double TICKS_PER_REVOLUTION = 1440; // Assuming 1440 ticks per revolution
-    private static final double WHEEL_RADIUS = 4.0; // Inches, adjust for your robot's wheels
-    private static final double ROBOT_TRACK_WIDTH = 14.5; // Distance between left and right wheels (inches)
+    private static final double TICKS_PER_REVOLUTION = 537.6; // 2000 Countable Events per Revolution
+    private static final double WHEEL_RADIUS = 2.0; // Inches, adjust for your robot's wheels
+    private static final double ROBOT_TRACK_WIDTH = 12; // Distance between left and right wheels (inches)
 
     public Odometer(DcMotor frontLeftMotor, DcMotor frontRightMotor, DcMotor backLeftMotor, DcMotor backRightMotor) {
         this.frontLeftMotor = frontLeftMotor;
