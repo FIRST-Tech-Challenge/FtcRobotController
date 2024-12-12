@@ -56,9 +56,9 @@ public class TeleOpTest extends LinearOpMode {
                     gamepad2.guide,          // reset encoders
                     gamepad2.a,              // hold viper position
                     gamepad2.y,              // bucket rest
-                    gamepad2.x,              // bucket score
-                    gamepad2.dpad_up,        // open bucket
-                    gamepad2.dpad_down       // close bucket
+                    gamepad2.x              // bucket score
+//                    gamepad2.dpad_up,        // open bucket
+//                    gamepad2.dpad_down       // close bucket
 
             );
         }

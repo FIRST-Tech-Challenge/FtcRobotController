@@ -68,9 +68,9 @@ public class ViperSlide {
             Boolean resetEncoders,
             Boolean hold,
             Boolean bucketRest,
-            Boolean bucketScore,
-            Boolean openBucket,
-            Boolean closeBucket
+            Boolean bucketScore
+//            Boolean openBucket,
+//            Boolean closeBucket
     ) {
         // Move Viper
         if (retractSpeed != 0) {
@@ -103,16 +103,16 @@ public class ViperSlide {
             bucketRest();
         }
 
-        if(openBucket) {
-            openBucket();
-            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
-            telemetry.addData("Bucket Flap Position", "open");
-        }
-        else if(closeBucket) {
-            closeBucket();
-            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
-            telemetry.addData("Bucket Flap Position", "closed");
-        }
+//        if(openBucket) {
+//            openBucket();
+//            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+//            telemetry.addData("Bucket Flap Position", "open");
+//        }
+//        else if(closeBucket) {
+//            closeBucket();
+//            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+//            telemetry.addData("Bucket Flap Position", "closed");
+//        }
     }
 
     public void stop() {
