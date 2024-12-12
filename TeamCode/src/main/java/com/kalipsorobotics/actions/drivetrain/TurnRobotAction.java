@@ -14,6 +14,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class TurnRobotAction extends DriveTrainAction {
 
+    private static final double ERROR_TOLERANCE = 0.5; // degrees
     DriveTrain driveTrain;
     PIDController controller;
     SparkfunOdometry sparkfunOdometry;
@@ -21,7 +22,6 @@ public class TurnRobotAction extends DriveTrainAction {
 
     double targetDegrees;
     double currentHeading;
-    double ERROR_TOLERANCE = 0.5; // degrees
     double remainingDegrees;
 
     double startTime;
@@ -29,6 +29,7 @@ public class TurnRobotAction extends DriveTrainAction {
     double duration;
 
     double overshoot;
+    private double initialError;
 
     public TurnRobotAction(double targetDegrees, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -60,7 +61,7 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     public double getCurrentHeading() {
-        return Math.toDegrees(wheelOdometry.getCurrentImuHeading());
+        return MathFunctions.angleWrapRad(wheelOdometry.getCurrentImuHeading());
     }
 
     public double getDuration() {
@@ -73,7 +74,9 @@ public class TurnRobotAction extends DriveTrainAction {
 
     private void refreshError() {
         remainingDegrees = targetDegrees - currentHeading;
-        // todo overshoot & anglewrap
+        if (Math.signum(remainingDegrees) != Math.signum(initialError)) {
+            overshoot = Math.abs(remainingDegrees);
+        }
     }
 
     @Override
@@ -83,8 +86,6 @@ public class TurnRobotAction extends DriveTrainAction {
         if ((Math.abs(remainingDegrees) <= ERROR_TOLERANCE) || duration > timeout) {
             driveTrain.setPower(0, 0, 0, 0);
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
-//            currentHeading = getCurrentHeading();
-//            targetDegrees = 0;
             Log.d("turn", "setHeading: final heading is " + currentHeading);
             return true;
         } else {
@@ -97,19 +98,20 @@ public class TurnRobotAction extends DriveTrainAction {
         double power;
         double minPower = 0.15;
 
-        Log.d("turn/error", String.format("Error %f Current Theta %f Target Theta %f", remainingDegrees, currentHeading, targetDegrees));
-
         currentHeading = getCurrentHeading();
         if (!hasStarted) {
             this.targetDegrees += currentHeading;
+            initialError = targetDegrees - currentHeading;
             Log.d("turn", "target degrees is " + this.targetDegrees);
+
             hasStarted = true;
             startTime = SystemClock.elapsedRealtime();
         }
 
         refreshError();
-        power = Range.clip(controller.calculate(currentHeading, targetDegrees), -0.7, 0.7);
+        Log.d("turn/error", String.format("Error %f Current Theta %f Target Theta %f", remainingDegrees, currentHeading, targetDegrees));
 
+        power = Range.clip(controller.calculate(currentHeading, targetDegrees), -0.7, 0.7);
         if (power > 0 && power < minPower) {
             power = minPower;
         } else if (power < 0 && power > -1 * minPower) {

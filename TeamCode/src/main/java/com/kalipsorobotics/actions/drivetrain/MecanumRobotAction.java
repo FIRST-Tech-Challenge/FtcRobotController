@@ -31,6 +31,7 @@ public class MecanumRobotAction extends DriveTrainAction {
     double duration;
 
     double overshoot;
+    private double initialError;
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -73,8 +74,8 @@ public class MecanumRobotAction extends DriveTrainAction {
 
     private void refreshRemainingDistance() {
         remainingDistance = targetInches - currentInches;
-        if (Math.signum(remainingDistance) != Math.signum(targetInches)) {
-            overshoot = Math.abs(currentInches);
+        if (Math.signum(remainingDistance) != Math.signum(initialError)) {
+            overshoot = Math.abs(remainingDistance);
         }
     }
 
@@ -100,17 +101,19 @@ public class MecanumRobotAction extends DriveTrainAction {
         double minPower = 0.2;
 
         this.currentInches = wheelOdometry.countBack() / 25.4;
+        if (!hasStarted) {
+            this.targetInches += currentInches;
+            initialError = targetInches - currentInches;
+            Log.d("mecanum","target inches is " + this.targetInches);
+
+            hasStarted = true;
+            startTime = SystemClock.elapsedRealtime();
+        }
+
         refreshRemainingDistance();
         refreshThetaOffset();
 
         Log.d("mecanum/error", String.format("Error %f Current Inches %f Target Inches %f", remainingDistance, currentInches, targetInches));
-
-        if (!hasStarted) {
-            this.targetInches += currentInches;
-            Log.d("mecanum","target inches is " + this.targetInches);
-            hasStarted = true;
-            startTime = SystemClock.elapsedRealtime();
-        }
 
         double strafePower = pidController.calculate(remainingDistance);
         double rotationPower = 0;

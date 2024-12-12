@@ -30,6 +30,7 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
     double duration;
 
     double overshoot = 0.;
+    private double initialError = 0;
 
     public MoveRobotStraightInchesAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
@@ -72,8 +73,8 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
 
     private void refreshRemainingDistance() {
         remainingDistance = targetInches - currentInches;
-        if (Math.signum(remainingDistance) != Math.signum(targetInches)) {
-            overshoot = Math.abs(currentInches);
+        if (Math.signum(remainingDistance) != Math.signum(initialError)) {
+            overshoot = Math.abs(remainingDistance);
         }
     }
 
@@ -100,17 +101,19 @@ public class MoveRobotStraightInchesAction extends DriveTrainAction {
         double minPower = 0.1;
 
         this.currentInches = wheelOdometry.countLeft() / 25.4;
+        if (!hasStarted) {
+            this.targetInches += currentInches;
+            initialError = targetInches - currentInches;
+            Log.d("straight", "target inches is " + this.targetInches);
+
+            hasStarted = true;
+            startTime = SystemClock.elapsedRealtime();
+        }
+
         refreshRemainingDistance();
         refreshThetaOffset();
 
         Log.d("straight/error", String.format("Error %f Current Inches %f Target Inches %f", remainingDistance, currentInches, targetInches));
-
-        if (!hasStarted) {
-            this.targetInches += currentInches;
-            Log.d("straight", "target inches is " + this.targetInches);
-            hasStarted = true;
-            startTime = SystemClock.elapsedRealtime();
-        }
 
         double linearPower = pidController.calculate(remainingDistance);
         double rotationPower = 0;
