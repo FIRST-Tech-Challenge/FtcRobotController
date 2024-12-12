@@ -53,7 +53,7 @@ public class RemoteControl extends LinearOpMode {
     //Callie
     Servo claw = null;
     final double CLAW_MIN = 0.0;        // Claw is closed
-    final double CLAW_MAX = 0.51;        // Claw is open
+    final double CLAW_MAX = 0.8;        // Claw is open
     double claw_position = CLAW_MIN;
 
     Servo ascentStick = null;
@@ -70,6 +70,7 @@ public class RemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
+        telemetry.addData("This code was last updated", "12/11/2024, 7:17 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         setAscentStick(ASCENT_MIN);
         waitForStart();

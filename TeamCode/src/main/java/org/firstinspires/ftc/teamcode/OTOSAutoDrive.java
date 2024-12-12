@@ -47,7 +47,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     //Callie
     Servo claw = null;
     final double CLAW_MIN = 0.0;           // Claw is closed
-    final double CLAW_MAX = 0.51;          // Claw is open
+    final double CLAW_MAX = 0.8;           // Claw is open
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/11/2024, 2:03 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/11/2024, 7:17 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -85,7 +85,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MIN);
         driveToLoc(23, -7, -20, 1);
         driveToLoc(25, -2, -20, 1);  // Move forward to get block
-        sleep(100);
+        sleep(300);
         setClaw(CLAW_MIN);                                          // Grab second block
         //sleep(200);
         setVertical(VERTICAL_MAX, 1000);
