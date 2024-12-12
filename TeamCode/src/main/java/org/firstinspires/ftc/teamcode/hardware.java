@@ -12,8 +12,8 @@ public class hardware {
     public DcMotor lift; //EXP PRT 1
     public DcMotor hopper; //EXP PRT 2
 
-    // Servos
-    public CRServo wrist; //EXP PRT 0
+    // Wrist and door
+    public DcMotor wrist; //EXP PRT 0
     public CRServo bottomGrabber; //EXP PRT 1
     public CRServo topGrabber; //EXP PRT 2
     public Servo door; //EXP PRT 3

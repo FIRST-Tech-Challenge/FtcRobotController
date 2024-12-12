@@ -13,6 +13,13 @@ public enum mainEnum {
     TURN_LEFT,
     TURN_RIGHT,
 
+    OPEN,
+    CLOSE,
+    GRAB,
+    RELEASE,
+    WRIST_UP,
+    WRIST_DOWN,
+
     HOPPER,
     LIFT,
     MANTIS,
@@ -20,12 +27,5 @@ public enum mainEnum {
 
     GRABBER,
     WRIST,
-    DOOR,
-
-    OPEN,
-    CLOSE,
-    GRAB,
-    RELEASE,
-    WRIST_UP,
-    WRIST_DOWN
+    DOOR
 }
