@@ -39,8 +39,9 @@ public class PivotBot extends OdometryBot {
     public final int searchSlidePos = 350;
     public final int specimenHighSlidePos = 1100;
     public final int specimenLowSlidePos = 800;
-    public final int highBucketSlidePos = 2400;
-    public final int lowBucketSlidePos = 800;
+    public final int highBasketSlidePos = 2400;
+    public final int lowBasketSlidePos = 800;
+    public final double slideCMCoefficient = 60.0;
 
     public int slideTarget = 110;
 
@@ -218,11 +219,19 @@ public class PivotBot extends OdometryBot {
     public void moveSlideByDelta(int delta){
         slideTarget += delta;
     }
+
+    /**
+     * Move the slide by a delta value in CM
+     * @param delta
+     */
+    public void moveSlideByDelta(double delta){
+        slideTarget += Math.round(delta * slideCMCoefficient);
+    }
     public void moveSlideToHighBucketPos(){
-        slideTarget = highBucketSlidePos;
+        slideTarget = highBasketSlidePos;
     }
     public void moveSlideToLowBucketPos(){
-        slideTarget = lowBucketSlidePos;
+        slideTarget = lowBasketSlidePos;
     }
 
     public void relatePivotToSlide(){
