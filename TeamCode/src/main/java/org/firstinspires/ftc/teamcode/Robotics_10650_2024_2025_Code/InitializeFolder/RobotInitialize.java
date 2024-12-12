@@ -137,23 +137,16 @@ public class RobotInitialize {
             liftPitch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Needs to not reset once teleop begins
         }
             liftPitch.setZeroPowerBehavior(BRAKE);
-        liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Needs to not reset once teleop begins
+
+        liftPitch.setTargetPosition(783);
+        liftPitch.setPower(.1);
+
+        liftPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Needs to not reset once teleop begins
 
         //Manipulator Servos
 
             // Hang on submersible servos
 
-        while(!opMode.opModeIsActive()&&Math.abs(liftPitch.getCurrentPosition() - liftPitchPosition) > 50) {
-            if (liftPitch.getCurrentPosition() < liftPitchPosition) {
-                liftPitch.setVelocity(300);
-            } else if (liftPitch.getCurrentPosition() >= liftPitchPosition) {
-                liftPitch.setVelocity(-300);
-
-            }
-            opMode.telemetry.addData(" pitch curent pos",liftPitch.getCurrentPosition());
-            opMode.telemetry.addData("pitch target pos", liftPitchPosition);
-        }
-        liftPitch.setVelocity(0);
 
 
 
