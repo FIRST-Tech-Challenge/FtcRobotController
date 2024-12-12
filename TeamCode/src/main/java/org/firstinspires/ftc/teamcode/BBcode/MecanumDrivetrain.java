@@ -47,12 +47,13 @@ public class MecanumDrivetrain {
         double strafe;
         double fLeftPow, fRightPow, bLeftPow, bRightPow;
         double speedMultiplier = 0.75;
+        double turnSpeedMultiplier = 0.5;
         double turnEasingExponet = 3, turnEasingYIntercept = 0.05;
 
         Gamepad gamepad1 = _opMode.gamepad1;
         //drive inputs
         drive = gamepad1.left_stick_y;
-        turn = Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (Math.signum(gamepad1.right_stick_x * -1) * turnEasingYIntercept);
+        turn = turnSpeedMultiplier  * (Math.pow((gamepad1.right_stick_x * -1), turnEasingExponet) + (Math.signum(gamepad1.right_stick_x * -1) * turnEasingYIntercept));
         strafe = gamepad1.left_stick_x * -1;
         if (gamepad1.left_trigger > 0) {speedMultiplier = 0.25;}
 
