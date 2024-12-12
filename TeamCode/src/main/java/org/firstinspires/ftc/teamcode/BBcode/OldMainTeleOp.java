@@ -11,6 +11,7 @@ package org.firstinspires.ftc.teamcode.BBcode;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import static java.lang.Math.acos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -20,8 +21,9 @@ import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
-@TeleOp(name = "MainTeleOp")
-public class MainTeleOp extends LinearOpMode{
+@TeleOp(name = "OldMainTeleOp")
+@Disabled
+public class OldMainTeleOp extends LinearOpMode{
     enum ViperState {
         Current,
         Closed,

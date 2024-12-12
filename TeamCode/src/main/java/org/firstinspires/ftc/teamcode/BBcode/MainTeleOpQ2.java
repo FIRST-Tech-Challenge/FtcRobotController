@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
-@TeleOp(name = "StateMachineTeleop")
-public class StateMachineTeleOp2 extends LinearOpMode{
+@TeleOp(name = "MainTeleopQ2")
+public class MainTeleOpQ2 extends LinearOpMode{
     enum HighBasketState {
         Home,
         RisingArmSample,
@@ -89,8 +89,6 @@ public class StateMachineTeleOp2 extends LinearOpMode{
         arm.Reset();
         viper.StopAndResetEncoder();
         wristTimer.reset();
-//        wristClaw.WristInit();
-//        wristClaw.CloseClaw();
 
         //Call the function to initialize telemetry functions
 //        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
@@ -102,6 +100,8 @@ public class StateMachineTeleOp2 extends LinearOpMode{
 
         while(opModeIsActive()){ //while loop for when program is active
 
+            wristClaw.WristUp();
+            wristClaw.CloseClaw();
 
             //Drive code
             drivetrain.Drive();
