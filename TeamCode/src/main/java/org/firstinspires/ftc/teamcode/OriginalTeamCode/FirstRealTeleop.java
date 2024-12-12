@@ -15,8 +15,8 @@ public class FirstRealTeleop extends LinearOpMode{
 
     // Declare OpMode members for each of the 4 motors.
 
-    final int ASCENT_UP = 12440;
-    final int ASCENT_DOWN = 1000;
+    final int ASCENT_UP = 14300;
+    final int ASCENT_DOWN = 2200;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -28,7 +28,7 @@ public class FirstRealTeleop extends LinearOpMode{
     DcMotor armRotate = null;
     DcMotor linearActuator = null;
     //servos
-    CRServo spool = null;
+//    CRServo spool = null;
     Servo wrist = null;
     CRServo sampPickUpLeft = null;
     CRServo sampPickUpRight = null;
@@ -69,7 +69,7 @@ public class FirstRealTeleop extends LinearOpMode{
         armLifterRight = hardwareMap.dcMotor.get("armLifterRight");
         armRotate = hardwareMap.dcMotor.get("armRotate");
         linearActuator = hardwareMap.dcMotor.get("linearActuator");
-        spool = hardwareMap.crservo.get("spool");
+//        spool = hardwareMap.crservo.get("spool");
         wrist = hardwareMap.servo.get("wrist");
         sampPickUpLeft = hardwareMap.crservo.get("sampPickUpLeft");
         sampPickUpRight = hardwareMap.crservo.get("sampPickUpRight");
@@ -131,13 +131,6 @@ public class FirstRealTeleop extends LinearOpMode{
         while (opModeIsActive()) {
             linearActuatorMover();
             controlBothArmExtenders();
-//
-//            linearActuator.setTargetPosition((int)actuatorPos);
-//            linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            armLifterLeft.setTargetPosition((int)armPos);
-//            armLifterRight.setTargetPosition((int)armPos);
-//            armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             double pose = drive.getExternalHeading(); // used for my custom function to drive straight thru the trusses
 
             double slowMode = gamepad1.left_trigger;
@@ -266,7 +259,9 @@ public class FirstRealTeleop extends LinearOpMode{
             } else if(gamepad2.dpad_down){
                 actuatorPos = ASCENT_DOWN;
 //                linearActuator.setPower(-1);
-            }
+            }// else {
+//                linearActuator.setPower(0);
+//            }
 
             //extenders
             armPos += gamepad2.left_trigger*75 + -gamepad2.right_trigger*75;
@@ -284,13 +279,13 @@ public class FirstRealTeleop extends LinearOpMode{
             wrist.setPosition(wristPos);
 
             //spool
-            int spoolPow = 0;
-            if(gamepad2.left_bumper){
-                spoolPow = 1;
-            } else if(gamepad2.right_bumper){
-                spoolPow = -1;
-            }
-            spool.setPower(spoolPow);
+//            int spoolPow = 0;
+//            if(gamepad2.left_bumper){
+//                spoolPow = 1;
+//            } else if(gamepad2.right_bumper){
+//                spoolPow = -1;
+//            }
+//            spool.setPower(spoolPow);
 
             //grabbers
             if(gamepad2.x){
@@ -310,8 +305,8 @@ public class FirstRealTeleop extends LinearOpMode{
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Wrist set pos",wrist.getPosition());
-            telemetry.addData("Wrist wanted set pos", wrist.getPosition());
+            telemetry.addData("Actuator pos",linearActuator.getCurrentPosition());
+//            telemetry.addData("Wrist wanted set pos", wrist.getPosition());
             telemetry.update();
         }
     }
