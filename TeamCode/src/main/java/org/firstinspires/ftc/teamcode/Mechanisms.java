@@ -31,19 +31,20 @@ public class Mechanisms {
     Servo intakePivotR;
     Servo intakePivotL;
     Servo inTakeRotator;
+    boolean HACK = false;
 
 
 
     // Mechanism stuff
-    public static double CLOSED_OT_POS = 0;
-    public static double OPEN_OT_POS = .5;
-    public static double lastClawTime;
-    public static double UP_OT_FLIP_POS = 0;
+    public double lastClawTime;
+    public static double UP_OT_FLIP_POS = .75;
     public static double DOWN_OT_FLIP_POS = 1;
-    public static double UP_OT_PIVOT_POS = 1;
-    public static double DOWN_OT_PIVOT_POS = 0;
-    public static double OT_CLAW_GRAB = 1;
-    public static double OT_CLAW_RELEASE = 0;
+    public static double BUCKET_OT_PIVOT_POS = .5;
+    public static double TRANSFER_OT_PIVOT_POS = .8;
+    public static double PICKUP_OT_PIVOT_POS = .23;
+
+    public static double OT_CLAW_GRAB = 0;
+    public static double OT_CLAW_RELEASE = 0.15;
 
     public static double PERP_IT_POS = .82;
     public static double PAR_IT_POS = .33;
@@ -59,6 +60,15 @@ public class Mechanisms {
     String ITMacroState = "none";
     ElapsedTime inTakeAndUpStateTime = new ElapsedTime();
 
+    String OTMacroState = "none";
+    ElapsedTime outTakeAndUpStateTime = new ElapsedTime();
+
+    boolean OTGrabbed = false;
+    boolean ITGrabbed = false;
+    ElapsedTime ITGrabTime = new ElapsedTime();
+
+    double brakePos = 0;
+    boolean braking;
     // backright drivetrain motor port 0 control
     // backleft drivetrain motor port 1 control
     // frontleft drivetrain motor port 1 expansion
@@ -112,53 +122,38 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeLift(){
-        outTakeLiftRight.setPower(master.gamepad2.left_stick_y);
+        //outTakeLiftRight.setPower(master.gamepad2.left_stick_y);
         outTakeLiftLeft.setPower(master.gamepad2.left_stick_y);
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeClawGrab(){
+        master.telemetry.addData("tt", totalTime.milliseconds());
         if (master.gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
         {
-            lastClawTime = totalTime.milliseconds();
-            outTakeClaw.setPosition(OT_CLAW_GRAB);
-        }
-        //outTakeClaw.setPosition(CLOSED_OT_POS);
-        if (master.gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
-        {
-            lastClawTime = totalTime.milliseconds();
-            outTakeClaw.setPosition(OT_CLAW_RELEASE);
+            if (OTGrabbed)
+            {
+                lastClawTime = totalTime.milliseconds();
+                outTakeClaw.setPosition(OT_CLAW_GRAB);
+                OTGrabbed = false;
+            }
+            else
+            {
+                lastClawTime = totalTime.milliseconds();
+                outTakeClaw.setPosition(OT_CLAW_RELEASE);
+                OTGrabbed = true;
+            }
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
-    public void outtakeToTransfer() {
-        if (master.gamepad2.b) {
-            outTakeFlip.setPosition(1); // tbd
-            if (outtakeTransferPos.milliseconds() > 300) {
-                outTakePivotLeft.setPosition(1); // tbd
-                outtakeTransferPos.reset();
-            }
-            if (outtakeTransferPos.milliseconds() > 100) {
-                outTakeFlip.setPosition(1); // tbd
-                outtakeTransferPos.reset();
-            }
-            if (outtakeTransferPos.milliseconds() > 100) {
-                outTakeClaw.setPosition(1); // tbd
-                outtakeTransferPos.reset();
-            }
-            if (outtakeTransferPos.milliseconds() > 100) {
-                inTakeClaw.setPosition(OPEN_IT_POS);
-            }
-        }
-    }
     ////////////////////////////////////////////////////////////////////////////////
 
     public void setOutTakeFlip(){
         if (master.gamepad2.left_trigger > .1)
-            outTakePivotRight.setPosition(DOWN_OT_FLIP_POS);
+            outTakeFlip.setPosition(DOWN_OT_FLIP_POS);
         if (master.gamepad2.right_trigger > .1)
-            outTakePivotLeft.setPosition(UP_OT_FLIP_POS);
+            outTakeFlip.setPosition(UP_OT_FLIP_POS);
     }
 
     public void UpMacroAndTransfer()
@@ -181,7 +176,7 @@ public class Mechanisms {
             ITMacroState = "clawup";
             inTakeAndUpStateTime.reset();
         }
-        outTakeClaw.setPosition(OPEN_OT_POS);
+        //outTakeClaw.setPosition(OPEN_OT_POS);
         if (ITMacroState.equals("clawup"))
         {
             if (inTakeAndUpStateTime.milliseconds() > 800) {
@@ -194,6 +189,8 @@ public class Mechanisms {
             }
             intakePivotL.setPosition(MID_IT_FLIP_POS);
             inTakeRotator.setPosition(PERP_IT_POS);
+            outTakePivotRight.setPosition(TRANSFER_OT_PIVOT_POS);
+            outTakeFlip.setPosition(UP_IT_FLIP_POS);
         }
         if (ITMacroState.equals("intakeMoveToTransfer"))
         {
@@ -203,49 +200,39 @@ public class Mechanisms {
             }
             inTakeClaw.setPosition(CLOSED_IT_POS);
             intakePivotL.setPosition(UP_IT_FLIP_POS);
-        }
-        if (ITMacroState.equals("outtaketransferpos"))
-        {
-            if (inTakeAndUpStateTime.milliseconds() > 300) {
-                ITMacroState = "outtakecloseclaw";
-                inTakeAndUpStateTime.reset();
-            }
-            if (inTakeAndUpStateTime.milliseconds() > 300)
-            {
-                outTakeFlip.setPosition(1); //tbd
-                inTakeAndUpStateTime.reset();
-            }
-            if (inTakeAndUpStateTime.milliseconds() > 200)
-            {
-                outTakePivotLeft.setPosition(1); //tbd
-                inTakeAndUpStateTime.reset();
-            }
-        }
-        if (ITMacroState.equals("outtakecloseclaw"))
-        {
-            if (inTakeAndUpStateTime.milliseconds() > 300) {
-                ITMacroState = "outtakeup";
-                inTakeAndUpStateTime.reset();
-            }
-            outTakeClaw.setPosition(CLOSED_OT_POS);
+            outTakeClaw.setPosition(OT_CLAW_RELEASE);
         }
 
-        if (ITMacroState.equals("outtakeup"))
+    }
+
+    public void outTakeMacroAndTransfer()
+    {
+        if (master.gamepad2.a && outTakeAndUpStateTime.milliseconds() > 500 && OTMacroState.equals("none"))
         {
-            if (inTakeAndUpStateTime.milliseconds() > 300) {
-                inTakeAndUpStateTime.reset();
+            outTakeAndUpStateTime.reset();
+            OTMacroState = "clamp";
+        }
+        if (OTMacroState.equals("clamp"))
+        {
+            outTakeClaw.setPosition(OT_CLAW_GRAB);
+            if (outTakeAndUpStateTime.milliseconds() > 200) {
+                inTakeClaw.setPosition(OPEN_IT_POS);
+                if (outTakeAndUpStateTime.milliseconds() > 300) {
+                    outTakeAndUpStateTime.reset();
+                    OTMacroState = "raise";
+                }
             }
-            if (inTakeAndUpStateTime.milliseconds() > 300)
-            {
-                outTakeFlip.setPosition(1); //tbd
-                inTakeAndUpStateTime.reset();
-            }
-            if (inTakeAndUpStateTime.milliseconds() > 300)
-            {
-                outTakePivotLeft.setPosition(1); //tbd
+        }
+        if (OTMacroState.equals("raise")) {
+            outTakePivotRight.setPosition(BUCKET_OT_PIVOT_POS);
+            outTakeFlip.setPosition(DOWN_OT_FLIP_POS - .2);
+            if (outTakeAndUpStateTime.milliseconds() > 750) {
+                outTakeAndUpStateTime.reset();
+                OTMacroState = "none";
             }
         }
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakePivot(){
@@ -253,23 +240,32 @@ public class Mechanisms {
         {
             if (upPivotOT)
             {
-                outTakeFlip.setPosition(DOWN_OT_PIVOT_POS);
+                outTakePivotRight.setPosition(TRANSFER_OT_PIVOT_POS);
                 upPivotOT = false;
+                pivotTimeOT = totalTime.milliseconds();
             }
             else
             {
-                outTakeFlip.setPosition(UP_OT_PIVOT_POS);
+                outTakePivotRight.setPosition(BUCKET_OT_PIVOT_POS);
                 upPivotOT = true;
+                pivotTimeOT = totalTime.milliseconds();
             }
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeClawGrab(){
-        if (master.gamepad2.a)
-            inTakeClaw.setPosition(CLOSED_IT_POS);
-        if (master.gamepad2.b)
-            inTakeClaw.setPosition(OPEN_IT_POS);
+        if (master.gamepad2.b && ITGrabTime.milliseconds() > 500) {
+            if (ITGrabbed) {
+                inTakeClaw.setPosition(OPEN_IT_POS);
+                ITGrabbed = false;
+            }
+            else {
+                inTakeClaw.setPosition(CLOSED_IT_POS);
+                ITGrabbed = true;
+            }
+            ITGrabTime.reset();
+        }
         if (master.gamepad2.dpad_right)
             inTakeClaw.setPosition(MIDDLE_IT_POS);
     }
@@ -302,14 +298,19 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeLift(){
-        inTakeLift.setPower(master.gamepad2.right_stick_y);
-        if (master.gamepad2.left_trigger > .1)
+        if (Math.abs(master.gamepad2.right_stick_y) < .05 && !braking)
         {
-            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            braking = true;
+            brakePos = inTakeLift.getCurrentPosition();
         }
-        if (master.gamepad2.right_trigger > .1)
+        else if (Math.abs(master.gamepad2.right_stick_y) > .05)
         {
-            inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            inTakeLift.setPower(master.gamepad2.right_stick_y * .2);
+            braking = false;
+        }
+        if (braking)
+        {
+            inTakeLift.setPower((inTakeLift.getCurrentPosition() - brakePos) / 200 * .05);
         }
     }
     //////////////////////////////////////////////////////////////////////////////

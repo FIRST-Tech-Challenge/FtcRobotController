@@ -96,7 +96,6 @@ public class teleop extends OpMode {
         }
         else {
             mechanisms.UpMacroAndTransfer();
-            mechanisms.outtakeToTransfer();
             mechanisms.setOutTakeLift();
             mechanisms.setInTakeLift();
             mechanisms.setInTakeClawGrab();
@@ -105,6 +104,7 @@ public class teleop extends OpMode {
             mechanisms.setOutTakePivot();
             mechanisms.setOutTakeClawGrab();
             mechanisms.setInTakeRotator();
+            mechanisms.outTakeMacroAndTransfer();
 
             fileRead.readFile();
 
