@@ -42,7 +42,7 @@ public class PIDCalibration extends LinearOpMode {
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
 
-        DriveTrainAction action = new TurnRobotAction(90, driveTrain, sparkfunOdometry, wheelOdometry,  5);
+        DriveTrainAction action = new TurnRobotAction(-150, driveTrain, sparkfunOdometry, wheelOdometry,  5);
         PIDController globalController = action.getPidController();
         String tag = String.format("ILC %s", globalController.getName());
 
@@ -109,7 +109,7 @@ public class PIDCalibration extends LinearOpMode {
 
                 sleep(500);  // should be safe I think
 
-                action = new TurnRobotAction(i % 2 == 0 ? 90 : -90, driveTrain, sparkfunOdometry, wheelOdometry, 5);
+                action = new TurnRobotAction(i % 2 == 0 ? -150 : 150, driveTrain, sparkfunOdometry, wheelOdometry, 5);
                 action.setPidController(globalController);
 
                 Log.d(tag, String.format("Error %f, Accumulated error %f, Error rate %f", totalSetError, accumulatedError, errorRate));

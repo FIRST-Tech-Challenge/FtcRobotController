@@ -39,7 +39,7 @@ public class TurnRobotAction extends DriveTrainAction {
         this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
 
-        this.controller = new PIDController(0.2, 0, 0, "turn");  // placeholder values
+        this.controller = new PIDController(0.077573, 0.000254, 0.003647, "turn");
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
     }
@@ -61,7 +61,7 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     public double getCurrentHeading() {
-        return Math.toDegrees(MathFunctions.angleWrapRad(wheelOdometry.getCurrentImuHeading()));
+        return Math.toDegrees(wheelOdometry.getCurrentImuHeading());  // Already angle wrapped
     }
 
     public double getDuration() {
@@ -96,7 +96,7 @@ public class TurnRobotAction extends DriveTrainAction {
     @Override
     public void update() {
         double power;
-        double minPower = 0.15;
+        double minPower = 0.1;
 
         currentHeading = getCurrentHeading();
         if (!hasStarted) {
@@ -109,16 +109,16 @@ public class TurnRobotAction extends DriveTrainAction {
         }
 
         refreshError();
-        Log.d("turn/error", String.format("Error %f Current Theta %f Target Theta %f", remainingDegrees, currentHeading, targetDegrees));
+        Log.d("turn/error", String.format("Error %f Current Degrees %f Target Degrees %f", remainingDegrees, currentHeading, targetDegrees));
 
         power = Range.clip(controller.calculate(currentHeading, targetDegrees), -0.7, 0.7);
         if (power > 0 && power < minPower) {
             power = minPower;
-        } else if (power < 0 && power > -1 * minPower) {
+        } else if (power < 0 && power > -minPower) {
             power = -minPower;
         }
 
         Log.d("turn/power", String.format("Turning power %f", power));
-        driveTrain.setPower(-power, power, -power, power);
+        driveTrain.setPower(power, -power, power, -power);
     }
 }
