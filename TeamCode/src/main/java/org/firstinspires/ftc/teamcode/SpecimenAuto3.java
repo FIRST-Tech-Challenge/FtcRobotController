@@ -113,7 +113,7 @@ public class SpecimenAuto3 extends LinearOpMode {
 
 
                 //next step
-                .strafeTo(new Vector2d(-54, -40)) // move right to pickup specimen
+                .strafeTo(new Vector2d(-54, -38)) // move right to pickup specimen
                 .strafeTo(new Vector2d(-65, -40))
                 .stopAndAdd(new CloseGrabber())
                 .waitSeconds(.250)
@@ -137,7 +137,7 @@ public class SpecimenAuto3 extends LinearOpMode {
                 .lineToX(-35)
                 .waitSeconds(.250)
                 .stopAndAdd(new LiftToBottom())
-
+                .waitSeconds(1.5)
                 .build();
 
         Action TrajectoryAction2 = drive.actionBuilder(drive.pose)

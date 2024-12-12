@@ -47,9 +47,18 @@ public class Slide {
 
     public void Retract(double power) {
         //extend with the power
-        motor.setTargetPosition(-200);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(Math.min(power, maxSpeed));
+        if (zeroTouch != null) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setDirection(extendMotorDirection == ExtendMotorDirection.Forward ? DcMotorSimple.Direction.REVERSE  : DcMotorSimple.Direction.FORWARD);
+            motor.setPower(Math.min(power, maxSpeed));
+
+        }
+        else {
+            motor.setTargetPosition(0);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(Math.min(power, maxSpeed));
+        }
+
     }
 
     public double GetExtendedInches() {
@@ -58,6 +67,8 @@ public class Slide {
 
     public void MoveTo(double inches, double power) {
         //move to to provided inches
+
+        motor.setDirection(extendMotorDirection == ExtendMotorDirection.Forward ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
         int targetTicks = (int) (inches*ticksPerInch);
         targetTicks = Math.max(0, targetTicks);
         targetTicks = Math.min(targetTicks, maxTicks);

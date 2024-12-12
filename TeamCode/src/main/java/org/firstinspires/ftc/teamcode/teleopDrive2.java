@@ -9,13 +9,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.network.WifiUtil;
-import org.firstinspires.ftc.teamcode.hardware.MecanumEncoder;
 import org.firstinspires.ftc.teamcode.hardware.Pincher;
 import org.firstinspires.ftc.teamcode.hardware.Slide;
 import org.firstinspires.ftc.teamcode.hardware.SpecimanGrabber;
 
 
-@TeleOp
+@TeleOp()
 public class teleopDrive2 extends OpMode {
 
     private String TESTBOT = "24342-RC";
@@ -25,6 +24,8 @@ public class teleopDrive2 extends OpMode {
     private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 2600, 1.0,68.568);
     private SpecimanGrabber specimanGrabber = new SpecimanGrabber();
     private Pincher pincher = new Pincher();
+    private enum PincherPostion {DRIVE, READY, PICKUP}
+    private PincherPostion currPincherPos = null;
 
     private String wifiSsid = "";
     Gamepad prevGamepad1 = new Gamepad();
@@ -33,7 +34,7 @@ public class teleopDrive2 extends OpMode {
     Gamepad currGamepad2 = new Gamepad();
 
 
-//    public void processLift() {
+    //    public void processLift() {
 //        if (currGamepad2.left_trigger == 0 && currGamepad2.right_trigger == 0) {
 //            clawSlide.Stop();
 //        }
@@ -51,13 +52,13 @@ public class teleopDrive2 extends OpMode {
     }
     public void processClawManualDown() {
         if(currGamepad2.left_trigger > 0.1) {
-            clawSlide.Retract(currGamepad1.left_trigger/2);
+            clawSlide.Retract(currGamepad1.left_trigger);
         }
     }
     public void hangSpecimen() {
         try {
             clawSlide.MoveTo(0, 0.75);
-            Thread.sleep(100);
+            Thread.sleep(200);
             specimanGrabber.Open();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -95,13 +96,20 @@ public class teleopDrive2 extends OpMode {
         }
     }
     public void processPincherActions() {
-        if (currGamepad1.dpad_up && !prevGamepad1.dpad_up) {
-            pincher.GoToDrivePosition();
-        } else if (currGamepad1.dpad_down && !prevGamepad1.dpad_down) {
+        if (currGamepad1.left_bumper && !prevGamepad1.left_bumper) {
+            if (currPincherPos == PincherPostion.DRIVE) {
+                pincher.GoToReadyPosition();
+                currPincherPos = PincherPostion.READY;
+            } else {
+                pincher.GoToDrivePosition();
+                currPincherPos = PincherPostion.DRIVE;
+            }
+        }
+        else if (currGamepad1.right_bumper && !prevGamepad1.right_bumper) {
             pincher.GoToPickupPosition();
-        } else if (currGamepad1.dpad_right && !prevGamepad1.dpad_right) {
-            pincher.GoToReadyPosition();
-        } else if (currGamepad1.x && !prevGamepad1.x) {
+            currPincherPos = PincherPostion.PICKUP;
+        }
+        else if (currGamepad1.x && !prevGamepad1.x) {
             if (pincher.isOpen) {
                 pincher.PincherClose();
             }
@@ -116,6 +124,7 @@ public class teleopDrive2 extends OpMode {
         intakeSlide.Init(hardwareMap);
         clawSlide.Init(hardwareMap);
         pincher.Init(hardwareMap);
+        currPincherPos = PincherPostion.DRIVE;
         specimanGrabber.Init(hardwareMap);
 
         // run once when init is pressed
@@ -159,6 +168,7 @@ public class teleopDrive2 extends OpMode {
         processLiftDPad();
         processPincherActions();
         processClawStop();
+        processClawManualDown();
         clawSlide.ProcessLoop();
         intakeSlide.ProcessLoop();
 

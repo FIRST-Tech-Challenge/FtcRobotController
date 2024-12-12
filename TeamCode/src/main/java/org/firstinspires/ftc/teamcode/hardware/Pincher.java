@@ -14,6 +14,7 @@ public class Pincher {
         axis1 = hardwareMap.get(Servo.class, "axis1");
         axis2 = hardwareMap.get(Servo.class, "axis2");
         pinch = hardwareMap.get(Servo.class, "pinch");
+        GoToDrivePosition();
     }
     public void GoToReadyPosition() {
         // make arm ready to pickup sample/specimen
