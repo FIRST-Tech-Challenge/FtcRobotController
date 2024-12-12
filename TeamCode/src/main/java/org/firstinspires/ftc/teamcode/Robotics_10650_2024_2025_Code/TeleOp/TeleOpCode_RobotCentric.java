@@ -81,9 +81,9 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             if (gamepad1.circle) {
                 speed = 270;
             } else if(gamepad1.cross){
-                speed = 7969;
+                speed = 2800; //DcMotorEx max speed (encoder ticks per second): 2,787.625
             } else{
-                speed = 2700;
+                speed = 1400;
             }
 
 
@@ -144,53 +144,8 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //                turnVelocity = 400 * Math.signum(gamepad1.right_stick_x);
 //            }
 
-            if (gamepad1.left_trigger > 0) {
-                //slow
 
-                straightMovementVelocity = 2700 * (gamepad1.left_trigger);
-                //strafeVelocity = 0*(gamepad1.left_trigger);
-                //turnVelocity =2700 * (gamepad1.left_trigger);
 
-            }
-            if (gamepad1.right_trigger > 0) {
-                //slow
-                straightMovementVelocity = -2700 * (gamepad1.right_trigger);
-                //strafeVelocity = 0*(gamepad1.right_trigger);
-                //turnVelocity = 0 *(gamepad1.right_trigger);
-
-            }
-            if (gamepad1.circle) {
-                //slow
-                if (gamepad1.left_trigger > 0) {
-                    straightMovementVelocity = 270;
-                } else if (gamepad1.right_trigger > 0) {
-                    straightMovementVelocity = -270;
-
-                }
-                strafeVelocity = 270 * Math.signum(gamepad1.right_stick_x);
-                //turnVelocity = 0 * Math.signum(gamepad1.right_stick_x);
-                if (gamepad1.left_stick_x > 0) {
-                    turnVelocity = 270 * Math.signum(gamepad1.left_stick_x);
-                } else if (gamepad1.left_stick_x > 0) {
-                    turnVelocity = -270 * Math.signum(gamepad1.left_stick_x);
-                }
-            }
-            if (gamepad1.cross) {
-                //boost
-                if (gamepad1.left_trigger > 0) {
-                    straightMovementVelocity = 6969;
-                } else if (gamepad1.right_trigger > 0) {
-                    straightMovementVelocity = -6969;
-
-                }
-                strafeVelocity = 6969 * Math.signum(gamepad1.right_stick_x);
-
-                if (gamepad1.left_stick_x > 0) {
-                    turnVelocity = 6969 * Math.signum(gamepad1.left_stick_x);
-                } else if (gamepad1.left_stick_x > 0) {
-                    turnVelocity = -6969 * Math.signum(gamepad1.left_stick_x);
-                }
-            }
             telemetry.addData("turnVelocity", turnVelocity);
             telemetry.addData("straightMovementVelpcity", straightMovementVelocity);
 
