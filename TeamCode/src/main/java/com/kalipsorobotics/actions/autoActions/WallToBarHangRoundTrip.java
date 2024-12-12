@@ -23,7 +23,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveWallToBar.setName("moveWallToBar");
         moveWallToBar.setMaxTimeOutMS(4000);
         moveWallToBar.setDependentActions(waitAtWall);
-        moveWallToBar.addPoint(-755, hangPosY, 0);
+        moveWallToBar.addPoint(-790, hangPosY, 0);
         this.addAction(moveWallToBar);
 
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
@@ -31,7 +31,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         specimenHangReady.setDependentActions(waitAtWall);
         this.addAction(specimenHangReady);
 
-        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 250);
+        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 225);
         lowerSlidesHalf.setName("lowerSlidesHalf");
         lowerSlidesHalf.setDependentActions(specimenHangReady, moveWallToBar);
         this.addAction(lowerSlidesHalf);
