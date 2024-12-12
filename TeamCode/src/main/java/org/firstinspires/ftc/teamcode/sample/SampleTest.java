@@ -31,7 +31,7 @@ class SampleTest {
         return new JSONObject(content);
     }
 
-    public void testWithJsonFile(String filename, String expected) throws IOException, JSONException {
+    public void testWithJsonFile(String filename, String expectedSample, String expectedDeltaY) throws IOException, JSONException {
         // Read JSON file
         JSONObject json = parseJSONFile("src/main/java/org/firstinspires/ftc/teamcode/sample/test_data/" + filename);
         MockLLResult llResult = new MockLLResult(json);
@@ -40,62 +40,76 @@ class SampleTest {
         Sample sample = new Sample(llResult, 0.0, 0.0);
 
         // Perform assertions
-        assertEquals(expected, sample.toString());
+        assertEquals(expectedSample, sample.toString());
+        if (sample.isLLResultValid() > 0) {
+            assertEquals(expectedDeltaY, sample.calculateOptimalDeltaY(10.0).toString());
+        }
     }
 
     @org.junit.jupiter.api.Test
     void testInvalidSmallTa() throws IOException, JSONException {
         testWithJsonFile("invalid_small_ta.json",
-                "Invalid LLResult with error code -10032");
+                "Invalid LLResult with error code -10032",
+                "-18.0");
     }
     @org.junit.jupiter.api.Test
     void testValid1() throws IOException, JSONException {
         testWithJsonFile("valid_1.json",
-                "Sample{x=7.99, y=-2.61, d=3.591, a=-33, whr=1.51, c=Red}");
+                "Sample{x=7.99, y=-2.61, d=3.591, a=-33, whr=1.51, c=Red}",
+                "-18.0");
     }
     @org.junit.jupiter.api.Test
     void testValid2() throws IOException, JSONException {
         testWithJsonFile("valid_2.json",
-                "Sample{x=-11.1, y=-4.85, d=3.732, a=-76, whr=3.59, c=Shared}");
+                "Sample{x=-11.1, y=-4.85, d=3.732, a=-76, whr=3.59, c=Shared}",
+                "-18.0");
     }
     @org.junit.jupiter.api.Test
     void testValid3() throws IOException, JSONException {
         testWithJsonFile("valid_3.json",
-                "Sample{x=2.34, y=4.75, d=3.266, a=33, whr=1.62, c=Blue}");
+                "Sample{x=2.34, y=4.75, d=3.266, a=33, whr=1.62, c=Blue}",
+                "-18.0");
     }
     @org.junit.jupiter.api.Test
     void testValid4() throws IOException, JSONException {
         testWithJsonFile("valid_4.json",
-                "Sample{x=1.08, y=1.73, d=3.006, a=4, whr=1.18, c=Unknown}");
+                "Sample{x=1.08, y=1.73, d=3.006, a=4, whr=1.18, c=Unknown}",
+                "-18.0");
     }
     @org.junit.jupiter.api.Test
     void testSample1() throws IOException, JSONException {
         testWithJsonFile("sample_1.json",
-                "Sample{x=-5.29, y=-1.7, d=1.78, a=-71, whr=2.04, c=Shared}");
+                "Sample{x=-5.29, y=-1.7, d=1.78, a=-71, whr=2.04, c=Shared}",
+                "OptimalDeltaY{isReachable=true, rotationAngle=109, deltaY=-3.07, distanceFromSample=-1.07");
     }
     @org.junit.jupiter.api.Test
     void testSpicimen1() throws IOException, JSONException {
         testWithJsonFile("specimen_1.json",
-                "Sample{x=0.0, y=-4.3, d=1.574, a=0, whr=1.95, c=Shared}");
+                "Sample{x=0.0, y=-4.3, d=1.574, a=0, whr=1.95, c=Shared}",
+                "OptimalDeltaY{isReachable=true, rotationAngle=0, deltaY=-6.25, distanceFromSample=-0.9");
     }
     @org.junit.jupiter.api.Test
     void testSpicimen2() throws IOException, JSONException {
         testWithJsonFile("specimen_2.json",
-                "Sample{x=-9.53, y=0.47, d=1.397, a=34, whr=2.08, c=Shared}");
+                "Sample{x=-9.53, y=0.47, d=1.397, a=34, whr=2.08, c=Shared}",
+                "OptimalDeltaY{isReachable=true, rotationAngle=34, deltaY=-7.91, distanceFromSample=1.61");
     }
     @org.junit.jupiter.api.Test
     void testSpicimen3() throws IOException, JSONException {
         testWithJsonFile("specimen_3.json",
-                "Sample{x=-4.19, y=-6.11, d=1.319, a=89, whr=1.77, c=Shared}");
+                "Sample{x=-4.19, y=-6.11, d=1.319, a=89, whr=1.77, c=Shared}",
+                "OptimalDeltaY{isReachable=true, rotationAngle=89, deltaY=-2.96, distanceFromSample=-1.37");
     }
     @org.junit.jupiter.api.Test
     void testSpicimen4() throws IOException, JSONException {
         testWithJsonFile("specimen_4.json",
-                "Sample{x=5.58, y=-3.01, d=1.296, a=-87, whr=1.8, c=Shared}");
+                "Sample{x=5.58, y=-3.01, d=1.296, a=-87, whr=1.8, c=Shared}",
+                "OptimalDeltaY{isReachable=true, rotationAngle=-87, deltaY=-3.48, distanceFromSample=-2.92");
     }
     @org.junit.jupiter.api.Test
     void testSpicimen5() throws IOException, JSONException {
         testWithJsonFile("specimen_5.json",
-                "Sample{x=-18.91, y=-1.74, d=1.448, a=-17, whr=2.1, c=Shared}");
+                "Sample{x=-18.91, y=-1.74, d=1.448, a=-17, whr=2.1, c=Shared}",
+                "OptimalDeltaY{isReachable=false, rotationAngle=163, deltaY=10.45, distanceFromSample=11.8");
     }
 }
