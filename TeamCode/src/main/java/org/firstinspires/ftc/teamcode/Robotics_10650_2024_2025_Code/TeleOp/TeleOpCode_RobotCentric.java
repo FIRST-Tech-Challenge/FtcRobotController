@@ -38,6 +38,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
         // initialization of the control of the robot when start is pressed
         waitForStart();
+        robot.liftPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //edit this to be valid for the dual mode servo
         //initial position
@@ -264,7 +265,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 
                     robot.liftPitchPosition = robot.liftPitchPosition - 35;
                     if (robot.liftPitchPosition > 1500) {
-                        robot.liftPitchPosition = robot.liftPitchPosition - 25;
+                        robot.liftPitchPosition = robot.liftPitchPosition - 10;
                     }
 
 
@@ -431,12 +432,13 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
             }
             telemetry.addData("hang r pos", robot.parkingServo.getPosition());
 
-//            if (gamepad2.circle) {
+            if (gamepad2.circle) {
 //                before 2167
-//                liftPitchPosition = 2090;
-//
-//                //edit this to be valid for the dual mode servo
-//            }
+                robot.liftPitchPosition = 2207;
+                liftExtenderPosition = 0;
+
+                //edit this to be valid for the dual mode servo
+            }
 
             //edit this to be valid for the dual mode servo
         }
