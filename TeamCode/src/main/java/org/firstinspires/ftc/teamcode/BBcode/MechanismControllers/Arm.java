@@ -26,7 +26,7 @@ public class Arm {
     final int clearancePosition = 24;
     final int hangPosition = 65;
     final int highBasketPosition = 80;
-    final int specimenPosition = 70;
+    final int specimenPosition = 32;
     //-----------------------
 
     private int DegreeConverterToTicks(int degrees) {
@@ -45,6 +45,7 @@ public class Arm {
 
     public boolean getIsArmHighBasketPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(highBasketPosition);}
     public boolean getIsArmHomePosition() {return _armMotor.getCurrentPosition() < DegreeConverterToTicks(homePosition + 5);}
+    public boolean getIsArmSpecimenPosition() {return _armMotor.getCurrentPosition() > DegreeConverterToTicks(specimenPosition);}
 
     public DcMotorEx get_armMotor() {
         return _armMotor;

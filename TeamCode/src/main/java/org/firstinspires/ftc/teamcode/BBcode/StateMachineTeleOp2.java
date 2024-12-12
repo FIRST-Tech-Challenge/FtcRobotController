@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 
 @TeleOp(name = "StateMachineTeleop")
 public class StateMachineTeleOp2 extends LinearOpMode{
-    enum RobotState {
+    enum HighBasketState {
         Home,
         RisingArmSample,
         ViperExtendFull,
@@ -29,10 +29,22 @@ public class StateMachineTeleOp2 extends LinearOpMode{
         WristUp,
         ViperClosed,
         ViperRetractedShort,
-        LoweringArm
+        LoweringArm,
     }
 
-    RobotState robotState = RobotState.Home;
+    enum SpecimenClipState {
+        Home,
+        RaiseArm,
+        ViperExtend,
+        SpecimenHang,
+        ViperExtendShort,
+        ViperExtendClosed,
+        ArmLowerToHome
+    }
+
+
+    HighBasketState highBasketState = HighBasketState.Home;
+    SpecimenClipState specimenClipState = SpecimenClipState.Home;
 
     ElapsedTime wristTimer = new ElapsedTime();
 
@@ -96,43 +108,43 @@ public class StateMachineTeleOp2 extends LinearOpMode{
 
             handleGamepad2(wristClaw);
 
-            switch (robotState) {
+            switch (highBasketState) {
                 case Home:
                     if (gamepad2.left_trigger > 0 && gamepad2.dpad_up) {
                         arm.MoveToHighBasket();
-                        robotState = RobotState.RisingArmSample;
+                        highBasketState = HighBasketState.RisingArmSample;
                     }
                     break;
                 case RisingArmSample:
                     if (arm.getIsArmHighBasketPosition()) {
                         viper.ExtendFull(1);
-                        robotState = RobotState.ViperExtendFull;
+                        highBasketState = HighBasketState.ViperExtendFull;
                     }
                     else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
                         arm.MoveToHome();
-                        robotState = RobotState.LoweringArm;
+                        highBasketState = HighBasketState.LoweringArm;
                     }
                     break;
 
                 case ViperExtendFull:
                     if (viper.getIsViperExtendFull()) {
                         wristClaw.WristDump();
-                        robotState = RobotState.WristDump;
+                        highBasketState = HighBasketState.WristDump;
                         wristTimer.reset();
                     }
                     else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
                         viper.ExtendShort(1);
-                        robotState = RobotState.ViperRetractedShort;
+                        highBasketState = HighBasketState.ViperRetractedShort;
                     }
                     break;
 
                 case WristDump:
                     if (wristTimer.seconds() >= wristFlipTime){
-                        robotState = RobotState.HighBasket;
+                        highBasketState = HighBasketState.HighBasket;
                     }
                     else if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
                         wristClaw.WristUp();
-                        robotState = RobotState.WristUp;
+                        highBasketState = HighBasketState.WristUp;
                         wristTimer.reset();
                     }
                     break;
@@ -140,7 +152,7 @@ public class StateMachineTeleOp2 extends LinearOpMode{
                 case HighBasket:
                     if (gamepad2.left_trigger > 0 && gamepad2.dpad_down) {
                         wristClaw.WristUp();
-                        robotState = RobotState.WristUp;
+                        highBasketState = HighBasketState.WristUp;
                         wristTimer.reset();
                     }
                     break;
@@ -148,28 +160,78 @@ public class StateMachineTeleOp2 extends LinearOpMode{
                 case WristUp:
                     if (wristTimer.seconds() >= wristFlipTime) {
                         viper.ExtendShort(1);
-                        robotState = RobotState.ViperRetractedShort;
+                        highBasketState = HighBasketState.ViperRetractedShort;
                     }
                     break;
 
                 case ViperRetractedShort:
                     if (viper.getIsViperRetractedShort()) {
                         viper.ExtendClosed(0.25);
-                        robotState = RobotState.ViperClosed;
+                        highBasketState = HighBasketState.ViperClosed;
                     }
 
                 case ViperClosed:
                     if (viper.getIsViperExtendClosed()) {
                         arm.MoveToHome();
-                        robotState = RobotState.LoweringArm;
+                        highBasketState = HighBasketState.LoweringArm;
                     }
                     break;
 
                 case LoweringArm:
                     if (arm.getIsArmHomePosition()) {
-                        robotState = RobotState.Home;
+                        highBasketState = HighBasketState.Home;
                     }
                     break;
+            }
+
+            switch (specimenClipState) {
+                case Home:
+                    if (gamepad2.right_trigger > 0 && gamepad2.dpad_up) {
+                        arm.MoveToSpecimen();
+                        specimenClipState = SpecimenClipState.RaiseArm;
+                    }
+                    break;
+                case RaiseArm:
+                    if (arm.getIsArmSpecimenPosition()) {
+                        viper.ExtendSpecimenhang(1);
+                        specimenClipState = SpecimenClipState.ViperExtend;
+                    }
+                    else if (gamepad2.right_trigger > 0 && gamepad2.dpad_down) {
+                        arm.MoveToHome();
+                        specimenClipState = SpecimenClipState.ArmLowerToHome;
+                    }
+                    break;
+
+                case ViperExtend:
+                    if (viper.getIsViperExtendSpecimenHang()) {
+                        specimenClipState = SpecimenClipState.SpecimenHang;
+                    }
+                    else if (gamepad2.right_trigger > 0 && gamepad2.dpad_down) {
+                        viper.ExtendClosed(0.25);
+                        specimenClipState = SpecimenClipState.ViperExtendShort;
+                    }
+                    break;
+
+                case SpecimenHang:
+                    if (gamepad2.right_trigger > 0 && gamepad2.dpad_down) {
+                        viper.ExtendClosed(0.25);
+                        specimenClipState = SpecimenClipState.ViperExtendClosed;
+                    }
+                    break;
+
+                case ViperExtendClosed:
+                    if (viper.getIsViperExtendClosed()) {
+                        arm.MoveToHome();
+                        specimenClipState = SpecimenClipState.ArmLowerToHome;
+                    }
+                    break;
+
+                case ArmLowerToHome:
+                    if (arm.getIsArmHomePosition()) {
+                        specimenClipState = SpecimenClipState.Home;
+                    }
+
+
             }
 
             telemetry.update();
