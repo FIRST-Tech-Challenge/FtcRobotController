@@ -13,7 +13,7 @@ public class LinearActuator  {
     private final BaseRobot baseRobot;
     public LinearActuator(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
-        this.actuatorMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.ACTUATOR);
+        this.actuatorMotor = baseRobot.hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.LINEAR_ACTUATOR);
 
         // Reset encoders
         actuatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

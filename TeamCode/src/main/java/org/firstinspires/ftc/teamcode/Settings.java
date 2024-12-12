@@ -91,7 +91,6 @@ public class Settings {
             public static final String WRIST = "wrist";
             public static final String LINKAGE = "linkage";
             public static final String CLAW = "claw";
-            public static final String ACTUATOR = "linearActuator";
         }
 
 
@@ -326,7 +325,7 @@ public class Settings {
         // Core Mechanisms
         public static final boolean INTAKE = true;
         public static final boolean OUTTAKE = true;
-        public static final boolean LINEAR_ACTUATOR = true;
+        public static final boolean LINEAR_ACTUATOR = false;
 
         // Navigation Systems
         public static final boolean ODOMETRY = true;
