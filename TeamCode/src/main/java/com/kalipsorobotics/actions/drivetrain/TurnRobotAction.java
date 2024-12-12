@@ -39,7 +39,7 @@ public class TurnRobotAction extends DriveTrainAction {
         this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
 
-        this.controller = new PIDController(0.2, 0.01, 0.01, "turn");  // placeholder values
+        this.controller = new PIDController(0.2, 0, 0, "turn");  // placeholder values
         this.startTime = Integer.MAX_VALUE;
         this.timeout = timeout;
     }
@@ -61,7 +61,7 @@ public class TurnRobotAction extends DriveTrainAction {
     }
 
     public double getCurrentHeading() {
-        return MathFunctions.angleWrapRad(wheelOdometry.getCurrentImuHeading());
+        return Math.toDegrees(MathFunctions.angleWrapRad(wheelOdometry.getCurrentImuHeading()));
     }
 
     public double getDuration() {

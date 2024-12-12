@@ -8,6 +8,7 @@ import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
 import com.kalipsorobotics.actions.drivetrain.MecanumRobotAction;
 import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
+import com.kalipsorobotics.actions.drivetrain.TurnRobotAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -19,15 +20,19 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+@TeleOp
 public class PIDCalibration extends LinearOpMode {
     static double learningRateP = 0.0075;
     static double learningRateI = 0.000075;
     static double learningRateD = 0.00075;
     static double learningAdjustmentRate = -0.1;
+
     static double timeDecay = 0.98;
-    static double overshootThreshold = 0.5;
+    static double overshootThreshold = 0.2;
+
+    static double speedupThreshold = 0.2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,11 +42,11 @@ public class PIDCalibration extends LinearOpMode {
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, 0);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
 
-        DriveTrainAction action = new MoveRobotStraightInchesAction(24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
+        DriveTrainAction action = new TurnRobotAction(90, driveTrain, sparkfunOdometry, wheelOdometry,  5);
         PIDController globalController = action.getPidController();
         String tag = String.format("ILC %s", globalController.getName());
 
-//        MoveIntakeLSAction maintainIntake = new MoveIntakeLSAction(new Intake(opModeUtilities), 0);
+        MoveIntakeLSAction maintainIntake = new MoveIntakeLSAction(new Intake(opModeUtilities), -10);
 
         int i = 0;
 
@@ -55,6 +60,7 @@ public class PIDCalibration extends LinearOpMode {
         while (opModeIsActive()) {
             wheelOdometry.updatePosition();
             action.updateCheckDone();
+            maintainIntake.update();
 
             if (action.getIsDone()) {
                 i++;
@@ -70,7 +76,7 @@ public class PIDCalibration extends LinearOpMode {
                 if (i % 2 == 0) {
                     Log.d(tag, String.format("Prev set duration %f, current set duration %f, total overshoot %f", prevSetDuration, totalSetDuration, totalOvershoot));
 
-                    if (totalSetDuration < prevSetDuration) {  // Faster-- decrease learning rates to prevent overly high increases
+                    if (prevSetDuration - totalSetDuration > speedupThreshold) {  // Faster-- decrease learning rates to prevent overly high increases
                         prevSetDuration = totalSetDuration;
                         learningRateP *= Math.exp(learningAdjustmentRate);
                         learningRateI *= Math.exp(learningAdjustmentRate);
@@ -79,7 +85,7 @@ public class PIDCalibration extends LinearOpMode {
                     if (totalOvershoot > overshootThreshold) {
                         learningRateP *= Math.exp(learningAdjustmentRate);
                         learningRateI *= Math.exp(learningAdjustmentRate);
-                        learningRateD *= Math.exp(-learningAdjustmentRate * Math.max(1.1, Math.sqrt(totalOvershoot)));  // Increase D to dampen faster
+                        learningRateD *= Math.exp(-learningAdjustmentRate);  // Increase D to dampen faster
                     }
 
                     Log.d(tag, String.format("Learning rates modified to %f, %f, %f", learningRateP, learningRateI, learningRateD));
@@ -92,9 +98,9 @@ public class PIDCalibration extends LinearOpMode {
                     globalController.chKi(deltaKI);
                     globalController.chKd(deltaKD);
 
-                    globalController.setKp(globalController.chKp(0) * Math.pow(timeDecay, i));
-                    globalController.setKi(globalController.chKi(0) * Math.pow(timeDecay, i));
-                    globalController.setKd(globalController.chKd(0) * Math.pow(timeDecay, i));
+                    globalController.setKp(globalController.chKp(0) * timeDecay);
+                    globalController.setKi(globalController.chKi(0) * timeDecay);
+                    globalController.setKd(globalController.chKd(0) * timeDecay);
 
                     totalSetError = 0;
                     totalSetDuration = 0;
@@ -102,9 +108,8 @@ public class PIDCalibration extends LinearOpMode {
                 }
 
                 sleep(500);  // should be safe I think
-//                maintainIntake.update();
 
-                action = new MoveRobotStraightInchesAction(i % 2 == 0 ? 24 : -24, driveTrain, sparkfunOdometry, wheelOdometry, 0, 5);
+                action = new TurnRobotAction(i % 2 == 0 ? 90 : -90, driveTrain, sparkfunOdometry, wheelOdometry, 5);
                 action.setPidController(globalController);
 
                 Log.d(tag, String.format("Error %f, Accumulated error %f, Error rate %f", totalSetError, accumulatedError, errorRate));

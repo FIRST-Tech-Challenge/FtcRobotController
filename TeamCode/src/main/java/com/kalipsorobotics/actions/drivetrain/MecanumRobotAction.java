@@ -12,8 +12,8 @@ import com.kalipsorobotics.modules.DriveTrain;
 
 public class MecanumRobotAction extends DriveTrainAction {
 
-    private static final double ERROR_TOLERANCE_IN = 0.4;
-    private static final double HEADING_ERROR_TOLERANCE_DEG = 1;
+    private static final double ERROR_TOLERANCE_IN = 0.5;
+    private static final double HEADING_ERROR_TOLERANCE_DEG = 2;
     DriveTrain driveTrain;
     SparkfunOdometry sparkfunOdometry;
     WheelOdometry wheelOdometry;
@@ -35,7 +35,7 @@ public class MecanumRobotAction extends DriveTrainAction {
 
     public MecanumRobotAction(double targetInches, DriveTrain driveTrain, SparkfunOdometry sparkfunOdometry, WheelOdometry wheelOdometry, double targetTheta, double timeout) {
         this.dependentActions.add(new DoneStateAction());
-        this.pidController = new PIDController(0.2, 0, 0, "mecanum");
+        this.pidController = new PIDController(0.093334, 0.000349, 0.002371, "mecanum");
         this.driveTrain = driveTrain;
 
         this.sparkfunOdometry = sparkfunOdometry;
@@ -88,7 +88,6 @@ public class MecanumRobotAction extends DriveTrainAction {
         if ((Math.abs(remainingDistance) <= ERROR_TOLERANCE_IN && Math.abs(thetaOffset) <= Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) || duration > timeout) {
             driveTrain.setPower(0); // stop, to be safe
             driveTrain.getOpModeUtilities().getOpMode().sleep(100);
-            duration = SystemClock.elapsedRealtime() - startTime;
             Log.d("mecanum", "done");
             return true;
         } else {
@@ -119,7 +118,12 @@ public class MecanumRobotAction extends DriveTrainAction {
         double rotationPower = 0;
 
         if (Math.abs(thetaOffset) > Math.toRadians(HEADING_ERROR_TOLERANCE_DEG)) {
-            rotationPower = thetaOffset * 0.3;
+            if (thetaOffset < 0) {
+                rotationPower = Math.min(0.05, thetaOffset * 0.4);
+            } else {
+                rotationPower = Math.max(0.05, thetaOffset * 0.4);
+
+            }
         }
 
         double fLeft = strafePower + rotationPower;
