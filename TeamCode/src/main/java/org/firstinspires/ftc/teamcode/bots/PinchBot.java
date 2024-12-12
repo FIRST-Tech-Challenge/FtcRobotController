@@ -21,9 +21,12 @@ public class PinchBot extends PivotBot{
     private double rotateServoPos; //0.66 - 0.3
 
     public final double rotateServoInitialPos = 0.66;
-    public final double rotateServoMax = 0.66;
-    public final double rotateServoMin = 0.33;
+    public final double rotateHorizontalLeftPos = 0.66;
+    public final double rotateHorizontalRightPos = 0.33;
     public final double rotateVerticalPos = 0.52;
+
+    public final double rotateMaxPos = 0.82;
+    public final double rotateMinPos = 0.22;
 
     public final double pinchOpenPos = 0.82;
     public final double pinchClosePos = 0.65;
@@ -86,11 +89,11 @@ public class PinchBot extends PivotBot{
     }
 
     public void rotateToPos(double pos){
-        if (pos > rotateServoMax) {
-            pos = rotateServoMax;
+        if (pos > rotateMaxPos) {
+            pos = rotateMaxPos;
         }
-        if (pos < rotateServoMin) {
-            pos = rotateServoMin;
+        if (pos < rotateMinPos) {
+            pos = rotateMinPos;
         }
         rotateServoPos = pos;
         rotate.setPosition(rotateServoPos);
@@ -108,9 +111,9 @@ public class PinchBot extends PivotBot{
      * @param angle
      */
     public void rotateToAngle(int angle){ //5216 - 4706
-        assert angle >= -90 && angle <= 90 : "Angle must be between -90 and 90 degrees";
+        assert angle > -165 && angle <= 165 : "Angle must be between -165 and 165 degrees";
         double relativeAngle = (-angle + 90) / 180.0;
-        double pos = relativeAngle * (rotateServoMax - rotateServoMin) + rotateServoMin;
+        double pos = relativeAngle * (rotateHorizontalLeftPos - rotateHorizontalRightPos) + rotateHorizontalRightPos;
         rotateToPos(pos);
     }
 
@@ -124,30 +127,6 @@ public class PinchBot extends PivotBot{
             pos += 0.01;
         }
         rotateToPos(pos);
-
-    }
-    @Deprecated
-    public void pickUp(boolean button){
-        // use horizontalDistance() to move robot and verticalDistance() to move slide
-        // figure out how to find angle and use rotate(angle)
-
-        double VERTICAL_OFFSET = 2;
-        double VERTICAL_PROPORTION = 2;
-        double HORIZONTAL_PROPORTION = 2;
-
-        // TODO : refactor with new detectOne method
-//        double[] position = detectOne();
-//        double x = position[0];
-//        double y = position[1];
-//        double theta = position[2];
-//        moveSlide((int) ((y + VERTICAL_OFFSET)*VERTICAL_PROPORTION),0.5); //move slide vertically
-//        driveStraightByDistance(90, x*HORIZONTAL_PROPORTION, 2);
-//        rotate(theta);
-//        isOpen = false;
-        //pinchControl();
-
-        //slideControl(false, true);
-        //rotate(CENTER_POSITION);
 
     }
 }
