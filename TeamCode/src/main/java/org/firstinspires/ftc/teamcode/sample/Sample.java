@@ -266,13 +266,13 @@ public class Sample {
     /**
      * The center of pinch arm to the center of rotation arm, in cm
      */
-    public final double pinchArmRadius = 3.0;
+    public final double pinchArmRadius = 1.5;
 
     /**
      * The center of rotation arm to the center of limelight camera, in cmspecimen_5
      */
-    public final double rotateArmCenterX = 0.9;
-    public final double rotateArmCenterY = -4.0;
+    public final double rotateArmCenterX = 1.5;
+    public final double rotateArmCenterY = -5.5;
     /**
      * When pinch the sample, the tolerance in sample length orientation, in cm
      */
@@ -292,7 +292,7 @@ public class Sample {
         double sampleCenterX = Math.tan(Math.toRadians(getX())) * distanceToFloor;
         double sampleCenterY = Math.tan(Math.toRadians(getY())) * distanceToFloor;
         int sampleAngle = getSampleAngle();
-        if (Math.abs(sampleAngle) >= 5) {
+        if (Math.abs(sampleAngle) >= 15) {
             if (sampleAngle > 0 && sampleCenterX > rotateArmCenterX) {
                 // the sample is on the right side of the robot, but the angle is positive ( pointing to left-upper corner)
                 sampleAngle = sampleAngle - 180;
@@ -313,7 +313,7 @@ public class Sample {
         boolean reachable;
         double deltaY;
         double distanceBetweenCenters;
-        if (Math.abs(sampleAngle)<5){
+        if (Math.abs(sampleAngle)<15){
             // TRICKY : handle sin(0) = 0 case
             // the sample is vertical aligned with robot, as long as the delta X is within the width tolerance, it is reachable
             reachable = Math.abs(deltaX) < sampleWidthTolerance;
