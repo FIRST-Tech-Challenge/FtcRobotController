@@ -44,16 +44,16 @@ public class RemoteControl extends LinearOpMode {
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2100;
-    final int VIPER_MAX_TALL = 3100;
+    final int VIPER_MAX_WIDE = 2000;
+    final int VIPER_MAX_TALL = 3200;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.2;        // Claw is closed
-    final double CLAW_MAX = 0.8;        // Claw is open
+    final double CLAW_MIN = 0.0;        // Claw is closed
+    final double CLAW_MAX = 0.51;        // Claw is open
     double claw_position = CLAW_MIN;
 
     Servo ascentStick = null;
