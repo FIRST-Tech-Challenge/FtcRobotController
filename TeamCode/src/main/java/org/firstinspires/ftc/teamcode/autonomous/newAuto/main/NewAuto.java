@@ -145,7 +145,7 @@
 //    }
 //
 //    @Override
-//    public void motorToPosition() {
+//    public void wheelMotorToPosition() {
 //        if (hardware.frontLeft.isBusy() || hardware.frontRight.isBusy() || hardware.backLeft.isBusy() || hardware.backRight.isBusy()) {
 //            runToPosition(hardware.frontLeft);
 //            runToPosition(hardware.frontRight);
@@ -197,7 +197,7 @@
 //    }
 //
 //    // Sets the motor speeds
-//    public void setSpeed(double frontLeftSpeed, double frontRightSpeed, double backRightSpeed, double backLeftSpeed) {
+//    public void setWheelSpeed(double frontLeftSpeed, double frontRightSpeed, double backRightSpeed, double backLeftSpeed) {
 //        hardware.frontLeft.setPower(frontLeftSpeed);
 //        hardware.frontRight.setPower(frontRightSpeed);
 //        hardware.backLeft.setPower(backLeftSpeed);
@@ -209,14 +209,14 @@
 //    public void base(int targetPosFL, int targetPosFR, int targetPosBL, int targetPosBR, double speedFL, double speedFR, double speedBL, double speedBR) {
 //        if(opModeIsActive()){
 //            setPosition(targetPosFL, targetPosFR, targetPosBL, targetPosBR);
-//            motorToPosition();
+//            wheelMotorToPosition();
 //            while(hardware.frontLeft.getCurrentPosition() < targetPosFL || hardware.frontRight.getCurrentPosition() < targetPosFR || hardware.backLeft.getCurrentPosition() < targetPosBL || hardware.backRight.getCurrentPosition() < targetPosBR){
-//                setSpeed(speedFL, speedFR, speedBL, speedBR);
+//                setWheelSpeed(speedFL, speedFR, speedBL, speedBR);
 //                while (hardware.frontLeft.isBusy()) {
 //                    whileMotorsBusy();
 //                }
 //            }
-//            setSpeed(0, 0, 0, 0);
+//            setWheelSpeed(0, 0, 0, 0);
 //            resetMotorEncoders();
 //            sleep(250);
 //        }
