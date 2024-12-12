@@ -41,7 +41,7 @@ public class PivotBot extends OdometryBot {
     public final int specimenLowSlidePos = 800;
     public final int highBasketSlidePos = 2400;
     public final int lowBasketSlidePos = 800;
-    public final double slideCMCoefficient = 60.0;
+    public final double slideCMCoefficient = 31.2;
 
     public int slideTarget = 110;
 
