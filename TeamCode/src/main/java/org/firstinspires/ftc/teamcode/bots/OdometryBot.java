@@ -304,6 +304,22 @@ public class OdometryBot extends GyroBot {
             isCoordinateDriving = true;
         }
     }
+
+    /**
+     * Strafes to a given distance with help of odometry
+     * @param distance In centimeters, positive is right, negative is left
+     */
+    public void strafing(double distance){
+        double xTarget = xBlue + distance * CENTIMETER_TO_DRIVING_MOTOR_CONVERSION_RATE;
+        driveToCoordinate(xTarget, yBlue, thetaDEG, 10, 1, false);
+    }
+    public void stopCoordinateDrive(){
+        isCoordinateDriving = false;
+    }
+
+    public void startCoordinateDrive(){
+        isCoordinateDriving = true;
+    }
     /**
      * Wait for odometry drive to stop (target reached).
      */

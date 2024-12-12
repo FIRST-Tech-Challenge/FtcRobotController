@@ -530,17 +530,5 @@ public class FourWheelDriveBot extends BotBot{
                 rightRear.getCurrentPosition()));
     }
 
-    public void strafing(double power){
-
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftFront.setPower(-power);
-        rightFront.setPower(power);
-        leftRear.setPower(power);
-        rightRear.setPower(-power);
-
-    }
 }
 

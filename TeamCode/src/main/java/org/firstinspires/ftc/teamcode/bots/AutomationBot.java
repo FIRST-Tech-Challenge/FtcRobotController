@@ -3,8 +3,13 @@ package org.firstinspires.ftc.teamcode.bots;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class AutomationBot extends LimelightBot{
 
+
+public class AutomationBot extends LimelightBot{
+    private boolean slideInSpecimenPosition = false;
+    private boolean slideInHighBasketPosition = false;
+    private boolean pivotInSpecimenPosition = false;
+    private boolean pivotInHighBasketPosition = false;
 
     public AutomationBot(LinearOpMode opMode) {
         super(opMode);
@@ -19,48 +24,39 @@ public class AutomationBot extends LimelightBot{
 
     protected void onTick() {
         super.onTick();
+        pivotInSpecimenPosition = (getPivotPosition() >= specimenHighPivotPos - 10) && (getPivotPosition() <= specimenHighPivotPos + 10);
+        slideInSpecimenPosition = (getSlidePosition() >= specimenHighSlidePos - 10) && (getSlidePosition() <= specimenHighSlidePos + 10);
+        pivotInHighBasketPosition = (getPivotPosition() >= highBasketPivotPos - 10) && (getPivotPosition() <= highBasketPivotPos + 10);
+        slideInHighBasketPosition = (getSlidePosition() >= highBasketSlidePos - 10) && (getSlidePosition() <= highBasketSlidePos + 10);
+    }
 
+    public void goToDefaultPosition(boolean input){
+        pivotTo(minumimPivotPos);
+        moveSlide(minimumSlidePos);
     }
     public void scoreSpecimen(boolean input) {
         if (input) {
-            if (getPivotPosition() <= 150 && getPivotPosition() >= 50 ) {
-                timer.reset(); // Reset the timer
-                while (timer.milliseconds() < 1000) {
-                    // Allow other tasks to run, like telemetry updates
-                }
+            if (!pivotInSpecimenPosition || !slideInSpecimenPosition) {
+
                 pivotToSpecimenHighPos();
-
-                timer.reset();
-                while (timer.milliseconds() < 1000){}
-                //rotateToPos(0);
-
-
-                timer.reset(); // Reset the timer again
-                while (timer.milliseconds() < 5000) {
-                    // Wait another second
-                }
-
-                moveSlideToHighSpecimenPos();
+                rotateToVerticalPos();
+                schedule(this::moveSlideToHighSpecimenPos, 600);
+            }
+            else{
+                moveSlideByDelta(-180);
+                schedule(this::openPinch, 600);
 
             }
-
-            if (getPivotPosition() >= specimenHighSlidePos -100 && getPivotPosition() <= specimenHighSlidePos + 100) {
-                timer.reset();
-                while (timer.milliseconds() < 500) {
-                    // Wait for .5 seconds before pinching
-                }
-                slideMotor.setPower(0.2);
-                slideTarget -= 550;
-                timer.reset();
-                while (timer.milliseconds() < 1000) {
-                    // Wait for 1 seconds before lowering
-                }
-
+        }
+    }
+    public void scoreBucket(boolean input) {
+        if (input) {
+            if (!pivotInHighBasketPosition || !slideInHighBasketPosition) {
+                pivotToHighBasketPos();
+                schedule(this::moveSlideToHighBucketPos, 1000);
+            }
+            else{
                 openPinch();
-
-                slideTarget = 100;
-                pivotTarget = 200;
-
             }
         }
     }
@@ -70,91 +66,55 @@ public class AutomationBot extends LimelightBot{
      * @param input - boolean to determine if the robot should prepare to score a specimen
      * @param aimHigh - boolean to determine if the robot should aim high or low chamber
      */
-    public void readySpecimenPos(boolean input, boolean aimHigh) {
-        if (input) {
-            rotateToVerticalPos();
-            if (aimHigh) {
-                pivotToSpecimenHighPos();
-                moveSlideToHighSpecimenPos();
-            } else {
-                pivotToSpecimenLowPos();
-                moveSlideToLowSpecimenPos();
-            }
-        }
-    }
+//    public void readySpecimenPos(boolean input, boolean aimHigh) {
+//        if (input) {
+//            rotateToVerticalPos();
+//            if (aimHigh) {
+//                pivotToSpecimenHighPos();
+//                schedule(this::moveSlideToHighSpecimenPos, 300);
+//            } else {
+//                pivotToSpecimenLowPos();
+//                moveSlideToLowSpecimenPos();
+//            }
+//        }
+//    }
 
     /**
      * This method will score a specimen (slide down a little, open pinch)
      * @param input
      */
-    public void scoreSpecimenSimple(boolean input) {
-        if (input) {
-            moveSlideByDelta(-100);
-            schedule(this::openPinch, 300);
-        }
-    }
-
-    /**
-     * This method will prepare the robot to score a basket (raise pivot arm, extend slide to a certain position)
-     * @param input - boolean to determine if the robot should prepare to score a basket
-     * @param aimHigh - boolean to determine if the robot should aim high or low basket
-     */
-    public void readyBucketPos(boolean input, boolean aimHigh) {
-        if (input) {
-            rotateToVerticalPos();
-            if (aimHigh) {
-                pivotToHighBasketPos();
-                moveSlideToHighBucketPos();
-            } else {
-                pivotToLowBasketPos();
-                moveSlideToLowBucketPos();
-            }
-        }
-    }
-    /**
-     * This method will score a bucket (pivot arm a little, open pinch, pivot arm up)
-     * @param input - boolean to determine if the robot should score a bucket
-     */
-    public void scoreBucketSimple(boolean input) {
-        if (input) {
-            pivotByDelta(-50);
-            schedule(this::openPinch, 100);
-            schedule(()->pivotByDelta(100), 300);
-        }
-    }
-
-    public void scoreBucket(boolean input){
-        if (input) {
-            if (getPivotPosition() <= minumimPivotPos + 200 && getPivotPosition() >= minumimPivotPos -150 ) {
-                timer.reset(); // Reset the timer
-                while (timer.milliseconds() < 500) {
-                    // Allow other tasks to run, like telemetry updates
-                }
-                pivotToHighBasketPos();
+//    public void scoreSpecimenSimple(boolean input) {
+//        if (input) {
+//            moveSlideByDelta(-180);
+//            schedule(this::openPinch, 900);
+//        }
+//    }
 
 
-                timer.reset(); // Reset the timer again
-                while (timer.milliseconds() < 1000) {
-                    // Wait another second
-                }
+//    public void readyBucketPos(boolean input, boolean aimHigh) {
+//        if (input) {
+//            rotateToVerticalPos();
+//            if (aimHigh) {
+//                pivotToHighBasketPos();
+//                moveSlideToHighBucketPos();
+//            } else {
+//                pivotToLowBasketPos();
+//                moveSlideToLowBucketPos();
+//            }
+//        }
+//    }
+//    /**
+//     * This method will score a bucket (pivot arm a little, open pinch, pivot arm up)
+//     * @param input - boolean to determine if the robot should score a bucket
+//     */
+//    public void scoreBucketSimple(boolean input) {
+//        if (input) {
+//            pivotByDelta(-50);
+//            schedule(this::openPinch, 100);
+//            schedule(()->pivotByDelta(100), 300);
+//        }
+//    }
 
-                moveSlideToHighBucketPos();
-
-            }
-
-            if (getPivotPosition() >= highBucketSlidePos -100 && getPivotPosition() <= highBucketSlidePos + 100) {
-
-
-                timer.reset();
-                while (timer.milliseconds() < 500) {
-                    // Wait for 2 seconds before pinching
-                }
-                openPinch();
-
-            }
-        }
-    }
-    
         
 
 

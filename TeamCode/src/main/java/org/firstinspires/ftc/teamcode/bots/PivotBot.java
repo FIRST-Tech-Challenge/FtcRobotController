@@ -9,9 +9,6 @@ package org.firstinspires.ftc.teamcode.bots;
 
         import java.util.Timer;
         import java.util.TimerTask;
-        import java.util.concurrent.Executors;
-        import java.util.concurrent.ScheduledExecutorService;
-        import java.util.concurrent.TimeUnit;
 
 public class PivotBot extends OdometryBot {
 
@@ -23,11 +20,11 @@ public class PivotBot extends OdometryBot {
     public final int minumimPivotPos = -100;
     private final int searchPivotPos = 250; // tested
     private final int pickupSpecimenPivotPos = 130; // tested
-    private final int pickupSamplePivotPos = 120; // tested
+    private final int pickupSamplePivotPos = 60; // tested
     private final int pickupUpPivotPos = 400;
-    public final int specimenHighPivotPos = 900;
+    public final int specimenHighPivotPos = 1196;
     public final int specimenLowPivotPos = 750;
-    public final int highBasketPivotPos = 1200;
+    public final int highBasketPivotPos = 1274;
     public final int lowBasketPivotPos = 1000;
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 300;
@@ -38,6 +35,7 @@ public class PivotBot extends OdometryBot {
 
     // Slide motor constants
     public final int maximumSlidePos = 2400;
+    public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
     public final int specimenHighSlidePos = 1100;
     public final int specimenLowSlidePos = 800;
@@ -128,15 +126,19 @@ public class PivotBot extends OdometryBot {
                 slideTarget = slideMotor.getCurrentPosition() + ((maximumSlidePos - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
         if (down) {
-            if (slideMotor.getCurrentPosition() > 170) {
+            if (slideMotor.getCurrentPosition() > minimumSlidePos) {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
+
+        //make pivot same
     }
 
     public void pivotControl(boolean up, boolean down){
@@ -156,22 +158,29 @@ public class PivotBot extends OdometryBot {
         }
     }
 
-    public void pivotTo(int pos, @Deprecated double power){
+    public void pivotTo(int pos){
         pivotTarget = pos;
     }
 
     public void pivotToSearchPos(){
         pivotTarget = searchPivotPos;
     }
-    public void pivotToPickupPos(boolean isSpecimen){
-        if (isSpecimen){
-            pivotTarget = pickupSpecimenPivotPos;
-        } else {
-            pivotTarget = pickupSamplePivotPos;
-        }
+//    public void pivotToPickupPos(boolean isSpecimen){
+//        if (isSpecimen){
+//            pivotTarget = pickupSpecimenPivotPos;
+//        } else {
+//            pivotTarget = pickupSamplePivotPos;
+//        }
+//    }
+    public void pivotToPickupPosSpecimen(){
+        pivotTarget = pickupSpecimenPivotPos;
+    }
+    public void pivotToPickupPosSample(){
+        pivotTarget = pickupSamplePivotPos;
     }
     public void pivotToPickupUpPos(){
-        pivotTarget = pickupUpPivotPos;
+        //pivotTarget = pickupUpPivotPos;
+        relatePivotToSlide();
     }
     public void pivotToSpecimenHighPos(){
         pivotTarget = specimenHighPivotPos;
@@ -193,7 +202,7 @@ public class PivotBot extends OdometryBot {
         pivotTimer.cancel();
     }
 
-    public void moveSlide(int pos, @Deprecated double power){
+    public void moveSlide(int pos){
         slideTarget = pos;
     }
 
@@ -216,6 +225,10 @@ public class PivotBot extends OdometryBot {
         slideTarget = lowBucketSlidePos;
     }
 
-
+    public void relatePivotToSlide(){
+        pivotTarget = Math.round((slideMotor.getCurrentPosition() / -23) + 245);
+        pivotMotor.setTargetPosition(pivotTarget);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
 }
