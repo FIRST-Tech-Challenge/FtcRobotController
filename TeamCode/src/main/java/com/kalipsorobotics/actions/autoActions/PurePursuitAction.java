@@ -41,7 +41,7 @@ public class PurePursuitAction extends Action {
 
     private long sleepTimeMS = 0;
 
-    private double maxTimeOutMS = 0;
+    private double maxTimeOutMS = 1000000000;
 
     private double startTimeMS = System.currentTimeMillis();
 
