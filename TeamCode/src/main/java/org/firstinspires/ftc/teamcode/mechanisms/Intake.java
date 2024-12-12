@@ -8,10 +8,12 @@ import org.firstinspires.ftc.teamcode.systems.Logger;
 
 public class Intake {
     public final Wrist wrist;
+    public final HorizontalSlide horizontalSlide;
     public final GeckoWheels geckoWheels;
 
     public Intake(BaseRobot baseRobot) {
         geckoWheels = new GeckoWheels(baseRobot);
+        horizontalSlide = new HorizontalSlide(baseRobot);
         wrist = new Wrist(baseRobot);
     }
 }

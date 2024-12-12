@@ -24,12 +24,15 @@ public class TestingSuite extends LinearOpMode {
             Settings.Hardware.IDs.REAR_LEFT_MOTOR,
             Settings.Hardware.IDs.REAR_RIGHT_MOTOR,
             Settings.Hardware.IDs.LINEAR_ACTUATOR,
+            Settings.Hardware.IDs.SLIDE_VERTICAL,
+            Settings.Hardware.IDs.SLIDE_HORIZONTAL,
     };
 
     private static final String[] SERVO_OPTIONS = {
             Settings.Hardware.IDs.GECKO_LEFT,
             Settings.Hardware.IDs.GECKO_RIGHT,
             Settings.Hardware.IDs.WRIST,
+            Settings.Hardware.IDs.LINKAGE,
     };
 
     private static final String[] LIST_OPTIONS = Stream.concat(Arrays.stream(MOTOR_OPTIONS),

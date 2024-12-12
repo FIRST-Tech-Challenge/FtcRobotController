@@ -20,11 +20,11 @@ public class VerticalSlide implements ViperSlide {
 
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        setPosition(VerticalPosition.HOVER);
+        setPosition(VerticalPosition.TRANSFER);
 
         // Set to RUN_TO_POSITION mode for position control
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.currentPosition = VerticalPosition.HOVER;
+        this.currentPosition = VerticalPosition.TRANSFER;
     }
 
     // Sets target position
@@ -58,11 +58,11 @@ public class VerticalSlide implements ViperSlide {
 
     @Override
     public void min() {
-        setPosition(VerticalPosition.PICKUP);
+        setPosition(VerticalPosition.TRANSFER);
     }
 
     @Override
     public void max() {
-        setPosition(VerticalPosition.HIGH_RUNG);
+        setPosition(VerticalPosition.HIGH_BASKET);
     }
 }

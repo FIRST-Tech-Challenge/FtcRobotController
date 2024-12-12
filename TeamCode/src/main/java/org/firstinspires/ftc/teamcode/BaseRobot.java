@@ -67,9 +67,9 @@ public class BaseRobot {
         rearRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.REAR_RIGHT_MOTOR);
 
         // IF A WHEEL IS GOING THE WRONG DIRECTION CHECK WIRING red/black
-        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rearLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rearLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         rearRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -184,13 +184,20 @@ public class BaseRobot {
             } else if (contextualActions.wristDown) {
                 intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
+
+            if (contextualActions.justExtendHorizontal) {
+                intake.horizontalSlide.extend();
+            }
+            if (contextualActions.justRetractHorizontal) {
+                intake.horizontalSlide.retract();
+            }
         }
 
         if (Settings.Deploy.OUTTAKE) {
-            if (contextualActions.extendHorizontal) {
+            if (contextualActions.justExtendVertical) {
                 outtake.verticalSlide.extend();
             }
-            if (contextualActions.retractHorizontal) {
+            if (contextualActions.justRetractVertical) {
                 outtake.verticalSlide.retract();
             }
         }

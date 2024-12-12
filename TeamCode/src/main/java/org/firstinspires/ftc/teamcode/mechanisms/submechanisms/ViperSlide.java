@@ -23,8 +23,9 @@ public interface ViperSlide {
     }
 
     enum VerticalPosition {
-        PICKUP(Settings.Hardware.VerticalSlide.PICKUP),
-        HOVER(Settings.Hardware.VerticalSlide.HOVER),
+        TRANSFER(Settings.Hardware.VerticalSlide.TRANSFER),
+        LOW_BASKET(Settings.Hardware.VerticalSlide.LOW_BASKET),
+        HIGH_BASKET(Settings.Hardware.VerticalSlide.HIGH_BASKET),
         LOW_RUNG(Settings.Hardware.VerticalSlide.LOW_RUNG),
         HIGH_RUNG(Settings.Hardware.VerticalSlide.HIGH_RUNG);
 

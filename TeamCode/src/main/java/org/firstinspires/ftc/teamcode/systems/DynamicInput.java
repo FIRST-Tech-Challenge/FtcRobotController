@@ -12,7 +12,7 @@ public class DynamicInput {
     private Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
-    private boolean prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevWrist;
+    private boolean prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist;
 
     public DynamicInput(Gamepad gamepad1, Gamepad gamepad2, Settings.ControllerProfile mainProfile,
             Settings.ControllerProfile subProfile) {
@@ -92,7 +92,7 @@ public class DynamicInput {
     }
 
     public static class Actions {
-        public final boolean extendHorizontal, retractHorizontal, groundExtensor, ceilingExtensor, extensorBusy;
+        public final boolean extendHorizontal, retractHorizontal, retractVertical, extendVertical, extensorBusy;
         public final boolean intakeIn, intakeOut, intakeStop;
         public final boolean wristUp, wristDown;
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorCeiling;
@@ -103,9 +103,9 @@ public class DynamicInput {
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
             this.extendHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.extendHorizontal);
             this.retractHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.retractHorizontal);
-            this.groundExtensor = getButtonState(subCtrl, subSettings.buttonMapping.groundExtensor);
-            this.ceilingExtensor = getButtonState(subCtrl, subSettings.buttonMapping.ceilingExtensor);
-            this.extensorBusy = extendHorizontal || retractHorizontal || groundExtensor;
+            this.retractVertical = getButtonState(subCtrl, subSettings.buttonMapping.retractVertical);
+            this.extendVertical = getButtonState(subCtrl, subSettings.buttonMapping.extendVertical);
+            this.extensorBusy = extendHorizontal || retractHorizontal || retractVertical;
             this.intakeIn = getButtonState(subCtrl, subSettings.buttonMapping.intakeIn);
             this.intakeOut = getButtonState(subCtrl, subSettings.buttonMapping.intakeOut);
             this.intakeStop = getButtonState(subCtrl, subSettings.buttonMapping.intakeStop);
@@ -129,18 +129,18 @@ public class DynamicInput {
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendExtensor, justRetractExtensor, justGroundExtensor, justCeilingExtensor, justWristUp;
+        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp;
         public final boolean shoulderUp, shoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
-                boolean prevExtend, boolean prevRetract, boolean prevGround, boolean prevCeiling, boolean prevWrist) {
+                boolean prevExtendHorizontal, boolean prevRetractHorizontal, boolean prevExtendVertical, boolean prevRetractVertical, boolean prevWrist) {
             super(mainCtrl, mainSettings, subCtrl, subSettings);
 
-            this.justExtendExtensor = extendHorizontal && !prevExtend;
-            this.justRetractExtensor = retractHorizontal && !prevRetract;
-            this.justGroundExtensor = groundExtensor && !prevGround;
-            this.justCeilingExtensor = ceilingExtensor && !prevCeiling;
+            this.justExtendHorizontal = extendHorizontal && !prevExtendHorizontal;
+            this.justRetractHorizontal = retractHorizontal && !prevRetractHorizontal;
+            this.justRetractVertical = retractVertical && !prevRetractVertical;
+            this.justExtendVertical = extendVertical && !prevExtendVertical;
             this.justWristUp = wristUp && !prevWrist;
 
             this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
@@ -158,13 +158,13 @@ public class DynamicInput {
 
     public ContextualActions getContextualActions() {
         ContextualActions actions = new ContextualActions(mainCtrl, mainSettings, subCtrl, subSettings,
-                prevExtendExtensor, prevRetractExtensor, prevGroundExtensor, prevCeilingExtensor, prevWrist);
+                prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist);
 
         // Update previous states
-        prevExtendExtensor = actions.extendHorizontal;
-        prevRetractExtensor = actions.retractHorizontal;
-        prevGroundExtensor = actions.groundExtensor;
-        prevCeilingExtensor = actions.ceilingExtensor;
+        prevExtendHorizontal = actions.extendHorizontal;
+        prevRetractHorizontal = actions.retractHorizontal;
+        prevExtendVertical = actions.extendVertical;
+        prevRetractVertical = actions.retractVertical;
         prevWrist = actions.wristUp;
 
         return actions;

@@ -107,11 +107,13 @@ public class Settings {
         @Config
         public static class VerticalSlide {
             // Positions in encoder ticks
-            // TODO: TUNE
-            public static int PICKUP = 0;
-            public static int HOVER = -20;
-            public static int LOW_RUNG = -500;
-            public static int HIGH_RUNG = -1000;
+
+            public static int TRANSFER = 0;
+            public static int LOW_RUNG = 500; // TODO TUNE
+            public static int LOW_BASKET = 1000; // TODO TUNE
+
+            public static int HIGH_RUNG = 1400; // TODO TUNE
+            public static int HIGH_BASKET = 1700;
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.5;
@@ -122,9 +124,9 @@ public class Settings {
             // Positions in encoder ticks
             // TODO: TUNE
             public static int COLLAPSED = 0;
-            public static int LEVEL_1 = 50;
-            public static int LEVEL_2 = 100;
-            public static int EXPANDED = 200;
+            public static int LEVEL_1 = -200;
+            public static int LEVEL_2 = -400;
+            public static int EXPANDED = -600;
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.7;
@@ -250,8 +252,8 @@ public class Settings {
         // Extensor controls
         public GamepadButton extendHorizontal = GamepadButton.B;
         public GamepadButton retractHorizontal = GamepadButton.X;
-        public final GamepadButton groundExtensor = GamepadButton.A;
-        public final GamepadButton ceilingExtensor = GamepadButton.Y;
+        public final GamepadButton retractVertical = GamepadButton.A;
+        public final GamepadButton extendVertical = GamepadButton.Y;
 
         // Movement controls
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
