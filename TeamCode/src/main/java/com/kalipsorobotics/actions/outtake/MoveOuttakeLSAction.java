@@ -166,6 +166,11 @@ public class MoveOuttakeLSAction extends Action {
     static public void incrementGlobal(double incrementTicks) {
         setGlobalLinearSlideMaintainTicks(globalLinearSlideMaintainTicks + incrementTicks);
     }
+
+    static public void setGlobal(double ticks) {
+        setGlobalLinearSlideMaintainTicks(ticks);
+    }
+
     public double getCurrentTicks() {
         return currentTicks;
     }

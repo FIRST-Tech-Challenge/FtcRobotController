@@ -49,7 +49,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-745, 300, 0);
+        moveToSpecimenBar.addPoint(-755, 300, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoSpecimen.addAction(moveToSpecimenBar);
 
@@ -103,8 +103,8 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveFloorSamples.addPoint(-430, -1170, -180);//move back out to avoid sample carry
 
         //wall to depot for specimen
-        moveFloorSamples.addPoint(-205, -600, -180);
-        moveFloorSamples.addPoint(-90, -600, -180);
+        moveFloorSamples.addPoint(-305, -700, -180); //-305, -600
+        moveFloorSamples.addPoint(-90, -700, -180);
         redAutoSpecimen.addAction(moveFloorSamples);
         //==============end of pushing================
 

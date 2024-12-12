@@ -296,7 +296,7 @@ public class RedTeleop extends LinearOpMode {
         boolean leftTriggerPressed = false;
         boolean gp2DPadPressed = false;
 
-        double hangStartPosition;
+        double hangStartPosition = 0;
 
 
         //CHANGE ACCORDING TO ALLIANCE
@@ -389,7 +389,8 @@ public class RedTeleop extends LinearOpMode {
 
             if(gamepad1.x) {
                 //MoveOuttakeLSAction.setOverridePower(-0.4);
-                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
+                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
+                //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
             } else {
                 MoveOuttakeLSAction.setOverridePower(0);
             }
@@ -398,12 +399,15 @@ public class RedTeleop extends LinearOpMode {
                 if (!gp2DPadPressed) {
                     outtake.getHangHook1().setPosition(0.5);
                     outtake.getHangHook2().setPosition(0.65);
+                    hangStartPosition = outtake.getLinearSlide1().getCurrentPosition();
                     gp2DPadPressed = true;
                 }
 
-
-                //MoveOuttakeLSAction.setOverridePower(-0.85);
-                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
+                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {
+                    //MoveOuttakeLSAction.setOverridePower(-0.85);
+                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(1));
+                    //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
+                }
 
             } else {
                 MoveOuttakeLSAction.setOverridePower(0);
