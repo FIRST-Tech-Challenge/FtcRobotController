@@ -176,7 +176,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
 //            }
 
             //determines the speed
-            if (Math.abs(robot.liftPitch.getCurrentPosition() - robot.liftPitchPosition) > 50) {
+            if (Math.abs(robot.liftPitch.getCurrentPosition() - robot.liftPitchPosition) > 25) {
                 if (robot.liftPitch.getCurrentPosition() < robot.liftPitchPosition) {
                     robot.liftPitch.setVelocity(2150);
                 } else if (robot.liftPitch.getCurrentPosition() >= robot.liftPitchPosition) {
@@ -185,7 +185,7 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                         robot.liftPitch.setVelocity(-3000);
                     }
                 }
-            } else {
+            }else {
                 robot.liftPitch.setVelocity(0);
             }
             telemetry.addData(" extender curent pos", robot.liftExtender.getCurrentPosition());
@@ -260,11 +260,14 @@ public class TeleOpCode_RobotCentric extends LinearOpMode {
                 if (gamepad2.left_stick_y < -0.2) {//going up
 
                     robot.liftPitchPosition = robot.liftPitchPosition + 40;
+                    if (robot.liftPitchPosition > 2090) {
+                        robot.liftPitchPosition = robot.liftPitchPosition + 10;
+                    }
 
                 } else if (gamepad2.left_stick_y > 0.2) {//going down
 
                     robot.liftPitchPosition = robot.liftPitchPosition - 35;
-                    if (robot.liftPitchPosition > 1500) {
+                    if (robot.liftPitchPosition > 2090) {
                         robot.liftPitchPosition = robot.liftPitchPosition - 10;
                     }
 
