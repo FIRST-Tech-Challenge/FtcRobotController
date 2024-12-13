@@ -25,6 +25,8 @@ public class AxonPickupTest extends OpMode {
     }
     public ElbowState elbowState = ElbowState.DOWN;
     public GripperState gripperState = GripperState.OPEN;
+    public int GRIPPERS_CLOSED = 1;
+    public int GRIPPERS_OPEN = 0;
 
     @Override
     public void init() {
@@ -50,7 +52,7 @@ public class AxonPickupTest extends OpMode {
                 case DOWN:
                     servoTimer.reset();
                     while (servoTimer.seconds() < 2) {
-                        grippers.setPosition(1);
+                        grippers.setPosition(GRIPPERS_CLOSED);
                         gripperState = GripperState.CLOSED;
                     }
                     elbowState = ElbowState.UP;
@@ -58,10 +60,10 @@ public class AxonPickupTest extends OpMode {
             button_timer.reset();
         }
         if(gripperState == GripperState.OPEN){
-            grippers.setPosition(0);
+            grippers.setPosition(GRIPPERS_OPEN);
         }
         else {
-            grippers.setPosition(1);
+            grippers.setPosition(GRIPPERS_CLOSED);
         }
         if(elbowState == ElbowState.UP){
             if(grippers.getPosition() == 1) {
