@@ -387,30 +387,26 @@ public class RedTeleop extends LinearOpMode {
                 }
             }
 
-            if(gamepad1.x) {
-                //MoveOuttakeLSAction.setOverridePower(-0.4);
-                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
-                //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
-            } else {
+            if (!gamepad1.x && !gamepad1.dpad_down){
                 MoveOuttakeLSAction.setOverridePower(0);
-            }
-
-            if (gamepad1.dpad_down) {
+            } else if(gamepad1.x && !gamepad1.dpad_down) {
+                MoveOuttakeLSAction.setOverridePower(-0.05);
+//                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
+                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition());
+                //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
+            } else if (gamepad1.dpad_down && !gamepad1.x) {
                 if (!gp2DPadPressed) {
                     outtake.getHangHook1().setPosition(0.5);
                     outtake.getHangHook2().setPosition(0.65);
-                    hangStartPosition = outtake.getLinearSlide1().getCurrentPosition();
+                    MoveOuttakeLSAction.setOverridePower(-0.65);
+                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(44.45));
                     gp2DPadPressed = true;
                 }
-
-                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {
-                    //MoveOuttakeLSAction.setOverridePower(-0.85);
-                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(1));
-                    //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
-                }
-
-            } else {
-                MoveOuttakeLSAction.setOverridePower(0);
+//                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {
+//                    //MoveOuttakeLSAction.setOverridePower(-0.85);
+//                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(1));
+//                    //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
+//                }
             }
 
             if(gamepad1.right_trigger == 1) {
