@@ -21,15 +21,15 @@ public class UppiesSubsystem extends SubsystemBase {
     private final static FTCDashboardPackets dbp = new FTCDashboardPackets("UppiesSubsytem");
     private final static FTCDashboardPackets dbp2 = new FTCDashboardPackets("DebugPositionUppies");
 
-    public static boolean PROGRAMATIC_STALL_SAFETY = true;
+    public static boolean PROGRAMATIC_STALL_SAFETY = false;
     public static boolean PROGRAMATIC_IGNORE_LIMITS = false;
     // After the motor has enough time to start moving, start checking if the motor is stalling.
     private static final long STALL_THRESHOLD = 300;
     // Once the motor is moving less than the specified ticks per second, it is stalling.
     public static final double STALL_TICKS_PER_SECOND_THRESHOLD = .5;
 
-    public static int MAX_POSITION = 10;
-    public static int MIN_POSITION = -1;
+    public static int MAX_POSITION = -33;
+    public static int MIN_POSITION = -5000;
 
     public UppiesSubsystem(DcMotorEx uppiesMotor) {
         this.uppiesMotor = uppiesMotor;
@@ -58,9 +58,6 @@ public class UppiesSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        if (!PROGRAMATIC_STALL_SAFETY) {
-            return;
-        }
 
         if (state == UppiesState.IDLE) {
             return;
@@ -68,23 +65,26 @@ public class UppiesSubsystem extends SubsystemBase {
 
         int currentPosition = uppiesMotor.getCurrentPosition();
         dbp2.info("Uppies Position: " + currentPosition);
-        dbp2.info("Uppies Limits: min[" + MIN_POSITION + "] : max[" + MAX_POSITION + "]");
+        //dbp2.info("Uppies Limits: min[" + MIN_POSITION + "] : max[" + MAX_POSITION + "]");
         dbp2.send(true);
 
-        if (!PROGRAMATIC_IGNORE_LIMITS && state == UppiesState.UPPIES && currentPosition >= MAX_POSITION) {
+        if (!PROGRAMATIC_IGNORE_LIMITS && state == UppiesState.UPPIES && currentPosition <= MIN_POSITION) {
             setUppiesState(UppiesState.IDLE);
             dbp.info("EXCEEDED MAX LIMIT. HALTING.");
             dbp.send(true);
         }
 
-        if (!PROGRAMATIC_IGNORE_LIMITS && state == UppiesState.UN_UPPIES && currentPosition <= MIN_POSITION) {
+        if (!PROGRAMATIC_IGNORE_LIMITS && state == UppiesState.UN_UPPIES && currentPosition >= MAX_POSITION) {
             setUppiesState(UppiesState.IDLE);
             dbp.info("EXCEEDED MIN LIMIT. HALTING.");
             dbp.send(true);
         }
 
+        if (!PROGRAMATIC_STALL_SAFETY) {
+            return;
+        }
+
         long elapsedStateMillis = System.currentTimeMillis() - lastStateChange;
-        dbp.info("Millis = "+elapsedStateMillis);
         if (elapsedStateMillis > STALL_THRESHOLD) {
             double ticksPerSecond = uppiesMotor.getVelocity(AngleUnit.DEGREES);
             dbp.info("Ticks = "+ticksPerSecond);

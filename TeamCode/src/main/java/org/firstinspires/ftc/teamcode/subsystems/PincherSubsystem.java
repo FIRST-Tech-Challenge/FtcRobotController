@@ -15,7 +15,7 @@ public class PincherSubsystem extends SubsystemBase {
     ServoEx finger1, finger2;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("FingerSubsystem");
 
-    public static float MAX_ANGLE = 40 / 2f;
+    public static float MAX_ANGLE = 5 / 2f;
 
     public enum FingerPositions {
         ZERO(0, AngleUnit.DEGREES),
@@ -63,10 +63,10 @@ public class PincherSubsystem extends SubsystemBase {
 
         double angleScale = position.getAngle() / MAX_ANGLE;
 
-        finger1.setPosition(1f-angleScale);
-        finger2.setPosition(angleScale);
-        //finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
-        //finger2.turnToAngle(position.getAngle(), position.getAngleUnit());
+        //finger1.setPosition(1f-angleScale);
+        //finger2.setPosition(angleScale);
+        finger1.turnToAngle((MAX_ANGLE-position.getAngle())/3f, position.getAngleUnit());
+        finger2.turnToAngle((position.getAngle())/3f, position.getAngleUnit());
         //dbp.info("ANGLE: "+angleScale);
         //dbp.info("POSITION: "+finger1.getPosition()+ ", "+finger2.getPosition());
         //dbp.info("OBJECT: "+finger1+ ", "+finger2);

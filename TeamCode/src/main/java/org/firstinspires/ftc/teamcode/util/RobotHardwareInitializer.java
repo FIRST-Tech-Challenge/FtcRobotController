@@ -4,11 +4,14 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
@@ -41,6 +44,7 @@ public class RobotHardwareInitializer {
 
         UPPIES("uppies"), // Used to move the pincher and bucket up and down
         EXTENDER("extender"), // Used to move in intake system forward and back
+        EXTENDER2("extender2"), // Used to move in intake system forward and back
         INTAKE("intake"), // Used to pick up blocks
         ;
         private final String componentName;
@@ -73,12 +77,22 @@ public class RobotHardwareInitializer {
     public enum EncoderComponent implements Component<DcMotor> {
         ENCODER_LEFT("fl_drv"),
         ENCODER_RIGHT("fr_drv"),
-        ENCODER_BACK("br_drv"),
-        ;
+        ENCODER_BACK("br_drv");
         private final String componentName;
         EncoderComponent(String componentName) { this.componentName = componentName; }
         @Override public String getComponentName() { return componentName; }
         @Override public DcMotor get(HardwareMap map) { return map.get(DcMotor.class, getComponentName()); }
+    }
+
+    public enum DistanceSensorComponent implements Component<DistanceSensor> {
+        // EXTENDER_SENSOR("extender_color_sensor"),
+        RIGHT_SENSOR("right_distance"),
+        CENTER_SENSOR("center_distance"),
+        LEFT_SENSOR("left_distance");
+        private final String componentName;
+        DistanceSensorComponent(String componentName) { this.componentName = componentName; }
+        @Override public String getComponentName() { return componentName; }
+        @Override public DistanceSensor get(HardwareMap map) { return map.get(DistanceSensor.class, getComponentName()); }
     }
 
     /*public enum Component {

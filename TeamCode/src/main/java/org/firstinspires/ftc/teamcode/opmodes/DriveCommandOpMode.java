@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -70,6 +71,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         GamepadKeys.Button toggleIntakeSpinButton   = GamepadKeys.Button.LEFT_STICK_BUTTON;
         GamepadKeys.Button toggleIntakeTiltButton   = GamepadKeys.Button.LEFT_BUMPER;
         GamepadKeys.Button manualSafetyOverride     = GamepadKeys.Button.BACK;
+        GamepadKeys.Button maxExtensionOverride     = GamepadKeys.Button.BACK;
 
         dbp.createNewTelePacket();
         dbp.info("Initializing drive command op mode...");
@@ -88,8 +90,8 @@ public class DriveCommandOpMode extends CommandOpMode {
         }
 
         try {
-            ServoEx pincher1 = RobotHardwareInitializer.ServoComponent.FINGER_1.getEx(hardwareMap, 0, 45);
-            ServoEx pincher2 = RobotHardwareInitializer.ServoComponent.FINGER_2.getEx(hardwareMap, 0, 45);
+            ServoEx pincher1 = RobotHardwareInitializer.ServoComponent.FINGER_1.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
+            ServoEx pincher2 = RobotHardwareInitializer.ServoComponent.FINGER_2.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
             pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
             register(pincherSubsystem);
 
@@ -143,7 +145,8 @@ public class DriveCommandOpMode extends CommandOpMode {
 
         try {
             DcMotorEx motorEx = RobotHardwareInitializer.MotorComponent.EXTENDER.getEx(hardwareMap);
-            extendoSystem = new ExtendoSystem(motorEx);
+            DcMotorEx motorReverseEx = RobotHardwareInitializer.MotorComponent.EXTENDER2.getEx(hardwareMap);
+            extendoSystem = new ExtendoSystem(motorEx, motorReverseEx);
             register(extendoSystem);
 
             ExtendoCommand extendCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD);
@@ -176,6 +179,11 @@ public class DriveCommandOpMode extends CommandOpMode {
                     .toggleWhenPressed(tiltCommand, untiltCommand);
             armerController.getGamepadButton(toggleIntakeSpinButton)
                     .whenPressed(toggleIntakeState);
+            armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).toggleWhenPressed(() -> {
+                intakeSubsystem.setIntakeDirection(DcMotorSimple.Direction.REVERSE);
+            }, () -> {
+                intakeSubsystem.setIntakeDirection(DcMotorSimple.Direction.FORWARD);
+            });
         } catch (Exception e) {
             dbp.info("ERROR IN INTAKE SYSTEM");
             dbp.error(e);
@@ -194,10 +202,15 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("GO GO GO!");
         dbp.send(false);
 
-        armerController.getGamepadButton(manualSafetyOverride).toggleWhenPressed(() -> {
+        /*armerController.getGamepadButton(manualSafetyOverride).toggleWhenPressed(() -> {
             UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = false;
         }, () -> {
             UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = true;
+        });*/
+        armerController.getGamepadButton(maxExtensionOverride).toggleWhenPressed(() -> {
+            UppiesSubsystem.PROGRAMATIC_IGNORE_LIMITS = false;
+        }, () -> {
+            UppiesSubsystem.PROGRAMATIC_IGNORE_LIMITS = true;
         });
 
         // NOTE: Do not include the opModeIsActive() while loop, as it prevents commands from running
@@ -221,7 +234,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         forwardBack = () -> {
             int dpadY = (driverController.getButton(GamepadKeys.Button.DPAD_UP) ? 1 : 0)
                     - (driverController.getButton(GamepadKeys.Button.DPAD_DOWN) ? 1 : 0);
-            if(dpadY != 0) {
+            if (dpadY != 0) {
                 return dpadY * slowdownMultiplier.getAsDouble();
             } else {
                 return driverController.getLeftY() * slowdownMultiplier.getAsDouble();
@@ -230,7 +243,7 @@ public class DriveCommandOpMode extends CommandOpMode {
         leftRight = () -> {
             int dpadX = (driverController.getButton(GamepadKeys.Button.DPAD_RIGHT) ? 1 : 0)
                     - (driverController.getButton(GamepadKeys.Button.DPAD_LEFT) ? 1 : 0);
-            if(dpadX != 0) {
+            if (dpadX != 0) {
                 return dpadX * slowdownMultiplier.getAsDouble();
             } else {
                 return driverController.getLeftX() * slowdownMultiplier.getAsDouble();
