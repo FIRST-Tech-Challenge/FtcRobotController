@@ -1,12 +1,13 @@
 package com.kalipsorobotics.test.outtake;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp
+@Disabled
 public class TestLinearSlide2 extends LinearOpMode {
     DcMotor linearSlideMotor1;
     DcMotor linearSlideMotor2;

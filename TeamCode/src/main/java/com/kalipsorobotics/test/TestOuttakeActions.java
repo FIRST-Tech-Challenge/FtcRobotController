@@ -1,5 +1,6 @@
 package com.kalipsorobotics.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import com.kalipsorobotics.modules.OuttakePositions;
 
-@TeleOp
+@Disabled
 public class TestOuttakeActions extends LinearOpMode {
 
     @Override

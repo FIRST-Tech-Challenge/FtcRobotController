@@ -1,6 +1,7 @@
 package com.kalipsorobotics.test.intake;
 
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +9,7 @@ import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-@TeleOp
+@Disabled
 public class IntakeTest extends LinearOpMode {
 
 

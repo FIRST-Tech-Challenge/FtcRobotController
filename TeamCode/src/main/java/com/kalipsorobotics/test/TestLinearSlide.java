@@ -1,5 +1,6 @@
 package com.kalipsorobotics.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.modules.Outtake;
 
-@TeleOp
+@Disabled
 public class TestLinearSlide extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

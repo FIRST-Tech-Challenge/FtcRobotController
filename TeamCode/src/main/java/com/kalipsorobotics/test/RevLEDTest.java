@@ -1,11 +1,12 @@
 package com.kalipsorobotics.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.kalipsorobotics.modules.RevLED;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@TeleOp
+@Disabled
 public class RevLEDTest extends LinearOpMode {
     private RevLED revLED;
 

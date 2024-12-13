@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //test drive for new INTO THE DEEP robot
 @Disabled
-@TeleOp
 public class NewRobotTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

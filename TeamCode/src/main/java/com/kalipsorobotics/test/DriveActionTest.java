@@ -8,13 +8,14 @@ import com.kalipsorobotics.localization.OdometrySpark;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.Arrays;
 
 
-@TeleOp
+@Disabled
 public class DriveActionTest extends LinearOpMode {
     private LinearOpMode opMode;
     public OdometrySpark odometryFuse;

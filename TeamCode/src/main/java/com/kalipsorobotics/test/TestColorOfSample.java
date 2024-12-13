@@ -5,13 +5,14 @@ import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.ColorDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
-@TeleOp
+@Disabled
 public class TestColorOfSample extends LinearOpMode {
 
     DriveTrain driveTrain;

@@ -1,11 +1,12 @@
 package com.kalipsorobotics.test.intake;
 
 import com.kalipsorobotics.utilities.KColor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 
-@TeleOp
+@Disabled
 public class TestColor extends LinearOpMode {
 
     // Define a variable for our color sensor

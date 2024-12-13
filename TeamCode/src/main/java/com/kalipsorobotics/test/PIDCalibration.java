@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="PIDCalibration")
+@Disabled
 public class PIDCalibration extends LinearOpMode {
     static double learningRateP = 0.05;
     static double learningRateI = 0.002;

@@ -1,10 +1,11 @@
 package com.kalipsorobotics.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp
+@Disabled
 public class TestLinkageServo extends LinearOpMode {
     Servo linkageServo1;
     Servo linkageServo2;

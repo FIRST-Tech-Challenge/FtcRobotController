@@ -3,10 +3,11 @@ package com.kalipsorobotics.test;
 import com.kalipsorobotics.actions.AutoHangAction;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
+@Disabled
 public class TestHanging extends LinearOpMode {
 
     @Override
