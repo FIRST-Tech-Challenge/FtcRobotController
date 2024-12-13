@@ -77,10 +77,10 @@ public class HardwareMinibot
     //Claw servo (demo)
     public Servo clawServo = null;
 
-    final public static double CLAW_SERVO_CLOSED  = 0.455;  // Claw closed (hold sample/specimen)
+    final public static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     final public static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
-    final public static double CLAW_SERVO_OPEN_N  = 0.550;  // claw opened narrow (enough to release/drop)
-    final public static double CLAW_SERVO_OPEN_W  = 0.850;  // claw opened wide (fully open)
+    final public static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
+    final public static double CLAW_SERVO_OPEN_W  = 0.830;  // claw opened wide (fully open)
 
     public enum clawStateEnum {
         CLAW_INIT,

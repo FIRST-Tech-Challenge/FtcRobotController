@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * TeleOp Servo Test Program
  */
 @TeleOp(name="Teleop-ServoTest", group="7592")
-@Disabled
+//@Disabled
 public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  //
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  //
@@ -43,7 +43,7 @@ public class TeleopServoTest extends LinearOpMode {
         telemetry.update();
 
         // Initialize robot hardware
-        robot.init(hardwareMap,false);
+        robot.init(hardwareMap,true);
 
         // Start each value at the initialization position
         elbowPos = robot.ELBOW_SERVO_INIT;

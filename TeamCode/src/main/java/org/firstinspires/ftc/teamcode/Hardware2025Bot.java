@@ -188,7 +188,7 @@ public class Hardware2025Bot
     //====== COLLECTOR SERVOS =====
     public AnalogInput elbowServoPos = null;
     public Servo elbowServo = null;
-    final public static double ELBOW_SERVO_INIT = 0.350;
+    final public static double ELBOW_SERVO_INIT = 0.500;
     final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
     final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
     final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
@@ -217,6 +217,8 @@ public class Hardware2025Bot
     final public static double WRIST_SERVO_BAR2 = 0.640;
     final public static double WRIST_SERVO_BAR_ANGLE = 134.0;
 
+    // horizontal = 0.440
+    // straight down = 0.710
     public CRServo geckoServo = null;
 
     //Ultrasonic sensors
