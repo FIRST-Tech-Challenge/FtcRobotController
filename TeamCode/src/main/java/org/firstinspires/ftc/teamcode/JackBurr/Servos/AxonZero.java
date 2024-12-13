@@ -19,7 +19,7 @@ public class AxonZero extends OpMode {
     public void loop() {
         double servo_pos = servo_encoder.getVoltage() / 3.3 * 360;
         if (servo_pos > 60.9){
-            double targetpos = servo_.getPosition() + 0.0002;
+            double targetpos = servo_.getPosition() + 0.01;
             telemetry.addData("Target Position: ", targetpos);
             servo_.setPosition(targetpos);
         }
