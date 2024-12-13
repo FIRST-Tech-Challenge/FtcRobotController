@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="test servos", group="Linear OpMode")
-//@Disabled
+@Disabled
 public class testServos extends LinearOpMode {
     /* Declare OpMode members. */
     public Servo    servo1    = null;
