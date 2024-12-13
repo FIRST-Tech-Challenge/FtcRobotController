@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.CommandGroups.Auto.LeftSideAuto87Pts;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /*
@@ -13,9 +12,9 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When a selection is made from the menu, the corresponding OpMode is executed.
  */
-@Autonomous(name="Red Auto", group="OpMode", preselectTeleOp="Red TeleOp")
-@Disabled
-public class RedAutoOp extends CommandOpMode {
+@Autonomous(name="BlueLeftSide", group="OpMode", preselectTeleOp="Blue TeleOp")
+//@Disabled
+public class BlueLeftSide extends CommandOpMode {
 
     // Initialize all objects, set up subsystems, etc...
     @Override
@@ -23,7 +22,7 @@ public class RedAutoOp extends CommandOpMode {
 
         // initialize for Auto in robot container
         // set team alliance color to red (isRedAlliance=true)
-        RobotContainer.Init_Auto(this, true);
+        RobotContainer.Init_Auto(this, false);
 
         // do not proceed until start button is pressed
         waitForStart();
@@ -31,7 +30,7 @@ public class RedAutoOp extends CommandOpMode {
         // ---------- autonomous command ----------
 
         // add autonomous command to scheduler and run it
-        new ExampleCommandGroup().schedule();
+        new LeftSideAuto87Pts().schedule();
 
     }
 

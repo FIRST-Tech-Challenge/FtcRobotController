@@ -44,56 +44,66 @@ public class Odometry extends SubsystemBase {
     @Override
     public void periodic() {
 
-        double leftPos;
-        double rightPos;
-        double frontPos;
+        // only update odometry if op mode is not about to shut down
+        // this prevents possible error in calculation cycle
+        if (!RobotContainer.ActiveOpMode.isStopRequested()) {
 
-        leftPos = RobotContainer.odometryPod.getLeftEncoderDistance();
-        rightPos = RobotContainer.odometryPod.getRightEncoderDistance();
-        frontPos = RobotContainer.odometryPod.getFrontEncoderDistance();
+            double leftPos;
+            double rightPos;
+            double frontPos;
 
-        double leftChangePos;
-        double rightChangePos;
-        double frontChangePos;
+            leftPos = RobotContainer.odometryPod.getLeftEncoderDistance();
+            rightPos = RobotContainer.odometryPod.getRightEncoderDistance();
+            frontPos = RobotContainer.odometryPod.getFrontEncoderDistance();
 
-        leftChangePos = leftPos - previousLeftPos;
-        rightChangePos = rightPos - previousRightPos;
-        frontChangePos = frontPos - previousFrontPos;
+            double leftChangePos;
+            double rightChangePos;
+            double frontChangePos;
 
-        previousLeftPos = leftPos;
-        previousRightPos = rightPos;
-        previousFrontPos = frontPos;
+            leftChangePos = leftPos - previousLeftPos;
+            rightChangePos = rightPos - previousRightPos;
+            frontChangePos = frontPos - previousFrontPos;
 
-        // creating the value of sin theta (aka the angle of the hipotinuse)
-        double theta = Math.asin((rightChangePos - leftChangePos)/RobotContainer.odometryPod.LATERAL_DISTANCE);
+            previousLeftPos = leftPos;
+            previousRightPos = rightPos;
+            previousFrontPos = frontPos;
 
-        // equation that tells us how much the robot has moved forward
-        double ForwardChange = (leftChangePos + rightChangePos) / 2.0 ;
+            // creating the value of sin theta (aka the angle of the hipotinuse)
+            double theta = Math.asin((rightChangePos - leftChangePos) / RobotContainer.odometryPod.LATERAL_DISTANCE);
 
-        // equation that tells us how much the robot has moved laterally
-        double LateralChange = (frontChangePos - RobotContainer.odometryPod.FORWARD_OFFSET * Math.sin(theta));// Lateral means left to right
+            // equation that tells us how much the robot has moved forward
+            double ForwardChange = (leftChangePos + rightChangePos) / 2.0;
 
-        double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
+            // equation that tells us how much the robot has moved laterally
+            double LateralChange = (frontChangePos - RobotContainer.odometryPod.FORWARD_OFFSET * Math.sin(theta));// Lateral means left to right
 
-        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
+            double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
-        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
+            double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
 
-        fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
+            double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
 
-        fieldY += fieldLateralChange;// += means is equal to and add fieldLateralChange to itself
+            fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
 
-        fieldAngle = IMUHeading;
+            fieldY += fieldLateralChange;// += means is equal to and add fieldLateralChange to itself
 
-        RobotContainer.ActiveOpMode.telemetry.addData("fieldX",fieldX);
-        RobotContainer.ActiveOpMode.telemetry.addData("fieldY",fieldY);
-        RobotContainer.ActiveOpMode.telemetry.addData("Yaw", Math.toDegrees(fieldAngle));
+            fieldAngle = IMUHeading;
 
-        // update FTC dashboard with latest odometry info - in separate function below for clarity
-        UpdateDashBoard();
+            // only update dashboard and controller telemetry if opmode not about to be shut down
+            if (!RobotContainer.ActiveOpMode.isStopRequested()) {
+                RobotContainer.ActiveOpMode.telemetry.addData("fieldX", fieldX);
+                RobotContainer.ActiveOpMode.telemetry.addData("fieldY", fieldY);
+                RobotContainer.ActiveOpMode.telemetry.addData("Yaw", Math.toDegrees(fieldAngle));
 
-        // save position to data store, in case op mode ends
-        StoredRobotPose = new Pose2d(fieldX, fieldY, new Rotation2d(fieldAngle));
+                // update FTC dashboard with latest odometry info - in separate function below for clarity
+                UpdateDashBoard();
+            }
+
+            // save position to data store, in case op mode ends
+            // check again if op mode not about to shut down - otherwise don't save it
+            if (!RobotContainer.ActiveOpMode.isStopRequested())
+                StoredRobotPose = new Pose2d(fieldX, fieldY, new Rotation2d(fieldAngle));
+        }
     }
 
     // place special subsystem methods here

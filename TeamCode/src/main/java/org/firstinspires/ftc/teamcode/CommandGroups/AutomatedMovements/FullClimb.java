@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.Commands.RaiseJack;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
 import java.util.ArrayList;
 
@@ -33,11 +34,10 @@ public class FullClimb extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(180)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(180))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(0.45, 0.2, new Rotation2d(Math.toRadians(180.0))),
-                        new Rotation2d(Math.toRadians(0.0))),
-
+                        AutoFunctions.redVsBlue(new Pose2d(0.45, 0.2, new Rotation2d(Math.toRadians(180.0)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(0.0)))),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
 
