@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.Settings;
 public class DynamicInput {
     private final Gamepad mainCtrl;
     private final Gamepad subCtrl;
-    private Settings.DefaultGamepadSettings mainSettings;
-    private Settings.DefaultGamepadSettings subSettings;
+    public Settings.DefaultGamepadSettings mainSettings;
+    public Settings.DefaultGamepadSettings subSettings;
     private Settings.ControllerProfile mainProfile;
     private Settings.ControllerProfile subProfile;
 

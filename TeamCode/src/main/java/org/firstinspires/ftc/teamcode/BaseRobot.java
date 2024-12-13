@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Outtake;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.LinearActuator;
@@ -40,7 +43,7 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public LazyImu imu;
+    public BHI260IMU imu;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -58,8 +61,7 @@ public class BaseRobot {
         this.input = input;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
-        this.imu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        this.imu = hardwareMap.get(BHI260IMU.class, Settings.Hardware.IDs.IMU);
         // Initialize and configure the motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
         frontRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
@@ -139,7 +141,6 @@ public class BaseRobot {
      * Handles boost/brake modifiers and applies power to drive system
      */
     public void gamepadPrimary() {
-
         DynamicInput.Movements directions = input.getMovements();
         DynamicInput.Actions actions = input.getActions();
 
@@ -147,9 +148,19 @@ public class BaseRobot {
         double brake = actions.brakeAmount;
 
         double powerMultiplier = 1 + (boost * 2) - brake;
-        double rotation = directions.rotation;
+        double rotation = directions.rotation * powerMultiplier;
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
+
+        if (input.mainSettings.use_absolute_positioning) {
+            // change strafe and drive power so that they are absolutely positioned and rotation does not affect the direction of the robot
+            double currentRotation = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double strafeTransformed = strafePower * Math.cos(Math.toRadians(currentRotation)) - drivePower * Math.sin(Math.toRadians(currentRotation));
+            double driveTransformed = strafePower * Math.sin(Math.toRadians(currentRotation)) + drivePower * Math.cos(Math.toRadians(currentRotation));
+
+            strafePower = strafeTransformed;
+            drivePower = driveTransformed;
+        }
 
         logger.update("X", String.valueOf(directions.x));
         logger.update("Y", String.valueOf(directions.y));

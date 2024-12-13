@@ -76,6 +76,8 @@ public class Settings {
 
         @Config
         public static class IDs {
+            public static final String IMU = "imu";
+
             // Drive motors
             public static final String FRONT_LEFT_MOTOR = "frontLeft";
             public static final String FRONT_RIGHT_MOTOR = "frontRight";
@@ -229,6 +231,10 @@ public class Settings {
 
         /** Whether to use right stick for rotation instead of bumpers */
         public boolean use_right_stick_rotation = false;
+
+        /* Whether to move based on rotation or absolute heading */
+
+        public boolean use_absolute_positioning = false;
 
         public final ButtonMapping buttonMapping;
 
