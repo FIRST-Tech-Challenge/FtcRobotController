@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
 
@@ -33,6 +34,8 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
+
+// TODO THIS FILE IS OUTDATED PLEASE DONT USE THANKS
 
 @Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
 public class testingsigma2 extends LinearOpMode {
@@ -82,6 +85,12 @@ public class testingsigma2 extends LinearOpMode {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // set zero power behaviour
+        frontLeftMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at",  "%7d :%7d",
@@ -173,7 +182,6 @@ public class testingsigma2 extends LinearOpMode {
             frontRightMotor.setPower(0);
             backRightMotor.setPower(0);
 
-
             // Turn off RUN_TO_POSITION
             frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -185,7 +193,6 @@ public class testingsigma2 extends LinearOpMode {
         }
     }
 
-    // TODO SCORE BASKET
     public static void setArmPos(double position) {
 
     }
