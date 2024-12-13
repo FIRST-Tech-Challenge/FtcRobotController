@@ -51,6 +51,7 @@ public class AutoOpMode extends LinearOpMode {
     private DcMotor slideExtension = null;
     private DcMotor slideAbduction = null;
     private DcMotor slideAbduction2 = null;
+    private DcMotor wrist = null;
     private CRServo leftIntake = null;
     private CRServo rightIntake = null;
     private double intakePower = 0;
@@ -85,6 +86,9 @@ public class AutoOpMode extends LinearOpMode {
         slideAbduction = hardwareMap.get(DcMotor.class, "slideAbd");
         slideAbduction2 = hardwareMap.get(DcMotor.class, "slideAbd2");
 
+        wrist = hardwareMap.get(DcMotor.class, "wrist");
+
+        wrist.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         slideExtension.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         slideAbduction.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         slideAbduction2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
@@ -92,6 +96,7 @@ public class AutoOpMode extends LinearOpMode {
         // Takers
         leftIntake = hardwareMap.get(CRServo.class, "l_intake");
         rightIntake = hardwareMap.get(CRServo.class, "r_intake");
+        boolean intakeReleased = true;
 
         // Initialize webcam
         webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
@@ -123,10 +128,16 @@ public class AutoOpMode extends LinearOpMode {
         slideAbduction.setDirection(DcMotor.Direction.FORWARD);
         slideAbduction2.setDirection(DcMotor.Direction.FORWARD);
 
+        wrist.setDirection(DcMotor.Direction.FORWARD);
+
+
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         // sigma
         slideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -138,6 +149,9 @@ public class AutoOpMode extends LinearOpMode {
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         // this is why oop should be used
         slideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideAbduction.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -148,6 +162,8 @@ public class AutoOpMode extends LinearOpMode {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
         // i hate this
         slideExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -176,11 +192,10 @@ public class AutoOpMode extends LinearOpMode {
 
 
         //drive foward
-        encoderDrive(DRIVE_SPEED,   24,24, 2 );
+        encoderDrive(DRIVE_SPEED,   4,4, 2 );
         //turn right
         encoderDrive(TURN_SPEED,   12, -12, 4.0);
         //drive foward
-        encoderDrive(DRIVE_SPEED,   24,24, 2 );
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
@@ -204,7 +219,6 @@ public class AutoOpMode extends LinearOpMode {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
-
 
             // Determine new target position, and pass to motor controller
             newLeftFrontTarget = frontLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
@@ -262,7 +276,9 @@ public class AutoOpMode extends LinearOpMode {
         }
     }
 
-    public static void setArmPos(double position) {
-        
+    public void moveWrist(int position) {
+        int desiredPosition = 720; // The position (in ticks) that you want the motor to move to
+        wrist.setTargetPosition(desiredPosition); // Tells the motor that the position it should go to is desiredPosition
+        wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
