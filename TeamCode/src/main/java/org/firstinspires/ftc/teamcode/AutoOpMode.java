@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-
 
 
 /*
@@ -45,6 +47,14 @@ public class AutoOpMode extends LinearOpMode {
     private DcMotor frontLeftMotor = null, backLeftMotor = null;
     private DcMotor frontRightMotor = null, backRightMotor = null;
 
+    // slide and intake
+    private DcMotor slideExtension = null;
+    private DcMotor slideAbduction = null;
+    private DcMotor slideAbduction2 = null;
+    private CRServo leftIntake = null;
+    private CRServo rightIntake = null;
+    private double intakePower = 0;
+
     private ElapsedTime runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
@@ -69,6 +79,19 @@ public class AutoOpMode extends LinearOpMode {
         frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
         backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
         backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
+
+        // DcMotors for Linear slide
+        slideExtension = hardwareMap.get(DcMotor.class, "slideExtend");
+        slideAbduction = hardwareMap.get(DcMotor.class, "slideAbd");
+        slideAbduction2 = hardwareMap.get(DcMotor.class, "slideAbd2");
+
+        slideExtension.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        slideAbduction.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        slideAbduction2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+
+        // Takers
+        leftIntake = hardwareMap.get(CRServo.class, "l_intake");
+        rightIntake = hardwareMap.get(CRServo.class, "r_intake");
 
         // Initialize webcam
         webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
@@ -95,15 +118,41 @@ public class AutoOpMode extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        // stupid ass sliders
+        slideExtension.setDirection(DcMotor.Direction.FORWARD);
+        slideAbduction.setDirection(DcMotor.Direction.FORWARD);
+        slideAbduction2.setDirection(DcMotor.Direction.FORWARD);
+
         frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // sigma
+        slideExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideAbduction.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideAbduction2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // this is why oop should be used
+        slideExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideAbduction.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideAbduction2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // set zero power behaviour
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // i hate this
+        slideExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideAbduction.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideAbduction2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting at",  "%7d :%7d",
@@ -203,7 +252,6 @@ public class AutoOpMode extends LinearOpMode {
             frontRightMotor.setPower(0);
             backRightMotor.setPower(0);
 
-
             // Turn off RUN_TO_POSITION
             frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -212,5 +260,9 @@ public class AutoOpMode extends LinearOpMode {
 
             sleep(250);   // optional pause after each move.
         }
+    }
+
+    public static void setArmPos(double position) {
+        
     }
 }
