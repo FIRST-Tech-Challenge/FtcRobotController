@@ -10,12 +10,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 @TeleOp(name="Teleop To Use :))))",group = "Teleops to use :))))))")
 public class FirstRealTeleop extends LinearOpMode{
 
     // Declare OpMode members for each of the 4 motors.
 
-    final int ASCENT_UP = 14300;
+    final int ASCENT_UP = 14200;
     final int ASCENT_DOWN = 2200;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -37,6 +40,7 @@ public class FirstRealTeleop extends LinearOpMode{
     double actuatorPos = 0;
     double armRotPos = 0;
     double wristPos = 1;
+    boolean canToggle = true;
     void linearActuatorMover(){
         linearActuator.setTargetPosition((int)actuatorPos);
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -83,6 +87,9 @@ public class FirstRealTeleop extends LinearOpMode{
         armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         linearActuator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+       Timer timer = new Timer();
+        long delay = 250L;
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -264,16 +271,22 @@ public class FirstRealTeleop extends LinearOpMode{
 //            }
 
             //extenders
-            armPos += gamepad2.left_trigger*75 + -gamepad2.right_trigger*75;
+            double rightTrig= gamepad2.right_trigger;
+            double leftTrig = gamepad2.left_trigger;
+            if(armPos - rightTrig*75 < 3010) {
+                armPos += -rightTrig*75;
+            } else if(armPos + leftTrig > 0){
+                armPos += leftTrig;
+            }
 //            armLifterLeft.setPower(gamepad2.right_stick_y);
 //            armLifterRight.setPower(gamepad2.right_stick_y);
 
 //            //wrist
 //            if(gamepad2.dpad_left){
 //                wristPos = 0.5;}
-            if(gamepad2.right_stick_y > 0.1 && wristPos <= 1){
+            if(gamepad2.right_stick_y > 0.1 && wristPos < 1){
                 wristPos += 0.01;
-            } else if (gamepad2.right_stick_y < -0.1 && wristPos >= 0) {
+            } else if (gamepad2.right_stick_y < -0.1 && wristPos > 0) {
                 wristPos -= 0.01;
             }
             wrist.setPosition(wristPos);
@@ -288,24 +301,37 @@ public class FirstRealTeleop extends LinearOpMode{
 //            spool.setPower(spoolPow);
 
             //grabbers
-            if(gamepad2.x){
-//                controlBothGrabbers(1);
-                sampPickUpLeft.setPower(1);
-                sampPickUpRight.setPower(1);
-            } else if (gamepad2.a) {
-//                controlBothGrabbers(-1);
-                sampPickUpRight.setPower(-1);
-                sampPickUpLeft.setPower(-1);
-            } else {
-                sampPickUpLeft.setPower(0);
-                sampPickUpRight.setPower(0);
+//            if(gamepad2.x){
+////                controlBothGrabbers(1);
+//                sampPickUpLeft.setPower(1);
+//                sampPickUpRight.setPower(1);
+//            } else if (gamepad2.a) {
+////                controlBothGrabbers(-1);
+//                sampPickUpRight.setPower(-1);
+//                sampPickUpLeft.setPower(-1);
+//            } else {
+//                sampPickUpLeft.setPower(0);
+//                sampPickUpRight.setPower(0);
+//            }
+            if(canToggle && gamepad2.x){
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        canToggle = true;
+                        controlBothGrabbers(0);
+                    }
+                };
+                canToggle = false;
+                controlBothGrabbers(1);
+                timer.schedule(task,delay);
             }
 
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Actuator pos",linearActuator.getCurrentPosition());
+            telemetry.addData("wrist",wrist.getPosition());
+            telemetry.addData("extender", armLifterRight.getCurrentPosition());
 //            telemetry.addData("Wrist wanted set pos", wrist.getPosition());
             telemetry.update();
         }
