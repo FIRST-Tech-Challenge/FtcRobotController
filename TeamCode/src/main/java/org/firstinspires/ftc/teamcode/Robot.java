@@ -54,7 +54,9 @@ public abstract class Robot extends LinearOpMode {
 
 //    public final int Low_Chamber  = 1000;
     public final int High_Chamber = 1780;
-    public final int High_Basket  = 2850;
+    public final int High_Basket  = 2900;
+
+    public ElapsedTime runtime = new ElapsedTime();
 
 
 
@@ -94,15 +96,18 @@ public abstract class Robot extends LinearOpMode {
     }
 
     public void move(double tilex, double tiley, double setpoint, double[] basespeed, double[] Kpidf_R,
-                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height) {
+                     double[] Kpidf_X, double[] Kpidf_Y, double Brake_Time, double height, double tim) {
         Controller  pidR    = new Controller(Kpidf_R[0], Kpidf_R[1], Kpidf_R[2], Kpidf_R[3], basespeed[0], toRadian(0.75));
         Controller  DelthaX = new Controller(Kpidf_X[0], Kpidf_X[1], Kpidf_X[2], Kpidf_X[3], basespeed[1], 1);
         Controller  DelthaY = new Controller(Kpidf_Y[0], Kpidf_Y[1], Kpidf_Y[2], Kpidf_Y[3], basespeed[2], 1.2);
         double targetx = tilex * tileSize[0];
         double targety = tiley * tileSize[1];
         int IS_Complete = 0;
+        int x = 0;
         this.Current_Time = System.nanoTime() * 1E-9;
         this.Last_Time = this.Current_Time;
+        runtime.reset();
+        runtime.seconds();
         while (opModeIsActive()) {
             this.Current_Time = System.nanoTime() * 1E-9;
             Odomentry();
@@ -121,7 +126,7 @@ public abstract class Robot extends LinearOpMode {
                     (y2 + x2 - r) / d * Move_Factor, (y2 - x2 + r) / d * Move_Factor);
             
             double  curPos     = Math.max(LL.getCurrentPosition(), RL.getCurrentPosition());
-            double  Lift_Power = (curPos < (height + 70) && curPos > (height - 70)) ? 0 : curPos > height ? -1 : 1;
+            double  Lift_Power = (curPos < (height + 80) && curPos > (height - 80)) ? 0 : curPos > height ? -0.8 : 1;
 
             LiftPower(Lift_Power);
 
@@ -141,8 +146,9 @@ public abstract class Robot extends LinearOpMode {
             telemetry.addData("Vx", Vx);
             telemetry.addData("Vy", Vy);
             telemetry.addData("Complete", IS_Complete);
+            telemetry.addData("Runtime", runtime);
             telemetry.update();
-            if (Math.abs(Vx) <= 0.1 && Math.abs(Vy) <= 0.1 && Math.abs(r) <= 0.1 && Lift_Power ==0 ) {
+            if ((Math.abs(Vx) <= 0.01 && Math.abs(Vy) <= 0.01 && Math.abs(r) <= 0.01 && Lift_Power ==0) || runtime.seconds() >= tim ) {
                 IS_Complete += 1;
                 if (IS_Complete > 1) break;
                 continue;
@@ -231,7 +237,7 @@ public abstract class Robot extends LinearOpMode {
         LA.setDirection(Servo.Direction.REVERSE);
         ADL.setDirection(Servo.Direction.REVERSE);
         RC.setDirection(Servo.Direction.REVERSE);
-        RJ.setDirection(Servo.Direction.REVERSE);
+//        RJ.setDirection(Servo.Direction.REVERSE);
         // Set Servo Position
         SetServoPos(0.1, LA, RA);
         SetServoPos(0, Ll, Rl);
