@@ -23,7 +23,7 @@ public class PinchBot extends PivotBot{
     public final double rotateServoInitialPos = 0.57;
     public final double rotateHorizontalLeftPos = 0.57;
     public final double rotateHorizontalRightPos = 0.24;
-    public final double rotateVerticalPos = 0.43;
+    public final double rotateVerticalPos = 0.40;
 
     public final double rotateMaxPos = 0.73;
     public final double rotateMinPos = 0.13;

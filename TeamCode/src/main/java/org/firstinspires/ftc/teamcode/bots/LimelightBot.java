@@ -180,8 +180,12 @@ public class LimelightBot extends PinchBot {
             for (int i = 0; i <3; i++) {
                 // try 3 times for each pipeline
                 LLResult result = limelight.getLatestResult();
-                if (telemetry != null) telemetry.addData("result<<<<<<<<<<<<<<<<<.ta", result.getTa());
+                if (result == null){
+                    if (telemetry != null) telemetry.addData("LL Result is null : ", i);
+                    continue;
+                }
                 Sample sample = new Sample(result, targetTx, targetTy);
+                if (telemetry != null) telemetry.addData("result<<<<<<<<<<<<<<<<<.ta", result.getTa());
                 if (telemetry != null) telemetry.addData("result >>>>>>>>>>>>>>>>> ", sample.toString());
                 if (sample.isLLResultValid() > 0) {
                     results.add(sample);
