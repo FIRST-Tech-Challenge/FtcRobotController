@@ -22,6 +22,12 @@ public class DifferentialArmTest extends OpMode {
         right_servo = hardwareMap.get(Servo.class, "right_diff");
         left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
         right_servo_encoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
+        left_servo.setDirection(Servo.Direction.REVERSE);
+        right_servo.setDirection(Servo.Direction.REVERSE);
+    }
+
+    @Override
+    public void start(){
         left_servo.setPosition(0);
         right_servo.setPosition(0);
     }

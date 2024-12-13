@@ -12,9 +12,11 @@ public class ScissorsMisumiTest extends OpMode {
     public int IN = 1;
     public enum SCISSORS_STATE {
         IN,
-        OUT
+        OUT,
+        OFF
     }
     public SCISSORS_STATE state;
+    public SCISSORS_STATE last_state;
     public ElapsedTime timer = new ElapsedTime();
     @Override
     public void init() {
@@ -38,7 +40,17 @@ public class ScissorsMisumiTest extends OpMode {
             scissors.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             timer.reset();
         }
+        else if(state == SCISSORS_STATE.OFF){
+            scissors.setPower(0);
+        }
 
+        if(gamepad1.x && state != SCISSORS_STATE.OFF){
+            last_state = state;
+            state = SCISSORS_STATE.OFF;
+        }
+        else {
+            state = last_state;
+        }
         telemetry.addData("Encoder position: ", scissors.getCurrentPosition());
         telemetry.addData("Direction: ", gamepad1.left_stick_y);
     }
