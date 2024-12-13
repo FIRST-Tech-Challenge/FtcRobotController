@@ -45,7 +45,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d drop_position = new Vector2d(54, 54);
         double drop_heading = Math.toRadians(45);
 
-        Vector2d outer_sample_pickup_position = new Vector2d(46, 43);
+        Vector2d outer_sample_pickup_position = new Vector2d(46, 43.25);
         Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
         double sample_pickup_heading = Math.toRadians(-90);
         Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
