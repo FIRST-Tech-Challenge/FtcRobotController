@@ -50,7 +50,7 @@ public class AxonPickupTest extends OpMode {
                 case DOWN:
                     servoTimer.reset();
                     while (servoTimer.seconds() < 2) {
-                        grippers.setPosition(0);
+                        grippers.setPosition(1);
                         gripperState = GripperState.CLOSED;
                     }
                     elbowState = ElbowState.UP;
