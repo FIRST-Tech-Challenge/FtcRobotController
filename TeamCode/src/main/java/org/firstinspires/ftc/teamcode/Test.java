@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+@TeleOp(name = "Test")
 public class Test extends LinearOpMode {
     private DcMotor
             frontLeftDrive,
@@ -16,19 +17,19 @@ public class Test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        frontLeftDrive = hardwareMap.dcMotor.get("frontLeftDrive");
-        frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive");
-        backLeftDrive = hardwareMap.dcMotor.get("backLeftDrive");
-        backRightDrive = hardwareMap.dcMotor.get("backRightDrive");
+        frontLeftDrive = hardwareMap.dcMotor.get("FL");
+        frontRightDrive = hardwareMap.dcMotor.get("FR");
+        backLeftDrive = hardwareMap.dcMotor.get("BL");
+        backRightDrive = hardwareMap.dcMotor.get("BR");
 
-        armMotor = hardwareMap.dcMotor.get("armMotor");
+//        armMotor = hardwareMap.dcMotor.get("armMotor");
 
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
@@ -44,11 +45,11 @@ public class Test extends LinearOpMode {
             backRightDrive.setPower(drive + strafe + spin);
 
             if (gamepad1.dpad_up) {
-                armMotor.setPower(0.5);
+//                armMotor.setPower(0.5);
             } else if (gamepad1.dpad_down) {
-                armMotor.setPower(-0.5);
+//                armMotor.setPower(-0.5);
             } else {
-                armMotor.setPower(0);
+//                armMotor.setPower(0);
             }
             if (gamepad1.a) {
                 armEncoderMovement(0.5, TOP, true);
