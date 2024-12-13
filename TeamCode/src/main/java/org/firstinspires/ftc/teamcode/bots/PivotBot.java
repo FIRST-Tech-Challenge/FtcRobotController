@@ -20,14 +20,14 @@ public class PivotBot extends OdometryBot {
     public final int minumimPivotPos = -100;
     private final int searchPivotPos = 250; // tested
     private final int pickupSpecimenPivotPos = 130; // tested
-    private final int pickupSamplePivotPos = 120; // tested
+    private final int pickupSamplePivotPos = 60; // tested
     private final int pickupUpPivotPos = 400;
     public final int specimenHighPivotPos = 1196;
     public final int specimenLowPivotPos = 750;
     public final int highBasketPivotPos = 1274;
     public final int lowBasketPivotPos = 1000;
     public boolean pivotOutOfRange = false;
-    public int pivotTarget = 100;
+    public int pivotTarget = 300;
     public double pivotPower = 0.7;
     // Pivot timmer
     private Timer pivotTimer = new Timer();
@@ -37,10 +37,11 @@ public class PivotBot extends OdometryBot {
     public final int maximumSlidePos = 2400;
     public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
-    public final int specimenHighSlidePos = 685;
+    public final int specimenHighSlidePos = 1100;
     public final int specimenLowSlidePos = 800;
-    public final int highBasketSlidePos = 2309;
-    public final int lowBucketSlidePos = 800;
+    public final int highBasketSlidePos = 2400;
+    public final int lowBasketSlidePos = 800;
+    public final double slideCMCoefficient = 31.2;
 
     public int slideTarget = 110;
 
@@ -126,6 +127,7 @@ public class PivotBot extends OdometryBot {
                 slideTarget = slideMotor.getCurrentPosition() + ((maximumSlidePos - slideMotor.getCurrentPosition()) / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
         if (down) {
@@ -133,8 +135,11 @@ public class PivotBot extends OdometryBot {
                 slideTarget = slideMotor.getCurrentPosition() - (slideMotor.getCurrentPosition() / 10);
                 slideMotor.setTargetPosition(slideTarget);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
         }
+
+        //make pivot same
     }
 
     public void pivotControl(boolean up, boolean down){
@@ -161,15 +166,22 @@ public class PivotBot extends OdometryBot {
     public void pivotToSearchPos(){
         pivotTarget = searchPivotPos;
     }
-    public void pivotToPickupPos(boolean isSpecimen){
-        if (isSpecimen){
-            pivotTarget = pickupSpecimenPivotPos;
-        } else {
-            pivotTarget = pickupSamplePivotPos;
-        }
+//    public void pivotToPickupPos(boolean isSpecimen){
+//        if (isSpecimen){
+//            pivotTarget = pickupSpecimenPivotPos;
+//        } else {
+//            pivotTarget = pickupSamplePivotPos;
+//        }
+//    }
+    public void pivotToPickupPosSpecimen(){
+        pivotTarget = pickupSpecimenPivotPos;
+    }
+    public void pivotToPickupPosSample(){
+        pivotTarget = pickupSamplePivotPos;
     }
     public void pivotToPickupUpPos(){
-        pivotTarget = pickupUpPivotPos;
+        //pivotTarget = pickupUpPivotPos;
+        relatePivotToSlide();
     }
     public void pivotToSpecimenHighPos(){
         pivotTarget = specimenHighPivotPos;
@@ -207,13 +219,25 @@ public class PivotBot extends OdometryBot {
     public void moveSlideByDelta(int delta){
         slideTarget += delta;
     }
+
+    /**
+     * Move the slide by a delta value in CM
+     * @param delta
+     */
+    public void moveSlideByDelta(double delta){
+        slideTarget += Math.round(delta * slideCMCoefficient);
+    }
     public void moveSlideToHighBucketPos(){
         slideTarget = highBasketSlidePos;
     }
     public void moveSlideToLowBucketPos(){
-        slideTarget = lowBucketSlidePos;
+        slideTarget = lowBasketSlidePos;
     }
 
-
+    public void relatePivotToSlide(){
+        pivotTarget = Math.round((slideMotor.getCurrentPosition() / -23) + 245);
+        pivotMotor.setTargetPosition(pivotTarget);
+        pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
 }

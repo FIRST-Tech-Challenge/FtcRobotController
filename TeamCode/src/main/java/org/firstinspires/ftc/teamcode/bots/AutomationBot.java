@@ -52,13 +52,11 @@ public class AutomationBot extends LimelightBot{
     public void scoreBucket(boolean input) {
         if (input) {
             if (!pivotInHighBasketPosition || !slideInHighBasketPosition) {
-
                 pivotToHighBasketPos();
                 schedule(this::moveSlideToHighBucketPos, 1000);
             }
             else{
                 openPinch();
-
             }
         }
     }
@@ -68,18 +66,18 @@ public class AutomationBot extends LimelightBot{
      * @param input - boolean to determine if the robot should prepare to score a specimen
      * @param aimHigh - boolean to determine if the robot should aim high or low chamber
      */
-//    public void readySpecimenPos(boolean input, boolean aimHigh) {
-//        if (input) {
-//            rotateToVerticalPos();
-//            if (aimHigh) {
-//                pivotToSpecimenHighPos();
-//                schedule(this::moveSlideToHighSpecimenPos, 300);
-//            } else {
-//                pivotToSpecimenLowPos();
-//                moveSlideToLowSpecimenPos();
-//            }
-//        }
-//    }
+    public void readySpecimenPos(boolean input, boolean aimHigh) {
+        if (input) {
+            rotateToVerticalPos();
+            if (aimHigh) {
+                pivotToSpecimenHighPos();
+                schedule(this::moveSlideToHighSpecimenPos, 300);
+            } else {
+                pivotToSpecimenLowPos();
+                moveSlideToLowSpecimenPos();
+            }
+        }
+    }
 
     /**
      * This method will score a specimen (slide down a little, open pinch)
@@ -92,11 +90,7 @@ public class AutomationBot extends LimelightBot{
 //        }
 //    }
 
-    /**
-     * This method will prepare the robot to score a basket (raise pivot arm, extend slide to a certain position)
-     * @param input - boolean to determine if the robot should prepare to score a basket
-     * @param aimHigh - boolean to determine if the robot should aim high or low basket
-     */
+
 //    public void readyBucketPos(boolean input, boolean aimHigh) {
 //        if (input) {
 //            rotateToVerticalPos();
@@ -121,8 +115,6 @@ public class AutomationBot extends LimelightBot{
 //        }
 //    }
 
-
-    
         
 
 

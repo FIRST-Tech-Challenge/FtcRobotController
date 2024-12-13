@@ -4,6 +4,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -37,7 +38,10 @@ public class LimelightBot extends PinchBot {
         super(opMode);
     }
 
-    public void pickup(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
+    public void pickup(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry, ElapsedTime scanTimer) {
+        scanTimer.reset();
+        stopCoordinateDrive();
+
         if (inAutoPickup){
             // already in auto pickup mode
             return;
@@ -50,7 +54,39 @@ public class LimelightBot extends PinchBot {
         double yThreshold = 2;
         boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
         boolean isYCloseEnough = Math.abs(sample.getDeltaY() ) < yThreshold;
-        if (isXCloseEnough && isYCloseEnough) {
+
+        int delta = (int)Math.round(sample.getDeltaY() * 7);
+        if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
+        moveSlideByDelta(delta);
+
+        startCoordinateDrive();
+
+        double distance = sample.getDeltaX() * -3;
+        if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
+        strafing(distance);
+        // sample is close enough, pick it up
+        inAutoPickup = true;
+        // rotate to the sample orientation
+        rotateToAngle(sample.getSampleAngle());
+        // open the pinch
+        openPinch();
+        // lower the pivot
+
+        schedule(this::stopCoordinateDrive, 1000);
+
+        if (isSpecimen) {
+            schedule(this::pivotToPickupPosSpecimen, 1000);
+        }
+        else {
+            schedule(this::pivotToPickupPosSample, 1000);
+        }
+        // close the pinch at a future time
+        schedule(this::closePinch, 1500);
+        // raise the pivot at a future time and also reset the auto pickup mode
+        schedule(this::pivotToPickupUpPos, 2000);
+
+        /*if (isXCloseEnough && isYCloseEnough) {
+            strafing(0);
             // sample is close enough, pick it up
             inAutoPickup = true;
             // rotate to the sample orientation
@@ -67,21 +103,57 @@ public class LimelightBot extends PinchBot {
         else{
             // sample is not close enough, move to the sample
             pivotToSearchPos();
-            if (!isYCloseEnough) {
+            if (!isYCloseEnough && scanTimer.time() > 0.25) {
                 // extend/retract the slide based on delta Y
                 int delta = (int)Math.round(sample.getDeltaY() * 5);
                 if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
-                slideByDelta(delta);
+                moveSlideByDelta(delta);
+                scanTimer.reset();
             }
-            if (!isXCloseEnough) {
-                // move the robot sideways based on delta X
-                double distance = sample.getDeltaX() * 0.5;
+            if (!isXCloseEnough && scanTimer.time() > 0.25) {
+                strafing(0);
+                // move the robot sideways based on delta X * 0.26875
+                double distance = sample.getDeltaX() * -3;
                 if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
                 strafing(distance);
+                scanTimer.reset();
             }
-        }
+        }*/
     }
 
+    /**
+     * Pickup method without strafe the robot,
+     *  given the pinch arm is installed in the center of rotation arm, we can calculate the center of pinch arm with detected sample angle
+     *  the pinch arm center is in a range of error, we can pinch
+     * @param isBlueAlliance
+     * @param includeSharedSample
+     * @param isSpecimen
+     * @param telemetry
+     */
+    public void pickup2(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
+        if (inAutoPickup){
+            // already in auto pickup mode
+            return;
+        }
+        Sample sample = detectOne(isBlueAlliance, includeSharedSample, telemetry);
+        if (sample == null || sample.isLLResultValid() < 0) {
+            // no sample found, do nothing
+            telemetry.addData("Sample not found : ", sample);
+            return;
+        }
+        Sample.OptimalDeltaY result = sample.calculateOptimalDeltaY(10.0);
+        if (result.isReachable){
+            // rotate to angle
+            rotateToAngle(result.rotationAngle);
+            // adjust slide
+            moveSlideByDelta(result.deltaY);
+        }
+        else{
+            // do nothing, the sample is not reachable
+            telemetry.addData("Sample is not reachable : ", result.toString());
+        }
+
+    }
     public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample, Telemetry telemetry) {
         List<Integer> pipelines = new ArrayList<>();
         if (includeSharedSample) {

@@ -233,4 +233,102 @@ public class Sample {
             return "Invalid LLResult with error code " + result;
         }
     }
+    public class OptimalDeltaY {
+        public boolean isReachable;
+        /**
+         * Rotation angle of the pinch arm to catch the sample (in degree)
+         */
+        public int rotationAngle;
+        /**
+         * Proposed move on Y direction to catch sample with the pinch arm (in cm)
+         */
+        public double deltaY;
+        /**
+         * Distance between the sample and the new pinch arm center after moved deltaY (in cm)
+         */
+        public double distanceFromSample;
+
+        public OptimalDeltaY(boolean isReachable, int rotationAngle, double deltaY, double distanceFromSample) {
+            this.isReachable = isReachable;
+            this.rotationAngle = rotationAngle;
+            this.deltaY = deltaY;
+            this.distanceFromSample = distanceFromSample;
+        }
+
+        public String toString() {
+            return "OptimalDeltaY{" +
+                    "isReachable=" + isReachable +
+                    ", rotationAngle=" + rotationAngle +
+                    ", deltaY=" + Math.round(deltaY * 100.0) / 100.0 +
+                    ", distanceFromSample=" + Math.round(distanceFromSample * 100.0) / 100.0;
+        }
+    }
+    /**
+     * The center of pinch arm to the center of rotation arm, in cm
+     */
+    public final double pinchArmRadius = 1.5;
+
+    /**
+     * The center of rotation arm to the center of limelight camera, in cmspecimen_5
+     */
+    public final double rotateArmCenterX = 1.5;
+    public final double rotateArmCenterY = -5.5;
+    /**
+     * When pinch the sample, the tolerance in sample length orientation, in cm
+     */
+    public final double sampleLengthTolerance = 3.0;
+    /**
+     * When pinch the sample, the tolerance in sample width orientation, in cm
+     */
+    public final double sampleWidthTolerance = 1.0;
+
+    /**
+     * Find the optimal delta Y to move the pinch arm to the sample
+     *
+     * @param distanceToFloor  TODO : maybe can be calculated with sample area percentage
+     * @return
+     */
+    public OptimalDeltaY calculateOptimalDeltaY(double distanceToFloor) {
+        double sampleCenterX = Math.tan(Math.toRadians(getX())) * distanceToFloor;
+        double sampleCenterY = Math.tan(Math.toRadians(getY())) * distanceToFloor;
+        int sampleAngle = getSampleAngle();
+        if (Math.abs(sampleAngle) >= 15) {
+            if (sampleAngle > 0 && sampleCenterX > rotateArmCenterX) {
+                // the sample is on the right side of the robot, but the angle is positive ( pointing to left-upper corner)
+                sampleAngle = sampleAngle - 180;
+            } else if (sampleAngle < 0 && sampleCenterX < rotateArmCenterX) {
+                // the sample is on the left side of the robot, but angle is negative (pointing to right-upper corner)
+                sampleAngle = sampleAngle + 180;
+            }
+        }
+        double pinchArmCenterX = rotateArmCenterX - Math.sin(Math.toRadians(sampleAngle)) * pinchArmRadius;
+        double pinchArmCenterY = rotateArmCenterY - Math.cos(Math.toRadians(sampleAngle)) * pinchArmRadius;
+        //System.out.println("Sample: (" + toString() + ")");
+        //System.out.println("Sample center: (" + sampleCenterX + ", " + sampleCenterY + ")");
+        //System.out.println("Rotate arm center: (" + rotateArmCenterX + ", " + rotateArmCenterY + ")");
+        //System.out.println("Pinch arm rotation: " + Math.sin(Math.toRadians(sampleAngle)) * pinchArmRadius + ", " + Math.cos(Math.toRadians(sampleAngle)) * pinchArmRadius);
+        //System.out.println("Pinch arm center: (" + pinchArmCenterX + ", " + pinchArmCenterY + ")");
+        double deltaX = pinchArmCenterX - sampleCenterX;
+        //System.out.println("Sample angle: " + sampleAngle + ", deltaX: " + deltaX);
+        boolean reachable;
+        double deltaY;
+        double distanceBetweenCenters;
+        if (Math.abs(sampleAngle)<15){
+            // TRICKY : handle sin(0) = 0 case
+            // the sample is vertical aligned with robot, as long as the delta X is within the width tolerance, it is reachable
+            reachable = Math.abs(deltaX) < sampleWidthTolerance;
+            distanceBetweenCenters = - deltaX;
+            deltaY = pinchArmCenterY - sampleCenterY;
+        }
+        else {
+            distanceBetweenCenters = deltaX / Math.sin(Math.toRadians(sampleAngle));
+            double newPinchArmCenterY = sampleCenterY + deltaX / Math.tan(Math.toRadians(sampleAngle));
+            deltaY = pinchArmCenterY - newPinchArmCenterY;
+            reachable = Math.abs(distanceBetweenCenters) < sampleLengthTolerance;
+            //System.out.println("New pinch arm center: (" + pinchArmCenterX + ", " + newPinchArmCenterY + ")");
+        }
+        //System.out.println("Distance between sample and new pinch arm center: " + distanceBetweenCenters);
+        //System.out.println("Sample length tolerance: " + sampleLengthTolerance);
+        return new OptimalDeltaY(reachable, sampleAngle, deltaY, distanceBetweenCenters);
+    }
 }

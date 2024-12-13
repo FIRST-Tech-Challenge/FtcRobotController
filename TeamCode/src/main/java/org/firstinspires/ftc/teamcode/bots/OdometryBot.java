@@ -48,7 +48,7 @@ public class OdometryBot extends GyroBot {
     final double hDiameter = 2841; //diameter of horizontal encoder: 82*2/606 = hD/10500
     final double leftX = -(diameter/2); //135mm
     final double rightX = (diameter/2); //170mm
-    final double hY = -(hDiameter/2); //135mm
+    final double hY = -(hDiameter); //135mm
 
     double vLOffset, vROffset, hOffset = 0;
 
@@ -311,7 +311,14 @@ public class OdometryBot extends GyroBot {
      */
     public void strafing(double distance){
         double xTarget = xBlue + distance * CENTIMETER_TO_DRIVING_MOTOR_CONVERSION_RATE;
-        driveToCoordinate(xTarget, yBlue, thetaDEG, 500, 0.1, false);
+        driveToCoordinate(xTarget, yBlue, thetaDEG, 10, 1, false);
+    }
+    public void stopCoordinateDrive(){
+        isCoordinateDriving = false;
+    }
+
+    public void startCoordinateDrive(){
+        isCoordinateDriving = true;
     }
     /**
      * Wait for odometry drive to stop (target reached).
