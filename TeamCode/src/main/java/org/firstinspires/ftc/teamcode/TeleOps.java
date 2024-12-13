@@ -60,7 +60,7 @@ public class TeleOps extends LinearOpMode {
 
             robot.resetAngle(gamepad1.x);
 
-            if (gamepad2.b) { robot.stopCoordinateDrive(); }
+//            if (gamepad2.b) { robot.stopCoordinateDrive(); }
 
             robot.onLoop(0, "manual drive");
 
@@ -70,9 +70,9 @@ public class TeleOps extends LinearOpMode {
             robot.rotateControl(gamepad1.left_trigger > 0.5,gamepad1.right_trigger > 0.5);
 //            robot.readySpecimenPos(gamepad2.a, true);
             //robot.scoreSpecimenSimple(gamepad2.b);
-            robot.scoreSpecimen(gamepad2.y);
-            robot.scoreBucket(gamepad2.a);
-            robot.hang(gamepad2.x);
+//            robot.scoreSpecimen(gamepad2.y);
+//            robot.scoreBucket(gamepad2.a);
+//            robot.hang(gamepad2.x);
 
             if (gamepad1.y) {
                 robot.inAutoPickup = false;
@@ -91,6 +91,22 @@ public class TeleOps extends LinearOpMode {
                         gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
                         gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
             }
+            if (gamepad2.a){
+                robot.rotateToPos(robot.rotateMaxPos);
+                robot.pivotToSearchPos();
+                robot.moveSlideToSearchPos();
+                robot.openPinch();
+            }
+            if (gamepad2.b){
+                robot.alignWithSample(true, true, false, telemetry);
+            }
+
+            if (gamepad2.x){
+                robot.pickup(false, telemetry);
+            }
+            if (gamepad2.y){
+                robot.limelight.captureSnapshot("Pickup test");
+            }
 
             if (gamepad2.left_bumper){
                 robot.detectOne(true, true, telemetry);
@@ -98,8 +114,6 @@ public class TeleOps extends LinearOpMode {
             else if (gamepad2.right_bumper){
                 robot.detectOne(false, true, telemetry);
             }
-
-            telemetry.addData("limelight.status", robot.limelight.getStatus());
 
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());

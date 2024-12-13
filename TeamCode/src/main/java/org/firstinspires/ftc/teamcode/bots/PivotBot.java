@@ -18,9 +18,9 @@ public class PivotBot extends OdometryBot {
     // Pivot motor constants
     public final int maximumPivotPos = 1300;
     public final int minumimPivotPos = -100;
-    private final int searchPivotPos = 250; // tested
-    private final int pickupSpecimenPivotPos = 130; // tested
-    private final int pickupSamplePivotPos = 60; // tested
+    private final int searchPivotPos = 220; // tested
+    private final int pickupSpecimenPivotPos = 115; // tested
+    private final int pickupSamplePivotPos = 50; // tested
     private final int pickupUpPivotPos = 400;
     public final int specimenHighPivotPos = 1196;
     public final int specimenLowPivotPos = 750;
