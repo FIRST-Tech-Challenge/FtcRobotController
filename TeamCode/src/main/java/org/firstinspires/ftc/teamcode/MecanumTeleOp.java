@@ -26,6 +26,7 @@ public class MecanumTeleOp extends LinearOpMode {
     double ClawFrontPos = 0.5;
     double ClawFlipPos = 0.5;
     double horizontalSlide = 0.1;
+    double clawPos = 0.02;
 
     @Override
     public void runOpMode() {
@@ -41,7 +42,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
         hardware.wrist.setPosition(0.28);
-        hardware.twist.setPosition(Twistpos);
+      //  hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -122,10 +123,12 @@ public class MecanumTeleOp extends LinearOpMode {
                 PickUpYellow(hardware);
             }
             if(gamepad2.b){
-                PickUpSpecimen(hardware);
+                specimenWallPick(hardware);
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+            telemetry.addData("Wrist Position",hardware.wrist.getPosition());
+            telemetry.addData("Claw Position",hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
@@ -254,8 +257,10 @@ public class MecanumTeleOp extends LinearOpMode {
         // Positive: towards back.
         // Exclusion zone 0 to -25deg whe lift < 6in.
         boolean emerg = false;
-        if (hardware.encoderVerticalSlide.getCurrentPosition() <= liftMinClearanceTicks) {
+
+        if (false/*hardware.encoderVerticalSlide.getCurrentPosition() <= liftMinClearanceTicks*/) {
             // get outta there
+            // we are always "outta there" now
             if (stick_pos > 0.7 && (armTargetPosDeg <= 5 || (armTargetPosDeg >= 35 && armTargetPosDeg <= 110))) {
                 armTargetPosDeg += 1;
             }
@@ -279,9 +284,12 @@ public class MecanumTeleOp extends LinearOpMode {
                 armTargetPosDeg -= 1;
             }
         }
+
         arm.setTargetPosition(deg2arm(armTargetPosDeg));
         arm.setPower(emerg ? 1.0 : 0.3);
         telemetry.addData("arm deg", degrees);
+
+
     }
     public void twist() {
         if(gamepad2.left_stick_x>=0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
@@ -291,7 +299,7 @@ public class MecanumTeleOp extends LinearOpMode {
             Twistpos-=0.01;
             hardware.twist.setPosition(Twistpos);
         }
-        telemetry.addData("Twist Position",Twistpos);
+      //  telemetry.addData("Twist Position",Twistpos);
 
     }
     public void wrist() {
@@ -471,6 +479,36 @@ public class MecanumTeleOp extends LinearOpMode {
         }
         hardware.horizontalSlide.setPosition(horizontalSlide);
     }
-
+    public void specimenWallPick(Hardware hardware){
+        double clawopen = 0.55;
+        double clawclose = 0.02;
+        double wristup = 0.46;
+        double wristback = 0.30;
+        double slideup = 200;
+        double armout = 23.94;
+        hardware.claw.setPosition(clawopen);
+        sleep(1000);
+        hardware.wrist.setPosition(wristup);
+        sleep(1000);
+        hardware.arm.setTargetPosition(45);
+        armTargetPosDeg=45;
+        sleep(500);
+        hardware.claw.setPosition(clawclose);
+        sleep(1000);
+        hardware.verticalSlide.setTargetPosition(300);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks=300;
+        sleep(1000);
+        hardware.wrist.setPosition(wristback);
+        sleep(1000);
+        hardware.arm.setTargetPosition(10);
+        armTargetPosDeg=10;
+        sleep(1000);
+        hardware.verticalSlide.setTargetPosition(0);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks=0;
+    }
 }
 
