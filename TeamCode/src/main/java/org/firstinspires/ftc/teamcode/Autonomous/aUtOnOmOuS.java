@@ -22,7 +22,7 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 import java.util.List;
 
-@Autonomous(name="Main")
+@Autonomous(name="Auto-Main")
 
 public class aUtOnOmOuS extends LinearOpMode {
 

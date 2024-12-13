@@ -44,24 +44,15 @@ public class TeleMain extends LinearOpMode {
             double strafe = gamepad1.left_stick_x * 100;
             double intake = gamepad2.left_stick_y * 100;
 
-            boolean armHold = (gamepad2.right_trigger * 100) > 0.01;
-
             double armRaise = gamepad2.right_stick_y * 100;
-            boolean dropButton = gamepad2.a;
 
             input.move(move);
             input.spin(spin);
             input.strafe(strafe);
 
-            //input.intake(intake);
-            //input.pickup(armHold);
+            input.claw(gamepad2.a, gamepad2.b);
 
-            input.armMove(-armRaise);
-            input.drop(dropButton);
-
-
-
-            input.stabalizeArm(gamepad2.left_stick_y);
+            input.upArm(armRaise);
 
             telemetry.addData("MOVE:", "left_y (%.2f),", move);
             telemetry.addData("SPIN:", "right_x (%.2f),", spin);

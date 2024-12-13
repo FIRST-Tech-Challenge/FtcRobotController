@@ -25,9 +25,9 @@ public class Servos {
         servos[servoNum].setPosition(position);
     }
 
-    public double getServoPosition(int servoNum)
-    {
-        return servos[servoNum].getPosition();
-    }
+//    public double getServoPosition(int servoNum)
+//    {
+//        return servos[servoNum].getPosition();
+//    }
 
 }

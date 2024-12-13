@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,9 +17,16 @@ public class ArmPIDTest extends LinearOpMode {
     ElapsedTime elapsedTime;
 
     // PID variables
-    public static double kp = 1;  // Proportional gain
-    public static double ki = 1;  // Integral gain
-    public static double kd = 0;  // Derivative gain
+    public static double kp = 2;  // Proportional gain
+    public static double ki = 0.45;  // Integral gain
+    public static double kd = 0.13;  // Derivative gain
+
+    //mid -15
+    //back -436
+    //front 769
+
+
+    public static int setPoint = 0;
 
     double prevError = 0;  // Previous error, used for derivative
     double integral = 0;   // Integral term
@@ -34,24 +40,35 @@ public class ArmPIDTest extends LinearOpMode {
         motors = new Motors(hardwareMap);
         elapsedTime = new ElapsedTime();
 
+        setPoint = motors.getArmPosition();
+
         waitForStart();
 
         double prevTime = elapsedTime.milliseconds();
-        double prevArmPos = motors.getArmPosition();
 
         while (opModeIsActive()) {
 
+            setPoint += gamepad2.left_stick_y;
             // Get current time and arm position
             double time = elapsedTime.milliseconds();
             double armPos = motors.getArmPosition();
 
+//            if (armPos < -775){
+//                kp = ((armPos + 775)/100);
+//            }
+//            if (armPos > -775)
+//            {
+//                kp = ((-armPos - 775)/100);
+//            }
+
+
             // Setpoint changes based on joystick input
-            double setPoint = gamepad2.right_stick_y * 100;  // Example scaling factor to setpoint
+            //double setPoint = gamepad2.right_stick_y * 100;  // Example scaling factor to setpoint
 
             // Time difference (dt)
             double dt = (time - prevTime) / 1000.0;  // Convert to seconds
 
-            double processValue = ((armPos - prevArmPos) / dt); // Finding the velocity of the motors
+            double processValue = armPos; // Finding the position of the motors
 
             // Calculate error
             double errorValue = setPoint - processValue;
@@ -76,14 +93,14 @@ public class ArmPIDTest extends LinearOpMode {
             double output = proportional + ki * integral + kd * derivative;
 
             // Apply the motor power
-            output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range
+            output = Math.max(Math.min(output, 100), -100);  // Clamp output to motor range
 
             motors.MoveMotor(Motors.Type.Arm, output);
 
             // Store current error and time for next iteration
+
             prevError = errorValue;
             prevTime = time;
-            prevArmPos = armPos;
 
 //            if(gamepad2.dpad_up)
 //                kp++;
