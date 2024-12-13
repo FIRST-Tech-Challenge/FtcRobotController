@@ -122,7 +122,7 @@ public class LimelightBot extends PinchBot {
     }
 
     /**
-     * Pickup method without strafe the robot,
+     * Align with sample without strafe the robot,
      *  given the pinch arm is installed in the center of rotation arm, we can calculate the center of pinch arm with detected sample angle
      *  the pinch arm center is in a range of error, we can pinch
      * @param isBlueAlliance
@@ -130,7 +130,7 @@ public class LimelightBot extends PinchBot {
      * @param isSpecimen
      * @param telemetry
      */
-    public void pickup2(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
+    public void alignWithSample(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry) {
         if (inAutoPickup){
             // already in auto pickup mode
             return;
@@ -143,6 +143,7 @@ public class LimelightBot extends PinchBot {
         }
         Sample.OptimalDeltaY result = sample.calculateOptimalDeltaY(10.0);
         if (result.isReachable){
+            telemetry.addData("Sample is reachable : ", result.toString());
             // rotate to angle
             rotateToAngle(result.rotationAngle);
             // adjust slide
@@ -152,6 +153,20 @@ public class LimelightBot extends PinchBot {
             // do nothing, the sample is not reachable
             telemetry.addData("Sample is not reachable : ", result.toString());
         }
+
+    }
+    public void pickup(boolean isSpecimen, Telemetry telemetry){
+        // lower the pivot
+        if (isSpecimen){
+            pivotToPickupPosSpecimen();
+        }
+        else {
+            pivotToPickupPosSample();
+        }
+        // close the pinch at a future time
+        schedule(this::closePinch, 500);
+        // raise the pivot at a future time and also reset the auto pickup mode
+        schedule(this::pivotToPickupUpPos, 1000);
 
     }
     public Sample detectOne(boolean isBlueAlliance, boolean includeSharedSample, Telemetry telemetry) {

@@ -292,13 +292,16 @@ public class Sample {
         double sampleCenterX = Math.tan(Math.toRadians(getX())) * distanceToFloor;
         double sampleCenterY = Math.tan(Math.toRadians(getY())) * distanceToFloor;
         int sampleAngle = getSampleAngle();
+        boolean reversePick = false;
         if (Math.abs(sampleAngle) >= 15) {
             if (sampleAngle > 0 && sampleCenterX > rotateArmCenterX) {
                 // the sample is on the right side of the robot, but the angle is positive ( pointing to left-upper corner)
                 sampleAngle = sampleAngle - 180;
+                reversePick = true;
             } else if (sampleAngle < 0 && sampleCenterX < rotateArmCenterX) {
                 // the sample is on the left side of the robot, but angle is negative (pointing to right-upper corner)
                 sampleAngle = sampleAngle + 180;
+                reversePick = true;
             }
         }
         double pinchArmCenterX = rotateArmCenterX - Math.sin(Math.toRadians(sampleAngle)) * pinchArmRadius;
@@ -327,6 +330,14 @@ public class Sample {
             reachable = Math.abs(distanceBetweenCenters) < sampleLengthTolerance;
             //System.out.println("New pinch arm center: (" + pinchArmCenterX + ", " + newPinchArmCenterY + ")");
         }
+        // adjust deltaX
+        if (reversePick){
+            deltaY += 2;
+        }
+        else{
+            deltaY += 1;
+        }
+
         //System.out.println("Distance between sample and new pinch arm center: " + distanceBetweenCenters);
         //System.out.println("Sample length tolerance: " + sampleLengthTolerance);
         return new OptimalDeltaY(reachable, sampleAngle, deltaY, distanceBetweenCenters);
