@@ -1,5 +1,6 @@
 package com.kalipsorobotics.actions.autoActions;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.kalipsorobotics.PID.PidNav;
@@ -39,6 +40,10 @@ public class PurePursuitAction extends Action {
     Optional<Position> prevFollow;
 
     private long sleepTimeMS = 0;
+
+    private double maxTimeOutMS = 1000000000;
+
+    private double startTimeMS = System.currentTimeMillis();
 
     /**
      * Should not do more than 24 inches or 600mm moves in X and Y (single move)
@@ -115,10 +120,22 @@ public class PurePursuitAction extends Action {
         if (isDone) {
             return;
         }
+
         if (!hasStarted) {
             path = new Path(pathPoints);
+            startTimeMS = System.currentTimeMillis();
             hasStarted = true;
         }
+
+
+        double elapsedTime = System.currentTimeMillis() - startTimeMS;
+
+        if (elapsedTime >= maxTimeOutMS) {
+            setIsDone(true);
+            Log.d("purepursaction_debug_follow", "done timeout  " + getName());
+            return;
+        }
+
 
         currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
 
@@ -160,4 +177,11 @@ public class PurePursuitAction extends Action {
         this.sleepTimeMS = sleepTimeMS;
     }
 
+    public double getMaxTimeOutMS() {
+        return maxTimeOutMS;
+    }
+
+    public void setMaxTimeOutMS(double maxTimeOutMS) {
+        this.maxTimeOutMS = maxTimeOutMS;
+    }
 }

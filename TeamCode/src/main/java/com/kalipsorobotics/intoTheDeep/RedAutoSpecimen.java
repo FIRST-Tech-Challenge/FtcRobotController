@@ -48,8 +48,9 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
+        moveToSpecimenBar.setMaxTimeOutMS(4000);
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-755, 300, 0);
+        moveToSpecimenBar.addPoint(-790, 300, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoSpecimen.addAction(moveToSpecimenBar);
 

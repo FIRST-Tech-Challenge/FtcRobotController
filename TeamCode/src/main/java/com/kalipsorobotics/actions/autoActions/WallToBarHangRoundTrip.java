@@ -21,8 +21,9 @@ public class WallToBarHangRoundTrip extends KActionSet {
 
         PurePursuitAction moveWallToBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveWallToBar.setName("moveWallToBar");
+        moveWallToBar.setMaxTimeOutMS(4000);
         moveWallToBar.setDependentActions(waitAtWall);
-        moveWallToBar.addPoint(-755, hangPosY, 0);
+        moveWallToBar.addPoint(-790, hangPosY, 0);
         this.addAction(moveWallToBar);
 
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
@@ -30,7 +31,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         specimenHangReady.setDependentActions(waitAtWall);
         this.addAction(specimenHangReady);
 
-        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 250);
+        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 225);
         lowerSlidesHalf.setName("lowerSlidesHalf");
         lowerSlidesHalf.setDependentActions(specimenHangReady, moveWallToBar);
         this.addAction(lowerSlidesHalf);
@@ -48,6 +49,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
 
         PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry);
         moveBarToWall.setName("moveBarToWall");
+        moveBarToWall.setMaxTimeOutMS(4000);
         moveBarToWall.setDependentActions(lowerSlidesHalf, openClaw);
         moveBarToWall.addPoint(-305, -700, -180); //-205, 700
         moveBarToWall.addPoint(-80, -700, -180);
