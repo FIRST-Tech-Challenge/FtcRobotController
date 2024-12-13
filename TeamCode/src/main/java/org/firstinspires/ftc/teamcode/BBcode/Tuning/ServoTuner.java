@@ -24,6 +24,8 @@ public class ServoTuner extends LinearOpMode {
 
         int selectedIndex = 0;
         Servo servo = null;
+        boolean yPressed = false;
+        boolean aPressed = false;
         boolean dpadUpPressed = false;
         boolean dpadDownPressed = false;
         boolean dpadLeftPressed = false;
@@ -36,21 +38,21 @@ public class ServoTuner extends LinearOpMode {
 
         // Allow the user to select a servo before start is pressed
         while (!isStarted()) {
-            if (gamepad1.dpad_up && !dpadUpPressed) {
+            if (gamepad1.y && !yPressed) {
                 selectedIndex = (selectedIndex - 1 + servoNames.length) % servoNames.length;
-                dpadUpPressed = true;
-            } else if (!gamepad1.dpad_up) {
-                dpadUpPressed = false;
+                yPressed = true;
+            } else if (!gamepad1.y) {
+                yPressed = false;
             }
 
-            if (gamepad1.dpad_down && !dpadDownPressed) {
+            if (gamepad1.a && !aPressed) {
                 selectedIndex = (selectedIndex + 1) % servoNames.length;
-                dpadDownPressed = true;
-            } else if (!gamepad1.dpad_down) {
-                dpadDownPressed = false;
+                aPressed = true;
+            } else if (!gamepad1.a) {
+                aPressed = false;
             }
 
-            telemetry.addData("Instructions", "Use D-pad up/down to select a servo.");
+            telemetry.addData("Instructions", "Use y/a to select a servo.");
             telemetry.addData("Selected Servo", servoNames[selectedIndex]);
             telemetry.update();
         }
@@ -61,14 +63,23 @@ public class ServoTuner extends LinearOpMode {
 
         // Allow the user to control the servo during the main loop
         while (opModeIsActive()) {
-            if (gamepad1.y) {
-                servoPosition = MID_SERVO;
+            if (gamepad1.y && !yPressed) {
+                selectedIndex = (selectedIndex - 1 + servoNames.length) % servoNames.length;
+                servo = hardwareMap.tryGet(Servo.class, servoNames[selectedIndex]);
+                yPressed = true;
+            } else if (!gamepad1.y) {
+                yPressed = false;
+            }
+
+            if (gamepad1.a && !aPressed) {
+                selectedIndex = (selectedIndex + 1) % servoNames.length;
+                servo = hardwareMap.tryGet(Servo.class, servoNames[selectedIndex]);
+                aPressed = true;
+            } else if (!gamepad1.a) {
+                aPressed = false;
             }
             if (gamepad1.x) {
-                servoPosition = 0.0;
-            }
-            if (gamepad1.b) {
-                servoPosition = 1.0;
+                servoPosition = MID_SERVO;
             }
             if (gamepad1.dpad_up && !dpadUpPressed) {
                 servoPosition = Math.min(servoPosition + increment, 1.0);
@@ -100,6 +111,7 @@ public class ServoTuner extends LinearOpMode {
 
             servo.setPosition(servoPosition);
             telemetry.addData("Instructions", "Use D-pad up/down to change by " + increment + ": Use buttons X=0, Y=0.5, B=1.0: Use left/right to change order of magnitude.");
+            telemetry.addData("Selected Servo", servoNames[selectedIndex]);
             telemetry.addData("Servo Position", servoPosition);
             telemetry.update();
         }
