@@ -294,7 +294,8 @@ public class RedTeleop extends LinearOpMode {
         boolean hangPressed = false;
         boolean rightTriggerPressed = false;
         boolean leftTriggerPressed = false;
-        boolean gp2DPadPressed = false;
+        boolean prevGamepad2DpadDown = false; //gp2DPadPressed
+        double targetHangPos = 0;
 
         double hangStartPosition = 0;
 
@@ -321,7 +322,7 @@ public class RedTeleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //=========DRIVER==========
+            //=========DRIVER 1==========
             driveAction.move(gamepad1);
 
             //RESET POS
@@ -371,6 +372,8 @@ public class RedTeleop extends LinearOpMode {
 
             }
 
+            //===================HANG==================
+
             if(gamepad1.left_bumper && gamepad1.right_bumper) {
                 hangPressed = true;
                 autoHangAction = new AutoHangAction(outtake);
@@ -390,17 +393,23 @@ public class RedTeleop extends LinearOpMode {
             if (!gamepad1.x && !gamepad1.dpad_down){
                 MoveOuttakeLSAction.setOverridePower(0);
             } else if(gamepad1.x && !gamepad1.dpad_down) {
-                MoveOuttakeLSAction.setOverridePower(-0.05);
+                MoveOuttakeLSAction.setOverridePower(-0.1);
 //                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
                 MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition());
                 //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
             } else if (gamepad1.dpad_down && !gamepad1.x) {
-                if (!gp2DPadPressed) {
-                    outtake.getHangHook1().setPosition(0.5);
+                if (!prevGamepad2DpadDown) {
+                    outtake.getHangHook1().setPosition(0.245);
                     outtake.getHangHook2().setPosition(0.65);
-                    MoveOuttakeLSAction.setOverridePower(-0.65);
-                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(44.45));
-                    gp2DPadPressed = true;
+                    MoveOuttakeLSAction.setOverridePower(-1);
+//                    MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(1);
+                    targetHangPos = outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(47);
+                    MoveOuttakeLSAction.setGlobal(targetHangPos);
+                    prevGamepad2DpadDown = true;
+                } else {
+                    if (Math.abs(outtake.getLinearSlide1().getCurrentPosition() - targetHangPos) <= MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS){
+                        MoveOuttakeLSAction.setOverridePower(0);
+                    }
                 }
 //                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {
 //                    //MoveOuttakeLSAction.setOverridePower(-0.85);
@@ -428,9 +437,8 @@ public class RedTeleop extends LinearOpMode {
                 leftTriggerPressed = false;
             }
 
-
+            //===============DRIVER 2===============
             //================OUTTAKE================
-
 
             //outtake pivot
             if (gamepad2.dpad_left) {
@@ -445,7 +453,7 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if (gamepad2.left_stick_button) {
-                CalculateTickPer.MIN_RANGE_LS_TICKS = -1800;
+                CalculateTickPer.MIN_RANGE_LS_TICKS = -2500;
             }
 
             if (gamepad2.left_trigger > 0.99) {
