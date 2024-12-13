@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
+import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +24,7 @@ import org.firstinspires.ftc.teamcode.commands.TiltIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ToggleIntakeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.BucketSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.EmergencyArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ExtendoSystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
@@ -45,11 +49,7 @@ public class DriveCommandOpMode extends CommandOpMode {
 
     private DriveSubsystem driveSubsystem;
     private HangSubsystem hangSubsystem;
-    private PincherSubsystem pincherSubsystem;
-    private UppiesSubsystem uppiesSubsystem;
-    private BucketSubsystem bucketSubsystem;
-    private ExtendoSystem extendoSystem;
-    private IntakeSubsystem intakeSubsystem;
+    private EmergencyArmSubsystem armSubsystem;
 
     private DefaultDrive driveCommand;
 
@@ -59,19 +59,6 @@ public class DriveCommandOpMode extends CommandOpMode {
     public void initialize() {
         driverController = new GamepadEx(gamepad1);
         armerController = new GamepadEx(gamepad2);
-
-        // CONTROL CONFIG
-        GamepadKeys.Button closePincherButton       = GamepadKeys.Button.X;
-        GamepadKeys.Button openPincherButton        = GamepadKeys.Button.Y;
-        GamepadKeys.Button moveUppiesUpButton       = GamepadKeys.Button.DPAD_UP;
-        GamepadKeys.Button moveUppiesDownButton     = GamepadKeys.Button.DPAD_DOWN;
-        GamepadKeys.Button dumpBucketButton         = GamepadKeys.Button.RIGHT_STICK_BUTTON;
-        GamepadKeys.Button retractIntakeButton      = GamepadKeys.Button.DPAD_LEFT;
-        GamepadKeys.Button extendIntakeButton       = GamepadKeys.Button.DPAD_RIGHT;
-        GamepadKeys.Button toggleIntakeSpinButton   = GamepadKeys.Button.LEFT_STICK_BUTTON;
-        GamepadKeys.Button toggleIntakeTiltButton   = GamepadKeys.Button.LEFT_BUMPER;
-        GamepadKeys.Button manualSafetyOverride     = GamepadKeys.Button.BACK;
-        GamepadKeys.Button maxExtensionOverride     = GamepadKeys.Button.BACK;
 
         dbp.createNewTelePacket();
         dbp.info("Initializing drive command op mode...");
@@ -90,104 +77,76 @@ public class DriveCommandOpMode extends CommandOpMode {
         }
 
         try {
-            ServoEx pincher1 = RobotHardwareInitializer.ServoComponent.FINGER_1.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
-            ServoEx pincher2 = RobotHardwareInitializer.ServoComponent.FINGER_2.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
-            pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
-            register(pincherSubsystem);
+            hangSubsystem = new HangSubsystem(hardwareMap);
 
-            MovePincherCommand closePincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED);
-            MovePincherCommand openPincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN);
+            // D-Pad Up and D-Pad Down toggles the manages the hanging
 
-            armerController.getGamepadButton(closePincherButton).whenPressed(closePincher);
-            armerController.getGamepadButton(openPincherButton).whenPressed(openPincher);
-        } catch (Exception e) {
-            dbp.info("ERROR IN PINCHER SYSTEM");
-            dbp.error(e);
-            dbp.send(true);
-            throw new RuntimeException(e);
-        }
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileActiveContinuous(() -> {
+                hangSubsystem.setHangDirection(HangSubsystem.HangDirection.UP);
+            }).whenInactive(() -> {
+                hangSubsystem.setHangDirection(HangSubsystem.HangDirection.IDLE);
+            });
 
-        try {
-            DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
-            uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
-            register(uppiesSubsystem);
-
-            SetUppiesCommand idleCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.IDLE);
-            SetUppiesCommand upCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UPPIES);
-            SetUppiesCommand downCommand = new SetUppiesCommand(uppiesSubsystem, UppiesSubsystem.UppiesState.UN_UPPIES);
-            armerController.getGamepadButton(moveUppiesUpButton)
-                    .whenPressed(upCommand)
-                    .whenReleased(idleCommand);
-            armerController.getGamepadButton(moveUppiesDownButton)
-                    .whenPressed(downCommand)
-                    .whenReleased(idleCommand);
-        } catch (Exception e) {
-            dbp.info("ERROR IN UPPIES SYSTEM");
-            dbp.error(e);
-            dbp.send(true);
-            throw new RuntimeException(e);
-        }
-
-        try {
-            ServoEx bucketServo = RobotHardwareInitializer.ServoComponent.BUCKET_DUMPER.getEx(hardwareMap, 0, 135);
-            bucketSubsystem = new BucketSubsystem(bucketServo);
-            register(bucketSubsystem);
-
-            DumpBucketCommand dumpBucketCommand = new DumpBucketCommand(bucketSubsystem);
-
-            armerController.getGamepadButton(dumpBucketButton).whenPressed(dumpBucketCommand);
-        } catch (Exception e) {
-            dbp.info("ERROR IN BUCKET SYSTEM");
-            dbp.error(e);
-            dbp.send(true);
-            throw new RuntimeException(e);
-        }
-
-        try {
-            DcMotorEx motorEx = RobotHardwareInitializer.MotorComponent.EXTENDER.getEx(hardwareMap);
-            DcMotorEx motorReverseEx = RobotHardwareInitializer.MotorComponent.EXTENDER2.getEx(hardwareMap);
-            extendoSystem = new ExtendoSystem(motorEx, motorReverseEx);
-            register(extendoSystem);
-
-            ExtendoCommand extendCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.OUTWARD);
-            ExtendoCommand retractCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.INWARD);
-            ExtendoCommand idleCommand = new ExtendoCommand(extendoSystem, ExtendoSystem.Direction.NONE);
-
-            armerController.getGamepadButton(retractIntakeButton)
-                    .whileHeld(retractCommand)
-                    .whenReleased(idleCommand);
-            armerController.getGamepadButton(extendIntakeButton)
-                    .whileHeld(extendCommand)
-                    .whenReleased(idleCommand);
-        } catch (Exception e) {
-            dbp.info("ERROR IN EXTENDING SYSTEM");
-            dbp.error(e);
-            dbp.send(true);
-            throw new RuntimeException(e);
-        }
-
-        try {
-            DcMotorEx intakePower = RobotHardwareInitializer.MotorComponent.INTAKE.getEx(hardwareMap);
-            ServoEx intakeTilter = RobotHardwareInitializer.ServoComponent.INTAKE_TILTER.getEx(hardwareMap);
-            intakeSubsystem = new IntakeSubsystem(intakePower, intakeTilter);
-
-            TiltIntakeCommand tiltCommand = new TiltIntakeCommand(intakeSubsystem, true);
-            TiltIntakeCommand untiltCommand = new TiltIntakeCommand(intakeSubsystem, false);
-            ToggleIntakeCommand toggleIntakeState = new ToggleIntakeCommand(intakeSubsystem);
-
-            armerController.getGamepadButton(toggleIntakeTiltButton)
-                    .toggleWhenPressed(tiltCommand, untiltCommand);
-            armerController.getGamepadButton(toggleIntakeSpinButton)
-                    .whenPressed(toggleIntakeState);
-            armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).toggleWhenPressed(() -> {
-                intakeSubsystem.setIntakeDirection(DcMotorSimple.Direction.REVERSE);
-            }, () -> {
-                intakeSubsystem.setIntakeDirection(DcMotorSimple.Direction.FORWARD);
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileActiveContinuous(() -> {
+                hangSubsystem.setHangDirection(HangSubsystem.HangDirection.DOWN);
+            }).whenInactive(() -> {
+                hangSubsystem.setHangDirection(HangSubsystem.HangDirection.IDLE);
             });
         } catch (Exception e) {
-            dbp.info("ERROR IN INTAKE SYSTEM");
+            dbp.info("ERROR IN HANG SYSTEM");
             dbp.error(e);
             dbp.send(true);
+            telemetry.addData("Hang", "Error in hang subsystem: "+e.getMessage());
+            telemetry.update();
+            throw new RuntimeException(e);
+        }
+
+        try {
+            armSubsystem = new EmergencyArmSubsystem(hardwareMap);
+            float threshold = .1f;
+
+            // Bumpers handle the lower arm
+            // Triggers handle the higher arm
+            // "A" toggles the pincher state
+            // Left Joystick X moves the wrist
+
+            DoubleSupplier higherSupplier = () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+
+            new Trigger(() -> Math.abs(higherSupplier.getAsDouble()) > threshold).whileActiveContinuous(() -> {
+                armSubsystem.setHigherArmPower(higherSupplier.getAsDouble());
+            }).whenInactive(() -> {
+                armSubsystem.setHigherArmPower(0);
+            });
+
+            armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whileHeld(() -> {
+                armSubsystem.setLowerArmPower(-1);
+            }).whenInactive(() -> {
+                 armSubsystem.setLowerArmPower(0);
+            });
+
+            armerController.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whileHeld(() -> {
+                armSubsystem.setLowerArmPower(1);
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+            });
+
+            armerController.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(() -> {
+                armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.OPEN);
+            }, () -> {
+                armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.PINCHED);
+            });
+
+            new Trigger(() -> Math.abs(armerController.getLeftX()) > threshold).whileActiveContinuous(() -> {
+                armSubsystem.setWristPower(armerController.getLeftX());
+            }).whenInactive(() -> {
+                armSubsystem.setWristPower(0);
+            });
+        } catch (Exception e) {
+            dbp.info("ERROR IN ARM SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
+            telemetry.addData("Arm", "Error in arm subsystem: "+e.getMessage());
+            telemetry.update();
             throw new RuntimeException(e);
         }
 
@@ -202,27 +161,12 @@ public class DriveCommandOpMode extends CommandOpMode {
         dbp.info("GO GO GO!");
         dbp.send(false);
 
-        /*armerController.getGamepadButton(manualSafetyOverride).toggleWhenPressed(() -> {
-            UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = false;
-        }, () -> {
-            UppiesSubsystem.PROGRAMATIC_STALL_SAFETY = true;
-        });*/
-        armerController.getGamepadButton(maxExtensionOverride).toggleWhenPressed(() -> {
-            UppiesSubsystem.PROGRAMATIC_IGNORE_LIMITS = false;
-        }, () -> {
-            UppiesSubsystem.PROGRAMATIC_IGNORE_LIMITS = true;
-        });
-
         // NOTE: Do not include the opModeIsActive() while loop, as it prevents commands from running
     }
 
     @Override
     public void reset() {
         super.reset();
-        // Reset the finger back to the original position
-        if (pincherSubsystem != null) {
-            pincherSubsystem.locomoteFinger(PincherSubsystem.FingerPositions.ZERO);
-        }
     }
 
     private void initializeDriveSuppliers() {

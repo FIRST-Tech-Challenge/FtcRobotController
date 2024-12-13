@@ -20,7 +20,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.HashMap;
 
 public class DriveSubsystem extends SubsystemBase {
-    private DcMotor lF, rF, lB, rB, eL, eB, eR;
+    private DcMotor lF, rF, lB, rB;
+    private DcMotor eL, eB, eR;
     private final double INCHES_PER_TICK = 0.0018912d;
     public ElapsedTime elapsedTime;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("DriveSubsystem");
@@ -32,9 +33,9 @@ public class DriveSubsystem extends SubsystemBase {
                 driveMotors.get(RobotHardwareInitializer.MotorComponent.RIGHT_FRONT),
                 driveMotors.get(RobotHardwareInitializer.MotorComponent.LEFT_BACK),
                 driveMotors.get(RobotHardwareInitializer.MotorComponent.RIGHT_BACK),
-                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_LEFT),
-                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_BACK),
-                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_RIGHT));
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_PAR0),
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_PERP),
+                driveMotors.get(RobotHardwareInitializer.EncoderComponent.ENCODER_PAR1));
     }
 
     public DriveSubsystem(HardwareMap hMap) {

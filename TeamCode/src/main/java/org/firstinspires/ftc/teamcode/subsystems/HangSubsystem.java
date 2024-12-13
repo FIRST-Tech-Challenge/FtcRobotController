@@ -5,20 +5,19 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.util.Direction;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 public class HangSubsystem extends SubsystemBase {
 
     final DcMotor extensionMotor;
     private final FTCDashboardPackets dbp = new FTCDashboardPackets("Hang Subsystem");
 
-    public HangSubsystem(DcMotor extensionMotor) {
-        this.extensionMotor = extensionMotor;
-        if (extensionMotor == null) {
-            dbp.info("WARNING: Hang motor is not set up in the config!", true);
-        }
+    public HangSubsystem(HardwareMap hardwareMap) {
+        this.extensionMotor = RobotHardwareInitializer.MotorComponent.HANG_MOTOR.get(hardwareMap);
     }
 
     public void setHangDirection(HangDirection direction) {

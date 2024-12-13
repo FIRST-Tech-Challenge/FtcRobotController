@@ -15,7 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.nullness.qual.Raw;
 import org.firstinspires.ftc.teamcode.messages.ThreeDeadWheelInputsMessage;
+import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
@@ -38,9 +40,12 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         // TODO: make sure your config has **motors** with these names (or change them)
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "fr_drv")));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "extender")));
+        //par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "fr_drv")));
+        //par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "intake")));
+        //perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "extender")));
+        par0 = new OverflowEncoder(new RawEncoder(RobotHardwareInitializer.EncoderComponent.ENCODER_PAR0.get(hardwareMap)));
+        par1 = new OverflowEncoder(new RawEncoder(RobotHardwareInitializer.EncoderComponent.ENCODER_PAR1.get(hardwareMap)));
+        perp = new OverflowEncoder(new RawEncoder(RobotHardwareInitializer.EncoderComponent.ENCODER_PERP.get(hardwareMap)));
 
         // TODO: reverse encoder directions if needed
         //   par0.setDirection(DcMotorSimple.Direction.REVERSE);

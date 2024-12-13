@@ -2,16 +2,13 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
@@ -42,10 +39,14 @@ public class RobotHardwareInitializer {
         LEFT_BACK("bl_drv"),
         RIGHT_BACK("br_drv"),
 
-        UPPIES("uppies"), // Used to move the pincher and bucket up and down
-        EXTENDER("extender"), // Used to move in intake system forward and back
-        EXTENDER2("extender2"), // Used to move in intake system forward and back
-        INTAKE("intake"), // Used to pick up blocks
+        LOWER_ARM("low_arm"),
+        HIGHER_ARM("higher_arm"),
+        HANG_MOTOR("hanging"),
+
+        @Deprecated UPPIES("uppies"), // Used to move the pincher and bucket up and down
+        @Deprecated EXTENDER("extender"), // Used to move in intake system forward and back
+        @Deprecated EXTENDER2("extender2"), // Used to move in intake system forward and back
+        @Deprecated INTAKE("intake"), // Used to pick up blocks
         ;
         private final String componentName;
         MotorComponent(String componentName) { this.componentName = componentName; }
@@ -57,10 +58,11 @@ public class RobotHardwareInitializer {
     }
 
     public enum ServoComponent implements Component<Servo> {
-        FINGER_1("finger1"), // left finger
-        FINGER_2("finger2"), // right finger
-        BUCKET_DUMPER("bucket"), // Used to dump the bucket and return to the collecting position
-        INTAKE_TILTER("intake_servo"), // Used to tilt the intake system toward the bucket at to the ground
+        PINCHER("pincher"),
+        @Deprecated FINGER_1("finger1"), // left finger
+        @Deprecated FINGER_2("finger2"), // right finger
+        @Deprecated BUCKET_DUMPER("bucket"), // Used to dump the bucket and return to the collecting position
+        @Deprecated INTAKE_TILTER("intake_servo"), // Used to tilt the intake system toward the bucket at to the ground
         ;
         private final String componentName;
         ServoComponent(String componentName) { this.componentName = componentName; }
@@ -74,14 +76,24 @@ public class RobotHardwareInitializer {
         }
     }
 
-    public enum EncoderComponent implements Component<DcMotor> {
-        ENCODER_LEFT("fl_drv"),
-        ENCODER_RIGHT("fr_drv"),
-        ENCODER_BACK("br_drv");
+    public enum CRServoComponent implements Component<CRServo> {
+        WRIST("wrist")
+        ;
+
+        private final String componentName;
+        CRServoComponent(String componentName) { this.componentName = componentName; }
+        @Override public String getComponentName() { return componentName; }
+        @Override public CRServo get(HardwareMap map) { return map.get(CRServo.class, getComponentName()); }
+    }
+
+    public enum EncoderComponent implements Component<DcMotorEx> {
+        ENCODER_PAR0("fr_drv"), // previously fr_drv, left
+        ENCODER_PAR1("intake"), // previously intake, right
+        ENCODER_PERP("extender"); // previously extender, back
         private final String componentName;
         EncoderComponent(String componentName) { this.componentName = componentName; }
         @Override public String getComponentName() { return componentName; }
-        @Override public DcMotor get(HardwareMap map) { return map.get(DcMotor.class, getComponentName()); }
+        @Override public DcMotorEx get(HardwareMap map) { return map.get(DcMotorEx.class, getComponentName()); }
     }
 
     public enum DistanceSensorComponent implements Component<DistanceSensor> {
@@ -124,6 +136,7 @@ public class RobotHardwareInitializer {
     public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
     public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
 
+    @Deprecated
     public static HashMap<Component, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {
         DcMotor leftFrontDrive;
         DcMotor rightFrontDrive;
@@ -144,14 +157,14 @@ public class RobotHardwareInitializer {
             return null;
         }
 
-        DcMotor encoderLeft;
-        DcMotor encoderRight;
-        DcMotor encoderBack;
+        DcMotorEx encoderLeft;
+        DcMotorEx encoderRight;
+        DcMotorEx encoderBack;
 
         try {
-            encoderLeft = hMap.dcMotor.get(EncoderComponent.ENCODER_LEFT.getComponentName());
-            encoderRight = hMap.dcMotor.get(EncoderComponent.ENCODER_RIGHT.getComponentName());
-            encoderBack = hMap.dcMotor.get(EncoderComponent.ENCODER_BACK.getComponentName());
+            encoderLeft = EncoderComponent.ENCODER_PAR0.get(hMap);
+            encoderRight = EncoderComponent.ENCODER_PAR1.get(hMap);
+            encoderBack = EncoderComponent.ENCODER_PERP.get(hMap);
         } catch (Exception e) {
             Error(e, opMode);
             return null;
@@ -163,9 +176,9 @@ public class RobotHardwareInitializer {
         motorMap.put(MotorComponent.RIGHT_FRONT, rightFrontDrive);
         motorMap.put(MotorComponent.LEFT_BACK, leftBackDrive);
         motorMap.put(MotorComponent.RIGHT_BACK, rightBackDrive);
-        motorMap.put(EncoderComponent.ENCODER_LEFT, encoderLeft);
-        motorMap.put(EncoderComponent.ENCODER_RIGHT, encoderRight);
-        motorMap.put(EncoderComponent.ENCODER_BACK, encoderBack);
+        motorMap.put(EncoderComponent.ENCODER_PAR0, encoderLeft);
+        motorMap.put(EncoderComponent.ENCODER_PAR0, encoderRight);
+        motorMap.put(EncoderComponent.ENCODER_PERP, encoderBack);
 
         return motorMap;
     }
