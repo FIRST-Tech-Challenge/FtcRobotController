@@ -25,6 +25,7 @@ public class Viper {
     int fullExtend = 24;
     int halfExtend = 9;
     int specimenhangExtend = 12;
+    int submersibleExtend = 5;
     int shortExtend = 3;
     int closedExtend = 0;
     //--------------------------
@@ -48,6 +49,7 @@ public class Viper {
 
     public void StopAndResetEncoder() {_viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
     public void ExtendFull(double power) {ViperMotorCustom(fullExtend, power);}
+    public void Extendsubmersible(double power) {ViperMotorCustom(submersibleExtend, power);}
     public void ExtendShort(double power) {ViperMotorCustom(shortExtend, power);}
     public void ExtendHalf(double power) {ViperMotorCustom(halfExtend, power);}
     public void ExtendClosed(double power) {ViperMotorCustom(closedExtend, power);}

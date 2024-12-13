@@ -50,6 +50,17 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
     final double wristFlipTime = 0.75;
 
+    private void handleGamepad1 (Viper viper) {
+        //viper extend into sub
+        if (gamepad1.y) {
+            viper.Extendsubmersible(0.5);
+        }
+
+        if (gamepad1.a) {
+            viper.ExtendClosed(0.5);
+        }
+    }
+
     private void handleGamepad2 (WristClaw wristClaw) {
 
         //Open Claw
@@ -100,12 +111,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
         while(opModeIsActive()){ //while loop for when program is active
 
-            wristClaw.WristUp();
-            wristClaw.CloseClaw();
-
             //Drive code
             drivetrain.Drive();
 
+            handleGamepad1(viper);
             handleGamepad2(wristClaw);
 
             switch (highBasketState) {
