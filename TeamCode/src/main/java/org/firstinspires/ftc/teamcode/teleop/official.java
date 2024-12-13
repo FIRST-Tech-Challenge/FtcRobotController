@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -26,8 +25,6 @@ public class official extends LinearOpMode {
 
     public Servo    intakeSlide1 = null;
     public Servo    intakeSlide2 = null;
-    private boolean elbowIsDown = false;
-    private boolean outtakeIsDown = false;
 
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -74,11 +71,9 @@ public class official extends LinearOpMode {
         intakeSlide2  = hardwareMap.get(Servo.class, "4");
         intakeSlide1 = hardwareMap.get(Servo.class, "5");
 
-        outtakeElbow = hardwareMap.get(Servo.class, "7");
-        outtakeClaw = hardwareMap.get(Servo.class, "6");
+        outtakeElbow = hardwareMap.get(Servo.class, "6");
+        outtakeClaw = hardwareMap.get(Servo.class, "7");
 
-        outtakeClaw.setPosition(0);
-        outtakeClaw.setPosition(0);
 
         clawPivot.setPosition(Values.MID_SERVO);
         wrist.setPosition(Values.MID_SERVO);
@@ -155,19 +150,19 @@ public class official extends LinearOpMode {
 
 
             //slide motors
-            if (currentGamepad1.left_trigger != 0 || currentGamepad1.right_trigger != 0) {
+            if (currentGamepad2.left_trigger != 0 || currentGamepad2.right_trigger != 0) {
 
-                if (currentGamepad1.right_trigger > 0) {
+                if (currentGamepad2.right_trigger > 0) {
                     slidePosition[0] += (int) (20 * currentGamepad1.right_trigger);
                 }
                 // Move Slide Down
-                if (currentGamepad1.left_trigger > 0) {
+                if (currentGamepad2.left_trigger > 0) {
                     slidePosition[0] -= (int) (20 * currentGamepad1.left_trigger);
                 }
                 //straight up or down
-                else if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+                else if (currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
                     slidePosition [0] = Values.slideMax;
-                } else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+                } else if (currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
                     slidePosition [0] = 0;
                 }
 
@@ -207,13 +202,12 @@ public class official extends LinearOpMode {
             //intake open N close
             //don know y its kinda jank
             if (currentGamepad2.circle && !previousGamepad2.circle){
-                if(!elbowIsDown){
+                if(intakeElbow.getPosition() != Values.intakeElbowWait){
                     intakeElbow.setPosition(Values.intakeElbowWait);
                     intakeClaw.setPosition(Values.intakeClawOpen);
                     wrist.setPosition(Values.wristDown);
-                    elbowIsDown = true;
                 }
-                else if (elbowIsDown) {
+                else if (intakeElbow.getPosition() == Values.intakeElbowWait) {
                     intakeElbow.setPosition(Values.intakeElbowDown);
                     sleep(500);
                     intakeClaw.setPosition(Values.intakeclawClose);
@@ -221,29 +215,25 @@ public class official extends LinearOpMode {
                     wrist.setPosition(Values.wristUp);
                     intakeElbow.setPosition(Values.intakeElbowUp);
                     slidesIn();
-                    elbowIsDown = false;
                 }
 
             }
 
             //outtake
             if (currentGamepad2.triangle && !previousGamepad2.triangle){
-                if (!outtakeIsDown){
+                if (outtakeElbow.getPosition() != Values.outtakeElbowDown){
                     outtakeClaw.setPosition(Values.outakeclawOpen);
-                    outtakeElbow.setPosition(Values.outtakeElbowDown);
-                    outtakeIsDown= true;
-                }else if (outtakeIsDown){
+                }else if (outtakeElbow.getPosition() == Values.outtakeElbowDown){
                     outtakeClaw.setPosition(Values.outtakeClawClose);
-                    sleep(200);
+                    sleep(500);
                     outtakeElbow.setPosition(Values.outtakeElbowUp);
-                    outtakeIsDown = false;
                 }
             }
             //pivot!
-            if (currentGamepad2.right_bumper) {
-                clawPivot.setPosition(clawPivot .getPosition() - 0.003);
-            } else if (currentGamepad2.left_bumper) {
-                clawPivot.setPosition(clawPivot .getPosition() + 0.003);
+            if (currentGamepad2.left_bumper) {
+                clawPivot.setPosition(clawPivot .getPosition() - 0.002);
+            } else if (currentGamepad2.right_bumper) {
+                clawPivot.setPosition(clawPivot .getPosition() + 0.002);
             } else if (currentGamepad2.share) {
                 clawPivot.setPosition(Values.MID_SERVO);
             }
@@ -253,7 +243,7 @@ public class official extends LinearOpMode {
             telemetry.addData("Intake Claw (circle)",  "%.02f", intakeClaw.getPosition());
             telemetry.addData("Intake pitch angle (square)",  "%.02f", wrist.getPosition());
             telemetry.addData("Intake big rotate (cross)",  "%.02f", intakeElbow.getPosition());
-            telemetry.addData("outake, triangle, elbow claw", "%.02f, %.02f",outtakeElbow.getPosition(), outtakeClaw.getPosition());
+            telemetry.addData("outake stuff is triangle", "%.02f",outtakeElbow.getPosition(), outtakeClaw.getPosition());
             telemetry.addData("slides servos (dpad up, or leftNright bumpy)",  "%.02f, %.02f", intakeSlide1.getPosition(),intakeSlide2.getPosition());
             telemetry.addData("motor position", outtakeSlide1.getCurrentPosition());
             telemetry.update();
@@ -280,11 +270,11 @@ public class official extends LinearOpMode {
     }
     private void slideServo (boolean goingOut) {
         if (goingOut) {
-            intakeSlide2.setPosition(intakeSlide2.getPosition() + 0.03);
-            intakeSlide1.setPosition(intakeSlide1.getPosition() - 0.03);
+            intakeSlide2.setPosition(intakeSlide2.getPosition() + 0.02);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() - 0.02);
         }else{
-            intakeSlide2.setPosition(intakeSlide2.getPosition() - 0.03);
-            intakeSlide1.setPosition(intakeSlide1.getPosition() + 0.03);
+            intakeSlide2.setPosition(intakeSlide2.getPosition() - 0.02);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() + 0.02);
         }
     }
 }
