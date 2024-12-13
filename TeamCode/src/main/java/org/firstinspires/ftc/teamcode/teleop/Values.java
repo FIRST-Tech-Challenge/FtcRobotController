@@ -3,14 +3,17 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Values {
+    public static double speedReducer = .4;
+
     public static double intakeClawOpen = .7;
     public static double intakeclawClose = .95;
 
     public static double wristDown = .1;
     public static double wristUp = .6;
 
-    public static double intakeElbowDown = 1;
-    public static double intakeElbowUp = 0;
+    public static double intakeElbowDown = 0;
+    public static double intakeElbowUp = 1;
+    public static double intakeElbowWait = .1;
 
     public static double outtakeElbowDown = .7;
     public static double outtakeElbowUp = .2;
