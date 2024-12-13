@@ -1,20 +1,20 @@
-plugins {
-    id 'java-library'
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_18
-    targetCompatibility = JavaVersion.VERSION_18
-}
-repositories {
-    maven {
-        url = uri("https://jitpack.io")
-    }
-    maven {
-        url = uri("https://maven.brott.dev/")
-    }
-}
-
-dependencies {
-    implementation 'com.github.rh-robotics:MeepMeep:v1.1.0'
-}
+//plugins {
+//    id 'java-library'
+//}
+//
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_18
+//    targetCompatibility = JavaVersion.VERSION_18
+//}
+//repositories {
+//    maven {
+//        url = uri("https://jitpack.io")
+//    }
+//    maven {
+//        url = uri("https://maven.brott.dev/")
+//    }
+//}
+//
+//dependencies {
+//    implementation 'com.github.rh-robotics:MeepMeep:v1.1.0'
+//}
