@@ -109,7 +109,7 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backRight.setPower(backRightPower * currentSpeed);
             wrist();
             servoMoves();
-            twist();
+           // twist();
             stepper(hardware);
             lift(hardware);
             HSlide(hardware);
@@ -124,6 +124,9 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             if(gamepad2.b){
                 specimenWallPick(hardware);
+            }
+            if(gamepad2.dpad_left){
+                score(hardware);
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -510,5 +513,20 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         maintainHeightTicks=0;
     }
+        private void score(Hardware hardware){
+            double clawclose = 0.02;
+
+            hardware.claw.setPosition(clawclose);
+            hardware.verticalSlide.setTargetPosition(710);
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.verticalSlide.setPower(VerticalSlideSpeed);
+            maintainHeightTicks = 710;
+            sleep(1000);
+            hardware.arm.setTargetPosition(-99);
+            armTargetPosDeg = -99;
+            sleep(1000);
+            hardware.wrist.setPosition(1);
+
+        }
 }
 
