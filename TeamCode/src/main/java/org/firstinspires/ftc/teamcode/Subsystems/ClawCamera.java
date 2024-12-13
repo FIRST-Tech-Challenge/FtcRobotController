@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
-import org.firstinspires.ftc.teamcode.vision.DetectedAngle;
+//import org.firstinspires.ftc.teamcode.vision.DetectedAngle;
 import org.firstinspires.ftc.vision.VisionPortal;
 import java.util.List;
 
@@ -36,40 +36,40 @@ public class ClawCamera extends SubsystemBase {
 
     @Override
     public void periodic() {
-        long lastUpdate = myColorAndOrienDetProcessor.getLastUpdatedTime();
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - lastUpdate > 500) { // Data is older than 100ms
-            System.out.println("Warning: Vision data is outdated!");
-            return; // Skip using outdated data
-        }
-
-        double ang = myColorAndOrienDetProcessor.calAngle("Blue");
-        if (ang > 0) {
-            System.out.println("Detected Blue Angle: " + ang);
-            RobotContainer.wristRotateServo.RotateTo((int) Math.round(ang));
-        } else {
-            System.out.println("Blue not detected!");
-        }
-
-        // Get all detected objects (thread-safe method)
-        List<DetectedAngle> detectedObjects = myColorAndOrienDetProcessor.getDetectedColorAndAng();
-        // Check if there are any detections
-        if (detectedObjects.isEmpty()) {
-            System.out.println("No objects detected!");
-        } else {
-            System.out.println("Detected Objects:");
-
-            // Print details of each detected object
-            for (DetectedAngle detected : detectedObjects) {
-                System.out.println(
-                        "Color: " + detected.getColorName() +
-                                ", Angle: " + String.format("%.1f", detected.getAngle()) +
-                                ", Center: (" + String.format("%.1f", detected.getCenter().x) +
-                                ", " + String.format("%.1f", detected.getCenter().y) + ")"
-                );
-            }
-        }
+//        long lastUpdate = myColorAndOrienDetProcessor.getLastUpdatedTime();
+//        long currentTime = System.currentTimeMillis();
+//
+//        if (currentTime - lastUpdate > 500) { // Data is older than 100ms
+//            System.out.println("Warning: Vision data is outdated!");
+//            return; // Skip using outdated data
+//        }
+//
+//        double ang = myColorAndOrienDetProcessor.calAngle("Blue");
+//        if (ang > 0) {
+//            System.out.println("Detected Blue Angle: " + ang);
+//            RobotContainer.wristRotateServo.RotateTo((int) Math.round(ang));
+//        } else {
+//            System.out.println("Blue not detected!");
+//        }
+//
+//        // Get all detected objects (thread-safe method)
+//        List<DetectedAngle> detectedObjects = myColorAndOrienDetProcessor.getDetectedColorAndAng();
+//        // Check if there are any detections
+//        if (detectedObjects.isEmpty()) {
+//            System.out.println("No objects detected!");
+//        } else {
+//            System.out.println("Detected Objects:");
+//
+//            // Print details of each detected object
+//            for (DetectedAngle detected : detectedObjects) {
+//                System.out.println(
+//                        "Color: " + detected.getColorName() +
+//                                ", Angle: " + String.format("%.1f", detected.getAngle()) +
+//                                ", Center: (" + String.format("%.1f", detected.getCenter().x) +
+//                                ", " + String.format("%.1f", detected.getCenter().y) + ")"
+//                );
+//            }
+//        }
 
     }
 

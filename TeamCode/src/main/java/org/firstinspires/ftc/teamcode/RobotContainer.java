@@ -105,6 +105,8 @@ public class RobotContainer {
     public static double RedStartAngle = 90;
     public static double BlueStartAngle = -90;
 
+    public static boolean GoHunting =false;
+
     //
 
     // Robot initialization for teleop - Run this once at start of teleop
@@ -263,8 +265,7 @@ public class RobotContainer {
     // call this function periodically to operate scheduler
     public static void Periodic() {
         piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Blue"));
-        if (piece_angle>-1){
-        new ConvertAngleForWristRotate().schedule();}
+
         // actual interval time
         double intervaltime = timer.milliseconds();
 
