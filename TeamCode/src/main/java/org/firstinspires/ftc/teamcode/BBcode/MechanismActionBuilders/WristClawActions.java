@@ -56,19 +56,6 @@ public class WristClawActions {
     }
 
 
-    //Generates Action for WristFlip
-    public class WristFlipAction implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.WristFlip();
-            return false;
-        }
-    }
-    public Action WristFlip() {
-        return new WristFlipAction();
-    }
-
-
     //Generates Action for WristDown
     public class WristDownAction implements Action {
         @Override
