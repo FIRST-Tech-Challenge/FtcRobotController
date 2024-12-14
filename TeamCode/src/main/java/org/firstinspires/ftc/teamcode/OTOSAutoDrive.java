@@ -46,8 +46,8 @@ public class OTOSAutoDrive extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.0;           // Claw is closed
-    final double CLAW_MAX = 0.8;           // Claw is open
+    final double CLAW_MIN = 0.18;           // Claw is closed
+    final double CLAW_MAX = 0.93;           // Claw is open
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
