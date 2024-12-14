@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -66,17 +66,21 @@ public class TT_RobotHardware {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    public DcMotor leftFrontDrive = null;
+    public DcMotor leftBackDrive = null;
+    public DcMotor rightFrontDrive = null;
+    public DcMotor rightBackDrive = null;
 
     public GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public GoBuildaDriveToPoint nav; //OpMode member for the point-to-point navigation class
     private DcMotor leftLift = null;  //  Used to control the left back drive wheel
     private DcMotor rightLift = null;  //  Used to control the left back drive wheel
 
-    private ScaledServo   extensionServo = null;
+    private ScaledServo extensionServo = null;
+    private ScaledServo extensionArm = null;
+    private boolean extensionArmUp = true;
+    private ScaledServo liftArm = null;
+    private boolean liftArmUp = true;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO = 0.5;
@@ -111,10 +115,10 @@ public class TT_RobotHardware {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -154,6 +158,9 @@ public class TT_RobotHardware {
         nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
 
         extensionServo = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension",0.0, 1.0);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "ExtensionArm"), "Extension",0.25, 0.5);
+
+        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Arm"), "Arm",0.38, .62);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.addData("X offset", odo.getXOffset());
@@ -162,9 +169,22 @@ public class TT_RobotHardware {
         myOpMode.telemetry.update();
     }
 
+    public void moveLiftArm() {
+        if (myOpMode.gamepad1.x) {
+            if (liftArmUp) {liftArm.setTargetPosition(1); }
+            else  {liftArm.setTargetPosition(0); }
+            liftArmUp = !liftArmUp;
+        }
+    }
+
+    public void moveExtensionArm() {
+        if (myOpMode.gamepad1.y) {
+            if (extensionArmUp) {extensionArm.setTargetPosition(1); }
+            else  {extensionArm.setTargetPosition(0); }
+            extensionArmUp = !extensionArmUp;
+        }
+    }
     public void drivelift() {
-
-
         if (myOpMode.gamepad1.a) {
             raiseLift();
         } else if (myOpMode.gamepad1.b) {
@@ -174,12 +194,12 @@ public class TT_RobotHardware {
 
     // Lift
     public void raiseLift() {
-        liftHeight = liftHeight + 5;
+        liftHeight = liftHeight + 10;
         liftHeight = setLiftPosition(liftHeight);
     }
 
     public void lowerLift() {
-        liftHeight = liftHeight - 5;
+        liftHeight = liftHeight - 20;
         liftHeight = setLiftPosition(liftHeight);
     }
 
@@ -215,7 +235,6 @@ public class TT_RobotHardware {
         leftLift.setTargetPosition(position);
         rightLift.setTargetPosition(position);
 
-        myOpMode.telemetry.addData("Lift", "Lift Height: %4d",liftHeight);
 
         return position;
 
@@ -244,7 +263,7 @@ public class TT_RobotHardware {
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
-        max *= 1.5;
+        //max *= 1.5;
 
         if (max > 1.0) {
             leftFrontPower /= max;
@@ -253,10 +272,7 @@ public class TT_RobotHardware {
             rightBackPower /= max;
         }
         setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
-        myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-        Pose2D pos = odo.getPosition();
-        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-        myOpMode.telemetry.addData("Position", data);
+
     }
 
     public void setDrivePower(double leftFront, double rightFront, double leftBack, double rightBack) {
@@ -277,6 +293,11 @@ public class TT_RobotHardware {
 
     public void displayTelemetry() {
         try {
+            myOpMode.telemetry.addData("Lift", "Lift Height: %4d",liftHeight);
+            Pose2D pos = odo.getPosition();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
+            myOpMode.telemetry.addData("Position", data);
+            myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
             myOpMode.telemetry.update();
         } catch (Exception ex) {        }
     }

@@ -4,8 +4,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Robot.TT_RobotHardware;
-
 @TeleOp(name="Linear OpMode", group="Techtonics")
 public class TT_LinearOpMode extends LinearOpMode {
     private TT_RobotHardware robot = new TT_RobotHardware(this);
@@ -22,7 +20,6 @@ public class TT_LinearOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             robot.driveRobot();
             robot.drivelift();
-            robot.moveLiftArm();
             robot.displayTelemetry();
         }
     }
