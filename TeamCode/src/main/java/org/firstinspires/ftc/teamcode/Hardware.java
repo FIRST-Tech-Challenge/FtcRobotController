@@ -20,6 +20,8 @@ public class Hardware   {
     public DcMotorEx RB;
     public DcMotorEx LB;
 
+    public GoBildaPinpointDriver pinPoint;
+
     // Deposit
     public DcMotorEx depositSlideRight;
     public DcMotorEx depositSlideLeft;
@@ -61,6 +63,8 @@ public class Hardware   {
         RB = hardwareMap.get(DcMotorEx.class, "EH-Motor-2");
         LB = hardwareMap.get(DcMotorEx.class, "EH-Motor-3");
 
+        pinPoint = hardwareMap.get(GoBildaPinpointDriver.class, "CH-I2C-0");
+
         // Deposit
         depositSlideRight = hardwareMap.get(DcMotorEx.class, "CH-Motor-0");
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
@@ -82,7 +86,7 @@ public class Hardware   {
 
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");
 
-        intakeCS = hardwareMap.get(ColorRangeSensor.class, "CH-I2C-0");
+        intakeCS = hardwareMap.get(ColorRangeSensor.class, "CH-I2C-1");
     }
 
 }
