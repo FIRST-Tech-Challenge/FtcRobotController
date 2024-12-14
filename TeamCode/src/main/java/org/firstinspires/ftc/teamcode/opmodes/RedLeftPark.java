@@ -22,8 +22,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "RedLeftBasketThenPark")
-public class RedLeftBasketThenPark extends LinearOpMode {
+@Autonomous(name = "RedLeftPark")
+public class RedLeftPark extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
@@ -40,31 +40,18 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
-        TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .lineToY(-52)
-                .turn(Math.toRadians(90))
-                .lineToX(-52)
-                .turn(Math.toRadians(45))
-                .waitSeconds(3);
+        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose)
+                // red left park
+                .lineToY(-10)
+                .turn(Math.toRadians(-90))
+                .lineToX(-26);
 
-        Action toSub = toBasket.endTrajectory().fresh()
-                // samples (push)
-                .turn(Math.toRadians(45))
-                //          .splineTo(new Vector2d(-35,-52),180) too wavy
-                .strafeTo(new Vector2d(-35,-52))
-                .strafeTo(new Vector2d(-35,-10))
-                .strafeTo(new Vector2d(-46,-10))
-                .strafeTo(new Vector2d(-46,-60))
-                .strafeTo(new Vector2d(-46,-10))
-                .turn(Math.toRadians(90))
-                .lineToX(-26)
-                .build();
 
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
 
-        Action firstTraj = toBasket.build();
+        Action firstTraj = toSub.build();
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
@@ -78,11 +65,10 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
-                        firstTraj, // go to the basket, push samples, and then submersible
+                        firstTraj // go to the basket, push samples, and then submersible
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()
-                        toSub // push samples, go to submersible
                 )
         );
     }

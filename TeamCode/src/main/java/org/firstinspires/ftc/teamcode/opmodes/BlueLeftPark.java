@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
 @Autonomous(name = "RedLeftPark")
-public class RedLeftPark extends LinearOpMode {
+public class BlueLeftPark extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
@@ -32,7 +32,7 @@ public class RedLeftPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
+        Pose2d initialPose = new Pose2d(38, 62, Math.toRadians(89));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
@@ -41,11 +41,10 @@ public class RedLeftPark extends LinearOpMode {
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .lineToY(-52)
-                .turn(Math.toRadians(90))
-                .lineToX(-52)
-                .turn(Math.toRadians(45))
-                .waitSeconds(3);
+                // blue left park
+                .lineToY(10)
+                .turn(Math.toRadians(-90))
+                .lineToX(26);
 
         Action toSub = toBasket.endTrajectory().fresh()
                 // samples (push)

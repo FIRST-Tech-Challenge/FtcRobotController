@@ -32,7 +32,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
+        Pose2d initialPose = new Pose2d(38, 62, Math.toRadians(89));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
@@ -41,9 +41,9 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .lineToY(-52)
+                .lineToY(52)
                 .turn(Math.toRadians(90))
-                .lineToX(-52)
+                .lineToX(52)
                 .turn(Math.toRadians(45))
                 .waitSeconds(3);
 
@@ -51,11 +51,11 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 // samples (push)
                 .turn(Math.toRadians(45))
                 //          .splineTo(new Vector2d(-35,-52),180) too wavy
-                .strafeTo(new Vector2d(-35,-52))
-                .strafeTo(new Vector2d(-35,-10))
-                .strafeTo(new Vector2d(-46,-10))
-                .strafeTo(new Vector2d(-46,-60))
-                .strafeTo(new Vector2d(-46,-10))
+                .strafeTo(new Vector2d(35,52))
+                .strafeTo(new Vector2d(35,10))
+                .strafeTo(new Vector2d(46,10))
+                .strafeTo(new Vector2d(46,60))
+                .strafeTo(new Vector2d(46,10))
                 .turn(Math.toRadians(90))
                 .lineToX(-26)
                 .build();
