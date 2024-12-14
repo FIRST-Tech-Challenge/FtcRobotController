@@ -121,12 +121,12 @@ public class RightAuto extends LinearOpMode {
 
         LeftIntakeWrist.setPosition(LeftServo);    // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
-        IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
+        IntakeV4B.setPosition(.8);   // Sets the intake virtual four bar to the starting position
         //RightIntakeV4B.setPosition(1);  // Sets the intake virtual four bar to the starting position
 
-        OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
+        OuttakeWrist.setPosition(.2);    // Sets the outtake wrist to the starting position
 
-        OuttakeV4B.setPosition(1);  // Sets the outtake virtual four bar to the starting position
+        OuttakeV4B.setPosition(.5);  // Sets the outtake virtual four bar to the starting position
         //RightOuttakeV4B.setPosition(0); // Sets the outtake virtual four bar to the starting position
 
      //   LeftHook.setPosition(0);    // Sets the left hook to the starting position
@@ -136,12 +136,26 @@ public class RightAuto extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
 
-            FrontLeft.setPower(-.5);
+            FrontLeft.setPower(.5);
             FrontRight.setPower(.5);
             BackLeft.setPower(.5);
             BackRight.setPower(.5);
 
-            sleep(5000);
+            sleep(300);
+
+            FrontLeft.setPower(0);
+            FrontRight.setPower(0);
+            BackLeft.setPower(0);
+            BackRight.setPower(0);
+
+            sleep(400);
+
+            FrontLeft.setPower(.5);
+            FrontRight.setPower(-.5);
+            BackLeft.setPower(-.5);
+            BackRight.setPower(.5);
+
+            sleep(3000);
 
             FrontLeft.setPower(0);
             FrontRight.setPower(0);
