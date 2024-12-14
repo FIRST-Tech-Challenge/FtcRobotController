@@ -86,6 +86,7 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         this.mecanumDrive.updatePoseEstimate();
+        telemetry.addData("Yaw", Math.toDegrees(mecanumDrive.pose.heading.log()));
     }
 
     public void driveArcade(double forwardSpeed, double strafeSpeed, double turnSpeed) {
