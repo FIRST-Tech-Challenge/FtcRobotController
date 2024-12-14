@@ -16,13 +16,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "RedLeftBasketThenPark")
-public class RedLeftBasketThenPark extends LinearOpMode {
+@Autonomous(name = "BlueLeftSpeciman")
+public class BlueLeftSpeciman extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
@@ -34,16 +33,14 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        Lift lift = new Lift(hardwareMap);
+     //   Lift lift = new Lift(hardwareMap);
      //   Claw claw = new Claw(hardwareMap);
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose)
-                .lineToY(-52)
-                .turn(Math.toRadians(90))
-                .lineToX(-52)
-                .turn(Math.toRadians(45))
+
+
 
 // to submersible
 //                .lineToY(-1)
