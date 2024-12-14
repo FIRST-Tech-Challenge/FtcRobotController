@@ -56,7 +56,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(lowerSlidesHalf, openClaw);
         moveBarToWall.addPoint(-305, -700, -180); //-205, 700
-        moveBarToWall.addPoint(-80, -700, -180);
+        moveBarToWall.addPoint(-70, -700, -180);
         this.addAction(moveBarToWall);
 
     }

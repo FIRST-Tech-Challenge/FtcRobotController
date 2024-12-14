@@ -105,7 +105,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         //wall to depot for specimen
         moveFloorSamples.addPoint(-305, -700, -180); //-305, -600
-        moveFloorSamples.addPoint(-90, -700, -180);
+        moveFloorSamples.addPoint(-70, -700, -180);
         redAutoSpecimen.addAction(moveFloorSamples);
         //==============end of pushing================
 
