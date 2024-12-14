@@ -1,10 +1,9 @@
 plugins {
     id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_18
-    targetCompatibility = JavaVersion.VERSION_18
 }
 repositories {
     maven {
@@ -13,8 +12,13 @@ repositories {
     maven {
         url = uri("https://maven.brott.dev/")
     }
+    mavenCentral()
 }
 
 dependencies {
     implementation 'com.github.rh-robotics:MeepMeep:v1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+kotlin {
+    jvmToolchain(17)
 }
