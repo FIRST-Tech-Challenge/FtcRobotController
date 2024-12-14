@@ -22,6 +22,8 @@ public class TeleOps extends LinearOpMode {
 
     private Sample lastSample = null;
 
+    private boolean collecting = false;
+
     private ElapsedTime scanTimer = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
@@ -76,22 +78,38 @@ public class TeleOps extends LinearOpMode {
 
             if (gamepad1.y) {
                 robot.inAutoPickup = false;
+                robot.rotateToPos(robot.rotateServoInitialPos);
                 robot.openPinch();
-                robot.rotateToVerticalPos();
                 robot.relatePivotToSlide();
             }
 
             if (gamepad1.left_bumper && scanTimer.time() > 1){
-                robot.pickup(true, true, false, telemetry, scanTimer);
+                robot.alignWithSampleJulian(true, true, false, telemetry, scanTimer);
+
+                collecting = true;
             }
             else if (gamepad1.right_bumper && scanTimer.time() > 1){
-                robot.pickup(false, true, false, telemetry, scanTimer);
-            } else {
+                robot.alignWithSampleJulian(false, true, false, telemetry, scanTimer);
+
+                collecting = true;
+            } else if (scanTimer.time() > 1.25) {
                 robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
-                        gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
+                        gamepad1.right_stick_x*-0.7, collecting, gamepad2.left_stick_x,
                         gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
+
+                robot.stopCoordinateDrive();
             }
-            if (gamepad2.a){
+
+            if (gamepad2.b) {
+                robot.stopCoordinateDrive();
+
+            }
+            if (gamepad2.x){
+                robot.pickup(false, telemetry);
+
+                collecting = false;
+            }
+            /*if (gamepad2.a){
                 robot.rotateToPos(robot.rotateMaxPos);
                 robot.pivotToSearchPos();
                 robot.moveSlideToSearchPos();
@@ -99,10 +117,6 @@ public class TeleOps extends LinearOpMode {
             }
             if (gamepad2.b){
                 robot.alignWithSample(true, true, false, telemetry);
-            }
-
-            if (gamepad2.x){
-                robot.pickup(false, telemetry);
             }
             if (gamepad2.y){
                 robot.limelight.captureSnapshot("Pickup test");
@@ -113,7 +127,7 @@ public class TeleOps extends LinearOpMode {
             }
             else if (gamepad2.right_bumper){
                 robot.detectOne(false, true, telemetry);
-            }
+            }*/
 
             telemetry.addData("slide position", robot.getSlidePosition());
             telemetry.addData("pivot position", robot.getPivotPosition());
