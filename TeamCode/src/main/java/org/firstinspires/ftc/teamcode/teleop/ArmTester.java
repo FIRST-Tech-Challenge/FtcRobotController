@@ -19,6 +19,7 @@ public class ArmTester extends LinearOpMode {
     private double midArmPos;
     private int testPos = 0;
 
+
     @Override
     public void runOpMode() {
         arm = new Arm(hardwareMap, "armRight", "armLeft");
