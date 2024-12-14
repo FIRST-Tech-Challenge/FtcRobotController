@@ -1,28 +1,24 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.Claw;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
 
 
 // command template
-public class CloseClaw extends CommandBase {
+public class WaitForClawButton extends CommandBase {
 
     // constructor
-    public CloseClaw() {
+    public WaitForClawButton() {
+
+        addRequirements(RobotContainer.clawTouch);
         // add subsystem requirements (if any) - for example:
-        addRequirements(RobotContainer.claw);
+        //addRequirements(RobotContainer.drivesystem);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-
-      RobotContainer.claw.ControlClaw(ClawState.CLOSE);
-
 
     }
 
@@ -35,8 +31,8 @@ public class CloseClaw extends CommandBase {
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
+        return RobotContainer.clawTouch.ControlTouchSenser();
 
-        return true;
 
     }
 

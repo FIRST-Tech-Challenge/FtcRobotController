@@ -6,12 +6,14 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 // command template
-public class WaitForClawButton extends CommandBase {
+public class WallPickupCalculation extends CommandBase {
+    private static double θ;
+    private static double distanceFromCenter;
 
     // constructor
-    public WaitForClawButton() {
+    public WallPickupCalculation() {
+        θ = (RobotContainer.piece_center_X-320)*40/640;
 
-        addRequirements(RobotContainer.clawTouch);
         // add subsystem requirements (if any) - for example:
         //addRequirements(RobotContainer.drivesystem);
     }
@@ -31,8 +33,8 @@ public class WaitForClawButton extends CommandBase {
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-        return RobotContainer.clawTouch.ControlTouchSenser();
 
+        return false;
 
     }
 

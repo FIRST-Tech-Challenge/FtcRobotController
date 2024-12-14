@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import android.util.Size;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
 //import org.firstinspires.ftc.teamcode.vision.DetectedAngle;
 import org.firstinspires.ftc.vision.VisionPortal;
-import java.util.List;
 
 /** Subsystem */
 public class ClawCamera extends SubsystemBase {
@@ -22,7 +21,7 @@ public class ClawCamera extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public ClawCamera(String cameraName) {
         myColorAndOrienDetProcessor = new ColorAndOrientationDetect();
-        myColorAndOrienDetProcessor.setMinBoundingBoxArea(0.05);
+        myColorAndOrienDetProcessor.setMinBoundingBoxArea(0.01);
 
         CameraPortal = new VisionPortal.Builder()
                 .setCamera(RobotContainer.ActiveOpMode.hardwareMap.get(WebcamName.class, cameraName))

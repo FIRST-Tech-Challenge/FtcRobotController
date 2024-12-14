@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Arm;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -6,18 +6,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
-/** Subsystem */
-public class FlappyFlappyWrist extends SubsystemBase {
+/** Shoulder Subsystem
+ * 0° is up*/
+public class ShoulderJoint extends SubsystemBase {
 
-    // Create wrist Servo
-    /**0° is in*/
-    private final Servo wristServo;
+    // Create the shoulder motor
+    /**0° is up*/
+    private final Servo ShoulderServo;
 
     /** Place code here to initialize subsystem */
-    public FlappyFlappyWrist() {
+    public ShoulderJoint() {
 
         // Creates a Servo using the hardware map
-        wristServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "flappyServoWrist");
+        ShoulderServo =  RobotContainer.ActiveOpMode.hardwareMap.get(Servo.class, "shoulderServo");
 
     }
 
@@ -36,8 +37,12 @@ public class FlappyFlappyWrist extends SubsystemBase {
         double servoPos = degrees/270.0;
 
         // Set the Servo to ServoPos
-        wristServo.setPosition(servoPos);
+        ShoulderServo.setPosition(servoPos);
 
     }
+
+    // Sets the Elbow to fixed positions
+    public void setPos(ShoulderPosition pos) {RotateTo(pos.getValue());}
+
 
 }

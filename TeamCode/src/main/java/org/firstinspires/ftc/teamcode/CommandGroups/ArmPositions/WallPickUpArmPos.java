@@ -2,9 +2,14 @@ package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 
-import org.firstinspires.ftc.teamcode.Commands.Pause;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+
+import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -12,35 +17,29 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class DropToGrab extends SequentialCommandGroup {
+public class WallPickUpArmPos extends SequentialCommandGroup {
 
     // constructor
-    public DropToGrab() {
-        addCommands(
+    public WallPickUpArmPos() {
 
-                // same as in hunting pos moving wrist 45 degrees
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+        addCommands (
+                // lifts the shoulder up 90+-60 degrees
+                // lifts the shoulder up to 135 degrees
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(35)),
 
-                new Pause(0.25),
+                // folds the elbow in 270
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(266)),
 
-                // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+                // folds the wrist in 0
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(100)),
 
-                // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170))
-
-                // same as in hunting pos going to 135 degrees straight
-                //new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
-
-
-
-        );
-
+                // powers the wrist and moves it to straight position
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(0))
 
         // new command1
         // new command2
         // new command3
-
+        );
     }
 
 }

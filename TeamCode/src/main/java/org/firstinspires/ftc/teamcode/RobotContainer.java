@@ -13,44 +13,36 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
+//import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PickupFromSubmersible;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
-import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ExampleCommandGroup;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
-//import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
-//import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
+//import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
+//import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
+import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
-import org.firstinspires.ftc.teamcode.Subsystems.Camera;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
-import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
-import org.firstinspires.ftc.teamcode.Subsystems.Climb;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawTouchSensor;
+//import org.firstinspires.ftc.teamcode.Subsystems.Climb;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.Subsystems.ElbowJoint;
-import org.firstinspires.ftc.teamcode.Subsystems.FlappyFlappyWrist;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ElbowJoint;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.FlappyFlappyWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Gyro;
-import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.Subsystems.OctQuad;
 import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
-import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
-import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
-import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.PivotingWrist;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ShoulderJoint;
+import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
-import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
+
+//import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
 public class RobotContainer {
@@ -93,7 +85,7 @@ public class RobotContainer {
     /** * 0° is down */
     public static ElbowJoint elbowJoint;
     public static Claw claw;
-    public static Climb climb;
+    //public static Climb climb;
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
 
@@ -106,6 +98,8 @@ public class RobotContainer {
     public static boolean GoHunting =false;
 
     //
+    private static boolean IsManualDrive=false;
+    private static double DriveToggleWait;
 
     // Robot initialization for teleop - Run this once at start of teleop
     // mode - current opmode that is being run
@@ -146,23 +140,17 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
-
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
-
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
-
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new );
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
-
-       // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> wristRotateServo.RotateTo(45, 10)));
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
+
+//        if (driverOp.getGamepadButton(GamepadKeys.Button.A).get()){
+//            new WallPickupCalculation();
+//        }
 
         // Controls the claw using bumpers
         // left = close
@@ -170,8 +158,8 @@ public class RobotContainer {
         //driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
-        //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new AutoPickUpOffGround());
 
 
 //        if (isRedAlliance){
@@ -243,25 +231,63 @@ public class RobotContainer {
         drivesystem = new DriveTrain();
         //odometry = new VirtualOdometry();
         //drivesystem = new VirtualDriveTrain();
-        clawCamera = new Camera("TagCamera");
+        //frontCamera = new Camera("CamyCamy");
+        clawCamera = new Camera("ClawCamera");//"TagCamera"
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
         shoulderJoint = new ShoulderJoint();
         wristRotateServo= new PivotingWrist();
         elbowJoint = new ElbowJoint();
         claw = new Claw();
-        climb = new Climb();
+        //climb = new Climb();
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
+
+        if (isRedAlliance){
+            clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
+        } else {
+            clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
+        }
 
         GoToNextDropOff.initializeDestinationDecrement();
     }
 
     public static int piece_angle;
+    public static double[] piece_center;
+    public static double piece_center_X;
+    public static double piece_center_Y;
 
     // call this function periodically to operate scheduler
     public static void Periodic() {
-        piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Blue"));
+        try {
+            piece_angle = (int) Math.round( clawCamera.GetBlobDetections().get(0).getBoxFit().angle);
+            if (clawCamera.GetBlobDetections().get(0).getBoxFit().size.width<clawCamera.GetBlobDetections().get(0).getBoxFit().size.height){
+                piece_angle += 90;
+            }
+            piece_center_X = clawCamera.GetBlobDetections().get(0).getBoxFit().center.x;
+            piece_center_Y = clawCamera.GetBlobDetections().get(0).getBoxFit().center.y;
+
+            //new ConvertAngleForWristRotate();
+
+        } catch (Exception e) {
+        }
+
+
+        DBTelemetry.addData("Angle", piece_angle);
+        DBTelemetry.addData("Center X", piece_center_X);
+        DBTelemetry.addData("Center Y", piece_center_Y);
+        DBTelemetry.update();
+
+//        if (isRedAlliance){
+//            piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Red"));
+//            piece_center = new ColorAndOrientationDetect().calCenter("Red");
+//        } else {
+//            piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Blue"));
+//            piece_center = new ColorAndOrientationDetect().calCenter("Blue");
+//        }
+        //piece_center_X = piece_center[0];
+        //piece_center_Y = piece_center[1];
+
 
         // actual interval time
         double intervaltime = timer.milliseconds();

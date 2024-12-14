@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Vision;
 
 import android.util.Size;
 import androidx.annotation.NonNull;
@@ -247,17 +247,17 @@ public class Camera extends SubsystemBase {
     public List<ColorBlobLocatorProcessor.Blob> GetBlobDetections() {
         List<ColorBlobLocatorProcessor.Blob> blobs;
 
-        switch(currentMode){
-            case RED_BLOB_ONLY:
-               blobs = redBlobProcessor.getBlobs();
-            case BLUE_BLOB_ONLY:
-                blobs = blueBlobProcessor.getBlobs();
-            case YELLOW_BLOB_ONLY:
-                blobs = yellowBlobProcessor.getBlobs();
-            default:
-                blobs = new ArrayList<>();
-        }
-
+//        switch(currentMode){
+//            case RED_BLOB_ONLY:
+//               blobs = redBlobProcessor.getBlobs();
+//            case BLUE_BLOB_ONLY:
+//                blobs = blueBlobProcessor.getBlobs();
+//            case YELLOW_BLOB_ONLY:
+//                blobs = yellowBlobProcessor.getBlobs();
+//            default:
+//                blobs = new ArrayList<>();
+//        }
+        blobs = blueBlobProcessor.getBlobs();
         // available filtering functions
         //ColorBlobLocatorProcessor.Util.filterByArea(25, 300000, blobs);
         //ColorBlobLocatorProcessor.Util.filterByDensity(0.10, 1.0, blobs);

@@ -1,10 +1,18 @@
-package org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions;
+package org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
+import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
+import org.firstinspires.ftc.teamcode.Commands.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+
+import java.util.ArrayList;
 
 // Example Sequential Command Group
 // There are also:
@@ -12,35 +20,27 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class DropToGrab extends SequentialCommandGroup {
+public class AutoPickUpOffGround extends SequentialCommandGroup {
 
     // constructor
-    public DropToGrab() {
-        addCommands(
+    public AutoPickUpOffGround() {
 
-                // same as in hunting pos moving wrist 45 degrees
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+        addCommands (
+
+                //new InstantCommand()
+
+                new ConvertAngleForWristRotate(),
 
                 new Pause(0.25),
 
-                // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+                new DropToGrab()
 
-                // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170))
-
-                // same as in hunting pos going to 135 degrees straight
-                //new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
-
-
-
-        );
 
 
         // new command1
         // new command2
         // new command3
-
+        );
     }
 
 }

@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Arm;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
@@ -41,13 +40,21 @@ public class PivotingWrist extends SubsystemBase {
 
     }
 
+    private double servo_degrees;
+
     public void RotateTo(int degrees, int adjustment){
 
+        servo_degrees = (degrees + adjustment)/180.0;
+        while (servo_degrees>1){
+            servo_degrees-=1;
+        }
+
         // Converts degrees into 0-1 float
-        double servoPos = (degrees + adjustment/180.0);
+        double servoPos = (servo_degrees);
 
         // Set the Servo to ServoPos
         wristServo.setPosition(servoPos);
+
 
     }
 

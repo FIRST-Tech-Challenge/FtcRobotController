@@ -1,29 +1,27 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.Claw;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
-import org.firstinspires.ftc.teamcode.vision.DetectedAngle;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawState;
 
 
 // command template
-public class ConvertAngleForWristRotate extends CommandBase {
+public class CloseClaw extends CommandBase {
 
     // constructor
-    public ConvertAngleForWristRotate() {
-
-        addRequirements(RobotContainer.wristRotateServo);
+    public CloseClaw() {
         // add subsystem requirements (if any) - for example:
-        //addRequirements(RobotContainer.drivesystem);
+        addRequirements(RobotContainer.claw);
     }
 
     // This method is called once when command is started
     @Override
     public void initialize() {
-        RobotContainer.wristRotateServo.RotateTo(RobotContainer.piece_angle, 90);
-        //RobotContainer.wristRotateServo.RotateTo((int) Math.round(new ColorAndOrientationDetect().calAngle("Blue")));
-        //new Pause(3);
+
+      RobotContainer.claw.ControlClaw(ClawState.CLOSE);
+
+
     }
 
     // This method is called periodically while command is active

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.Claw;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawState;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
