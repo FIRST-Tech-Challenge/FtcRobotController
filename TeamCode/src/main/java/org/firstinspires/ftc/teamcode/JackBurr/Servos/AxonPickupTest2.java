@@ -75,7 +75,7 @@ public class AxonPickupTest2 extends OpMode {
             }
         }
         else {
-            left_servo.setPosition(1);
+            run_left_servo_to_zero();
             right_servo.setPosition(1);
         }
         telemetry.addData("Left Servo Position:",left_servo.getPosition());
@@ -87,9 +87,35 @@ public class AxonPickupTest2 extends OpMode {
     public void run_left_servo_to_zero(){
         double encoder_pos = left_servo_encoder.getVoltage() / 3.3 * 360;
         if (!is_in_range(encoder_pos, LEFT_SERVO_ZERO - 2, LEFT_SERVO_ZERO + 2)){
-            //TODO: Continue this
+            if (encoder_pos < LEFT_SERVO_ZERO - 2){
+                double target = left_servo.getPosition() - 0.05;
+                left_servo.setPosition(target);
+                telemetry.addData("Left Servo is left of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            }
+            else if (encoder_pos > LEFT_SERVO_ZERO + 2){
+                double target = left_servo.getPosition() + 0.05;
+                left_servo.setPosition(target);
+                telemetry.addData("Left Servo is right of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            }
         }
     }
+
+    public void run_right_servo_to_zero(){
+        double encoder_pos = right_servo_encoder.getVoltage() / 3.3 * 360;
+        if (!is_in_range(encoder_pos, RIGHT_SERVO_ZERO - 2, RIGHT_SERVO_ZERO + 2)){
+            if (encoder_pos < LEFT_SERVO_ZERO - 2){
+                double target = left_servo.getPosition() - 0.05;
+                left_servo.setPosition(target);
+                telemetry.addData("Left Servo is left of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            }
+            else if (encoder_pos > LEFT_SERVO_ZERO + 2){
+                double target = left_servo.getPosition() + 0.05;
+                left_servo.setPosition(target);
+                telemetry.addData("Left Servo is right of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            }
+        }
+    }
+
     public boolean is_in_range(double number, double left_number, double right_number){
         if(number > left_number && number < right_number) {
             return true;
