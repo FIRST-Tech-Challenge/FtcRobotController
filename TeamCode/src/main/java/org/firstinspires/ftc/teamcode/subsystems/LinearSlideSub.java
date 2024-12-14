@@ -17,7 +17,7 @@ public class LinearSlideSub extends SubsystemBase {
         linearSlideMotor = hardwareMap.get(DcMotor.class, "linearSlideMotor");
         this.telemetry = tm;
 
-        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override

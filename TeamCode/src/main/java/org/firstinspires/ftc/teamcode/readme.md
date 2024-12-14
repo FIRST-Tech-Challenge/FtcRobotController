@@ -43,12 +43,12 @@
 ### Expansion Hub
 
 #### Motors
-|Port| Type                           | Name        |
-|---:|--------------------------------|-------------|
-|0 | REV Robotics 40:1 HD Hex Motor | armMotor    |
-|1 | Gobilda 5202/3/4 series        | linearSlide |
-|2 |                                |             |
-|3 |                                |             |
+|Port| Type                           | Name             |
+|---:|--------------------------------|------------------|
+|0 | REV Robotics 40:1 HD Hex Motor | armMotor         |
+|1 | Gobilda 5202/3/4 series        | linearSlideMotor |
+|2 |                                |                  |
+|3 |                                |                  |
 
 #### Servos
 |Port|Type|Name|
