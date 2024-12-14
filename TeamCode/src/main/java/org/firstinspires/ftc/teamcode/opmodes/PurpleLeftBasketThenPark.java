@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,12 +36,12 @@ public class PurpleLeftBasketThenPark extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
-     //   Claw claw = new Claw(hardwareMap);
+        Claw claw = new Claw(hardwareMap);
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .lineToY(-52 jkl)
+                .lineToY(-52)
                 .turn(Math.toRadians(90))
                 .lineToX(-52)
                 .turn(Math.toRadians(45))
@@ -153,41 +154,52 @@ public class PurpleLeftBasketThenPark extends LinearOpMode {
 
     }
 
-//    public class Claw {
-  //      private Servo claw;
+    public class Claw {
+        private CRServo claw;
+        private CRServo claw2;
 
-  //      public Claw(HardwareMap hardwareMap) {
-    //        claw = hardwareMap.get(Servo.class, "claw");
-      //  }
+        public Claw(HardwareMap hardwareMap) {
+            claw = hardwareMap.get(CRServo.class, "claw");
+            claw2 = hardwareMap.get(CRServo.class, "claw2");
+        }
 
-  //      public class CloseClaw implements Action {
+        public class CloseClaw implements Action {
 
-   //         @Override
-    //        public boolean run(@NonNull TelemetryPacket packet) {
-      //          claw.setPosition(0.5);
-        //        return false;
-          //  }
-    //    }
-//
-//        public Action closeClaw() {
-//            return new CloseClaw();
-//        }
-//
-//        public class OpenClaw implements Action {
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket packet) {
-//                claw.setPosition(0.2);
-//                return false;
-//            }
-//        }
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPower(1);
+                claw2.setPower(-1);
+                sleep(2000);
+                claw.setPower(0);
+                claw2.setPower(0);
+                return false;
+            }
+        }
 
-//        public Action openClaw() {
-  //          return new CloseClaw();
-    //    }
-  //  }
+        public Action closeClaw() {
+            return new CloseClaw();
+        }
+
+        public class OpenClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPower(-1);
+                claw2.setPower(1);
+                sleep(2000);
+                claw.setPower(0);
+                claw2.setPower(0);
+                return false;
+            }
+        }
+
+        public Action openClaw() {
+            return new OpenClaw();
+        }
+    }
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
+        private DcMotorEx liftPivotRight;
 
         public LiftPivot(HardwareMap hardwareMap) {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
