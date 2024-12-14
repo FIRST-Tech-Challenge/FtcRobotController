@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,7 +13,7 @@ public class Devices {
         final double CLAW_OPEN = .864;
         final double CLAW_CLOSED = 1.05;
 
-        final double MIN_SLIDER_TICKS = 10; // chosen just to be saf
+        final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
 
     /**
      *  This is the maximum length the slider is allowed to be in order
@@ -21,7 +24,7 @@ public class Devices {
 //        final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
-        final double MAX_LEGAL_SLIDER_LENGTH = maxLegalSliderLength();
+        final double MAX_LEGAL_SLIDER_LENGTH = MAX_HORIZONTAL_SLIDER_TICKS;
 
         /** This is the angle that the arm starts each match */
         final double STARTING_ANGLE = -20;
@@ -35,10 +38,14 @@ public class Devices {
         DcMotorEx rightBackDrive;
         DcMotorEx leftBackDrive;
         Servo clawServo;
+        BHI260IMU imu;
 
     public void init(HardwareMap hwmap) {
 
         wormGear = hwmap.get(DcMotorEx.class, "wormGear");
+
+        imu = hwmap.get(BHI260IMU.class, "imu");
+        imu.initialize();
 
         sliderMotor = hwmap.get(DcMotorEx.class, "sliderMotor");
 
@@ -78,6 +85,3 @@ public class Devices {
 
 
     }
-
-
-}
