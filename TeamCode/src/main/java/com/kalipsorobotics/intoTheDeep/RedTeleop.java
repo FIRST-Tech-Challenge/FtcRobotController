@@ -374,6 +374,12 @@ public class RedTeleop extends LinearOpMode {
 
             //===================HANG==================
 
+            if (gamepad1.b) {
+                hangPressed = false;
+                prevGamepad2DpadDown = false;
+
+            }
+
             if(gamepad1.left_bumper && gamepad1.right_bumper) {
                 hangPressed = true;
                 autoHangAction = new AutoHangAction(outtake);
@@ -453,13 +459,23 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if (gamepad2.left_stick_button) {
+                //outtake slide
                 CalculateTickPer.MIN_RANGE_LS_TICKS = -2500;
+                //intake slide
+                CalculateTickPer.MIN_RANGE_INTAKE_TICKS = CalculateTickPer.degToTicksIntakeLS(-100);
             }
 
             if (gamepad2.left_trigger > 0.99) {
+                //outtake slide
                 outtake.getLinearSlide1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 outtake.getLinearSlide1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 CalculateTickPer.MIN_RANGE_LS_TICKS = outtake.getLinearSlide1().getCurrentPosition() - mmToTicksLS(25);
+
+                //intake slide
+                intake.getLinkageMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                intake.getLinkageMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                CalculateTickPer.MIN_RANGE_INTAKE_TICKS =
+                        intake.getLinkageMotor().getCurrentPosition() - degToTicksIntakeLS(10);
             }
 
 
@@ -552,7 +568,6 @@ public class RedTeleop extends LinearOpMode {
                     intakeTransferAction.setIsDone(true);
                 }
             }
-
 
             if (-gamepad2.right_stick_y != 0) {
                 MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
