@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="test servos", group="Linear OpMode")
-@Disabled
+//@Disabled
 public class testServos extends LinearOpMode {
     /* Declare OpMode members. */
     public Servo    servo1    = null;
@@ -29,8 +29,8 @@ public class testServos extends LinearOpMode {
         clawOffset1 = MID_SERVO;
         clawOffset2 = MID_SERVO;
         // Define and initialize ALL installed servos.
-        servo1  = hardwareMap.get(Servo.class, "1");
-        servo2 = hardwareMap.get(Servo.class, "2");
+        servo1  = hardwareMap.get(Servo.class, "6");
+        servo2 = hardwareMap.get(Servo.class, "7");
         servo1.setPosition(MID_SERVO);
         servo2.setPosition(MID_SERVO);
         //servo1.setPosition(MID_SERVO);

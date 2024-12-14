@@ -28,6 +28,7 @@ public class official extends LinearOpMode {
     public Servo    intakeSlide2 = null;
     private boolean elbowIsDown = false;
     private boolean outtakeIsDown = false;
+    private boolean outtakeIsFlat = false;
 
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -62,7 +63,7 @@ public class official extends LinearOpMode {
         //slide motors
         outtakeSlide1 = hardwareMap.get(DcMotor.class, "Motor5");
         outtakeSlide2 = hardwareMap.get(DcMotor.class, "Motor6");
-        outtakeSlide2.setDirection(DcMotor.Direction.REVERSE);
+        outtakeSlide1.setDirection(DcMotor.Direction.REVERSE);
         outtakeSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -122,7 +123,7 @@ public class official extends LinearOpMode {
                 imu.resetYaw();
             }
             //make it slower
-            if (currentGamepad1.left_trigger != 0) {
+            if (currentGamepad1.left_bumper) {
                 motorSpeed = Values.speedReducer;
             }else{
                 motorSpeed = 1;
@@ -198,9 +199,9 @@ public class official extends LinearOpMode {
                 //    slidesIn();
                 //}
             }
-            if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+            if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
                 slideServo(true);
-            } else if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+            } else if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
                 slideServo(false);
             }
 
@@ -211,25 +212,52 @@ public class official extends LinearOpMode {
                     intakeElbow.setPosition(Values.intakeElbowWait);
                     intakeClaw.setPosition(Values.intakeClawOpen);
                     wrist.setPosition(Values.wristDown);
+                    outtakeClaw.setPosition(Values.outakeclawOpen);
+                    outtakeElbow.setPosition(Values.outtakeElbowDown);
+                    slidePosition [0] = 0;
+                    moveSlides(slidePosition [0], Values.velocity);
                     elbowIsDown = true;
                 }
                 else if (elbowIsDown) {
                     intakeElbow.setPosition(Values.intakeElbowDown);
                     sleep(500);
                     intakeClaw.setPosition(Values.intakeclawClose);
+                    sleep(400);
+                    wrist.setPosition(Values.wristUp);
+                    clawPivot.setPosition(Values.MID_SERVO);
+                    intakeElbow.setPosition(Values.intakeElbowUp);
+                    slidesIn();
+                    sleep(1200);
+                    outtakeClaw.setPosition(Values.outtakeClawClose);
+                    sleep(400);
+                    intakeClaw.setPosition(Values.intakeClawOpen);
+                    sleep(200);
+                    outtakeElbow.setPosition(Values.outtakeElbowUp);
+                    elbowIsDown = false;
+                }
+            }
+            if (currentGamepad2.cross && !previousGamepad2.cross){
+                if (elbowIsDown){
+                    intakeElbow.setPosition(Values.intakeElbowDown);
                     sleep(500);
+                    intakeClaw.setPosition(Values.intakeclawClose);
+                    sleep(200);
                     wrist.setPosition(Values.wristUp);
                     intakeElbow.setPosition(Values.intakeElbowUp);
                     slidesIn();
-                    elbowIsDown = false;
+                } else if (!elbowIsDown) {
+                    intakeElbow.setPosition(Values.intakeElbowWait);
+                    wrist.setPosition(Values.wristDown);
+                    sleep(800);
+                    intakeClaw.setPosition(Values.intakeClawOpen);
                 }
-
             }
 
             //outtake
             if (currentGamepad2.triangle && !previousGamepad2.triangle){
                 if (!outtakeIsDown){
                     outtakeClaw.setPosition(Values.outakeclawOpen);
+                    sleep(200);
                     outtakeElbow.setPosition(Values.outtakeElbowDown);
                     outtakeIsDown= true;
                 }else if (outtakeIsDown){
@@ -239,11 +267,26 @@ public class official extends LinearOpMode {
                     outtakeIsDown = false;
                 }
             }
+            if (currentGamepad2.square && !previousGamepad1.square){
+                if (!outtakeIsFlat){
+                    outtakeClaw.setPosition(Values.outakeclawOpen);
+                    sleep(200);
+                    outtakeElbow.setPosition(Values.outtakeElbowFlat);
+                    outtakeIsFlat = true;
+                }else if (outtakeIsFlat){
+                    outtakeClaw.setPosition(Values.outtakeClawClose);
+                    sleep(200);
+                    outtakeElbow.setPosition(Values.outtakeElbowUp);
+                    outtakeIsFlat = false;
+                }
+
+
+            }
             //pivot!
-            if (currentGamepad2.right_bumper) {
-                clawPivot.setPosition(clawPivot .getPosition() - 0.003);
-            } else if (currentGamepad2.left_bumper) {
-                clawPivot.setPosition(clawPivot .getPosition() + 0.003);
+            if (currentGamepad2.dpad_right) {
+                clawPivot.setPosition(clawPivot .getPosition() - 0.004);
+            } else if (currentGamepad2.dpad_left) {
+                clawPivot.setPosition(clawPivot .getPosition() + 0.004);
             } else if (currentGamepad2.share) {
                 clawPivot.setPosition(Values.MID_SERVO);
             }
@@ -280,11 +323,11 @@ public class official extends LinearOpMode {
     }
     private void slideServo (boolean goingOut) {
         if (goingOut) {
-            intakeSlide2.setPosition(intakeSlide2.getPosition() + 0.03);
-            intakeSlide1.setPosition(intakeSlide1.getPosition() - 0.03);
+            intakeSlide2.setPosition(intakeSlide2.getPosition() + 0.05);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() - 0.05);
         }else{
-            intakeSlide2.setPosition(intakeSlide2.getPosition() - 0.03);
-            intakeSlide1.setPosition(intakeSlide1.getPosition() + 0.03);
+            intakeSlide2.setPosition(intakeSlide2.getPosition() - 0.05);
+            intakeSlide1.setPosition(intakeSlide1.getPosition() + 0.05);
         }
     }
 }
