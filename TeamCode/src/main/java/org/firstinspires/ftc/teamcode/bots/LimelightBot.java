@@ -38,10 +38,7 @@ public class LimelightBot extends PinchBot {
         super(opMode);
     }
 
-    public void pickup(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry, ElapsedTime scanTimer) {
-        scanTimer.reset();
-        stopCoordinateDrive();
-
+    public void alignWithSampleJulian(boolean isBlueAlliance, boolean includeSharedSample, boolean isSpecimen, Telemetry telemetry, ElapsedTime scanTimer) {
         if (inAutoPickup){
             // already in auto pickup mode
             return;
@@ -50,6 +47,8 @@ public class LimelightBot extends PinchBot {
         if (sample == null) {
             return;
         }
+        scanTimer.reset();
+
         double xThreshold = 2;
         double yThreshold = 2;
         boolean isXCloseEnough = Math.abs(sample.getDeltaX() ) < xThreshold;
@@ -59,9 +58,7 @@ public class LimelightBot extends PinchBot {
         if (telemetry != null) telemetry.addData("extendSlide-------->", delta);
         moveSlideByDelta(delta);
 
-        startCoordinateDrive();
-
-        double distance = sample.getDeltaX() * -3;
+        double distance = sample.getDeltaX() * 2.2;
         if (telemetry != null) telemetry.addData("DRIVE --------------> distance :", distance);
         strafing(distance);
         // sample is close enough, pick it up
@@ -74,16 +71,16 @@ public class LimelightBot extends PinchBot {
 
         schedule(this::stopCoordinateDrive, 1000);
 
-        if (isSpecimen) {
-            schedule(this::pivotToPickupPosSpecimen, 1000);
-        }
-        else {
-            schedule(this::pivotToPickupPosSample, 1000);
-        }
-        // close the pinch at a future time
-        schedule(this::closePinch, 1500);
-        // raise the pivot at a future time and also reset the auto pickup mode
-        schedule(this::pivotToPickupUpPos, 2000);
+//        `if (isSpecimen) {
+//            schedule(this::pivotToPickupPosSpecimen, 1500);
+//        }
+//        else {
+//            schedule(this::pivotToPickupPosSample, 1500);
+//        }
+//        // close the pinch at a future time
+//        schedule(this::closePinch, 2000);
+//        // raise the pivot at a future time and also reset the auto pickup mode
+//        schedule(this::pivotToPickupUpPos, 2500);`
 
         /*if (isXCloseEnough && isYCloseEnough) {
             strafing(0);

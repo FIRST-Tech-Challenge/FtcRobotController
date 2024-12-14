@@ -31,9 +31,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Autonomous(name = "AutonPedro", group = "Autos")
 public class AutonPedroSpecimens extends LinearOpMode{
     protected boolean isBlue = false;
+
     protected HangBot robot = new HangBot(this);
     private int lastMotorPosition;
 
+    private boolean isReadyFlag = false;
+
+    private boolean slideReadyFlag = false;
     private double startingTime;
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -190,11 +194,16 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 //robot.init(hardwareMap);
                 //robot.scoreSpecimen(true);
                 //robot.pinchControl(false,true);
+
                 follower.followPath(scorePreload);
-                robot.readySpecimenPos(true, true);
                 setPathState(1);
                 break;
             case 1:
+                if (isReadyFlag = false){
+                    robot.readySpecimenPos(true,true);
+                }
+                isReadyFlag = true;
+
                 /* You could check for
                 - Follower State: "if(!follower.isBusy() {}" (Though, I don't recommend this because it might not return due to holdEnd
                 - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
@@ -202,8 +211,13 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 */
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    robot.slideTarget = lastMotorPosition - 500;
-                    robot.readySpecimenPos(true, true);
+                    if (!slideReadyFlag) {
+                        robot.slideMotor.setPower(0.2);
+                        robot.slideTarget = lastMotorPosition - 500;
+                        robot.readySpecimenPos(true, true);
+
+                    }
+                    isReadyFlag = true;
                     /*robot.scoreSpecimen(true);
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
@@ -219,6 +233,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
 
                 break;
             case 2:
+                isReadyFlag = false;
                 robot.openPinch();
                 robot.slideTarget = 0;
                 robot.pivotTarget = 60;
@@ -248,7 +263,11 @@ public class AutonPedroSpecimens extends LinearOpMode{
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    robot.pivotTarget = 0;
+                    if(!isReadyFlag){
+
+                        robot.pivotTarget = 0;
+                        isReadyFlag = true;
+                    }
                     /* Score Sample */
                     /*robot.pinchControl(false,true);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */

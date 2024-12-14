@@ -20,7 +20,7 @@ public class PivotBot extends OdometryBot {
     public final int minumimPivotPos = -100;
     private final int searchPivotPos = 220; // tested
     private final int pickupSpecimenPivotPos = 115; // tested
-    private final int pickupSamplePivotPos = 50; // tested
+    private final int pickupSamplePivotPos = 20; // tested
     private final int pickupUpPivotPos = 400;
     public final int specimenHighPivotPos = 1150;
     public final int specimenLowPivotPos = 750;
