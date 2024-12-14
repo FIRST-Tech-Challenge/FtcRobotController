@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.commands.ArmDown;
 import org.firstinspires.ftc.teamcode.commands.ArmHighGoal;
@@ -13,12 +14,13 @@ import org.firstinspires.ftc.teamcode.commands.ArmLowGoal;
 import org.firstinspires.ftc.teamcode.commands.ArmMed;
 import org.firstinspires.ftc.teamcode.commands.DriveCmd;
 import org.firstinspires.ftc.teamcode.commands.IntakeCmd;
-import org.firstinspires.ftc.teamcode.commands.ArmUp;
+import org.firstinspires.ftc.teamcode.commands.MoveArm;
 import org.firstinspires.ftc.teamcode.commands.MoveLinearSlide;
 import org.firstinspires.ftc.teamcode.commands.MoveWristBadlyDown;
 import org.firstinspires.ftc.teamcode.commands.MoveWristBadlyUp;
 import org.firstinspires.ftc.teamcode.commands.MoveWristLeft;
 import org.firstinspires.ftc.teamcode.commands.MoveWristRight;
+import org.firstinspires.ftc.teamcode.commands.TurnCmd;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSub;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainSub;
 import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
@@ -48,8 +50,7 @@ public class TeleOp25 extends CommandOpMode {
     private MoveWristRight wristRight;
 
     private ArmSub armSub;
-    private ArmUp armUp;
-    private ArmDown armDown;
+    private MoveArm moveArm;
     private ArmLow armLow;
     private ArmMed armMed;
     private ArmLowGoal armLowGoal;
@@ -61,6 +62,9 @@ public class TeleOp25 extends CommandOpMode {
     private MoveLinearSlide linearSlideOff;
     private MoveWristBadlyUp wristUp;
     private MoveWristBadlyDown wristDown;
+    private MoveLinearSlide moveLinearSlide;
+    private TurnCmd turnCW;
+    private TurnCmd turnCCW;
 
 
     @Override
@@ -71,16 +75,26 @@ public class TeleOp25 extends CommandOpMode {
         toolOp = new GamepadEx(gamepad2);
 
 
+        // MOTOR SYSTEMS
         // Drive
         drive = new DrivetrainSub(hardwareMap, telemetry);
-        driveCmd = new DriveCmd(drive, driverOp, robotImu::getAngle, this::getFieldCentric);
+        driveCmd = new DriveCmd(drive, this::rightTrigger, this::leftTrigger, driverOp::getLeftX, driverOp::getLeftY, driverOp::getRightX, driverOp::getRightY, robotImu::getAngle, this::getFieldCentric);
+
+        turnCW = new TurnCmd(-90, 0.4, drive, robotImu, telemetry);
+        turnCCW = new TurnCmd(90, 0.4, drive, robotImu, telemetry);
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(this::toggleFieldCentric));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(turnCCW);
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(turnCCW);
+
         register(drive);
         drive.setDefaultCommand(driveCmd);
 
+        driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
 
         // Linear Slide
         linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
@@ -92,7 +106,7 @@ public class TeleOp25 extends CommandOpMode {
 
         // Arm
         armSub = new ArmSub(hardwareMap, telemetry);
-        moveArm = new MoveArm(armSub, toolOp::getRightY, telemetry);
+        moveArm = new MoveArm(armSub, toolOp::getLeftY, telemetry);
         armLow = new ArmLow(armSub, telemetry);
         armMed = new ArmMed(armSub, telemetry);
         armLowGoal = new ArmLowGoal(armSub, telemetry);
@@ -115,10 +129,10 @@ public class TeleOp25 extends CommandOpMode {
         intakeOut = new IntakeCmd(intake, -1);
         intakeOff = new IntakeCmd(intake, 0);
 
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(intakeIn);
+        toolOp.getGamepadButton(GamepadKeys.Button.A).whenReleased(intakeOff);
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(intakeOut);
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenReleased(intakeOff);
-        toolOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(intakeIn);
-        toolOp.getGamepadButton(GamepadKeys.Button.Y).whenReleased(intakeOff);
 
 
         // Wrist
@@ -129,38 +143,11 @@ public class TeleOp25 extends CommandOpMode {
         wristUp = new MoveWristBadlyUp(wrist, telemetry);
         wristDown = new MoveWristBadlyDown(wrist, telemetry);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(wristUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(wristDown);
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(wristLeft);
+        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(wristRight);
 
-        // Arm
-        armSub = new ArmSub(hardwareMap, telemetry);
-        armUp = new ArmUp(armSub, toolOp, telemetry);
-        armDown = new ArmDown(armSub, toolOp, telemetry);
-        armLow = new ArmLow(armSub, toolOp, telemetry);
-        armMed = new ArmMed(armSub, toolOp, telemetry);
-        armLowGoal = new ArmLowGoal(armSub, toolOp, telemetry);
-        armHighGoal = new ArmHighGoal(armSub, toolOp, telemetry);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(armDown);
-        toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(armUp);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(armLow);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(armMed);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(armLowGoal);
-        toolOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(armHighGoal);
 
-        // Linear Slide
-       linearSlideSub = new LinearSlideSub(hardwareMap, telemetry);
-       linearSlideUp = new MoveLinearSlide(linearSlideSub, telemetry, 0.5);
-       linearSlideDown = new MoveLinearSlide(linearSlideSub, telemetry, -0.5);
-       linearSlideOff = new MoveLinearSlide(linearSlideSub, telemetry, 0);
-
-       toolOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(linearSlideUp);
-       toolOp.getGamepadButton(GamepadKeys.Button.START).whenReleased(linearSlideOff);
-       toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(linearSlideDown);
-       toolOp.getGamepadButton(GamepadKeys.Button.BACK).whenReleased(linearSlideOff);
-
-       // TODO: This is probably a bit of a sloppy way to do this, I imagine a less sloppy one would have a command class for it
-        linearSlideSub.resetEncoder();
     }
 
     @Override
@@ -185,5 +172,13 @@ public class TeleOp25 extends CommandOpMode {
         if (fieldCentric) {
             robotImu.resetAngle();
         }
+    }
+
+    public double rightTrigger() {
+        return driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+    }
+
+    public double leftTrigger() {
+        return driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
     }
 }

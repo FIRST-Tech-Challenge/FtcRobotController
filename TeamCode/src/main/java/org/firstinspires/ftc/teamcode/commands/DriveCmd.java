@@ -16,7 +16,12 @@ import java.util.function.DoubleSupplier;
 public class DriveCmd extends CommandBase {
 
     private final DrivetrainSub drivetrainSub;
-    private final GamepadEx gamepad;
+    private final DoubleSupplier driveX;
+    private final DoubleSupplier driveY;
+    private final DoubleSupplier turnX;
+    private final DoubleSupplier turnY;
+    private final DoubleSupplier rightTrigger;
+    private final DoubleSupplier leftTrigger;
     private final DoubleSupplier angleDegrees;
     private final BooleanSupplier fieldCentricity;
 
@@ -24,14 +29,18 @@ public class DriveCmd extends CommandBase {
      * This command deals with the driving in teleop.
      *
      * @param drivetrainSubParam The drivetrain sub to be imported
-     * @param gamepad1Param The main gamepad to be imported
      * @param angleParam The angle returned by the IMU, implemented by a double supplier because this is run in init, and we need this value to be updated constantly
      * @param fieldCentricityParam Whether we're field centric or not. This is a supplier for the same reason that angleParam is.
      */
 
-    public DriveCmd(DrivetrainSub drivetrainSubParam, GamepadEx gamepad1Param, DoubleSupplier angleParam, BooleanSupplier fieldCentricityParam){
+    public DriveCmd(DrivetrainSub drivetrainSubParam, DoubleSupplier rightTrigger, DoubleSupplier leftTrigger, DoubleSupplier driveX, DoubleSupplier driveY, DoubleSupplier turnX, DoubleSupplier turnY, DoubleSupplier angleParam, BooleanSupplier fieldCentricityParam){
         this.drivetrainSub = drivetrainSubParam;
-        gamepad = gamepad1Param;
+        this.driveX = driveX;
+        this.driveY = driveY;
+        this.turnX = turnX;
+        this.turnY = turnY;
+        this.rightTrigger = rightTrigger;
+        this.leftTrigger = leftTrigger;
         angleDegrees = angleParam;
         fieldCentricity = fieldCentricityParam;
         addRequirements(this.drivetrainSub);
@@ -39,8 +48,21 @@ public class DriveCmd extends CommandBase {
 
     @Override
     public void execute(){
+        double driveX = this.driveX.getAsDouble();
+        double driveY = this.driveY.getAsDouble();
+        double turnX = this.turnX.getAsDouble();
+        double turnY = this.turnY.getAsDouble();
         double brakeMultiplier = 1;
-        double rightTrigger=gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        double rightTrigger = this.rightTrigger.getAsDouble();
+        double leftTrigger = this.leftTrigger.getAsDouble();
+
+
+        if (leftTrigger > 0.05 && leftTrigger < 0.75) {
+            brakeMultiplier = (1 - leftTrigger)/2;
+        } else if (rightTrigger >= 0.75) {
+            brakeMultiplier = 0.125;
+        }
+
         // if precision mode is on (the right trigger is pulled down to some degree)
         if (rightTrigger > 0.05 && rightTrigger < 0.75) {
             brakeMultiplier = 1 - rightTrigger;
@@ -51,21 +73,22 @@ public class DriveCmd extends CommandBase {
             //telemetry.addData("Precise Mode", "On");
         }
 
+
         if (fieldCentricity.getAsBoolean()) {
             // optional fifth parameter for squared inputs
             drivetrainSub.getDrive().driveFieldCentric(
-                    gamepad.getLeftX()*-brakeMultiplier,
-                    gamepad.getLeftY()*-brakeMultiplier,
-                    gamepad.getRightX()*-brakeMultiplier,
+                    driveX*-brakeMultiplier,
+                    driveY*-brakeMultiplier,
+                    turnX*-brakeMultiplier,
                     angleDegrees.getAsDouble(),   // gyro value passed in here must be in degrees
                     false
             );
         } else {
             // optional fourth parameter for squared inputs
             drivetrainSub.getDrive().driveRobotCentric(
-                    gamepad.getLeftX()*-brakeMultiplier,
-                    gamepad.getLeftY()*-brakeMultiplier,
-                    gamepad.getRightX()*-brakeMultiplier,
+                    driveX*-brakeMultiplier,
+                    driveY*-brakeMultiplier,
+                    turnX*-brakeMultiplier,
                     false
             );
         }

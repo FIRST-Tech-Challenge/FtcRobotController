@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static java.lang.Math.abs;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,6 +42,11 @@ public class ArmSub extends SubsystemBase{
     public void armDown() {
         setPos(getMotor().getCurrentPosition() - 20, 1);
     }
+
+    public void moveArm(double speed) {
+        setPos((int) (getMotor().getCurrentPosition() + speed*20), (int) (speed/abs(speed)));
+    }
+
 
     public void armLow() {
         setPos(ArmConstants.armLow, -1);

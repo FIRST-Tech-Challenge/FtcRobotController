@@ -87,3 +87,31 @@
 5)  Add:    include ':Team0417' to the "/settings.gradle" file.
     
 6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+
+# Button Mappings
+## Gamepad 1
+*Joystick Left* - Driving
+*Joystick Right* - Turning
+*DPAD* - 90 and 180 turns
+*A* -
+*B* -
+*X* - Reset Global Positioning
+*Y* - Global Positioning
+*Trigger Right* - Precision Mode
+*Trigger Left* - Not-so Precision Mode
+*Bumper Right* -
+*Bumper Left* -
+
+## Gamepad 2
+
+*Joystick Left* - Arm
+*Joystick Right* - Linear Slide
+*DPAD* - Default Linear Slide Positions
+*A* - Intake
+*B* -
+*X* - Outtake
+*Y* -
+*Trigger Right* -
+*Trigger Left* - 
+*Bumper Right* - Wrist right
+*Bumper Left* - Wrist left

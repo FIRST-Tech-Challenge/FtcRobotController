@@ -18,6 +18,7 @@ public class LinearSlideSub extends SubsystemBase {
         this.telemetry = tm;
 
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        resetEncoder();
     }
 
     @Override

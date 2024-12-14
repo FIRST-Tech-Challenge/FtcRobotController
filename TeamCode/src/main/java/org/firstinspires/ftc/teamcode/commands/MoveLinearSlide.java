@@ -5,25 +5,23 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LinearSlideSub;
 
+import java.util.function.DoubleSupplier;
+
 public class MoveLinearSlide extends CommandBase {
     private final LinearSlideSub linearSlideSub;
     private final Telemetry telemetry;
-    private final double speed;
+    private final DoubleSupplier leftY;
 
-    public MoveLinearSlide(LinearSlideSub linearSlideSub, Telemetry telemetry, double speed) {
+    public MoveLinearSlide(LinearSlideSub linearSlideSub, DoubleSupplier leftY, Telemetry telemetry) {
         this.linearSlideSub = linearSlideSub;
         this.telemetry = telemetry;
-        this.speed = speed;
+        this.leftY = leftY;
+        addRequirements(this.linearSlideSub);
+
     }
 
     @Override
     public void execute() {
-        linearSlideSub.move(speed);
-    }
-
-
-    @Override
-    public boolean isFinished(){
-        return true;
+        linearSlideSub.move(this.leftY.getAsDouble());
     }
 }
