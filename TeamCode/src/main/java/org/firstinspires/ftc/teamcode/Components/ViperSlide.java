@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import java.util.Timer;
+
 public class ViperSlide {
     private DcMotorEx leftViper;
     private DcMotorEx rightViper;
@@ -28,7 +30,11 @@ public class ViperSlide {
     double minFlipLimit = 650;
     public double holdPower = .2;
 
+    private ElapsedTime bucketCooldownTimer;
+
     double lastPosition;
+
+
 
 
     public ViperSlide(OpMode opMode) {
@@ -96,11 +102,21 @@ public class ViperSlide {
         }
 
         // Bucket
-        if(bucketScore && (getPos() > minFlipLimit)) {
-            bucketScore();
+        if(bucketScore) {
+            if(getPos() > minFlipLimit) {
+                bucketScore();
+            }
+            else {
+                bucketCooldownTimer = new ElapsedTime();
+            }
         }
-        else if(bucketRest) {
+
+        if(bucketRest) {
             bucketRest();
+//            if(bucketCooldownTimer != null && bucketCooldownTimer.seconds() < 1)
+//                bucketRest();
+//            else
+//                bucketCooldownTimer = null;
         }
 
 //        if(openBucket) {
