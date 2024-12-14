@@ -17,9 +17,15 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-10, 60, 0))
                         //todo finish this
                         .strafeLeft(-5)
-                        .turn(Math.toRadians(-90))
+                        //.turn(Math.toRadians(-90))
                         //.forward(30)
-                        .splineToLinearHeading(new Pose2d(-58, 36, 0), -90)
+                        .splineToLinearHeading(new Pose2d(-35, 22, 0), -90)
+                        .splineToLinearHeading(new Pose2d(-27, 5.8, 0), 0)
+                        //.splineToLinearHeading(new Pose2d(-37, 12, 0), 90)
+                        //.forward(-5)
+                        .splineToLinearHeading(new Pose2d(-50, 5.8, Math.toRadians(15)), 0)
+                        .splineToLinearHeading(new Pose2d(-57, 62,  Math.toRadians(-90)), 90)
+                        //.splineToLinearHeading(new Pose2d(-57, 64,  Math.toRadians(-90)), 90)
                         .build());
 
 
