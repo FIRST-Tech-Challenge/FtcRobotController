@@ -30,9 +30,9 @@ public class Lift{
     public Lift(HardwareMap hw, String leftLiftName, String rightLiftName, String leftEncoderName, String rightEncoderName){
         leftLift = hw.get(DcMotor.class, leftLiftName);
         rightLift = hw.get(DcMotor.class, rightLiftName);
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
         leftEncoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, leftEncoderName)));
         rightEncoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, rightEncoderName)));
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,6 +59,16 @@ public class Lift{
     public double getPosition(){
         return leftEncoder.getPositionAndVelocity().position;
     }
+    public int getLeftPosition()
+    {
+        return leftEncoder.getPositionAndVelocity().position;
+    }
+
+    public int getRightPosition()
+    {
+        return rightEncoder.getPositionAndVelocity().position;
+    }
+
     public void setPosition(int targetPosition){
 
         leftLift.setTargetPosition(targetPosition);
@@ -67,7 +77,35 @@ public class Lift{
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        leftLift.setPower(0.7);
+        rightLift.setPower(0.7);
+
+    }
+
+    public void setNewTargetPosition(int changePosition)
+    {
+        int currLeftTicks = getLeftPosition();
+        int currRightTicks = getRightPosition();
+
+        leftLift.setTargetPosition(currLeftTicks + changePosition);
+        rightLift.setTargetPosition(currRightTicks + changePosition);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         leftLift.setPower(1.0);
         rightLift.setPower(1.0);
+
     }
+
+    public double getLeftMotorPower()
+    {
+        return leftLift.getPower();
+    }
+
+    public double geRightMotorPower()
+    {
+        return rightLift.getPower();
+    }
+
 }

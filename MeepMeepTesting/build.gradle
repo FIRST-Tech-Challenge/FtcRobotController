@@ -7,7 +7,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 repositories {
-    maven { url = 'https://maven.brott.dev/' }
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
 }
 
 dependencies {

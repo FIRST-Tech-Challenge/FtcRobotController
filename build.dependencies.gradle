@@ -13,5 +13,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:10.1.1'
     implementation 'org.firstinspires.ftc:Vision:10.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'org.ejml:ejml-all:0.40'
 }
 
