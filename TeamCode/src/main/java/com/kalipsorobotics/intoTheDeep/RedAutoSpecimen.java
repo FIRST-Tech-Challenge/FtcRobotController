@@ -87,13 +87,13 @@ public class RedAutoSpecimen extends LinearOpMode {
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setDependentActions(waitAfterHang);
         //first sample to depot
-        moveFloorSamples.addPoint( -620, -500, -90);
-        moveFloorSamples.addPoint(-1330, -500, -180);
+        moveFloorSamples.addPoint( -620, -475, -90); //y -500
+        moveFloorSamples.addPoint(-1330, -500, -180); //y -475
         moveFloorSamples.addPoint(-1330, -800, -180);// before push
         moveFloorSamples.addPoint(-240, -800, -180);
 
         //second sample to depot
-        moveFloorSamples.addPoint(-1330, -800, -180);
+        moveFloorSamples.addPoint(-1330, -775, -180); //y -80
         moveFloorSamples.addPoint(-1330, -1050, -180);// before push
         moveFloorSamples.addPoint(-240, -1050, -180);
 
@@ -112,7 +112,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 375);
+                outtake, 375); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setDependentActions(moveFloorSamples);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
@@ -120,7 +120,7 @@ public class RedAutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 450);
+                outtake, 450); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);
