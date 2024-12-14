@@ -14,7 +14,6 @@ public class AxonPickupTest extends OpMode {
     public AnalogInput right_servo_encoder;
     public Servo right_servo;
     public ElapsedTime button_timer = new ElapsedTime();
-    public ElapsedTime servoTimer = new ElapsedTime();
     public enum ElbowState {
         DOWN,
         UP
@@ -50,11 +49,8 @@ public class AxonPickupTest extends OpMode {
                     elbowState = ElbowState.DOWN;
                     break;
                 case DOWN:
-                    servoTimer.reset();
-                    while (servoTimer.seconds() < 2) {
-                        grippers.setPosition(GRIPPERS_CLOSED);
-                        gripperState = GripperState.CLOSED;
-                    }
+                    grippers.setPosition(GRIPPERS_CLOSED);
+                    gripperState = GripperState.CLOSED;
                     elbowState = ElbowState.UP;
             }
             button_timer.reset();
