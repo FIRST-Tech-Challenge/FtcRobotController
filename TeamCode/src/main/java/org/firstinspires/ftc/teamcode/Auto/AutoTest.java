@@ -37,6 +37,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
@@ -54,7 +55,7 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
+@Autonomous(name = "woohooooo", group = "Autonomous")
 public class AutoTest extends LinearOpMode {
 
     private IntakeThings intakeThings;
@@ -63,8 +64,10 @@ public class AutoTest extends LinearOpMode {
     private SlideServos slideServos;
 
     @Override public void runOpMode(){
+        //all of these are during init
+
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d (63.8, -61.7, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         // make instance
@@ -72,7 +75,33 @@ public class AutoTest extends LinearOpMode {
         OuttakeServos outtakeServos = new OuttakeServos(hardwareMap);
         SlideMotors slideMotor = new SlideMotors(hardwareMap);
         SlideServos slideServos = new SlideServos(hardwareMap);
-        
 
+        // vision here that outputs position
+
+        //test path
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                //.strafeTo(new Vector2d(44.5, 61.7))
+                .lineToY(50)
+                .waitSeconds(3);
+
+        int visionOutputPosition = 1;
+        // actions that need to happen on init; for instance, a claw tightening.
+        //Actions.runBlocking(claw.closeClaw());
+        while (!isStopRequested() && !opModeIsActive()) {
+            int position = visionOutputPosition;
+            telemetry.addData("Position during Init", position);
+            telemetry.update();
+        }
+        int startPosition = visionOutputPosition;
+        telemetry.addData("Starting Position", startPosition);
+        telemetry.update();
+        waitForStart();
+
+        if (isStopRequested()) return;
+        Actions.runBlocking(
+                new SequentialAction(
+                        tab1.build()
+                )
+        );
     }
 }
