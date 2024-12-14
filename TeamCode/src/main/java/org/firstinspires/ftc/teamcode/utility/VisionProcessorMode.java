@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+// available processing modes of camera
 public enum VisionProcessorMode {
-    CLAW_CAMERA,
-    REAR_CAMERA_BACKDROP_APRIL_TAG,
-    FRONT_CAMERA_PIXEL_GRAB,
+    APRIL_TAG_ONLY,
+    RED_BLOB_ONLY,
+    BLUE_BLOB_ONLY,
+    YELLOW_BLOB_ONLY,
     NONE
 }
