@@ -111,8 +111,10 @@ public class Hardware   {
 
         // Intake
         intakeSlide = hardwareMap.get(DcMotorEx.class, "CH-Motor-2");
+        intakeSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
         intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
