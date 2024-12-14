@@ -70,12 +70,12 @@ public class AxonPickupTest2 extends OpMode {
         }
         if(elbowState == ElbowState.UP){
             if(grippers.getPosition() == 1) {
-                left_servo.setPosition(0.1);
-                right_servo.setPosition(0.1);
+                run_left_servo_to_zero();
+                run_right_servo_to_zero();
             }
         }
         else {
-            run_left_servo_to_zero();
+            left_servo.setPosition(1);
             right_servo.setPosition(1);
         }
         telemetry.addData("Left Servo Position:",left_servo.getPosition());
@@ -103,15 +103,15 @@ public class AxonPickupTest2 extends OpMode {
     public void run_right_servo_to_zero(){
         double encoder_pos = right_servo_encoder.getVoltage() / 3.3 * 360;
         if (!is_in_range(encoder_pos, RIGHT_SERVO_ZERO - 2, RIGHT_SERVO_ZERO + 2)){
-            if (encoder_pos < LEFT_SERVO_ZERO - 2){
-                double target = left_servo.getPosition() - 0.05;
-                left_servo.setPosition(target);
-                telemetry.addData("Left Servo is left of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            if (encoder_pos < RIGHT_SERVO_ZERO - 2){
+                double target = right_servo.getPosition() - 0.05;
+                right_servo.setPosition(target);
+                telemetry.addData("Left Servo is left of zero. Moving from " + right_servo.getPosition() + " to: ", target);
             }
-            else if (encoder_pos > LEFT_SERVO_ZERO + 2){
-                double target = left_servo.getPosition() + 0.05;
-                left_servo.setPosition(target);
-                telemetry.addData("Left Servo is right of zero. Moving from " + left_servo.getPosition() + " to: ", target);
+            else if (encoder_pos > RIGHT_SERVO_ZERO + 2){
+                double target = right_servo.getPosition() + 0.05;
+                right_servo.setPosition(target);
+                telemetry.addData("Left Servo is right of zero. Moving from " + right_servo.getPosition() + " to: ", target);
             }
         }
     }
@@ -123,7 +123,7 @@ public class AxonPickupTest2 extends OpMode {
         else if(number == left_number || number == right_number) {
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
