@@ -46,17 +46,33 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.IntakeThings;
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.OuttakeServos;
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
 @Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
-public class AutoTest extends LinearOpMode
-{
-       // Used to hold the data for a detected AprilTag
+public class AutoTest extends LinearOpMode {
 
-    @Override public void runOpMode()
-    {
+    private IntakeThings intakeThings;
+    private OuttakeServos outtakeServos;
+    private SlideMotors slideMotor;
+    private SlideServos slideServos;
+
+    @Override public void runOpMode(){
+        // instantiate your MecanumDrive at a particular pose.
+        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+        // make instance
+        IntakeThings intakeThings = new IntakeThings(hardwareMap);
+        OuttakeServos outtakeServos = new OuttakeServos(hardwareMap);
+        SlideMotors slideMotor = new SlideMotors(hardwareMap);
+        SlideServos slideServos = new SlideServos(hardwareMap);
+        
 
     }
-
 }
