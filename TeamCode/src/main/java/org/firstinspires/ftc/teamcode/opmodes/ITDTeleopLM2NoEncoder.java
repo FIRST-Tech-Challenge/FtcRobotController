@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@TeleOp(name = "Teleop LM2")
-public class ITDTeleopLM2 extends LinearOpMode {
+@TeleOp(name = "Teleop LM2 NO ENCODER")
+public class ITDTeleopLM2NoEncoder extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftFront   = null;
@@ -48,14 +48,6 @@ public class ITDTeleopLM2 extends LinearOpMode {
 
         liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftPivot.setTargetPosition(0);
-        liftPivotRight.setTargetPosition(0);
-        liftPivotRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftPivot.setPower(0.5);
-        liftPivotRight.setPower(0.5);
 
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -99,20 +91,11 @@ public class ITDTeleopLM2 extends LinearOpMode {
 
             lift.setPower(gamepad2.left_stick_y);
             liftPivotRight.setPower(-0.7*gamepad2.right_stick_y);
-            liftPivot.setPower(-0.7*gamepad2.right_stick_y);
+            liftPivot.setPower(0.7*gamepad2.right_stick_y);
 
             if (gamepad2.a) {
                 claw.setPower(1);
                 claw2.setPower(-1);
-            }
-
-            else if (gamepad2.y) {
-                liftPivotRight.setTargetPosition(900);
-                liftPivot.setTargetPosition(900);
-            }
-            else if (gamepad2.b) {
-                liftPivot.setTargetPosition(0);
-                liftPivotRight.setTargetPosition(0);
             }
 
             else if (gamepad2.x) {

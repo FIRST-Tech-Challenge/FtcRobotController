@@ -43,7 +43,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
                 .lineToY(-52)
                 .turn(Math.toRadians(90))
-                .lineToX(-52)
+                .lineToX(-56)
                 .turn(Math.toRadians(45))
                 .waitSeconds(3);
 
@@ -79,9 +79,10 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
                         firstTraj, // go to the basket, push samples, and then submersible
-                        //lift.liftUp() // to lvl1 ascent
-                      //  claw.openClaw(), // drop the sample
-                      //  lift.liftDown()
+                        liftPivot.liftPivotUp(),
+                        lift.liftUp(), // to lvl1 ascent
+                        claw.openClaw(), // drop the sample
+                        lift.liftDown(),
                         toSub // push samples, go to submersible
                 )
         );
@@ -205,9 +206,21 @@ public class RedLeftBasketThenPark extends LinearOpMode {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
             liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             liftPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+            liftPivotRight = hardwareMap.get(DcMotorEx.class, "liftPivotRight");
+            liftPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftPivotRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
             liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftPivot.setTargetPosition(900);
+            liftPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftPivot.setTargetPosition(0);
+            liftPivotRight.setTargetPosition(0);
             liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftPivotRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftPivot.setTargetPosition(900);
+            liftPivotRight.setTargetPosition(900);
+
+
+
         }
 
         public class LiftPivotUp implements Action {
@@ -220,6 +233,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 // powers on motor, if it is not on
                 if (!initialized) {
                     liftPivot.setPower(0.8);
+                    liftPivotRight.setPower(0.8);
                     initialized = true;
                 }
                 // checks lift's current position
