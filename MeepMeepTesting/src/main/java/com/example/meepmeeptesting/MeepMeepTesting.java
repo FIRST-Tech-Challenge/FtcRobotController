@@ -20,15 +20,26 @@ public class MeepMeepTesting {
                         .strafeLeft(-5)
                         .splineToLinearHeading(new Pose2d(-35, 22, 0), -90)
                         .splineToLinearHeading(new Pose2d(-28, 5.8, 0), 90)
+                        //get thing
                         .splineToConstantHeading(new Vector2d(-52, 57), Math.toRadians(0))
                         .splineToLinearHeading(new Pose2d(-56, 57, Math.toRadians(90)), 0)
                         //get hook
                         .splineToLinearHeading(new Pose2d(-38, 45,  Math.toRadians(90)), -90)
                         .splineToConstantHeading(new Vector2d(0, 37), Math.toRadians(0))
                         //put hook away
-                        .splineToConstantHeading(new Vector2d(-43, 40), Math.toRadians(0))
-                        .splineToLinearHeading(new Pose2d(-28, 5.8), Math.toRadians(0))
-                        //.splineToLinearHeading(new Pose2d(-28, 5.8, 0), -90)
+                        .splineToConstantHeading(new Vector2d(-40, 40), Math.toRadians(0))
+                        .splineToLinearHeading(new Pose2d(-28, 5.8,  Math.toRadians(0)), 90)
+
+
+                        //get thing
+                        .splineToLinearHeading(new Pose2d(-52, 57, Math.toRadians(0)), 90)
+                        .splineToLinearHeading(new Pose2d(-56, 57, Math.toRadians(90)), 0)
+                        //get hook
+                        .splineToLinearHeading(new Pose2d(-38, 45,  Math.toRadians(90)), -90)
+                        .splineToConstantHeading(new Vector2d(0, 37), Math.toRadians(0))
+                        //put hook away
+
+
                         .build());
 
 
