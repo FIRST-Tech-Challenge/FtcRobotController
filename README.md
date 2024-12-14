@@ -3,12 +3,33 @@
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
 
 ## Welcome!
-This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+This is a fork of the offical FTC SDK for the 24-25 season. It includes the source code for the FTC SDK, as well as the driver for the goBILDA Pinpoint Odometry Computer: https://www.gobilda.com/pinpoint-odometry-computer-imu-sensor-fusion-for-2-wheel-odometry/
+
+This repo includes the FTC Driver, and example Opmodes showing how to use the goBILDA® Pinpoint Odometry Computer.
+The goBILDA Odometry Computer is a device designed to solve the Pose Exponential calculation
+commonly associated with Dead Wheel Odometry systems. It reads two encoders, and an integrated
+system of sensors to determine the robot's current heading, X position, and Y position.
+
+## How to use? 
+If you are already an Android Studio team, and are using git, you can add this repo as a git remote, and this will allow you to easily pull just the two files which this repo adds to the SDK. GoBildaPinpointDriver and SensorGoBildaPinpointExample. You can add a remote to Android Studio by going to Git, then Manage Remotes in the navigation bar. Once you've added this Remote, click on the branch icon near the name of your curent project and find the new remote. There should be a branch called "goBILDA-Odometry-Driver", select that, and select "Pull into (yourbranch) using merge". There may be a conflict with the readme file, just accept your's. And you'll be off to the races!
+
+If you do not already have a github project for your team/season, you can clone this repository. Just make sure to note that only the branch titled "goBILDA-Odometry-Driver" has the driver and example file.
+
+If you would like to just download the driver files and example code, you can find them here: just click the download button in the top right and put those two files in your teamcode folder.
+
+### Direct link to driver and example files:
+https://github.com/goBILDA-Official/goBILDA-Pinpoint-Odometry-Computer-FTC-Driver/tree/goBILDA-Odometry-Driver/TeamCode/src/main/java/org/firstinspires/ftc/teamcode
+
+
+### User guide:
+We also have a PDF user guide that goes over calibration, tuning, and common issues which can be found here:
+https://www.gobilda.com/content/user_manuals/3110-0002-0001_user-guide.pdf
 
 ## Requirements
 To use this Android Studio project, you will need Android Studio Ladybug (2024.2) or later.
 
 To program your robot in Blocks or OnBot Java, you do not need Android Studio.
+
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html) to get familiar with how to use the control system:
