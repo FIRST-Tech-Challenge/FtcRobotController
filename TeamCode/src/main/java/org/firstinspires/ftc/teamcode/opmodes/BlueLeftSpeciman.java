@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -40,25 +39,11 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
-        TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose)
                 .lineToY(-52)
                 .turn(Math.toRadians(90))
                 .lineToX(-52)
                 .turn(Math.toRadians(45))
-                .waitSeconds(3);
-
-        Action toSub = toBasket.endTrajectory().fresh()
-                // samples (push)
-                .turn(Math.toRadians(45))
-                //          .splineTo(new Vector2d(-35,-52),180) too wavy
-                .strafeTo(new Vector2d(-35,-52))
-                .strafeTo(new Vector2d(-35,-10))
-                .strafeTo(new Vector2d(-46,-10))
-                .strafeTo(new Vector2d(-46,-60))
-                .strafeTo(new Vector2d(-46,-10))
-                .turn(Math.toRadians(90))
-                .lineToX(-26)
-                .build();
 
 // to submersible
 //                .lineToY(-1)
@@ -75,12 +60,12 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 //                .strafeTo(new Vector2d(44.5, 30))
 //                .turn(Math.toRadians(180))
 //                .lineToX(47.5)
-  //               .waitSeconds(3);
+                 .waitSeconds(3);
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
 
-        Action firstTraj = toBasket.build();
+        Action firstTraj = toSub.build();
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
@@ -96,11 +81,10 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 //                        liftPivot.liftPivotDown(),
   //                      lift.liftUp(),
     //                    claw.openClaw(),
-                        firstTraj, // go to the basket and then submersible
+                        firstTraj // go to the basket and then submersible
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()
-                        toSub // push samples, go to submersible
                 )
         );
     }
