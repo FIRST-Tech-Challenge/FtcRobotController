@@ -9,7 +9,7 @@ public class OuttakeClawAction {
 
     final private Outtake outtake;
     final private KServo outtakeClawServo;
-    final static public double OUTTAKE_CLAW_OPEN_POS = 0.65;
+    final static public double OUTTAKE_CLAW_OPEN_POS = 0.72; //0.65;
     final static public double OUTTAKE_CLAW_CLOSE_POS = 0.45;
 
     private boolean isClosed = true;
