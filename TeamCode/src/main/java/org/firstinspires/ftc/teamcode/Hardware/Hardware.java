@@ -1,12 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.List;
 
 public class Hardware   {
 
@@ -22,6 +27,8 @@ public class Hardware   {
     public DcMotorEx LB;
 
     public GoBildaPinpointDriver pinPoint;
+
+    List<LynxModule> hubs;
 
     // Deposit
     public DcMotorEx depositSlideRight;
@@ -44,7 +51,8 @@ public class Hardware   {
 
     public AnalogInput intakePivotEnc;
 
-    public ColorRangeSensor intakeCS;
+    public RevColorSensorV3 intakeCS;
+
 
 
     public static Hardware getInstance() {
@@ -61,6 +69,7 @@ public class Hardware   {
         // Drivetrain
         LF = hardwareMap.get(DcMotorEx.class, "EH-Motor-0");
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LF.setDirection(DcMotorSimple.Direction.REVERSE);
 
         RF = hardwareMap.get(DcMotorEx.class, "EH-Motor-1");
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -70,17 +79,24 @@ public class Hardware   {
 
         LB = hardwareMap.get(DcMotorEx.class, "EH-Motor-3");
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LB.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pinPoint = hardwareMap.get(GoBildaPinpointDriver.class, "CH-I2C-0");
+        pinPoint = hardwareMap.get(GoBildaPinpointDriver.class, "CH-I2C-0-1");
         pinPoint.setOffsets(-71,-109.18776);
         pinPoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        // Not adjusted
-        pinPoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        pinPoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        pinPoint.resetPosAndIMU();
+
+        hubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub: hubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
 
         // Deposit
         depositSlideRight = hardwareMap.get(DcMotorEx.class, "CH-Motor-0");
         depositSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
         depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -96,6 +112,7 @@ public class Hardware   {
         // Intake
         intakeSlide = hardwareMap.get(DcMotorEx.class, "CH-Motor-2");
         intakeSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
         intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -105,7 +122,13 @@ public class Hardware   {
 
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");
 
-        intakeCS = hardwareMap.get(ColorRangeSensor.class, "CH-I2C-1");
+        intakeCS = hardwareMap.get(RevColorSensorV3.class, "CH-I2C-1-0");
+    }
+
+    public void clearCache() {
+        for (LynxModule hub : hubs) {
+            hub.clearBulkCache();
+        }
     }
 
 }
