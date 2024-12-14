@@ -81,7 +81,6 @@ public class SpecimenAndSample extends LinearOpMode {
 //                        .turn(Math.toRadians(180))
 //                        .waitSeconds(0.001)
 //                        .lineToY(-55)
-
                         //after scoring first sample
                         .build());
 
