@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -59,15 +60,30 @@ public class Hardware   {
 
         // Drivetrain
         LF = hardwareMap.get(DcMotorEx.class, "EH-Motor-0");
+        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         RF = hardwareMap.get(DcMotorEx.class, "EH-Motor-1");
+        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         RB = hardwareMap.get(DcMotorEx.class, "EH-Motor-2");
+        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         LB = hardwareMap.get(DcMotorEx.class, "EH-Motor-3");
+        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         pinPoint = hardwareMap.get(GoBildaPinpointDriver.class, "CH-I2C-0");
+        pinPoint.setOffsets(-71,-109.18776);
+        pinPoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        // Not adjusted
+        pinPoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
 
         // Deposit
         depositSlideRight = hardwareMap.get(DcMotorEx.class, "CH-Motor-0");
+        depositSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
+        depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armRight = hardwareMap.get(CRServo.class, "CH-Servo-0");
         armLeft = hardwareMap.get(CRServo.class, "CH-Servo-1");
@@ -79,7 +95,10 @@ public class Hardware   {
 
         // Intake
         intakeSlide = hardwareMap.get(DcMotorEx.class, "CH-Motor-2");
+        intakeSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
+        intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intakePivot = hardwareMap.get(CRServo.class, "CH-Servo-3");
         intakeDoor = hardwareMap.get(Servo.class, "CH-Servo-4");
