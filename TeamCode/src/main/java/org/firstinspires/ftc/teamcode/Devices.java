@@ -21,12 +21,10 @@ public class Devices {
 //        final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
-        final double MAX_LEGAL_SLIDER_LENGTH = maxLegalSliderLength();
-
         /** This is the angle that the arm starts each match */
         final double STARTING_ANGLE = -20;
 
-        final double MAX_SAFE_SLIDER_TICKS = 2900; // needs to be tested
+        final double MAX_SAFE_SLIDER_TICKS = 3050; // needs to be tested
 
         DcMotorEx wormGear;
         DcMotorEx sliderMotor;
@@ -80,4 +78,4 @@ public class Devices {
     }
 
 
-}
+
