@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -21,8 +22,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "PurpleRightSpeciman")
-public class PurpleRightSpeciman extends LinearOpMode {
+@Autonomous(name = "BlueLeftBasketThenPark")
+public class BlueLeftBasketThenPark extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
@@ -31,28 +32,39 @@ public class PurpleRightSpeciman extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(8, -60, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-     //   Lift lift = new Lift(hardwareMap);
-     //   Claw claw = new Claw(hardwareMap);
+        Lift lift = new Lift(hardwareMap);
+        Claw claw = new Claw(hardwareMap);
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
-        TrajectoryActionBuilder toChamber = drive.actionBuilder(initialPose)
-                .lineToY(-33.5)
-                .turn(Math.toRadians(-90))
-                .lineToX(34)
-                .turn(Math.toRadians(-90))
-                .strafeTo(new Vector2d(34,-4))
-                .strafeTo(new Vector2d(48,-4))
-                .strafeTo(new Vector2d(48,-58))
+        TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
+                .lineToY(-52)
+                .turn(Math.toRadians(90))
+                .lineToX(-52)
+                .turn(Math.toRadians(45))
                 .waitSeconds(3);
+
+        Action toSub = toBasket.endTrajectory().fresh()
+                // samples (push)
+                .turn(Math.toRadians(45))
+                //          .splineTo(new Vector2d(-35,-52),180) too wavy
+                .strafeTo(new Vector2d(-35,-52))
+                .strafeTo(new Vector2d(-35,-10))
+                .strafeTo(new Vector2d(-46,-10))
+                .strafeTo(new Vector2d(-46,-60))
+                .strafeTo(new Vector2d(-46,-10))
+                .turn(Math.toRadians(90))
+                .lineToX(-26)
+                .build();
+
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
 
-        Action firstTraj = toChamber.build();
+        Action firstTraj = toBasket.build();
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
@@ -66,10 +78,11 @@ public class PurpleRightSpeciman extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
-                        firstTraj // go to the chamber, push sample, park in observation zone
+                        firstTraj, // go to the basket, push samples, and then submersible
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()
+                        toSub // push samples, go to submersible
                 )
         );
     }
@@ -141,41 +154,52 @@ public class PurpleRightSpeciman extends LinearOpMode {
 
     }
 
-//    public class Claw {
-  //      private Servo claw;
+    public class Claw {
+        private CRServo claw;
+        private CRServo claw2;
 
-  //      public Claw(HardwareMap hardwareMap) {
-    //        claw = hardwareMap.get(Servo.class, "claw");
-      //  }
+        public Claw(HardwareMap hardwareMap) {
+            claw = hardwareMap.get(CRServo.class, "claw");
+            claw2 = hardwareMap.get(CRServo.class, "claw2");
+        }
 
-  //      public class CloseClaw implements Action {
+        public class CloseClaw implements Action {
 
-   //         @Override
-    //        public boolean run(@NonNull TelemetryPacket packet) {
-      //          claw.setPosition(0.5);
-        //        return false;
-          //  }
-    //    }
-//
-//        public Action closeClaw() {
-//            return new CloseClaw();
-//        }
-//
-//        public class OpenClaw implements Action {
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket packet) {
-//                claw.setPosition(0.2);
-//                return false;
-//            }
-//        }
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPower(1);
+                claw2.setPower(-1);
+                sleep(2000);
+                claw.setPower(0);
+                claw2.setPower(0);
+                return false;
+            }
+        }
 
-//        public Action openClaw() {
-  //          return new CloseClaw();
-    //    }
-  //  }
+        public Action closeClaw() {
+            return new CloseClaw();
+        }
+
+        public class OpenClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPower(-1);
+                claw2.setPower(1);
+                sleep(2000);
+                claw.setPower(0);
+                claw2.setPower(0);
+                return false;
+            }
+        }
+
+        public Action openClaw() {
+            return new OpenClaw();
+        }
+    }
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
+        private DcMotorEx liftPivotRight;
 
         public LiftPivot(HardwareMap hardwareMap) {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
