@@ -13,6 +13,7 @@ public class AxonRead extends OpMode {
     public void init() {
         servo_ = hardwareMap.get(Servo.class, "left_diff");
         servo_encoder = hardwareMap.get(AnalogInput.class, "left_servo_encoder");
+        servo_.setPosition(1);
     }
 
     @Override
