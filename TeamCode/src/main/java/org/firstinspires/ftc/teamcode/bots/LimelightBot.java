@@ -156,6 +156,8 @@ public class LimelightBot extends PinchBot {
 
     }
     public void pickup(boolean isSpecimen, Telemetry telemetry){
+
+        openPinch();
         // lower the pivot
         if (isSpecimen){
             pivotToPickupPosSpecimen();

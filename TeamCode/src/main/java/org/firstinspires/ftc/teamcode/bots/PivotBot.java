@@ -22,9 +22,9 @@ public class PivotBot extends OdometryBot {
     private final int pickupSpecimenPivotPos = 115; // tested
     private final int pickupSamplePivotPos = 50; // tested
     private final int pickupUpPivotPos = 400;
-    public final int specimenHighPivotPos = 1196;
+    public final int specimenHighPivotPos = 1150;
     public final int specimenLowPivotPos = 750;
-    public final int highBasketPivotPos = 1274;
+    public final int highBasketPivotPos = 1200;
     public final int lowBasketPivotPos = 1000;
     public boolean pivotOutOfRange = false;
     public int pivotTarget = 300;
@@ -34,12 +34,12 @@ public class PivotBot extends OdometryBot {
     private TimerTask pivotTimerTask;
 
     // Slide motor constants
-    public final int maximumSlidePos = 2400;
+    public final int maximumSlidePos = 2600;
     public final int minimumSlidePos = 170;
     public final int searchSlidePos = 350;
-    public final int specimenHighSlidePos = 1100;
+    public final int specimenHighSlidePos = 716;
     public final int specimenLowSlidePos = 800;
-    public final int highBasketSlidePos = 2400;
+    public final int highBasketSlidePos = 2580;
     public final int lowBasketSlidePos = 800;
     public final double slideCMCoefficient = 31.2;
 

@@ -31,8 +31,10 @@ public class AutomationBot extends LimelightBot{
     }
 
     public void goToDefaultPosition(boolean input){
-        pivotTo(minumimPivotPos);
-        moveSlide(minimumSlidePos);
+        if (input) {
+            moveSlide(minimumSlidePos);
+            schedule(this::relatePivotToSlide, 1500);
+        }
     }
     public void scoreSpecimen(boolean input) {
         if (input) {
@@ -43,7 +45,7 @@ public class AutomationBot extends LimelightBot{
                 schedule(this::moveSlideToHighSpecimenPos, 600);
             }
             else{
-                moveSlideByDelta(-180);
+                moveSlideByDelta(-350);
                 schedule(this::openPinch, 600);
 
             }
