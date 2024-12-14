@@ -24,7 +24,7 @@ public class MoveOuttakeLSAction extends Action {
 
     private static double globalLinearSlideMaintainTicks = 0;
     DcMotor linearSlide1, linearSlide2;
-    private double ERROR_TOLERANCE_TICKS;
+    public static double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
     final double targetTicks;
     private double currentTicks;
