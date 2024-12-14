@@ -26,11 +26,9 @@ import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-
-import org.firstinspires.ftc.teamcode.Commands.PollButtonSwitcherButton;
 import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
-import org.firstinspires.ftc.teamcode.Subsystems.ButtonSwitcher;
+import org.firstinspires.ftc.teamcode.Subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
@@ -47,7 +45,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
-//import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
+import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 
 
 public class RobotContainer {
@@ -77,8 +75,8 @@ public class RobotContainer {
     public static Gyro gyro;
     public static OctQuad odometryPod;
     public static Odometry odometry;
-    //public static Camera frontCamera;
-    public static ClawCamera clawCamera;
+    public static Camera clawCamera;
+    //public static ClawCamera clawCamera;
     //public static VirtualOdometry odometry;
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
@@ -157,7 +155,7 @@ public class RobotContainer {
 
        // driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
 
         // Controls the claw using bumpers
         // left = close
@@ -165,8 +163,8 @@ public class RobotContainer {
         //driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
+        //driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
+        //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
 
 
 //        if (isRedAlliance){
@@ -242,8 +240,7 @@ public class RobotContainer {
         drivesystem = new DriveTrain();
         //odometry = new VirtualOdometry();
         //drivesystem = new VirtualDriveTrain();
-        //frontCamera = new Camera("CamyCamy");
-        clawCamera = new ClawCamera("ClawCamera");
+        clawCamera = new Camera("TagCamera");
         linearSlide = new LinearSlide();
         flappyFlappyWrist = new FlappyFlappyWrist();
         shoulderJoint = new ShoulderJoint();
