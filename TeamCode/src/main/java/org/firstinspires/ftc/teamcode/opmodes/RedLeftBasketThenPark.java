@@ -60,22 +60,6 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 .lineToX(-26)
                 .build();
 
-// to submersible
-//                .lineToY(-1)
-  //              .waitSeconds(2)
-    //            .turn(Math.toRadians(-96.5))
-      //          .lineToX(-23)
-
-
-//                .waitSeconds(2)
-//                .setTangent(Math.toRadians(90))
-//                .lineToY(48)
-//                .setTangent(Math.toRadians(0))
-//                .lineToX(32)
-//                .strafeTo(new Vector2d(44.5, 30))
-//                .turn(Math.toRadians(180))
-//                .lineToX(47.5)
-  //               .waitSeconds(3);
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
@@ -94,9 +78,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
-  //                      lift.liftUp(),
-    //                    claw.openClaw(),
-                        firstTraj, // go to the basket and then submersible
+                        firstTraj, // go to the basket, push samples, and then submersible
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()

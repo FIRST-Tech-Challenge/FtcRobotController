@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,7 +31,7 @@ public class BlueLeftSpeciman extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
+        Pose2d initialPose = new Pose2d(8, -60, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
      //   Lift lift = new Lift(hardwareMap);
@@ -38,31 +39,20 @@ public class BlueLeftSpeciman extends LinearOpMode {
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
-        TrajectoryActionBuilder toSub = drive.actionBuilder(initialPose)
-
-
-
-// to submersible
-//                .lineToY(-1)
-  //              .waitSeconds(2)
-    //            .turn(Math.toRadians(-96.5))
-      //          .lineToX(-23)
-
-
-//                .waitSeconds(2)
-//                .setTangent(Math.toRadians(90))
-//                .lineToY(48)
-//                .setTangent(Math.toRadians(0))
-//                .lineToX(32)
-//                .strafeTo(new Vector2d(44.5, 30))
-//                .turn(Math.toRadians(180))
-//                .lineToX(47.5)
-                 .waitSeconds(3);
+        TrajectoryActionBuilder toChamber = drive.actionBuilder(initialPose)
+                .lineToY(-33.5)
+                .turn(Math.toRadians(-90))
+                .lineToX(34)
+                .turn(Math.toRadians(-90))
+                .strafeTo(new Vector2d(34,-4))
+                .strafeTo(new Vector2d(48,-4))
+                .strafeTo(new Vector2d(48,-58))
+                .waitSeconds(3);
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
 
-        Action firstTraj = toSub.build();
+        Action firstTraj = toChamber.build();
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
@@ -76,9 +66,7 @@ public class BlueLeftSpeciman extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
-  //                      lift.liftUp(),
-    //                    claw.openClaw(),
-                        firstTraj // go to the basket and then submersible
+                        firstTraj // go to the chamber, push sample, park in observation zone
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()
