@@ -42,7 +42,7 @@ public class TestAuton extends LinearOpMode {
         SimpleMatrix desiredPose = new SimpleMatrix(
                 new double [][]{
                         new double[]{0},
-                        new double[]{-24},
+                        new double[]{24},
                         new double[]{0}
                 }
         );

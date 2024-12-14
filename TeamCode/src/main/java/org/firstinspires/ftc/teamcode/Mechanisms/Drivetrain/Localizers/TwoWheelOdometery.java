@@ -33,13 +33,13 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors.GoBildaPinpointDriver;
 public class TwoWheelOdometery {
 
     GoBildaPinpointDriver odo;
-    public static double xOffset = 138.0;
-    public static double yOffset = 0.0;
+    public static double xOffset = 59.238;
+    public static double yOffset = 164.644;
     HardwareMap hardwareMap;
     public TwoWheelOdometery(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        this.odo.setOffsets(-xOffset, yOffset);
+        this.odo.setOffsets(xOffset, yOffset);
         this.odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         this.odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         this.odo.resetPosAndIMU();
@@ -49,7 +49,7 @@ public class TwoWheelOdometery {
             return new SimpleMatrix(
                     new double[][]{
                             new double[]{odo.getPosition().getX(DistanceUnit.INCH)},
-                            new double[]{odo.getPosition().getY(DistanceUnit.INCH)},
+                            new double[]{-odo.getPosition().getY(DistanceUnit.INCH)},
                             new double[]{odo.getHeading()},
                             new double[]{odo.getVelocity().getX(DistanceUnit.INCH)},
                             new double[]{odo.getVelocity().getY(DistanceUnit.INCH)},
