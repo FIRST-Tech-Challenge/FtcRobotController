@@ -57,7 +57,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 .strafeTo(new Vector2d(46,60))
                 .strafeTo(new Vector2d(46,10))
                 .turn(Math.toRadians(90))
-                .lineToX(-26)
+                .lineToX(26)
                 .build();
 
 

@@ -31,7 +31,7 @@ public class BlueRightSpeciman extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(8, -60, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(-8, 60, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
      //   Lift lift = new Lift(hardwareMap);
@@ -40,13 +40,13 @@ public class BlueRightSpeciman extends LinearOpMode {
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toChamber = drive.actionBuilder(initialPose)
-                .lineToY(-33.5)
+                .lineToY(33.5)
                 .turn(Math.toRadians(-90))
-                .lineToX(34)
+                .lineToX(-34)
                 .turn(Math.toRadians(-90))
-                .strafeTo(new Vector2d(34,-4))
-                .strafeTo(new Vector2d(48,-4))
-                .strafeTo(new Vector2d(48,-58))
+                .strafeTo(new Vector2d(-34,4))
+                .strafeTo(new Vector2d(-48,4))
+                .strafeTo(new Vector2d(-48,58))
                 .waitSeconds(3);
 
         // ON INIT:

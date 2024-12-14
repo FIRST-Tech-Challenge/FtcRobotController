@@ -13,7 +13,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,8 +21,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "BlueLeftPark")
-public class BlueLeftPark extends LinearOpMode {
+@Autonomous(name = "BlueRightSpeciman")
+public class BlueRightTripleSpeciman extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
@@ -32,24 +31,28 @@ public class BlueLeftPark extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(38, 62, Math.toRadians(-89));
+        Pose2d initialPose = new Pose2d(-8, 60, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        Lift lift = new Lift(hardwareMap);
-        Claw claw = new Claw(hardwareMap);
+     //   Lift lift = new Lift(hardwareMap);
+     //   Claw claw = new Claw(hardwareMap);
         LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         // actionBuilder builds from the drive steps passed to it
-        TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                // blue left park
-                .lineToY(10)
+        TrajectoryActionBuilder toChamber = drive.actionBuilder(initialPose)
+                .lineToY(33.5)
                 .turn(Math.toRadians(-90))
-                .lineToX(26);
+                .lineToX(-34)
+                .turn(Math.toRadians(-90))
+                .strafeTo(new Vector2d(-34,4))
+                .strafeTo(new Vector2d(-48,4))
+                .strafeTo(new Vector2d(-48,58))
+                .waitSeconds(3);
 
         // ON INIT:
   //      Actions.runBlocking(claw.closeClaw());
 
-        Action firstTraj = toBasket.build();
+        Action firstTraj = toChamber.build();
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Robot position: ", drive.updatePoseEstimate());
@@ -63,7 +66,7 @@ public class BlueLeftPark extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
-                        firstTraj // go to submersible
+                        firstTraj // go to the chamber, push sample, park in observation zone
                         //lift.liftUp() // to lvl1 ascent
                       //  claw.openClaw(), // drop the sample
                       //  lift.liftDown()
@@ -138,52 +141,41 @@ public class BlueLeftPark extends LinearOpMode {
 
     }
 
-    public class Claw {
-        private CRServo claw;
-        private CRServo claw2;
+//    public class Claw {
+  //      private Servo claw;
 
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(CRServo.class, "claw");
-            claw2 = hardwareMap.get(CRServo.class, "claw2");
-        }
+  //      public Claw(HardwareMap hardwareMap) {
+    //        claw = hardwareMap.get(Servo.class, "claw");
+      //  }
 
-        public class CloseClaw implements Action {
+  //      public class CloseClaw implements Action {
 
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPower(1);
-                claw2.setPower(-1);
-                sleep(2000);
-                claw.setPower(0);
-                claw2.setPower(0);
-                return false;
-            }
-        }
+   //         @Override
+    //        public boolean run(@NonNull TelemetryPacket packet) {
+      //          claw.setPosition(0.5);
+        //        return false;
+          //  }
+    //    }
+//
+//        public Action closeClaw() {
+//            return new CloseClaw();
+//        }
+//
+//        public class OpenClaw implements Action {
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket packet) {
+//                claw.setPosition(0.2);
+//                return false;
+//            }
+//        }
 
-        public Action closeClaw() {
-            return new CloseClaw();
-        }
-
-        public class OpenClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPower(-1);
-                claw2.setPower(1);
-                sleep(2000);
-                claw.setPower(0);
-                claw2.setPower(0);
-                return false;
-            }
-        }
-
-        public Action openClaw() {
-            return new OpenClaw();
-        }
-    }
+//        public Action openClaw() {
+  //          return new CloseClaw();
+    //    }
+  //  }
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
-        private DcMotorEx liftPivotRight;
 
         public LiftPivot(HardwareMap hardwareMap) {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
