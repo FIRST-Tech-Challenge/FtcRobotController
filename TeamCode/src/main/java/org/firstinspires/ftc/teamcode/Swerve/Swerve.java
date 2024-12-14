@@ -46,6 +46,8 @@ public class Swerve {
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter yawLimiter;
 
+  private double lastHeading = 0;
+
   public Swerve(OpMode opMode) {
     odometry = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odometry.setOffsets(110, 30);
@@ -146,6 +148,11 @@ public class Swerve {
                             * rotationalScalar
                             / drivebaseRadius)),
             dt);
+
+    if(yawInput == 0 && odometry.getHeading().getRadians()!=lastHeading)
+        telemetry.addData("Unwanted rotation: ",true);
+    else
+        telemetry.addData("Unwanted rotation: ",false);
   }
 
   public Pose2d getPose() {
