@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.bots.AutomationBot;
+import org.firstinspires.ftc.teamcode.bots.HangBot;
 import org.firstinspires.ftc.teamcode.bots.LimelightBot;
 
 import org.firstinspires.ftc.teamcode.bots.OdometryBot;
@@ -30,7 +31,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Autonomous(name = "AutonPedro", group = "Autos")
 public class AutonPedroSpecimens extends LinearOpMode{
     protected boolean isBlue = false;
-    protected AutomationBot robot = new AutomationBot(this);
+    protected HangBot robot = new HangBot(this);
+    private int lastMotorPosition;
+
+    private double startingTime;
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
@@ -74,13 +78,14 @@ public class AutonPedroSpecimens extends LinearOpMode{
 
     private final Pose push3ControlPose = new Pose(100, 18, Math.toRadians(0));
 
-    private final Pose push3Pose = new Pose(20, 12, Math.toRadians(0));
+    private final Pose push3Pose = new Pose(20, 14, Math.toRadians(0));
 
     /** Pickup Samples form Human player area */
 
     private final Pose pickupPoseControl = new Pose(47.5,22.1, Math.toRadians(270));
 
-    private final Pose pickupPose = new Pose(12.1,40, Math.toRadians(270));
+    private final Pose pickupReadyPose = new Pose(15.1,48, Math.toRadians(270));
+    private final Pose pickupPose = new Pose(15.1,40, Math.toRadians(270));
 
     private final Pose scoreControlPose = new Pose(15,63, Math.toRadians(0));
     private final Pose obsScorePose = new Pose(40, 80, Math.toRadians(0));
@@ -95,7 +100,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload, park;
-    private PathChain rungToPush, pushSpec1, pushSpec2, pushSpec3, specReadyToScore, readyToScore, scoreFromObservation;
+    private PathChain rungToPush, pushSpec1, pushSpec2, pushSpec3, specReadyToScore, readyToScore, scoreFromObservation, moveIn;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -147,10 +152,12 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 .setLinearHeadingInterpolation(push2Pose.getHeading(), push3Pose.getHeading())
                 .build();
 
+
+
         /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         specReadyToScore = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(push3Pose), new Point(pickupPoseControl), new Point(pickupPose)))
-                .setLinearHeadingInterpolation(push3Pose.getHeading(), pickupPose.getHeading())
+                .addPath(new BezierCurve(new Point(push2Pose), new Point(pickupPoseControl), new Point(pickupPose)))
+                .setLinearHeadingInterpolation(push2Pose.getHeading(), pickupPose.getHeading())
                 .build();
 
         /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -160,8 +167,13 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 .build();
 
         readyToScore = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePose),new Point(scoreControlPose), new Point(pickupPose)))
+                .addPath(new BezierCurve(new Point(scorePose),new Point(scoreControlPose), new Point(pickupReadyPose)))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickupPose.getHeading())
+                .build();
+
+        moveIn = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickupReadyPose), new Point(pickupPose)))
+                .setLinearHeadingInterpolation(pickupReadyPose.getHeading(), pickupPose.getHeading())
                 .build();
 
         /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
@@ -179,26 +191,37 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 //robot.scoreSpecimen(true);
                 //robot.pinchControl(false,true);
                 follower.followPath(scorePreload);
+                robot.readySpecimenPos(true, true);
                 setPathState(1);
                 break;
             case 1:
-
                 /* You could check for
                 - Follower State: "if(!follower.isBusy() {}" (Though, I don't recommend this because it might not return due to holdEnd
                 - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
                 - Robot Position: "if(follower.getPose().getX() > 36) {}"
                 */
-
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    robot.slideTarget = lastMotorPosition - 500;
+                    robot.readySpecimenPos(true, true);
                     /*robot.scoreSpecimen(true);
                     /* Score Preload */
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(rungToPush,true);
-                    setPathState(2);
+                    if(pathTimer.getElapsedTimeSeconds() > startingTime + 2) {
+                        follower.followPath(rungToPush, true);
+                        setPathState(2);
+                    }
                 }
+                else {
+                    startingTime =  pathTimer.getElapsedTimeSeconds();
+                    lastMotorPosition = robot.slideTarget;
+                }
+
                 break;
             case 2:
+                robot.openPinch();
+                robot.slideTarget = 0;
+                robot.pivotTarget = 60;
                 /*robot.pivotTo(0,0.5);
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(follower.getPose().getX() > (push1Pose.getX() - 1) && follower.getPose().getY() > (push1Pose.getY() - 1)) {
@@ -212,7 +235,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
                 if(!follower.isBusy()) {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                     follower.followPath(pushSpec2,false);
-                    setPathState(4);
+                    setPathState(5);
                 }
                 break;
             case 4:
@@ -225,6 +248,7 @@ public class AutonPedroSpecimens extends LinearOpMode{
             case 5:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
+                    robot.pivotTarget = 0;
                     /* Score Sample */
                     /*robot.pinchControl(false,true);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
@@ -239,79 +263,59 @@ public class AutonPedroSpecimens extends LinearOpMode{
                     /*robot.pinchControl(false,true);
                     /*robot.pickup(isBlue, false, true, telemetry);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(scoreFromObservation, true);
+                    follower.setMaxPower(0.5);
+                    follower.followPath(moveIn, true);
+
                     setPathState(7);
                 }
                 break;
             case 7:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    /* Score Sample */
-                    /*robot.scoreSpecimen(true);
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(readyToScore,true);
-                    setPathState(8);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
+                if(follower.getPose().getX() > (pickupPose.getX() - 0.2) && follower.getPose().getY() < (pickupPose.getY() + 0.2)) {
+                    robot.closePinch();
+                    /* Grab Sample */
+                    /*robot.pinchControl(false,true);
+                    /*robot.pickup(isBlue, false, true, telemetry);
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    if(pathTimer.getElapsedTimeSeconds() > startingTime + 2) {
+                        follower.followPath(scoreFromObservation, true);
+                        follower.setMaxPower(1);
+                        robot.pivotTarget = 300;
+                        setPathState(-1);
+                    }
+                }
+                else {
+                    startingTime =  pathTimer.getElapsedTimeSeconds();
+                    lastMotorPosition = robot.slideTarget;
                 }
                 break;
             case 8:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
-                    /*robot.pickup(isBlue, false, true, telemetry);
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(scoreFromObservation,true);
-                    setPathState(9);
-                }
-                break;
-            case 9:
+                robot.readySpecimenPos(true,true);
+                startingTime = pathTimer.getElapsedTime();
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    /* Score Sample */
-                    /*robot.scoreSpecimen(true);
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(readyToScore,true);
-                    setPathState(10);
-                }
-                break;
-            case 10:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
-                    //robot.pickup(isBlue, false, true, telemetry);
 
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(scoreFromObservation,true);
-                    setPathState(11);
-                }
-                break;
-            case 11:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    robot.slideTarget = lastMotorPosition + 500;
+                    robot.slideMotor.setPower(0.2);
+
                     /* Score Sample */
                     /*robot.scoreSpecimen(true);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(readyToScore,true);
-                    setPathState(12);
+                    if(pathTimer.getElapsedTimeSeconds() > startingTime + 1) {
+                        follower.followPath(readyToScore, true);
+                        setPathState(9);
+                        robot.openPinch();
+                        robot.slideMotor.setPower(0.6);
+                        robot.slideTarget = 0;
+                        robot.pivotTarget = 0;
+                    }
+                } else {
+                    lastMotorPosition = robot.slideTarget;
                 }
                 break;
-            case 12:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
-                    /*robot.pickup(isBlue, false, true, telemetry);
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(scoreFromObservation,true);
-                    setPathState(13);
-                }
-                break;
-            case 13:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    /* Score Sample */
-                    /*robot.scoreSpecimen(true);
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
-                    follower.followPath(readyToScore,true);
-                    setPathState(14);
-                }
-                break;
-            case 14:
+
+
+            case 9:
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1)) {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
@@ -331,17 +335,18 @@ public class AutonPedroSpecimens extends LinearOpMode{
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
     public void runOpMode() throws InterruptedException {
-
+        robot.isAuto = true;
+        robot.init(hardwareMap);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
-        waitForStart();
         opmodeTimer.resetTimer();
         setPathState(0);
+        waitForStart();
+
         while (isStarted() == true) {
 
             // These loop the movements of the robot
