@@ -151,6 +151,7 @@ public class Swerve {
         telemetry.addData("Unwanted rotation: ",true);
     else
         telemetry.addData("Unwanted rotation: ",false);
+    lastHeading = odometry.getHeading().getRadians();
   }
 
   public Pose2d getPose() {
