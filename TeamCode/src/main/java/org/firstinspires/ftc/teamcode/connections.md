@@ -35,12 +35,12 @@
 
 ### Motors
 
-| Motor Port | Name           | Description                   | Encoder       |
-|------------|----------------|-------------------------------|---------------|
-| 0          | HangArmRight   | Motor for right hang arm      | -             |
-| 1          | DeliveryPivot  | Motor for delivery pivot      | Pivot encoder |
-| 2          | DeliverySlider | Motor for the delivery slider | Slide encoder |
-| 3          | HangArmLeft    | Motor for left hang arm       | -             |
+| Motor Port | Name          | Description                   | Encoder       |
+|------------|---------------|-------------------------------|---------------|
+| 0          | Slider1       | Motor for right hang arm      | -             |
+| 1          | DeliveryPivot | Motor for delivery pivot      | Pivot encoder |
+| 2          | Slider2       | Motor for the delivery slider | Slide encoder |
+| 3          | HangArmLeft   | Motor for left hang arm       | -             |
 
 ### Servos
 

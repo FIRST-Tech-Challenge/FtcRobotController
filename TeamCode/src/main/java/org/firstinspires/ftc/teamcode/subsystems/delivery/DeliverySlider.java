@@ -16,6 +16,8 @@ import java.util.function.Supplier;
 public class DeliverySlider extends SonicSubsystemBase {
 
     private Motor motor;
+    private Motor motor2;
+
 
     private Telemetry telemetry;
 
@@ -42,9 +44,11 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
-        this.motor  = new Motor(hardwareMap, "DeliverySlider");
+        this.motor  = new Motor(hardwareMap, "Slider1");
+        this.motor2  = new Motor(hardwareMap, "Slider2");
 
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
@@ -68,11 +72,14 @@ public class DeliverySlider extends SonicSubsystemBase {
     public void Expand() {
         SetTelop();
         motor.set(1);
+        motor2.set(-1);
+
     }
 
     public void Collapse() {
         SetTelop();
         motor.set(-1);
+        motor2.set(1);
     }
 
     public void ExpandSlowly() {
@@ -88,6 +95,7 @@ public class DeliverySlider extends SonicSubsystemBase {
     public void Hold() {
         SetTelop();
         motor.set(0);
+        motor2.set(0);
     }
 
     public void MoveToValidPosition() {
@@ -111,6 +119,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     @Override
     public void periodic() {
+        super.periodic();
+
         double position = motor.encoder.getPosition();
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
@@ -138,12 +148,12 @@ public class DeliverySlider extends SonicSubsystemBase {
                 motor.set(power);
             }
         } else {
-//            Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
+            Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
 
-//            telemetry.addData("slider", position);
-//            telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
-//            telemetry.addData("motor", motor.get());
-//            telemetry.update();
+            telemetry.addData("slider", position);
+            telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
+            telemetry.addData("motor", motor.get());
+            telemetry.update();
 
 
             if (pivotLowEnoughSupplier != null

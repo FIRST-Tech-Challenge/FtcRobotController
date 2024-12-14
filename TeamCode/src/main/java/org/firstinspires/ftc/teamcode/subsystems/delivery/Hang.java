@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 
 public class Hang extends SonicSubsystemBase {
 
-    private Motor left, right, pivot;
+    private Motor left;
 
     private Telemetry telemetry;
 
@@ -21,13 +21,9 @@ public class Hang extends SonicSubsystemBase {
     public Hang(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
         this.left  = new Motor(hardwareMap, "left");
-        this.right  = new Motor(hardwareMap, "right");
-        this.pivot  = new Motor(hardwareMap, "pivot");
 
 
         left.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        right.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        pivot.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         this.gamepad = gamepad;
         this.telemetry = telemetry;
@@ -36,28 +32,13 @@ public class Hang extends SonicSubsystemBase {
 
     public void Expand() {
         left.set(1);
-        right.set(-1);
     }
 
     public void Collapse() {
         left.set(-1);
-        right.set(1);
     }
 
     public void Hold() {
         left.set(0);
-        right.set(0);
-    }
-
-    public void PivotExpand() {
-        pivot.set(1);
-    }
-
-    public void PivotCollapse() {
-        pivot.set(-1);
-    }
-
-    public void PivotHold() {
-        pivot.set(0);
     }
 }

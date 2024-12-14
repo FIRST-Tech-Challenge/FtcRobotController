@@ -14,7 +14,6 @@ public class HangingArm extends SonicSubsystemBase {
     private static final String LOG_TAG = HangingArm.class.getSimpleName();
 
     private Motor motorLeft;
-    private Motor motorRight;
 
     private Telemetry telemetry;
 
@@ -29,7 +28,6 @@ public class HangingArm extends SonicSubsystemBase {
 
     public HangingArm(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx gamepad, DriverFeedback feedback) {
         this.motorLeft = new Motor(hardwareMap, "HangArmLeft");
-        this.motorRight = new Motor(hardwareMap, "HangArmRight");
         this.telemetry = telemetry;
         this.gamepad = gamepad;
         this.feedback = feedback;
@@ -40,16 +38,13 @@ public class HangingArm extends SonicSubsystemBase {
 
     public void extend() {
         motorLeft.set(1);
-        motorRight.set(-1);
     }
 
     public void collapse() {
         motorLeft.set(-1);
-        motorRight.set(1);
     }
 
     public void hold() {
         this.motorLeft.set(0);
-        this.motorRight.set(0);
     }
 }
