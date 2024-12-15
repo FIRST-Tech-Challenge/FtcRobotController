@@ -273,6 +273,7 @@ public class Official extends LinearOpMode {
                     slidePosition[0] = 0;
                     moveSlides(slidePosition[0], Values.velocity);
                     elbowIsDown = true;
+                    slidesIn();
                 } else if (elbowIsDown == true) {
                     intakeElbow.setPosition(Values.intakeElbowDown);
                     sleep(500);
@@ -293,23 +294,31 @@ public class Official extends LinearOpMode {
                     intakeElbow.setPosition(Values.intakeElbowWait);
                     outtakeElbow.setPosition(Values.outtakeElbowUp);
                     elbowIsDown = false;
+                    slidesIn();
                 }
             }
                 if (currentGamepad2.cross && !previousGamepad2.cross) {
-                    if (elbowIsDown) {
-                        intakeElbow.setPosition(Values.outtakeElbowDown);
-                        sleep(500);
-                        intakeClaw.setPosition(Values.intakeclawClose);
-                        sleep(200);
-                        wrist.setPosition(Values.wristUp);
-                        intakeElbow.setPosition(Values.outtakeElbowUp);
-                        slidesIn();
-                    } else if (!elbowIsDown) {
+                    if (!elbowIsDown) {
                         intakeElbow.setPosition(Values.intakeElbowWait);
                         wrist.setPosition(Values.wristDown);
-                        sleep(800);
                         intakeClaw.setPosition(Values.intakeClawOpen);
+                    } else if (elbowIsDown) {
+                        intakeClaw.setPosition(Values.intakeClawOpen);
+                        intakeElbow.setPosition(Values.intakeElbowDown);
+                        sleep(500);
+                        intakeClaw.setPosition(Values.intakeclawClose);
+                        sleep(400);
+                        wrist.setPosition(Values.wristUp);
+                        clawPivot.setPosition(Values.MID_SERVO);
+                        intakeElbow.setPosition(Values.intakeElbowUp);
                     }
+
+                    sleep(250);
+                    intakeClaw.setPosition(Values.intakeclawClose);
+                    sleep(200);
+                    wrist.setPosition(Values.wristUp);
+                    intakeElbow.setPosition(Values.intakeElbowUp);
+                    slidesIn();
                 }
 
                 //outtake
