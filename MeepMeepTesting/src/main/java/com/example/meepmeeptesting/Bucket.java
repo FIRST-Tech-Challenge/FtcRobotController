@@ -14,20 +14,21 @@ public class Bucket {
         RoadRunnerBotEntity myBot = new ActualBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(270)))
-                        .forward(3)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(37, 60, Math.toRadians(90)))
+                        .setTangent(Math.toRadians(270))
+                        .lineTo(new Vector2d(37,53))
                         .splineToConstantHeading(new Vector2d(47,40),Math.toRadians(280))           
                         .waitSeconds(3)
-                        //pickup
+                         //pickup
                         .setTangent(Math.toRadians(90))
                         .splineToLinearHeading(new Pose2d(53,58,Math.toRadians(45)),Math.toRadians(70))
                         .waitSeconds(1)
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .back(3)
+                        .lineTo(new Vector2d(49,53))
                         //slides down
-                        .splineToLinearHeading(new Pose2d(58,40,Math.toRadians(270)),Math.toRadians(270))
+                        .splineToLinearHeading(new Pose2d(58,40,Math.toRadians(90)),Math.toRadians(270))
                         .waitSeconds(3)
                         //pickup
                         .setTangent(Math.toRadians(90))
@@ -36,7 +37,7 @@ public class Bucket {
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .back(3)
+                        .lineTo(new Vector2d(49,53))
 
                         .build());
 
