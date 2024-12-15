@@ -25,7 +25,7 @@ public class MecanumTeleOp extends LinearOpMode {
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
     double ClawFlipPos = 1.0;
-    double hslidepos = 0.1;
+    double hslidepos = 0.05;
     double clawPos = 0.02;
 
     @Override
@@ -108,6 +108,7 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.frontRight.setPower(frontRightPower * currentSpeed);
             hardware.backRight.setPower(backRightPower * currentSpeed);
             wrist();
+            trasfer(hardware);
             servoMoves();
             // twist();
             stepper(hardware);
@@ -590,6 +591,29 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
 
 
+    }
+
+    public void trasfer(Hardware hardware){
+        if (gamepad2.x) {
+            hardware.clawFront.setPosition(0.07);
+            ClawFrontPos = 0.07;
+            hardware.claw.setPosition(0.55);
+            sleep(500);
+            hardware.wrist.setPosition(0);
+            sleep(500);
+            hardware.arm.setTargetPosition(-28);
+            armTargetPosDeg = -8;
+            sleep(1000);
+            hardware.claw.setPosition(0.02);
+            sleep(500);
+            hardware.clawFront.setPosition(0.33);
+            sleep(500);
+            hardware.arm.setTargetPosition(0);
+            armTargetPosDeg=0;
+            sleep(500);
+            hardware.wrist.setPosition(0.28);
+            ClawFrontPos=0.28;
+        }
     }
 }
 
