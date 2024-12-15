@@ -24,7 +24,7 @@ open class ActualBotBuilder(private val meepMeep: MeepMeep) {
     )
 
     /** The width of the bot. */
-    private var width = 17.0
+    private var width = 15.0
 
     /** The height of the bot. */
     private var height = 18.0

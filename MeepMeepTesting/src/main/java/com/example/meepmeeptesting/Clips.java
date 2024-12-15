@@ -27,23 +27,24 @@ public class Clips {
                         .splineToConstantHeading(new Vector2d(-27,38),Math.toRadians(180))
                         .splineToLinearHeading(new Pose2d(-46,13,Math.toRadians(90)),Math.toRadians(180))
                         .forward(45)
-                        .back(45)
-                        .strafeLeft(10)
-                        .forward(45)
-                        .back(45)
-                        .strafeLeft(7)
-                        .forward(45)
-                        .back(5)
-                        .strafeRight(15)
+//                        .back(45)
+//                        .strafeLeft(10)
+//                        .forward(45)
+//                        .back(45)
+//                        .strafeLeft(7)
+//                        .forward(45)
+//                        .back(5)
+//                        .strafeRight(15)
                         //slides up
                         //open claw
+                        .back(10)
                         .waitSeconds(2)
-                        .forward(7)
+                        .forward(15)
                         .waitSeconds(5)
                         //close claw
                         .setTangent(Math.toRadians(270))
                         //Slides Up
-                        .splineToConstantHeading(new Vector2d(-7,32),Math.toRadians(270))
+                        .splineToLinearHeading(new Pose2d(-7,32,Math.toRadians(270)),Math.toRadians(270))
                         //slides down
                         //Open claw
 
