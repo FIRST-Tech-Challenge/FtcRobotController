@@ -18,6 +18,6 @@ class SharedResource @JvmOverloads constructor(val id: String, val panic: () -> 
     }
 
     override fun toString(): String {
-        return "Loq:$id"
+        return "SharedResource:$id"
     }
 }

@@ -11,21 +11,35 @@ internal class TaskGroupScheduler : MultitaskScheduler() {
     }
 }
 
-class TaskGroup(private val outerScheduler: Scheduler) : TaskTemplate(outerScheduler) {
+class TaskGroup(outerScheduler: Scheduler) : TaskTemplate(outerScheduler) {
     private val innerScheduler = TaskGroupScheduler()
 
+    /**
+     * Access the inner scheduler, cast to a generic Scheduler. Not recommended for general use.
+     */
+    fun accessInner() = innerScheduler as Scheduler
+
     fun with(provider: (Scheduler) -> Unit): TaskGroup {
-        provider(outerScheduler)
+        provider(innerScheduler)
         return this
     }
 
     fun with(provider: Consumer<Scheduler>): TaskGroup {
-        provider.accept(outerScheduler)
+        provider.accept(innerScheduler)
         return this
     }
 
+    private val extraDeps: MutableSet<SharedResource> = mutableSetOf()
+
+    fun extraDepends(vararg with: SharedResource): TaskGroup {
+        extraDeps.addAll(with)
+        return this
+    }
+
+    fun extraClear() = extraDeps.clear()
+
     override fun requirements(): Set<SharedResource> {
-        return innerScheduler.subtaskRequirements
+        return innerScheduler.subtaskRequirements + extraDeps
     }
 
     override fun invokeOnTick() {
@@ -41,10 +55,10 @@ class TaskGroup(private val outerScheduler: Scheduler) : TaskTemplate(outerSched
         return !innerScheduler.hasJobs()
     }
 
-    private val genName: String; get() = "with ${innerScheduler.taskCount()} inner tasks"
+    private val genName: String; get() = "(a group containing ${innerScheduler.taskCount()} subtasks)"
     private var customName = "unnamed"
     override var name: String
-        get() = "$customName, $genName"
+        get() = "$customName $genName"
         set(value) {
             customName = value
         }

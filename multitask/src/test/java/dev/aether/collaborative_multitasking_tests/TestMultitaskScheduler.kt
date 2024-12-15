@@ -1,9 +1,8 @@
 package dev.aether.collaborative_multitasking_tests
 
+import dev.aether.collaborative_multitasking.ITask.State
 import dev.aether.collaborative_multitasking.MultitaskScheduler
 import dev.aether.collaborative_multitasking.SharedResource
-import dev.aether.collaborative_multitasking.Task
-import dev.aether.collaborative_multitasking.ITask.State
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
