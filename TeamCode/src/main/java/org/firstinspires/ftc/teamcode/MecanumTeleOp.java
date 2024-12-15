@@ -24,8 +24,8 @@ public class MecanumTeleOp extends LinearOpMode {
     double Twistpos = 0.17;
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
-    double ClawFlipPos = 0.5;
-    double horizontalSlide = 0.1;
+    double ClawFlipPos = 1.0;
+    double hslidepos = 0.1;
 
     @Override
     public void runOpMode() {
@@ -123,6 +123,12 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             if(gamepad2.b){
                 PickUpSpecimen(hardware);
+            }
+            if(gamepad1.right_trigger>0.5){
+               /* Horizontalpick(hardware);*/Flipin(hardware);
+            }
+            if(gamepad1.left_trigger>0.5){
+                Flipout(hardware);
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
@@ -442,10 +448,10 @@ public class MecanumTeleOp extends LinearOpMode {
     }
     private void stepper(Hardware hardware){
         if(gamepad1.dpad_left) {
-            ClawFrontPos += -0.01;
+            ClawFrontPos = 0.33;
         }
         if(gamepad1.dpad_right){
-            ClawFrontPos += 0.01;
+            ClawFrontPos = 0.07;
         }
         if(gamepad1.dpad_up) {
             ClawFlipPos += -0.01;
@@ -463,14 +469,57 @@ public class MecanumTeleOp extends LinearOpMode {
     }
     public void HSlide(Hardware hardware) {
 
-        if (gamepad1.y && horizontalSlide < 1) {
-            horizontalSlide += 0.01;
+        if (gamepad1.y && hslidepos < 1) {
+            hslidepos += 0.01;
         }
-        if (gamepad1.a && horizontalSlide > 0) {
-            horizontalSlide += -0.01;
+        if (gamepad1.a && hslidepos > 0) {
+            hslidepos += -0.01;
         }
-        hardware.horizontalSlide.setPosition(horizontalSlide);
+        hardware.horizontalSlide.setPosition(hslidepos);
+        telemetry.addData("Horizontal Position",hardware.horizontalSlide.getPosition());
     }
+        public void Horizontalpick(Hardware hardware){
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        double frontopen = 0.33;
+        double frontclose = 0.07;
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.horizontalSlide.setPosition(hslideout);
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        sleep(500);
+        hardware.clawFront.setPosition(frontopen);
+        sleep(500);
+        hardware.clawFront.setPosition(frontclose);
+        ClawFrontPos = frontclose;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipup);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        sleep(500);
+        }
+    public void Flipout(Hardware hardware){
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        hardware.horizontalSlide.setPosition(hslideout);
+        hslidepos = hslideout;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        ClawFlipPos = flipdown;
+        sleep(500);
+    }
+    public void Flipin(Hardware hardware){
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.clawFlip.setPosition(flipup);
+        ClawFlipPos = flipup;
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        hslidepos = hslidein;
+        sleep(500);
 
+
+    }
 }
 
