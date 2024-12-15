@@ -20,6 +20,12 @@ import dev.aether.collaborative_multitasking.SharedResource;
 
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
+    public static final double spinTickPerRev = 751.8;
+
+    public static int deg2arm(double degrees) {
+        return (int) (degrees / 360.0 * spinTickPerRev);
+    }
+
     public static class Locks {
         /// The four drive motors: frontLeft, frontRight, backLeft, and backRight.
         public static final SharedResource DriveMotors = new SharedResource("DriveMotors");
