@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.PID.PIDController;
 import org.firstinspires.ftc.teamcode.utils.telescopicArmCOM;
+
+import java.util.function.DoubleSupplier;
+
 public class extensionSubsystem implements Subsystem {
     HardwareMap map;
     public MotorEx arm1;
@@ -19,7 +22,8 @@ public class extensionSubsystem implements Subsystem {
     public Motor.Encoder extensionEncoder1;
     public Motor.Encoder extensionEncoder2;
     PIDController m_extensionPID;
-    public double armLength;
+    public double currentArmLength;
+    public static DoubleSupplier armLengthSupplier;
     public double armCOM;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
     public extensionSubsystem(HardwareMap map, MotorEx arm1, MotorEx arm2){
@@ -29,6 +33,7 @@ public class extensionSubsystem implements Subsystem {
         armLength = encoderToLength*extensionEncoder1.getPosition();
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,armLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);
+        armLengthSupplier = getArmLength();
 
     }
 
@@ -36,6 +41,11 @@ public class extensionSubsystem implements Subsystem {
     public void periodic() {
         updateTelemetry();
         updateValues();
+    }
+
+    private double getArmLength()
+    {
+        return currentArmLength;
     }
 
     private void updateValues() {
