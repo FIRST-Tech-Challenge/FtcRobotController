@@ -180,18 +180,18 @@ public class RightAuto extends LinearOpMode {
 
     static class MoveRelTask extends MoveToTask {
 
-        @NonNull
+        @NotNull
         private final Pose offset;
 
         public MoveRelTask(
-                @NonNull Scheduler scheduler,
-                @NonNull Hardware hardware,
-                @NonNull Pose offset,
-                @NonNull EncoderTracking tracker,
-                @NonNull LoopStopwatch loopTimer,
-                @NonNull Speed2Power speed2Power,
-                @NonNull Ramps ramps,
-                @NonNull Telemetry telemetry
+                @NotNull Scheduler scheduler,
+                @NotNull Hardware hardware,
+                @NotNull Pose offset,
+                @NotNull EncoderTracking tracker,
+                @NotNull LoopStopwatch loopTimer,
+                @NotNull Speed2Power speed2Power,
+                @NotNull Ramps ramps,
+                @NotNull Telemetry telemetry
         ) {
             super(scheduler, hardware, new Pose(0, 0, 0), tracker, loopTimer, speed2Power, ramps, telemetry);
             this.offset = offset;
