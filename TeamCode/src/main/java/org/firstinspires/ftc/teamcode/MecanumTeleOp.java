@@ -24,8 +24,8 @@ public class MecanumTeleOp extends LinearOpMode {
     double Twistpos = 0.17;
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
-    double ClawFlipPos = 0.5;
-    double horizontalSlide = 0.1;
+    double ClawFlipPos = 1.0;
+    double hslidepos = 0.1;
     double clawPos = 0.02;
 
     @Override
@@ -42,7 +42,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
         hardware.wrist.setPosition(0.28);
-      //  hardware.twist.setPosition(Twistpos);
+        //  hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -109,29 +109,36 @@ public class MecanumTeleOp extends LinearOpMode {
             hardware.backRight.setPower(backRightPower * currentSpeed);
             wrist();
             servoMoves();
-           // twist();
+            // twist();
             stepper(hardware);
             lift(hardware);
             HSlide(hardware);
-            if(gamepad1.x){
+            if (gamepad1.x) {
                 transfer(hardware);
             }
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
             }
-            if(gamepad2.x){
+            if (gamepad2.x) {
                 PickUpYellow(hardware);
             }
-            if(gamepad2.b){
+            if (gamepad2.b) {
                 specimenWallPick(hardware);
             }
-            if(gamepad2.dpad_left){
+            if (gamepad2.dpad_left) {
                 score(hardware);
+            }
+            if (gamepad1.right_trigger > 0.5) {
+                /* Horizontalpick(hardware);*/
+                Flipin(hardware);
+            }
+            if (gamepad1.left_trigger > 0.5) {
+                Flipout(hardware);
             }
             arm(hardware);
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
-            telemetry.addData("Wrist Position",hardware.wrist.getPosition());
-            telemetry.addData("Claw Position",hardware.claw.getPosition());
+            telemetry.addData("Wrist Position", hardware.wrist.getPosition());
+            telemetry.addData("Claw Position", hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
             telemetry.addData("fl power", frontLeftPower);
             telemetry.addData("fr power", frontRightPower);
@@ -222,7 +229,6 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
 
-
     double armTargetPosDeg = 0.0;
     int liftMinClearanceTicks = 350;
 
@@ -294,41 +300,45 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
     }
+
     public void twist() {
-        if(gamepad2.left_stick_x>=0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
-            Twistpos+=0.01;
+        if (gamepad2.left_stick_x >= 0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
+            Twistpos += 0.01;
             hardware.twist.setPosition(Twistpos);
-        } else if (gamepad2.left_stick_x<=-0.5 && gamepad2.left_stick_y>=-0.25 && gamepad2.left_stick_y<=0.25){
-            Twistpos-=0.01;
+        } else if (gamepad2.left_stick_x <= -0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
+            Twistpos -= 0.01;
             hardware.twist.setPosition(Twistpos);
         }
-      //  telemetry.addData("Twist Position",Twistpos);
+        //  telemetry.addData("Twist Position",Twistpos);
 
     }
+
     public void wrist() {
-        if(gamepad2.left_stick_y>=0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
+        if (gamepad2.left_stick_y >= 0.5 && gamepad2.left_stick_x >= -0.25 && gamepad2.left_stick_x <= 0.25) {
             Wristpos += 0.01;
             hardware.wrist.setPosition(Wristpos);
-        } else if (gamepad2.left_stick_y<=-0.5 && gamepad2.left_stick_x>=-0.25 && gamepad2.left_stick_x<=0.25){
-            Wristpos-= 0.01;
+        } else if (gamepad2.left_stick_y <= -0.5 && gamepad2.left_stick_x >= -0.25 && gamepad2.left_stick_x <= 0.25) {
+            Wristpos -= 0.01;
             hardware.wrist.setPosition(Wristpos);
         }
 
-        telemetry.addData("Wrist Position",hardware.wrist.getPosition());
+        telemetry.addData("Wrist Position", hardware.wrist.getPosition());
     }
-    public void servoMoves(){
-        Servo servo = hardwareMap.get(Servo.class,"claw");
+
+    public void servoMoves() {
+        Servo servo = hardwareMap.get(Servo.class, "claw");
         final double open = 0.02;
         final double close = 0.55;
-        if(gamepad2.left_bumper) {
+        if (gamepad2.left_bumper) {
             servo.setPosition(open);
         } else if (gamepad2.right_bumper) {
             servo.setPosition(close);
 
         }
     }
-   //////////////////////////////////////////////////////////////////////////////////////////////////
-    public void ScoreHighBasket(Hardware hardware)  {
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    public void ScoreHighBasket(Hardware hardware) {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
@@ -351,7 +361,8 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.verticalSlide.setTargetPosition(0);
         maintainHeightTicks = 0;
     }
-    public void PickUpYellow(Hardware hardware){
+
+    public void PickUpYellow(Hardware hardware) {
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
@@ -413,7 +424,8 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
         armTargetPosDeg = 0;
     }
-    private void transfer(Hardware hardware){
+
+    private void transfer(Hardware hardware) {
         //hardware.arm.setPower(-0.5);
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -423,7 +435,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setTargetPosition(-63);//This is in ticks
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg=-30;//(752 ticks /360 degrees)
+        armTargetPosDeg = -30;//(752 ticks /360 degrees)
         sleep(500);
         hardware.wrist.setPosition(0.9);
         sleep(2000);
@@ -440,7 +452,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.5);
-        armTargetPosDeg=0;
+        armTargetPosDeg = 0;
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -451,17 +463,18 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
     }
-    private void stepper(Hardware hardware){
-        if(gamepad1.dpad_left) {
-            ClawFrontPos += -0.01;
+
+    private void stepper(Hardware hardware) {
+        if (gamepad1.dpad_left) {
+            ClawFrontPos = 0.33;
         }
-        if(gamepad1.dpad_right){
-            ClawFrontPos += 0.01;
+        if (gamepad1.dpad_right) {
+            ClawFrontPos = 0.07;
         }
-        if(gamepad1.dpad_up) {
+        if (gamepad1.dpad_up) {
             ClawFlipPos += -0.01;
         }
-        if(gamepad1.dpad_down){
+        if (gamepad1.dpad_down) {
             ClawFlipPos += 0.01;
         }
         hardware.clawFlip.setPosition(ClawFlipPos);
@@ -472,17 +485,20 @@ public class MecanumTeleOp extends LinearOpMode {
         telemetry.addData("FrontClawPos", ClawFrontPos);
         telemetry.addData("FlipClawPos", ClawFlipPos);
     }
+
     public void HSlide(Hardware hardware) {
 
-        if (gamepad1.y && horizontalSlide < 1) {
-            horizontalSlide += 0.01;
+        if (gamepad1.y && hslidepos < 1) {
+            hslidepos += 0.01;
         }
-        if (gamepad1.a && horizontalSlide > 0) {
-            horizontalSlide += -0.01;
+        if (gamepad1.a && hslidepos > 0) {
+            hslidepos += -0.01;
         }
-        hardware.horizontalSlide.setPosition(horizontalSlide);
+        hardware.horizontalSlide.setPosition(hslidepos);
+        telemetry.addData("Horizontal Position", hardware.horizontalSlide.getPosition());
     }
-    public void specimenWallPick(Hardware hardware){
+
+    public void specimenWallPick(Hardware hardware) {
         double clawopen = 0.55;
         double clawclose = 0.02;
         double wristup = 0.46;
@@ -494,39 +510,86 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.wrist.setPosition(wristup);
         sleep(1000);
         hardware.arm.setTargetPosition(45);
-        armTargetPosDeg=45;
+        armTargetPosDeg = 45;
         sleep(500);
         hardware.claw.setPosition(clawclose);
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(300);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        maintainHeightTicks=300;
+        maintainHeightTicks = 300;
         sleep(1000);
         hardware.wrist.setPosition(wristback);
         sleep(1000);
         hardware.arm.setTargetPosition(10);
-        armTargetPosDeg=10;
+        armTargetPosDeg = 10;
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        maintainHeightTicks=0;
+        maintainHeightTicks = 0;
     }
-        private void score(Hardware hardware){
-            double clawclose = 0.02;
 
-            hardware.claw.setPosition(clawclose);
-            hardware.verticalSlide.setTargetPosition(710);
-            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            hardware.verticalSlide.setPower(VerticalSlideSpeed);
-            maintainHeightTicks = 710;
-            sleep(1000);
-            hardware.arm.setTargetPosition(-99);
-            armTargetPosDeg = -99;
-            sleep(1000);
-            hardware.wrist.setPosition(1);
+    private void score(Hardware hardware) {
+        double clawclose = 0.02;
 
-        }
+        hardware.claw.setPosition(clawclose);
+        hardware.verticalSlide.setTargetPosition(710);
+        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.verticalSlide.setPower(VerticalSlideSpeed);
+        maintainHeightTicks = 710;
+        sleep(1000);
+        hardware.arm.setTargetPosition(-99);
+        armTargetPosDeg = -99;
+        sleep(1000);
+        hardware.wrist.setPosition(1);
+
+    }
+
+    public void Horizontalpick(Hardware hardware) {
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        double frontopen = 0.33;
+        double frontclose = 0.07;
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.horizontalSlide.setPosition(hslideout);
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        sleep(500);
+        hardware.clawFront.setPosition(frontopen);
+        sleep(500);
+        hardware.clawFront.setPosition(frontclose);
+        ClawFrontPos = frontclose;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipup);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        sleep(500);
+    }
+
+    public void Flipout(Hardware hardware) {
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        hardware.horizontalSlide.setPosition(hslideout);
+        hslidepos = hslideout;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        ClawFlipPos = flipdown;
+        sleep(500);
+    }
+
+    public void Flipin(Hardware hardware) {
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.clawFlip.setPosition(flipup);
+        ClawFlipPos = flipup;
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        hslidepos = hslidein;
+        sleep(500);
+
+
+    }
 }
 
