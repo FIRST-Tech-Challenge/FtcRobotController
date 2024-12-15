@@ -84,13 +84,13 @@ public class Official extends LinearOpMode {
         clawPivot.setPosition(Values.MID_SERVO);
         wrist.setPosition(Values.MID_SERVO);
         intakeElbow.setPosition(Values.intakeElbowUp);
-        outtakeElbow.setPosition(Values.outtakeElbowDown);
+        outtakeElbow.setPosition(Values.outtakeElbowDown+0.06);
 
         //make servo go slower
 //        intakeSlide1.scaleRange(2000, 600);
 //        intakeSlide1.scaleRange(2000, 600);
-        intakeSlide1.setPosition(Values.slide1in);
-        intakeSlide2.setPosition(Values.slide2in);
+        intakeSlide1.setPosition(Values.slide1wait);
+        intakeSlide2.setPosition(Values.slide2wait);
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters myIMUparameters;
@@ -266,6 +266,8 @@ public class Official extends LinearOpMode {
                     outtakeClaw.setPosition(Values.outtakeClawClose);
                     sleep(400);
                     intakeClaw.setPosition(Values.intakeClawOpen);
+                    intakeSlide1.setPosition(Values.slide1wait-0.1);
+                    intakeSlide2.setPosition(Values.slide2wait+0.1);
                     sleep(200);
                     outtakeElbow.setPosition(Values.outtakeElbowUp);
                     elbowIsDown = false;
@@ -273,12 +275,12 @@ public class Official extends LinearOpMode {
             }
                 if (currentGamepad2.cross && !previousGamepad2.cross) {
                     if (elbowIsDown) {
-                        intakeElbow.setPosition(Values.intakeElbowDown);
+                        intakeElbow.setPosition(Values.outtakeElbowDown);
                         sleep(500);
                         intakeClaw.setPosition(Values.intakeclawClose);
                         sleep(200);
                         wrist.setPosition(Values.wristUp);
-                        intakeElbow.setPosition(Values.intakeElbowUp);
+                        intakeElbow.setPosition(Values.outtakeElbowUp);
                         slidesIn();
                     } else if (!elbowIsDown) {
                         intakeElbow.setPosition(Values.intakeElbowWait);
@@ -304,7 +306,7 @@ public class Official extends LinearOpMode {
                 }
                 if (currentGamepad2.square && !previousGamepad1.square) {
                     if (!outtakeIsFlat) {
-                        outtakeClaw.setPosition(Values.outakeclawOpen);
+                        outtakeClaw.setPosition(Values.outakeclawOpen+0.03);
                         sleep(200);
                         outtakeElbow.setPosition(Values.outtakeElbowFlat);
                         outtakeIsFlat = true;
