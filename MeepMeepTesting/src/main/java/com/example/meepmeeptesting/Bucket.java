@@ -26,7 +26,7 @@ public class Bucket {
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .lineTo(new Vector2d(49,53))
+                        .splineToConstantHeading(new Vector2d(49,53),Math.toRadians(90))
                         //slides down
                         .splineToLinearHeading(new Pose2d(58,40,Math.toRadians(90)),Math.toRadians(270))
                         .waitSeconds(3)
@@ -37,7 +37,7 @@ public class Bucket {
                         //Slides up
                         //open claw
                         .setTangent(Math.toRadians(225))
-                        .lineTo(new Vector2d(49,53))
+                        .splineToConstantHeading(new Vector2d(49,53),Math.toRadians(90))
 
                         .build());
 

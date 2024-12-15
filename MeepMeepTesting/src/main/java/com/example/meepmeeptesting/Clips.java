@@ -21,7 +21,7 @@ public class Clips {
                         .waitSeconds(5)
                         //slides down
                         //Open claw
-                        .lineTo(new Vector2d(-7,34))
+                        .splineToConstantHeading(new Vector2d(-7,34),Math.toRadians(90))
                         .setTangent(Math.toRadians(90))
                         .waitSeconds(.5)
                         //slides all the way down
