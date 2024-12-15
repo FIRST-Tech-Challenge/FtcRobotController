@@ -15,10 +15,10 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(700);
         Pose2d blueBasket = new Pose2d(64 - robotCenterToArm/Math.sqrt(2), 64 - robotCenterToArm/Math.sqrt(2),Math.toRadians(45));
         Pose2d redBasket = new Pose2d(-64 + robotCenterToArm/Math.sqrt(2), -64 + robotCenterToArm/Math.sqrt(2),Math.toRadians(225));
-        Pose2d blueRobot2StartPosition = new Pose2d(-58, 64,Math.toRadians(270));
-        Pose2d blueRobot1StartPosition = new Pose2d(60, 60,Math.toRadians(270));
-        Pose2d redRobot1StartPosition = new Pose2d(-60,-60,Math.toRadians(90));
-        Pose2d redRobot2StartPosition = new Pose2d(58,-64,Math.toRadians(90));
+        Pose2d blueRobot2StartPosition = new Pose2d(-23.5, 64,Math.toRadians(270));
+        Pose2d blueRobot1StartPosition = new Pose2d(23.5, 64,Math.toRadians(270));
+        Pose2d redRobot1StartPosition = new Pose2d(-23.5,-64,Math.toRadians(90));
+        Pose2d redRobot2StartPosition = new Pose2d(23.5,-64,Math.toRadians(90));
         Pose2d blueGamePiece1 = new Pose2d(-48 + robotCenterToArm, 26,Math.toRadians(180));
         Pose2d blueGamePiece2 = new Pose2d(-58 + robotCenterToArm, 26,Math.toRadians(180));
         Pose2d blueGamePiece3 = new Pose2d(-68 + robotCenterToArm, 26,Math.toRadians(180));
@@ -85,10 +85,8 @@ public class MeepMeepTesting {
                 .build();
 
         red2Bot.runAction(red2Bot.getDrive().actionBuilder(redRobot2StartPosition)
-                        //.waitSeconds(1)
-//                .strafeToLinearHeading(redBasket.position,redBasket.heading)
-                        .splineToLinearHeading(redBasket, Math.toRadians(22.5))
-                        .strafeToLinearHeading(redGamePiece3.position,redGamePiece3.heading)
+                .splineToLinearHeading(redBasket, Math.toRadians(22.5-180))
+                .strafeToLinearHeading(redGamePiece3.position,redGamePiece3.heading)
                 .strafeToLinearHeading(redBasket.position,redBasket.heading)
                 .strafeToLinearHeading(redGamePiece2.position,redGamePiece2.heading)
                 .strafeToLinearHeading(redBasket.position,redBasket.heading)
@@ -129,7 +127,7 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueBasket.position,blueBasket.heading)
                 .build());
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_LIGHT)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 // Add both of our declared bot entities
