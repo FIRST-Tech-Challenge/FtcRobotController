@@ -98,16 +98,17 @@ public class Lift {
         // current, then use that to set the reverse boolean in the motion profile. Then use the
         // absolute value of the difference to set the distance.
 
-        reverse = !(targetHeight - currentPosition >= 0);
 
-        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
-
-        // When you call getPos from the motion profile, you're getting a distance NOT a target. How 
-        // can you solve this? Hint: add two things.
-        
-        ElapsedTime t = new ElapsedTime();
-        int initialPos = currentPosition;
         return new Action() {
+            boolean reverse = !(targetHeight - currentPosition >= 0);
+
+            MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
+
+            // When you call getPos from the motion profile, you're getting a distance NOT a target. How
+            // can you solve this? Hint: add two things.
+
+            ElapsedTime t = new ElapsedTime();
+            int initialPos = currentPosition;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 checkLimit();
