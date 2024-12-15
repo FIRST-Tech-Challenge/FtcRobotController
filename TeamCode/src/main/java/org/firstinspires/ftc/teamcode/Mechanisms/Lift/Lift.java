@@ -30,7 +30,7 @@ public class Lift {
     public int currentPosition;
     public DcMotorAdvanced liftMotorLeft;
     public DcMotorAdvanced liftMotorRight;
-    Encoder encoder;
+//    Encoder encoder;
     TouchSensor limiter;
     public static double kA=0;
     public static double kV=0;
@@ -55,15 +55,15 @@ public class Lift {
 
         this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
-        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
+//        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.liftMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        this.liftMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
-        this.liftMotorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        this.liftMotorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        this.liftMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        this.liftMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        this.liftMotorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        this.liftMotorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         this.liftMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.liftMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -80,7 +80,7 @@ public class Lift {
     // FUNCTION TO RESET CURRENT ENCODER POSITION WHEN LIMIT SWITCHES ARE HIT
     private void checkLimit(){
         if (limiter.isPressed()){
-            encoder.reset();
+//            encoder.reset();
         }
     }
 
@@ -112,7 +112,8 @@ public class Lift {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 //                checkLimit();
-                int currentPosition = encoder.getCurrentPosition();
+//                int currentPosition = encoder.getCurrentPosition();
+                int currentPosition = 0;
 
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));

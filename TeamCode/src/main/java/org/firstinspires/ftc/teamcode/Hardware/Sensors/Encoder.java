@@ -14,9 +14,7 @@ public class Encoder {
     }
 
 
-    public void encoder(DcMotorEx encoder){
-        this.encoder = encoder;
-    }
+
 
     public void reset(){
         storedPos = encoder.getCurrentPosition();

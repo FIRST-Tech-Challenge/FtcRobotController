@@ -18,36 +18,43 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 @Config
 @Autonomous(name = "Test Lift Feed Forward", group = "Autonomous")
 public class TuneFeedForwardLift  extends LinearOpMode {
-    Encoder encoder;
+//    Encoder encoder;
     Lift lift;
     public static double height = 12;
     public void runOpMode() throws InterruptedException {
-        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
-        int currentPosition = encoder.getCurrentPosition();
+//        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
+        int currentPosition = 0;
         ElapsedTime Timer = new ElapsedTime();
-        if (gamepad1.a) {
+        Battery battery = new Battery(hardwareMap);
+        Lift lift = new Lift(hardwareMap, battery);
+
+        waitForStart();
+
+        while(opModeIsActive()){
+//            if (gamepad1.circle) {
 //            runningActions.add(
 //                    lift.moveToHeight(height)
 //            );
 //            runningActions.add(
 //                    lift.moveToHeight(currentPosition)
 //            );
-            Actions.runBlocking((lift.moveToHeight(height)));
-            if(Timer.seconds() > 3) {
-                Actions.runBlocking(lift.moveToHeight(currentPosition));
+                Actions.runBlocking((lift.moveToHeight(12)));
+                if (Timer.seconds() > 3) {
+                    Actions.runBlocking(lift.moveToHeight(currentPosition));
 
 
-                new Action() {
-                    @Override
-                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                        telemetryPacket.addLine("Height: " + lift.currentPosition);
+                    new Action() {
+                        @Override
+                        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                            telemetryPacket.addLine("Height: " + lift.currentPosition);
 //                                    telemetryPacket.addLine("Velocity: " + lift.liftMotorLeft.getVelocity());
 //                                    telemetryPacket.addLine("Acceleration: " + lift.liftMotorLe);
 //                                    telemetryPacket.addLine("maxHeight: " + maxHeight);
-                       return false;
-                    }
-                };
-            }
+                            return false;
+                        }
+                    };
+//                }
+//            }
         }
     }
 }
