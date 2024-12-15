@@ -227,14 +227,20 @@ public class Official extends LinearOpMode {
             }
 
             //all servo stuff
-
+            sethDumbControlThing = outtakeElbow.getPosition();
             //trigger controls gp2
-            while (gamepad2.right_trigger > 0) {
-                sethDumbControlThing += 0.01;
+            while (gamepad2.left_trigger > 0) {
+                sethDumbControlThing += 0.001;
+                if (sethDumbControlThing > .85){
+                    sethDumbControlThing = .85;
+                }
                 outtakeElbow.setPosition(sethDumbControlThing);
             }
             while (gamepad2.right_trigger > 0) {
-                sethDumbControlThing -= 0.01;
+                sethDumbControlThing -= 0.001;
+                if (sethDumbControlThing < 0){
+                    sethDumbControlThing = 0;
+                }
                 outtakeElbow.setPosition(sethDumbControlThing);
             }
 

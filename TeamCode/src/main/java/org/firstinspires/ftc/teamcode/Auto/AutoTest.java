@@ -80,7 +80,9 @@ public class AutoTest extends LinearOpMode {
 
         //test path
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .lineToXConstantHeading(12.5);
+                .lineToX(12.5);
+                //.lineToXConstantHeading(12.5);
+
 
         int visionOutputPosition = 1;
         // actions that need to happen on init; for instance, a claw tightening.
