@@ -45,7 +45,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.750, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.770, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
                 // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error

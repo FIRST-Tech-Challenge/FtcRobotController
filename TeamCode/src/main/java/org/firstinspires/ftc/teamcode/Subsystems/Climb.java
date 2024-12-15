@@ -31,7 +31,7 @@ public class Climb extends SubsystemBase {
 
 
         // Turn the left motor in reverse to move the slide upwards
-        climb.setDirection(DcMotorSimple.Direction.REVERSE);
+        climb.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         // Sets the motors PIDF values
@@ -53,6 +53,9 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
 
+        RobotContainer.DBTelemetry.addData("ClimbPose ", climb.getCurrentPosition());
+        RobotContainer.DBTelemetry.update();
+
     }
 
     // Using the var ticks sets the motor encoder ticks to a set position
@@ -61,10 +64,11 @@ public class Climb extends SubsystemBase {
         // Sets both motors to the ticks target position
         climb.setTargetPosition(ticks);
 
-
         // Sets the power VERY IMPORTANT
         climb.setPower(1);
         
     }
+
+    public void moveTo(ClimbTargetHeight target) {moveClimb(target.getValue());}
 
 }
