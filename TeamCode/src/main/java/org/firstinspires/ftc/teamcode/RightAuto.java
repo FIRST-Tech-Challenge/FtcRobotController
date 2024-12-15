@@ -6,6 +6,8 @@ import static java.lang.Math.sqrt;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,7 +23,6 @@ import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
@@ -74,17 +75,17 @@ public class RightAuto extends LinearOpMode {
         }
     }
 
-    final static class MoveToTask extends TaskTemplate {
-        private final Pose target;
-        private final EncoderTracking tracker;
-        private final Speed2Power speed2Power;
-        private final Ramps ramps;
-        private final Telemetry telemetry;
-        private final LoopStopwatch loopTimer;
-        private final Hardware hardware;
-        private ElapsedTime targetTime = new ElapsedTime();
-        private ElapsedTime runTime = new ElapsedTime();
-        private boolean finished = false;
+    static class MoveToTask extends TaskTemplate {
+        protected Pose target;
+        protected final EncoderTracking tracker;
+        protected final Speed2Power speed2Power;
+        protected final Ramps ramps;
+        protected final Telemetry telemetry;
+        protected final LoopStopwatch loopTimer;
+        protected final Hardware hardware;
+        protected ElapsedTime targetTime = new ElapsedTime();
+        protected ElapsedTime runTime = new ElapsedTime();
+        protected boolean finished = false;
 
         public MoveToTask(
                 @NotNull Scheduler scheduler,
@@ -177,6 +178,33 @@ public class RightAuto extends LinearOpMode {
         }
     }
 
+    static class MoveRelTask extends MoveToTask {
+
+        @NonNull
+        private final Pose offset;
+
+        public MoveRelTask(
+                @NonNull Scheduler scheduler,
+                @NonNull Hardware hardware,
+                @NonNull Pose offset,
+                @NonNull EncoderTracking tracker,
+                @NonNull LoopStopwatch loopTimer,
+                @NonNull Speed2Power speed2Power,
+                @NonNull Ramps ramps,
+                @NonNull Telemetry telemetry
+        ) {
+            super(scheduler, hardware, new Pose(0, 0, 0), tracker, loopTimer, speed2Power, ramps, telemetry);
+            this.offset = offset;
+        }
+
+        @Override
+        public void invokeOnStart() {
+            Pose current = tracker.getPose();
+            target = current.add(offset);
+            super.invokeOnStart();
+        }
+    }
+
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
 
     // Constants //
@@ -194,9 +222,15 @@ public class RightAuto extends LinearOpMode {
     private Speed2Power speed2Power;
     private MultitaskScheduler scheduler;
 
-    private MoveToTask moveTo(Scheduler s, Pose target) {
+    private MoveToTask moveTo(Pose target) {
         return new MoveToTask(
-                s, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
+                scheduler, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
+        );
+    }
+
+    private MoveRelTask moveRel(Pose offset) {
+        return new MoveRelTask(
+                scheduler, hardware, offset, tracker, loopTimer, speed2Power, ramps, telemetry
         );
     }
 
@@ -216,24 +250,6 @@ public class RightAuto extends LinearOpMode {
 
     private ITask wait(double seconds) {
         return new Pause(scheduler, seconds);
-    }
-
-    private Pair<ITask, ITask> flipOut() {
-        ITask first = scheduler.task(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
-        ITask last = first
-                .then(wait(0.500))
-                .then(run(() -> hardware.clawFlip.setPosition(FLIP_DOWN)))
-                .then(wait(0.500));
-        return new Pair<>(first, last);
-    }
-
-    private Pair<ITask, ITask> flipIn() {
-        ITask first = scheduler.task(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
-        ITask last = first
-                .then(wait(0.500))
-                .then(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_IN)))
-                .then(wait(0.500));
-        return new Pair<>(first, last);
     }
 
     private Pair<ITask, ITask> specimenWallPick() {
@@ -260,42 +276,49 @@ public class RightAuto extends LinearOpMode {
         return new Pair<>(first, last);
     }
 
-    public void mainAuto() {
-        scheduler.task(new OneShot(scheduler, () -> {
-            hardware.claw.setPosition(0.55);
-            hardware.wrist.setPosition(0.28);
-            hardware.twist.setPosition(0.17);
-            hardware.arm.setTargetPosition(0);
-            hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    private Pair<ITask, ITask> scoreSpecimen() {
+        ITask first = scheduler.task(run(() -> {
+            hardware.claw.setPosition(CLAW_CLOSE);
+            hardware.verticalSlide.setTargetPosition(710);
+            hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.verticalSlide.setPower(VERTICAL_SLIDE_SPEED);
         }));
-        scheduler
-                .task(moveTo(scheduler, new Pose(6, -40, 0)))
-                .then(run(() -> hardware.wrist.setPosition(0.44)))
+        ITask last = first
+                .then(wait(1.000))
+                .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
+                .then(wait(1.000))
+                .then(run(() -> hardware.wrist.setPosition(1)))
+                .then(wait(1.000))
+                .then(moveRel(new Pose(-3.5, 0, 0)))
+                .then(run(() -> hardware.claw.setPosition(CLAW_OPEN)))
                 .then(wait(0.500))
-                .then(run(() -> hardware.claw.setPosition(0.02)))
-                .then(wait(0.500))
+                // Maybe let the rest of this be async
                 .then(run(() -> {
                     hardware.wrist.setPosition(0.28);
-                    hardware.claw.setPosition(0.55);
+                    hardware.arm.setTargetPosition(Hardware.deg2arm(0));
                 }))
-                .then(moveTo(scheduler, new Pose(6, -48, 0)))
-                .then(moveTo(scheduler, new Pose(4, -48, 0)));
-//                .then(moveTo(scheduler,
-//                        new Pose(65, -12, Math.toRadians(0))))
-
+                .then(wait(1.000))
+                .then(run(() -> hardware.verticalSlide.setTargetPosition(0)))
+                .then(wait(0.25))
+                ;
+        return new Pair<>(first, last);
     }
 
-    public void test() {
-        scheduler.task(new OneShot(scheduler, () -> {
-                    hardware.claw.setPosition(0.55);
-                    hardware.wrist.setPosition(0.28);
-                    hardware.twist.setPosition(0.17);
-                    hardware.arm.setTargetPosition(0);
-                    hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }))
-                .then(flipOut())
-                .then(wait(2.0))
-                .then(flipIn());
+    private final Runnable setup = () -> {
+        hardware.claw.setPosition(CLAW_CLOSE);
+        hardware.wrist.setPosition(0.28);
+        hardware.twist.setPosition(0.17);
+        hardware.arm.setTargetPosition(0);
+        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.arm.setPower(0.2);
+    };
+
+    public void runAuto() {
+        scheduler.task(new OneShot(scheduler, setup))
+                .then(moveTo(new Pose(30, 12, 0)))
+                .then(scoreSpecimen())
+//                .then(wait(2.0))
+                .then(moveTo(new Pose(4, -48, 0)));
     }
 
     @Override
@@ -321,8 +344,9 @@ public class RightAuto extends LinearOpMode {
                 scheduler, tracker, loopTimer
         ));
 //        mainAuto();
-        test();
+        runAuto();
         // park
+        hardware.claw.setPosition(CLAW_CLOSE);
 
         telemetry.addLine("Initialized.");
         telemetry.addLine(String.format("%d in queue.", scheduler.taskCount()));

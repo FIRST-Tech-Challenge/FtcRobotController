@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mmooover
 
-import org.apache.commons.math3.stat.regression.SimpleRegression
 import org.firstinspires.ftc.teamcode.hardware.Encoder
 import kotlin.math.cos
 import kotlin.math.sin
@@ -33,7 +32,7 @@ class EncoderTracking @JvmOverloads constructor(
     var heading: Double = origin.heading
     var x: Double = origin.x
     var y: Double = origin.y
-    val currentPose get() = Pose(x, y, heading)
+    private val currentPose get() = Pose(x, y, heading)
 
     var lastLeft: Double
     var lastCenter: Double
