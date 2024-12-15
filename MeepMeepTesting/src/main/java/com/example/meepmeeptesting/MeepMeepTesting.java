@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
@@ -12,10 +13,11 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class MeepMeepTesting {
     public static void main(String[] args) {
         final double robotCenterToArm = 10;
+
         MeepMeep meepMeep = new MeepMeep(700);
         Pose2d blueBasket = new Pose2d(64 - robotCenterToArm/Math.sqrt(2), 64 - robotCenterToArm/Math.sqrt(2),Math.toRadians(45));
         Pose2d redBasket = new Pose2d(-64 + robotCenterToArm/Math.sqrt(2), -64 + robotCenterToArm/Math.sqrt(2),Math.toRadians(225));
-        Pose2d blueRobot2StartPosition = new Pose2d(-23.5, 64,Math.toRadians(270));
+        Pose2d blueRobot2StartPosition = new Pose2d(-23.5, 64,Math.toRadians(270)).times(new Pose2d(0,0,Math.PI*2));
         Pose2d blueRobot1StartPosition = new Pose2d(23.5, 64,Math.toRadians(270));
         Pose2d redRobot1StartPosition = new Pose2d(-23.5,-64,Math.toRadians(90));
         Pose2d redRobot2StartPosition = new Pose2d(23.5,-64,Math.toRadians(90));
@@ -127,7 +129,7 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueBasket.position,blueBasket.heading)
                 .build());
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
+        meepMeep.setBackground(MeepMeep.Background.GRID_GREEN)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 // Add both of our declared bot entities
