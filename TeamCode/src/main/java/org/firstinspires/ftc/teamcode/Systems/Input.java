@@ -1,21 +1,11 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.util.Date;
 
 public class Input {
 
     Motors motors;
     Servos servos;
-
-    public static double MAX_SPEED = 20.0;
-    public static int POS_0 = -460;
-    public static int POS_1 = -65;
-    public static int POS_3 = 580;
-
-    ElapsedTime elapsedTime = new ElapsedTime();
 
     public Input(HardwareMap hardwareMap) {
         motors = new Motors(hardwareMap);
@@ -50,15 +40,15 @@ public class Input {
     public void claw(boolean grabButton, boolean releaseButton) {
 
         if (releaseButton) {
-            servos.moveServo(0, 1);
+            servos.moveServo(Servos.Type.Claw, 1);
         }
         else if (grabButton) {
-            servos.moveServo(0, 0.645);
+            servos.moveServo(Servos.Type.Claw, 0.645);
         }
 
     }
 
     public void upArm(double power) {
-        motors.MoveMotor(Motors.Type.Claw, power);
+        motors.MoveMotor(Motors.Type.Pull, power);
     }
 }
