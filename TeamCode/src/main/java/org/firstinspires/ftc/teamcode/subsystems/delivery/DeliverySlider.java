@@ -71,8 +71,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void Expand() {
         SetTelop();
-        motor.set(1);
-        motor2.set(-1);
+        motor.set(.5);
+        motor2.set(-.5);
 
     }
 
@@ -148,10 +148,10 @@ public class DeliverySlider extends SonicSubsystemBase {
                 motor.set(power);
             }
         } else {
-            Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
+            //Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
 
             telemetry.addData("slider", position);
-            telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
+            //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
             telemetry.addData("motor", motor.get());
             telemetry.update();
 
