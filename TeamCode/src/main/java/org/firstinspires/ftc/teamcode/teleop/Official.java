@@ -45,9 +45,10 @@ public class Official extends LinearOpMode {
     Gamepad previousGamepad2 = new Gamepad();
     private IMU imu;
 
+    private double sethDumbControlThing;
+
     @Override
     public void runOpMode() {
-
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         leftFrontDrive = hardwareMap.get(DcMotor.class, "Motor0");
@@ -225,14 +226,25 @@ public class Official extends LinearOpMode {
                 }
             }
 
-
             //all servo stuff
 
+            //trigger controls gp2
+            while (gamepad2.right_trigger > 0) {
+                sethDumbControlThing += 0.01;
+                outtakeElbow.setPosition(sethDumbControlThing);
+            }
+            while (gamepad2.right_trigger > 0) {
+                sethDumbControlThing -= 0.01;
+                outtakeElbow.setPosition(sethDumbControlThing);
+            }
+
             //horizontal slides in N out
-            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    slidesOut();
-            } else if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    slidesIn();
+            {
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                        slidesOut();
+                } else if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                        slidesIn();
+                }
             }
             if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
                 slideServo(true);
@@ -267,6 +279,7 @@ public class Official extends LinearOpMode {
                     sleep(400);
                     intakeClaw.setPosition(Values.intakeClawOpen);
                     sleep(200);
+                    intakeElbow.setPosition(Values.intakeElbowWait);
                     outtakeElbow.setPosition(Values.outtakeElbowUp);
                     elbowIsDown = false;
                 }

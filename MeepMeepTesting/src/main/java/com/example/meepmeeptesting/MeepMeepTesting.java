@@ -26,14 +26,12 @@ public class MeepMeepTesting {
                         .splineToLinearHeading(new Pose2d(-56, 57, Math.toRadians(-90)), 0)
                         //put hook
                         .splineToLinearHeading(new Pose2d(-55, 47, Math.toRadians(90)), 90)
-                        .strafeRight(5)
+                        //.strafeRight(5)
                         .splineToConstantHeading(new Vector2d(0, 35), Math.toRadians(0))
                         //go back
                         .strafeLeft(40)
                         .splineToConstantHeading(new Vector2d(-28, 5.8), Math.toRadians(0))
                         .turn(Math.toRadians(-90))
-
-
 
                         .build());
 
