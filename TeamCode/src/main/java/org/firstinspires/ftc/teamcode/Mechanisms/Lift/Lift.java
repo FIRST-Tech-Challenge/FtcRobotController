@@ -111,7 +111,7 @@ public class Lift {
             int initialPos = currentPosition;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                checkLimit();
+//                checkLimit();
                 int currentPosition = encoder.getCurrentPosition();
 
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?

@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Lift.Tuners;
 
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -13,9 +9,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
@@ -24,14 +18,10 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 @Config
 @Autonomous(name = "Test Lift Feed Forward", group = "Autonomous")
 public class TuneFeedForwardLift  extends LinearOpMode {
-    Drivetrain drivetrain = null;
-    FtcDashboard dashboard;
-    Battery battery;
     Encoder encoder;
+    Lift lift;
     public static double height = 12;
     public void runOpMode() throws InterruptedException {
-        Battery battery = new Battery(hardwareMap);
-        Lift lift = new Lift(hardwareMap, battery);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
         int currentPosition = encoder.getCurrentPosition();
         ElapsedTime Timer = new ElapsedTime();
