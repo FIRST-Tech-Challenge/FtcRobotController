@@ -22,7 +22,7 @@ abstract class Scheduler {
     /// Get the number of ticks that have occurred.
     abstract fun getTicks(): Int
 
-    /// Acquires this lock if there is no task holding it.
+    /// Registers a task with this scheduler.
     internal abstract fun register(task: ITask): Int
 
     /// The next task ID, which will be used for the next task.

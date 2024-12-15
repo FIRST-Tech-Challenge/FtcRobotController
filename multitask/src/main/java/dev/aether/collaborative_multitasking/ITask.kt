@@ -59,6 +59,8 @@ interface ITask {
         this.then(polyChain.first)
         return polyChain.second
     }
+
+    fun display(indent: Int, write: (String) -> Unit) {}
 }
 
 abstract class TaskWithChaining() : ITask {

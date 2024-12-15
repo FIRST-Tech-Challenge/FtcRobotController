@@ -6,7 +6,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import dev.aether.collaborative_multitasking.ITask.State
 
-class MultitaskScheduler
+open class MultitaskScheduler
 @JvmOverloads constructor(private val throwDebuggingErrors: Boolean = false) : Scheduler() {
     private val locks: MutableMap<String, Int?> = mutableMapOf()
     private val tasks: MutableMap<Int, ITask> = mutableMapOf()
@@ -39,19 +39,19 @@ class MultitaskScheduler
 
     val tickTimes: MutableList<Double> = mutableListOf()
 
-    override var nextId: Int = 0
+    final override var nextId: Int = 0
         private set
     private var tickCount = 0
 
-    private fun selectState(state: State): List<ITask> {
+    protected fun selectState(state: State): List<ITask> {
         return tasks.values.filter { it.state == state }
     }
 
-    private fun allFreed(requirements: Set<SharedResource>): Boolean {
+    protected fun allFreed(requirements: Set<SharedResource>): Boolean {
         return requirements.all { locks[it.id] == null }
     }
 
-    private fun tickMarkStartable() {
+    protected fun tickMarkStartable() {
         selectState(State.NotStarted)
             .filter {
                 it.invokeCanStart()
@@ -73,7 +73,7 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickStartMarked() {
+    protected fun tickStartMarked() {
         selectState(State.Starting)
             .forEach {
                 try {
@@ -95,7 +95,7 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickTick() {
+    protected fun tickTick() {
         selectState(State.Ticking)
             .forEach {
                 try {
@@ -108,12 +108,12 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickFinish() {
+    protected fun tickFinish() {
         val candidates = selectState(State.Finishing)
         candidates.forEach(::release)
     }
 
-    private fun release(task: ITask, cancel: Boolean = false) {
+    protected fun release(task: ITask, cancel: Boolean = false) {
         val targetState = if (cancel) State.Cancelled else State.Finished
         if (task.state == State.NotStarted) {
             task.transition(targetState)
@@ -190,16 +190,23 @@ class MultitaskScheduler
         )
     }
 
-    private fun displayTaskNoStatus(task: ITask, indent: Int, writeLine: (String) -> Unit) {
+    protected fun displayTaskNoStatus(task: ITask, indent: Int, writeLine: (String) -> Unit) {
         writeLine(buildString {
             append(" ".repeat(indent))
             append("#%d (%s)".format(task.myId, task.name))
-            if(task.daemon) append(" daemon")
-            if(task.onRequest()) append(" startReq")
+            if (task.daemon) append(" daemon")
+            if (task.onRequest()) append(" startReq")
         })
+        task.display(indent + 4, writeLine)
     }
 
-    fun displayStatus(withFinished: Boolean, withNotStarted: Boolean, writeLine: (String) -> Unit) {
+    @JvmOverloads
+    fun displayStatus(
+        withFinished: Boolean,
+        withNotStarted: Boolean,
+        writeLine: (String) -> Unit,
+        indent: Int = 0
+    ) {
         val notStartedList: MutableList<ITask> = mutableListOf()
         val inProgressList: MutableList<ITask> = mutableListOf()
         val finishedList: MutableList<ITask> = mutableListOf()
@@ -209,38 +216,54 @@ class MultitaskScheduler
         var done = 0
         var cancelled = 0
         var total = tasks.size
+
+        val spaces = " ".repeat(indent)
+
         for (task in tasks.values) {
             when (task.state) {
                 State.NotStarted -> {
                     waiting++
                     notStartedList.add(task)
                 }
+
                 State.Finished -> {
                     done++
                     finishedList.add(task)
                 }
+
                 State.Cancelled -> {
                     cancelled++
                     cancelledList.add(task)
                 }
+
                 else -> {
                     progress++
                     inProgressList.add(task)
                 }
             }
         }
-        writeLine("%d tasks: %d WAIT > %d RUN > %d STOP (%d done, %d cancel)".format(total, waiting, progress, done + cancelled, done, cancelled))
+        writeLine(
+            "%s%d tasks: %d WAIT > %d RUN > %d STOP (%d done, %d cancel)".format(
+                spaces,
+                total,
+                waiting,
+                progress,
+                done + cancelled,
+                done,
+                cancelled
+            )
+        )
         if (withNotStarted) {
-            writeLine("%d not started:".format(waiting))
-            for (task in notStartedList) displayTaskNoStatus(task, 4, writeLine)
+            writeLine("%s%d not started:".format(spaces, waiting))
+            for (task in notStartedList) displayTaskNoStatus(task, indent + 4, writeLine)
         }
-        writeLine("%d in progress:".format(progress))
-        for (task in inProgressList) displayTaskNoStatus(task, 4, writeLine)
+        writeLine("%s%d in progress:".format(spaces, progress))
+        for (task in inProgressList) displayTaskNoStatus(task, indent + 4, writeLine)
         if (withFinished) {
-            writeLine("%d finished:".format(done))
-            for (task in finishedList) displayTaskNoStatus(task, 4, writeLine)
-            writeLine("%d cancelled:".format(cancelled))
-            for (task in cancelledList) displayTaskNoStatus(task, 4, writeLine)
+            writeLine("%s%d finished:".format(spaces, done))
+            for (task in finishedList) displayTaskNoStatus(task, indent + 4, writeLine)
+            writeLine("%s%d cancelled:".format(spaces, cancelled))
+            for (task in cancelledList) displayTaskNoStatus(task, indent + 4, writeLine)
         }
     }
 
