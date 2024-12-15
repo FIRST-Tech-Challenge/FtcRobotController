@@ -28,6 +28,7 @@ public class SlideServos{
     public Action slidesOut() {
         return new SlideOut();
     }
+
     public class SlideIn implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -50,4 +51,20 @@ public class SlideServos{
     public Action slidesWait() {
         return new SlideWait();
     }
+
+    public class GetOutOfTheWay implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+
+            intakeSlide1.setPosition(Values.slide1wait);
+            intakeSlide1.setPosition(Values.slide2wait);
+            intakeSlide1.setPosition(Values.slide1wait-0.1);
+            intakeSlide2.setPosition(Values.slide2wait+0.1);
+            return false;
+        }
+    }
+    public Action getOuttaTheWay() {
+        return new GetOutOfTheWay();
+    }
+
 }

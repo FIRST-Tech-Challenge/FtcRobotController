@@ -29,6 +29,7 @@ public class IntakeThings {
         public boolean run(@NonNull TelemetryPacket packet) {
             //not sure if the sleep action works
             intakeElbow.setPosition(Values.intakeElbowDown);
+            wrist.setPosition(Values.wristDown);
             new SleepAction(0.4);
             intakeClaw.setPosition(Values.intakeclawClose);
             new SleepAction(0.5);
@@ -38,7 +39,7 @@ public class IntakeThings {
             return false;
         }
     }
-    public Action clawClose() {
+    public Action clawGrab() {
         return new ClawUp();
     }
 
@@ -52,7 +53,20 @@ public class IntakeThings {
             return false;
         }
     }
-    public Action openClaw() {
+    public Action openWait() {
         return new ClawWait();
     }
+    public class GetOutOfTheWay implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+
+            intakeClaw.setPosition(Values.intakeClawOpen);
+            intakeElbow.setPosition(Values.intakeElbowWait);
+            return false;
+        }
+    }
+    public Action getOuttaTheWay() {
+        return new GetOutOfTheWay();
+    }
+
 }

@@ -23,16 +23,16 @@ public class OuttakeServos {
         public boolean run(@NonNull TelemetryPacket packet) {
             outtakeClaw.setPosition(Values.outtakeClawClose);
             new SleepAction(1.6);
-            outtakeElbow.setPosition(Values.outtakeElbowUp);
             return false;
         }
     }
-    public Action OuttakeOpen() {
+    public Action OuttakeClose() {
         return new OuttakeClose();
     }
     public class OuttakeOpen implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            new SleepAction(.4);
             outtakeClaw.setPosition(Values.outakeclawOpen);
             return false;
         }
@@ -40,4 +40,28 @@ public class OuttakeServos {
     public Action outtakeOpen() {
         return new OuttakeOpen();
     }
+
+    public class OuttakeFlat implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            outtakeElbow.setPosition(Values.outtakeElbowFlat);
+            return false;
+        }
+    }
+    public Action outtakeFlat() {
+        return new OuttakeFlat();
+    }
+
+    public class OuttakeUp implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            outtakeElbow.setPosition(Values.outtakeElbowUp);
+            return false;
+        }
+    }
+    public Action outtakeUp() {
+        return new OuttakeUp();
+    }
+
+
 }

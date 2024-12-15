@@ -29,12 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Auto;
 
-import androidx.annotation.NonNull;
-
 // RR-specific imports
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -44,9 +40,6 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 // Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.IntakeThings;
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.OuttakeServos;
@@ -55,8 +48,8 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "woohooooo", group = "Autonomous")
-public class AutoTest extends LinearOpMode {
+@Autonomous(name = "1 clip", group = "Autonomous")
+public class AutoTestClips extends LinearOpMode {
 
     private IntakeThings intakeThings;
     private OuttakeServos outtakeServos;
@@ -67,33 +60,65 @@ public class AutoTest extends LinearOpMode {
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
-<<<<<<< HEAD
-        Pose2d initialPose = new Pose2d (11.8, -61.7, Math.toRadians(90));
-=======
-        Pose2d initialPose = new Pose2d (-10, 60, Math.toRadians(90));
->>>>>>> 16b902dbaa09f9edbafdc20ea6803b1525e806a0
+        Pose2d initialPose = Positions.clipsInitialPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-
         // make instance
-        IntakeThings intakeThings = new IntakeThings(hardwareMap);
-        OuttakeServos outtakeServos = new OuttakeServos(hardwareMap);
-        SlideMotors slideMotor = new SlideMotors(hardwareMap);
-        SlideServos slideServos = new SlideServos(hardwareMap);
+        intakeThings = new IntakeThings(hardwareMap);
+        outtakeServos = new OuttakeServos(hardwareMap);
+        slideMotor = new SlideMotors(hardwareMap);
+        slideServos = new SlideServos(hardwareMap);
 
-        // vision here that outputs position
 
         //test path
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-<<<<<<< HEAD
-                .lineToXConstantHeading(-70)
-                .waitSeconds(3);
-=======
-                .lineToX(12.5);
-                //.lineToXConstantHeading(12.5);
+        TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
+                //Slides Up
 
->>>>>>> 16b902dbaa09f9edbafdc20ea6803b1525e806a0
+                .lineToY(drive.pose.position.y-1.0)
+                .splineToConstantHeading(Positions.toClips,Math.toRadians(270))
+                .waitSeconds(5);
 
+        TrajectoryActionBuilder backOff = drive.actionBuilder(initialPose)
+                //slides down
+                //Open claw
+                .lineToY(drive.pose.position.y+3);
+
+        TrajectoryActionBuilder cLipsToPushFirstBlock = drive.actionBuilder(initialPose)
+                //slides all the way down
+                .splineToConstantHeading(new Vector2d(-27,38),Math.toRadians(180))
+                .splineToLinearHeading(Positions.readyToPushFirst,Math.toRadians(180))
+                .lineToY(drive.pose.position.y+45);
+//                        .back(45)
+//                        .strafeLeft(10)
+//                        .forward(45)
+//                        .back(45)
+//                        .strafeLeft(7)
+//                        .forward(45)
+//                        .back(5)
+//                        .strafeRight(15);
+        TrajectoryActionBuilder backOffNWait = drive.actionBuilder(initialPose)
+                //slides up
+                //open claw
+            .lineToY(drive.pose.position.y-10);
+
+
+        TrajectoryActionBuilder goInToGrab = drive.actionBuilder(initialPose)
+                .waitSeconds(3)
+                .lineToY(drive.pose.position.y+10);
+
+        //close claw
+        TrajectoryActionBuilder GrabToClip = drive.actionBuilder(initialPose)
+                .waitSeconds(4)
+                .setTangent(Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-7,32,Math.toRadians(270)),Math.toRadians(270));
+        //slides down
+        //Open claw
+
+        TrajectoryActionBuilder wait1sec = drive.actionBuilder(initialPose).waitSeconds(1);
+
+        TrajectoryActionBuilder waitHalfSec = drive.actionBuilder(initialPose).waitSeconds(0.5);
+        // vision here that outputs position
         int visionOutputPosition = 1;
+
         // actions that need to happen on init; for instance, a claw tightening.
         //Actions.runBlocking(claw.closeClaw());
         while (!isStopRequested() && !opModeIsActive()) {
@@ -109,7 +134,29 @@ public class AutoTest extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        tab1.build()
+                        outtakeServos.OuttakeClose(),
+                        slideMotor.liftUp(),
+                        initToCLips.build(),
+                        slideMotor.liftClip(),
+                        wait1sec.build(),
+                        wait1sec.build(),
+                        outtakeServos.outtakeOpen(),
+                        backOff.build(),
+                        slideMotor.liftDown(),
+                        cLipsToPushFirstBlock.build(),
+                        backOffNWait.build(),
+                        outtakeServos.outtakeOpen(),
+                        outtakeServos.outtakeFlat(),
+                        goInToGrab.build(),
+                        outtakeServos.OuttakeClose(),
+                        outtakeServos.outtakeUp(),
+                        slideMotor.liftUp(),
+                        GrabToClip.build(),
+                        slideMotor.liftClip(),
+                        wait1sec.build(),
+                        wait1sec.build(),
+                        wait1sec.build(),
+                        outtakeServos.outtakeOpen()
                 )
         );
     }

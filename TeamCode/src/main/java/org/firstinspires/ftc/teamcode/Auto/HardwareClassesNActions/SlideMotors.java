@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.teleop.Values;
+
 public class SlideMotors {
 
     private DcMotor outtakeSlide1;
@@ -49,8 +51,69 @@ public class SlideMotors {
             }
         }
     }
-
     public Action liftDown() {
         return new LiftDown();
+    }
+
+    public class LiftUp implements Action {
+        private boolean initialized = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                outtakeSlide1.setTargetPosition(2300);
+                outtakeSlide2.setTargetPosition(2300);
+                outtakeSlide1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                outtakeSlide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                outtakeSlide1.setPower(1);
+                outtakeSlide2.setPower(1);
+
+                initialized = true;
+            }
+
+            double pos = outtakeSlide1.getCurrentPosition();
+            packet.put("liftPos", pos);
+            if (pos > 2300.0) {
+                return true;
+            } else {
+                outtakeSlide1.setPower(0);
+                outtakeSlide2.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action liftUp() {
+        return new LiftUp();
+    }
+
+    public class LiftMax implements Action {
+        private boolean initialized = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                outtakeSlide1.setTargetPosition(Values.slideMax);
+                outtakeSlide2.setTargetPosition(Values.slideMax);
+                outtakeSlide1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                outtakeSlide2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                outtakeSlide1.setPower(1);
+                outtakeSlide2.setPower(1);
+
+                initialized = true;
+            }
+
+            double pos = outtakeSlide1.getCurrentPosition();
+            packet.put("liftPos", pos);
+            if (pos < 2100.0) {
+                return true;
+            } else {
+                outtakeSlide1.setPower(0);
+                outtakeSlide2.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action lifeMax() {
+        return new LiftMax();
     }
 }

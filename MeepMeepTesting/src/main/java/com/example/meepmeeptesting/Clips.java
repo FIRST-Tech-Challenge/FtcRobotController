@@ -14,7 +14,7 @@ public class Clips {
         RoadRunnerBotEntity myBot = new ActualBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-37, 60, Math.toRadians(270)))
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-13.5, 60, Math.toRadians(270)))
                         //todo finish this
                         //Slides Up
                         .forward(1)
