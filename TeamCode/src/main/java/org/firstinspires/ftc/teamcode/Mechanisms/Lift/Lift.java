@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 public class Lift {
     HardwareMap hardwareMap;
     FeedForward feedForward;
+    FeedForward feedForwardDown;
     PID pid;
     double motorPower;
     public int currentPosition;
@@ -33,10 +34,11 @@ public class Lift {
     TouchSensor limiter;
     public static double kA=0;
     public static double kV=0;
-    public static double kS=0.1;
+    public static double kG=0.1;
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
+    public static double liftThreshold = 0.1;
     double spoolRadius =  0.702; // [in]
     int ticksPerRev = 1024;
     public static double maxAcceleration = 50.0;
@@ -70,7 +72,7 @@ public class Lift {
         this.liftMotorRight.setPower(0);
 
         this.currentPosition = 0;
-        this.feedForward = new FeedForward(kV, kA, kS);
+        this.feedForward = new FeedForward(kV, kA, 0);
         this.pid = new PID(kP, kI, kD);
         this.limiter = hardwareMap.get(TouchSensor.class, "liftTouch");
     }
@@ -113,15 +115,15 @@ public class Lift {
 
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
-                if (reverse) {
-                    double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
-                    motorPower = pidPower + ffPower;
-                } else {
-                    motorPower = kS + ffPower;
-                }
+                double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
+                motorPower = pidPower + ffPower + kG;
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
-                return Math.abs(targetHeight - currentPosition) < 0.1;
+                if (targetHeight == 0 && Math.abs(targetHeight - currentPosition) < liftThreshold){
+                    liftMotorLeft.setPower(0);
+                    liftMotorRight.setPower(0);
+                }
+                return Math.abs(targetHeight - currentPosition) < liftThreshold;
             }
         };
     }
@@ -129,8 +131,8 @@ public class Lift {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                liftMotorLeft.setPower(power-kS);
-                liftMotorRight.setPower(power-kS);
+                liftMotorLeft.setPower(power);
+                liftMotorRight.setPower(power);
                 return false;
             }
         };
