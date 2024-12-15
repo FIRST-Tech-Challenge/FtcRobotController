@@ -253,7 +253,7 @@ public class RightAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> specimenWallPick() {
-        ITask first = scheduler.task(run(() -> hardware.claw.setPosition(CLAW_OPEN)));
+        ITask first = scheduler.add(run(() -> hardware.claw.setPosition(CLAW_OPEN)));
         ITask last = first
                 .then(wait(1.000))
                 .then(run(() -> hardware.wrist.setPosition(WRIST_UP)))
@@ -277,7 +277,7 @@ public class RightAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> scoreSpecimen() {
-        ITask first = scheduler.task(run(() -> {
+        ITask first = scheduler.add(run(() -> {
             hardware.claw.setPosition(CLAW_CLOSE);
             hardware.verticalSlide.setTargetPosition(710);
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -314,7 +314,7 @@ public class RightAuto extends LinearOpMode {
     };
 
     public void runAuto() {
-        scheduler.task(new OneShot(scheduler, setup))
+        scheduler.add(new OneShot(scheduler, setup))
                 .then(moveTo(new Pose(30, 12, 0)))
                 .then(scoreSpecimen())
 //                .then(wait(2.0))
@@ -340,7 +340,7 @@ public class RightAuto extends LinearOpMode {
         double doneIn = 0;
 
         // queue everything up
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
 //        mainAuto();

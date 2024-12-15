@@ -386,7 +386,7 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> flipOut() {
-        ITask first = scheduler.task(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
+        ITask first = scheduler.add(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
         ITask last = first
                 .then(wait(0.500))
                 .then(run(() -> hardware.clawFlip.setPosition(FLIP_DOWN)))
@@ -395,7 +395,7 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> flipIn() {
-        ITask first = scheduler.task(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
+        ITask first = scheduler.add(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
         ITask last = first
                 .then(wait(0.500))
                 .then(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_IN)))
@@ -448,16 +448,16 @@ public class LeftAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
-        scheduler.task(new OneShot(scheduler, () -> {
+        scheduler.add(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
             hardware.twist.setPosition(0.17);
         }));
         scheduler
-                .task(moveTo(scheduler, SCORE_HIGH_BASKET))
+                .add(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
