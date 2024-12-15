@@ -29,7 +29,6 @@ public class TuneFeedForwardLift  extends LinearOpMode {
     FtcDashboard dashboard;
     Battery battery;
     Encoder encoder;
-    HardwareMap hardwareMap;
     private HashSet<Action> runningActions = new HashSet<>();
 
     public static double height = 12;
