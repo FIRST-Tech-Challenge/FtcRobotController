@@ -67,7 +67,11 @@ public class AutoTest extends LinearOpMode {
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
+<<<<<<< HEAD
         Pose2d initialPose = new Pose2d (11.8, -61.7, Math.toRadians(90));
+=======
+        Pose2d initialPose = new Pose2d (-10, 60, Math.toRadians(90));
+>>>>>>> 16b902dbaa09f9edbafdc20ea6803b1525e806a0
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         // make instance
@@ -80,8 +84,14 @@ public class AutoTest extends LinearOpMode {
 
         //test path
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+<<<<<<< HEAD
                 .lineToXConstantHeading(-70)
                 .waitSeconds(3);
+=======
+                .lineToX(12.5);
+                //.lineToXConstantHeading(12.5);
+
+>>>>>>> 16b902dbaa09f9edbafdc20ea6803b1525e806a0
 
         int visionOutputPosition = 1;
         // actions that need to happen on init; for instance, a claw tightening.

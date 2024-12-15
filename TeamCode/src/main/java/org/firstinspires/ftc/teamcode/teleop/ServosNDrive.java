@@ -76,6 +76,7 @@ public class ServosNDrive extends LinearOpMode {
     private DcMotor outtakeSlide2;
     private final int[] slidePosition = {0};
 
+
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
 

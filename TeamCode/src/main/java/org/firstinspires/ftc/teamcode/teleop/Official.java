@@ -45,9 +45,10 @@ public class Official extends LinearOpMode {
     Gamepad previousGamepad2 = new Gamepad();
     private IMU imu;
 
+    private double sethControlThing;
+
     @Override
     public void runOpMode() {
-
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         leftFrontDrive = hardwareMap.get(DcMotor.class, "Motor0");
@@ -225,14 +226,34 @@ public class Official extends LinearOpMode {
                 }
             }
 
-
             //all servo stuff
 
+
+            // wtf happened here
+            sethControlThing = outtakeElbow.getPosition();
+            //trigger controls gp2
+            while (gamepad2.left_trigger > 0) {
+                sethControlThing += 0.001;
+                if (sethControlThing > .85){
+                    sethControlThing = .85;
+                }
+                outtakeElbow.setPosition(sethControlThing);
+            }
+            while (gamepad2.right_trigger > 0) {
+                sethControlThing -= 0.001;
+                if (sethControlThing < 0){
+                    sethControlThing = 0;
+                }
+                outtakeElbow.setPosition(sethControlThing);
+            }
+
             //horizontal slides in N out
-            if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-                    slidesOut();
-            } else if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-                    slidesIn();
+            {
+                if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
+                        slidesOut();
+                } else if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
+                        slidesIn();
+                }
             }
             if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
                 slideServo(true);
@@ -269,6 +290,7 @@ public class Official extends LinearOpMode {
                     intakeSlide1.setPosition(Values.slide1wait-0.1);
                     intakeSlide2.setPosition(Values.slide2wait+0.1);
                     sleep(200);
+                    intakeElbow.setPosition(Values.intakeElbowWait);
                     outtakeElbow.setPosition(Values.outtakeElbowUp);
                     elbowIsDown = false;
                 }
