@@ -15,7 +15,7 @@ public class Clips {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-13.5, 60, Math.toRadians(270)))
-                        //todo finish this
+                        //todone: finish this
                         //Slides Up
                         .splineToConstantHeading(new Vector2d(-7,32),Math.toRadians(270))
                         .waitSeconds(5)
