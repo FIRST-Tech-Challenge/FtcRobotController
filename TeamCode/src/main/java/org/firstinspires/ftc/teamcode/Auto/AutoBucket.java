@@ -113,8 +113,6 @@ public class AutoBucket extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         initToBlock1.build(),
-                        //todo add 0.4 seconds of delay in the claw transfer methods, maybe I did some of them
-                        //todo ignore non-paths stuff comment them out when testing
                         intakeThings.openWait(),
                         intakeThings.clawGrab(),
                         outtakeServos.OuttakeClose(),

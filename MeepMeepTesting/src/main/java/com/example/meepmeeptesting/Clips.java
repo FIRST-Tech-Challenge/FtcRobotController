@@ -17,33 +17,32 @@ public class Clips {
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-13.5, 60, Math.toRadians(270)))
                         //todo finish this
                         //Slides Up
-                        .forward(1)
                         .splineToConstantHeading(new Vector2d(-7,32),Math.toRadians(270))
                         .waitSeconds(5)
                         //slides down
                         //Open claw
-                        .back(3)
+                        .lineTo(new Vector2d(-7,34))
+                        .setTangent(Math.toRadians(90))
+                        .waitSeconds(.5)
                         //slides all the way down
                         .splineToConstantHeading(new Vector2d(-27,38),Math.toRadians(180))
-                        .splineToLinearHeading(new Pose2d(-46,13,Math.toRadians(90)),Math.toRadians(180))
-                        .forward(45)
-//                        .back(45)
-//                        .strafeLeft(10)
-//                        .forward(45)
-//                        .back(45)
-//                        .strafeLeft(7)
-//                        .forward(45)
-//                        .back(5)
-//                        .strafeRight(15)
+                        .setTangent(Math.toRadians(180))
+                        .splineToLinearHeading(new Pose2d(-46,13,Math.toRadians(90)),Math.toRadians(170))
+                        //foward
+                        .setTangent(Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-46,59),Math.toRadians(90))
+                        .setTangent(Math.toRadians(270))
+                        .splineToConstantHeading(new Vector2d(-46,48),Math.toRadians(270))
+                        .setTangent(Math.toRadians(90))
+                        .waitSeconds(3)
+                        .splineToConstantHeading(new Vector2d(-46,65),Math.toRadians(90))
+                        .waitSeconds(5)
                         //slides up
                         //open claw
-                        .back(10)
-                        .waitSeconds(2)
-                        .forward(15)
-                        .waitSeconds(5)
                         //close claw
-                        .setTangent(Math.toRadians(270))
+
                         //Slides Up
+                        .setTangent(Math.toRadians(270))
                         .splineToLinearHeading(new Pose2d(-7,32,Math.toRadians(270)),Math.toRadians(270))
                         //slides down
                         //Open claw
