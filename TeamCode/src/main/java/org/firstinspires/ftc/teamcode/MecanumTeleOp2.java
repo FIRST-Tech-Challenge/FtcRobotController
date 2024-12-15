@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.ITaskWithResult;
@@ -29,6 +30,7 @@ import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
+import dev.aether.collaborative_multitasking.TaskGroup;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.TaskWithResultTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
@@ -75,6 +77,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private While doWhile(Function0<Boolean> condition, Runnable action) {
         return new While(scheduler, condition, action);
+    }
+
+    private TaskGroup groupOf(Consumer<Scheduler> contents) {
+        return new TaskGroup(scheduler).with(contents);
     }
 
     private void hardwareInit() {
