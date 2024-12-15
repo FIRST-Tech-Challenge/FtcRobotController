@@ -45,7 +45,7 @@ public class Official extends LinearOpMode {
     Gamepad previousGamepad2 = new Gamepad();
     private IMU imu;
 
-    private double sethDumbControlThing;
+    private double sethControlThing;
 
     @Override
     public void runOpMode() {
@@ -227,21 +227,24 @@ public class Official extends LinearOpMode {
             }
 
             //all servo stuff
-            sethDumbControlThing = outtakeElbow.getPosition();
+
+
+            // wtf happened here
+            sethControlThing = outtakeElbow.getPosition();
             //trigger controls gp2
             while (gamepad2.left_trigger > 0) {
-                sethDumbControlThing += 0.001;
-                if (sethDumbControlThing > .85){
-                    sethDumbControlThing = .85;
+                sethControlThing += 0.001;
+                if (sethControlThing > .85){
+                    sethControlThing = .85;
                 }
-                outtakeElbow.setPosition(sethDumbControlThing);
+                outtakeElbow.setPosition(sethControlThing);
             }
             while (gamepad2.right_trigger > 0) {
-                sethDumbControlThing -= 0.001;
-                if (sethDumbControlThing < 0){
-                    sethDumbControlThing = 0;
+                sethControlThing -= 0.001;
+                if (sethControlThing < 0){
+                    sethControlThing = 0;
                 }
-                outtakeElbow.setPosition(sethDumbControlThing);
+                outtakeElbow.setPosition(sethControlThing);
             }
 
             //horizontal slides in N out
