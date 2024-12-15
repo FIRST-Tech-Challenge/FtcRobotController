@@ -41,20 +41,16 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.IntakeThings;
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.OuttakeServos;
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
 @Autonomous(name = "1 clip", group = "Autonomous")
-public class AutoTestClips extends LinearOpMode {
+public class Clips extends LinearOpMode {
 
-    private IntakeThings intakeThings;
-    private OuttakeServos outtakeServos;
+    private Servos servos;
     private SlideMotors slideMotor;
-    private SlideServos slideServos;
 
     @Override public void runOpMode(){
         //all of these are during init
@@ -63,11 +59,8 @@ public class AutoTestClips extends LinearOpMode {
         Pose2d initialPose = Positions.clipsInitialPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // make instance
-        intakeThings = new IntakeThings(hardwareMap);
-        outtakeServos = new OuttakeServos(hardwareMap);
+        servos = new Servos(hardwareMap);
         slideMotor = new SlideMotors(hardwareMap);
-        slideServos = new SlideServos(hardwareMap);
-
 
         //test path
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
@@ -134,29 +127,28 @@ public class AutoTestClips extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        outtakeServos.OuttakeClose(),
+                        servos.OuttakeClose(),
+                        servos.outtakeFlat(),
                         slideMotor.liftUp(),
-                        initToCLips.build(),
-                        slideMotor.liftClip(),
-                        wait1sec.build(),
-                        wait1sec.build(),
-                        outtakeServos.outtakeOpen(),
-                        backOff.build(),
+                        //initToCLips.build(),
+                        slideMotor.liftPutClips(),
+                        servos.outtakeOpen(),
+                        //backOff.build(),
                         slideMotor.liftDown(),
-                        cLipsToPushFirstBlock.build(),
-                        backOffNWait.build(),
-                        outtakeServos.outtakeOpen(),
-                        outtakeServos.outtakeFlat(),
-                        goInToGrab.build(),
-                        outtakeServos.OuttakeClose(),
-                        outtakeServos.outtakeUp(),
+                        //cLipsToPushFirstBlock.build(),
+                        //backOffNWait.build(),
+                        servos.outtakeOpen(),
+                        servos.outtakeFlat(),
+                        //goInToGrab.build(),
+                        servos.OuttakeClose(),
+                        servos.outtakeUp(),
                         slideMotor.liftUp(),
-                        GrabToClip.build(),
-                        slideMotor.liftClip(),
+                        //GrabToClip.build(),
+                        slideMotor.liftPutClips(),
                         wait1sec.build(),
                         wait1sec.build(),
                         wait1sec.build(),
-                        outtakeServos.outtakeOpen()
+                        servos.outtakeOpen()
                 )
         );
     }

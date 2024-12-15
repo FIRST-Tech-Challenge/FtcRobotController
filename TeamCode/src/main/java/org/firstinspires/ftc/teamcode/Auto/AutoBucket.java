@@ -40,7 +40,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.IntakeThings;
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.OuttakeServos;
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideServos;
@@ -50,7 +50,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Autonomous(name = "bucket", group = "Autonomous")
 public class AutoBucket extends LinearOpMode {
 
-    private IntakeThings intakeThings;
+    private Servos intakeThings;
     private OuttakeServos outtakeServos;
     private SlideMotors slideMotor;
     private SlideServos slideServos;
@@ -62,7 +62,7 @@ public class AutoBucket extends LinearOpMode {
         Pose2d initialPose = Positions.bucketInitialPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // make instance
-        intakeThings = new IntakeThings(hardwareMap);
+        intakeThings = new Servos(hardwareMap);
         outtakeServos = new OuttakeServos(hardwareMap);
         slideMotor = new SlideMotors(hardwareMap);
         slideServos = new SlideServos(hardwareMap);

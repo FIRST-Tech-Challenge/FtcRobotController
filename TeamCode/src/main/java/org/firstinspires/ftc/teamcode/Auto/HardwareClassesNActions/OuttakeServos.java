@@ -63,5 +63,14 @@ public class OuttakeServos {
         return new OuttakeUp();
     }
 
-
+    public class OuttakeDown implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            outtakeElbow.setPosition(Values.outtakeElbowDown);
+            return false;
+        }
+    }
+    public Action outtakedown() {
+        return new OuttakeDown();
+    }
 }
