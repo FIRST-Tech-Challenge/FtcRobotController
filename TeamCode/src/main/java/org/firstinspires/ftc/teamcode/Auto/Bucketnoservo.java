@@ -40,26 +40,24 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
-import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "strafe to right? park", group = "Autonomous")
-public class Clipsnoservo extends LinearOpMode {
+@Autonomous(name = "bucket no servo no servo, no work", group = "Autonomous")
+public class Bucketnoservo extends LinearOpMode {
 
 
     @Override public void runOpMode(){
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = Positions.bucketInitialPos;
+        Pose2d initialPose = Positions.clipsInitialPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        Servos servos = new Servos(hardwareMap);
 
         //test path
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(-60,60));
+                .lineToY(-40);
+
 
         // vision here that outputs position
         int visionOutputPosition = 1;
@@ -79,8 +77,7 @@ public class Clipsnoservo extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        initToCLips.build(),
-                        servos.GrabWaitSequence()
+                        initToCLips.build()
                 )
         );
     }

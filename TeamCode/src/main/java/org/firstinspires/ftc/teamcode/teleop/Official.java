@@ -302,6 +302,7 @@ public class Official extends LinearOpMode {
                         intakeElbow.setPosition(Values.intakeElbowWait);
                         wrist.setPosition(Values.wristDown);
                         intakeClaw.setPosition(Values.intakeClawOpen);
+                        elbowIsDown= true;
                     } else if (elbowIsDown) {
                         intakeClaw.setPosition(Values.intakeClawOpen);
                         intakeElbow.setPosition(Values.intakeElbowDown);
@@ -311,6 +312,7 @@ public class Official extends LinearOpMode {
                         wrist.setPosition(Values.wristUp);
                         clawPivot.setPosition(Values.MID_SERVO);
                         intakeElbow.setPosition(Values.intakeElbowUp);
+                        elbowIsDown = false;
                     }
 
                     sleep(250);

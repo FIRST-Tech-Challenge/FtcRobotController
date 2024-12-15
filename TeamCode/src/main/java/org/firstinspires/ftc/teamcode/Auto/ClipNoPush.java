@@ -30,14 +30,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 // RR-specific imports
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-
-// Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -46,11 +45,10 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "1 clip whole thing", group = "Autonomous")
-public class Clips extends LinearOpMode {
+@Autonomous(name = "push all of them", group = "Autonomous")
+public class ClipNoPush extends LinearOpMode {
 
     private Servos servos;
-    private SlideMotors slideMotor;
 
     @Override public void runOpMode(){
         //all of these are during init
@@ -60,56 +58,25 @@ public class Clips extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         // make instance
         servos = new Servos(hardwareMap);
-        slideMotor = new SlideMotors(hardwareMap);
-
         //test path
-        TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder pushDaBlocks = drive.actionBuilder(initialPose)
                 //Slides Up
-
-                .lineToY(drive.pose.position.y-1.0)
-                .splineToConstantHeading(Positions.toClips,Math.toRadians(270))
-                .waitSeconds(5);
-
-        TrajectoryActionBuilder backOff = drive.actionBuilder(initialPose)
-                //slides down
-                //Open claw
-                .lineToY(drive.pose.position.y+3);
-
-        TrajectoryActionBuilder cLipsToPushFirstBlock = drive.actionBuilder(initialPose)
-                //slides all the way down
-                .splineToConstantHeading(new Vector2d(-27,38),Math.toRadians(180))
-                .splineToLinearHeading(Positions.readyToPushFirst,Math.toRadians(180))
-                .lineToY(drive.pose.position.y+45);
-//                        .back(45)
-//                        .strafeLeft(10)
-//                        .forward(45)
-//                        .back(45)
-//                        .strafeLeft(7)
-//                        .forward(45)
-//                        .back(5)
-//                        .strafeRight(15);
-        TrajectoryActionBuilder backOffNWait = drive.actionBuilder(initialPose)
-                //slides up
-                //open claw
-            .lineToY(drive.pose.position.y-10);
-
-
-        TrajectoryActionBuilder goInToGrab = drive.actionBuilder(initialPose)
-                .waitSeconds(3)
-                .lineToY(drive.pose.position.y+10);
-
-        //close claw
-        TrajectoryActionBuilder GrabToClip = drive.actionBuilder(initialPose)
-                .waitSeconds(4)
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(31,-23),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(47,-6),0)
                 .setTangent(Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(-7,32,Math.toRadians(270)),Math.toRadians(270));
-        //slides down
-        //Open claw
+                .splineToConstantHeading(new Vector2d(47,-52),Math.toRadians(270))
+                .setTangent(Math.toRadians(90))
 
-        TrajectoryActionBuilder wait1sec = drive.actionBuilder(initialPose).waitSeconds(1);
+                .splineToConstantHeading(new Vector2d(53,-6),Math.toRadians(45))
+                .setTangent(Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(53,-52),Math.toRadians(270))
 
-        TrajectoryActionBuilder waitHalfSec = drive.actionBuilder(initialPose).waitSeconds(0.5);
-        // vision here that outputs position
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(64,-6),Math.toRadians(45))
+                .setTangent(Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(64d,-52),Math.toRadians(270));
+
         int visionOutputPosition = 1;
 
         // actions that need to happen on init; for instance, a claw tightening.
@@ -127,28 +94,7 @@ public class Clips extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        servos.OuttakeClose(),
-                        servos.outtakeFlat(),
-                        slideMotor.liftUp(),
-                        //initToCLips.build(),
-                        slideMotor.liftPutClips(),
-                        servos.outtakeOpen(),
-                        //backOff.build(),
-                        slideMotor.liftDown(),
-                        //cLipsToPushFirstBlock.build(),
-                        //backOffNWait.build(),
-                        servos.outtakeOpen(),
-                        servos.outtakeFlat(),
-                        //goInToGrab.build(),
-                        servos.OuttakeClose(),
-                        servos.outtakeUp(),
-                        slideMotor.liftUp(),
-                        //GrabToClip.build(),
-                        slideMotor.liftPutClips(),
-                        wait1sec.build(),
-                        wait1sec.build(),
-                        wait1sec.build(),
-                        servos.outtakeOpen()
+                        pushDaBlocks.build()
                 )
         );
     }
