@@ -318,6 +318,7 @@ public class MecanumTeleOp extends LinearOpMode {
         if (gamepad2.left_stick_y >= 0.5 && gamepad2.left_stick_x >= -0.25 && gamepad2.left_stick_x <= 0.25) {
             Wristpos += 0.01;
             hardware.wrist.setPosition(Wristpos);
+
         } else if (gamepad2.left_stick_y <= -0.5 && gamepad2.left_stick_x >= -0.25 && gamepad2.left_stick_x <= 0.25) {
             Wristpos -= 0.01;
             hardware.wrist.setPosition(Wristpos);
@@ -473,10 +474,16 @@ public class MecanumTeleOp extends LinearOpMode {
             ClawFrontPos = 0.07;
         }
         if (gamepad1.dpad_up) {
-            ClawFlipPos += -0.01;
+            ClawFlipPos -= 0.01;
+            if(ClawFlipPos<0){
+                ClawFlipPos = 0.0;
+            }
         }
         if (gamepad1.dpad_down) {
             ClawFlipPos += 0.01;
+            if(ClawFlipPos>1){
+                ClawFlipPos = 1.0;
+            }
         }
         hardware.clawFlip.setPosition(ClawFlipPos);
         hardware.clawFront.setPosition(ClawFrontPos);
