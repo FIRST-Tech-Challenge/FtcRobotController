@@ -21,6 +21,19 @@ import dev.aether.collaborative_multitasking.SharedResource;
 
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double spinTickPerRev = 751.8;
+    public static final double RIGHT_SLIDE_OUT = 0.72;
+    public static final double LEFT_SLIDE_OUT = 0.28;
+    public static final double LEFT_SLIDE_IN = 0.55;
+    public static final double RIGHT_SLIDE_IN = 0.45;
+    public static final double FLIP_DOWN = 0.04;
+    public static final double FRONT_OPEN = 0.33;
+    public static final double FRONT_CLOSE = 0.07;
+    public static final double FLIP_UP = 0.98;
+    public static final double CLAW_CLOSE = 0.02;
+    public static final double CLAW_OPEN = 0.55;
+    public static final double WRIST_UP = 0.46;
+    public static final double WRIST_BACK = 0.30;
+    public static final double ARM_POWER = 0.2;
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
@@ -51,13 +64,6 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double FORWARD_OFFSET = 5.05905785;
     public static final double ENC_WHEEL_RADIUS = 1.25984 / 2.0;
     public static final int ENC_TICKS_PER_REV = 2000;
-
-    public static final double H_SLIDE_OUT = 0.35;
-    public static final double H_SLIDE_IN = 0.1;
-    public static final double FLIP_DOWN = 0.04;
-    public static final double FLIP_UP = 0.98;
-    public static final double FRONT_OPEN = 0.33;
-    public static final double FRONT_CLOSE = 0.07;
 
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
