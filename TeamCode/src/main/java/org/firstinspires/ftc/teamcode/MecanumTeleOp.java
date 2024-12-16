@@ -473,13 +473,13 @@ public class MecanumTeleOp extends LinearOpMode {
         if (gamepad1.dpad_right) {
             ClawFrontPos = 0.07;
         }
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpad_down) {
             ClawFlipPos -= 0.01;
             if(ClawFlipPos<0){
                 ClawFlipPos = 0.0;
             }
         }
-        if (gamepad1.dpad_down) {
+        if (gamepad1.dpad_up) {
             ClawFlipPos += 0.01;
             if(ClawFlipPos>1){
                 ClawFlipPos = 1.0;
@@ -496,11 +496,12 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void HSlide(Hardware hardware) {
 
-        if (gamepad1.y && hslidepos < 1) {
-            hslidepos += 0.01;
+        if (gamepad1.y) {
+            hslidepos = 1.0;
+
         }
-        if (gamepad1.a && hslidepos > 0) {
-            hslidepos += -0.01;
+        if (gamepad1.a) {
+            hslidepos = -0.0;
         }
         hardware.horizontalSlide.setPosition(hslidepos);
         telemetry.addData("Horizontal Position", hardware.horizontalSlide.getPosition());
