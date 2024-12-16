@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "strafe to right? park", group = "Autonomous")
+@Autonomous(name = "strafe to left? park", group = "Autonomous")
 public class Clipsnoservo extends LinearOpMode {
 
 

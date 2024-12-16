@@ -40,6 +40,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
@@ -53,6 +54,7 @@ public class Bucketnoservo extends LinearOpMode {
         // instantiate your MecanumDrive at a particular pose.
         Pose2d initialPose = Positions.clipsInitialPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        Servos servos = new Servos(hardwareMap);
 
         //test path
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
@@ -77,6 +79,7 @@ public class Bucketnoservo extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
+                        servos.GrabWaitSequence(),
                         initToCLips.build()
                 )
         );

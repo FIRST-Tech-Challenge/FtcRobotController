@@ -54,26 +54,25 @@ public class ClipNoPush extends LinearOpMode {
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = Positions.clipsInitialPos;
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        Pose2d initialPose = new Pose2d(7, -60, Math.toRadians(90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(7, -60, Math.toRadians(90)));
         // make instance
         servos = new Servos(hardwareMap);
         //test path
-        TrajectoryActionBuilder pushDaBlocks = drive.actionBuilder(initialPose)
-                //Slides Up
+        TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(31,-23),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(47,-6),0)
+                .splineToConstantHeading(new Vector2d(40,-23),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(42,35),0)
                 .setTangent(Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(47,-52),Math.toRadians(270))
                 .setTangent(Math.toRadians(90))
 
-                .splineToConstantHeading(new Vector2d(53,-6),Math.toRadians(45))
+                .splineToConstantHeading(new Vector2d(53,25),Math.toRadians(45))
                 .setTangent(Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(53,-52),Math.toRadians(270))
 
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(64,-6),Math.toRadians(45))
+                .splineToConstantHeading(new Vector2d(64,25),Math.toRadians(45))
                 .setTangent(Math.toRadians(270))
                 .splineToConstantHeading(new Vector2d(64d,-52),Math.toRadians(270));
 
@@ -94,7 +93,9 @@ public class ClipNoPush extends LinearOpMode {
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        pushDaBlocks.build()
+                        servos.elbowUp(),
+                        initToCLips.build(),
+                        servos.elbowUp()
                 )
         );
     }

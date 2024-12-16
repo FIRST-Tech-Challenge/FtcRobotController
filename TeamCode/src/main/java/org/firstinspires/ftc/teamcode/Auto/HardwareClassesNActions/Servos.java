@@ -234,4 +234,18 @@ public class Servos {
     public Action slideOuttaTheWay() {
         return new SlideOutOfTheWay();
     }
+
+
+
+    public class ElbowUp implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+
+            intakeElbow.setPosition(Values.intakeElbowUp);
+            return false;
+        }
+    }
+    public Action elbowUp() {
+        return new ElbowUp();
+    }
 }
