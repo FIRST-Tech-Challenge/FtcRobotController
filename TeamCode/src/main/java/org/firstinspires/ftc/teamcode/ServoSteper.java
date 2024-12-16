@@ -45,16 +45,9 @@ public class ServoSteper extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-
         // Scan servo till stop pressed.
         while (opModeIsActive()) {
 
-            if (gamepad1.dpad_down) {
-
-            }
-
-
-            // slew the servo, according to the rampUp (direction) variable.
             if (gamepad1.y) {
                 // Keep stepping up until we hit the max value.
                 position += INCREMENT;
@@ -80,13 +73,15 @@ public class ServoSteper extends LinearOpMode {
             // Set the servo to the new position and pause;
             sleep(CYCLE_MS);
             idle();
-//aa
+            hardware.horizontalLeft.setPosition(position);
+            hardware.horizontalSlide.setPosition(1-position);
+
         }
 
         // Signal done;
         telemetry.addData(">", "Done");
         telemetry.addData("position", position);
         telemetry.update();
-        hardware.clawFront.setPosition(position);
+      //  hardware.horizontalSlide.setPosition(position);
     }
 }
