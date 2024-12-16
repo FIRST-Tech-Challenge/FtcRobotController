@@ -21,7 +21,7 @@ public class pivotSubsystem implements Subsystem {
     public Motor.Encoder pivotEncoder1;
     public Motor.Encoder pivotEncoder2;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    public DoubleSupplier getArmLength;
+    private DoubleSupplier getArmLength;
     private double currentArmLength;
 
     PIDController m_pivotPID;
@@ -32,7 +32,7 @@ public class pivotSubsystem implements Subsystem {
         this.pivot1 = pivot1;
         this.pivot2 = pivot2;
         m_pivotPID = new PIDController(pKP,pKI,pKD);
-        this.getArmLength = extensionSubsystem.armLengthSupplier
+        this.getArmLength = extensionSubsystem.getInstance().armLengthSupplier;
 
 
     }
@@ -46,7 +46,7 @@ public class pivotSubsystem implements Subsystem {
 
     
     private void updateValues() {
-        currentArmLength = this.getArmLength.getAsDouble();
+        currentArmLength = getArmLength.getAsDouble();
     }
 
     private void updateTelemetry() {

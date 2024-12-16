@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.utils.telescopicArmCOM;
 import java.util.function.DoubleSupplier;
 
 public class extensionSubsystem implements Subsystem {
+    private static extensionSubsystem instance;
     HardwareMap map;
     public MotorEx arm1;
     public MotorEx arm2;
@@ -23,10 +24,11 @@ public class extensionSubsystem implements Subsystem {
     public Motor.Encoder extensionEncoder2;
     PIDController m_extensionPID;
     public double currentArmLength;
-    public static DoubleSupplier armLengthSupplier;
+    public DoubleSupplier armLengthSupplier;
     public double armCOM;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    public extensionSubsystem(HardwareMap map, MotorEx arm1, MotorEx arm2){
+   
+    public init(HardwareMap map, MotorEx arm1, MotorEx arm2){
         this.map = map;
         this.arm1 = arm1;
         this.arm2 = arm2;
@@ -42,6 +44,13 @@ public class extensionSubsystem implements Subsystem {
         updateTelemetry();
         updateValues();
     }
+    public static synchronized extensionSubsystem getInstance() {
+        if (instance == null) {
+            instance = new extensionSubsystem(); // Create the instance if it doesn't exist
+        }
+        return instance;
+    }
+    private extensionSubsystem()    {    }
 
     private double getArmLength()
     {
