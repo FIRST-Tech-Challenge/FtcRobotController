@@ -104,19 +104,24 @@ public class nematocyst {
                 setSlideHeight(0);
             } else if (opMode.gamepad1.x) {
                 setSlideHeight(13.0);
-            } else if (opMode.gamepad1.y) {
+            } else if (opMode.gamepad1.b) {
                 setSlideHeight(26.0 - 5);
-            } else if (opMode.gamepad1.dpad_down) {
-                setSlideHeight(0);
-            } else if (opMode.gamepad1.dpad_right) {
-                setSlideHeight(25.75 - 5);
-            } else if (opMode.gamepad1.dpad_up) {
+            } else if (opMode.gamepad1.y) {
                 setSlideHeight(43.0 - 5);
             }
             if (opMode.gamepad1.left_bumper) {
                 targPivotPos = -5;
             } else if (opMode.gamepad1.right_bumper) {
                 targPivotPos = -160;
+            }
+            if (opMode.gamepad1.dpad_up) {
+                wristOut();
+            } else if (opMode.gamepad1.dpad_down) {
+                wristIn();
+            } else if (opMode.gamepad1.dpad_right) {
+                grab();
+            } else if (opMode.gamepad1.dpad_left) {
+                release();
             }
             targetSlidePosition = (int) (targSlideHeight*ticksPerInch);
         }
