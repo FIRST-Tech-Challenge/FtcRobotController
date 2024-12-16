@@ -55,7 +55,7 @@ interface ITask {
         return task
     }
 
-    fun then(polyChain: Pair<Task, Task>): Task {
+    fun then(polyChain: Pair<ITask, ITask>): ITask {
         this.then(polyChain.first)
         return polyChain.second
     }

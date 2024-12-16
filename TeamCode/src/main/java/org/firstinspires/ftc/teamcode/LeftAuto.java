@@ -33,6 +33,7 @@ import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
+import kotlin.Pair;
 import kotlin.Unit;
 
 @Autonomous // Appear on the autonomous drop down
@@ -367,6 +368,41 @@ public class LeftAuto extends LinearOpMode {
     public static final int ARM_BASKET_TICKS = 222;
     public static final int ARM_PICK_UP_TICKS = 67;
 
+    public static final double FLIP_UP = 0.98;
+    public static final double FLIP_DOWN = 0.04;
+    public static final double H_SLIDE_OUT = 0.35;
+    public static final double H_SLIDE_IN = 0.1;
+    public static final double CLAW_OPEN = 0.55;
+    public static final double CLAW_CLOSE = 0.02;
+    public static final double WRIST_UP = 0.46;
+    public static final double WRIST_BACK = 0.30;
+
+    private ITask run(Runnable it) {
+        return new OneShot(scheduler, it);
+    }
+
+    private ITask wait(double seconds) {
+        return new Pause(scheduler, seconds);
+    }
+
+    private Pair<ITask, ITask> flipOut() {
+        ITask first = scheduler.task(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
+        ITask last = first
+                .then(wait(0.500))
+                .then(run(() -> hardware.clawFlip.setPosition(FLIP_DOWN)))
+                .then(wait(0.500));
+        return new Pair<>(first, last);
+    }
+
+    private Pair<ITask, ITask> flipIn() {
+        ITask first = scheduler.task(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
+        ITask last = first
+                .then(wait(0.500))
+                .then(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_IN)))
+                .then(wait(0.500));
+        return new Pair<>(first, last);
+    }
+
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
 
@@ -377,6 +413,7 @@ public class LeftAuto extends LinearOpMode {
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
+    private MultitaskScheduler scheduler;
 
     private MoveToTask moveTo(Scheduler s, Pose target) {
         return new MoveToTask(
@@ -394,7 +431,7 @@ public class LeftAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MultitaskScheduler scheduler = new MultitaskScheduler();
+        scheduler = new MultitaskScheduler();
 
         hardware = new Hardware(hardwareMap);
         tracker = new EncoderTracking(hardware);
