@@ -1,36 +1,23 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import android.graphics.Color;
-import android.util.Size;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 @TeleOp(name="Teleop-Main")
 
 public class TeleMain extends LinearOpMode {
 
-    Motors motors;
-    Input input;
-//
-//    public boolean moveto = false;
+    Motors motors = new Motors(hardwareMap);
+    Input input = new Input(hardwareMap);
+    ElapsedTime elapsedTime = new ElapsedTime();
 
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
-
-        motors = new Motors(hardwareMap); // just needed for debugging, probably comment out and line 32
-        input = new Input(hardwareMap);
-
 
 
         waitForStart();
@@ -54,6 +41,8 @@ public class TeleMain extends LinearOpMode {
 
             input.upArm(armRaise);
 
+            implementArmPID(gamepad2.right_stick_y);
+
             telemetry.addData("MOVE:", "left_y (%.2f),", move);
             telemetry.addData("SPIN:", "right_x (%.2f),", spin);
             telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
@@ -62,4 +51,18 @@ public class TeleMain extends LinearOpMode {
             telemetry.update(); // telemtryy
         }
     }
+
+
+    double prevTime = elapsedTime.milliseconds();
+    public void implementArmPID(double power) {
+
+        double time = elapsedTime.milliseconds();
+
+        double deltaTime = (time - prevTime) / 1000.0;  // Convert to seconds
+        input.ArmPidControl(deltaTime, power);
+
+        prevTime = time;
+    }
 }
+
+
