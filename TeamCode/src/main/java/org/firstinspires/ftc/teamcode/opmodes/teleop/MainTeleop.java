@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -24,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 @SuppressWarnings("unused")
 public class MainTeleop extends OpModeTemplate {
 
+    private static final String LOG_TAG = MainTeleop.class.getSimpleName();
     private TeleFourWheelMecanumDriveTrain driveTrain;
 
     @Override
@@ -77,21 +80,19 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(deliverySlider::ExpandSlowly, deliverySlider))
                 .whenReleased(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).toggleWhenPressed(
-                new InstantCommand(() -> {
-                    // first set of button binding
-                }),
-                new InstantCommand(() -> {
-                    // second set of button binding
-                })
-        );
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(() -> {
+            double sliderPosition = deliverySlider.getPosition();
+            double pivotPosition = deliveryPivot.getPosition();
+            Log.i(LOG_TAG, String.format("slider position = %f, pivot position = %f", sliderPosition, pivotPosition));
+
+        });
         // Delivery Slider
         new Trigger(() -> gamepad2.left_stick_y > 0.5)
-                .whenActive(new InstantCommand(deliverySlider::Expand, deliverySlider))
+                .whenActive(new InstantCommand(deliverySlider::collapse, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
         new Trigger(() -> gamepad2.left_stick_y < -0.5)
-                .whenActive(new InstantCommand(deliverySlider::Collapse, deliverySlider))
+                .whenActive(new InstantCommand(deliverySlider::expand, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
         // Intake and Outtake

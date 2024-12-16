@@ -267,4 +267,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
     public void resetEncoder() {
         motor.resetEncoder();
     }
+
+    public int getPosition() {
+        return motor.getCurrentPosition();
+    }
 }

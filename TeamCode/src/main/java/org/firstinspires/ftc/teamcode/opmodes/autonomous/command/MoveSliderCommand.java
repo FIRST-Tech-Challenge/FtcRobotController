@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 public class MoveSliderCommand extends SounderBotCommandBase {
 
+    private static final String LOG_TAG = MoveSliderCommand.class.getSimpleName();
     public static class EndAction {
         public static final double DEFAULT_END_POWER = .2;
         public double endPowerWithoutSign;
@@ -42,18 +45,22 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     boolean resetEncoder = false;
 
-    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target) {
-        this(slider, telemetry, target, false);
+    DeliverySlider.Direction direction;
+
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, DeliverySlider.Direction direction) {
+        this(slider, telemetry, target, false, direction);
     }
 
-    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder) {
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction direction) {
         this.slider = slider;
         this.telemetry = telemetry;
         this.target = target;
         this.motor = slider.getMotor();
         this.pidController = slider.getPidController();
         this.resetEncoder = resetEncoder;
+        this.direction = direction;
 
+        Log.i(LOG_TAG, "Target set to: " + target);
         addRequirements(slider);
     }
 
@@ -65,16 +72,20 @@ public class MoveSliderCommand extends SounderBotCommandBase {
     @Override
     public void doExecute() {
         position = motor.encoder.getPosition();
+        Log.i(LOG_TAG, String.format("Current position = %f, direction = %s", position, direction.name()));
         double power = pidController.calculatePIDAlgorithm(target - position);
 
         if(isTargetReached() || holdPosition != Integer.MIN_VALUE) {
+            Log.i(LOG_TAG, "target reached with direction " + direction.name());
             if (endAction == null) {
-                motor.set(0);
+                Log.i(LOG_TAG, "no end action");
+                end(false);
                 finished = true;
                 telemetry.addLine("Done");
 
                 if(resetEncoder) {
                     this.slider.ResetEncoder();
+
                 }
             } else {
                 if (holdPosition == Integer.MIN_VALUE) {
@@ -83,14 +94,14 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                 }
 
                 if (endAction.stopMotorSignalProvider.get()) {
-                    motor.set(0);
+                    slider.setMotors(0);
                     finished = true;
                 } else {
                     telemetry.addLine("holding slider...");
                     if (Math.abs(holdPosition - motor.getCurrentPosition()) < 50) {
-                        motor.set(0);
+                        slider.setMotors(0);
                     } else {
-                        motor.set(holdingPower);
+                        slider.setMotors(holdingPower);
                     }
                 }
 
@@ -99,16 +110,15 @@ public class MoveSliderCommand extends SounderBotCommandBase {
         } else {
             double minPower = .2;
 
-            if (Math.abs(power) < minPower) {
-
-                power = minPower * Math.abs(power) / power;
-            }
+            power = Math.max(minPower, Math.abs(power)) * direction.directionFactor;
 
             telemetry.addData("slider", position);
             telemetry.addData("target", target);
             telemetry.addData("power", power);
 
-            motor.set(power);
+
+            Log.i(LOG_TAG, "Power to motor: " + power);
+            slider.setMotors(power);
         }
 
         telemetry.update();
@@ -121,6 +131,10 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        motor.set(0);
+        if (DeliverySlider.Direction.EXPANDING == direction) {
+            slider.setMotors(-.1);
+        } else {
+            slider.setMotors(0);
+        }
     }
 }

@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
@@ -89,23 +86,23 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSlider() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
     }
 
     public MoveSliderCommand extendSliderToSpeciment() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand extendSliderToDeliverSpeciman() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition-600);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition-600, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand collapseSlider() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
     }
 
     public TurnAngleRelativeCommand turnAngleRelative(double angleInDegrees) {

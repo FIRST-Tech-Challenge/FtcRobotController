@@ -4,10 +4,8 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.Hang;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 
 /**
@@ -27,11 +25,11 @@ public class DoubleMotorSlider extends OpModeTemplate {
 
         // Delivery Slider
         new Trigger(() -> gamepad2.left_stick_y > 0.5)
-                .whenActive(new InstantCommand(deliverySlider::Expand, deliverySlider))
+                .whenActive(new InstantCommand(deliverySlider::collapse, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
         new Trigger(() -> gamepad2.left_stick_y < -0.5)
-                .whenActive(new InstantCommand(deliverySlider::Collapse, deliverySlider))
+                .whenActive(new InstantCommand(deliverySlider::expand, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
 

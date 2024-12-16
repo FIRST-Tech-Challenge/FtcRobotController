@@ -15,6 +15,17 @@ import java.util.function.Supplier;
 
 public class DeliverySlider extends SonicSubsystemBase {
 
+    public enum Direction {
+        EXPANDING (-1),
+        COLLAPSE (1);
+
+        public final int directionFactor;
+
+        Direction(int directionFactor) {
+            this.directionFactor = directionFactor;
+        }
+    }
+
     private Motor motor;
     private Motor motor2;
 
@@ -25,8 +36,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    public static int BasketDeliveryPosition = 1000;
-    public static int CollapsedPosition = 90;
+    public static int BasketDeliveryPosition = 863;
+    public static int CollapsedPosition = -10;
 
     public static int StartPosition = 400;
 
@@ -69,14 +80,14 @@ public class DeliverySlider extends SonicSubsystemBase {
         this.isTeleop = false;
     }
 
-    public void Expand() {
+    public void collapse() {
         SetTelop();
         motor.set(.6);
         motor2.set(-.6);
 
     }
 
-    public void Collapse() {
+    public void expand() {
         SetTelop();
         if (pivotLowEnoughSupplier != null
                 && pivotLowEnoughSupplier.get()) {
@@ -203,6 +214,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void ResetEncoder() {
         this.motor.encoder.reset();
+        this.motor2.encoder.reset();
     }
 
     public void CollapseMinInAuto() {
@@ -247,5 +259,14 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public SonicPIDFController getPidController() {
         return pidController;
+    }
+
+    public void setMotors(double power) {
+        motor.set(power);
+        motor2.set(-power);
+    }
+
+    public double getPosition() {
+        return motor.getCurrentPosition();
     }
 }

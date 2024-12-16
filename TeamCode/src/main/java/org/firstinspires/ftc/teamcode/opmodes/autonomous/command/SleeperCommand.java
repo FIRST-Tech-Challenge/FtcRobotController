@@ -6,6 +6,8 @@ public class SleeperCommand extends SounderBotCommandBase {
 
     private final long timeToSleepMs;
 
+    private boolean slept = false;
+
 
     public SleeperCommand(long timeToSleepMs) {
         this.timeToSleepMs = timeToSleepMs;
@@ -13,7 +15,11 @@ public class SleeperCommand extends SounderBotCommandBase {
 
     @Override
     protected void doExecute() {
-        sleep(timeToSleepMs);
+        if (!slept) {
+            sleep(timeToSleepMs);
+            slept = true;
+        }
+        finished = true;
     }
 
     @Override
