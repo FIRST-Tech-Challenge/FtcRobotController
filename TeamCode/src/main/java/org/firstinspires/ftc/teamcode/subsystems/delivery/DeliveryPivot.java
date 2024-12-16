@@ -29,7 +29,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int DeliveryPositionFromStart = 1500; //CHANGED
 
-    public static int IntakePositionFromStart = -920;
+    public static int IntakePositionFromStart = -1220;
 
     private int SampleIntakePositionFromStart = -1490;
 
@@ -64,7 +64,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
         this.recordedPosition = 0;
 
-        pidController = new SonicPIDFController(0.005, 0, 0.000);
+        pidController = new SonicPIDFController(0.03, 0, 0.000);
     }
 
     boolean isStopperClosed = false;
