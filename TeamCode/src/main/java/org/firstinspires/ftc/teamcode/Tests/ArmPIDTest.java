@@ -28,12 +28,12 @@ public class ArmPIDTest extends LinearOpMode {
     ElapsedTime elapsedTime;
 
     // PID variables
-    public static double kp = 2;  // Proportional gain
-    public static double ki = 0.45;  // Integral gain
-    public static double kd = 0.13;  // Derivative gain
+     static double kp = 2;  // Proportional gain
+     static double ki = 0.45;  // Integral gain
+     static double kd = 0.13;  // Derivative gain
 
 
-    public static int setPoint = 0;
+     static int setPoint;
 
     double prevError = 0;  // Previous error, used for derivative
     double integral = 0;   // Integral term
