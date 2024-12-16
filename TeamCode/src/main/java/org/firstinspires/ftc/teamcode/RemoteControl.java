@@ -188,7 +188,7 @@ public class RemoteControl extends LinearOpMode {
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
             if (gamepad1.b) {
-                setVertical(355, 1800);
+                setVertical(380, 1800);
                 setViper(1900, 2000);
             }
 
