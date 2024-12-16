@@ -30,31 +30,19 @@ public class TuneFeedForwardLift  extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()){
-//            if (gamepad1.circle) {
-//            runningActions.add(
-//                    lift.moveToHeight(height)
-//            );
-//            runningActions.add(
-//                    lift.moveToHeight(currentPosition)
-//            );
                 Actions.runBlocking((lift.moveToHeight(12)));
-                if (Timer.seconds() > 3) {
-                    Actions.runBlocking(lift.moveToHeight(currentPosition));
-
-
-                    new Action() {
-                        @Override
-                        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                            telemetryPacket.addLine("Height: " + lift.currentPosition);
+//                if (Timer.seconds() > 3) {
+//                    Actions.runBlocking(lift.moveToHeight(currentPosition));
+//
+//                    new Action() {
+//                        @Override
+//                        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                            telemetryPacket.addLine("Height: " + lift.currentPosition);
 //                                    telemetryPacket.addLine("Velocity: " + lift.liftMotorLeft.getVelocity());
 //                                    telemetryPacket.addLine("Acceleration: " + lift.liftMotorLe);
 //                                    telemetryPacket.addLine("maxHeight: " + maxHeight);
-                            return false;
-                        }
-                    };
-//                }
-          }
+//                            return false;
+//                        }
+//                    };
         }
     }
-}

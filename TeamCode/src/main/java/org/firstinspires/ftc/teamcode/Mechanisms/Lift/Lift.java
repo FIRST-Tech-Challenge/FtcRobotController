@@ -56,8 +56,8 @@ public class Lift {
         this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
 //        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
-        this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 //        this.liftMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //        this.liftMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,16 +125,23 @@ public class Lift {
                     liftMotorLeft.setPower(0);
                     liftMotorRight.setPower(0);
                 }
-                return Math.abs(targetHeight - currentPosition) < liftThreshold;
+                packet.put("Current Height: ", currentPosition);
+                packet.put("Target Height: ", targetHeight);
+                packet.put("Motor Power", motorPower);
+
+                return Math.abs(targetHeight - currentPosition) > liftThreshold;
             }
         };
     }
     public Action manualControl(double power) {
         return new Action() {
+
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 liftMotorLeft.setPower(power);
                 liftMotorRight.setPower(power);
+
+                packet.put("Motor Power", power);
                 return false;
             }
         };

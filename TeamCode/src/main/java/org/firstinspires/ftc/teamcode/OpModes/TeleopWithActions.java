@@ -92,7 +92,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.add(arm.servoArmSpec());
         }
         if(gamepad2.left_stick_y > 0.2 ||gamepad2.left_stick_y < -0.2){
-            runningActions.add(lift.manualControl(gamepad2.left_stick_y));
+            runningActions.add(lift.manualControl(-gamepad2.left_stick_y));
         } else {
             runningActions.add(lift.manualControl(0));
         }
