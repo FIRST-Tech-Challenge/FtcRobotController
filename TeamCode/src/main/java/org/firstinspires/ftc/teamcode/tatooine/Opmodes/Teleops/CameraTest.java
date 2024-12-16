@@ -16,7 +16,7 @@ public class CameraTest extends LinearOpMode {
         Servo s = hardwareMap.get(Servo.class, "s");
         waitForStart();
         while (opModeIsActive()) {
-            s.setPosition(camera.getPostion());
+            s.setPosition(camera.getAngle());
         }
     }
 }

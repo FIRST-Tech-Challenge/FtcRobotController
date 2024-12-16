@@ -24,9 +24,9 @@ public class Wrist {
     private Telemetry telemetry;
     private boolean IS_DEBUG = false;
 
-    private PIDFController pid = new PIDFController(0.01, 0, 0, 0);
+    private PIDFController pid = new PIDFController(0.0025, 0.05, 0.001, 0);
 
-    private final double ANGLE_TOLERANCE = 0.1;
+    private final double ANGLE_TOLERANCE = 3;
 
     private AnalogInput angleSensor = null;
 
@@ -165,7 +165,14 @@ public class Wrist {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            angleServo.setPower(pid.calculate(getAngle(), goal));
+            if (IS_DEBUG) {
+                telemetry.addData("angle", getAngle());
+            }
+            pid.setTimeout(100000000);
+            angleServo.setPower(-pid.calculate(getAngle(), goal));
+            if (pid.atSetPoint()){
+                angleServo.setPower(0);
+            }
             return !pid.atSetPoint();
         }
     }

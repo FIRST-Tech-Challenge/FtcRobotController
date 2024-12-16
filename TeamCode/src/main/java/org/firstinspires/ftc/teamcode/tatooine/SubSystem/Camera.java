@@ -60,7 +60,7 @@ public class Camera {
                 .build();
     }
 
-    public double getPostion() {
+    public double getAngle() {
         prevAngle = angle;
         prevPostion = postion;
         List<ColorBlobLocatorProcessor.Blob> blobs =blobLocatorProcessor.getBlobs();
@@ -84,10 +84,11 @@ public class Camera {
             angle = Math.toDegrees(Math.atan((pt[0].y - pt[1].y) / (pt[0].x - pt[1].x)));
         }
         postion = (MathUtil.optimizeAngle(angle, prevAngle)/180)+0.5;
-        opMode.telemetry.addData("pos",postion/5);
-        opMode.telemetry.addData("ang",MathUtil.optimizeAngle(angle, prevAngle));
-        opMode.telemetry.update();
-        return  postion;
+        if (IS_DEBUG) {
+            opMode.telemetry.addData("pos", postion / 5);
+            opMode.telemetry.addData("ang", MathUtil.optimizeAngle(angle, prevAngle));
+        }
+        return  angle;
 
 
     }
