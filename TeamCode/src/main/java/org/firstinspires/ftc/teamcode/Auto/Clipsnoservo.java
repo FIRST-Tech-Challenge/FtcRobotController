@@ -61,21 +61,6 @@ public class Clipsnoservo extends LinearOpMode {
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(-60,60));
 
-        // vision here that outputs position
-        int visionOutputPosition = 1;
-
-        // actions that need to happen on init; for instance, a claw tightening.
-        //Actions.runBlocking(claw.closeClaw());
-        while (!isStopRequested() && !opModeIsActive()) {
-            int position = visionOutputPosition;
-            telemetry.addData("Position during Init", position);
-            telemetry.update();
-        }
-        int startPosition = visionOutputPosition;
-        telemetry.addData("Starting Position", startPosition);
-        telemetry.update();
-        waitForStart();
-
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
