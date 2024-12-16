@@ -590,15 +590,13 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void Flipin(Hardware hardware) {
         double flipup = 0.98;
-        double hslidein = 0.1;
+        double hslidein = 0.0;
         hardware.clawFlip.setPosition(flipup);
         ClawFlipPos = flipup;
         sleep(500);
         hardware.horizontalSlide.setPosition(hslidein);
         hslidepos = hslidein;
         sleep(500);
-
-
     }
 
     public void trasfer(Hardware hardware){
