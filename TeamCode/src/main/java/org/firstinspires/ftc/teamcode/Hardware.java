@@ -129,6 +129,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("horizontalSlide")
     public Servo horizontalSlide;
 
+    @HardwareName("horizontalLeft")
+    public Servo horizontalLeft;
+
     @Override
     public Encoder getLeftEncoder() {
         return encoderLeft;
