@@ -40,12 +40,24 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         /// * the `arm` motor
         /// * the `wrist`, `twist`, and `claw` servos
         public static final SharedResource ArmAssembly = new SharedResource("ArmAssembly");
+
+        /// The components that make up the horizontal slide assembly:
+        /// * the `horizontalSlide` servo
+        /// * the `clawFront` and `clawFlip` servos
+        public static final SharedResource SlideAssembly = new SharedResource("SlideAssembly");
     }
 
     public static final double TRACK_WIDTH = 11.3385888;
     public static final double FORWARD_OFFSET = 5.05905785;
     public static final double ENC_WHEEL_RADIUS = 1.25984 / 2.0;
     public static final int ENC_TICKS_PER_REV = 2000;
+
+    public static final double H_SLIDE_OUT = 0.35;
+    public static final double H_SLIDE_IN = 0.1;
+    public static final double FLIP_DOWN = 0.04;
+    public static final double FLIP_UP = 0.98;
+    public static final double FRONT_OPEN = 0.33;
+    public static final double FRONT_CLOSE = 0.07;
 
     // left = left motor = exp 0 frontLeft
     // right = right motor = ctr 0 frontRight
