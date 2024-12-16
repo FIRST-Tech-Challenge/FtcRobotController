@@ -8,16 +8,14 @@ import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.Hardware.Locks;
-
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Hardware.Locks;
+import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +44,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
     double ClawFlipPos = 0.5;
+    double hslidepos = 0.05;
     double horizontalSlide = 0;
 
     private LiftBackgroundTask liftProxy;
@@ -364,16 +363,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 telemetry.addData("br power", backRightPower);
             }
             wrist();
+            trasfer();
             claw();
-            twist();
+//            twist();
             stepper();
             lift();
             HSlide();
             arm();
 
-            if (gamepad1.x) {
-                transfer();
-            }
             if (gamepad2.y) {
                 ScoreHighBasket();
             }
@@ -381,9 +378,17 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 PickUpYellow();
             }
             if (gamepad2.b) {
-                PickUpSpecimen();
+                specimenWallPick();
             }
+            if (gamepad2.dpad_left) {
+                score();
+            }
+            if (gamepad1.right_trigger > 0.5) Flipin();
+            if (gamepad1.left_trigger > 0.5) Flipout();
+
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+            telemetry.addData("Wrist Position", hardware.wrist.getPosition());
+            telemetry.addData("Claw Position", hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
             telemetry.update();
         }
@@ -401,8 +406,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     /////////////////////////////////////////////
 
-    int maxVerticalLiftTicks = 2300;
-    int minVerticalLiftTicks = 0;
+    // These are in the LiftProxy
     int highChamberTicks = 790;
     int highBasketTicks = 2180;
 
@@ -428,88 +432,36 @@ public class MecanumTeleOp2 extends LinearOpMode {
         }
     }
 
-
     double armTargetPosDeg = 0.0;
     int liftMinClearanceTicks = 350;
 
-    private static int deg2arm(double degrees) {
-        return (int) (degrees / 360.0 * spinTickPerRev);
-    }
-
     private double getArmPosDeg() {
-        double rotations = hardware.arm.getCurrentPosition() / spinTickPerRev;
+        double rotations = hardware.arm.getCurrentPosition() / Hardware.spinTickPerRev;
         // 0 = straight down
         return rotations * 360.0;
     }
-
-    private boolean checkedArmGoto(double degrees) {
-        if (hardware.encoderVerticalSlide.getCurrentPosition() < liftMinClearanceTicks) {
-            double current = getArmPosDeg();
-            if (degrees > 5 && degrees < 35) return false;
-            if (current < 5 && degrees >= 35) return false;
-            if (current > 35 && degrees < 5) return false;
-        }
-        armTargetPosDeg = degrees;
-        return true;
-    }
-
-    static final double spinTickPerRev = 751.8;
 
     private void arm() {
         // https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
         // 537.7 ppr
         DcMotor arm = hardware.arm;
         double stick_pos = -gamepad2.right_stick_y;
-        double rotations = arm.getCurrentPosition() / spinTickPerRev;
+        double rotations = arm.getCurrentPosition() / Hardware.spinTickPerRev;
         double degrees = rotations * 360.0; // 0 = straight down
         // Negative: towards front;
         // Positive: towards back.
         // Exclusion zone 0 to -25deg whe lift < 6in.
-        boolean emerg = false;
-        if (hardware.encoderVerticalSlide.getCurrentPosition() <= liftMinClearanceTicks) {
-            // get outta there
-            if (stick_pos > 0.7 && (armTargetPosDeg <= 5 || (armTargetPosDeg >= 35 && armTargetPosDeg <= 110))) {
-                armTargetPosDeg += 1;
-            }
-            if (stick_pos < -0.7 && (armTargetPosDeg >= 35 || (armTargetPosDeg >= -110 && armTargetPosDeg <= 5))) {
-                armTargetPosDeg -= 1;
-            }
-
-            if (armTargetPosDeg > 5 && armTargetPosDeg < 12.5) {
-                emerg = true;
-                armTargetPosDeg = 5;
-            } else if (armTargetPosDeg >= 12.5 && armTargetPosDeg < 35) {
-                emerg = true;
-                armTargetPosDeg = 35;
-            }
-        } else {
-            // Full* clearance
-            if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
-                armTargetPosDeg += 1;
-            }
-            if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
-                armTargetPosDeg -= 1;
-            }
+        // [removed if statement, disabled]
+        // Full* clearance
+        if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
+            armTargetPosDeg += 1;
         }
-        arm.setTargetPosition(deg2arm(armTargetPosDeg));
-        arm.setPower(emerg ? 1.0 : 0.3);
+        if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
+            armTargetPosDeg -= 1;
+        }
+        arm.setTargetPosition(Hardware.deg2arm(armTargetPosDeg));
+        arm.setPower(0.3);
         telemetry.addData("arm deg", degrees);
-    }
-
-    public void twist() {
-        boolean write = false;
-        if (gamepad2.left_stick_x >= 0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
-            twistPos += 0.01;
-            write = true;
-        } else if (gamepad2.left_stick_x <= -0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
-            twistPos -= 0.01;
-            write = true;
-        }
-        if (write) {
-            abandonLock(Locks.ArmAssembly);
-            hardware.twist.setPosition(twistPos);
-        }
-        telemetry.addData("Twist Position", twistPos);
     }
 
     public void wrist() {
@@ -529,62 +481,43 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     public void claw() {
-        Servo servo = hardwareMap.get(Servo.class, "claw");
         final double open = 0.02;
         final double close = 0.55;
         if (gamepad2.left_bumper) {
             abandonLock(Locks.ArmAssembly);
-            servo.setPosition(open);
+            hardware.claw.setPosition(open);
         } else if (gamepad2.right_bumper) {
             abandonLock(Locks.ArmAssembly);
-            servo.setPosition(close);
+            hardware.claw.setPosition(close);
         }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket() {
-        scheduler
-                .add(liftProxy.moveTo(highBasketTicks, 5, 2.0))
-                .then(run(() -> {
-                    hardware.arm.setTargetPosition(222);
-                    hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    hardware.arm.setPower(0.5);
-                }))
-                .then(await(500))
-                .then(run(() -> hardware.wrist.setPosition(0.94)))
-                .then(await(500))
-                .then(run(() -> hardware.claw.setPosition(0.02)))
-                .then(await(500))
-                .then(run(() -> hardware.claw.setPosition(0.55)))
-                .then(await(100))
-                .then(run(() -> hardware.wrist.setPosition(0.28)))
-                .then(await(500))
-                .then(run(() -> hardware.arm.setTargetPosition(0)))
-                .then(await(500))
-                .then(liftProxy.moveTo(0, 5, 2.0))
-                ;
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        hardware.verticalSlide.setTargetPosition(highBasketTicks);
-        sleep(2000);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        hardware.arm.setTargetPosition(222);
-        sleep(500);
-        hardware.wrist.setPosition(0.94);
-        sleep(500);
-        hardware.claw.setPosition(0.02);
-        sleep(500);
-        hardware.claw.setPosition(0.55);
-        sleep(100);
-        hardware.wrist.setPosition(0.28);
-        sleep(500);
-        hardware.arm.setTargetPosition(0);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(0);
+        scheduler.add(
+                groupOf(inner -> inner.add(liftProxy.moveTo(highBasketTicks, 5, 2.0))
+                        .then(run(() -> hardware.arm.setTargetPosition(222)))
+                        .then(await(500))
+                        .then(run(() -> hardware.wrist.setPosition(0.94)))
+                        .then(await(500))
+                        .then(run(() -> hardware.claw.setPosition(0.02)))
+                        .then(await(500))
+                        .then(run(() -> hardware.claw.setPosition(0.55)))
+                        .then(await(100))
+                        .then(run(() -> hardware.wrist.setPosition(0.28)))
+                        .then(await(500))
+                        .then(run(() -> hardware.arm.setTargetPosition(0)))
+                        .then(await(500))
+                        .then(liftProxy.moveTo(0, 5, 2.0))
+                ).extraDepends(
+                        Locks.ArmAssembly,
+                        liftProxy.CONTROL
+                )
+        );
     }
 
     public void PickUpYellow() {
+        // Scheduled to be rewritten -miles
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(224);
@@ -642,8 +575,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
         armTargetPosDeg = 0;
     }
 
-
     private void transfer() {
+        // Technically still enabled in normal MechanumTeleOp, but likely error
         //hardware.arm.setPower(-0.5);
         hardware.verticalSlide.setTargetPosition(900);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -680,14 +613,16 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     private void stepper() {
+        // this deals with the horizontal slide stuff. we don't have locks (yet) so it's remaining
+        // as-is for now
         if (gamepad1.dpad_left) {
-            ClawFrontPos += -0.01;
+            ClawFrontPos = 0.33;
         }
         if (gamepad1.dpad_right) {
-            ClawFrontPos += 0.01;
+            ClawFrontPos = 0.07;
         }
         if (gamepad1.dpad_up) {
-            ClawFlipPos += -0.01;
+            ClawFlipPos -= 0.01;
         }
         if (gamepad1.dpad_down) {
             ClawFlipPos += 0.01;
@@ -702,13 +637,145 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     public void HSlide() {
+        // same note as above.
+        if (gamepad1.y && hslidepos < 1) {
+            hslidepos += 0.01;
+        }
+        if (gamepad1.a && hslidepos > 0) {
+            hslidepos += -0.01;
+        }
+        hardware.horizontalSlide.setPosition(hslidepos);
+        telemetry.addData("Horizontal Position", hardware.horizontalSlide.getPosition());
+    }
 
-        if (gamepad1.x && horizontalSlide < 1) {
-            horizontalSlide += 0.01;
+    public void specimenWallPick() {
+        // todo: move these into Hardware.java
+        double clawopen = 0.55;
+        double clawclose = 0.02;
+        double wristup = 0.46;
+        double wristback = 0.30;
+        double slideup = 200;
+        double armout = 23.94;
+
+        scheduler.add(
+                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawopen)))
+                        .then(await(1000))
+                        .then(run(() -> hardware.wrist.setPosition(wristup)))
+                        .then(await(1000))
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(45))))
+                        // FIXME: get that global variable out of here
+                        .then(await(500))
+                        .then(run(() -> hardware.claw.setPosition(clawclose)))
+                        .then(await(1000))
+                        .then(liftProxy.moveTo(300, 5, 1.0))
+                        .then(run(() -> hardware.wrist.setPosition(wristback)))
+                        .then(await(1000))
+                        // TODO: investigate if 10 ticks or 10 degrees is the right number
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
+                        .then(await(1000))
+                        .then(liftProxy.moveTo(0, 5, 0))
+                ).extraDepends(
+                        liftProxy.CONTROL,
+                        Locks.ArmAssembly
+                )
+        );
+    }
+
+    private void score() {
+        double clawclose = 0.02;
+
+        scheduler.add(
+                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
+                        .then(liftProxy.moveTo(710, 5, 1.0))
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
+                        .then(await(1000))
+                        .then(run(() -> hardware.wrist.setPosition(1)))
+//                        .then(await(1000))
+//                        .then(moveRel(new Pose(-3.5, 0, 0)))
+//                        .then(run(() -> hardware.claw.setPosition(clawopen)))
+//                        .then(await(500))
+//                        // Maybe let the rest of this be async
+//                        .then(run(() -> {
+//                            hardware.wrist.setPosition(0.28);
+//                            hardware.arm.setTargetPosition(Hardware.deg2arm(0));
+//                        }))
+//                        .then(await(1000))
+//                        .then(run(() -> hardware.verticalSlide.setTargetPosition(0)))
+//                        .then(await(250))
+
+                ).extraDepends(
+                        liftProxy.CONTROL,
+                        Locks.ArmAssembly
+                )
+        );
+    }
+
+    public void Horizontalpick() {
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        double frontopen = 0.33;
+        double frontclose = 0.07;
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.horizontalSlide.setPosition(hslideout);
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        sleep(500);
+        hardware.clawFront.setPosition(frontopen);
+        sleep(500);
+        hardware.clawFront.setPosition(frontclose);
+        ClawFrontPos = frontclose;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipup);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        sleep(500);
+    }
+
+    public void Flipout() {
+        double hslideout = 0.35;
+        double flipdown = 0.04;
+        hardware.horizontalSlide.setPosition(hslideout);
+        hslidepos = hslideout;
+        sleep(500);
+        hardware.clawFlip.setPosition(flipdown);
+        ClawFlipPos = flipdown;
+        sleep(500);
+    }
+
+    public void Flipin() {
+        double flipup = 0.98;
+        double hslidein = 0.1;
+        hardware.clawFlip.setPosition(flipup);
+        ClawFlipPos = flipup;
+        sleep(500);
+        hardware.horizontalSlide.setPosition(hslidein);
+        hslidepos = hslidein;
+        sleep(500);
+
+
+    }
+
+    public void trasfer() {
+        if (gamepad2.x) {
+            hardware.clawFront.setPosition(0.07);
+            ClawFrontPos = 0.07;
+            hardware.claw.setPosition(0.55);
+            sleep(500);
+            hardware.wrist.setPosition(0);
+            sleep(500);
+            hardware.arm.setTargetPosition(-28);
+            armTargetPosDeg = -8;
+            sleep(1000);
+            hardware.claw.setPosition(0.02);
+            sleep(500);
+            hardware.clawFront.setPosition(0.33);
+            sleep(500);
+            hardware.arm.setTargetPosition(0);
+            armTargetPosDeg = 0;
+            sleep(500);
+            hardware.wrist.setPosition(0.28);
+            ClawFrontPos = 0.28;
         }
-        if (gamepad1.b && horizontalSlide > 0) {
-            horizontalSlide += -0.01;
-        }
-        hardware.horizontalSlide.setPosition(horizontalSlide);
     }
 }
