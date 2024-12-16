@@ -47,7 +47,7 @@ abstract class TaskWithResultTemplate<T>(scheduler: Scheduler) : TaskTemplate(sc
         return super<TaskTemplate>.then(configure)
     }
 
-    override fun then(polyChain: Pair<Task, Task>): Task {
+    override fun then(polyChain: Pair<ITask, ITask>): ITask {
         return super<TaskTemplate>.then(polyChain)
     }
 }
