@@ -24,7 +24,8 @@ public class AutonomousPurePursuit extends CommonUtil {
         //setup
 
         telemetry.setAutoClear(false);
-        // initialize hardware
+        // initialize hardware JESUS TAKE THE WHEEL
+        //YEEZUS CHRISTLER
         initialize(hardwareMap);
         // Initialize motors
         setMotorOrientation();
