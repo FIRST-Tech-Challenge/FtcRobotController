@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -21,7 +23,7 @@ public class nematocyst {
 //    private static final double inchesToDegrees =  1/2.067;
     private static final double ticksPerInch = (double) 1024 /24; // TODO: wtf???
     private static final double Max_Extension = 1024; // Max safe extension distance from slide base
-    private static final int angToTicks = 752 /360;
+    private static final double degPerTick = (double) 360 /752;
     // PID constants
 //    public static double sP = 0.01;
 //    public static double sI = 0.0001;
@@ -29,6 +31,9 @@ public class nematocyst {
     public double pP = 0;
     public double pI = 0;
     public double pD = 0;
+    public double pF = 0;
+    PIDFController pivotPID;
+//    ElapsedTime pidTimer;
     public static double maxSlidePower = 0;
     private boolean manualMode = true;
     // PID variables
@@ -38,7 +43,7 @@ public class nematocyst {
     private int targetSlidePosition = (int) (targSlideHeight * ticksPerInch);  // Starting at initial position (adjust)
     private int targPivotPos;
     private int maxSlidePos;
-    private int maxPivotPos = 210;
+    private int maxPivotPos = -210;
     ElapsedTime pivotTimer;
     OpMode opMode;
     public nematocyst(OpMode OM) {
@@ -65,6 +70,7 @@ public class nematocyst {
         targSlideHeight = 0;
         targPivotPos = 0;
         pivotTimer = new ElapsedTime();
+        pivotPID = new PIDController(pP, pI, pD);
     }
 
     public void loop() {
@@ -108,29 +114,28 @@ public class nematocyst {
                 setSlideHeight(43.0 - 5);
             }
             if (opMode.gamepad1.left_bumper) {
-                targPivotPos = 5;
+                targPivotPos = -5;
             } else if (opMode.gamepad1.right_bumper) {
-                targPivotPos = 160;
+                targPivotPos = -160;
             }
             targetSlidePosition = (int) (targSlideHeight*ticksPerInch);
         }
         targetSlidePosition = Math.max(0, Math.min(targetSlidePosition, maxSlidePos));
-        targPivotPos = Math.max(0, Math.min(targPivotPos, maxPivotPos));
+        targPivotPos = Math.min(0, Math.max(targPivotPos, maxPivotPos));
         // Ensure the motor does not exceed max forward extension
         slideMotor.setTargetPosition(targetSlidePosition);
         double direction = maxSlidePower * Math.signum((double) targetSlidePosition- slideMotor.getCurrentPosition());
         slideMotor.setPower(direction);
-//
-        pivotPower = calculatePID(pP, pI, pD, targPivotPos, pivot.getCurrentPosition(), pivotTimer);
-        pivot.setPower(pivotPower); // use updatePID to fix this
+//        pivotPID.setPIDF(aP, aI, aD, aF);
+        pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
+        pivot.setPower(pivotPower); // use updatdePID to fix this
     }
-    public void updatePID(double aP, double aI, double aD) {
-//        sP = slideP;
-//        sI = slideI;
-//        sD = slideD;
+    public void updatePID(double aP, double aI, double aD, double aF) {
         pP = aP;
         pI = aI;
         pD = aD;
+        pF = aF;
+//        pivotPID.setPIDF(aP, aI, aD);
     }
     public void setSlideHeight(double inches) {
         targSlideHeight = inches;
@@ -144,6 +149,10 @@ public class nematocyst {
     }
     public void manualUp() { targPivotPos++;}
     public void manualDown() { targPivotPos--;}
+    public void grab() { claw.setPosition(0); }
+    public void release() {claw.setPosition(0.012);}
+    public void wristOut() {wrist.setPosition(0);}
+    public void wristIn() {wrist.setPosition(0.774);}
 
 
 
@@ -177,22 +186,19 @@ public class nematocyst {
         t.update();
     }
 
-    private double calculatePID(double p, double i, double d, int target, int current, ElapsedTime timer) {
+    private double calculatePID(int target, int current) {
         // Calculate error
+
         double error = target - current;
-
-        // Proportional term
-        double pTerm = p * error;
-
-        // Integral term
-        integral += (error * timer.seconds());
-        double iTerm = i * integral;
+        integral += (error * pivotTimer.seconds());
+//        double iTerm = i * integral;
         // Derivative term
-        double dTerm = d * ((error - lastError)/timer.seconds());
+        double derivative = ((error - lastError)/pivotTimer.seconds());
         lastError = error;
         // PID output
-        double output = pTerm + iTerm + dTerm;
-        timer.reset();
+        double ff = -Math.cos(Math.toRadians(90-(current * degPerTick)));
+        double output = (error * pP) + (integral * pI) + (derivative * pD) + (pF * ff);
+        pivotTimer.reset();
         // Limit the output to motor range [-1, 1]
         output = Math.max(-1, Math.min(output, 1));
         return output;

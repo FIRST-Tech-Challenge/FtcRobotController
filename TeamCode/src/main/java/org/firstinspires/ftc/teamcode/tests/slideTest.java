@@ -17,6 +17,7 @@ public class slideTest extends OpMode {
     public static double angP;
     public static double angI;
     public static double angD;
+    public static double angF;
     public static double sP;
     public static double sI;
     public static double sD;
@@ -35,7 +36,7 @@ public class slideTest extends OpMode {
     @Override
     public void loop() {
         slide.loop();
-        slide.updatePID(angP, angI, angD);
+        slide.updatePID(angP, angI, angD, angF);
         slide.getTelemetry();
         slide.getTelemetry(t2);
     }
