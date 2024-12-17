@@ -13,17 +13,32 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-//import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
-import org.firstinspires.ftc.teamcode.Commands.ConvertAngleForWristRotate;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PickupFromSubmersible;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
+//import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
+//import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
+import org.firstinspires.ftc.teamcode.Subsystems.BackDistance;
 //import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
+import org.firstinspires.ftc.teamcode.Subsystems.Camera;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
+import org.firstinspires.ftc.teamcode.Subsystems.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
+import org.firstinspires.ftc.teamcode.Subsystems.Climb;
+import org.firstinspires.ftc.teamcode.Subsystems.ClimbTargetHeight;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawTouchSensor;
@@ -85,9 +100,10 @@ public class RobotContainer {
     /** * 0° is down */
     public static ElbowJoint elbowJoint;
     public static Claw claw;
-    //public static Climb climb;
+    public static Climb climb;
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
+    public static BackDistance backDistance;
 
 
 
@@ -95,11 +111,7 @@ public class RobotContainer {
     public static double RedStartAngle = 90;
     public static double BlueStartAngle = -90;
 
-    public static boolean GoHunting =false;
-
     //
-    private static boolean IsManualDrive=false;
-    private static double DriveToggleWait;
 
     // Robot initialization for teleop - Run this once at start of teleop
     // mode - current opmode that is being run
@@ -124,13 +136,15 @@ public class RobotContainer {
         //driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
         driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> odometry.setCurrentPos(AutoFunctions.redVsBlue(
-        new Pose2d(0.16, 0.76, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
-
-        //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new LeftSideAuto87Pts());
+        new Pose2d(0.16, 0.77, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.START).whileHeld(new SweepAlliancePieces());
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new SweepAlliancePieces());
+
+        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new InstantCommand(()->climb.moveTo(ClimbTargetHeight.SAMPLE_LIFT)));
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
 
@@ -140,17 +154,22 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new );
+        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
+
         driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> wristRotateServo.RotateTo(45, 10)));
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new ArmStowHigh());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
 
-//        if (driverOp.getGamepadButton(GamepadKeys.Button.A).get()){
-//            new WallPickupCalculation();
-//        }
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
+
 
         // Controls the claw using bumpers
         // left = close
@@ -158,8 +177,7 @@ public class RobotContainer {
         //driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.CLOSE)));
         //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(()->claw.ControlClaw(ClawState.OPEN)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new AutoPickUpOffGround());
+
 
 
 //        if (isRedAlliance){
@@ -239,9 +257,10 @@ public class RobotContainer {
         wristRotateServo= new PivotingWrist();
         elbowJoint = new ElbowJoint();
         claw = new Claw();
-        //climb = new Climb();
+        climb = new Climb();
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
+        backDistance = new BackDistance();
 
         if (isRedAlliance){
             clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
