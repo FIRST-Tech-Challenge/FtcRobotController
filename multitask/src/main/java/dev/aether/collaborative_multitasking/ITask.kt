@@ -20,6 +20,8 @@ interface ITask {
     val isStartRequested: Boolean
     fun onRequest() = isStartRequested
 
+    fun isBypass() = false
+
     // Lifecycle
     fun transition(newState: State)
     fun register()

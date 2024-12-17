@@ -57,6 +57,10 @@ open class MultitaskScheduler
                 it.invokeCanStart()
             }
             .forEach {
+                if (it.isBypass()) {
+                    val idsToStop = it.requirements().map { locks[it.id] }.filterNotNull()
+                    filteredStop { it.myId in idsToStop }
+                }
                 if (allFreed(it.requirements())) {
                     it.transition(State.Starting)
                     // acquire locks
