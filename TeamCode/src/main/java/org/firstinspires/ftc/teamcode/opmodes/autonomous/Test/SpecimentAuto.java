@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.Test;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,9 +20,9 @@ public class SpecimentAuto extends CommandAutoOpMode {
                              commandFactory.driveToTarget(650, 200, 0, .05, .6, 30),
                                 commandFactory.pivotToSpecimenDelivery(),
                              commandFactory.elbowToSpecimenPosition(),
-                                commandFactory.extendSliderToSpeciment()
+                                commandFactory.extendSliderToSpecimen()
                         ),
-                        commandFactory.extendSliderToDeliverSpeciman(),
+                        commandFactory.extendSliderToDeliverSpecimen(),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSlider(),
