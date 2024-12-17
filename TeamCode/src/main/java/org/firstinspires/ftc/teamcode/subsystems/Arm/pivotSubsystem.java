@@ -20,39 +20,3 @@ public class pivotSubsystem implements Subsystem {
     public MotorEx pivot2;
     public Motor.Encoder pivotEncoder1;
     public Motor.Encoder pivotEncoder2;
-    private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    public DoubleSupplier armLength;
-
-    PIDController m_pivotPID;
-
-
-    public pivotSubsystem(HardwareMap map, MotorEx pivot1, MotorEx pivot2){
-        this.map = map;
-        this.pivot1 = pivot1;
-        this.pivot2 = pivot2;
-        m_pivotPID = new PIDController(pKP,pKI,pKD);
-
-
-
-
-    }
-
-    @Override
-    public void periodic(){
-    updateTelemetry();
-    updateValues();
-    }
-
-    private void updateValues() {
-
-    }
-
-    private void updateTelemetry() {
-
-    }
-
-    public static double calculateFeedForward(){
-
-        return 0;
-    }
-}
