@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
 public class AxonPickupTest2 extends OpMode {
+    public DiffConstantsV1 diffConstantsV1 = new DiffConstantsV1();
     public Servo grippers;
     public Servo left_servo;
     public AnalogInput left_servo_encoder;
@@ -27,9 +28,9 @@ public class AxonPickupTest2 extends OpMode {
     public GripperState gripperState = GripperState.OPEN;
     public int GRIPPERS_CLOSED = 1;
     public int GRIPPERS_OPEN = 0;
-    public double LEFT_SERVO_ZERO = 306.8;
+    public double LEFT_SERVO_ZERO = diffConstantsV1.LEFT_SERVO_UP;
     //TODO: REPLACE THESE VALUES WITH CORRECT VALUES
-    public double RIGHT_SERVO_ZERO = 60.9;
+    public double RIGHT_SERVO_ZERO = diffConstantsV1.RIGHT_SERVO_UP;
 
     public double RIGHT_SERVO_POSITION = 1;
     public double LEFT_SERVO_POSITION = 1;
@@ -107,6 +108,9 @@ public class AxonPickupTest2 extends OpMode {
                 LEFT_SERVO_POSITION = target;
                 telemetry.addData("Left Servo is right of zero. Moving from " + left_servo.getPosition() + " to: ", target);
             }
+        }
+        else {
+            telemetry.addLine("Servo is in range.");
         }
     }
 
