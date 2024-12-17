@@ -57,7 +57,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        defineHardware();
+        initializeHardwareVariables();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
@@ -312,7 +312,7 @@ public class OTOSAutoDrive extends LinearOpMode {
                 xDistance, yDistance, hDistance);
     }
 
-    public void defineHardware() {
+    public void initializeHardwareVariables() {
         // Define all the hardware
         myOtos = hardwareMap.get(SparkFunOTOS.class, "OTOS");
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
@@ -320,6 +320,10 @@ public class OTOSAutoDrive extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -327,14 +331,12 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        vertical.setTargetPosition(0);
-        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperSlide.setDirection(DcMotor.Direction.REVERSE);
-        viperSlide.setTargetPosition(0);
-        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
