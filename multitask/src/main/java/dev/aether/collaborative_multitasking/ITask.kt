@@ -12,7 +12,7 @@ interface ITask {
         Cancelled(4),
     }
 
-    val scheduler: Scheduler
+    var scheduler: Scheduler
     val state: State
     val myId: Int?
     var name: String
@@ -51,7 +51,8 @@ interface ITask {
         return task
     }
 
-    fun <T: ITask> then(task: T): T {
+    fun <T : ITask> then(task: T): T {
+        task.scheduler = scheduler
         task waitsFor this
         task.register()
         return task
@@ -82,10 +83,15 @@ abstract class TaskWithChaining() : ITask {
     }
 }
 
-abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithChaining(), ITask {
+abstract class TaskTemplate(override var scheduler: Scheduler) : TaskWithChaining(), ITask {
     final override var state = State.NotStarted
     final override var myId: Int? = null
-    override var name: String = "unnamed task"
+    private var name2 = "unnamed task"
+    override var name: String
+        get() = name2
+        set(value) {
+            name2 = value
+        }
 
     var startedAt = 0
         private set
@@ -126,6 +132,10 @@ abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithChainin
     override fun invokeCanStart() = super.invokeCanStart()
 
     override val daemon: Boolean = false
+
+    override fun toString(): String {
+        return "task $myId '$name'"
+    }
 }
 
 abstract class ConsumingTaskTemplate<T>(scheduler: Scheduler) : TaskTemplate(scheduler),

@@ -22,10 +22,13 @@ import dev.aether.collaborative_multitasking.SharedResource;
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double spinTickPerRev = 751.8;
     public static final double RIGHT_SLIDE_OUT = 0.72;
-    public static final double LEFT_SLIDE_OUT = 0.28;
-    public static final double LEFT_SLIDE_IN = 0.55;
+    @Deprecated public static final double LEFT_SLIDE_OUT = 1 - RIGHT_SLIDE_OUT;
     public static final double RIGHT_SLIDE_IN = 0.45;
-    public static final double FLIP_DOWN = 0.04;
+    @Deprecated public static final double LEFT_SLIDE_IN = 1 - RIGHT_SLIDE_IN;
+    public static final double SLIDE_INWARD_TIME = 0.75; // seconds
+    public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
+    public static final double SLIDE_OVERSHOOT = 0.05;
+    public static final double FLIP_DOWN = 0.05;
     public static final double FRONT_OPEN = 0.33;
     public static final double FRONT_CLOSE = 0.07;
     public static final double FLIP_UP = 0.98;
@@ -54,10 +57,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         /// * the `wrist`, `twist`, and `claw` servos
         public static final SharedResource ArmAssembly = new SharedResource("ArmAssembly");
 
-        /// The components that make up the horizontal slide assembly:
-        /// * the `horizontalSlide` servo
-        /// * the `clawFront` and `clawFlip` servos
-        public static final SharedResource SlideAssembly = new SharedResource("SlideAssembly");
+        /// The `horizontalSlide` and `horizontalLeft` servos.
+        public static final SharedResource HorizontalSlide = new SharedResource("HorizontalSlide");
+
+        public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
     }
 
     public static final double TRACK_WIDTH = 11.3385888;

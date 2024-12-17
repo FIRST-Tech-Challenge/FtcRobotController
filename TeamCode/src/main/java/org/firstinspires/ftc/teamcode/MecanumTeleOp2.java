@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static androidx.core.math.MathUtils.clamp;
 import static java.lang.Math.abs;
 
 import android.annotation.SuppressLint;
@@ -15,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Locks;
-import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +33,7 @@ import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.TaskWithResultTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
 import dev.aether.collaborative_multitasking.ext.While;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 
@@ -47,7 +48,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     double hslidepos = 0.05;
     double horizontalSlide = 0;
 
-    private LiftBackgroundTask liftProxy;
+    private LiftProxy liftProxy;
 
     /**
      * How much you need to push the joysticks to stop autonomous code.
@@ -56,6 +57,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private MultitaskScheduler scheduler;
     private NavxMicroNavigationSensor navxMicro;
+    private HSlideProxy hSlideProxy;
+    private HClawProxy hClawProxy;
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -89,6 +92,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.verticalSlide.setTargetPosition(0);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
 
         hardware.arm.setTargetPosition(0);
         armTargetPosDeg = 0.0;
@@ -100,7 +105,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         navxMicro = hardware.gyro;
     }
 
-    private static class LiftBackgroundTask extends TaskTemplate {
+    private static class LiftProxy extends TaskTemplate {
         private static final double SPEED = .75;
         private static int INSTANCE_COUNT = 0;
         private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
@@ -125,7 +130,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             return requires;
         }
 
-        public LiftBackgroundTask(@NotNull Scheduler scheduler, DcMotor lift) {
+        public LiftProxy(@NotNull Scheduler scheduler, DcMotor lift) {
             super(scheduler);
             this.lift = lift;
             this.scheduler = scheduler;
@@ -173,6 +178,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         public void controlManual(boolean goUp, boolean goDown) {
             if (!manualAdjustMode) {
                 if (goUp || goDown) startManual();
+                return;
             }
             int currentPosition = lift.getCurrentPosition();
             if (goUp && goDown) {
@@ -274,6 +280,173 @@ public class MecanumTeleOp2 extends LinearOpMode {
         }
     }
 
+    private static class HSlideProxy extends TaskTemplate {
+        private final Hardware hardware;
+        private double position = Hardware.RIGHT_SLIDE_IN;
+        private final Scheduler scheduler = getScheduler();
+
+        private static int INSTANCE_COUNT = 0;
+        public final SharedResource CONTROL = new SharedResource("HSlideProxy" + (++INSTANCE_COUNT));
+
+        private static final Set<SharedResource> requires = Set.of(Locks.HorizontalSlide);
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requires;
+        }
+
+        public HSlideProxy(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            this.hardware = hardware;
+        }
+
+        @Override
+        public boolean getDaemon() {
+            return true;
+        }
+
+        @Override
+        public void invokeOnStart() {
+            update();
+        }
+
+        public void update() {
+            hardware.horizontalSlide.setPosition(position);
+            hardware.horizontalLeft.setPosition(1 - position);
+        }
+
+        boolean isOut = false; // isOut?
+
+        private void moveTo(double newPos) {
+            position = newPos;
+            update();
+        }
+
+        private ITask activeTask = null;
+
+        public ITask moveIn() {
+            return new TaskTemplate(scheduler) {
+                ElapsedTime timer;
+
+                @Override
+                public void invokeOnStart() {
+                    if (!isOut) requestStop();
+                    if (activeTask != null) activeTask.requestStop();
+                    activeTask = this;
+                    isOut = false;
+                    moveTo(Hardware.RIGHT_SLIDE_IN - Hardware.SLIDE_OVERSHOOT);
+                    timer = new ElapsedTime();
+                    timer.reset();
+                }
+
+                @Override
+                public void invokeOnFinish() {
+                    moveTo(Hardware.RIGHT_SLIDE_IN);
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return timer.time() >= Hardware.SLIDE_INWARD_TIME;
+                }
+            };
+        }
+
+        public ITask moveOut() {
+            return new TaskTemplate(scheduler) {
+                ElapsedTime timer;
+
+                @Override
+                public void invokeOnStart() {
+                    if (isOut) requestStop();
+                    if (activeTask != null) activeTask.requestStop();
+                    activeTask = this;
+                    moveTo(Hardware.RIGHT_SLIDE_OUT);
+                    isOut = true;
+                    timer = new ElapsedTime();
+                    timer.reset();
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return timer.time() >= Hardware.SLIDE_OUTWARD_TIME;
+                }
+            };
+        }
+    }
+
+    private static class HClawProxy extends TaskTemplate {
+
+        private final Hardware hardware;
+        private final Scheduler scheduler = getScheduler();
+
+        public HClawProxy(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            this.hardware = hardware;
+        }
+
+        public double getFlipPosition() {
+            return flipPosition;
+        }
+
+        public double getClawPosition() {
+            return clawPosition;
+        }
+
+        private double flipPosition = Hardware.FLIP_UP;
+        private double clawPosition = Hardware.FRONT_OPEN;
+
+        private static int INSTANCE_COUNT = 0;
+        public final SharedResource CONTROL_CLAW = new SharedResource("HClawProxy_Claw" + (++INSTANCE_COUNT));
+        public final SharedResource CONTROL_FLIP = new SharedResource("HClawProxy_Flip" + (++INSTANCE_COUNT));
+
+        private static final Set<SharedResource> requires = Set.of(Locks.HSlideClaw);
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requires;
+        }
+
+        private void update() {
+            hardware.clawFlip.setPosition(flipPosition);
+            hardware.clawFront.setPosition(clawPosition);
+        }
+
+        @Override
+        public void invokeOnStart() {
+            update();
+        }
+
+        public void setFlip(double newPos) {
+            flipPosition = clamp(newPos, 0.0, 1.0);
+            update();
+        }
+
+        public void setClaw(double newPos) {
+            clawPosition = clamp(newPos, 0.0, 1.0);
+            update();
+        }
+
+        public ITask aSetFlip(double newPos) {
+            return new OneShot(scheduler, () -> setFlip(newPos));
+        }
+
+        public ITask aSetClaw(double newPos) {
+            return new OneShot(scheduler, () -> setClaw(newPos));
+        }
+
+        public void setFlipClaw(double flip, double claw) {
+            flipPosition = clamp(flip, 0.0, 1.0);
+            clawPosition = clamp(claw, 0.0, 1.0);
+            update();
+        }
+
+        public ITask aSetFlipClaw(double flip, double claw) {
+            return new OneShot(scheduler, () -> setFlipClaw(flip, claw));
+        }
+    }
+
     @Override
     public void runOpMode() {
         // this scheduler will only be used in init
@@ -301,7 +474,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         // this is the scheduler that will be used during the main program
         scheduler = new MultitaskScheduler();
-        liftProxy = scheduler.add(new LiftBackgroundTask(scheduler, hardware.verticalSlide));
+        liftProxy = scheduler.add(new LiftProxy(scheduler, hardware.verticalSlide));
+        hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
+        hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
 
         telemetry.log().clear();
         telemetry.log().add("Set and ready to roll!");
@@ -309,6 +484,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
+
+        boolean isFlipIn = false;
+        boolean isFlipOut = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -383,13 +561,22 @@ public class MecanumTeleOp2 extends LinearOpMode {
             if (gamepad2.dpad_left) {
                 score();
             }
-            if (gamepad1.right_trigger > 0.5) Flipin();
-            if (gamepad1.left_trigger > 0.5) Flipout();
+
+            boolean shouldFlipIn = gamepad1.right_trigger > 0.5;
+            if (shouldFlipIn && !isFlipIn) Flipin();
+            boolean shouldFlipOut = gamepad1.left_trigger > 0.5;
+            if (shouldFlipOut && !isFlipOut) Flipout();
+
+            isFlipIn = shouldFlipIn;
+            isFlipOut = shouldFlipOut;
 
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+
+            scheduler.tick();
             telemetry.addData("Wrist Position", hardware.wrist.getPosition());
             telemetry.addData("Claw Position", hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
+            scheduler.displayStatus(false, true, (str) -> { telemetry.addLine(str); return Unit.INSTANCE; });
             telemetry.update();
         }
 
@@ -542,133 +729,60 @@ public class MecanumTeleOp2 extends LinearOpMode {
         sleep(500);
     }
 
-    private void PickUpSpecimen() {
-        // Lift --> arm out --> Lift to 0 --> move wrist --> open claw
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        hardware.verticalSlide.setTargetPosition(224);
-        sleep(500);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        hardware.arm.setTargetPosition(90);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(0);
-        sleep(500);
-        hardware.wrist.setPosition(1);
-        sleep(500);
-        hardware.claw.setPosition(0.02); // TBD
-        sleep(500);
-        hardware.twist.setPosition(0.17);
-        sleep(500);
-        hardware.arm.setTargetPosition(145);
-        sleep(500);
-        hardware.claw.setPosition(0.55);
-        sleep(500);
-        hardware.wrist.setPosition(0.5);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(300);
-        sleep(500);
-        hardware.arm.setTargetPosition(0);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(0);
-        sleep(500);
-        armTargetPosDeg = 0;
-    }
-
-    private void transfer() {
-        // Technically still enabled in normal MechanumTeleOp, but likely error
-        //hardware.arm.setPower(-0.5);
-        hardware.verticalSlide.setTargetPosition(900);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        sleep(500);
-        hardware.arm.setTargetPosition(-63);//This is in ticks
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        armTargetPosDeg = -30;//(752 ticks /360 degrees)
-        sleep(500);
-        hardware.wrist.setPosition(0.9);
-        sleep(2000);
-        hardware.claw.setPosition(0.02);
-        sleep(2000);
-        hardware.verticalSlide.setTargetPosition(735);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        sleep(2000);
-        hardware.claw.setPosition(0.55);
-        sleep(1000);
-        hardware.wrist.setPosition(0.45);
-        hardware.arm.setTargetPosition(0);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        armTargetPosDeg = 0;
-        sleep(1000);
-        hardware.verticalSlide.setTargetPosition(0);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-
-        //To-Do: open horizontal claw
-
-
-    }
-
     private void stepper() {
         // this deals with the horizontal slide stuff. we don't have locks (yet) so it's remaining
         // as-is for now
         if (gamepad1.dpad_left) {
-            ClawFrontPos = 0.33;
+            abandonLock(hClawProxy.CONTROL_CLAW);
+            hClawProxy.setClaw(Hardware.FRONT_OPEN);
         }
         if (gamepad1.dpad_right) {
-            ClawFrontPos = 0.07;
+            abandonLock(hClawProxy.CONTROL_CLAW);
+            hClawProxy.setClaw(Hardware.FRONT_CLOSE);
         }
         if (gamepad1.dpad_up) {
-            ClawFlipPos -= 0.01;
+            abandonLock(hClawProxy.CONTROL_FLIP);
+            hClawProxy.setFlip(hClawProxy.getFlipPosition() - 0.01);
         }
         if (gamepad1.dpad_down) {
-            ClawFlipPos += 0.01;
+            abandonLock(hClawProxy.CONTROL_FLIP);
+            hClawProxy.setFlip(hClawProxy.getFlipPosition() + 0.01);
         }
-        hardware.clawFlip.setPosition(ClawFlipPos);
-        hardware.clawFront.setPosition(ClawFrontPos);
+//        hardware.clawFlip.setPosition(ClawFlipPos);
+//        hardware.clawFront.setPosition(ClawFrontPos);
         // clawFront close is 0
         //clawFront open is 0.27
 
-        telemetry.addData("FrontClawPos", ClawFrontPos);
-        telemetry.addData("FlipClawPos", ClawFlipPos);
+        telemetry.addData("FrontClawPos", hClawProxy.getClawPosition());
+        telemetry.addData("FlipClawPos", hClawProxy.getFlipPosition());
     }
 
     public void HSlide() {
         // same note as above.
-        if (gamepad1.y && hslidepos < 1) {
-            hslidepos += 0.01;
+        if (gamepad1.y) {
+            abandonLock(hSlideProxy.CONTROL);
+            scheduler.add(hSlideProxy.moveOut());
         }
-        if (gamepad1.a && hslidepos > 0) {
-            hslidepos += -0.01;
+        if (gamepad1.a) {
+            abandonLock(hSlideProxy.CONTROL);
+            scheduler.add(hSlideProxy.moveIn());
         }
-        hardware.horizontalSlide.setPosition(hslidepos);
-        telemetry.addData("Horizontal Position", hardware.horizontalSlide.getPosition());
+        telemetry.addData("HorizontalR", hardware.horizontalSlide.getPosition());
+        telemetry.addData("HorizontalL", hardware.horizontalLeft.getPosition());
     }
 
     public void specimenWallPick() {
-        // todo: move these into Hardware.java
-        double clawopen = 0.55;
-        double clawclose = 0.02;
-        double wristup = 0.46;
-        double wristback = 0.30;
-        double slideup = 200;
-        double armout = 23.94;
-
         scheduler.add(
-                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawopen)))
+                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(1000))
-                        .then(run(() -> hardware.wrist.setPosition(wristup)))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
                         .then(await(1000))
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(45))))
-                        // FIXME: get that global variable out of here
                         .then(await(500))
-                        .then(run(() -> hardware.claw.setPosition(clawclose)))
+                        .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(1000))
                         .then(liftProxy.moveTo(300, 5, 1.0))
-                        .then(run(() -> hardware.wrist.setPosition(wristback)))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
                         .then(await(1000))
                         // TODO: investigate if 10 ticks or 10 degrees is the right number
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
@@ -686,10 +800,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
-                        .then(liftProxy.moveTo(710, 5, 1.0))
-                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
-                        .then(await(1000))
-                        .then(run(() -> hardware.wrist.setPosition(1)))
+                                .then(liftProxy.moveTo(710, 5, 1.0))
+                                .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
+                                .then(await(1000))
+                                .then(run(() -> hardware.wrist.setPosition(1)))
 //                        .then(await(1000))
 //                        .then(moveRel(new Pose(-3.5, 0, 0)))
 //                        .then(run(() -> hardware.claw.setPosition(clawopen)))
@@ -733,27 +847,30 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     public void Flipout() {
-        double hslideout = 0.35;
-        double flipdown = 0.04;
-        hardware.horizontalSlide.setPosition(hslideout);
-        hslidepos = hslideout;
-        sleep(500);
-        hardware.clawFlip.setPosition(flipdown);
-        ClawFlipPos = flipdown;
-        sleep(500);
+        abandonLock(hSlideProxy.CONTROL);
+        abandonLock(Locks.HSlideClaw);
+        scheduler.add(groupOf(
+                it -> it.add(hSlideProxy.moveOut())
+                        .then(hClawProxy.aSetFlipClaw(Hardware.FLIP_DOWN, Hardware.FRONT_OPEN))
+                        .then(await(500)))
+                .extraDepends(
+                        hSlideProxy.CONTROL,
+                        Locks.HSlideClaw
+                ));
     }
 
     public void Flipin() {
-        double flipup = 0.98;
-        double hslidein = 0.1;
-        hardware.clawFlip.setPosition(flipup);
-        ClawFlipPos = flipup;
-        sleep(500);
-        hardware.horizontalSlide.setPosition(hslidein);
-        hslidepos = hslidein;
-        sleep(500);
-
-
+        abandonLock(hSlideProxy.CONTROL);
+        abandonLock(Locks.HSlideClaw);
+        double flipThird = 0.66;
+        scheduler.add(groupOf(
+                it -> it.add(hClawProxy.aSetFlip(flipThird))
+                        .then(hSlideProxy.moveIn())
+                        .then(hClawProxy.aSetFlip(Hardware.FLIP_UP)))
+                .extraDepends(
+                        hSlideProxy.CONTROL,
+                        Locks.HSlideClaw
+                ));
     }
 
     public void trasfer() {

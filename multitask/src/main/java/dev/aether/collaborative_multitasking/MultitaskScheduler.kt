@@ -82,6 +82,8 @@ open class MultitaskScheduler
             .forEach {
                 try {
                     it.invokeOnStart()
+                    if (it.state != State.Starting) // cancelled
+                        return@forEach
                     if (it.invokeIsCompleted()) {
                         it.transition(State.Finishing)
                     } else {
@@ -284,6 +286,7 @@ open class MultitaskScheduler
     }
 
     override fun <T : ITask> add(t: T): T {
+        t.scheduler = this
         t.name = getCaller()
         t.register()
         return t
