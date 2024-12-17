@@ -50,6 +50,7 @@ public class DriveCommandOpMode extends CommandOpMode {
     private DriveSubsystem driveSubsystem;
     private HangSubsystem hangSubsystem;
     private EmergencyArmSubsystem armSubsystem;
+    private PincherSubsystem pincherSubsystem;
 
     private DefaultDrive driveCommand;
 
@@ -81,13 +82,13 @@ public class DriveCommandOpMode extends CommandOpMode {
 
             // D-Pad Up and D-Pad Down toggles the manages the hanging
 
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whileActiveContinuous(() -> {
+            armerController.getGamepadButton(GamepadKeys.Button.Y).whileActiveContinuous(() -> {
                 hangSubsystem.setHangDirection(HangSubsystem.HangDirection.UP);
             }).whenInactive(() -> {
                 hangSubsystem.setHangDirection(HangSubsystem.HangDirection.IDLE);
             });
 
-            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whileActiveContinuous(() -> {
+            armerController.getGamepadButton(GamepadKeys.Button.X).whileActiveContinuous(() -> {
                 hangSubsystem.setHangDirection(HangSubsystem.HangDirection.DOWN);
             }).whenInactive(() -> {
                 hangSubsystem.setHangDirection(HangSubsystem.HangDirection.IDLE);
@@ -102,15 +103,18 @@ public class DriveCommandOpMode extends CommandOpMode {
         }
 
         try {
-            armSubsystem = new EmergencyArmSubsystem(hardwareMap);
+            armSubsystem = new EmergencyArmSubsystem(hardwareMap, telemetry);
             float threshold = .1f;
+
+
 
             // Bumpers handle the lower arm
             // Triggers handle the higher arm
             // "A" toggles the pincher state
             // Left Joystick X moves the wrist
 
-            DoubleSupplier higherSupplier = () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+            DoubleSupplier higherSupplier = () -> armerController.getRightY();//() -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+            DoubleSupplier lowerSupplier = () -> armerController.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - armerController.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
 
             new Trigger(() -> Math.abs(higherSupplier.getAsDouble()) > threshold).whileActiveContinuous(() -> {
                 armSubsystem.setHigherArmPower(higherSupplier.getAsDouble());
@@ -118,7 +122,13 @@ public class DriveCommandOpMode extends CommandOpMode {
                 armSubsystem.setHigherArmPower(0);
             });
 
-            armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whileHeld(() -> {
+            new Trigger(() -> Math.abs(lowerSupplier.getAsDouble()) > threshold).whileActiveContinuous(() -> {
+                armSubsystem.setLowerArmPower(lowerSupplier.getAsDouble());
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+            });
+
+            /*armerController.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whileHeld(() -> {
                 armSubsystem.setLowerArmPower(-1);
             }).whenInactive(() -> {
                  armSubsystem.setLowerArmPower(0);
@@ -128,13 +138,48 @@ public class DriveCommandOpMode extends CommandOpMode {
                 armSubsystem.setLowerArmPower(1);
             }).whenInactive(() -> {
                 armSubsystem.setLowerArmPower(0);
+            });*/
+
+            /*armerController.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(() -> {
+                armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.OPEN);
+            }, () -> armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.PINCHED));*/
+
+            new Trigger(() -> Math.abs(armerController.getLeftX()) > threshold).whileActiveContinuous(() -> {
+                armSubsystem.setWristPower(armerController.getLeftX());
+            }).whenInactive(() -> armSubsystem.setWristPower(0));
+
+            final double angularVelocityLower = 25;
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(() -> {
+                armSubsystem.constantX(angularVelocityLower);
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+                armSubsystem.setHigherArmPower(0);
+            });
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(() -> {
+                armSubsystem.constantX(-angularVelocityLower);
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+                armSubsystem.setHigherArmPower(0);
             });
 
-            armerController.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(() -> {
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(() -> {
+                armSubsystem.constantY(angularVelocityLower); // Todo: Might need to swap the negative sign
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+                armSubsystem.setHigherArmPower(0);
+            });
+            armerController.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(() -> {
+                armSubsystem.constantY(-angularVelocityLower); // Todo: Might need to swap the negative sign
+            }).whenInactive(() -> {
+                armSubsystem.setLowerArmPower(0);
+                armSubsystem.setHigherArmPower(0);
+            });
+
+            /*armerController.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(() -> {
                 armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.OPEN);
             }, () -> {
                 armSubsystem.setPinchState(EmergencyArmSubsystem.PinchState.PINCHED);
-            });
+            });*/
 
             new Trigger(() -> Math.abs(armerController.getLeftX()) > threshold).whileActiveContinuous(() -> {
                 armSubsystem.setWristPower(armerController.getLeftX());
@@ -147,6 +192,24 @@ public class DriveCommandOpMode extends CommandOpMode {
             dbp.send(true);
             telemetry.addData("Arm", "Error in arm subsystem: "+e.getMessage());
             telemetry.update();
+            throw new RuntimeException(e);
+        }
+
+        try {
+            ServoEx pincher1 = RobotHardwareInitializer.ServoComponent.FINGER_1.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
+            ServoEx pincher2 = RobotHardwareInitializer.ServoComponent.FINGER_2.getEx(hardwareMap, 0, PincherSubsystem.MAX_ANGLE);
+            pincherSubsystem  = new PincherSubsystem(pincher1, pincher2);
+            register(pincherSubsystem);
+
+            MovePincherCommand closePincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.CLOSED);
+            MovePincherCommand openPincher = new MovePincherCommand(pincherSubsystem, PincherSubsystem.FingerPositions.OPEN);
+
+            armerController.getGamepadButton(GamepadKeys.Button.A).toggleWhenPressed(closePincher, openPincher);
+            pincherSubsystem.closeFinger();
+        } catch (Exception e) {
+            dbp.info("ERROR IN PINCHER SYSTEM");
+            dbp.error(e);
+            dbp.send(true);
             throw new RuntimeException(e);
         }
 

@@ -22,7 +22,7 @@ public class Blue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d initialPose = new Pose2d(11.8, 61.7, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(7.00, -70.00, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         while (!isStopRequested() && !opModeIsActive()) {
@@ -38,29 +38,19 @@ public class Blue extends LinearOpMode {
         waitForStart();
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(0))
-                .waitSeconds(2)
-                .setTangent(Math.toRadians(90))
-                .lineToY(48)
-                .setTangent(Math.toRadians(0))
-                .lineToX(32)
-                .strafeTo(new Vector2d(44.5, 30))
-                .turn(Math.toRadians(180))
-                .lineToX(47.5)
-                .waitSeconds(3);
+                .waitSeconds(4.605)
+                .strafeTo(new Vector2d(initialPose.position.x, initialPose.position.y+5))
+                .strafeTo(new Vector2d(initialPose.position.x + 5, initialPose.position.y+5));
 
         // Trajectories
 
-        AutonomousActions.Pincher pincher = new AutonomousActions.Pincher(hardwareMap);
-        AutonomousActions.Uppies uppies = new AutonomousActions.Uppies(hardwareMap);
+        AutonomousActions.EmergencyArm emergencyArm = new AutonomousActions.EmergencyArm(hardwareMap, telemetry);
 
-        TrajectoryActionBuilder red = drive.actionBuilder(new Pose2d(7.00, -70.00, Math.toRadians(90.00)))
+        TrajectoryActionBuilder red = drive.actionBuilder(initialPose)
                 .lineToY(-35) // (7, -25) 90 deg
                 // Put Specimen on rung
                 .afterTime(.5f, new SequentialAction(
-                        uppies.iWantUp(),
-                        uppies.iWantDown(),
-                        pincher.openPincher()
+                        emergencyArm.openPincher()
                     )
                 )
                 .strafeTo(new Vector2d(50.00, -35.00)) // (50, -35) 90 deg
@@ -82,18 +72,17 @@ public class Blue extends LinearOpMode {
                 .waitSeconds(3)
                 .strafeTo(new Vector2d(48, -60)) // (48, -80) -90 deg
                 // Move and pickup specimen
-                .afterTime(.5f, pincher.closePincher())
+                .afterTime(.5f, emergencyArm.closePincher())
                 .waitSeconds(3)
                 .turnTo(Math.toRadians(90))
                 .strafeTo(new Vector2d(7.00, -35))
                 // Put specimen on rung
                 .afterTime(.5f, new SequentialAction(
-                                uppies.iWantUp(),
-                                uppies.iWantDown(),
-                                pincher.openPincher()
+                                emergencyArm.openPincher()
                         )
                 )
                 .waitSeconds(3);
+
         Actions.runBlocking(red.build());
     }
 }

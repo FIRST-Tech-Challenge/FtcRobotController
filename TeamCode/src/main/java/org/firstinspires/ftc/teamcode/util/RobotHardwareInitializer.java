@@ -40,8 +40,8 @@ public class RobotHardwareInitializer {
         RIGHT_BACK("br_drv"),
 
         LOWER_ARM("low_arm"),
-        HIGHER_ARM("higher_arm"),
-        HANG_MOTOR("hanging"),
+        HIGHER_ARM("high_arm"),
+        HANG_MOTOR("hang"),
 
         @Deprecated UPPIES("uppies"), // Used to move the pincher and bucket up and down
         @Deprecated EXTENDER("extender"), // Used to move in intake system forward and back
@@ -87,9 +87,9 @@ public class RobotHardwareInitializer {
     }
 
     public enum EncoderComponent implements Component<DcMotorEx> {
-        ENCODER_PAR0("fr_drv"), // previously fr_drv, left
-        ENCODER_PAR1("intake"), // previously intake, right
-        ENCODER_PERP("extender"); // previously extender, back
+        ENCODER_PAR0("fl_drv"), // previously fr_drv, left
+        ENCODER_PAR1("fr_drv"), // previously intake, right
+        ENCODER_PERP("br_drv"); // previously extender, back
         private final String componentName;
         EncoderComponent(String componentName) { this.componentName = componentName; }
         @Override public String getComponentName() { return componentName; }
@@ -126,15 +126,6 @@ public class RobotHardwareInitializer {
             return clazz
         }
     }*/
-
-    public static final String FRONT_LEFT_DRIVE = "fl_drv";
-    public static final String FRONT_RIGHT_DRIVE = "fr_drv";
-    public static final String BACK_LEFT_DRIVE = "bl_drv";
-    public static final String BACK_RIGHT_DRIVE = "br_drv";
-
-    public static final String LEFT_ENCODER = FRONT_LEFT_DRIVE;
-    public static final String RIGHT_ENCODER = FRONT_RIGHT_DRIVE;
-    public static final String BACK_ENCODER = BACK_LEFT_DRIVE;
 
     @Deprecated
     public static HashMap<Component, DcMotor> initializeDriveMotors(final HardwareMap hMap, final OpMode opMode) {

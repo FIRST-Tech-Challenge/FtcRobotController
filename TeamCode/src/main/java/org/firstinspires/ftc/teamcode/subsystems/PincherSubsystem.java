@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.annotation.SuppressLint;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.arcrobotics.ftclib.hardware.ServoEx;
@@ -57,6 +59,7 @@ public class PincherSubsystem extends SubsystemBase {
 
     double lastPower = Double.MIN_VALUE;
 
+    @SuppressLint("DefaultLocale")
     public void locomoteFinger(FingerPositions position) {
         //finger1.turnToAngle(position.getAngle(), position.getAngleUnit());
         //finger2.turnToAngle(position.getAngle(), position.getAngleUnit());

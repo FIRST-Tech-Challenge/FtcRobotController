@@ -65,7 +65,6 @@ public class UppiesSubsystem extends SubsystemBase {
 
         int currentPosition = uppiesMotor.getCurrentPosition();
         dbp2.info("Uppies Position: " + currentPosition);
-        //dbp2.info("Uppies Limits: min[" + MIN_POSITION + "] : max[" + MAX_POSITION + "]");
         dbp2.send(true);
 
         if (!PROGRAMATIC_IGNORE_LIMITS && state == UppiesState.UPPIES && currentPosition <= MIN_POSITION) {

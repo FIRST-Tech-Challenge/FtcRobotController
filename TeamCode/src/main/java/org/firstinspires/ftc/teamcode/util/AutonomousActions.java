@@ -9,14 +9,14 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.commands.MovePincherCommand;
-import org.firstinspires.ftc.teamcode.commands.SetUppiesCommand;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.EmergencyArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.UppiesSubsystem;
 
 public class AutonomousActions {
     private static final FTCDashboardPackets dbp = new FTCDashboardPackets("AutoActions");
 
+    @Deprecated
     public static class Pincher {
         private PincherSubsystem pincherSubsystem;
 
@@ -45,7 +45,6 @@ public class AutonomousActions {
                     initialized = true;
                 }
                 return !pincherSubsystem.isFingerReady();
-
             }
         }
 
@@ -71,53 +70,44 @@ public class AutonomousActions {
         }
     }
 
-    public static class Uppies {
-        private UppiesSubsystem uppiesSubsystem;
+    public static class EmergencyArm {
+        private EmergencyArmSubsystem emergencyArmSubsystem;
 
-        public Uppies(HardwareMap hardwareMap) {
+        public EmergencyArm(HardwareMap hardwareMap, Telemetry telemetry) {
             try {
-                DcMotorEx uppiesMotor = RobotHardwareInitializer.MotorComponent.UPPIES.getEx(hardwareMap);
-                uppiesSubsystem = new UppiesSubsystem(uppiesMotor);
+                emergencyArmSubsystem = new EmergencyArmSubsystem(hardwareMap, telemetry);
             } catch (Exception e) {
-                //e.printStackTrace();
+                dbp.info("[EMER_ARM] ERROR IN ARM SYSTEM");
+                dbp.error(e);
+                dbp.send(true);
                 throw new RuntimeException(e);
             }
         }
 
-        public class IWantUp implements Action {
-            private boolean intialized = false;
-
+        public class OpenPincher implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                if (!intialized) {
-                    uppiesSubsystem.IWantUp();
-                    intialized = true;
-                }
+                emergencyArmSubsystem.openPincher();
 
-                return !uppiesSubsystem.isIdle();
+                return true;
             }
         }
 
-        public Action iWantUp() {
-            return new IWantUp();
+        public Action openPincher() {
+            return new OpenPincher();
         }
 
-        public class IWantDown implements Action {
-            private boolean intialized = false;
-
+        public class ClosePincher implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                if (!intialized) {
-                    uppiesSubsystem.IWantDown();
-                    intialized = true;
-                }
+                emergencyArmSubsystem.closePincher();
 
-                return !uppiesSubsystem.isIdle();
+                return true;
             }
         }
 
-        public Action iWantDown() {
-            return new IWantDown();
+        public Action closePincher() {
+            return new ClosePincher();
         }
     }
 }

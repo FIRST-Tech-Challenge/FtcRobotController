@@ -101,11 +101,30 @@ public class DriveSubsystem extends SubsystemBase {
         return true;
     }
 
-    public void moveRobot(Gamepad gamepad1) {
+    public void moveRobotMecanum(double forwardBackward, double leftRight, double rotation) {
         drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        forwardBackward,
+                        -leftRight
+                ),
+                -rotation
+        ));
+
+        drive.updatePoseEstimate();
+    }
+
+    public void moveRobot(Gamepad gamepad1) {
+        /*drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x
+                ),
+                -gamepad1.right_stick_x
+        ));*/
+        drive.setDrivePowers(new PoseVelocity2d(
+                new Vector2d(
+                        gamepad1.left_stick_y,
+                        -(gamepad1.right_trigger - gamepad1.left_trigger)
                 ),
                 -gamepad1.right_stick_x
         ));
