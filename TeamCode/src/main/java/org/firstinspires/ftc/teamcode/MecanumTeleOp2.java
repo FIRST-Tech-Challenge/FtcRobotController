@@ -850,8 +850,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(hSlideProxy.CONTROL);
         abandonLock(Locks.HSlideClaw);
         scheduler.add(groupOf(
-                it -> it.add(hSlideProxy.moveOut())
-                        .then(hClawProxy.aSetFlipClaw(Hardware.FLIP_DOWN, Hardware.FRONT_OPEN))
+                it -> it.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(hSlideProxy.moveOut())
+                        .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
                         .then(await(500)))
                 .extraDepends(
                         hSlideProxy.CONTROL,
