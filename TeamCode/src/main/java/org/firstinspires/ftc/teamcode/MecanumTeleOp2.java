@@ -576,7 +576,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
             telemetry.addData("Wrist Position", hardware.wrist.getPosition());
             telemetry.addData("Claw Position", hardware.claw.getPosition());
             telemetry.addData("Vertical position", verticalPosition);
-            scheduler.displayStatus(false, true, (str) -> { telemetry.addLine(str); return Unit.INSTANCE; });
+            scheduler.displayStatus(false, true, (str) -> {
+                telemetry.addLine(str);
+                return Unit.INSTANCE;
+            });
             telemetry.update();
         }
 
@@ -848,30 +851,31 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     public void Flipout() {
         abandonLock(hSlideProxy.CONTROL);
-        abandonLock(Locks.HSlideClaw);
+        abandonLock(hClawProxy.CONTROL_CLAW);
+        abandonLock(hClawProxy.CONTROL_FLIP);
         scheduler.add(groupOf(
                 it -> it.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut())
                         .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
-                        .then(await(500)))
-                .extraDepends(
-                        hSlideProxy.CONTROL,
-                        Locks.HSlideClaw
-                ));
+        ).extraDepends(
+                hSlideProxy.CONTROL,
+                hClawProxy.CONTROL_FLIP,
+                hClawProxy.CONTROL_CLAW
+        ));
     }
 
     public void Flipin() {
         abandonLock(hSlideProxy.CONTROL);
-        abandonLock(Locks.HSlideClaw);
+        abandonLock(hClawProxy.CONTROL_FLIP);
         double flipThird = 0.66;
         scheduler.add(groupOf(
                 it -> it.add(hClawProxy.aSetFlip(flipThird))
                         .then(hSlideProxy.moveIn())
-                        .then(hClawProxy.aSetFlip(Hardware.FLIP_UP)))
-                .extraDepends(
-                        hSlideProxy.CONTROL,
-                        Locks.HSlideClaw
-                ));
+                        .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
+        ).extraDepends(
+                hSlideProxy.CONTROL,
+                hClawProxy.CONTROL_FLIP
+        ));
     }
 
     public void trasfer() {
