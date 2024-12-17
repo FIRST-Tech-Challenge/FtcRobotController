@@ -16,6 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Locks;
+import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
+import org.firstinspires.ftc.teamcode.mmooover.Pose;
+import org.firstinspires.ftc.teamcode.mmooover.Ramps;
+import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
+import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveRelTask;
+import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveToTask;
+import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,26 +46,28 @@ import kotlin.jvm.functions.Function0;
 
 @TeleOp
 public class MecanumTeleOp2 extends LinearOpMode {
-    private Hardware hardware;
-    double wristPos = 0.28;
-    double twistPos = 0.17;
-    double VerticalSlideSpeed = 0.75;
-    double ClawFrontPos = 0.5;
-    double ClawFlipPos = 0.5;
-    double hslidepos = 0.05;
-    double horizontalSlide = 0;
-
-    private LiftProxy liftProxy;
-
     /**
      * How much you need to push the joysticks to stop autonomous code.
      */
     public static final double PUSH_TO_BYPASS = 0.20;
-
+    double wristPos = 0.28;
+    double twistPos = 0.17;
+    double VerticalSlideSpeed = 0.75;
+    int highChamberTicks = 790;
+    int highBasketTicks = 2180;
+    double armTargetPosDeg = 0.0;
+    int liftMinClearanceTicks = 350;
+    private Hardware hardware;
     private MultitaskScheduler scheduler;
     private NavxMicroNavigationSensor navxMicro;
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
+    private EncoderTracking tracker;
+    private Ramps ramps;
+    private LoopStopwatch loopTimer;
+    private Speed2Power speed2Power;
+    private LiftProxy liftProxy;
+    private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -85,7 +94,29 @@ public class MecanumTeleOp2 extends LinearOpMode {
         return new TaskGroup(scheduler).with(contents);
     }
 
+    private MoveToTask moveTo(Pose target) {
+        return new MoveToTask(
+                scheduler, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
+        );
+    }
+
+    private MoveRelTask moveRel(Pose offset) {
+        return new MoveRelTask(
+                scheduler, hardware, offset, tracker, loopTimer, speed2Power, ramps, telemetry
+        );
+    }
+
     private void hardwareInit() {
+        tracker = new EncoderTracking(hardware);
+        loopTimer = new LoopStopwatch();
+        speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.15 seconds
+        ramps = new Ramps(
+                Ramps.linear(2.0),
+                Ramps.linear(1 / 12.0),
+//                Easing.power(3.0, 12.0),
+                Ramps.LimitMode.SCALE
+        );
+
         hardware.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -103,348 +134,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.twist.setPosition(twistPos);
 
         navxMicro = hardware.gyro;
-    }
-
-    private static class LiftProxy extends TaskTemplate {
-        private static final double SPEED = .75;
-        private static int INSTANCE_COUNT = 0;
-        private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
-        private static final int MIN_VERTICAL_LIFT_TICKS = 0;
-
-        private boolean manualAdjustMode = false;
-
-        private final DcMotor lift;
-
-        private int targetPosition = 0;
-
-        /// If you hold this lock, you have exclusive control over the Lift (by proxy of this task.)
-        public final SharedResource CONTROL = new SharedResource("LiftBackgroundTask" + (++INSTANCE_COUNT));
-        private final Set<SharedResource> provides = Set.of(CONTROL);
-
-        private static final Set<SharedResource> requires = Set.of(Locks.VerticalSlide);
-        private final Scheduler scheduler;
-
-        @Override
-        @NotNull
-        public Set<SharedResource> requirements() {
-            return requires;
-        }
-
-        public LiftProxy(@NotNull Scheduler scheduler, DcMotor lift) {
-            super(scheduler);
-            this.lift = lift;
-            this.scheduler = scheduler;
-        }
-
-        @Override
-        public boolean getDaemon() {
-            return true;
-        }
-
-        @Override
-        public void invokeOnTick() {
-            lift.setTargetPosition(targetPosition);
-        }
-
-        public void commitCurrent() {
-            targetPosition = lift.getCurrentPosition();
-        }
-
-        @Override
-        public void invokeOnStart() {
-            commitCurrent();
-            lift.setTargetPosition(targetPosition);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift.setPower(SPEED);
-        }
-
-        private void startManual() {
-            // forcibly grab the lock from whatever has it at the moment
-            scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
-            scheduler.manualAcquire(CONTROL);
-            manualAdjustMode = true;
-            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        private void stopManual() {
-            manualAdjustMode = false;
-            commitCurrent();
-            lift.setTargetPosition(targetPosition);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            lift.setPower(SPEED);
-            scheduler.manualRelease(CONTROL);
-        }
-
-        public void controlManual(boolean goUp, boolean goDown) {
-            if (!manualAdjustMode) {
-                if (goUp || goDown) startManual();
-                return;
-            }
-            int currentPosition = lift.getCurrentPosition();
-            if (goUp && goDown) {
-                lift.setPower(0);
-                return;
-            }
-            if (goUp) {
-                if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
-                    lift.setPower(SPEED);
-                    return;
-                }
-            }
-            if (goDown) {
-                if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
-                    lift.setPower(-SPEED);
-                    return;
-                }
-            }
-            stopManual();
-        }
-
-        public boolean isManualAdjustModeEnabled() {
-            return manualAdjustMode;
-        }
-
-        public ITask target(int target) {
-            return new TaskTemplate(scheduler) {
-                @Override
-                public void invokeOnStart() {
-                    targetPosition = target;
-                }
-
-                @Override
-                public boolean invokeIsCompleted() {
-                    return true;
-                }
-            };
-        }
-
-        public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
-            ITaskWithResult<Boolean> result;
-            // This version has a timer
-            if (maxDuration > 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
-                private final ElapsedTime t = new ElapsedTime();
-
-                @Override
-                @NotNull
-                public Set<SharedResource> requirements() {
-                    return provides;
-                }
-
-                @Override
-                public void invokeOnStart() {
-                    targetPosition = target;
-                    t.reset();
-                }
-
-                @Override
-                public boolean invokeIsCompleted() {
-                    if (t.time() >= maxDuration) {
-                        setResult(false);
-                        return true;
-                    }
-                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
-                        setResult(true);
-                        return true;
-                    }
-                    return false;
-                }
-
-                @Override
-                public void invokeOnFinish() {
-                    setResultMaybe(false);
-                }
-            };
-                // This version doesn't
-            else result = new TaskWithResultTemplate<Boolean>(scheduler) {
-                @Override
-                @NotNull
-                public Set<SharedResource> requirements() {
-                    return provides;
-                }
-
-                @Override
-                public void invokeOnStart() {
-                    targetPosition = target;
-                }
-
-                @Override
-                public boolean invokeIsCompleted() {
-                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
-                        setResult(true);
-                        return true;
-                    }
-                    return false;
-                }
-            };
-            return result;
-        }
-    }
-
-    private static class HSlideProxy extends TaskTemplate {
-        private final Hardware hardware;
-        private double position = Hardware.RIGHT_SLIDE_IN;
-        private final Scheduler scheduler = getScheduler();
-
-        private static int INSTANCE_COUNT = 0;
-        public final SharedResource CONTROL = new SharedResource("HSlideProxy" + (++INSTANCE_COUNT));
-
-        private static final Set<SharedResource> requires = Set.of(Locks.HorizontalSlide);
-
-        @Override
-        @NotNull
-        public Set<SharedResource> requirements() {
-            return requires;
-        }
-
-        public HSlideProxy(@NotNull Scheduler scheduler, Hardware hardware) {
-            super(scheduler);
-            this.hardware = hardware;
-        }
-
-        @Override
-        public boolean getDaemon() {
-            return true;
-        }
-
-        @Override
-        public void invokeOnStart() {
-            update();
-        }
-
-        public void update() {
-            hardware.horizontalSlide.setPosition(position);
-            hardware.horizontalLeft.setPosition(1 - position);
-        }
-
-        boolean isOut = false; // isOut?
-
-        private void moveTo(double newPos) {
-            position = newPos;
-            update();
-        }
-
-        private ITask activeTask = null;
-
-        public ITask moveIn() {
-            return new TaskTemplate(scheduler) {
-                ElapsedTime timer;
-
-                @Override
-                public void invokeOnStart() {
-                    if (!isOut) requestStop();
-                    if (activeTask != null) activeTask.requestStop();
-                    activeTask = this;
-                    isOut = false;
-                    moveTo(Hardware.RIGHT_SLIDE_IN - Hardware.SLIDE_OVERSHOOT);
-                    timer = new ElapsedTime();
-                    timer.reset();
-                }
-
-                @Override
-                public void invokeOnFinish() {
-                    moveTo(Hardware.RIGHT_SLIDE_IN);
-                }
-
-                @Override
-                public boolean invokeIsCompleted() {
-                    return timer.time() >= Hardware.SLIDE_INWARD_TIME;
-                }
-            };
-        }
-
-        public ITask moveOut() {
-            return new TaskTemplate(scheduler) {
-                ElapsedTime timer;
-
-                @Override
-                public void invokeOnStart() {
-                    if (isOut) requestStop();
-                    if (activeTask != null) activeTask.requestStop();
-                    activeTask = this;
-                    moveTo(Hardware.RIGHT_SLIDE_OUT);
-                    isOut = true;
-                    timer = new ElapsedTime();
-                    timer.reset();
-                }
-
-                @Override
-                public boolean invokeIsCompleted() {
-                    return timer.time() >= Hardware.SLIDE_OUTWARD_TIME;
-                }
-            };
-        }
-    }
-
-    private static class HClawProxy extends TaskTemplate {
-
-        private final Hardware hardware;
-        private final Scheduler scheduler = getScheduler();
-
-        public HClawProxy(@NotNull Scheduler scheduler, Hardware hardware) {
-            super(scheduler);
-            this.hardware = hardware;
-        }
-
-        public double getFlipPosition() {
-            return flipPosition;
-        }
-
-        public double getClawPosition() {
-            return clawPosition;
-        }
-
-        private double flipPosition = Hardware.FLIP_UP;
-        private double clawPosition = Hardware.FRONT_OPEN;
-
-        private static int INSTANCE_COUNT = 0;
-        public final SharedResource CONTROL_CLAW = new SharedResource("HClawProxy_Claw" + (++INSTANCE_COUNT));
-        public final SharedResource CONTROL_FLIP = new SharedResource("HClawProxy_Flip" + (++INSTANCE_COUNT));
-
-        private static final Set<SharedResource> requires = Set.of(Locks.HSlideClaw);
-
-        @Override
-        @NotNull
-        public Set<SharedResource> requirements() {
-            return requires;
-        }
-
-        private void update() {
-            hardware.clawFlip.setPosition(flipPosition);
-            hardware.clawFront.setPosition(clawPosition);
-        }
-
-        @Override
-        public void invokeOnStart() {
-            update();
-        }
-
-        public void setFlip(double newPos) {
-            flipPosition = clamp(newPos, 0.0, 1.0);
-            update();
-        }
-
-        public void setClaw(double newPos) {
-            clawPosition = clamp(newPos, 0.0, 1.0);
-            update();
-        }
-
-        public ITask aSetFlip(double newPos) {
-            return new OneShot(scheduler, () -> setFlip(newPos));
-        }
-
-        public ITask aSetClaw(double newPos) {
-            return new OneShot(scheduler, () -> setClaw(newPos));
-        }
-
-        public void setFlipClaw(double flip, double claw) {
-            flipPosition = clamp(flip, 0.0, 1.0);
-            clawPosition = clamp(claw, 0.0, 1.0);
-            update();
-        }
-
-        public ITask aSetFlipClaw(double flip, double claw) {
-            return new OneShot(scheduler, () -> setFlipClaw(flip, claw));
-        }
     }
 
     @Override
@@ -585,6 +274,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     }
 
+    /////////////////////////////////////////////
+
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
@@ -594,20 +285,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
         return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
-    /////////////////////////////////////////////
-
-    // These are in the LiftProxy
-    int highChamberTicks = 790;
-    int highBasketTicks = 2180;
-
     // lifts the vertical slides to a target position in ticks
 
     private ITaskWithResult<Boolean> targetLift(int targetPosition) {
         abandonLock(liftProxy.CONTROL);
         return scheduler.add(liftProxy.moveTo(targetPosition, 5, 3.0));
     }
-
-    private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
 
     private void lift() {
         liftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
@@ -621,9 +304,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
             }
         }
     }
-
-    double armTargetPosDeg = 0.0;
-    int liftMinClearanceTicks = 350;
 
     private double getArmPosDeg() {
         double rotations = hardware.arm.getCurrentPosition() / Hardware.spinTickPerRev;
@@ -841,7 +521,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.clawFront.setPosition(frontopen);
         sleep(500);
         hardware.clawFront.setPosition(frontclose);
-        ClawFrontPos = frontclose;
         sleep(500);
         hardware.clawFlip.setPosition(flipup);
         sleep(500);
@@ -881,7 +560,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
     public void trasfer() {
         if (gamepad2.x) {
             hardware.clawFront.setPosition(0.07);
-            ClawFrontPos = 0.07;
             hardware.claw.setPosition(0.55);
             sleep(500);
             hardware.wrist.setPosition(0);
@@ -897,7 +575,335 @@ public class MecanumTeleOp2 extends LinearOpMode {
             armTargetPosDeg = 0;
             sleep(500);
             hardware.wrist.setPosition(0.28);
-            ClawFrontPos = 0.28;
+        }
+    }
+
+    private static class LiftProxy extends TaskTemplate {
+        private static final double SPEED = .75;
+        private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
+        private static final int MIN_VERTICAL_LIFT_TICKS = 0;
+        private static final Set<SharedResource> requires = Set.of(Locks.VerticalSlide);
+        private static int INSTANCE_COUNT = 0;
+        /// If you hold this lock, you have exclusive control over the Lift (by proxy of this task.)
+        public final SharedResource CONTROL = new SharedResource("LiftBackgroundTask" + (++INSTANCE_COUNT));
+        private final DcMotor lift;
+        private final Set<SharedResource> provides = Set.of(CONTROL);
+        private final Scheduler scheduler;
+        private boolean manualAdjustMode = false;
+        private int targetPosition = 0;
+
+        public LiftProxy(@NotNull Scheduler scheduler, DcMotor lift) {
+            super(scheduler);
+            this.lift = lift;
+            this.scheduler = scheduler;
+        }
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requires;
+        }
+
+        @Override
+        public boolean getDaemon() {
+            return true;
+        }
+
+        @Override
+        public void invokeOnTick() {
+            lift.setTargetPosition(targetPosition);
+        }
+
+        public void commitCurrent() {
+            targetPosition = lift.getCurrentPosition();
+        }
+
+        @Override
+        public void invokeOnStart() {
+            commitCurrent();
+            lift.setTargetPosition(targetPosition);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(SPEED);
+        }
+
+        private void startManual() {
+            // forcibly grab the lock from whatever has it at the moment
+            scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
+            scheduler.manualAcquire(CONTROL);
+            manualAdjustMode = true;
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        private void stopManual() {
+            manualAdjustMode = false;
+            commitCurrent();
+            lift.setTargetPosition(targetPosition);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            lift.setPower(SPEED);
+            scheduler.manualRelease(CONTROL);
+        }
+
+        public void controlManual(boolean goUp, boolean goDown) {
+            if (!manualAdjustMode) {
+                if (goUp || goDown) startManual();
+                return;
+            }
+            int currentPosition = lift.getCurrentPosition();
+            if (goUp && goDown) {
+                lift.setPower(0);
+                return;
+            }
+            if (goUp) {
+                if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
+                    lift.setPower(SPEED);
+                    return;
+                }
+            }
+            if (goDown) {
+                if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
+                    lift.setPower(-SPEED);
+                    return;
+                }
+            }
+            stopManual();
+        }
+
+        public boolean isManualAdjustModeEnabled() {
+            return manualAdjustMode;
+        }
+
+        public ITask target(int target) {
+            return new TaskTemplate(scheduler) {
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return true;
+                }
+            };
+        }
+
+        public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
+            ITaskWithResult<Boolean> result;
+            // This version has a timer
+            if (maxDuration > 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
+                private final ElapsedTime t = new ElapsedTime();
+
+                @Override
+                @NotNull
+                public Set<SharedResource> requirements() {
+                    return provides;
+                }
+
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                    t.reset();
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    if (t.time() >= maxDuration) {
+                        setResult(false);
+                        return true;
+                    }
+                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
+                        setResult(true);
+                        return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                public void invokeOnFinish() {
+                    setResultMaybe(false);
+                }
+            };
+                // This version doesn't
+            else result = new TaskWithResultTemplate<Boolean>(scheduler) {
+                @Override
+                @NotNull
+                public Set<SharedResource> requirements() {
+                    return provides;
+                }
+
+                @Override
+                public void invokeOnStart() {
+                    targetPosition = target;
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    if (Math.abs(lift.getCurrentPosition() - target) < range) {
+                        setResult(true);
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            return result;
+        }
+    }
+
+    private static class HSlideProxy extends TaskTemplate {
+        private static final Set<SharedResource> requires = Set.of(Locks.HorizontalSlide);
+        private static int INSTANCE_COUNT = 0;
+        public final SharedResource CONTROL = new SharedResource("HSlideProxy" + (++INSTANCE_COUNT));
+        private final Hardware hardware;
+        private final Scheduler scheduler = getScheduler();
+        boolean isOut = false; // isOut?
+        private double position = Hardware.RIGHT_SLIDE_IN;
+        private ITask activeTask = null;
+
+        public HSlideProxy(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            this.hardware = hardware;
+        }
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requires;
+        }
+
+        @Override
+        public boolean getDaemon() {
+            return true;
+        }
+
+        @Override
+        public void invokeOnStart() {
+            update();
+        }
+
+        public void update() {
+            hardware.horizontalSlide.setPosition(position);
+            hardware.horizontalLeft.setPosition(1 - position);
+        }
+
+        private void moveTo(double newPos) {
+            position = newPos;
+            update();
+        }
+
+        public ITask moveIn() {
+            return new TaskTemplate(scheduler) {
+                ElapsedTime timer;
+
+                @Override
+                public void invokeOnStart() {
+                    if (!isOut) requestStop();
+                    if (activeTask != null) activeTask.requestStop();
+                    activeTask = this;
+                    isOut = false;
+                    moveTo(Hardware.RIGHT_SLIDE_IN - Hardware.SLIDE_OVERSHOOT);
+                    timer = new ElapsedTime();
+                    timer.reset();
+                }
+
+                @Override
+                public void invokeOnFinish() {
+                    moveTo(Hardware.RIGHT_SLIDE_IN);
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return timer.time() >= Hardware.SLIDE_INWARD_TIME;
+                }
+            };
+        }
+
+        public ITask moveOut() {
+            return new TaskTemplate(scheduler) {
+                ElapsedTime timer;
+
+                @Override
+                public void invokeOnStart() {
+                    if (isOut) requestStop();
+                    if (activeTask != null) activeTask.requestStop();
+                    activeTask = this;
+                    moveTo(Hardware.RIGHT_SLIDE_OUT);
+                    isOut = true;
+                    timer = new ElapsedTime();
+                    timer.reset();
+                }
+
+                @Override
+                public boolean invokeIsCompleted() {
+                    return timer.time() >= Hardware.SLIDE_OUTWARD_TIME;
+                }
+            };
+        }
+    }
+
+    private static class HClawProxy extends TaskTemplate {
+
+        private static final Set<SharedResource> requires = Set.of(Locks.HSlideClaw);
+        private static int INSTANCE_COUNT = 0;
+        public final SharedResource CONTROL_CLAW = new SharedResource("HClawProxy_Claw" + (++INSTANCE_COUNT));
+        public final SharedResource CONTROL_FLIP = new SharedResource("HClawProxy_Flip" + (++INSTANCE_COUNT));
+        private final Hardware hardware;
+        private final Scheduler scheduler = getScheduler();
+        private double flipPosition = Hardware.FLIP_UP;
+        private double clawPosition = Hardware.FRONT_OPEN;
+        public HClawProxy(@NotNull Scheduler scheduler, Hardware hardware) {
+            super(scheduler);
+            this.hardware = hardware;
+        }
+
+        public double getFlipPosition() {
+            return flipPosition;
+        }
+
+        public double getClawPosition() {
+            return clawPosition;
+        }
+
+        @Override
+        @NotNull
+        public Set<SharedResource> requirements() {
+            return requires;
+        }
+
+        private void update() {
+            hardware.clawFlip.setPosition(flipPosition);
+            hardware.clawFront.setPosition(clawPosition);
+        }
+
+        @Override
+        public void invokeOnStart() {
+            update();
+        }
+
+        public void setFlip(double newPos) {
+            flipPosition = clamp(newPos, 0.0, 1.0);
+            update();
+        }
+
+        public void setClaw(double newPos) {
+            clawPosition = clamp(newPos, 0.0, 1.0);
+            update();
+        }
+
+        public ITask aSetFlip(double newPos) {
+            return new OneShot(scheduler, () -> setFlip(newPos));
+        }
+
+        public ITask aSetClaw(double newPos) {
+            return new OneShot(scheduler, () -> setClaw(newPos));
+        }
+
+        public void setFlipClaw(double flip, double claw) {
+            flipPosition = clamp(flip, 0.0, 1.0);
+            clawPosition = clamp(claw, 0.0, 1.0);
+            update();
+        }
+
+        public ITask aSetFlipClaw(double flip, double claw) {
+            return new OneShot(scheduler, () -> setFlipClaw(flip, claw));
         }
     }
 }
