@@ -76,11 +76,15 @@ public class TT_RobotHardware {
     private DcMotor leftLift = null;  //  Used to control the left back drive wheel
     private DcMotor rightLift = null;  //  Used to control the left back drive wheel
 
-    private ScaledServo extensionServo = null;
+    private ScaledServo extension = null;
     private ScaledServo extensionArm = null;
     private boolean extensionArmUp = true;
+    private boolean extensionArmButtonPress = false;
+    private ScaledServo extensionSpin = null;
     private ScaledServo liftArm = null;
     private boolean liftArmUp = true;
+    private boolean liftArmButtonPress = false;
+    private ScaledServo light = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO = 0.5;
@@ -149,7 +153,7 @@ public class TT_RobotHardware {
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         odo = myOpMode.hardwareMap.get(GoBuildaPinpointDriver.class, "odo");
-        odo.setOffsets(-115.0, -160.0); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(-145.0, -200.0); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBuildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBuildaPinpointDriver.EncoderDirection.FORWARD, GoBuildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
@@ -157,44 +161,86 @@ public class TT_RobotHardware {
         nav = new GoBuildaDriveToPoint(myOpMode);
         nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
 
-        extensionServo = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension",0.0, 1.0);
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "ExtensionArm"), "Extension",0.25, 0.5);
-
-        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Arm"), "Arm",0.38, .62);
+        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.0, 1.0);
+        extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension", 0, 1);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.3, 0.5);
+        light = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Light"), "Light", 0.0, 1.0);
+        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Arm"), "Arm", 0.38, .55);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.addData("X offset", odo.getXOffset());
         myOpMode.telemetry.addData("Y offset", odo.getYOffset());
         myOpMode.telemetry.addData("Device Scalar", odo.getYawScalar());
         myOpMode.telemetry.update();
+        light.setTargetPosition(.5);
     }
 
     public void moveLiftArm() {
         if (myOpMode.gamepad1.x) {
-            if (liftArmUp) {liftArm.setTargetPosition(1); }
-            else  {liftArm.setTargetPosition(0); }
-            liftArmUp = !liftArmUp;
+            if (!liftArmButtonPress) {
+                light.setTargetPosition(.300);
+                if (liftArmUp) {
+                    liftArm.setTargetPosition(1);
+                } else {
+                    liftArm.setTargetPosition(0);
+                }
+                liftArmUp = !liftArmUp;
+            }
+            liftArmButtonPress = true;
+        } else {
+            liftArmButtonPress = false;
         }
     }
 
     public void moveExtensionArm() {
         if (myOpMode.gamepad1.y) {
-            if (extensionArmUp) {extensionArm.setTargetPosition(1); }
-            else  {extensionArm.setTargetPosition(0); }
-            extensionArmUp = !extensionArmUp;
+            if (!extensionArmButtonPress) {
+                light.setTargetPosition(.38);
+                if (extensionArmUp) {
+                    extensionArm.setTargetPosition(1);
+                } else {
+                    extensionArm.setTargetPosition(0);
+                }
+                extensionArmUp = !extensionArmUp;
+            }
+            extensionArmButtonPress = true;
+        } else {
+            extensionArmButtonPress = false;
         }
     }
+
+    public void moveExtension() {
+        if (myOpMode.gamepad1.right_trigger > 0) {
+            extension.setTargetPosition(.5 - ( myOpMode.gamepad1.right_trigger / 2));
+        } else if (myOpMode.gamepad1.left_trigger > 0) {
+            extension.setTargetPosition(.5 + ( myOpMode.gamepad1.left_trigger / 2));
+        } else {
+            extension.setTargetPosition(.5);
+        }
+    }
+
+    public void moveExtensionSpin() {
+        if (myOpMode.gamepad1.dpad_left) {
+            extensionSpin.setTargetPosition(.75);
+        } else if (myOpMode.gamepad1.dpad_right) {
+            extensionSpin.setTargetPosition(.25);
+        }
+    }
+
     public void drivelift() {
         if (myOpMode.gamepad1.a) {
+            light.setTargetPosition(.6);
             raiseLift();
         } else if (myOpMode.gamepad1.b) {
+            light.setTargetPosition(.6);
             lowerLift();
         }
+        //setLiftPosition((int)myOpMode.gamepad1.right_trigger * liftHeightMax );
     }
 
     // Lift
     public void raiseLift() {
-        liftHeight = liftHeight + 10;
+        liftHeight = liftHeight + 20;
         liftHeight = setLiftPosition(liftHeight);
     }
 
@@ -275,7 +321,8 @@ public class TT_RobotHardware {
 
     }
 
-    public void setDrivePower(double leftFront, double rightFront, double leftBack, double rightBack) {
+    public void setDrivePower(double leftFront, double rightFront, double leftBack,
+                              double rightBack) {
         // Output the values to the motor drives.
         leftFrontDrive.setPower(leftFront);
         rightFrontDrive.setPower(rightFront);
@@ -293,23 +340,24 @@ public class TT_RobotHardware {
 
     public void displayTelemetry() {
         try {
-            myOpMode.telemetry.addData("Lift", "Lift Height: %4d",liftHeight);
+            myOpMode.telemetry.addData("Lift", "Lift Height: %4d", liftHeight);
             Pose2D pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             myOpMode.telemetry.addData("Position", data);
             myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
             myOpMode.telemetry.update();
-        } catch (Exception ex) {        }
+        } catch (Exception ex) {
+        }
     }
 
-    /**
-     * Pass the requested arm power to the appropriate hardware drive motor
-     *
-     * @param power driving power (-1.0 to 1.0)
-     */
-    //public void setArmPower(double power) {
-    //  armMotor.setPower(power);
-    //}
+/**
+ * Pass the requested arm power to the appropriate hardware drive motor
+ *
+ * @param power driving power (-1.0 to 1.0)
+ */
+//public void setArmPower(double power) {
+//  armMotor.setPower(power);
+//}
 
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.

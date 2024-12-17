@@ -17,6 +17,9 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 
     packagingOptions {
         jniLibs {
