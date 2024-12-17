@@ -93,11 +93,11 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
     }
 
-    public MoveSliderCommand extendSliderToSpeciment() {
+    public MoveSliderCommand extendSliderToSpecimen() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
     }
 
-    public MoveSliderCommand extendSliderToDeliverSpeciman() {
+    public MoveSliderCommand extendSliderToDeliverSpecimen() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition-600, DeliverySlider.Direction.EXPANDING);
     }
 

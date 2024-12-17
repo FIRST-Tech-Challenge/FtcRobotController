@@ -60,7 +60,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
         this.resetEncoder = resetEncoder;
         this.direction = direction;
 
-        Log.i(LOG_TAG, "Target set to: " + target);
+        Log.i(LOG_TAG, "Target set to: " + target + ", direction = " + direction.name());
         addRequirements(slider);
     }
 
@@ -72,8 +72,8 @@ public class MoveSliderCommand extends SounderBotCommandBase {
     @Override
     public void doExecute() {
         position = motor.encoder.getPosition();
-        Log.i(LOG_TAG, String.format("Current position = %f, direction = %s", position, direction.name()));
-        double power = pidController.calculatePIDAlgorithm(target - position);
+        Log.i(LOG_TAG, String.format("Current position = %f, direction = %s, target = %f", position, direction.name(), target));
+        double power = Math.abs(pidController.calculatePIDAlgorithm(target - position));
 
         if(isTargetReached() || holdPosition != Integer.MIN_VALUE) {
             Log.i(LOG_TAG, "target reached with direction " + direction.name());
@@ -85,7 +85,6 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
                 if(resetEncoder) {
                     this.slider.ResetEncoder();
-
                 }
             } else {
                 if (holdPosition == Integer.MIN_VALUE) {
