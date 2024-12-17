@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Arm.SlideVerticalArm;
 import org.firstinspires.ftc.teamcode.Arm.TubeDriver;
 import org.firstinspires.ftc.teamcode.Utils.AdvancedPidController;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+//import com.acmerobotics.roadrunner.geometry.Pose2d;
 import Utils.Chassis.ChassisDriver ;
 
 
@@ -222,8 +222,7 @@ public class FirstTeleOp extends LinearOpMode {
                 intake.setPower(getArmPower());
             } else if (gamepad1.left_trigger > 0.9 && !isFastIntakeMode) {
                 TARGET_INCHES = 12; //TODO CHECK WHAT THE MAX REACH IS IN INCHES
-                intake.setPower(getArmPower());
-            } else {
+                } else {
                 intake.setPower(0);
             }
 
@@ -247,7 +246,7 @@ public class FirstTeleOp extends LinearOpMode {
             double leftPower = -gamepad1.left_stick_x * TURN_MULT;
             double rotatePower = -gamepad1.right_stick_x * TURN_MULT;
 
-            //chassisDriver.setNormalizedDrive(new Pose2d(forwardPower, leftPower, rotatePower));
+           //chassisDriver.setNormalizedDrive(new Pose2d(forwardPower, leftPower, rotatePower));
         }
     }
 
