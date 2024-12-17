@@ -37,14 +37,16 @@ public class Mechanisms {
 
     // Mechanism stuff
     public double lastClawTime;
+    public static double PLACE_OT_FLIP_POS = .35;
     public static double UP_OT_FLIP_POS = .25;
+    public static double MID_OT_FLIP_POS = .15;
     public static double DOWN_OT_FLIP_POS = 0;
     public static double BUCKET_OT_PIVOT_POS = .5;
     public static double TRANSFER_OT_PIVOT_POS = .67;
     public static double PICKUP_OT_PIVOT_POS = .23;
 
-    public static double OT_CLAW_GRAB = 0;
-    public static double OT_CLAW_RELEASE = 0.15;
+    public static double OT_CLAW_GRAB = .68;
+    public static double OT_CLAW_RELEASE = 1;
 
     public static double PERP_IT_POS = .82;
     public static double PAR_IT_POS = .33;
@@ -125,6 +127,9 @@ public class Mechanisms {
         brakePosIT = inTakeLift.getCurrentPosition();
         brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
 
+        intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
+        inTakeClaw.setPosition(CLOSED_IT_POS);
+
 
         master = opMode;
     }
@@ -132,21 +137,26 @@ public class Mechanisms {
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeLift(){
 
+        double mult = Math.max(1 - master.gamepad2.left_trigger, .4);
+        //outTakeLiftLeft.setPower(master.gamepad2.left_stick_y * mult);
+        //outTakeLiftRight.setPower(master.gamepad2.left_stick_y * mult);
         if (Math.abs(master.gamepad2.left_stick_y) < .05 && !brakingOT)
         {
             brakingOT = true;
-            brakePosIT = outTakeLiftLeft.getCurrentPosition();
+            brakePosOT = outTakeLiftLeft.getCurrentPosition();
         }
         else if (Math.abs(master.gamepad2.left_stick_y) > .05)
         {
-            outTakeLiftLeft.setPower(master.gamepad2.left_stick_y);
-            outTakeLiftRight.setPower(master.gamepad2.left_stick_y);
+            master.telemetry.addData("stick y", Math.abs(master.gamepad2.left_stick_y));
             brakingOT = false;
+            outTakeLiftLeft.setPower(master.gamepad2.left_stick_y * mult);
+            outTakeLiftRight.setPower(master.gamepad2.left_stick_y * mult);
         }
         if (brakingOT)
         {
-           // outTakeLiftLeft.setPower(-(outTakeLiftLeft.getCurrentPosition() - brakePosOT) / 100 * .05);
-           // outTakeLiftRight.setPower(-(outTakeLiftLeft.getCurrentPosition() - brakePosOT) / 100 * .05);
+            master.telemetry.addData("diff", outTakeLiftLeft.getCurrentPosition() - brakePosOT);
+            outTakeLiftLeft.setPower((outTakeLiftLeft.getCurrentPosition() - brakePosOT) / 100 * .07);
+            outTakeLiftRight.setPower((outTakeLiftLeft.getCurrentPosition() - brakePosOT) / 100 * .07);
         }
     }
 
@@ -164,9 +174,9 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeClawGrab(){
-        master.telemetry.addData("tt", totalTime.milliseconds());
         if (master.gamepad2.y && lastClawTime < totalTime.milliseconds() - 500)
         {
+            master.telemetry.addData("tt", totalTime.milliseconds());
             if (!OTGrabbed)
             {
                 lastClawTime = totalTime.milliseconds();
@@ -185,10 +195,12 @@ public class Mechanisms {
     ////////////////////////////////////////////////////////////////////////////////
 
     public void setOutTakeFlip(){
-        if (master.gamepad2.left_trigger > .1)
-            outTakeFlip.setPosition(DOWN_OT_FLIP_POS);
         if (master.gamepad2.right_trigger > .1)
             outTakeFlip.setPosition(UP_OT_FLIP_POS);
+        if (master.gamepad2.b)
+            outTakeFlip.setPosition(MID_OT_FLIP_POS);
+        if (master.gamepad2.back)
+            outTakeFlip.setPosition(UP_OT_FLIP_POS + .15);
     }
 
     public void
@@ -208,7 +220,7 @@ public class Mechanisms {
             }
             inTakeClaw.setPosition(CLOSED_IT_POS);
         }*/
-        if (master.gamepad2.x && inTakeAndUpStateTime.milliseconds() > 500)
+        /*if (master.gamepad2.x && inTakeAndUpStateTime.milliseconds() > 500)
         {
             ITMacroState = "clawup";
             inTakeAndUpStateTime.reset();
@@ -241,6 +253,8 @@ public class Mechanisms {
             intakePivotL.setPosition(UP_IT_FLIP_POS);
         }
 
+         */
+
     }
 
     public void outTakeMacroAndTransfer()
@@ -263,7 +277,7 @@ public class Mechanisms {
         }
         if (OTMacroState.equals("raise")) {
             outTakePivotRight.setPosition(BUCKET_OT_PIVOT_POS);
-            outTakeFlip.setPosition(UP_OT_FLIP_POS);
+            outTakeFlip.setPosition(PLACE_OT_FLIP_POS);
             if (outTakeAndUpStateTime.milliseconds() > 750) {
                 outTakeAndUpStateTime.reset();
                 OTMacroState = "none";
@@ -279,13 +293,23 @@ public class Mechanisms {
             if (upPivotOT)
             {
                 outTakePivotRight.setPosition(TRANSFER_OT_PIVOT_POS);
+                outTakeClaw.setPosition(OT_CLAW_GRAB);
                 upPivotOT = false;
             }
             else
             {
                 outTakePivotRight.setPosition(BUCKET_OT_PIVOT_POS);
+                outTakeClaw.setPosition(OT_CLAW_GRAB);
+                outTakeFlip.setPosition(PLACE_OT_FLIP_POS);
                 upPivotOT = true;
             }
+            pivotTimeOT = totalTime.milliseconds();
+        }
+        if (master.gamepad2.x && pivotTimeOT < totalTime.milliseconds() - 500)
+        {
+            //outTakeClaw.setPosition(OT_CLAW_RELEASE);
+            outTakeFlip.setPosition(MID_OT_FLIP_POS);
+            outTakePivotRight.setPosition(.2);
             pivotTimeOT = totalTime.milliseconds();
         }
     }
@@ -335,6 +359,7 @@ public class Mechanisms {
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeLift(){
+        inTakeLift.setPower(master.gamepad2.right_stick_y * .4);
         if (Math.abs(master.gamepad2.right_stick_y) < .05 && !brakingIT)
         {
             brakingIT = true;
@@ -342,7 +367,6 @@ public class Mechanisms {
         }
         else if (Math.abs(master.gamepad2.right_stick_y) > .05)
         {
-            inTakeLift.setPower(master.gamepad2.right_stick_y * .4);
             brakingIT = false;
         }
         if (brakingIT)

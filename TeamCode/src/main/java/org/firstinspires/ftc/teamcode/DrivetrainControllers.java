@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
@@ -53,7 +54,6 @@ public class DrivetrainControllers {
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         master = opMode;
     }
 
@@ -166,7 +166,7 @@ public class DrivetrainControllers {
 
             double y = -master.gamepad1.left_stick_y;
             double x = master.gamepad1.left_stick_x * 1.1;
-            double rx = master.gamepad1.right_stick_x;
+            double rx = -master.gamepad1.right_stick_x;
 
 
 
@@ -186,14 +186,14 @@ public class DrivetrainControllers {
 
             double power = Math.min(Math.abs(y) + Math.abs(x), 1);
             frontLeftMotor.setPower(acceleratorFL((power * cos + power * sin + rx) * multiplier) - adder);
-            backLeftMotor.setPower(acceleratorBL((power * cos - power * sin + rx) * multiplier) - adder);
-            frontRightMotor.setPower(acceleratorFR((power * cos - power * sin - rx) * multiplier) + adder);
-            backRightMotor.setPower(acceleratorBR((power * cos + power * sin - rx) * multiplier) + adder);
+            backLeftMotor.setPower(-acceleratorBL((power * cos - power * sin + rx) * multiplier) - adder);
+            frontRightMotor.setPower(-acceleratorFR((power * cos - power * sin - rx) * multiplier) + adder);
+            backRightMotor.setPower(-acceleratorBR((power * cos + power * sin - rx) * multiplier) + adder);
         }
         else {
             double y = -master.gamepad1.left_stick_y;
             double x = master.gamepad1.left_stick_x * 1.1;
-            double rx = master.gamepad1.right_stick_x;
+            double rx = -master.gamepad1.right_stick_x;
 
             master.telemetry.addData("y", y);
             master.telemetry.addData("x",x);
@@ -208,10 +208,32 @@ public class DrivetrainControllers {
             double multiplier = Math.max(1 - master.gamepad1.right_trigger, .25) ;
 
             frontLeftMotor.setPower(acceleratorFL(frontLeftPower * multiplier) - adder);
-            backLeftMotor.setPower(acceleratorBL(backLeftPower * multiplier) - adder);
-            frontRightMotor.setPower(acceleratorFR(frontRightPower * multiplier) + adder);
-            backRightMotor.setPower(acceleratorBR(backRightPower * multiplier) + adder);
+            backLeftMotor.setPower(-acceleratorBL(backLeftPower * multiplier) - adder);
+            frontRightMotor.setPower(-acceleratorFR(frontRightPower * multiplier) + adder);
+            backRightMotor.setPower(-acceleratorBR(backRightPower * multiplier) + adder);
         }
+    }
+
+    public void moveForwardByInches(double inches, double timeOut) {
+        // Record the initial position
+        //Vector2d initialPosition = localizationRead.returnPose().position;
+        //double targetY = initialPosition.y + inches;  // Assuming "forward" is along the y-axis
+        timeOut = totalTime.seconds() + timeOut;
+
+        // Move forward until we reach the target distance
+        while (totalTime.seconds() <= timeOut) {
+            frontLeftMotor.setPower(-.3 * Math.signum(inches));// Apply forward power
+            frontRightMotor.setPower(.3 * Math.signum(inches));
+            backRightMotor.setPower(.3 * Math.signum(inches));// Apply forward power
+            backLeftMotor.setPower(.3 * Math.signum(inches));
+            //localizationRead.returnPose();  // Update position each loop
+        }
+
+        // Stop the robot once the target position is reached
+        frontLeftMotor.setPower(0);// Apply forward power
+        frontRightMotor.setPower(0);
+        backLeftMotor.setPower(0);// Apply forward power
+        backRightMotor.setPower(0);
     }
 
 

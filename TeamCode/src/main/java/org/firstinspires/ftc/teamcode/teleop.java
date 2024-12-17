@@ -106,7 +106,7 @@ public class teleop extends OpMode {
             mechanisms.setInTakeRotator();
             mechanisms.outTakeMacroAndTransfer();
 
-            fileRead.readFile();
+            //fileRead.readFile();
 
             driveTrain.runMotors(sensors);
             telemetry.update();
