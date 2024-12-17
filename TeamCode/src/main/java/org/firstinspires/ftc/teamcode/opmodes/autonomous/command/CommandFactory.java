@@ -170,4 +170,8 @@ public class CommandFactory {
     public RoboticCentricDriveCommand driveRobotCentric(double strafeSpeed, double forwardSpeed, double rotSpeed, long timeToDriveMs) {
         return new RoboticCentricDriveCommand(driveTrain, strafeSpeed, forwardSpeed, rotSpeed, timeToDriveMs);
     }
+
+    public SleeperCommand sleep(long timeToSleepMs) {
+        return new SleeperCommand(timeToSleepMs);
+    }
 }
