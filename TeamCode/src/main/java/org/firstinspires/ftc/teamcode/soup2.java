@@ -138,19 +138,19 @@ public class soup2 extends OpMode {
         }
         spindle.setPower(-gamepad2.left_stick_y * 0.75);
         // Linear Slide Lower
-        if ((gamepad2.a || gamepad1.a) && !LSLowerToggling) {
+        if ((gamepad2.x || gamepad1.x) && !LSLowerToggling) {
             LSLowerOut = !LSLowerOut;
             LSLowerToggling = true;
         }
-        if ((!gamepad2.a) && (!gamepad1.a)) {
+        if ((!gamepad2.x) && (!gamepad1.x)) {
             LSLowerToggling = false;
         }
         // Linear Servo Top
-        if ((gamepad2.x ||gamepad1.x) && !LSTopToggling) {
+        if ((gamepad2.a ||gamepad1.a) && !LSTopToggling) {
             LSTopOut = !LSTopOut;
             LSTopToggling = true;
         }
-        if ((!gamepad2.x) && (!gamepad1.x)) {
+        if ((!gamepad2.a) && (!gamepad1.a)) {
             LSTopToggling = false;
         }
         if (LSTopOut) {

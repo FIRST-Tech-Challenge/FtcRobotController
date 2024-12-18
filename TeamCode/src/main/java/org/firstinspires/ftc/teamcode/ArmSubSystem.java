@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.sun.tools.javac.util.Warner;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -64,15 +59,25 @@ public class ArmSubSystem {
                 extendoReference = 2400;
                 capstanReference = 170;
                 break;
-            case CHAMBER_B:
+            case CHAMBER_C:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 280;
+                capstanReference = 425; //was 325
+                break;
+            case CHAMBER_D:
+                positionalZone = armPoseZone.CHAMBER;
+                extendoReference = 0;
+                capstanReference = 410; //was 350, wrist no function
                 break;
             case CHAMBER_A:
                 positionalZone = armPoseZone.CHAMBER;
                 extendoReference = 0;
-                capstanReference = 380;
+                capstanReference = 310;
+                break;
+            case CHAMBER_B:
+                positionalZone = armPoseZone.CHAMBER;
+                extendoReference = 0;
+                capstanReference = 280;
                 break;
             case BASKET:
                 positionalZone = armPoseZone.OTHER;
@@ -137,10 +142,10 @@ public class ArmSubSystem {
         }
         switch (stateOfClaw) {
             case LOOSE:
-                clawReference = 0.2f;
+                clawReference = 0.9f;
                 break;
             case CLOSED:
-                clawReference = 0.1f;
+                clawReference = 0f;
                 break;
             case OPENED:
                 clawReference = 1f;

@@ -14,6 +14,8 @@ public enum  armPose {
     REST,
     CHAMBER_A,
     CHAMBER_B,
+    CHAMBER_C,
+    CHAMBER_D,
     ZERO,
     BASKET_PREP,
     PICKUP,

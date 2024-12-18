@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 @Autonomous(name="ramAuto", group="Auto")
 public class ramAuro extends OpMode {
     private AutonomousHandler autoHandler;
+    private ServoImplEx LSLower;
+    private ServoImplEx LSTop;
 
     @Override
     public void init() {
@@ -23,8 +25,8 @@ public class ramAuro extends OpMode {
         SparkFunOTOS odometry = hardwareMap.get(SparkFunOTOS.class, "odometry");
         DcMotor cap = hardwareMap.get(DcMotor.class, "cap");
         // Servos
-        ServoImplEx LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
-        ServoImplEx LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
+        LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
+        LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
         RevTouchSensor lswitch = hardwareMap.get(RevTouchSensor.class, "Lswitch");
 
         // Define Servo range
@@ -63,13 +65,23 @@ public class ramAuro extends OpMode {
                 wristState.UP,
                 clawState.CLOSED
         );
+        // forward 10 arm up
         instructionHandler.addInstruction(
-                2.5,
+                1.5,
                 new SparkFunOTOS.Pose2D(0,10,0),
                 armPose.CHAMBER_A,
                 wristState.UP,
                 clawState.CLOSED
         );
+        // forward 10 arm up
+        instructionHandler.addInstruction(
+                1.5,
+                new SparkFunOTOS.Pose2D(0,10,0),
+                armPose.CHAMBER_A,
+                wristState.UP,
+                clawState.CLOSED
+        );
+        // forward 27 arm up
         instructionHandler.addInstruction(
                 2,
                 new SparkFunOTOS.Pose2D(0,27,0),
@@ -77,13 +89,15 @@ public class ramAuro extends OpMode {
                 wristState.UP,
                 clawState.CLOSED
         );
+        // forward arm lower
         instructionHandler.addInstruction(
                 0.4,
-                new SparkFunOTOS.Pose2D(0,30.5,0),
+                new SparkFunOTOS.Pose2D(0,32,0),
                 armPose.CHAMBER_B,
                 wristState.UP,
                 clawState.CLOSED
         );
+        // forward arm up open claw
         instructionHandler.addInstruction(
                 0.5,
                 new SparkFunOTOS.Pose2D(0,26,0),
@@ -91,6 +105,7 @@ public class ramAuro extends OpMode {
                 wristState.UP,
                 clawState.OPENED
         );
+        //end of scoring first speciman, beginning scoring human player specimen, go right
         instructionHandler.addInstruction(
                 1,
                 new SparkFunOTOS.Pose2D(-12,10, 0),
@@ -98,6 +113,7 @@ public class ramAuro extends OpMode {
                 wristState.UP,
                 clawState.OPENED
         );
+        // forward and right more
         instructionHandler.addInstruction(
                 1,
                 new SparkFunOTOS.Pose2D(-32,10, 0),
@@ -105,13 +121,15 @@ public class ramAuro extends OpMode {
                 wristState.UP,
                 clawState.OPENED
         );
+        // forward and right and rotate right
         instructionHandler.addInstruction(
                 2,
-                new SparkFunOTOS.Pose2D(-44,80,45),
+                new SparkFunOTOS.Pose2D(-44,50,45),
                 armPose.AUTO_2,
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // moves back and left
         instructionHandler.addInstruction(
                 1,
                 new SparkFunOTOS.Pose2D(-33,50,0),
@@ -119,6 +137,7 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // back
         instructionHandler.addInstruction(
                 2.25,
                 new SparkFunOTOS.Pose2D(-33,18,0),
@@ -126,6 +145,7 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // forward
         instructionHandler.addInstruction(
                 1,
                 new SparkFunOTOS.Pose2D(-33,50,0),
@@ -133,6 +153,7 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // left
         instructionHandler.addInstruction(
                 1.15,
                 new SparkFunOTOS.Pose2D(-49,50,0),
@@ -140,6 +161,7 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // back
         instructionHandler.addInstruction(
                 2,
                 new SparkFunOTOS.Pose2D(-49,20,0),
@@ -147,6 +169,7 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // forward and left
         instructionHandler.addInstruction(
                 0.3,
                 new SparkFunOTOS.Pose2D(-30,40,0),
@@ -154,12 +177,20 @@ public class ramAuro extends OpMode {
                 wristState.DOWN,
                 clawState.OPENED
         );
+        // moves back and turns 180 to pick up from human player
         instructionHandler.addInstruction(
                 1.7,
                 new SparkFunOTOS.Pose2D(-30,18,180),
                 armPose.AUTO_3,
                 wristState.DOWN,
                 clawState.OPENED
+        );
+        instructionHandler.addInstruction(
+                1,
+                new SparkFunOTOS.Pose2D(-30,18,180),
+                armPose.AUTO_3,
+                wristState.DOWN,
+                clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 1.5,
@@ -169,30 +200,44 @@ public class ramAuro extends OpMode {
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
-                2,
+                1.5,
                 new SparkFunOTOS.Pose2D(12,20,0),
-                armPose.CHAMBER_A,
+                armPose.CHAMBER_C,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
-                1,
+                .75,
                 new SparkFunOTOS.Pose2D(12,28.5,0),
-                armPose.CHAMBER_A,
+                armPose.CHAMBER_C,
+                wristState.UP,
+                clawState.CLOSED
+        );
+        instructionHandler.addInstruction(
+                .5,
+                new SparkFunOTOS.Pose2D(12,28.5,0),
+                armPose.CHAMBER_C,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 0.5,
-                new SparkFunOTOS.Pose2D(12,31,0),
-                armPose.CHAMBER_A,
+                new SparkFunOTOS.Pose2D(12,34,0),
+                armPose.CHAMBER_C,
                 wristState.UP,
                 clawState.CLOSED
         );
         instructionHandler.addInstruction(
                 0.7,
+                new SparkFunOTOS.Pose2D(12,30,0),
+                armPose.CHAMBER_A,
+                wristState.UP,
+                clawState.CLOSED
+        );
+        instructionHandler.addInstruction(
+                0.4,
                 new SparkFunOTOS.Pose2D(12,28.5,0),
-                armPose.CHAMBER_B,
+                armPose.CHAMBER_A,
                 wristState.UP,
                 clawState.OPENED
         );
@@ -211,14 +256,21 @@ public class ramAuro extends OpMode {
                 clawState.OPENED
         );
         // ACS & DBS & Handler
-        ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
+        ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSLower, LSTop, telemetry);
         DriveBaseSubsystem driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
         autoHandler = new AutonomousHandler(instructionHandler.getInstructions(), armControlSubsystem, driveBaseSystem, 0, telemetry);
 
         autoHandler.resetPID(0.03f, 0f, 0.015f);
-        LSLower.setPosition(0.1);
+        LSLower.setPosition(0.1);  // RC
         LSTop.setPosition(0.1);
 
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        LSLower.setPosition(0.1);  // RC
+        LSTop.setPosition(0.1);
     }
 
     @Override
