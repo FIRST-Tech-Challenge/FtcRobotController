@@ -91,7 +91,8 @@ public class Settings {
             public static final String LINEAR_ACTUATOR = "linearActuator";
             public static final String GECKO_LEFT = "geckoLeft";
             public static final String GECKO_RIGHT = "geckoRight";
-            public static final String WRIST = "wrist";
+            public static final String WRIST_LEFT = "wristLeft";
+            public static final String WRIST_RIGHT = "wristRight";
             public static final String LINKAGE = "linkage";
             public static final String CLAW = "claw";
         }

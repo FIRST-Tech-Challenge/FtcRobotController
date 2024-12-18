@@ -7,12 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.firstinspires.ftc.teamcode.utils.MenuHelper;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 /** @noinspection unused */
@@ -29,7 +24,8 @@ public class CheckSuite extends LinearOpMode {
     };
 
     private static final String[] SERVO_OPTIONS = {
-            Settings.Hardware.IDs.WRIST,
+            Settings.Hardware.IDs.WRIST_LEFT,
+            Settings.Hardware.IDs.WRIST_RIGHT,
     };
 
     private static final String[] CRSERVO_OPTIONS = {

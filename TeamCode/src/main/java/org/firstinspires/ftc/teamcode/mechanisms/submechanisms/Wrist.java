@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.Settings;
 /** @noinspection FieldCanBeLocal, unused */
 public class Wrist {
     public static double position = 0;
-    public final Servo wristServo;
+    public final Servo wristLeft;
+    public final Servo wristRight;
     public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
     public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
     public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
@@ -20,7 +21,9 @@ public class Wrist {
     public Wrist(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        wristServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST);
+        wristLeft = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST_LEFT);
+        wristRight = hardwareMap.get(Servo.class, Settings.Hardware.IDs.WRIST_RIGHT);
+        wristRight.setDirection(Servo.Direction.REVERSE);
     }
 
     public void setPosition(Position newPosition) {
@@ -36,7 +39,8 @@ public class Wrist {
                 position = horizPos;
                 break;
         }
-        wristServo.setPosition(position);
+        wristLeft.setPosition(position);
+        wristRight.setPosition(position);
     }
 
     public Position position() {
