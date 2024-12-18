@@ -74,9 +74,11 @@ public class ViperSlide {
             Boolean resetEncoders,
             Boolean hold,
             Boolean bucketRest,
-            Boolean bucketScore
-//            Boolean openBucket,
-//            Boolean closeBucket
+            Boolean bucketScore,
+            Boolean openBucket,
+            Boolean closeBucket,
+            Boolean grabSpecimen,
+            Boolean releaseSpecimen
     ) {
         // Move Viper
         if (retractSpeed != 0) {
@@ -119,16 +121,23 @@ public class ViperSlide {
 //                bucketCooldownTimer = null;
         }
 
-//        if(openBucket) {
-//            openBucket();
-//            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
-//            telemetry.addData("Bucket Flap Position", "open");
-//        }
-//        else if(closeBucket) {
-//            closeBucket();
-//            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
-//            telemetry.addData("Bucket Flap Position", "closed");
-//        }
+        if(openBucket) {
+            openBucket();
+            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+            telemetry.addData("Bucket Flap Position", "open");
+        }
+        else if(closeBucket) {
+            closeBucket();
+            telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
+            telemetry.addData("Bucket Flap Position", "closed");
+        }
+
+        if(grabSpecimen) {
+            // grab specimen
+        }
+        else if(releaseSpecimen) {
+            // release specimen
+        }
     }
 
     public void stop() {
@@ -248,7 +257,7 @@ public class ViperSlide {
     }
 
     public void closeBucket() {
-        setBucketFlapPosition(0.75);
+        setBucketFlapPosition(.4 ); // .75
     }
 
 

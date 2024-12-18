@@ -47,30 +47,30 @@ public class Intake {
             Boolean wristDown,
             Boolean wristUp,
             Boolean wristHalf,
-            Boolean wristModifier,
+//            Boolean wristModifier,
             Boolean grabberSuck,
             Boolean grabberSpit
     ) {
         double wristIncrement = .015;
 
         if((hSlide.getPos() < maxFlipPosition)) {
-            if (wristDown && (hSlide.getPos() > minFlipPosition) && !gamepad1.start && !wristModifier) {
+            if (wristDown && (hSlide.getPos() > minFlipPosition) && !gamepad1.start) { // && !wristModifier
                 wristDown();
             }
-            else if (wristUp && !gamepad1.start && !wristModifier) {
+            else if (wristUp && !gamepad1.start) { // && !wristModifier
                 wristUp();
             }
             else if (wristHalf) {
                 wristHalf();
             }
 
-            if(wristModifier && wristUp) {
-                setWristPosition(leftWrist.getPosition() - wristIncrement, rightWrist.getPosition() + wristIncrement);
-
-            }
-            else if(wristModifier && wristDown) {
-                setWristPosition(leftWrist.getPosition() + wristIncrement, rightWrist.getPosition() - wristIncrement);
-            }
+//            if(wristModifier && wristUp) {
+//                setWristPosition(leftWrist.getPosition() - wristIncrement, rightWrist.getPosition() + wristIncrement);
+//
+//            }
+//            else if(wristModifier && wristDown) {
+//                setWristPosition(leftWrist.getPosition() + wristIncrement, rightWrist.getPosition() - wristIncrement);
+//            }
 
             telemetry.addData("left wrist pos", leftWrist.getPosition());
             telemetry.addData("right wrist pos",  rightWrist.getPosition());

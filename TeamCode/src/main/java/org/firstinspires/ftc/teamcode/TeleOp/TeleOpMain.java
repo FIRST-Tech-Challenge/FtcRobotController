@@ -103,9 +103,13 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad2.left_trigger,        // retract
                     gamepad2.right_trigger,       // extend
                     gamepad2.guide,               // reset encoders
-                    gamepad2.a,                   // hold viper position
+                    gamepad2.back,                // hold viper position
                     gamepad2.y,                   // bucket rest
-                    gamepad2.x                    // bucket score
+                    gamepad2.x,                   // bucket score
+                    gamepad2.b,                   // open bucket
+                    gamepad2.a,                   // close bucket
+                    gamepad2.dpad_up,             // grab specimen
+                    gamepad2.dpad_down            // release specimen
             );
 
             hSlide.checkInputs(
@@ -115,12 +119,12 @@ public class TeleOpMain extends LinearOpMode {
             );
 
             intake.checkInputs(
-                    gamepad2.b,                                     // wrist down position
-                    gamepad2.a,                                     // wrist up position
-                    gamepad1.back,                                  // wrist half
-                    (gamepad1.dpad_left),                           // wrist modifier
-                    (gamepad1.dpad_up || gamepad2.dpad_up),         // intake on
-                    (gamepad1.dpad_down || gamepad2.dpad_down)      // intake reverse
+                    gamepad1.x,                   // wrist down position
+                    gamepad1.a,                   // wrist up position
+                    gamepad1.back,                // wrist half
+//                    (gamepad1.dpad_left         // wrist modifier
+                    gamepad2.right_bumper,        // intake on
+                    gamepad2.left_bumper          // intake reverse
 
             );
 
