@@ -24,10 +24,10 @@ public class ExtensionSubsystem implements Subsystem {
     public double armCOM;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
    
-    public ExtensionSubsystem(HardwareMap map, MotorEx arm1, MotorEx arm2){
+    public ExtensionSubsystem(HardwareMap map){
         this.map = map;
-        this.arm1 = arm1;
-        this.arm2 = arm2;
+        arm1 = MotorEx(map,"leftExtension")//tbd
+        arm2 = MotorEx(map,"rightExtension")//tbd
         currentArmLength = encoderToLength*extensionEncoder1.getPosition();
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);

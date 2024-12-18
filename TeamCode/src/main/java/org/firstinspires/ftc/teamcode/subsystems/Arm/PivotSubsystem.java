@@ -30,10 +30,10 @@ public class PivotSubsystem implements Subsystem {
     private double pivotFF;
 
 
-    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, DoubleSupplier armCOM, MotorEx pivot1, MotorEx pivot2){
+    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, DoubleSupplier armCOM){
         this.map = map;
-        this.pivot1 = pivot1;
-        this.pivot2 = pivot2;
+        pivot1 = new MotorEx(map,"leftPivot");//tbd
+        pivot2 = new MotorEx(map,"rightPivot");//tbd
         this.armLength = armLength;
         this.armCOM = armCOM;
         currentArmCOM = armCOM.getAsDouble();
@@ -72,12 +72,12 @@ public class PivotSubsystem implements Subsystem {
     }
 
     private double setPivotMotor(double setpoint) {
-
+        double pidResult = m_pivotPID.calculate(setpoint)
+        return pidResult + calculateFeedForward(setpoint)
     }
 
-    public void calculateFeedForward(){
-
-        pivotFF = armMass*g*currentArmCOM*Math.sin(currentArmAngle);
+    public double calculateFeedForward(double angle){
+         return armMass*g*currentArmCOM*Math.sin(angle);
     }
 
     private void calcArmAngle() {
