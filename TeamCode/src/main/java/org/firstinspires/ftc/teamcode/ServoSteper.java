@@ -73,8 +73,7 @@ public class ServoSteper extends LinearOpMode {
             // Set the servo to the new position and pause;
             sleep(CYCLE_MS);
             idle();
-            hardware.horizontalLeft.setPosition(position);
-            hardware.horizontalSlide.setPosition(1-position);
+            hardware.claw.setPosition(position);
 
         }
 

@@ -123,9 +123,6 @@ public class MecanumTeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 ScoreHighBasket(hardware);
             }
-            if (gamepad2.x) {
-                PickUpYellow(hardware);
-            }
             if (gamepad2.b) {
                 specimenWallPick(hardware);
             }
@@ -346,6 +343,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket(Hardware hardware) {
+        hardware.claw.setPosition(0.02);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         hardware.verticalSlide.setTargetPosition(highBasketTicks);
@@ -356,9 +354,7 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setTargetPosition(222);
         sleep(500);
         hardware.wrist.setPosition(0.94);
-        sleep(500);
-        hardware.claw.setPosition(0.02);
-        sleep(500);
+        sleep(700);
         hardware.claw.setPosition(0.55);
         sleep(100);
         hardware.wrist.setPosition(0.28);
@@ -572,24 +568,28 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void trasfer(Hardware hardware){
         if (gamepad2.x) {
-            hardware.clawFront.setPosition(0.07);
-            ClawFrontPos = 0.07;
-            hardware.claw.setPosition(0.55);
+            double frontopen = 0.33;
+            double frontclosed = 0.07;
+            double clawopen = 0.55;
+            double clawclose = 0.02;
+            hardware.clawFront.setPosition(frontclosed);
+            ClawFrontPos = frontclosed;
+            hardware.claw.setPosition(clawopen);
             sleep(500);
             hardware.wrist.setPosition(0);
             sleep(500);
             hardware.arm.setTargetPosition(-28);
             armTargetPosDeg = -8;
             sleep(1000);
-            hardware.claw.setPosition(0.02);
+            hardware.claw.setPosition(clawclose);
             sleep(500);
-            hardware.clawFront.setPosition(0.33);
+            hardware.clawFront.setPosition(frontopen);
             sleep(500);
             hardware.arm.setTargetPosition(0);
             armTargetPosDeg=0;
             sleep(500);
             hardware.wrist.setPosition(0.28);
-            ClawFrontPos=0.28;
+            ClawFrontPos=frontopen;
         }
     }
 }
