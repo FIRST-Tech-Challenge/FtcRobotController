@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
 
-public class armConstants {
+public class ArmConstants {
     public static final double armMass = 0;
+    public static final double g = 9.81;
 
 
     public static class PIDConstants{

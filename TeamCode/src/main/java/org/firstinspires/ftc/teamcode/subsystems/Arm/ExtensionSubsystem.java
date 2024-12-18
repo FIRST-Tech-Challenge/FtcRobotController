@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.armConstants.PIDConstants.*;
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.armConstants.extensionConstants.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.PIDConstants.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensionConstants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -9,14 +9,11 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.PID.PIDController;
 import org.firstinspires.ftc.teamcode.utils.telescopicArmCOM;
 
-import java.util.function.DoubleSupplier;
-
-public class extensionSubsystem implements Subsystem {
-    private static extensionSubsystem instance;
+public class ExtensionSubsystem implements Subsystem {
+    private static ExtensionSubsystem instance;
     HardwareMap map;
     public MotorEx arm1;
     public MotorEx arm2;
@@ -27,7 +24,7 @@ public class extensionSubsystem implements Subsystem {
     public double armCOM;
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
    
-    public extensionSubsystem(HardwareMap map, MotorEx arm1, MotorEx arm2){
+    public ExtensionSubsystem(HardwareMap map, MotorEx arm1, MotorEx arm2){
         this.map = map;
         this.arm1 = arm1;
         this.arm2 = arm2;
@@ -43,18 +40,24 @@ public class extensionSubsystem implements Subsystem {
         updateValues();
     }
 
-    private extensionSubsystem()    {    }
+    private ExtensionSubsystem()    {    }
 
     public double getArmLength()
     {
         return currentArmLength;
     }
+    public double getArmCOM()
+    {
+        return armCOM;
+    }
 
     private void updateValues() {
-        armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,armLength);
+        armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
     }
 
     private void updateTelemetry() {
-        dashboard.addData("armLength ",armLength);
+        dashboard.addData("encoder1Value", extensionEncoder1.getPosition());
+        dashboard.addData("encoder2Value", extensionEncoder2.getPosition());
+        dashboard.addData("armLength ",currentArmLength);
     }
 }

@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems.Gripper.gripperCommands;
 
-import com.arcrobotics.ftclib.command.Subsystem;
-
 import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
-import org.firstinspires.ftc.teamcode.subsystems.Gripper.gripperSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 
 public class closeGripper extends BTCommand {
-    public gripperSubsystem m_subsystem;
+    public GripperSubsystem m_subsystem;
 
-    public closeGripper(gripperSubsystem subsystem){
+    public closeGripper(GripperSubsystem subsystem){
         m_subsystem = subsystem;
     }
 
