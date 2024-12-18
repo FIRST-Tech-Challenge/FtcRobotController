@@ -30,6 +30,8 @@ public class HighBucketDeposit extends SequentialCommandGroup {
 
         addCommands (
 
+                //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+
                 new FollowPath(
                         2.0,
                         1.0,

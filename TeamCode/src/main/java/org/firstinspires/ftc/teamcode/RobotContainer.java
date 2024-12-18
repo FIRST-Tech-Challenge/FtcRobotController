@@ -17,26 +17,29 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePos
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PickupFromSubmersible;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.SweepAlliancePieces;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
+import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.ManualDrive;
 //import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
+import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
+import org.firstinspires.ftc.teamcode.Commands.MoveToPickup;
 import org.firstinspires.ftc.teamcode.Subsystems.BackDistance;
 //import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
-import org.firstinspires.ftc.teamcode.Subsystems.Camera;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawCamera;
-import org.firstinspires.ftc.teamcode.Subsystems.Claw;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawState;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawTouchSensor;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
+import org.firstinspires.ftc.teamcode.Subsystems.Vision.ClawCamera;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawTouchSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.Climb;
 import org.firstinspires.ftc.teamcode.Subsystems.ClimbTargetHeight;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
@@ -158,9 +161,9 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new BackDepositePose());
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
 
@@ -168,7 +171,9 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new PickupFromSubmersible());
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new OpenClaw());//new AutoPickUpOffGround()
+
+        //driverOp.getGamepadButton(GamepadKeys.Button.).
 
 
         // Controls the claw using bumpers
@@ -295,6 +300,9 @@ public class RobotContainer {
         DBTelemetry.addData("Angle", piece_angle);
         DBTelemetry.addData("Center X", piece_center_X);
         DBTelemetry.addData("Center Y", piece_center_Y);
+        DBTelemetry.addData("Target X", 296);
+        DBTelemetry.addData("Target Y", 316);
+        //DBTelemetry.addData("width", )
         DBTelemetry.update();
 
 //        if (isRedAlliance){

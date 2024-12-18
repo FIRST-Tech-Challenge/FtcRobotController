@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems.LinearSlide;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.Subsystems.Odometry;
 
 
 /**
@@ -59,7 +62,8 @@ public class LinearSlide extends SubsystemBase {
 
     // Using the var ticks sets the motor encoder ticks to a set position
     public void moveLinearSlide(int ticks) {
-
+        Pose2d currentPOS = RobotContainer.odometry.getCurrentPos();
+        if (!(Math.abs(currentPOS.getX())<1 && Math.abs(currentPOS.getY())<1.2)){
         // Sets both motors to the ticks target position
         leftMotor.setTargetPosition(ticks);
         rightMotor.setTargetPosition(ticks);
@@ -67,6 +71,7 @@ public class LinearSlide extends SubsystemBase {
         // Sets the power VERY IMPORTANT
         leftMotor.setPower(1);
         rightMotor.setPower(1);
+        }
     }
 
     // Used to move the slides to fixed levels

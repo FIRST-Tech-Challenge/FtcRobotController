@@ -94,7 +94,7 @@ public class Camera extends SubsystemBase {
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.75, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
         blueBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
