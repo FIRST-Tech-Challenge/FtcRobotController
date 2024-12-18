@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -108,6 +109,15 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("horizontalLeft")
     public Servo horizontalLeft;
+
+    @HardwareName("lightLeft")
+    public Servo lightLeft;
+
+    @HardwareName("lightRight")
+    public Servo lightRight;
+
+    @HardwareName("clawColor")
+    public ColorSensor clawColor;
 
     @Override
     public Encoder getLeftEncoder() { return encoderLeft; }
