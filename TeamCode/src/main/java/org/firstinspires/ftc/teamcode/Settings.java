@@ -54,19 +54,19 @@ public class Settings {
             @Config
             public static class Claw {
                 /** Values for open and closed positions on the outtake claw */
-                public static double OPEN = 0.2;
+                public static double OPEN = 0.12;
                 public static double CLOSED = 0;
             }
 
             @Config
             public static class Wrist {
-                public static double[] HORIZONTAL_POSITION = {0.65, 0.93} ;
+                public static double[] HORIZONTAL_POSITION = {0.68, 0.98};
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
                 public static double[] VERTICAL_POSITION = {0, 0.1};
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.2;
+                public static double TRANSFER_POSITION = 0.215;
                 public static double PLACE_POSITION = 0.9;
 
             }

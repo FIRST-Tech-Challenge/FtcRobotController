@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,7 +15,7 @@ public class Claw {
     private final HardwareMap hardwareMap;
     public boolean opened = true;
 
-    public Claw(BaseRobot baseRobot) {
+    public Claw(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
         clawServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW);
