@@ -60,7 +60,6 @@ public class Input {
         else if (grabButton) {
             servos.moveServo(Servos.Type.Claw, 182.25);
         }
-
     }
 
     public void upArm(double power) {
