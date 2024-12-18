@@ -19,20 +19,16 @@ public class clawServoMove extends LinearOpMode {
 
         waitForStart();
 
-        servos.moveServo(0,0);
+        servos.moveServo(Servos.Type.Claw,0);
         sleep(3000);
 
         while(opModeIsActive())
         {
 
 
-            servos.moveServo(0,90);
+            servos.moveServo(Servos.Type.Claw,90);
             sleep(500);
-            servos.moveServo(0,180);
-            sleep(500);
-            servos.moveServo(0,270);
-            sleep(500);
-            servos.moveServo(0,0);
+            servos.moveServo(Servos.Type.Claw,180);
             sleep(500);
         }
     }

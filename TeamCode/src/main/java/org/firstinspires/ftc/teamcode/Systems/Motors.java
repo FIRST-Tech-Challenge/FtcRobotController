@@ -30,7 +30,7 @@ public class Motors {
 
     public Motors(HardwareMap hardwareMap) {
 
-        motors = new DcMotor[Servos.Type.values().length];
+        motors = new DcMotor[Type.values().length];
 
         motors[Type.LeftBack.getValue()] = hardwareMap.get(DcMotor.class, "0");
         motors[Type.LeftFront.getValue()] = hardwareMap.get(DcMotor.class, "1");

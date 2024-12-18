@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Systems.Input;
@@ -9,18 +11,34 @@ import org.firstinspires.ftc.teamcode.Systems.Motors;
 
 @TeleOp(name="Teleop-Main")
 
+@Config
 public class TeleMain extends LinearOpMode {
 
-    Motors motors = new Motors(hardwareMap);
-    Input input = new Input(hardwareMap);
-    ElapsedTime elapsedTime = new ElapsedTime();
+    Motors motors ;
+    Input input;
+    ElapsedTime elapsedTime;
 
+    // PID variables
+    public static double kp = 2;  // Proportional gain
+    public static double ki = 0.45;  // Integral gain
+    public static double kd = 0;  // Derivative gain
+
+
+    public static int setPoint;
+
+    double prevError = 0;  // Previous error, used for derivative
+    double integral = 0;   // Integral term
 
     @Override
     public void runOpMode() throws InterruptedException {
 
+        motors = new Motors(hardwareMap);
+        input = new Input(hardwareMap);
+        elapsedTime = new ElapsedTime();
 
+        setPoint = motors.getArmPosition();
         waitForStart();
+        double prevTime = elapsedTime.milliseconds();
 
         while (opModeIsActive())
         {
@@ -41,28 +59,83 @@ public class TeleMain extends LinearOpMode {
 
             input.upArm(armRaise);
 
-            implementArmPID(gamepad2.right_stick_y);
+
+            setPoint += (int) (gamepad2.left_stick_y * 10);    //multiply the game pad input by 100 so that there are no decimals which doesn't work in the setPoint then turn it into and int
+            // Get current time and arm position
+            double time = elapsedTime.milliseconds();
+
+            // Time difference (dt)
+            double dt = (time - prevTime) / 1000.0;  // Convert to seconds
+
+            double processValue = motors.getArmPosition(); // Finding the position of the motors
+
+            // Calculate error
+            double errorValue = setPoint - processValue;
+
+
+
+            // Prevent divide-by-zero errors
+            if (dt == 0) {
+                dt = 0.1;  // Default small value if no time has passed
+            }
+
+            // Calculate PID terms
+            double proportional = kp * errorValue;
+
+            integral += errorValue * dt;  // Integrate the error over time
+            // Anti-windup: Limit the integral term to prevent it from growing too large
+            integral = Math.max(Math.min(integral, 1000), -1000);
+
+            double derivative = (errorValue - prevError) / dt;
+
+            // Compute the final PID output
+            double output = proportional + ki * integral + kd * derivative;
+
+            // Apply the motor power
+            output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range
+
+            motors.MoveMotor(Motors.Type.Arm, output);
+
+            // Store current error and time for next iteration
+
+            prevError = errorValue;
+            prevTime = time;
+
+
+
+            // Telemetry
+            telemetry.addData("Set Point", setPoint);
+            telemetry.addData("Process Value", processValue);
+            telemetry.addData("Proportional Gain", kp);
+            telemetry.addData("Integral Gain", ki);
+            telemetry.addData("Derivative Gain", kd);
+            telemetry.addData("Proportional", proportional);
+            telemetry.addData("Integral", integral);
+            telemetry.addData("Derivative", derivative);
+            telemetry.addData("PID Output", output);
+
+
 
             telemetry.addData("MOVE:", "left_y (%.2f),", move);
             telemetry.addData("SPIN:", "right_x (%.2f),", spin);
             telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
-            telemetry.addData("ARM:", "arm_x (%.2f),", intake);
+            telemetry.addData("ARM:", "arm_Power (%.2f),", intake);
             telemetry.addData("ARM position:", "arm_pos (%.2f),", armPos);
             telemetry.update(); // telemtryy
         }
     }
 
-
-    double prevTime = elapsedTime.milliseconds();
-    public void implementArmPID(double power) {
-
-        double time = elapsedTime.milliseconds();
-
-        double deltaTime = (time - prevTime) / 1000.0;  // Convert to seconds
-        input.ArmPidControl(deltaTime, power);
-
-        prevTime = time;
-    }
+//
+//    double prevTime = elapsedTime.milliseconds();
+//    public void implementArmPID(double power) {
+//
+//        double time = elapsedTime.milliseconds();
+//
+//        double deltaTime = (time - prevTime) / 1000.0;  // Convert to seconds
+//        input.ArmPidControl(deltaTime, power);
+//
+//        prevTime = time;
+//    }
 }
 
 
