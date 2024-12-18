@@ -1,18 +1,19 @@
 package com.kalipsorobotics.tensorflow;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.firstinspires.ftc.teamcode.R;
+import org.openftc.easyopencv.OpenCvPipeline;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -21,72 +22,80 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-public class MainActivity extends AppCompatActivity {
+@TeleOp(name = "Robot Detector", group = "TensorFlow")
+public class MainActivity extends LinearOpMode {
 
-    private static final int CAMERA_REQUEST = 1888;
-    private static final String TAG = "RobotDetector"; // Use this tag for logging
+    private OpenCvCamera webcam;
     private Interpreter tfliteInterpreter;
-    private ImageView imageView;
+    private static final String MODEL_NAME = "robot_detector.tflite";
 
-    @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button captureButton = findViewById(R.id.captureButton);
-        imageView = findViewById(R.id.imageView);
-
+    public void runOpMode() {
+        // Initialize TensorFlow Lite model
         try {
-            tfliteInterpreter = new Interpreter(loadModelFile("robotv2_model.tflite"));
+            tfliteInterpreter = new Interpreter(loadModelFile(MODEL_NAME));
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Failed to load model.");
+            telemetry.addData("Error", "Failed to load model");
+            telemetry.update();
+            return;
         }
 
-        captureButton.setOnClickListener(v -> openCamera());
-    }
+        // Initialize the camera
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-    private void openCamera() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-    }
+        // Set up the webcam and start the stream
+        webcam.setPipeline(new OpenCvPipeline() {
+            @Override
+            public Mat processFrame(Mat input) {
+                Bitmap bitmap = convertMatToBitmap(input);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && data != null) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
+                // Preprocess the image and run TensorFlow Lite
+                float[][] output = runModel(bitmap);
 
-            // Resize and preprocess the image
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(photo, 224, 224, true);
-            float[][] output = runModel(resizedBitmap);
+                // Display results on telemetry
+                if (output[0][0] > 0.5) {
+                    telemetry.addData("Detection", "Robot Detected!");
+                } else {
+                    telemetry.addData("Detection", "No Robot Detected");
+                }
+                telemetry.update();
 
-            // Log the result
-            if (output[0][0] > 0.5) { // Assuming model outputs [1, 1] with "robot probability"
-                Log.d(TAG, "Robot detected!");
-            } else {
-                Log.d(TAG, "No robot detected.");
+                return input; // Return the original frame for visualization
             }
+        });
+
+        //webcam.openCameraDeviceAsync(() -> webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT));
+
+        telemetry.addData("Status", "Waiting for start...");
+        telemetry.update();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            // Loop while the OpMode is running
         }
+
+        // Stop the camera
+        webcam.stopStreaming();
+        webcam.closeCameraDevice();
     }
 
     private ByteBuffer preprocessImage(Bitmap bitmap) {
-        // Convert image to ByteBuffer in model input format
-        int imageSize = 224; // Model input size
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * imageSize * imageSize * 3); // 3 channels (RGB)
+        // Resize and normalize the image
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 224 * 224 * 3);
         byteBuffer.order(ByteOrder.nativeOrder());
 
-        int[] pixels = new int[imageSize * imageSize];
-        bitmap.getPixels(pixels, 0, imageSize, 0, 0, imageSize, imageSize);
+        int[] pixels = new int[224 * 224];
+        resizedBitmap.getPixels(pixels, 0, 224, 0, 0, 224, 224);
 
         for (int pixel : pixels) {
             int r = (pixel >> 16) & 0xFF;
             int g = (pixel >> 8) & 0xFF;
             int b = pixel & 0xFF;
 
-            // Normalize the pixel values to [0, 1]
             byteBuffer.putFloat(r / 255.0f);
             byteBuffer.putFloat(g / 255.0f);
             byteBuffer.putFloat(b / 255.0f);
@@ -96,11 +105,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private float[][] runModel(Bitmap bitmap) {
-        // Preprocess the image
+        // Prepare input buffer
         ByteBuffer inputBuffer = preprocessImage(bitmap);
 
         // Define output buffer
-        float[][] output = new float[1][1]; // Assuming the model outputs a single probability
+        float[][] output = new float[1][1]; // Assuming the model outputs one probability value
 
         // Run inference
         tfliteInterpreter.run(inputBuffer, output);
@@ -109,10 +118,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ByteBuffer loadModelFile(String modelPath) throws IOException {
-        FileInputStream inputStream = new FileInputStream(getAssets().openFd(modelPath).getFileDescriptor());
+        FileInputStream inputStream = new FileInputStream(hardwareMap.appContext.getAssets().openFd(modelPath).getFileDescriptor());
         FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = getAssets().openFd(modelPath).getStartOffset();
-        long declaredLength = getAssets().openFd(modelPath).getDeclaredLength();
+        long startOffset = hardwareMap.appContext.getAssets().openFd(modelPath).getStartOffset();
+        long declaredLength = hardwareMap.appContext.getAssets().openFd(modelPath).getDeclaredLength();
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+
+    private Bitmap convertMatToBitmap(Mat input) {
+        Bitmap bitmap = Bitmap.createBitmap(input.width(), input.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(input, bitmap);
+        return bitmap;
     }
 }
