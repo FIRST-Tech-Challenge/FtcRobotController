@@ -56,7 +56,6 @@ public class PivotSubsystem implements Subsystem {
         currentArmLength = armLength.getAsDouble();
         currentArmCOM = armCOM.getAsDouble();
         calcArmAngle();
-        calculateFeedForward();
     }
 
 
@@ -68,12 +67,12 @@ public class PivotSubsystem implements Subsystem {
     }
 
     public void setAngle(double setpoint){
-        pivot1.set(setArmMotor(setpoint));
+        pivot1.set(setPivotMotor(setpoint));
     }
 
     private double setPivotMotor(double setpoint) {
-        double pidResult = m_pivotPID.calculate(setpoint)
-        return pidResult + calculateFeedForward(setpoint)
+        double pidResult = m_pivotPID.calculate(setpoint);
+        return pidResult + calculateFeedForward(setpoint);
     }
 
     public double calculateFeedForward(double angle){
