@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PWMOutput;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,6 +34,7 @@ public class BaseRobot {
     public final DcMotor frontRightMotor;
     public final DcMotor rearLeftMotor;
     public final DcMotor rearRightMotor;
+    public PWMOutput led;
     public final DynamicInput input;
     public final HardwareMap hardwareMap;
     public final LinearOpMode parentOp;
@@ -98,6 +100,10 @@ public class BaseRobot {
 
         if (Settings.Deploy.ODOMETRY) {
             odometry = new Odometry(this);
+        }
+
+        if (Settings.Deploy.LED) {
+            led = hardwareMap.get(PWMOutput.class, Settings.Hardware.IDs.LED);
         }
     }
 
@@ -221,6 +227,13 @@ public class BaseRobot {
             }
             if (actions.linearActuatorRetract) {
                 linearActuator.retract();
+            }
+        }
+
+        if (Settings.Deploy.LED) {
+            if (input.subCtrl.touchpad_finger_1) {
+                led.setPulseWidthOutputTime(1000 + (int) (800 * input.subCtrl.touchpad_finger_1_x));
+                led.setPulseWidthPeriod((int) (10000 * input.subCtrl.touchpad_finger_1_y));
             }
         }
     }

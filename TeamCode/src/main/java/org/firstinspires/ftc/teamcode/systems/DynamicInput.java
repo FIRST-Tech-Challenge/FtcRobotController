@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.Settings;
 
 public class DynamicInput {
-    private final Gamepad mainCtrl;
-    private final Gamepad subCtrl;
+    public final Gamepad mainCtrl;
+    public final Gamepad subCtrl;
     public Settings.DefaultGamepadSettings mainSettings;
     public Settings.DefaultGamepadSettings subSettings;
-    private Settings.ControllerProfile mainProfile;
-    private Settings.ControllerProfile subProfile;
+    public Settings.ControllerProfile mainProfile;
+    public Settings.ControllerProfile subProfile;
 
     // Track previous button states for justPressed functionality
     private boolean prevExtendHorizontal, prevRetractHorizontal, prevExtendVertical, prevRetractVertical, prevWrist;

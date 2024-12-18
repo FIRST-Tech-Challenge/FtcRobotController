@@ -77,6 +77,7 @@ public class Settings {
         @Config
         public static class IDs {
             public static final String IMU = "imu";
+            public static final String LED = "led";
 
             // Drive motors
             public static final String FRONT_LEFT_MOTOR = "frontLeft";
@@ -332,6 +333,7 @@ public class Settings {
     public static class Deploy {
         // Core Mechanisms
         public static final boolean INTAKE = true;
+        public static final boolean LED = false;
         public static final boolean OUTTAKE = true;
         public static final boolean LINEAR_ACTUATOR = false;
 
