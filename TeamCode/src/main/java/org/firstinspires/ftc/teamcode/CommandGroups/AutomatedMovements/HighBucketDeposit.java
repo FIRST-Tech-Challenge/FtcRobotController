@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositePose;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositPose;
+import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
@@ -48,7 +48,7 @@ public class HighBucketDeposit extends SequentialCommandGroup {
 
                 //new Pause(1),
 
-                new BackDepositePose(),
+                new BackDepositPose(),
 
                 new Pause(0.85),
 

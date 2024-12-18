@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.Commands.Claw;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.ClawState;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
-// command template
+/** a toggle to open and close the claw
+ * */
 public class ToggleClaw extends CommandBase {
 
     private boolean claw;

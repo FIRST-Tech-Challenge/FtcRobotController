@@ -11,23 +11,23 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 // ParallelRaceGroup
 // ParallelDeadlineGroup
 
-public class DepositePos extends SequentialCommandGroup {
+public class BackDepositPose extends SequentialCommandGroup {
 
     // constructor
-    public DepositePos() {
+    public BackDepositPose() {
 
         addCommands (
 
-                // lifts the shoulder up 90+-60 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(125)),
+                // lifts the shoulder up 45 degrees
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
 
-                // folds the elbow in 10
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(200)),
+                // folds the elbow in 60 degrees
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(195)),
 
-                // folds the wrist in 10
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(70)),
+                // folds the wrist in 135 degrees
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(170)),
 
-                // folds the wrist in 10
+                // folds the wrist in 135 degrees
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
 
 

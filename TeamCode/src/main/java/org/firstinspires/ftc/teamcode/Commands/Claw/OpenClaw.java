@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode.Commands.Claw;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.Subsystems.Arm.ClawState;
+import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.ClawState;
 
 
-// command template
+/**Command to open the claw
+ * */
 public class OpenClaw extends CommandBase {
 
     // constructor

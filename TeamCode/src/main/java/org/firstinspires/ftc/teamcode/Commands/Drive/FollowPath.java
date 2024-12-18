@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.Drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.Utils;
 import java.util.List;
 
-
-// command to follow a path generated from input parameters
+/** A command to follow a path generated from input parameters
+ * */
 public class FollowPath extends CommandBase {
 
     // Trajectory Configuration
@@ -77,10 +77,20 @@ public class FollowPath extends CommandBase {
 
    } */
 
-
+    /** A command to follow a path based on input parameters
+     *
+     *  @param maxSpeed - max robot travel speed (m/s)
+     *  @param maxAccel - max robot travel accel (m/s2)
+     *  @param startSpeed - starting robot speed of path (m/s) - normally 0m/s unless continuing from previous path
+     *  @param endSpeed - ending robot speed of path (m/s) - normally 0m/s unless continuing into subsequent path
+     *  @param pathStartAngle - starting angle of generated path (Rotation2d)
+     *  @param pathWaypoints - list of waypoints (x,y) (List<Translation2d>)
+     *  @param pathEndPose - ending position of path (x,y and angle combined) (Pose2d)
+     *  @param robotEndAngle - angle robot faces at end of path (Rotation2d)
+     * */
     public FollowPath(double maxSpeed,
                       double maxAccel,
-                      double StartSpeed,
+                      double startSpeed,
                       double endSpeed,
                       Rotation2d pathStartAngle,
                       List<Translation2d> pathWaypoints,
@@ -95,7 +105,7 @@ public class FollowPath extends CommandBase {
 
         // set constraints of trajectory
         config.setReversed(false);
-        config.setStartVelocity(StartSpeed);
+        config.setStartVelocity(startSpeed);
         config.setEndVelocity(endSpeed);
         config.setKinematics(RobotContainer.drivesystem.GetKinematics());
         config.addConstraint(new MecanumDriveKinematicsConstraint(RobotContainer.drivesystem.GetKinematics(),

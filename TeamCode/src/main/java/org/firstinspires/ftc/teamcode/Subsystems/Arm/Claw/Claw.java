@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Arm;
+package org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;

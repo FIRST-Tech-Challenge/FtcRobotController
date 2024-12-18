@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems.Arm;
+package org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw;
 
 public enum ClawState {
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;

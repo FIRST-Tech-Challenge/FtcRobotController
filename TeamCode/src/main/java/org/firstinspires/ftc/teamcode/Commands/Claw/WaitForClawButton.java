@@ -5,7 +5,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
-// command template
+/** a command to wait for the claw button
+ * */
 public class WaitForClawButton extends CommandBase {
 
     // constructor

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpec
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep1;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
-import org.firstinspires.ftc.teamcode.Commands.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;

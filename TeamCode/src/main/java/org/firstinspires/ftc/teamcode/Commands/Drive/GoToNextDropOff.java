@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Commands;
+package org.firstinspires.ftc.teamcode.Commands.Drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -82,10 +82,20 @@ public class GoToNextDropOff extends CommandBase {
 
    } */
 
-
+    /** A command that follows a path to the submersible and then iterates it's x coordinate
+     *
+     *  @param maxSpeed - max robot travel speed (m/s)
+     *  @param maxAccel - max robot travel accel (m/s2)
+     *  @param startSpeed - starting robot speed of path (m/s) - normally 0m/s unless continuing from previous path
+     *  @param endSpeed - ending robot speed of path (m/s) - normally 0m/s unless continuing into subsequent path
+     *  @param pathStartAngle - starting angle of generated path (Rotation2d)
+     *  @param pathWaypoints - list of waypoints (x,y) (List<Translation2d>)
+     *  @param pathEndPose - ending position of path (x,y and angle combined) (Pose2d)
+     *  @param robotEndAngle - angle robot faces at end of path (Rotation2d)
+     * */
     public GoToNextDropOff(double maxSpeed,
                            double maxAccel,
-                           double StartSpeed,
+                           double startSpeed,
                            double endSpeed,
                            Rotation2d pathStartAngle,
                            List<Translation2d> pathWaypoints,
@@ -100,7 +110,7 @@ public class GoToNextDropOff extends CommandBase {
 
         // set constraints of trajectory
         config.setReversed(false);
-        config.setStartVelocity(StartSpeed);
+        config.setStartVelocity(startSpeed);
         config.setEndVelocity(endSpeed);
         config.setKinematics(RobotContainer.drivesystem.GetKinematics());
         config.addConstraint(new MecanumDriveKinematicsConstraint(RobotContainer.drivesystem.GetKinematics(),
