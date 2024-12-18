@@ -27,7 +27,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDFController xPid = new SonicPIDFController(0.0023, 0, 0, 0);
+    SonicPIDFController xPid = new SonicPIDFController(0.0018, 0, 0, 0);
 
     SonicPIDFController yPid = new SonicPIDFController(-0.0033, 0, 00, 0.02);
 

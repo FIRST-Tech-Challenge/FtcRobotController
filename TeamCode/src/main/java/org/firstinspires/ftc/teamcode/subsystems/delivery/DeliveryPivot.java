@@ -25,11 +25,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private DriverFeedback feedback;
 
-    private int StartPositionFromCalibration = 1590;
+    private int StartPositionFromCalibration = 2700;
 
-    public static int DeliveryPositionFromStart = 1500; //CHANGED
+    public static int DeliveryPositionFromStart = 1100; //CHANGED
 
-    public static int IntakePositionFromStart = -1220;
+    public static int IntakePositionFromStart = -1825;
 
     private int SampleIntakePositionFromStart = -1490;
 
@@ -150,7 +150,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
 
         if(addTelemetry) {
             telemetry.addData("pivot target", currentTarget);

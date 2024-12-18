@@ -59,8 +59,12 @@ public class RollingIntake extends SonicSubsystemBase {
 
         double d = GetDepth();
 
-        telemetry.addData("distance", d);
-        telemetry.addData("IsDelivery", this.isInDeliveryPosition);
+        boolean addData = false;
+
+        if(addData) {
+            telemetry.addData("distance", d);
+            telemetry.addData("IsDelivery", this.isInDeliveryPosition);
+        }
 
         if(d < 500) {
             if (feedback != null) {
@@ -73,10 +77,14 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         if(state == IntakeState.Intake || state == IntakeState.IntakeAuto) {
-            telemetry.addData("State", "Intake");
+            if(addData) {
+                telemetry.addData("State", "Intake");
+            }
 
             if(d > 50 || this.isInDeliveryPosition) {
-                telemetry.addData("power", 1);
+                if(addData) {
+                    telemetry.addData("power", 1);
+                }
 
                 if(state == IntakeState.Intake) {
                     this.leftServo.setPower(-1);
@@ -95,7 +103,9 @@ public class RollingIntake extends SonicSubsystemBase {
                     this.rightServo.setPower(0);
                 }
 
-                telemetry.addData("power",0);
+                if(addData) {
+                    telemetry.addData("power", 0);
+                }
 
                 if (feedback != null) {
                     feedback.DriverRumbleBlip();
@@ -105,7 +115,9 @@ public class RollingIntake extends SonicSubsystemBase {
                 state = IntakeState.Hold;
             }
         } else if (state == IntakeState.Outtake) {
-            telemetry.addData("State", "Outtake");
+            if(addData) {
+                telemetry.addData("State", "Outtake");
+            }
 
             if(d > 50) {
                 if (feedback != null) {
@@ -118,12 +130,13 @@ public class RollingIntake extends SonicSubsystemBase {
 
         } else {
 
-            telemetry.addData("State", "Hold");
-            telemetry.addData("Pivot", DeliveryPivot.recordedPosition);
-            telemetry.addData("Slider", DeliverySlider.recordedPosition);
+            if(addData) {
+                telemetry.addData("State", "Hold");
+                telemetry.addData("Pivot", DeliveryPivot.recordedPosition);
+                telemetry.addData("Slider", DeliverySlider.recordedPosition);
+            }
 
             if (DeliveryPivot.recordedPosition > 1000 && DeliverySlider.recordedPosition < -2200) {
-                telemetry.addLine("Toggling wrist...");
                 SetElbowInSampleDeliveryPosition();
             }
 
@@ -131,7 +144,9 @@ public class RollingIntake extends SonicSubsystemBase {
             this.rightServo.setPower(0);
         }
 
-        telemetry.update();
+        if(addData) {
+            telemetry.update();
+        }
     }
 
     public boolean IsSampleIntaken() {

@@ -9,13 +9,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class SounderBotCommandBase extends CommandBase {
     private static final String LOG_TAG = SounderBotCommandBase.class.getSimpleName();
     boolean finished = false;
-    long TIME_OUT_MS = 1500; // 4 seconds
+    long TIME_OUT_MS = 2 * 1000; // 4 seconds
 
     long startTime = -1;
 
     @Override
     public final boolean isFinished() {
-        return finished;
+        return finished || isTargetReached();
     }
 
     @Override
@@ -68,6 +68,6 @@ public abstract class SounderBotCommandBase extends CommandBase {
     }
 
     protected boolean isDebugging() {
-        return true;
+        return false;
     }
 }

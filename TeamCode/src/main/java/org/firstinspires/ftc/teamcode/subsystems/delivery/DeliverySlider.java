@@ -181,10 +181,11 @@ public class DeliverySlider extends SonicSubsystemBase {
         } else {
             //Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
 
-            telemetry.addData("slider", position);
-            //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
-            telemetry.addData("motor", motor.get());
-            telemetry.update();
+            if(addTelemetry) {
+                telemetry.addData("slider", position);
+                //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
+                telemetry.addData("motor", motor.get());
+            }
 
 
             if (pivotLowEnoughSupplier != null
