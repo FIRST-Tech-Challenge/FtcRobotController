@@ -15,24 +15,28 @@ public class MeepMeepTesting {
         final double robotCenterToArm = 10;
 
         MeepMeep meepMeep = new MeepMeep(700);
-        Pose2d blueBasket = new Pose2d(64 - robotCenterToArm/Math.sqrt(2), 64 - robotCenterToArm/Math.sqrt(2),Math.toRadians(45));
-        Pose2d redBasket = new Pose2d(-64 + robotCenterToArm/Math.sqrt(2), -64 + robotCenterToArm/Math.sqrt(2),Math.toRadians(225));
-        Pose2d blueRobot2StartPosition = new Pose2d(-23.5, 64,Math.toRadians(270)).times(new Pose2d(0,0,Math.PI*2));
-        Pose2d blueRobot1StartPosition = new Pose2d(23.5, 64,Math.toRadians(270));
-        Pose2d redRobot1StartPosition = new Pose2d(-23.5,-64,Math.toRadians(90));
-        Pose2d redRobot2StartPosition = new Pose2d(23.5,-64,Math.toRadians(90));
-        Pose2d blueGamePiece1 = new Pose2d(-48 + robotCenterToArm, 26,Math.toRadians(180));
-        Pose2d blueGamePiece2 = new Pose2d(-58 + robotCenterToArm, 26,Math.toRadians(180));
-        Pose2d blueGamePiece3 = new Pose2d(-68 + robotCenterToArm, 26,Math.toRadians(180));
-        Pose2d yellow1GamePiece1 = new Pose2d(68, 26 + robotCenterToArm,Math.toRadians(270));
-        Pose2d yellow1GamePiece2 = new Pose2d(58, 26 + robotCenterToArm,Math.toRadians(270));
-        Pose2d yellow1GamePiece3 = new Pose2d(48, 26 + robotCenterToArm,Math.toRadians(270));
-        Pose2d redGamePiece1 = new Pose2d(68 - robotCenterToArm, -26, Math.toRadians(0));
-        Pose2d redGamePiece2 = new Pose2d(58 - robotCenterToArm, -26, Math.toRadians(0));
-        Pose2d redGamePiece3 = new Pose2d(48 - robotCenterToArm, -26, Math.toRadians(0));
-        Pose2d yellow2GamePiece1 = new Pose2d(-68, -26 - robotCenterToArm,Math.toRadians(90));
-        Pose2d yellow2GamePiece2 = new Pose2d(-58, -26 - robotCenterToArm,Math.toRadians(90));
-        Pose2d yellow2GamePiece3 = new Pose2d(-48, -26 - robotCenterToArm,Math.toRadians(90));
+
+        //simulator cords
+
+        Pose2d blueBasket = RotatedPose2d.rotate90deg( new Pose2d(64 - robotCenterToArm/Math.sqrt(2), 64 - robotCenterToArm/Math.sqrt(2),Math.toRadians(45)));
+        Pose2d redBasket = RotatedPose2d.rotate90deg(new Pose2d(-64 + robotCenterToArm/Math.sqrt(2), -64 + robotCenterToArm/Math.sqrt(2),Math.toRadians(225)));
+        Pose2d blueRobot2StartPosition = RotatedPose2d.rotate90deg(new Pose2d(-23.5, 64,Math.toRadians(270)).times(new Pose2d(0,0,Math.PI*2)));
+        Pose2d blueRobot1StartPosition = RotatedPose2d.rotate90deg(new Pose2d(23.5, 64,Math.toRadians(270)));
+        Pose2d redRobot1StartPosition = RotatedPose2d.rotate90deg(new Pose2d(-23.5,-64,Math.toRadians(90)));
+        Pose2d redRobot2StartPosition = RotatedPose2d.rotate90deg(new Pose2d(23.5,-64,Math.toRadians(90)));
+        Pose2d blueGamePiece1 = RotatedPose2d.rotate90deg(new Pose2d(-48 + robotCenterToArm, 26,Math.toRadians(180)));
+        Pose2d blueGamePiece2 = RotatedPose2d.rotate90deg(new Pose2d(-58 + robotCenterToArm, 26,Math.toRadians(180)));
+        Pose2d blueGamePiece3 = RotatedPose2d.rotate90deg(new Pose2d(-68 + robotCenterToArm, 26,Math.toRadians(180)));
+        Pose2d yellow1GamePiece1 = RotatedPose2d.rotate90deg(new Pose2d(68, 26 + robotCenterToArm,Math.toRadians(270)));
+        Pose2d yellow1GamePiece2 = RotatedPose2d.rotate90deg(new Pose2d(58, 26 + robotCenterToArm,Math.toRadians(270)));
+        Pose2d yellow1GamePiece3 = RotatedPose2d.rotate90deg(new Pose2d(48, 26 + robotCenterToArm,Math.toRadians(270)));
+        Pose2d redGamePiece1 = RotatedPose2d.rotate90deg(new Pose2d(68 - robotCenterToArm, -26, Math.toRadians(0)));
+        Pose2d redGamePiece2 = RotatedPose2d.rotate90deg(new Pose2d(58 - robotCenterToArm, -26, Math.toRadians(0)));
+        Pose2d redGamePiece3 = RotatedPose2d.rotate90deg(new Pose2d(48 - robotCenterToArm, -26, Math.toRadians(0)));
+        Pose2d yellow2GamePiece1 = RotatedPose2d.rotate90deg(new Pose2d(-68, -26 - robotCenterToArm,Math.toRadians(90)));
+        Pose2d yellow2GamePiece2 = RotatedPose2d.rotate90deg(new Pose2d(-58, -26 - robotCenterToArm,Math.toRadians(90)));
+        Pose2d yellow2GamePiece3 = RotatedPose2d.rotate90deg(new Pose2d(-48, -26 - robotCenterToArm,Math.toRadians(90)));
+
 
         // Declare our first bot
         RoadRunnerBotEntity blue1Bot = new DefaultBotBuilder(meepMeep)
@@ -71,7 +75,7 @@ public class MeepMeepTesting {
 
         blue2Bot.runAction(blue2Bot.getDrive().actionBuilder(blueRobot2StartPosition)
 //                .strafeToLinearHeading(basket.position,basket.heading)
-                .splineToLinearHeading(blueBasket, Math.toRadians(22.5))
+                .splineToLinearHeading(blueBasket, Math.toRadians(22.5-90))
                 .strafeToLinearHeading(blueGamePiece1.position,blueGamePiece1.heading)
                 .strafeToLinearHeading(blueBasket.position,blueBasket.heading)
                 .strafeToLinearHeading(blueGamePiece2.position,blueGamePiece2.heading)
@@ -87,7 +91,7 @@ public class MeepMeepTesting {
                 .build();
 
         red2Bot.runAction(red2Bot.getDrive().actionBuilder(redRobot2StartPosition)
-                .splineToLinearHeading(redBasket, Math.toRadians(22.5-180))
+                .splineToLinearHeading(redBasket, Math.toRadians(22.5-180-90))
                 .strafeToLinearHeading(redGamePiece3.position,redGamePiece3.heading)
                 .strafeToLinearHeading(redBasket.position,redBasket.heading)
                 .strafeToLinearHeading(redGamePiece2.position,redGamePiece2.heading)
@@ -120,7 +124,7 @@ public class MeepMeepTesting {
 
         blue3Bot.runAction(blue3Bot.getDrive().actionBuilder(blueRobot2StartPosition)
 //                .strafeToLinearHeading(basket.position,basket.heading)
-                .splineToLinearHeading(blueBasket, Math.toRadians(22.5))
+                .splineToLinearHeading(blueBasket, Math.toRadians(22.5-90))
                 .strafeToLinearHeading(yellow1GamePiece1.position,yellow1GamePiece1.heading)
                 .strafeToLinearHeading(blueBasket.position,blueBasket.heading)
                 .strafeToLinearHeading(yellow1GamePiece2.position,yellow1GamePiece2.heading)
@@ -129,7 +133,7 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueBasket.position,blueBasket.heading)
                 .build());
 
-        meepMeep.setBackground(MeepMeep.Background.GRID_GREEN)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 // Add both of our declared bot entities
