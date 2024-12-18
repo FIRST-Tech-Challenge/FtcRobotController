@@ -32,7 +32,7 @@ public class Servos {
     }
     public void moveServo(Type servoName, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
     {
-        //double actualPosition = position / 270;            ============= REMEMBER TO ADD THIS BACK IN LATER =============
+        double actualPosition = position / 270;
 
         //servos[servoNum].setPosition(actualPosition);
         servos[servoName.getValue()].setPosition(position);
