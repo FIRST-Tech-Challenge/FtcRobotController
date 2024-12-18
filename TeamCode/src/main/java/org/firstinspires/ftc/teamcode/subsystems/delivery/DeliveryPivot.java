@@ -4,10 +4,13 @@ import android.util.Log;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
@@ -48,9 +51,13 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     RollingIntake rollingIntake;
 
+    NormalizedColorSensor colorSensor;
+
     public DeliveryPivot(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, RollingIntake rollingIntake) {
         /* instantiate motors */
         this.motor  = new Motor(hardwareMap, "DeliveryPivot");
+        this.colorSensor = hardwareMap.get(NormalizedColorSensor.class, "PivotColor");
+
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.motor.encoder.reset();
 
@@ -65,6 +72,16 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.recordedPosition = 0;
 
         pidController = new SonicPIDFController(0.03, 0, 0.000);
+    }
+
+    public double GetDepth() {
+        if (colorSensor instanceof DistanceSensor) {
+            double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
+            //telemetry.addData("Left distance (mm)", "%.3f", depth);
+            return depth;
+        }
+
+        return 1000000;
     }
 
     boolean isStopperClosed = false;
@@ -172,8 +189,10 @@ public class DeliveryPivot extends SonicSubsystemBase {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
             //telemetry.addData("power", power);
 
+            telemetry.addData("pivot color  depth", GetDepth());
+            telemetry.update();
 
-            if(Math.abs(currentTarget - position) < 15) {
+            if(Math.abs(currentTarget - position) < 15 || (GetDepth() < 27 && currentTarget >  500)) {
                 //telemetry.addData("done", true);
                 motor.set(0);
             }

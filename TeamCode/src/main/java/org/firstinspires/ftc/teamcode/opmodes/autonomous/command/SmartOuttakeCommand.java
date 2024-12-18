@@ -22,7 +22,7 @@ public class SmartOuttakeCommand extends SounderBotCommandBase {
 
     @Override
     public void doExecute() {
-        intake.Intake();
+        intake.IntakeInAuto();
         if (isTargetReached()) {
             intake.Hold();
             finished = true;

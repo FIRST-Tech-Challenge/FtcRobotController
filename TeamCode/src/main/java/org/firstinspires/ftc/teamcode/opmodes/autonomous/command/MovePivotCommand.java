@@ -26,7 +26,10 @@ public class MovePivotCommand extends SounderBotCommandBase{
 
     @Override
     protected boolean isTargetReached() {
-        return Math.abs(target - position) < 40 || position == previousPosition;
+        if (pivot.GetDepth() < 27 && target >  500) {
+            target = Math.min(target, position + 100);
+        }
+        return Math.abs(target - position) < 30;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class MovePivotCommand extends SounderBotCommandBase{
             if (Math.abs(power) < minPower) {
                 //telemetry.addData("minPower", true);
 
-                power = minPower * Math.abs(power) / power;
+                power = minPower * Math.signum(power);
             }
 
             motor.set(power);

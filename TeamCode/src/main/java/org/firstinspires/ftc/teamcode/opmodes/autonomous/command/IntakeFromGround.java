@@ -23,7 +23,7 @@ public class IntakeFromGround extends SounderBotCommandBase {
 
     @Override
     protected boolean isTargetReached() {
-        return intake.IsSampleIntaken() || DeliveryPivot.recordedPosition < DeliveryPivot.IntakePositionFromStart - 400;
+        return intake.IsSampleIntaken() || DeliveryPivot.recordedPosition < DeliveryPivot.IntakePositionFromStart -200;
     }
 
     @Override

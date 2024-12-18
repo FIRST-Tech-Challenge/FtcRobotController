@@ -125,7 +125,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     @Override
     protected boolean isTargetReached() {
-        return Math.abs(target - position) < 100;
+        return Math.abs(target - position) < 40;
     }
 
     @Override
