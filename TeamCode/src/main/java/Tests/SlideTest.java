@@ -41,15 +41,16 @@ public class SlideTest extends LinearOpMode {
 
                 speed = 0;
                 if (gamepad1.y && !pressY) { //if pressing b and var is false
-                    speed += 0.3;
+                    speed += 0.1;
                     pressY = true;
                     motor.setPower(speed);
                 } else if (!gamepad1.y && pressY) {
                     pressY = false;
                 }
 
+
                 if (gamepad1.a && !pressA) {
-                    speed -= 0.3;
+                    speed -= 0.1;
                     pressA = true;
                     motor.setPower(speed);
                 } else if (!gamepad1.a && pressA) {
@@ -58,7 +59,7 @@ public class SlideTest extends LinearOpMode {
 
 
                 if (pos > 2000 || pos < -20) {
-                    stop();
+                    motor.setPower(0);
                 }
 
 
