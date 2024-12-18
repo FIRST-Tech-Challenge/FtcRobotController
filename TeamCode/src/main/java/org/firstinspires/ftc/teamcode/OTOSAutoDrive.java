@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/14/2024, 2:35 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/18/2024, 2:01 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -83,25 +83,25 @@ public class OTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(24, -7, -20, 1);
-        driveToLoc(26, -2, -20, 1);  // Move forward to get block
-        sleep(300);
+        driveToLoc(26, 1, -25, 1);
+        driveToLoc(27, 6, -25, 1);  // Move forward to get block
+        sleep(400);
         setClaw(CLAW_MIN);                                          // Grab second block
         //sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 500) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 9, 45, 1.5);  // Go to basket
+        driveToLoc(10, 15, 45, 1.5);  // Go to basket
         sleep(500);
         setClaw(CLAW_MAX);                                          // Drop second block
-        
+
         // Third Sample ///////////////////////////////////////////////////////////////
         driveToLoc(16, 10, -10, 4);
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(27, 6, -10, 1);
-        driveToLoc(30, 10, -10, 1);  // Move forward to get block
+        driveToLoc(26, 8, -20, 1);
+        driveToLoc(27, 12, -20, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab third block
         setVertical(VERTICAL_MAX, 1000);
@@ -113,12 +113,12 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(300);
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(26, 11, -10, 1);
+        driveToLoc(26, 7, -10, 1);
         setViper(VIPER_GROUND);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(28, 17, -10, 1);  // Move forward to get block
+        driveToLoc(27, 13, -20, 1);  // Move forward to get block
         setClaw(CLAW_MIN);                                          // Grab fourth block
         driveToLoc(24, 12, -10);
         setVertical(VERTICAL_MAX, 1000);
@@ -128,6 +128,13 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
 
+        // temp
+        driveToLoc(15, 0, 45);
+        setViper(VIPER_MIN);
+        sleep(700);
+        setVertical(VERTICAL_MIN);
+        sleep(2000);
+/*
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
         setViper(VIPER_MIN);
@@ -144,6 +151,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
+
+         */
     }
 
     public void setAscentStick(double target) {
@@ -320,10 +329,10 @@ public class OTOSAutoDrive extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -332,11 +341,13 @@ public class OTOSAutoDrive extends LinearOpMode {
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperSlide.setDirection(DcMotor.Direction.REVERSE);
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
