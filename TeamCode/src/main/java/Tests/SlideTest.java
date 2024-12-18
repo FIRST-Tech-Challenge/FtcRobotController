@@ -39,46 +39,43 @@ public class SlideTest extends LinearOpMode {
                 pos = motor.getCurrentPosition();
                 deg = (360 / 751.8) * pos * (28.8 / 7);
 
-
-                while (pos <= 2000 && pos >= -20) {
-                    speed = 0;
-                    if (gamepad1.y && !pressY) { //if pressing b and var is false
-                        speed += 0.3;
-                        pressY = true;
-                        motor.setPower(speed);
-                    } else if (!gamepad1.y && pressY) {
-                        pressY = false;
-                    }
-                    if (gamepad1.a && !pressA) {
-                        speed -= 0.3;
-                        pressA = true;
-                        motor.setPower(speed);
-                    } else if (!gamepad1.a && pressA) {
-                        pressA = false;
-                    }
-
+                speed = 0;
+                if (gamepad1.y && !pressY) { //if pressing b and var is false
+                    speed += 0.3;
+                    pressY = true;
+                    motor.setPower(speed);
+                } else if (!gamepad1.y && pressY) {
+                    pressY = false;
                 }
+
+                if (gamepad1.a && !pressA) {
+                    speed -= 0.3;
+                    pressA = true;
+                    motor.setPower(speed);
+                } else if (!gamepad1.a && pressA) {
+                    pressA = false;
+                }
+
+
+                if (pos > 2000 || pos < -20) {
+                    stop();
+                }
+
+
+                if (gamepad1.b && !pressB) { //if pressing b and var is false
+                    motor.setPower(0);
+                }
+
+                telemetry.addData("motor speed", speed);
+                telemetry.addData("Pos: ", pos);
+                telemetry.addData("Degrees: ", deg);
+
+                telemetry.update();
             }
-
-            if (pos > 2000 && pos < -20){
-               speed = 0;
-                break;
-            }
-            motor.setPower(speed);
-
-
-            if (gamepad1.b && !pressB) { //if pressing b and var is false
-                motor.setPower(0);
-            }
-
-            telemetry.addData("motor speed", speed);
-            telemetry.addData("Pos: ", pos);
-            telemetry.addData("Degrees: ", deg);
-
-            telemetry.update();
-        }
         }
     }
+}
+
 
 
 
