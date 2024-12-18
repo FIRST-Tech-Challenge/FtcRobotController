@@ -1,17 +1,20 @@
-package Utils.Chassis;
+package org.firstinspires.ftc.teamcode.Utils.Chassis;
 
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.ChassisSpeeds;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.Utils.AdvancedPidController;
 import org.firstinspires.ftc.teamcode.Utils.DepthCamera;
 
@@ -128,12 +131,6 @@ public class ChassisDriver {
         rb.setMode(rbRM);
     }
 
-    public static void fieldOrientedDrive(double forwardPower, double leftPower, double rotationPower, Rotation2d heading) {
-    }
-
-    public static void resetWheelEncoders() {
-    }
-
     public void setNormalizedDrive(Pose2d drivePower) {
         ChassisSpeeds speeds = new ChassisSpeeds(
                 drivePower.getX(),
@@ -148,7 +145,6 @@ public class ChassisDriver {
         wheelSpeeds[1] = mecanumWheelSpeeds.frontRightMetersPerSecond;
         wheelSpeeds[2] = mecanumWheelSpeeds.rearLeftMetersPerSecond;
         wheelSpeeds[3] = mecanumWheelSpeeds.rearRightMetersPerSecond;
-
         adjustedWheelSpeeds(wheelSpeeds);
 
         requestPowers(
@@ -438,7 +434,6 @@ public class ChassisDriver {
         else if (p > 0)
             return MIN_POWER_OFFSET + (1 - MIN_POWER_OFFSET) * p;
         else
-
             return -MIN_POWER_OFFSET + (1 - MIN_POWER_OFFSET) * p;
     }
 

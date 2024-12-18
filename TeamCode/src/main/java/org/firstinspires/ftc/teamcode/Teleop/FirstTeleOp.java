@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.Teleop;;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import org.firstinspires.ftc.teamcode.Arm.SlideVerticalArm;
 import org.firstinspires.ftc.teamcode.Arm.TubeDriver;
 import org.firstinspires.ftc.teamcode.Utils.AdvancedPidController;
 import com.acmerobotics.dashboard.config.Config;
-//import com.acmerobotics.roadrunner.geometry.Pose2d;
-import Utils.Chassis.ChassisDriver ;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.Utils.Chassis.ChassisDriver;
 
 
 @Config
@@ -246,14 +245,15 @@ public class FirstTeleOp extends LinearOpMode {
             double leftPower = -gamepad1.left_stick_x * TURN_MULT;
             double rotatePower = -gamepad1.right_stick_x * TURN_MULT;
 
-           //chassisDriver.setNormalizedDrive(new Pose2d(forwardPower, leftPower, rotatePower));
+           chassisDriver.setNormalizedDrive(new Pose2d(forwardPower, leftPower, rotatePower));
         }
     }
 
     public double getArmPower() {
         double pos = intake.getCurrentPosition();
         double angle_deg = (360 / 751.8) * pos; //TODO CHECK TICKS PER REV ON MOTOR
-        return AdvancedPidController.calculate(angle_deg, TARGET_INCHES);
+        //return AdvancedPidController.calculate(angle_deg, TARGET_INCHES);
+        return pos;
     }
 
     public void initializeEverything() {

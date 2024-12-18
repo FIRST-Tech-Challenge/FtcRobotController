@@ -1,4 +1,4 @@
-package Tests;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "MotorTest")
-public class MotorTest extends LinearOpMode {
+@TeleOp(name = "SlideTest")
+public class SlideTest extends LinearOpMode {
     DcMotorEx motor;
     double pos;
 
@@ -27,33 +27,70 @@ public class MotorTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            double diameterBig = 28.8; //mm
+            double diameterSmall = 7; //mm
+
             double speed = 0;
             boolean pressY = false;
             boolean pressA = false;
+            boolean pressB = false;
+            double joystick = gamepad1.right_stick_y; //joystick
+            double deg = 0;
             while (opModeIsActive()) {
                 pos = motor.getCurrentPosition();
-                double degrees = (360 / 751.8) * pos;
+                deg = (360 / 751.8) * pos * (28.8 / 7);
+
+                speed = 0;
+
+                //motor.setPower(joystick);
+
                 if (gamepad1.y && !pressY) { //if pressing b and var is false
                     speed += 0.1;
-                    motor.setPower(speed);
                     pressY = true;
+                    motor.setPower(speed);
                 } else if (!gamepad1.y && pressY) {
                     pressY = false;
                 }
 
+
                 if (gamepad1.a && !pressA) {
                     speed -= 0.1;
-                    motor.setPower(speed);
                     pressA = true;
+                    motor.setPower(speed);
                 } else if (!gamepad1.a && pressA) {
                     pressA = false;
                 }
 
+
+
+                if (pos > 2000) {
+                    motor.setPower(0);
+                    pos = 1999;
+                }
+                if (pos < -20) {
+                    motor.setPower(0);
+                    pos = 0;
+                }
+
+
+                if (gamepad1.b && !pressB) { //if pressing b and var is false
+                    motor.setPower(0);
+                }
+
                 telemetry.addData("motor speed", speed);
                 telemetry.addData("Pos: ", pos);
-                telemetry.addData("Degrees: ", degrees);
+                telemetry.addData("Degrees: ", deg);
+
                 telemetry.update();
             }
         }
     }
 }
+
+
+
+
+    //slide test : max pos 3512
+    // degree = 6919.0925
+
+// min pos -29 , degree -57

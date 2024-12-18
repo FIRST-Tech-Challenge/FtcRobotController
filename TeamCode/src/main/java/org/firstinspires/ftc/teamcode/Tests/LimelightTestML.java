@@ -1,22 +1,19 @@
 //package org.firstinspires.ftc.teamcode.Tests;
 //import com.qualcomm.robotcore.hardware.IMU;
 //import com.qualcomm.hardware.limelightvision.LLResult;
-//import com.qualcomm.hardware.limelightvision.LLResultTypes;
 //import com.qualcomm.hardware.limelightvision.LLStatus;
 //import com.qualcomm.hardware.limelightvision.Limelight3A;
-//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 //import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-//import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 //import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 //
 //
 //
-//@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
+//@TeleOp(name = "Limelight3A", group = "Sensor")
 //public class
-//LimelightTest extends LinearOpMode {
+//LimelightTestML extends LinearOpMode {
 //
 //    private Limelight3A limelight;
 //    IMU imu;
