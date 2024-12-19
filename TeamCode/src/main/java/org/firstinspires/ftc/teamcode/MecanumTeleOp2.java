@@ -473,11 +473,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
         }
         if (gamepad1.dpad_up) {
             abandonLock(hClawProxy.CONTROL_FLIP);
-            hClawProxy.setFlip(hClawProxy.getFlipPosition() - 0.01);
+            hClawProxy.setFlip(hClawProxy.getFlipPosition() + 0.01);
         }
         if (gamepad1.dpad_down) {
             abandonLock(hClawProxy.CONTROL_FLIP);
-            hClawProxy.setFlip(hClawProxy.getFlipPosition() + 0.01);
+            hClawProxy.setFlip(hClawProxy.getFlipPosition() - 0.01);
         }
 //        hardware.clawFlip.setPosition(ClawFlipPos);
 //        hardware.clawFront.setPosition(ClawFrontPos);
