@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public enum BlinkinColour {
-    NO_INFORMATION(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE),
+    NO_INFORMATION(RevBlinkinLedDriver.BlinkinPattern.BLACK),
     BLUE_ALLIANCE(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE),
     RED_ALLIANCE(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_LAVA_PALETTE),
     ALLIANCE_SAMPLE(RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE),

@@ -250,14 +250,17 @@ public class Camera extends SubsystemBase {
         switch(currentMode){
             case RED_BLOB_ONLY:
                blobs = redBlobProcessor.getBlobs();
+               break;
             case BLUE_BLOB_ONLY:
                 blobs = blueBlobProcessor.getBlobs();
+                break;
             case YELLOW_BLOB_ONLY:
                 blobs = yellowBlobProcessor.getBlobs();
+                break;
             default:
                 blobs = new ArrayList<>();
         }
-        //blobs = blueBlobProcessor.getBlobs();
+
         // available filtering functions
         //ColorBlobLocatorProcessor.Util.filterByArea(25, 300000, blobs);
         //ColorBlobLocatorProcessor.Util.filterByDensity(0.10, 1.0, blobs);

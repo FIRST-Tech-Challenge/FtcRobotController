@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
-import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
@@ -29,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.BackDistance;
 //import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 //import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
+import org.firstinspires.ftc.teamcode.Subsystems.OperatingMode;
 import org.firstinspires.ftc.teamcode.Subsystems.SideDistance;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
@@ -98,6 +98,7 @@ public class RobotContainer {
     public static Blinkin blinkin;
     public static BackDistance backDistance;
     public static SideDistance sideDistance;
+    public static OperatingMode operatingMode;
 
 
 
@@ -256,6 +257,7 @@ public class RobotContainer {
         blinkin = new Blinkin();
         backDistance = new BackDistance();
         sideDistance = new SideDistance();
+        operatingMode = new OperatingMode();
 
         if (isRedAlliance){
             clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
