@@ -23,7 +23,7 @@ public class HuntingPos extends SequentialCommandGroup {
 
                 // sets elbow to a straight position at 145 degrees,
                 // 145 is becouse gravity and leverage bend the elbow down so the extera 10 degrees stops the drooping
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(150)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(145)),
 
                 // sets wrist to a straight position  45 is parallel to floor
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),

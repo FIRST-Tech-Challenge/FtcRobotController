@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
@@ -153,9 +154,9 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
 
@@ -292,8 +293,8 @@ public class RobotContainer {
         DBTelemetry.addData("Angle", piece_angle);
         DBTelemetry.addData("Center X", piece_center_X);
         DBTelemetry.addData("Center Y", piece_center_Y);
-        DBTelemetry.addData("Target X", 296);
-        DBTelemetry.addData("Target Y", 316);
+        DBTelemetry.addData("Target X", (315 + 330) /2);
+        DBTelemetry.addData("Target Y", (325 + 315) /2);
         //DBTelemetry.addData("width", )
         DBTelemetry.update();
 

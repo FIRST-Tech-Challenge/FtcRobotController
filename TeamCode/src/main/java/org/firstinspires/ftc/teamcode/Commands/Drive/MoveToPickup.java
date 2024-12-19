@@ -38,8 +38,8 @@ public class MoveToPickup extends CommandBase {
     // This method is called periodically while command is active
     @Override
     public void execute() {
-        double Target_X = 296;
-        double Target_Y = 316;
+        double Target_X = (double) (315 + 330) /2;
+        double Target_Y = (double) (325 + 315) /2;
         xError = Target_X - RobotContainer.piece_center_X;
         yError = Target_Y - RobotContainer.piece_center_Y;
 

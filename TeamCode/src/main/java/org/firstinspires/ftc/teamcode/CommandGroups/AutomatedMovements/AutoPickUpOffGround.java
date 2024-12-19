@@ -38,6 +38,8 @@ public class AutoPickUpOffGround extends SequentialCommandGroup {
 
                 new WaitForClawButton(),
 
+                new Pause(.25),
+
                 new CloseClaw(),
 
                 new HuntingPos(),

@@ -22,7 +22,7 @@ public class StartingArmStowHigh extends SequentialCommandGroup {
         // What this position should do is give the camera a good vantage point as well as keep the arm out of the way
 
                 //powers shoulder
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(67)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(60)),
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
