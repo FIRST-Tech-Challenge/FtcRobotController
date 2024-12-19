@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="frontLeft" port="0" />
+            <goBILDA5202SeriesMotor name="backLeft" port="1" />
+            <goBILDA5202SeriesMotor name="arm" port="2" />
+            <Servo name="twist" port="0" />
+            <Servo name="claw" port="1" />
+            <Servo name="horizontalLeft" port="2" />
+            <Servo name="lightLeft" port="3" />
+            <Servo name="wrist" port="4" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5202SeriesMotor name="frontRight" port="0" />
+            <goBILDA5202SeriesMotor name="backRight" port="1" />
+            <goBILDA5202SeriesMotor name="verticalSlides" port="2" />
+            <Servo name="horizontalSlide" port="0" />
+            <Servo name="clawFlip" port="2" />
+            <Servo name="lightRight" port="3" />
+            <Servo name="clawFront" port="4" />
+            <KauaiLabsNavxMicro name="gyro" port="0" bus="0" />
+            <RevColorSensorV3 name="clawColor" port="0" bus="1" />
+        </LynxModule>
+    </LynxUsbDevice>
+    <EthernetDevice name="limelight" serialNumber="EthernetOverUsb:eth0:172.29.0.30" port="-1" ipAddress="172.29.0.1" />
+</Robot>
