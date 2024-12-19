@@ -60,9 +60,10 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double HORIZONTAL_POSITION = 0.7;
-                public static double CHAMBER_POSITION = 0.3;
-                public static double VERTICAL_POSITION = 0.1;
+                // TODO: Tune as needed
+                public static double[] HORIZONTAL_POSITION = {0.65, 0.93} ;
+                public static double[] CHAMBER_POSITION = {0.3, 0.43};
+                public static double[] VERTICAL_POSITION = {0.1, 0.2};
             }
             @Config
             public static class Linkage {
@@ -321,6 +322,10 @@ public class Settings {
         LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON,
         OPTIONS,
         RIGHT_TRIGGER, LEFT_TRIGGER
+    }
+
+    public enum WristPosition {
+        LEFT, RIGHT
     }
 
     public enum GamepadAxis {

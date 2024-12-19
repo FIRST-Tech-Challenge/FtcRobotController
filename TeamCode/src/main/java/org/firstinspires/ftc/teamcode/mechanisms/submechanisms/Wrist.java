@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 
+import static android.os.SystemClock.sleep;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -8,12 +11,13 @@ import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Wrist {
-    public static double position = 0;
+    public static double[] position = {0,0};
     public final Servo wristLeft;
     public final Servo wristRight;
-    public final double verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
-    public final double chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
-    public final double horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
+    public static long rightServoDelay = 45;
+    public final double[] verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
+    public final double[] chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
+    public final double[] horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
 
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
@@ -27,7 +31,7 @@ public class Wrist {
     }
 
     public void setPosition(Position newPosition) {
-        double oldPosition = position;
+        double[] oldPosition = position;
         switch (newPosition) {
             case VERTICAL:
                 position = verticalPos;
@@ -39,8 +43,10 @@ public class Wrist {
                 position = horizPos;
                 break;
         }
-        wristLeft.setPosition(position);
-        wristRight.setPosition(position);
+        wristLeft.setPosition(position[0]);
+        // added a delay, since the right servo seems to react ~45ms faster than the left servo
+        sleep(rightServoDelay);
+        wristRight.setPosition(position[1]);
     }
 
     public Position position() {
