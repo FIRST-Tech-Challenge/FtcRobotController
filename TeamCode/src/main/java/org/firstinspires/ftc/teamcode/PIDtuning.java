@@ -18,7 +18,7 @@ public class PIDtuning extends OpMode {
     private PIDController ExtendController;
 
     public static double Lp = 0.03, Li = 0, Ld = 0.0005;
-    public static double Ep = 0, Ei = 0, Ed = 0;
+    public static double Ep = .01, Ei = 0, Ed = .0004;
     public static double Lf = 0.037;
     public static double Ef = 0;
 

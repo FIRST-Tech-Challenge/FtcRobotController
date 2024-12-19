@@ -15,6 +15,8 @@ import java.util.List;
 
 // ************************ HARDWARE !!!!!  Configuration change ****************
 // IntakeLeft/Right changed to Left/RightIntake
+
+/*
 @TeleOp(name = "Test copy_Main TeleOp")
 @Disabled
 public class Test_MainTeleOPcopy extends LinearOpMode {
@@ -351,6 +353,7 @@ public class Test_MainTeleOPcopy extends LinearOpMode {
                 Flex = .63;
             }
         */
+/*
 
             denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);    // calculate motor movement math and adjust according to lift height or manual precision mode selection
 
@@ -408,3 +411,5 @@ public class Test_MainTeleOPcopy extends LinearOpMode {
         }
 
     }
+
+ */

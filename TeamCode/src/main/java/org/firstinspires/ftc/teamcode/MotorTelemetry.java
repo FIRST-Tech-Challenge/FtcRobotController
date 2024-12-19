@@ -18,6 +18,9 @@ public class MotorTelemetry extends LinearOpMode {
     @Override
     public void runOpMode(){
 
+        DcMotor BackRight = hardwareMap.dcMotor.get("Back Right");
+        DcMotor FrontRight = hardwareMap.dcMotor.get("Front Right");
+
         DcMotor IntakeRight = hardwareMap.dcMotor.get("Intake Right"); // Ehub Port 0 // X Button To Position Automatically? // Joystick Up And Down?
         DcMotor IntakeLeft = hardwareMap.dcMotor.get("Intake Left");   // Ehub Port 1 // ----------------------------------
         DcMotor RightLift = hardwareMap.dcMotor.get("Right Lift");     // Ehub Port 2 // Triangle Button To Delivery Position
@@ -38,11 +41,20 @@ public class MotorTelemetry extends LinearOpMode {
 
         LeftLift.setDirection(DcMotorSimple.Direction.REVERSE);     // Reverses the direction the motor turns
 
+        FrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         RightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);   // Resets the position so it sets it's current position to 0
         LeftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);    // Resets the position so it sets it's current position to 0
 
         IntakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         IntakeLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);   // Resets the position so it sets it's current position to 0
+        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);    // Resets the position so it sets it's current position to 0
+
+        FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LeftLift.setTargetPosition(0);     // Makes sure it starts at the set 0
         RightLift.setTargetPosition(0);    // Makes sure it starts at the set 0
@@ -50,12 +62,18 @@ public class MotorTelemetry extends LinearOpMode {
         IntakeRight.setTargetPosition(0);
         IntakeLeft.setTargetPosition(0);
 
+        BackRight.setTargetPosition(0);
+        FrontRight.setTargetPosition(0);
+
         LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Sets the mode so we can say to move the motor a certain amount of ticks
         RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);//Sets the mode so we can say to move the motor a certain amount of ticks
 
         IntakeRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         IntakeLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+/*
         LeftIntakeWrist.setPosition(LeftServo);    // Sets the intake wrist to the starting position // Left is 0 Right is 1
         RightIntakeWrist.setPosition(RightServo);   // Sets the intake wrist to the starting position // Left is 0 Right is 1
         IntakeV4B.setPosition(.78);   // Sets the intake virtual four bar to the starting position
@@ -64,23 +82,15 @@ public class MotorTelemetry extends LinearOpMode {
         OuttakeWrist.setPosition(0);    // Sets the outtake wrist to the starting position
 
         OuttakeV4B.setPosition(1);  // Sets the outtake virtual four bar to the starting position
-
+*/
 
         waitForStart();
         while(opModeIsActive()){
 
-            IntakeV4B.setPosition(V4Bpos);
-            //RightIntakeV4B.setPosition(V4Bpos);
-            LeftServo = Flex - (.5 * Yaw); //Calculates required servo angles for combined flex and yaw motion
-            RightServo = Flex + (.5 * Yaw);//^
-            LeftIntakeWrist.setPosition(LeftServo); //Sets servos to calculated positions
-            RightIntakeWrist.setPosition(RightServo); //^
 
-            telemetry.addData("Right Intake Position", IntakeRight.getCurrentPosition());
-            telemetry.addData("Left Intake Position", IntakeLeft.getCurrentPosition());
+            telemetry.addData("Right Back Wheel", BackRight.getCurrentPosition());
+            telemetry.addData("Right Front Wheel", FrontRight.getCurrentPosition());
 
-            telemetry.addData("Right Lift Position", RightLift.getCurrentPosition());
-            telemetry.addData("Left Lift Position", LeftLift.getCurrentPosition());
 
             telemetry.update();
         }
