@@ -62,21 +62,19 @@ public class ColorSensorTeleOp
             double green = clawColor.green();
 
             if (blue - green > 100 && blue - red > 100) {
-                lightRight.setPosition(0.611);
-                lightLeft.setPosition(0.611);
+                lightRight.setPosition(Hardware.LAMP_BLUE);
+                lightLeft.setPosition(Hardware.LAMP_BLUE);
                 telemetry.addLine("blue");
             }
             else if (red - blue > 100 && red - green > 100) {
                 telemetry.addLine("red");
-                lightRight.setPosition(0.28);
-                lightLeft.setPosition(0.28);
+                lightRight.setPosition(Hardware.LAMP_RED);
+                lightLeft.setPosition(Hardware.LAMP_RED);
             }
             else if (green - blue > 100 && green - red > 100 && red >= 350) {
                 telemetry.addLine("yellow");
-                lightRight.setPosition(0.36);
-                lightLeft.setPosition(0.36);
-
-
+                lightRight.setPosition(Hardware.LAMP_YELLOW);
+                lightLeft.setPosition(Hardware.LAMP_YELLOW);
             }
             else{
             lightLeft.setPosition(0);

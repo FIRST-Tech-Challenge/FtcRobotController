@@ -473,8 +473,11 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
     }
 
+    boolean lastX = false;
+
     public void trasfer(Hardware hardware){
-        if (gamepad2.x) {
+        boolean x = gamepad2.x;
+        if (x && !lastX) {
             hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
             ClawFrontPos = Hardware.FRONT_CLOSE;
             hardware.claw.setPosition(Hardware.CLAW_OPEN);
@@ -492,7 +495,7 @@ public class MecanumTeleOp extends LinearOpMode {
             armTargetPosDeg=0;
             sleep(500);
             hardware.wrist.setPosition(0.28);
-            ClawFrontPos=frontopen;
+            ClawFrontPos = Hardware.FRONT_OPEN;
         }
     }
 }

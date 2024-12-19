@@ -4,6 +4,7 @@ import static androidx.core.math.MathUtils.clamp;
 import static java.lang.Math.abs;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -75,7 +76,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
      * @param theLockInQuestion which lock to forcibly acquire
      */
     private void abandonLock(SharedResource theLockInQuestion) {
-        scheduler.filteredStop(it -> it.requirements().contains(theLockInQuestion));
+        scheduler.filteredStop(it -> it.requirements().contains(theLockInQuestion), true, true);
     }
 
     private OneShot run(Runnable target) {
@@ -109,7 +110,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private void hardwareInit() {
         tracker = new EncoderTracking(hardware);
         loopTimer = new LoopStopwatch();
-        speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.15 seconds
+        speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.20 seconds
         ramps = new Ramps(
                 Ramps.linear(2.0),
                 Ramps.linear(1 / 12.0),
@@ -129,7 +130,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         armTargetPosDeg = 0.0;
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.2);
+        hardware.arm.setPower(0.3);
         hardware.wrist.setPosition(0.28);
         hardware.twist.setPosition(twistPos);
 
@@ -176,6 +177,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         boolean isFlipIn = false;
         boolean isFlipOut = false;
+        boolean isSpecimenPick = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -229,22 +231,20 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 telemetry.addData("bl power", backLeftPower);
                 telemetry.addData("br power", backRightPower);
             }
+            lamps();
             wrist();
             trasfer();
             claw();
 //            twist();
             stepper();
             lift();
-            HSlide();
             arm();
 
             if (gamepad2.y) {
                 ScoreHighBasket();
             }
-            if (gamepad2.x) {
-                PickUpYellow();
-            }
-            if (gamepad2.b) {
+            boolean shouldSpecimenPick = gamepad2.b;
+            if (shouldSpecimenPick && !isSpecimenPick) {
                 specimenWallPick();
             }
             if (gamepad2.dpad_left) {
@@ -256,6 +256,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             boolean shouldFlipOut = gamepad1.left_trigger > 0.5;
             if (shouldFlipOut && !isFlipOut) Flipout();
 
+            isSpecimenPick = shouldSpecimenPick;
             isFlipIn = shouldFlipIn;
             isFlipOut = shouldFlipOut;
 
@@ -292,6 +293,34 @@ public class MecanumTeleOp2 extends LinearOpMode {
         return scheduler.add(liftProxy.moveTo(targetPosition, 5, 3.0));
     }
 
+    private void lamps() {
+//        @ColorInt int color = hardware.clawColor.argb();
+        // extract the components from the packed number
+//        int red = (color >> 16) & 0xff;
+//        int green = (color >> 8) & 0xff;
+//        int blue = color & 0xff;
+        int red = hardware.clawColor.red();
+        int green = hardware.clawColor.green();
+        int blue = hardware.clawColor.blue();
+
+        if (blue - green > 100 && blue - red > 100) {
+            hardware.lightRight.setPosition(Hardware.LAMP_BLUE);
+            hardware.lightLeft.setPosition(Hardware.LAMP_BLUE);
+//            telemetry.addLine("blue");
+        } else if (red - blue > 100 && red - green > 100) {
+//            telemetry.addLine("red");
+            hardware.lightRight.setPosition(Hardware.LAMP_RED);
+            hardware.lightLeft.setPosition(Hardware.LAMP_RED);
+        } else if (green - blue > 100 && green - red > 100 && red >= 350) {
+//            telemetry.addLine("yellow");
+            hardware.lightRight.setPosition(Hardware.LAMP_YELLOW);
+            hardware.lightLeft.setPosition(Hardware.LAMP_YELLOW);
+        } else {
+            hardware.lightRight.setPosition(0);
+            hardware.lightLeft.setPosition(0);
+        }
+    }
+
     private void lift() {
         liftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
 
@@ -318,20 +347,27 @@ public class MecanumTeleOp2 extends LinearOpMode {
         double stick_pos = -gamepad2.right_stick_y;
         double rotations = arm.getCurrentPosition() / Hardware.spinTickPerRev;
         double degrees = rotations * 360.0; // 0 = straight down
+        double tRotations = arm.getTargetPosition() / Hardware.spinTickPerRev;
+        double tDegrees = tRotations * 360.0; // 0 = straight down
         // Negative: towards front;
         // Positive: towards back.
         // Exclusion zone 0 to -25deg whe lift < 6in.
         // [removed if statement, disabled]
         // Full* clearance
-        if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
-            armTargetPosDeg += 1;
+        boolean shouldWrite = true;
+        if (stick_pos > 0.7 && tDegrees <= 110) {
+            tDegrees += 1;
+        } else if (stick_pos < -0.7 && tDegrees >= -110) {
+            tDegrees -= 1;
+        } else {
+            shouldWrite = false;
         }
-        if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
-            armTargetPosDeg -= 1;
+        if (shouldWrite) {
+            abandonLock(Locks.ArmAssembly);
+            arm.setTargetPosition(Hardware.deg2arm(tDegrees));
         }
-        arm.setTargetPosition(Hardware.deg2arm(armTargetPosDeg));
-        arm.setPower(0.3);
         telemetry.addData("arm deg", degrees);
+        telemetry.addData("arm target deg", tDegrees);
     }
 
     public void wrist() {
@@ -369,10 +405,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(run(() -> hardware.arm.setTargetPosition(222)))
                         .then(await(500))
                         .then(run(() -> hardware.wrist.setPosition(0.94)))
-                        .then(await(500))
-                        .then(run(() -> hardware.claw.setPosition(0.02)))
-                        .then(await(500))
-                        .then(run(() -> hardware.claw.setPosition(0.55)))
+                        .then(await(700))
+//                        .then(run(() -> hardware.claw.setPosition(0.02)))
+//                        .then(await(500))
+                        .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(100))
                         .then(run(() -> hardware.wrist.setPosition(0.28)))
                         .then(await(500))
@@ -440,33 +476,21 @@ public class MecanumTeleOp2 extends LinearOpMode {
         telemetry.addData("FlipClawPos", hClawProxy.getFlipPosition());
     }
 
-    public void HSlide() {
-        // same note as above.
-        if (gamepad1.y) {
-            abandonLock(hSlideProxy.CONTROL);
-            scheduler.add(hSlideProxy.moveOut());
-        }
-        if (gamepad1.a) {
-            abandonLock(hSlideProxy.CONTROL);
-            scheduler.add(hSlideProxy.moveIn());
-        }
-        telemetry.addData("HorizontalR", hardware.horizontalSlide.getPosition());
-        telemetry.addData("HorizontalL", hardware.horizontalLeft.getPosition());
-    }
-
     public void specimenWallPick() {
+        abandonLock(Locks.ArmAssembly);
+        abandonLock(liftProxy.CONTROL);
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                        .then(await(1000))
+                        .then(await(200))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
-                        .then(await(1000))
-                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(45))))
+                        .then(await(500))
+                        .then(run(() -> hardware.arm.setTargetPosition(50)))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(1000))
+                        .then(await(500))
                         .then(liftProxy.moveTo(300, 5, 1.0))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
-                        .then(await(1000))
+                        .then(await(500))
                         // TODO: investigate if 10 ticks or 10 degrees is the right number
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
                         .then(await(1000))
@@ -849,6 +873,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         private final Scheduler scheduler = getScheduler();
         private double flipPosition = Hardware.FLIP_UP;
         private double clawPosition = Hardware.FRONT_OPEN;
+
         public HClawProxy(@NotNull Scheduler scheduler, Hardware hardware) {
             super(scheduler);
             this.hardware = hardware;

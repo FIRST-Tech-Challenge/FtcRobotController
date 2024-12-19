@@ -362,7 +362,7 @@ open class MultitaskScheduler
             }
         if (dropNonStarted) {
             val dropped = tasks.filterInPlace { k, v ->
-                v.state == State.NotStarted && predicate(v)
+                !(v.state == State.NotStarted && predicate(v))
             }
             println("dropped ${dropped.size} tasks: ${dropped.joinToString(", ")}")
         }
