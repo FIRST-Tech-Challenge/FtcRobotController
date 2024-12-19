@@ -34,12 +34,16 @@ public class SlideTest extends LinearOpMode {
             boolean pressY = false;
             boolean pressA = false;
             boolean pressB = false;
+            double joystick = gamepad1.right_stick_y; //joystick
             double deg = 0;
             while (opModeIsActive()) {
                 pos = motor.getCurrentPosition();
                 deg = (360 / 751.8) * pos * (28.8 / 7);
 
                 speed = 0;
+
+                //motor.setPower(joystick);
+
                 if (gamepad1.y && !pressY) { //if pressing b and var is false
                     speed += 0.1;
                     pressY = true;
@@ -58,8 +62,14 @@ public class SlideTest extends LinearOpMode {
                 }
 
 
-                if (pos > 2000 || pos < -20) {
+
+                if (pos > 2000) {
                     motor.setPower(0);
+                    pos = 1999;
+                }
+                if (pos < -20) {
+                    motor.setPower(0);
+                    pos = 0;
                 }
 
 
