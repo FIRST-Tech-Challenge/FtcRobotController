@@ -22,7 +22,7 @@ public class BackDepositPose extends SequentialCommandGroup {
                 new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
 
                 // folds the elbow in 60 degrees
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(195)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(188)),
 
                 // folds the wrist in 135 degrees
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(170)),

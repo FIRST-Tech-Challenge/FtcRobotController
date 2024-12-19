@@ -2,25 +2,24 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
-public class BackDistance extends SubsystemBase {
+public class SideDistance extends SubsystemBase {
 
     // Local objects and variables here
 
     private final DistanceSensor testDistance;
-    private static double wallDistance;
+    private static double rightWallDistance;
 
     /** Place code here to initialize subsystem */
-    public BackDistance() {
+    public SideDistance() {
 
-        testDistance =  RobotContainer.ActiveOpMode.hardwareMap.get(DistanceSensor.class, "rearDistance");
-        wallDistance = 0.0;
+        testDistance =  RobotContainer.ActiveOpMode.hardwareMap.get(DistanceSensor.class, "rightDistance");
+        rightWallDistance = 0.0;
     }
 
     /** Method called periodically by the scheduler
@@ -28,9 +27,9 @@ public class BackDistance extends SubsystemBase {
     @Override
     public void periodic() {
 
-        wallDistance = 0.4*wallDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+        rightWallDistance = 0.4*rightWallDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
 
-        RobotContainer.DBTelemetry.addData("BackDistance cm ", getDistance());
+        RobotContainer.DBTelemetry.addData("RightDistance cm ", getDistance());
         RobotContainer.DBTelemetry.update();
 
     }
@@ -39,7 +38,7 @@ public class BackDistance extends SubsystemBase {
 
     public double getDistance(){
 
-        return wallDistance;
+        return rightWallDistance;
     }
 
 }

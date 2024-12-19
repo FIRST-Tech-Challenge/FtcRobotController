@@ -5,8 +5,8 @@ public enum ClimbTargetHeight {
     // Constants that store the ticks for the linear slide levels
 
     SAMPLE_CLIMB_ZERO(0),
-    SAMPLE_LIFT(50),
-    SAMLE_RETRACT(0);
+    SAMPLE_LIFT(2381);
+
 
 
 

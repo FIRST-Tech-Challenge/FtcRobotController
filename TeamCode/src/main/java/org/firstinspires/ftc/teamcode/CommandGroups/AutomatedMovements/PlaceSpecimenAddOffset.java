@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
+import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
@@ -37,6 +38,28 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 //new Pause(1),
                 //max speed = 1
+                new FollowPath(
+                        2.0,
+                        1.2,
+                        0.0,
+                        0.0,
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
+                        new ArrayList<Translation2d>() {{ }},
+                        AutoFunctions.redVsBlue(new Pose2d(0.0, 1.2, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
+
+
+                new InstantCommand(()-> {
+                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+                    Pose2d correctedPosition;
+                    if(RobotContainer.isRedAlliance)
+                        correctedPosition = new Pose2d(position.getX(),-1.78435+0.20+0.01*RobotContainer.backDistance.getDistance(), position.getRotation());
+                    else
+                        correctedPosition = new Pose2d(position.getX(),1.78435-0.20-0.01*RobotContainer.backDistance.getDistance(), position.getRotation());
+
+                    RobotContainer.odometry.setCurrentPos(correctedPosition);
+                }),
+
                 new GoToNextDropOff(
                         2.0,
                         1.2,

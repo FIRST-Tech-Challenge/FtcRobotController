@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
@@ -62,6 +63,16 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 new Pause(0.25),
 
+                new InstantCommand(()-> {
+                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+                    Pose2d correctedPosition;
+                    if(RobotContainer.isRedAlliance)
+                        correctedPosition = new Pose2d(1.78435-0.18-0.01*RobotContainer.sideDistance.getDistance(), position.getY(), position.getRotation());
+                    else
+                        correctedPosition = new Pose2d(-1.78435+0.18+0.01*RobotContainer.sideDistance.getDistance(), position.getY(), position.getRotation());
+
+                    RobotContainer.odometry.setCurrentPos(correctedPosition);
+                }),
 
                 new FollowPath(
                         1.0,
