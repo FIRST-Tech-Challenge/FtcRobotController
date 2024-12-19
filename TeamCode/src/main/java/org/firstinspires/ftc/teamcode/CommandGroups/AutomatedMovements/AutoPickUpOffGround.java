@@ -24,8 +24,6 @@ public class AutoPickUpOffGround extends SequentialCommandGroup {
 
         addCommands (
 
-                new HuntingPos(),
-
                 new OpenClaw(),
 
                 new ConvertAngleForWristRotate(),
@@ -44,7 +42,7 @@ public class AutoPickUpOffGround extends SequentialCommandGroup {
 
                 new HuntingPos(),
 
-                new Pause(1)
+                new Pause(0.1)
 
 
 

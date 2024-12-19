@@ -58,10 +58,15 @@ public class LinearSlide extends SubsystemBase {
 
     }
 
-    // Using the var ticks sets the motor encoder ticks to a set position
-    public void moveLinearSlide(int ticks) {
+    /**Moves the linear slide motors to a set position.
+     * DO NOT USE OVERRIDE OUTSIDE OF AUTOMATED MOVEMENTS
+     *
+     * @param ticks - Amount to move slides (int)
+     * @param override - When true ignores safety conditions (boolean)
+     * */
+    public void moveLinearSlide(int ticks, boolean override) {
         Pose2d currentPOS = RobotContainer.odometry.getCurrentPos();
-        if (!(Math.abs(currentPOS.getX())<1 && Math.abs(currentPOS.getY())<1.2)){
+        if (!(Math.abs(currentPOS.getX())<1 && Math.abs(currentPOS.getY())<1.2) || override){
         // Sets both motors to the ticks target position
         leftMotor.setTargetPosition(ticks);
         rightMotor.setTargetPosition(ticks);
@@ -72,9 +77,22 @@ public class LinearSlide extends SubsystemBase {
         }
     }
 
-    // Used to move the slides to fixed levels
+    /**Moves the slides to fixed levels. Use for driver controlled movements.
+     *
+     * @param target - slide target position (SlideTargetHeight)
+     * */
     public void moveTo(SlideTargetHeight target) {
-        moveLinearSlide(target.getValue());
+        moveLinearSlide(target.getValue(), false);
+    }
+
+    /**Moves the slides to fixed levels.
+     * DO NOT USE OVERRIDE OUTSIDE OF AUTOMATED MOVEMENTS
+     *
+     * @param target - slide target position (SlideTargetHeight)
+     * @param override - When true ignores safety conditions (boolean)
+     * */
+    public void moveTo(SlideTargetHeight target, boolean override) {
+        moveLinearSlide(target.getValue(), override);
     }
 
 }

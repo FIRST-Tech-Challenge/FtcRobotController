@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class AutoFunctions {
 
     // mirror provided pose2d for red vs blue team
+    /**
+     * */
     public static Pose2d redVsBlue(Pose2d pose) {
         if (RobotContainer.isRedAlliance)
             return new Pose2d (-pose.getX(),
