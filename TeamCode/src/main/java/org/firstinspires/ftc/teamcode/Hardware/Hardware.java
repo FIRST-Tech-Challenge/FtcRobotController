@@ -43,7 +43,7 @@ public class Hardware   {
     public AnalogInput clawEnc;
 
     // Intake
-    public DcMotorEx intakeSlide;
+    public DcMotorEx intakeSlideMotor;
     public DcMotorEx intakeRoller;
 
     public CRServo intakePivot;
@@ -110,11 +110,11 @@ public class Hardware   {
         clawEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-2");
 
         // Intake
-        intakeSlide = hardwareMap.get(DcMotorEx.class, "CH-Motor-2");
-        intakeSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        intakeSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlideMotor = hardwareMap.get(DcMotorEx.class, "CH-Motor-2");
+        intakeSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        intakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
         intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

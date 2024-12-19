@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Hardware.IntakeConstants;
+import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +42,7 @@ public class IntakeSlideTuner extends OpMode {
         hardware.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        slideMotor = hardware.intakeSlide;
+        slideMotor = hardware.intakeSlideMotor;
     }
 
     public void start() {
@@ -52,11 +52,11 @@ public class IntakeSlideTuner extends OpMode {
     @Override
     public void loop() {
         hardware.clearCache();
-        double pos = hardware.intakeSlide.getCurrentPosition();
+        double pos = hardware.intakeSlideMotor.getCurrentPosition();
         controller.setPID(p,i, d);
         double output = controller.calculate(pos, target);
 
-        hardware.intakeSlide.setPower(output);
+        hardware.intakeSlideMotor.setPower(output);
 
         if (target != prevTarget) {
             timer.start();
@@ -71,7 +71,7 @@ public class IntakeSlideTuner extends OpMode {
         telemetry.addData("Target Pos: ", target);
         telemetry.addData("Current Pos: ", pos);
         telemetry.addData("Output: ", output);
-        telemetry.addData("Current: ", hardware.intakeSlide.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Current: ", hardware.intakeSlideMotor.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Cycle Time: ", controller.getPeriod());
         telemetry.addData("Elapsed Time (ms): ", timer.elapsedTime());
         telemetry.update();
