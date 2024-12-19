@@ -72,7 +72,7 @@ public class Camera extends SubsystemBase {
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.75, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
         redBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
@@ -116,7 +116,7 @@ public class Camera extends SubsystemBase {
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.75, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
         yellowBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
@@ -247,17 +247,17 @@ public class Camera extends SubsystemBase {
     public List<ColorBlobLocatorProcessor.Blob> GetBlobDetections() {
         List<ColorBlobLocatorProcessor.Blob> blobs;
 
-//        switch(currentMode){
-//            case RED_BLOB_ONLY:
-//               blobs = redBlobProcessor.getBlobs();
-//            case BLUE_BLOB_ONLY:
-//                blobs = blueBlobProcessor.getBlobs();
-//            case YELLOW_BLOB_ONLY:
-//                blobs = yellowBlobProcessor.getBlobs();
-//            default:
-//                blobs = new ArrayList<>();
-//        }
-        blobs = blueBlobProcessor.getBlobs();
+        switch(currentMode){
+            case RED_BLOB_ONLY:
+               blobs = redBlobProcessor.getBlobs();
+            case BLUE_BLOB_ONLY:
+                blobs = blueBlobProcessor.getBlobs();
+            case YELLOW_BLOB_ONLY:
+                blobs = yellowBlobProcessor.getBlobs();
+            default:
+                blobs = new ArrayList<>();
+        }
+        //blobs = blueBlobProcessor.getBlobs();
         // available filtering functions
         //ColorBlobLocatorProcessor.Util.filterByArea(25, 300000, blobs);
         //ColorBlobLocatorProcessor.Util.filterByDensity(0.10, 1.0, blobs);
