@@ -1,21 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Config
-@TeleOp(name="Arm Auto Test", group="TeleOp Test")
-public class autoTeleArm extends OpMode {
+@Disabled
+@TeleOp(name="Extendo-Auto Test", group="TeleOp Test")
+public class extenderTeleAuto extends OpMode {
     public static float p = 0.005F;
     public static float i = 0;
     public static float d = 0.001F;
-    public static int referenceA = 100;
+    public static int referenceA = 0;
     public static int referenceB = 200;
 
     static class PIDController {
@@ -53,19 +50,17 @@ public class autoTeleArm extends OpMode {
         }
     }
 
-    private DcMotor cap;
-    private RevTouchSensor Lswitch;
-    private PIDController capPID = new PIDController();
+    private DcMotor extendo;
+    private static PIDController extendoPID = new PIDController();
     private Boolean toggle = false;
     private Boolean toggeled = false;
 
     @Override
     public void init() {
-        cap = hardwareMap.get(DcMotor.class, "cap");
-        Lswitch = hardwareMap.get(RevTouchSensor.class, "Lswitch");
-        capPID.init(p, i, d);
-        cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extendo = hardwareMap.get(DcMotor.class, "spindle");
+        extendoPID.init(p, i, d);
+        extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -77,16 +72,14 @@ public class autoTeleArm extends OpMode {
         if (!gamepad1.y) {
             toggle = false;
         }
-        if (!Lswitch.isPressed()) {
-            if (toggeled) {
-                cap.setPower(capPID.getOutput(cap.getCurrentPosition(), referenceA));
-                telemetry.addData("Reference", referenceA);
-            } else {
-                cap.setPower(capPID.getOutput(cap.getCurrentPosition(), referenceB));
-                telemetry.addData("Reference", referenceB);
-            }
+        if (toggeled) {
+            extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), referenceA));
+            telemetry.addData("Reference", referenceA);
+        } else {
+            extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), referenceB));
+            telemetry.addData("Reference", referenceB);
         }
-        telemetry.addData("Pos", cap.getCurrentPosition());
+        telemetry.addData("Pos", extendo.getCurrentPosition());
         telemetry.update();
     }
 }

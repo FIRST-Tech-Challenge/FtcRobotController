@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name="RunThisOne", group="TeleOp")
-public class soup2 extends OpMode {
+@TeleOp(name="EviumMainTeleop", group="TeleOp")
+public class EviumMainTeleop extends OpMode {
 
     // Motors & Sensors
     private DcMotor frontLeftMotor;

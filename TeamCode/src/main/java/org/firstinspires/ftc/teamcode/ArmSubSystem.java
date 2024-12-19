@@ -12,7 +12,7 @@ public class ArmSubSystem {
     private DcMotor cap;
     private DcMotor extendo;
     private RevTouchSensor ClasslimitSwitch;
-    private final PIDController capstanPID = new PIDController();
+    private final ArmPIDFController capstanPIDF;
     private final PIDController extendoPID = new PIDController();
     private int capstanReference = 0;
     private int extendoReference = 0;
@@ -37,7 +37,7 @@ public class ArmSubSystem {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         extendoPID.init(0.008F, 0, 0.001F);
-        capstanPID.init(0.008F, 0, 0.001F);
+        this.capstanPIDF = new ArmPIDFController(0.008, 0, 0.001, 0.01);
     }
 
     public double getCapstanReference() {
@@ -152,15 +152,19 @@ public class ArmSubSystem {
                 break;
         }
     }
+    private double encoderTicsToDegrees(double tics) {
+        // TODO: Figure out how many tics in a degree
+        return tics / 100;
+    }
     public void periodicUpdate(TelemetryPacket packet) {
         packet.put("ExtendoPosition", extendo.getCurrentPosition());
         packet.put("ExtendoReference", extendoReference);
         packet.put("CapstanPosition", cap.getCurrentPosition());
         packet.put("CapstanReference", capstanReference);
-        float extendoPIDValue = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference, packet, "extendo");
+        double extendoPIDValue = extendoPID.getOutput(extendo.getCurrentPosition(), extendoReference);
         extendo.setPower(extendoPIDValue);
         if (!ClasslimitSwitch.isPressed()) {
-            float capPIDValue = capstanPID.getOutput(cap.getCurrentPosition(), capstanReference, packet, "capstan");
+            double capPIDValue = capstanPIDF.getOutput(cap.getCurrentPosition(), capstanReference, encoderTicsToDegrees(capstanReference));
             if (capPIDValue > 0.75) {
                 cap.setPower(0.75);
             } else if (capPIDValue < -0.75) {

@@ -1,22 +1,24 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Config
-@TeleOp(name="Extendo-Auto Test", group="TeleOp Test")
-public class extenderTeleAuto extends OpMode {
+@Disabled
+@TeleOp(name="POSFINDER", group="TeleOp Test")
+public class positionFinder extends OpMode {
     public static float p = 0.005F;
     public static float i = 0;
     public static float d = 0.001F;
     public static int referenceA = 0;
-    public static int referenceB = 200;
+    public static int referenceB = 0;
+    public static float gripper = 0.3f;
+    public static float wrist = 0;
 
     static class PIDController {
         private static float p;
@@ -55,8 +57,14 @@ public class extenderTeleAuto extends OpMode {
 
     private DcMotor extendo;
     private static PIDController extendoPID = new PIDController();
-    private Boolean toggle = false;
-    private Boolean toggeled = false;
+    private DcMotor cap;
+    private RevTouchSensor Lswitch;
+//    private autoTeleArm.PIDController capPID = new autoTeleArm.PIDController();
+    private ServoImplEx LSLower;
+    private ServoImplEx LSTop;
+    private double lolclock = 0.01;
+    private SparkFunOTOS odometry;
+
 
     @Override
     public void init() {
@@ -64,25 +72,33 @@ public class extenderTeleAuto extends OpMode {
         extendoPID.init(p, i, d);
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        cap = hardwareMap.get(DcMotor.class, "cap");
+        Lswitch = hardwareMap.get(RevTouchSensor.class, "Lswitch");
+        LSLower = hardwareMap.get(ServoImplEx.class, "LSLower");
+        LSTop = hardwareMap.get(ServoImplEx.class, "LSTop");
+        odometry = hardwareMap.get(SparkFunOTOS.class, "odometry");
+//        capPID.init(p, i, d);
+        cap.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        cap.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        odometry.setPosition(new SparkFunOTOS.Pose2D(0,0,0));
     }
 
     @Override
     public void loop() {
-        if (gamepad1.y && !toggle) {
-            toggeled = !toggeled;
-            toggle = true;
-        }
-        if (!gamepad1.y) {
-            toggle = false;
-        }
-        if (toggeled) {
-            extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), referenceA));
-            telemetry.addData("Reference", referenceA);
+        if (lolclock > 0.03) {
+            lolclock = lolclock - 0.001;
         } else {
-            extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), referenceB));
-            telemetry.addData("Reference", referenceB);
+            lolclock = lolclock + 0.001;
         }
-        telemetry.addData("Pos", extendo.getCurrentPosition());
-        telemetry.update();
+        LSTop.setPosition(gripper + lolclock);
+        LSLower.setPosition(wrist + lolclock);
+        if (!Lswitch.isPressed()) {
+//            cap.setPower(capPID.getOutput(cap.getCurrentPosition(), referenceA));
+        }
+        extendo.setPower(extendoPID.getOutput(extendo.getCurrentPosition(), referenceB));
+
+        telemetry.addData("Capstan Pos", cap.getCurrentPosition());
+        telemetry.addData("Extendo Pos", extendo.getCurrentPosition());
+        telemetry.addData("Drive Pos", "(" + odometry.getPosition().x + ", " + odometry.getPosition().y + ", " + odometry.getPosition().h + ")");
     }
 }

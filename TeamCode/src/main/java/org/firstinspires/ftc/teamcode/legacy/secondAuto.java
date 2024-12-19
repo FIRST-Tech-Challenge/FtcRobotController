@@ -1,17 +1,42 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.ArmSubSystem;
+import org.firstinspires.ftc.teamcode.AutonomousHandler;
+import org.firstinspires.ftc.teamcode.DriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.SystemState;
+import org.firstinspires.ftc.teamcode.armPose;
+import org.firstinspires.ftc.teamcode.clawState;
+import org.firstinspires.ftc.teamcode.wristState;
+
 import java.util.HashMap;
 
-@Autonomous(name="rightAuto", group="Auto")
-public class rightAuto extends OpMode {
+@Disabled
+@Autonomous(name="secondAuto", group="Auto")
+public class secondAuto extends OpMode {
     private AutonomousHandler autoHandler;
+    private HashMap<Integer, SystemState> instructions;
+    private ArmSubSystem armControlSubsystem;
+    private DriveBaseSubsystem driveBaseSystem;
+
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
+    private DcMotor spindle;
+    private SparkFunOTOS odometry;
+    private DcMotor cap;
+    // Servos
+    private ServoImplEx LSLower;
+    private ServoImplEx LSTop;
+    private RevTouchSensor lswitch;
 
     @Override
     public void init() {
@@ -33,8 +58,6 @@ public class rightAuto extends OpMode {
         LSTop.setPwmEnable();
         LSLower.scaleRange(0, 1);
         LSTop.scaleRange(0, 1);
-        LSLower.setPosition(0.1);
-        LSTop.setPosition(0.1);
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -49,78 +72,52 @@ public class rightAuto extends OpMode {
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Breaking mode
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         cap.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         spindle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // State 1
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
-        stateOne.wristPosition = wristState.DOWN;
-        stateOne.armPosition = armPose.AUTO_1;
-        stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
-        stateOne.ignorePosTime = 1;
+        stateOne.wristPosition = wristState.UP;
+        stateOne.armPosition = armPose.CHAMBER_A;
+        stateOne.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
 
-        // State 2
+        // State Two
         SystemState stateTwo = new SystemState();
         stateTwo.clawPosition = clawState.CLOSED;
         stateTwo.wristPosition = wristState.UP;
-        stateTwo.armPosition = armPose.AUTO_1;
-        stateTwo.drivePose = new SparkFunOTOS.Pose2D(-12, 18, 180);
-        stateTwo.ignorePosTime = 3.5;
+        stateTwo.armPosition = armPose.BASKET;
+        stateTwo.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
 
-        // State 3
+        // State Three
         SystemState stateThree = new SystemState();
-        stateThree.clawPosition = clawState.CLOSED;
+        stateThree.clawPosition = clawState.OPENED;
         stateThree.wristPosition = wristState.UP;
-        stateThree.armPosition = armPose.AUTO_1;
-        stateThree.drivePose = new SparkFunOTOS.Pose2D(30, 9, -135);
-        stateThree.ignorePosTime = 2.5;
+        stateThree.armPosition = armPose.BASKET;
+        stateThree.drivePose = new SparkFunOTOS.Pose2D(12, 0, 0);
 
-        // State 4
+        // State Four
         SystemState stateFour = new SystemState();
-        stateFour.clawPosition = clawState.CLOSED;
-        stateFour.wristPosition = wristState.DOWN;
-        stateFour.armPosition = armPose.AUTO_1;
-        stateFour.drivePose = new SparkFunOTOS.Pose2D(30, 9, -135);
-        stateFour.ignorePosTime = 0.5;
-
-        // State 5
-        SystemState stateFive = new SystemState();
-        stateFive.clawPosition = clawState.CLOSED;
-        stateFive.wristPosition = wristState.DOWN;
-        stateFive.armPosition = armPose.AUTO_1;
-        stateFive.drivePose = new SparkFunOTOS.Pose2D(15.75, 25, 0); // 27
-        stateFive.ignorePosTime = 4;
-
-        // State 6
-        SystemState endState = new SystemState();
-        endState.clawPosition = clawState.OPENED;
-        endState.wristPosition = wristState.UP;
-        endState.armPosition = armPose.ZERO;
-        endState.drivePose = new SparkFunOTOS.Pose2D(0, -100, 0);
-        endState.ignorePosTime = 10;
+        stateFour.clawPosition = clawState.OPENED;
+        stateFour.wristPosition = wristState.UP;
+        stateFour.armPosition = armPose.REST;
+        stateFour.drivePose = new SparkFunOTOS.Pose2D(-50, 0, 0);
 
         // Generate Path
-        HashMap<Integer, SystemState> instructions = new HashMap<>();
+        instructions = new HashMap<>();
         instructions.put(0, stateOne);
         instructions.put(1, stateTwo);
         instructions.put(2, stateThree);
         instructions.put(3, stateFour);
-        instructions.put(4, stateFive);
-        instructions.put(5, endState);
 
         // ACS & DBS & Handler
-        ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
-        DriveBaseSubsystem driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
+        armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
+        driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
         autoHandler = new AutonomousHandler(instructions, armControlSubsystem, driveBaseSystem, 0, telemetry);
-
-        LSLower.setPosition(0.1);
-        LSTop.setPosition(0.1);
-
     }
 
     @Override

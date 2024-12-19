@@ -1,15 +1,21 @@
-package org.firstinspires.ftc.teamcode;
-
-import com.acmerobotics.dashboard.config.Config;
+package org.firstinspires.ftc.teamcode.legacy;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import java.util.HashMap;
+import org.firstinspires.ftc.teamcode.ArmSubSystem;
+import org.firstinspires.ftc.teamcode.AutonomousHandler;
+import org.firstinspires.ftc.teamcode.DriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.InstructionHandler;
+import org.firstinspires.ftc.teamcode.armPose;
+import org.firstinspires.ftc.teamcode.clawState;
+import org.firstinspires.ftc.teamcode.wristState;
 
+@Disabled
 @Autonomous(name="thirdAuto", group="Auto")
 public class thirdAuto extends OpMode {
     private AutonomousHandler autoHandler;

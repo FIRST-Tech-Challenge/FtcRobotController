@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -8,11 +8,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.ArmSubSystem;
+import org.firstinspires.ftc.teamcode.AutonomousHandler;
+import org.firstinspires.ftc.teamcode.DriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.SystemState;
+import org.firstinspires.ftc.teamcode.armPose;
+import org.firstinspires.ftc.teamcode.clawState;
+import org.firstinspires.ftc.teamcode.wristState;
+
 import java.util.HashMap;
 
 @Disabled
-@Autonomous(name="wristTest", group="Auto")
-public class wristTest extends OpMode {
+@Autonomous(name="antAuto", group="Auto")
+public class antAuto extends OpMode {
     private AutonomousHandler autoHandler;
 
     @Override
@@ -35,12 +43,14 @@ public class wristTest extends OpMode {
         LSTop.setPwmEnable();
         LSLower.scaleRange(0, 1);
         LSTop.scaleRange(0, 1);
+        LSLower.setPosition(0.1);
+        LSTop.setPosition(0.1);
 
         // Set motor directions
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set motor modes
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -60,18 +70,36 @@ public class wristTest extends OpMode {
         SystemState stateOne = new SystemState();
         stateOne.clawPosition = clawState.CLOSED;
         stateOne.wristPosition = wristState.UP;
-        stateOne.armPosition = armPose.REST;
-        stateOne.drivePose = new SparkFunOTOS.Pose2D(0, 0, 0);
+        stateOne.armPosition = armPose.ZERO;
+        stateOne.drivePose = new SparkFunOTOS.Pose2D(-20, 0, 0);
+        stateOne.ignorePosTime = 100000;
 
+        // State too
+        SystemState stateToo = new SystemState();
+        stateToo.clawPosition = clawState.OPENED;
+        stateToo.wristPosition = wristState.UP;
+        stateToo.armPosition = armPose.ZERO;
+        stateToo.drivePose = new SparkFunOTOS.Pose2D(20, 0, 0);
+        stateToo.ignorePosTime = 100000;
         // Generate Path
         HashMap<Integer, SystemState> instructions = new HashMap<>();
         instructions.put(0, stateOne); // Arm Up
+        instructions.put(1, stateToo); //lik ofrword or smth
+        instructions.put(2, stateOne); // Arm Up
+        instructions.put(3, stateToo); //lik ofrword or smth
+        instructions.put(4, stateOne); // Arm Up
+        instructions.put(5, stateToo); //lik ofrword or smth
+        instructions.put(6, stateOne); // Arm Up
 
 
         // ACS & DBS & Handler
         ArmSubSystem armControlSubsystem = new ArmSubSystem(armPose.ZERO, cap, spindle, lswitch, LSTop, LSLower, telemetry);
         DriveBaseSubsystem driveBaseSystem = new DriveBaseSubsystem(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor, odometry, telemetry);
         autoHandler = new AutonomousHandler(instructions, armControlSubsystem, driveBaseSystem, 0, telemetry);
+
+        LSLower.setPosition(0.1);
+        LSTop.setPosition(0.1);
+
     }
 
     @Override

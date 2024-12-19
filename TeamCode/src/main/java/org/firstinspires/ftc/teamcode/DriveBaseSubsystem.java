@@ -178,22 +178,22 @@ public class DriveBaseSubsystem {
         double turnLeftError = Math.abs((currentPose.h + 360) - goal.h);
         if (turnRightError > turnLeftError) {
             if (normalError < turnLeftError) {
-                rxValue = headingPID.getOutput((float) currentPose.h, (float) goal.h, packet, "heading");
+                rxValue = headingPID.getOutput(currentPose.h, goal.h);
             } else {
-                rxValue = -1 * Math.abs(headingPID.getOutput((float) goal.h, (float) (currentPose.h + 360), packet, "heading"));
+                rxValue = -1 * Math.abs(headingPID.getOutput(goal.h, (currentPose.h + 360)));
             }
         } else {
             if (normalError < turnRightError) {
-                rxValue = headingPID.getOutput((float) currentPose.h, (float) goal.h, packet, "heading");
+                rxValue = headingPID.getOutput(currentPose.h, goal.h);
             } else {
-                rxValue = Math.abs(headingPID.getOutput((float) currentPose.h, (float) goal.h, packet, "heading"));
+                rxValue = Math.abs(headingPID.getOutput(currentPose.h, goal.h));
             }
         }
 
         // Drive Mechanum
         driveMech(
-                -translationX.getOutput((float) -currentPose.y, (float) goal.x, packet, "transX"),
-                translationY.getOutput((float) -currentPose.x, (float) goal.y, packet, "transY"),
+                -translationX.getOutput(-currentPose.y, goal.x),
+                translationY.getOutput(-currentPose.x, goal.y),
                 -rxValue,
                 Math.toRadians(currentPose.h),
                 packet
@@ -202,7 +202,6 @@ public class DriveBaseSubsystem {
         // Send Telemetry
         telemetry.addData("Current Pose", "(" + -currentPose.x + ", " + currentPose.y + ", " + currentPose.h + ")");
         telemetry.addData("Goal Pose", "(" + goal.x + ", " + goal.y + ", " + goal.x + ")");
-        // driveMech(XY(currentPose.x, goal.x), XY(currentPose.y, goal.y), Rotation(currentPose.h, goal.h), Math.toRadians(currentPose.h), packet);
         packet.fieldOverlay().fillRect(currentPose.y, currentPose.x, 18,18);
         packet.put("x", currentPose.y);
         packet.put("y", currentPose.x);
@@ -225,7 +224,6 @@ public class DriveBaseSubsystem {
             y = ((goal.y-1) < -currentPose.x) && (-currentPose.x < (goal.y + 1));
             h = Math.abs(Math.abs(currentPose.h) - Math.abs(goal.h)) < 4;
         }
-//        boolean h = ((goal.x - 2) < -currentPose.h) && (-currentPose.h < (goal.h + 2));
         packet.put("xAcceptable", x);
         packet.put("yAcceptable", y);
         packet.put("hAcceptable", h);

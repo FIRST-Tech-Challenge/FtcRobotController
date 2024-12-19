@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -7,6 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.teamcode.ArmSubSystem;
+import org.firstinspires.ftc.teamcode.AutonomousHandler;
+import org.firstinspires.ftc.teamcode.DriveBaseSubsystem;
+import org.firstinspires.ftc.teamcode.SystemState;
+import org.firstinspires.ftc.teamcode.armPose;
+import org.firstinspires.ftc.teamcode.clawState;
+import org.firstinspires.ftc.teamcode.wristState;
 
 import java.util.HashMap;
 

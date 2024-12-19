@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.wristState;
 
 import java.util.HashMap;
 
+@Disabled
 @Autonomous(name="thirdAutoLegacy", group="Auto")
 public class thirdAutoLegacy extends OpMode {
     private AutonomousHandler autoHandler;
