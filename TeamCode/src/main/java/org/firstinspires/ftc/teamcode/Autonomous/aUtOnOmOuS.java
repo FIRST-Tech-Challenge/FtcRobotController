@@ -56,6 +56,9 @@ public class aUtOnOmOuS extends LinearOpMode {
 
             // Share the CPU.
             sleep(20);
+            input.move(50);
+            sleep(1000);
+            input.move(0);
         }
 
         visionPortal.close();
