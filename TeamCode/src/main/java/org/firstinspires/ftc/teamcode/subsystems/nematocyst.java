@@ -31,8 +31,9 @@ public class nematocyst {
     public double pP = 0;
     public double pI = 0;
     public double pD = 0;
-    public double pF = 0;
-    PIDFController pivotPID;
+    public double pCos = 0.4;
+    public double pExt = 3e-4;
+//    PIDFController pivotPID;
 //    ElapsedTime pidTimer;
     public static double maxSlidePower = 0;
     private boolean manualMode = true;
@@ -70,7 +71,9 @@ public class nematocyst {
         targSlideHeight = 0;
         targPivotPos = 0;
         pivotTimer = new ElapsedTime();
-        pivotPID = new PIDController(pP, pI, pD);
+//        pivotPID = new PIDController(pP, pI, pD);
+        grab();
+        wristOut();
     }
 
     public void loop() {
@@ -110,9 +113,11 @@ public class nematocyst {
                 setSlideHeight(43.0 - 5);
             }
             if (opMode.gamepad1.left_bumper) {
-                targPivotPos = -5;
+                targPivotPos = -75;
             } else if (opMode.gamepad1.right_bumper) {
-                targPivotPos = -160;
+                targPivotPos = -195;
+            } else if (opMode.gamepad1.right_trigger > 0.5) {
+                targPivotPos = -5;
             }
             if (opMode.gamepad1.dpad_up) {
                 wristOut();
@@ -135,12 +140,12 @@ public class nematocyst {
         pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
         pivot.setPower(pivotPower); // use updatdePID to fix this
     }
-    public void updatePID(double aP, double aI, double aD, double aF) {
+    public void updatePID(double aP, double aI, double aD, double aCos, double aExt) {
         pP = aP;
         pI = aI;
         pD = aD;
-        pF = aF;
-//        pivotPID.setPIDF(aP, aI, aD);
+        pCos = aCos;
+        pExt = aExt;
     }
     public void setSlideHeight(double inches) {
         targSlideHeight = inches;
@@ -155,9 +160,9 @@ public class nematocyst {
     public void manualUp() { targPivotPos++;}
     public void manualDown() { targPivotPos--;}
     public void grab() { claw.setPosition(0); }
-    public void release() {claw.setPosition(0.012);}
+    public void release() {claw.setPosition(0.12);}
     public void wristOut() {wrist.setPosition(0);}
-    public void wristIn() {wrist.setPosition(0.774);}
+    public void wristIn() {wrist.setPosition(.79);}
 
 
 
@@ -201,8 +206,8 @@ public class nematocyst {
         double derivative = ((error - lastError)/pivotTimer.seconds());
         lastError = error;
         // PID output
-        double ff = -Math.cos(Math.toRadians(90-(current * degPerTick)));
-        double output = (error * pP) + (integral * pI) + (derivative * pD) + (pF * ff);
+        double ff = ((pExt * slideMotor.getCurrentPosition())-pCos*Math.cos(Math.toRadians(90-(current * degPerTick))));
+        double output = (error * pP) + (integral * pI) + (derivative * pD) + (ff);
         pivotTimer.reset();
         // Limit the output to motor range [-1, 1]
         output = Math.max(-1, Math.min(output, 1));
