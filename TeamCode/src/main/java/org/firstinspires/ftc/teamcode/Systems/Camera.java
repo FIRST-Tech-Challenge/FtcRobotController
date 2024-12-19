@@ -142,13 +142,14 @@ public class Camera extends LinearOpMode {
      */
     private void centerAprilTag() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        AprilTagDetection detection = currentDetections.get(0);
-
-        double yaw = detection.ftcPose.yaw;
-        if (yaw > -0.5 && yaw < 0.5) {
-            do {
-                input.spin(-1*yaw);
-            } while (yaw > -0.5 && yaw < 0.5);
+        if(!currentDetections.isEmpty()) {
+            AprilTagDetection detection = currentDetections.get(0);
+            double yaw = detection.ftcPose.yaw;
+            if (yaw > -0.5 && yaw < 0.5) {
+                do {
+                    input.Spin(-1*yaw);
+                } while (yaw > -0.5 && yaw < 0.5);
+            }
         }
     }
     private void telemetryAprilTag() {
