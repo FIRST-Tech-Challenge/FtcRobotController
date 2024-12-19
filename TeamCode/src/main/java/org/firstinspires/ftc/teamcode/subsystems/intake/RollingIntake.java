@@ -66,7 +66,7 @@ public class RollingIntake extends SonicSubsystemBase {
             telemetry.addData("IsDelivery", this.isInDeliveryPosition);
         }
 
-        if(d < 500) {
+        if(d < 50) {
             if (feedback != null) {
                 feedback.TurnLedGreen();
             }
