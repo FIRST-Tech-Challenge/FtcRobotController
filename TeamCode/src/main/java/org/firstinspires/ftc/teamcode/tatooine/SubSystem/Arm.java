@@ -290,6 +290,10 @@ public class Arm {
         return new SequentialAction(setAngle(60), new SleepAction(3), setExtension(0), new SleepAction(3), setAngle(45));
     }
 
+    public Action scoreSampleAction() {
+        return new SequentialAction(setAngle(90), new SleepAction(3), setExtension(0));
+    }
+
     public Action closeAction() {
         return new SequentialAction(setExtension(0), setAngle(-15));
     }

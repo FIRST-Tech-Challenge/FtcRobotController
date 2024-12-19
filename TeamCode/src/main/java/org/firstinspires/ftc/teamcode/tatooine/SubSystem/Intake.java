@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 
+import java.util.Set;
+
 public class Intake {
 
     //add the variables
@@ -170,10 +172,14 @@ public class Intake {
 
 
     public class SetPowerAction implements Action {
+        ElapsedTime timer = new ElapsedTime();
+        public SetPowerAction(){
+            timer.reset();
+        }
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             intake.setPower(power);
-            return false;
+            return timer.seconds()<3;
         }
     }
 
