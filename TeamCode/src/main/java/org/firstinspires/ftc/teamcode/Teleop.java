@@ -80,6 +80,8 @@ public abstract class Teleop extends LinearOpMode {
     boolean clipStarted          = false; // Reminder to shut off the collector
     boolean enableOdometry       = true; // Process/report odometry updates?
 
+    double    clawServoPosAdj = 0.500;
+
     double   curX, curY, curAngle;
     double   minX=0.0, maxX=0.0, minY=0.0, maxY=0.0;
 
@@ -221,7 +223,8 @@ public abstract class Teleop extends LinearOpMode {
 //          processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
-            processCollectorControls();
+            //processCollectorControls();
+            processClaw();
             processLevel2Ascent();
             performEveryLoopTeleop();
 
@@ -622,7 +625,7 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void ProcessViperLiftControls() {
         boolean safeToManuallyRetract = (robot.viperMotorPos > Hardware2025Bot.VIPER_EXTEND_ZERO);
-        boolean safeToManuallyExtend  = (robot.viperMotorPos < Hardware2025Bot.VIPER_EXTEND_FULL1);
+        boolean safeToManuallyExtend  = (robot.viperMotorPos < Hardware2025Bot.VIPER_EXTEND_FULL2);
         // Capture user inputs ONCE, in case they change during processing of this code
         // or we want to scale them down
         double  gamepad2_left_trigger  = gamepad2.left_trigger  * 1.00;
@@ -658,7 +661,7 @@ public abstract class Teleop extends LinearOpMode {
             if( !liftTweaked) {
                 terminateAutoArmMovements();
                 robot.abortViperSlideExtension();
-                robot.geckoServo.setPower( -0.75 ); // collector on (firm grip)
+                //robot.geckoServo.setPower( -0.75 ); // collector on (firm grip)
             }
             // Retract viper arm to hook a specimen
             robot.viperMotor.setPower( -1.0  );
@@ -668,7 +671,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for ON-to-OFF toggle of the gamepad2 TRIANGLE
         else if( !gamepad2_triangle_now && gamepad2_triangle_last )
         {
-            robot.geckoServo.setPower( 0.0 ); // collector off (we're clipped)
+            //robot.geckoServo.setPower( 0.0 ); // collector off (we're clipped)
             clipStarted = false;
         }
         //===================================================================
@@ -733,10 +736,10 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
         {
             if( geckoServoEjecting ) {
-               robot.geckoServo.setPower( 0.0 );  // toggle eject OFF
+               //robot.geckoServo.setPower( 0.0 );  // toggle eject OFF
                geckoServoEjecting = false;
             } else /* not ejecting */ {
-               robot.geckoServo.setPower( 1.0 );  // toggle eject ON
+               //robot.geckoServo.setPower( 1.0 );  // toggle eject ON
                geckoServoEjecting = true;
             }
             geckoServoCollecting = false;      // (we can't be doing this)
@@ -744,16 +747,49 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
             if( geckoServoCollecting ) {
-               robot.geckoServo.setPower( 0.0 );  // toggle collect OFF
+               //robot.geckoServo.setPower( 0.0 );  // toggle collect OFF
                geckoServoCollecting = false;
             } else /* not collecting */ {
-               robot.geckoServo.setPower( -1.0 ); // toggle collect ON
+               //robot.geckoServo.setPower( -1.0 ); // toggle collect ON
                geckoServoCollecting = true;
             }
             geckoServoEjecting = false;           // (we can't be doing this)
         } // r_bumper
 
     }  // processCollectorControls
+
+    void processClaw() {
+
+        // Left Bumper = OPEN claw
+        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last) {
+            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
+        }
+
+        // Right Bumper = CLOSE claw
+        if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last) {
+            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+        }
+
+        // Manually tweak claw servo position
+        if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last ) {
+            clawServoPosAdj += 0.010;
+            robot.clawServo.setPosition( clawServoPosAdj );
+        }
+        if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last ) {
+            clawServoPosAdj += 0.001;
+            robot.clawServo.setPosition( clawServoPosAdj );
+        }
+
+        if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last ) {
+            clawServoPosAdj -= 0.001;
+            robot.clawServo.setPosition( clawServoPosAdj );
+        }
+        if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last ) {
+            clawServoPosAdj -= 0.010;
+            robot.clawServo.setPosition( clawServoPosAdj );
+        }
+
+    } // processClaw
 
     /*---------------------------------------------------------------------------------*/
     void processLevel2Ascent() {
@@ -797,7 +833,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_READY :
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
-                    robot.geckoServo.setPower( 0.0 );  // we accidentally turn this on
+                    //robot.geckoServo.setPower( 0.0 );  // we accidentally turn this on
                     //=== METHOD 1 ===
                     robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, robot.VIPER_RAISE_POWER, robot.VIPER_RAISE_POWER );
                     //=== METHOD 2 ===
@@ -1048,7 +1084,7 @@ public abstract class Teleop extends LinearOpMode {
             terminateAutoArmMovements();
             robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG);
             scoreArmSpecState = Score_Arm_Spec_Steps.ROTATING_ARM;
-            robot.geckoServo.setPower(-0.3);
+            //robot.geckoServo.setPower(-0.3);
         }
     }
     public void processScoreArmSpec() {
@@ -1073,7 +1109,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case POSITION_INTAKE:
                 if(!robot.viperMotorBusy && !robot.wormTiltMotorBusy && scoreSpecTimer.milliseconds() >= 500) {
-                    robot.geckoServo.setPower(0.0);
+                    //robot.geckoServo.setPower(0.0);
                     scoreArmSpecState = Score_Arm_Spec_Steps.IDLE;
                 }
                 break;

@@ -66,10 +66,10 @@ public class AutonomousRightRed extends AutonomousBase {
             // Do we need to preload a specimen?
             if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
                 if (geckoServoCollecting) {
-                    robot.geckoServo.setPower(0.00);  // toggle collect OFF
+                    //robot.geckoServo.setPower(0.00);  // toggle collect OFF
                     geckoServoCollecting = false;
                 } else {
-                    robot.geckoServo.setPower(-0.50); // toggle collect ON
+                    //robot.geckoServo.setPower(-0.50); // toggle collect ON
                     geckoServoCollecting = true;
                 }
             }
@@ -192,7 +192,8 @@ public class AutonomousRightRed extends AutonomousBase {
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
-    private void scoreSpecimenPreload() {
+    //Geckowheel
+    private void scoreSpecimenPreload1() {
         // Drive forward to submersible
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "Move to submersible");
@@ -238,7 +239,7 @@ public class AutonomousRightRed extends AutonomousBase {
 
         // Rotate lift down to get specimen close to bar
         if( opModeIsActive() ) {
-            robot.geckoServo.setPower(-0.50); // hold it while we clip
+            //robot.geckoServo.setPower(-0.50); // hold it while we clip
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO2_DEG,0.80 );
             do {
                 if( !opModeIsActive() ) break;
@@ -263,9 +264,113 @@ public class AutonomousRightRed extends AutonomousBase {
 
         // Release the specimen once its clipped
         if( opModeIsActive() ) {
-            robot.geckoServo.setPower(0.25); // release
+            //robot.geckoServo.setPower(0.25); // release
             sleep( 750 );
-            robot.geckoServo.setPower(0.0); // stop
+            //robot.geckoServo.setPower(0.0); // stop
+        } // opModeIsActive
+
+        // Retract the arm for parking
+        if( opModeIsActive() ) {
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_ZERO);
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 50 );
+                // update all our status
+                performEveryLoop();
+            } while( autoViperMotorMoving() );
+        } // opModeIsActive
+
+        // Store the collector
+        if( opModeIsActive() ) {
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
+        } // opModeIsActive
+
+        // Lower the arm for parking
+        if( opModeIsActive() ) {
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ZERO_DEG);
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 50 );
+                // update all our status
+                performEveryLoop();
+            } while( autoTiltMotorMoving() );
+            // Back up from submersible
+            pos_y -= 2.0;  pos_x += 16.2;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+        } // opModeIsActive
+
+    } // scoreSpecimenPreload
+
+    /*--------------------------------------------------------------------------------------------*/
+    //claw
+    private void scoreSpecimenPreload() {
+        // Drive forward to submersible
+        if( opModeIsActive() ) {
+            telemetry.addData("Motion", "Move to submersible");
+            telemetry.update();
+            // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
+            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG);
+            autoViperMotorMoveToTarget( robot.VIPER_EXTEND_AUTO1);
+            robot.elbowServo.setPosition(robot.ELBOW_SERVO_BAR1);
+            robot.wristServo.setPosition(robot.WRIST_SERVO_BAR1);
+            driveToPosition( 28.90, -7.20, 0.00, DRIVE_SPEED_80, TURN_SPEED_20, DRIVE_TO );
+            robot.driveTrainMotorsZero();
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 150 );
+                // update all our status
+                performEveryLoop();
+            } while( autoTiltMotorMoving() || autoViperMotorMoving());
+        } // opModeIsActive
+
+        if( opModeIsActive() ) {
+            pos_y += 12.0;  pos_angle = 45.0;
+            driveToPosition( pos_y, pos_x, pos_angle, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO );
+            robot.driveTrainMotorsZero();
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 50 );
+                // update all our status
+                performEveryLoop();
+            } while( autoViperMotorMoving() );
+        } // opModeIsActive
+
+        // Rotate lift down to get specimen close to bar
+        if( opModeIsActive() ) {
+            //robot.geckoServo.setPower(-0.50); // hold it while we clip
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO2_DEG,0.80 );
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 50 );
+                // update all our status
+                performEveryLoop();
+            } while( autoTiltMotorMoving() );
+        } // opModeIsActive
+
+        // Retract lift to clip the specimen on the bar
+        if( opModeIsActive() ) {
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO2);
+            do {
+                if( !opModeIsActive() ) break;
+                // wait for lift/tilt to finish...
+                sleep( 50 );
+                // update all our status
+                performEveryLoop();
+            } while( autoViperMotorMoving() );
+        } // opModeIsActive
+
+        // Release the specimen once its clipped
+        if( opModeIsActive() ) {
+            //robot.geckoServo.setPower(0.25); // release
+            sleep( 750 );
+            //robot.geckoServo.setPower(0.0); // stop
         } // opModeIsActive
 
         // Retract the arm for parking

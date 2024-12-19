@@ -66,10 +66,10 @@ public class AutonomousLeftBlue extends AutonomousBase {
             // Do we need to preload a specimen?
             if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
                 if (geckoServoCollecting) {
-                    robot.geckoServo.setPower(0.00);  // toggle collect OFF
+                    //robot.geckoServo.setPower(0.00);  // toggle collect OFF
                     geckoServoCollecting = false;
                 } else {
-                    robot.geckoServo.setPower(-0.50); // toggle collect ON
+                    //robot.geckoServo.setPower(-0.50); // toggle collect ON
                     geckoServoCollecting = true;
                 }
             }
@@ -221,7 +221,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
         // Rotate lift down to get specimen close to bar
         if( opModeIsActive() ) {
-            robot.geckoServo.setPower(-0.50); // hold it while we clip
+            //robot.geckoServo.setPower(-0.50); // hold it while we clip
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO2_DEG,0.80 );
             do {
                 if( !opModeIsActive() ) break;
@@ -246,9 +246,9 @@ public class AutonomousLeftBlue extends AutonomousBase {
 
         // Release the specimen once its clipped
         if( opModeIsActive() ) {
-            robot.geckoServo.setPower(0.25); // release
+            //robot.geckoServo.setPower(0.25); // release
             sleep( 750 );
-            robot.geckoServo.setPower(0.0); // stop
+            //robot.geckoServo.setPower(0.0); // stop
         } // opModeIsActive
 
         //Prepare arm for what comes next (samples/parking)
@@ -364,7 +364,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
             // update all our status
             performEveryLoop();
         } while( autoTiltMotorMoving() );
-        robot.geckoServo.setPower( -1.0 );
+        //robot.geckoServo.setPower( -1.0 );
         autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT, 0.5);
         do {
             if( !opModeIsActive() ) break;
@@ -413,12 +413,12 @@ public class AutonomousLeftBlue extends AutonomousBase {
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_SAFE);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_SAFE);
         sleep(250);
-        robot.geckoServo.setPower( 1.0 );
+        //robot.geckoServo.setPower( 1.0 );
         sleep(500);
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
         sleep(100);
-        robot.geckoServo.setPower( 0.0 );
+        //robot.geckoServo.setPower( 0.0 );
         autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG, 0.80 );
         autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_AUTO_READY);
     } // scoreSample

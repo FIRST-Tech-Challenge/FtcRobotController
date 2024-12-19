@@ -26,8 +26,8 @@ public class TeleopServoTest extends LinearOpMode {
     boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
     int     selectedServo = 0;  // 0=push, 1=wrist, 2=gecko
-    double  elbowPos, wristPos;
-    boolean geckoOn = false;
+    double  elbowPos, wristPos, clawPos;
+    //boolean geckoOn = false;
     double  stepSize = 0.01;
     long    nanoTimeCurr=0, nanoTimePrev=0;
     double  elapsedTime, elapsedHz;
@@ -48,7 +48,8 @@ public class TeleopServoTest extends LinearOpMode {
         // Start each value at the initialization position
         elbowPos = robot.ELBOW_SERVO_INIT;
         wristPos = robot.WRIST_SERVO_INIT;
-        geckoOn = false;
+        clawPos  = robot.CLAW_SERVO_INIT;
+        //geckoOn = false;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -81,8 +82,10 @@ public class TeleopServoTest extends LinearOpMode {
                     telemetry.addData("Wrist Servo Angle", "%.1f",robot.getWristServoAngle());
                     break;
                 case 2 :
-                    telemetry.addData("SELECTED:", "IntakeServo" );
-                    telemetry.addData("Intake Servo power", "%.1f", robot.geckoServo.getPower() );
+//                  telemetry.addData("SELECTED:", "IntakeServo" );
+//                  telemetry.addData("Intake Servo power", "%.1f", robot.geckoServo.getPower() );
+                    telemetry.addData("SELECTED:", "ClawServo" );
+                    telemetry.addData("Claw Servo Position", "%.1f", robot.clawServo.getPosition());
                     break;
                 default :
                     selectedServo = 0;
@@ -113,6 +116,11 @@ public class TeleopServoTest extends LinearOpMode {
                         robot.wristServo.setPosition(wristPos);
                         break;
                     case 2 :
+                        clawPos -= stepSize;
+                        if( clawPos < 0.0 ) clawPos = 0.0;
+                        if( clawPos > 1.0 ) clawPos = 1.0;
+                        robot.clawServo.setPosition(clawPos);
+/*
                         if(geckoOn){
                             robot.geckoServo.setPower(0.0);
                             geckoOn = false;
@@ -121,6 +129,7 @@ public class TeleopServoTest extends LinearOpMode {
                             robot.geckoServo.setPower(-1.0);
                             geckoOn = true;
                         }
+*/
                         break;
                     default :
                         break;
@@ -144,6 +153,11 @@ public class TeleopServoTest extends LinearOpMode {
                         robot.wristServo.setPosition(wristPos);
                         break;
                     case 2 :
+                        clawPos += stepSize;
+                        if( clawPos < 0.0 ) clawPos = 0.0;
+                        if( clawPos > 1.0 ) clawPos = 1.0;
+                        robot.clawServo.setPosition(clawPos);
+/*
                         if(geckoOn){
                             robot.geckoServo.setPower(0.0);
                             geckoOn = false;
@@ -152,6 +166,7 @@ public class TeleopServoTest extends LinearOpMode {
                             robot.geckoServo.setPower(1.0);
                             geckoOn = true;
                         }
+*/
                         break;
                     default :
                         break;
