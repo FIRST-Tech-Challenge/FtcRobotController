@@ -33,7 +33,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets arm to specimen place position
                 new SpecimenPlacePos(),
                 //sets the slides to low
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
 
                 //new Pause(1),
                 //max speed = 1
