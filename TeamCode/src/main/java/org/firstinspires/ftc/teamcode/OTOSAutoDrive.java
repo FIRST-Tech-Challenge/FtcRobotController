@@ -61,7 +61,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/18/2024, 2:01 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "12/18/2024, 4:16 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -79,48 +79,50 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(200);
 
         // Second Sample ///////////////////////////////////////////////////////////////
+        RobotLog.vv("Rockin'", "Get Sample 2");
         driveToLoc(15, 12, -10, 4);
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(26, 1, -25, 1);
-        driveToLoc(27, 6, -25, 1);  // Move forward to get block
+        driveToLoc(24, 0, -25, 1);
+        driveToLoc(25, 4, -25, 1);  // Move forward to get block
         sleep(400);
         setClaw(CLAW_MIN);                                          // Grab second block
-        //sleep(200);
+        sleep(200);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 500) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(10, 15, 45, 1.5);  // Go to basket
+        driveToLoc(10, 11, 45, 1.5);  // Go to basket
         sleep(500);
         setClaw(CLAW_MAX);                                          // Drop second block
 
         // Third Sample ///////////////////////////////////////////////////////////////
+        RobotLog.vv("Rockin'", "Get Sample 3");
         driveToLoc(16, 10, -10, 4);
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(26, 8, -20, 1);
-        driveToLoc(27, 12, -20, 1);  // Move forward to get block
+        driveToLoc(25, 7, -20, 1);
+        driveToLoc(26, 11, -20, 1);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab third block
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 700) { sleep(10); }
         setViper(VIPER_MAX);
-        driveToLoc(9, 10, 45, 1.5);  // Go to basket
+        driveToLoc(10, 13, 45, 1.5);  // Go to basket
         sleep(100);
         setClaw(CLAW_MAX);                                          // Drop third block
         sleep(300);
 
         // Fourth Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(26, 7, -10, 1);
+        driveToLoc(23, 7, -20, 2);
         setViper(VIPER_GROUND);
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(27, 13, -20, 1);  // Move forward to get block
+        driveToLoc(23, 17, -20, 1);  // Move forward to get block
         setClaw(CLAW_MIN);                                          // Grab fourth block
-        driveToLoc(24, 12, -10);
+        driveToLoc(24, 12, -20);
         setVertical(VERTICAL_MAX, 1000);
         while(vertical.getCurrentPosition() < 800) { sleep(10); }
         setViper(VIPER_MAX);
@@ -128,13 +130,6 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(200);
         setClaw(CLAW_MAX);                                          // Drop fourth block
 
-        // temp
-        driveToLoc(15, 0, 45);
-        setViper(VIPER_MIN);
-        sleep(700);
-        setVertical(VERTICAL_MIN);
-        sleep(2000);
-/*
         // Park ///////////////////////////////////////////////////////////////
         driveToLoc(25, 5, 0, 3);
         setViper(VIPER_MIN);
@@ -151,8 +146,6 @@ public class OTOSAutoDrive extends LinearOpMode {
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
-
-         */
     }
 
     public void setAscentStick(double target) {
@@ -301,9 +294,9 @@ public class OTOSAutoDrive extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            //RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
-                    //"leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
-                    //xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+            RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
+                    "leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
+                    xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
             getPosition();
             xDistance = xTarget - xLoc;
@@ -341,12 +334,14 @@ public class OTOSAutoDrive extends LinearOpMode {
         vertical = hardwareMap.get(DcMotor.class, "vertical");
         vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vertical.setTargetPosition(0);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         viperSlide = hardwareMap.get(DcMotor.class, "viper_slide");
         viperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         viperSlide.setDirection(DcMotor.Direction.REVERSE);
         viperSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperSlide.setTargetPosition(0);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
