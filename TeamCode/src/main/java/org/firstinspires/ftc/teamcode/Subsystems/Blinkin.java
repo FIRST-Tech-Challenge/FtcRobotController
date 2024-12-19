@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.BlinkinColour;
 
@@ -15,8 +13,9 @@ public class Blinkin extends SubsystemBase {
 
     // Instance of the RevBlinkinLedDriver
     private RevBlinkinLedDriver blinkinLedDriver;
-    // Current pattern of the Blinkin LED driver
-    private RevBlinkinLedDriver.BlinkinPattern pattern;
+
+    // blink counter
+    private int counter;
 
     /**
      * Constructor for the Blinkin class.
@@ -25,11 +24,8 @@ public class Blinkin extends SubsystemBase {
     public Blinkin() {
         // Creates a Blinkin LED driver using the hardware map
         blinkinLedDriver = RobotContainer.ActiveOpMode.hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        // Sets the initial pattern to RED_ALLIANCE
-        pattern = BlinkinColour.RED_ALLIANCE.getPattern();
-        blinkinLedDriver.setPattern(pattern);
 
-
+        counter=0;
     }
 
     /**
@@ -38,8 +34,16 @@ public class Blinkin extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        // blink counter
+        counter +=1;
+        if (counter>15)
+            counter=0;
+        boolean blink = (counter>8);
+
         // set blinkin for team color
-        if (RobotContainer.isRedAlliance)
+        if (RobotContainer.operatingMode.getSelectedMode() && blink)
+            setPattern(BlinkinColour.NO_INFORMATION.getPattern());
+        else if (RobotContainer.isRedAlliance)
             setPattern(BlinkinColour.RED_ALLIANCE.getPattern());
         else
             setPattern(BlinkinColour.BLUE_ALLIANCE.getPattern());
