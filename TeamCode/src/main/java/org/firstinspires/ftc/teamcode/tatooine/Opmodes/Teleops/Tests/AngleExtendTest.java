@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops;
+package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
-@TeleOp
+@TeleOp(name = "AngleExtendTest",group = "Tests")
 public class AngleExtendTest extends LinearOpMode {
 
     @Override

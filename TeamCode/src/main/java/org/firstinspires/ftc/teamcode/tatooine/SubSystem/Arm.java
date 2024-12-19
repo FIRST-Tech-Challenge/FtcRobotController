@@ -7,13 +7,10 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
@@ -27,48 +24,23 @@ public class Arm {
     private final double ANGLE_TOLERANCE = 2;//deg
     private final double EXTEND_TOLERANCE = 0.1;
     private final double EXTEND_CPR = 0;
-    private final double ANGLE_CPR = 1425.1 * 3 ;
+    private final double ANGLE_CPR = 1425.1 * 3;
     private final double SPOOL_DIM = 0;//mm
     private final double AMP_LIMIT = 0;
-    private final double angle = 0;
-    private final double length = 0;
     private final double angleOffSet = -26;
-    private PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
-    private DcMotorEx angleMotor;
-    private  Servo extendServoLeft;
-
-    private Servo extendServoRight;
-
-    public Telemetry telemetry;
-    private TouchSensor touchSensor = null;
-
-    private AnalogInput analogLeft = null;
-
-    private AnalogInput analogRight = null;
-
     private final boolean IS_DEBUG;
-
-    private double positionLeft;
-
-    private double positionRight;
-
-    private final double POS_LEFT_OFFSET = 269.7;
-    private final double POS_RIGHT_OFFSET = 98.4;
-    private final double OPEN_POSE_LEFT = 154.5;
-
-    private final double OPEN_POSE_RIGHT = 166.5;
-
-    private int level = 0;
-    private ElapsedTime angleTimer = new ElapsedTime();
-    private ElapsedTime extendTimer = new ElapsedTime();
+    private final double KF = 0.01;
+    public Telemetry telemetry;
+    private PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
+    private PIDFController extendPID = new PIDFController(0.03, 0, 0, 0);
+    private DcMotorEx angleLeft;
+    private DcMotorEx angleRight;
+    private DcMotorEx extendLeft;
+    private DcMotorEx extendRight;
+    private TouchSensor touchSensor = null;
     private double angleTimeout = 0;
     private double extendTimeout = 0;
-    private final double KF = 0.01;
     private double F = 0;
-
-    //TODO put value here
-    private double openTimeWithPID = 8000;
-
 
 
     //arm constructor
@@ -80,64 +52,88 @@ public class Arm {
         if (IS_DEBUG) {
             opMode.telemetry.addData("second constructor", true);
         }
-        analogLeft = opMode.hardwareMap.get(AnalogInput.class ,"analogLeft");
-        analogRight = opMode.hardwareMap.get(AnalogInput.class ,"analogRight");
 
-        angleMotor = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AngleMotor");
-        extendServoLeft = opMode.hardwareMap.get(Servo.class, "ExtendServoLeft");
-        extendServoRight = opMode.hardwareMap.get(Servo.class, "ExtendServoRight");
-        //touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TouchSensor");
+        angleLeft = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AL");
+        angleRight = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AR");
+        extendLeft = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "EL");
+        extendRight = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "ER");
+        touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TS");
 
-        anglePID.setTolerance(ANGLE_TOLERANCE);
-        opMode.telemetry.update();
         init();
 
 
     }
 
-//    public Arm(OpMode opMode, boolean isDebug) {
-//        opMode.telemetry.addData("first constructor",true);
-//        new Arm(opMode,false);
-//    }
+    public Arm(OpMode opMode) {
+        this(opMode, false);
+    }
+
 
     //init function
     public void init() {
         //TODO change directions if needed
-        //extendServoRight.setDirection(Servo.Direction.REVERSE);
-        //extendServoLeft.setDirection(Servo.Direction.REVERSE);
-        extendServoLeft.setPosition(0.1);
-        extendServoRight.setPosition(0.1);
-        angleMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        angleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        angleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        angleLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        angleRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        extendLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        extendRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        anglePID.setTolerance(ANGLE_TOLERANCE);
+        extendPID.setTolerance(EXTEND_TOLERANCE);
+
         resetEncoders();
-        if (IS_DEBUG){
-            telemetry.addData("position left", getPositionLeft());
-            telemetry.addData("position left", getPositionRight());
-            telemetry.addData("Motor (A) Direction", angleMotor.getDirection());
+        if (IS_DEBUG) {
+            telemetry.addData("Motor (AL) Direction", angleLeft.getDirection());
+            telemetry.addData("Motor (AR) Direction", angleRight.getDirection());
+            telemetry.addData("Motor (EL) Direction", extendLeft.getDirection());
+            telemetry.addData("Motor (ER) Direction", extendRight.getDirection());
             telemetry.addData("resetEncoderInit", true);
         }
     }
 
     // resets all encoders
     public void resetEncoders() {
-        if (IS_DEBUG){
-            telemetry.addData("angleEncoderReset", true);
+        if (IS_DEBUG) {
+            telemetry.addData("resetEncoders", true);
         }
         resetAngleEncoder();
+        resetExtendEncoders();
     }
 
     //resets the angle encoder
     public void resetAngleEncoder() {
-        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (IS_DEBUG) {
+            telemetry.addData("angleEncoderReset", true);
+        }
+        angleLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void resetExtendEncoders() {
+        if (IS_DEBUG) {
+            telemetry.addData("extendEncoderReset", true);
+        }
+        extendLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     //returns the angle(transforms ticks to degrees)
     public double getAngle() {
-        if (IS_DEBUG){
-            telemetry.addData("arm angle", MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()) + angleOffSet);
+        if (IS_DEBUG) {
+            telemetry.addData("arm angle", (((MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + angleOffSet) + MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + angleOffSet)) / 2);
         }
-        return MathUtil.convertTicksToDegries(ANGLE_CPR, angleMotor.getCurrentPosition()) + angleOffSet;
+        return (((MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + angleOffSet) + MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + angleOffSet)) / 2;
+    }
+
+    public double getExtend() {
+        if (IS_DEBUG) {
+            telemetry.addData("arm extend", true);
+        }
+        return (MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendLeft.getCurrentPosition()) + MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendRight.getCurrentPosition())) / 2;
     }
 
     public Telemetry getTelemetry() {
@@ -160,20 +156,12 @@ public class Arm {
         this.anglePID = anglePID;
     }
 
-    public DcMotorEx getAngleMotor() {
-        return angleMotor;
+    public DcMotorEx getAngleLeft() {
+        return angleLeft;
     }
 
-    public void setAngleMotor(DcMotorEx angleMotor) {
-        this.angleMotor = angleMotor;
-    }
-
-    public Servo getExtendServoLeft() {
-        return extendServoLeft;
-    }
-
-    public void setExtendServoLeft(Servo extendServoLeft) {
-        this.extendServoLeft = extendServoLeft;
+    public void setAngleLeft(DcMotorEx angleLeft) {
+        this.angleLeft = angleLeft;
     }
 
     public double getANGLE_TOLERANCE() {
@@ -209,60 +197,6 @@ public class Arm {
         return EXTEND_CPR;
     }
 
-    public double getLength() {
-        return length;
-    }
-
-    public Servo getExtendServoRight() {
-        return extendServoRight;
-    }
-
-    public void setExtendServoRight(Servo extendServoRight) {
-        this.extendServoRight = extendServoRight;
-    }
-
-    public AnalogInput getAnalogLeft() {
-        return analogLeft;
-    }
-
-    public void setAnalogLeft(AnalogInput analogLeft) {
-        this.analogLeft = analogLeft;
-    }
-
-    public AnalogInput getAnalogRight() {
-        return analogRight;
-    }
-
-    public double getPositionRight() {
-        if (IS_DEBUG){
-            telemetry.addData("PositionLeft",(MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET)/ (OPEN_POSE_RIGHT));
-        }
-        return (MathUtil.voltageToDegrees(analogRight.getVoltage())-POS_RIGHT_OFFSET)/ (OPEN_POSE_RIGHT);
-    }
-
-    public void setPositionRight(double positionRight) {
-        this.positionRight = positionRight;
-    }
-
-    public double getPositionLeft() {
-        if (IS_DEBUG){
-            telemetry.addData("PositionLeft",(MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET)/ (OPEN_POSE_LEFT));
-        }
-        return (MathUtil.voltageToDegrees(analogLeft.getVoltage())-POS_LEFT_OFFSET)/ (OPEN_POSE_LEFT);
-    }
-
-    public void setPositionLeft(double positionLeft) {
-        this.positionLeft = positionLeft;
-    }
-
-    public double getAngleOffSet() {
-        return angleOffSet;
-    }
-
-    public void setAnalogRight(AnalogInput analogRight) {
-        this.analogRight = analogRight;
-    }
-
     public double getF() {
         return F;
     }
@@ -291,59 +225,52 @@ public class Arm {
         this.angleTimeout = angleTimeout;
     }
 
-    public ElapsedTime getExtendTimer() {
-        return extendTimer;
+    public double getAngleOffSet() {
+        return angleOffSet;
     }
 
-    public void setExtendTimer(ElapsedTime extendTimer) {
-        this.extendTimer = extendTimer;
+    public PIDFController getExtendPID() {
+        return extendPID;
     }
 
-    public ElapsedTime getAngleTimer() {
-        return angleTimer;
+    public void setExtendPID(PIDFController extendPID) {
+        this.extendPID = extendPID;
     }
 
-    public void setAngleTimer(ElapsedTime angleTimer) {
-        this.angleTimer = angleTimer;
+    public DcMotorEx getAngleRight() {
+        return angleRight;
     }
 
-    public int getLevel() {
-        return level;
+    public void setAngleRight(DcMotorEx angleRight) {
+        this.angleRight = angleRight;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public DcMotorEx getExtendLeft() {
+        return extendLeft;
     }
 
-    public double getOPEN_POSE_RIGHT() {
-        return OPEN_POSE_RIGHT;
+    public void setExtendLeft(DcMotorEx extendLeft) {
+        this.extendLeft = extendLeft;
     }
 
-    public double getOPEN_POSE_LEFT() {
-        return OPEN_POSE_LEFT;
+    public DcMotorEx getExtendRight() {
+        return extendRight;
     }
 
-    public double getPOS_RIGHT_OFFSET() {
-        return POS_RIGHT_OFFSET;
+    public void setExtendRight(DcMotorEx extendRight) {
+        this.extendRight = extendRight;
     }
 
-    public double getPOS_LEFT_OFFSET() {
-        return POS_LEFT_OFFSET;
-    }
-
-
-
-    public double calculateF(){
-        if (IS_DEBUG){
-            telemetry.addData("F",Math.cos(Math.toRadians(getAngle()))* KF);
+    public double calculateF() {
+        if (IS_DEBUG) {
+            telemetry.addData("F", Math.cos(Math.toRadians(getAngle())) * KF);
         }
-        return Math.cos(Math.toRadians(getAngle()))* KF;
+        return Math.cos(Math.toRadians(getAngle())) * KF;
     }
 
     //an actions that sets the angle of the arm to the desired angle
     public Action setAngle(double angle) {
         MoveAngle moveAngle = new MoveAngle(angle);
-        anglePID.reset();
         if (IS_DEBUG) {
             telemetry.addData("the new ang ", angle);
         }
@@ -359,20 +286,21 @@ public class Arm {
         return move;
     }
 
-    public Action scoreAction (){
-    return new SequentialAction(setAngle(60),new SleepAction(3), setExtension(0.8),new SleepAction(3),setAngle(45));
+    public Action scoreSpecimenAction() {
+        return new SequentialAction(setAngle(60), new SleepAction(3), setExtension(0), new SleepAction(3), setAngle(45));
     }
 
-    public Action closeAction (){
-        return new SequentialAction(setExtension(0.1), setAngle(-15));
+    public Action closeAction() {
+        return new SequentialAction(setExtension(0), setAngle(-15));
     }
 
 
-    //Sets the Extension Servo position
     public class moveExtension implements Action {
         private double goal = 0;
-        public moveExtension(double goal){
+
+        public moveExtension(double goal) {
             this.goal = goal;
+            extendPID.reset();
         }
 
         public double getGoal() {
@@ -383,39 +311,27 @@ public class Arm {
             this.goal = goal;
         }
 
-
-
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            positionLeft = MathUtil.voltageToDegrees(analogLeft.getVoltage());
-            positionRight = MathUtil.voltageToDegrees(analogRight.getVoltage());
-            extendServoLeft.setPosition(goal);
-            extendServoRight.setPosition(goal);
+            extendLeft.setPower(extendPID.calculate(getExtend(), goal));
+            extendRight.setPower(extendPID.calculate(getExtend(), goal));
             if (IS_DEBUG) {
-                telemetry.addData("servo Left(E) Position", extendServoLeft.getPosition());
-                telemetry.addData("servo Right(E) Position", extendServoRight.getPosition());
-                telemetry.addData("posLeft",getPositionLeft());
-                telemetry.addData("posRight ",getPositionRight());
-                telemetry.addData("goal",goal);
+                telemetry.addData("tiemout", extendPID.getTimeout());
+                telemetry.addData("motor (EL) power", extendLeft.getPower());
+                telemetry.addData("motor (ER) power", extendRight.getPower());
             }
-            return !MathUtil.inTolerance(goal,getPositionRight(), EXTEND_TOLERANCE) && !MathUtil.inTolerance(goal,getPositionLeft(), EXTEND_TOLERANCE);
+            return !extendPID.atSetPoint();
         }
     }
+
     //Sets the angle motor power through PID and F
     public class MoveAngle implements Action {
 
         private double goal = 0;
 
-        private final double startAngle;
-
-        private double angleDifference = 0;
-        public MoveAngle(double goal)
-        {
+        public MoveAngle(double goal) {
             anglePID.reset();
-            telemetry.addData("did",true);
             this.goal = goal;
-            this.startAngle = getAngle();
         }
 
         public double getGoal() {
@@ -424,21 +340,6 @@ public class Arm {
 
         public void setGoal(double goal) {
             this.goal = goal;
-        }
-
-        public double getAngleDifference() {
-            if (IS_DEBUG){
-                telemetry.addData("AngleDifference", Math.abs(goal- getStartAngle()));
-            }
-            return Math.abs(goal- getStartAngle());
-        }
-
-        public void setAngleDifference(double angleDifference) {
-            this.angleDifference = angleDifference;
-        }
-
-        public double getStartAngle() {
-            return startAngle;
         }
 
         @Override
@@ -446,24 +347,24 @@ public class Arm {
             //        if (touchSensor.isPressed()) {
 //            resetAngleEncoder();
 ////        }
-            anglePID.setTimeout(getAngleDifference()*(openTimeWithPID/90));
             double pidPower = anglePID.calculate(getAngle(), goal);
-            if (pidPower<0){
+            if (pidPower < 0) {
                 F = 0;
-            }
-            else {
+            } else {
                 F = calculateF();
             }
-            angleMotor.setPower(pidPower+F);
+            angleLeft.setPower(pidPower + F);
+            angleRight.setPower(pidPower + F);
             if (IS_DEBUG) {
                 telemetry.addData("runtime", anglePID.getRunTime());
                 telemetry.addData("tiemout", anglePID.getTimeout());
-                telemetry.addData("startAngle", startAngle);
-                telemetry.addData("motor (A) power", angleMotor.getPower());
-                telemetry.addData("pidPower+",pidPower);
-                telemetry.addData("pidPower+F",pidPower+F);
+                telemetry.addData("motor (AR) power", angleRight.getPower());
+                telemetry.addData("motor (AL) power", angleLeft.getPower());
+                telemetry.addData("motor (AL) power", angleLeft.getPower());
+                telemetry.addData("pidPower+", pidPower);
+                telemetry.addData("pidPower+F", pidPower + F);
             }
-            return !anglePID.atSetPoint() && (F == 0 || pidPower<0);
+            return !anglePID.atSetPoint() && (F == 0 || pidPower < 0);
         }
     }
 }

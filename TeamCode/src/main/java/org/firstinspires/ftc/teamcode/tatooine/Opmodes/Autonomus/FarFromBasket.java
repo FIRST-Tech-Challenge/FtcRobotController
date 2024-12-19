@@ -36,7 +36,7 @@ public class FarFromBasket extends LinearOpMode {
         wrist = new Wrist(this, false);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
                 .splineTo(new Vector2d(7.79, -32.70), Math.toRadians(90))
-                .stopAndAdd(new SequentialAction(arm.scoreAction(),
+                .stopAndAdd(new SequentialAction(arm.scoreSpecimenAction(),
                         new InstantAction(()-> wrist.changeState()),
                         intake.outtake(), new SleepAction(2),
                         arm.closeAction()))

@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops;
+package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp
+@TeleOp(name = "EncoderTests",group = "Tests")
 public class Encoder_t extends LinearOpMode {
-
     DcMotor encoder1;
 
     @Override public void runOpMode(){

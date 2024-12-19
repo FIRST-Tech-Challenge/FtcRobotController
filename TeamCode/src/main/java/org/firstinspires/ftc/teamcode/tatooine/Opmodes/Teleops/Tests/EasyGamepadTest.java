@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops;
+package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "EasyGamePadTest",group = "Tests")
 public class EasyGamepadTest extends LinearOpMode {
     private EasyGamepad easyGamepad = new EasyGamepad(gamepad1);
     private Arm arm = new Arm(this, true);
@@ -28,16 +28,16 @@ public class EasyGamepadTest extends LinearOpMode {
             TelemetryPacket packet = new TelemetryPacket();
             easyGamepad.update(gamepad1);
             if (easyGamepad.getButton(GamepadKeys.Button.CROSS)) {
-                runningActions.add(arm.scoreAction());
+                runningActions.add(arm.scoreSpecimenAction());
             }
             if (easyGamepad.getButton(GamepadKeys.Button.SQUARE)) {
-                runningActions.add(arm.scoreAction());
+                runningActions.add(arm.scoreSpecimenAction());
             }
             if (easyGamepad.justPressedButton(GamepadKeys.Button.CIRCLE) && circleTriggered ) {
-                runningActions.add(arm.scoreAction());
+                runningActions.add(arm.scoreSpecimenAction());
             }
             else if (easyGamepad.justPressedButton(GamepadKeys.Button.CIRCLE)) {
-                runningActions.add(arm.scoreAction());
+                runningActions.add(arm.scoreSpecimenAction());
             }
 
             List<Action> newActions = new ArrayList<>();

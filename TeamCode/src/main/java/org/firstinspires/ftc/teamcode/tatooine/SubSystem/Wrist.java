@@ -146,12 +146,22 @@ public class Wrist {
         return new MoveAngle(angle);
     }
 
+
+
     public Action specimen() {
         return new MoveAngle(90);
     }
 
+    public Action parralalToFloor() {
+        return new ParralalToFloor();
+    }
+
     public void setShouldStayParralal(boolean shouldStayParralal) {
         this.shouldStayParralal = shouldStayParralal;
+    }
+
+    public boolean getShouldStayParralal() {
+        return shouldStayParralal;
     }
 
     public class MoveAngle implements Action {
@@ -177,12 +187,9 @@ public class Wrist {
         }
     }
 
-    public class parralalToFloor implements Action {
+    public class ParralalToFloor implements Action {
         double armAngle = 0;
 
-        public parralalToFloor(double armAngle) {
-            this.armAngle = armAngle;
-        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
