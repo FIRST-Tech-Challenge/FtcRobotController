@@ -15,6 +15,7 @@ public class OperatingMode extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public OperatingMode() {
         prevTriggerState = false;
+        TriggerLock = false;
     }
 
     /** Method called periodically by the scheduler
