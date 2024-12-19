@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -40,7 +41,11 @@ public class DriversTest extends LinearOpMode {
 
     private boolean circleTriggered = false;
 
+    private boolean crossTriggered = false;
+
     private boolean armUp = false;
+
+    private boolean armOpen = false;
 
     private boolean isRed = CheckAlliance.isRed();
     @Override
@@ -67,13 +72,17 @@ public class DriversTest extends LinearOpMode {
                 circleTriggered = true;
                 runningActions.add(new SequentialAction(arm.scoreSampleAction(),  wrist.moveToAngle(90), intake.outtake()));
             }
-
-            else if ((gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)|| gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) && armUp == true) {
+            else if (gamepadEx1.justPressedButton(GamepadKeys.Button.CROSS)&& !crossTriggered) {
+                runningActions.add(new SequentialAction(new ParallelAction(arm.intakeAction(), wrist.moveToAngle(0), intake.intake())));
+            }
+            else if (((gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && circleTriggered)|| (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE) && triangleTriggered) || (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS) && crossTriggered)) && armUp == true){
                 armUp = false;
                 circleTriggered = !gamepadEx1.justPressedButton(GamepadKeys.Button.CIRCLE);
                 triangleTriggered = !gamepadEx1.justPressedButton(GamepadKeys.Button.TRIANGLE);
-                runningActions.add(new SequentialAction(arm.closeAction(),wrist.moveToAngle(0)));
+                crossTriggered = !gamepadEx1.justPressedButton(GamepadKeys.Button.CROSS);
+                runningActions.add(new ParallelAction(intake.setPowerAction(0), new SequentialAction(arm.closeAction(),wrist.moveToAngle(0))));
             }
+
 
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

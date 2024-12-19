@@ -298,6 +298,10 @@ public class Arm {
         return new SequentialAction(setExtension(0), setAngle(-15));
     }
 
+    public Action intakeAction() {
+        return new SequentialAction(setAngle(0),setExtension(0));
+    }
+
 
     public class moveExtension implements Action {
         private double goal = 0;

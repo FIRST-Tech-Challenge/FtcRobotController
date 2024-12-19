@@ -154,14 +154,13 @@ public class Intake {
     //intake action that is active as long as i press a button
     public Action intake() {
         this.buttonPressed = buttonPressed;
-        power = INTAKE_SPEED;
-        return new SetPowerAction();
+        return new SetPowerAction(INTAKE_SPEED);
     }
 
     //outtake action that is active as long as i press a button
     public Action outtake() {
         power = OUTTAKE_SPEED;
-        return new SetPowerAction();
+        return new SetPowerAction(OUTTAKE_SPEED);
     }
 
     //intake action that intakes and outtake by right color
@@ -170,16 +169,21 @@ public class Intake {
         return new IntakeByColor();
     }
 
+    public Action setPowerAction(double power) {
+        return new SetPowerAction(power);
+    }
+
 
     public class SetPowerAction implements Action {
-        ElapsedTime timer = new ElapsedTime();
-        public SetPowerAction(){
+        double power = 0;
+        public SetPowerAction(double power) {
+            this.power = power;
             timer.reset();
         }
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             intake.setPower(power);
-            return timer.seconds()<3;
+            return false;
         }
     }
 
