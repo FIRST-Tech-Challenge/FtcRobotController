@@ -37,13 +37,14 @@ public class AxonPickupTest3 extends OpMode {
     public GripperState gripperState = GripperState.OPEN;
     public int GRIPPERS_CLOSED = 1;
     public int GRIPPERS_OPEN = 0;
+    //TODO: Adjust values
     public double LEFT_SERVO_ZERO = diffConstantsV1.LEFT_SERVO_UP;
     public double LEFT_SERVO_ONE = diffConstantsV1.LEFT_SERVO_DOWN;
     public double RIGHT_SERVO_ZERO = diffConstantsV1.RIGHT_SERVO_UP;
     public double RIGHT_SERVO_ONE = diffConstantsV1.RIGHT_SERVO_DOWN;
 
-    public double RIGHT_SERVO_POSITION = 0;
-    public double LEFT_SERVO_POSITION = 0;
+    public double RIGHT_SERVO_POSITION = 1;
+    public double LEFT_SERVO_POSITION = 1;
 
     @Override
     public void init() {
@@ -52,8 +53,8 @@ public class AxonPickupTest3 extends OpMode {
         right_servo = hardwareMap.get(Servo.class, "right_diff");
         left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
         right_servo_encoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
-        left_servo.setPosition(0);
-        right_servo.setPosition(0);
+        left_servo.setPosition(1);
+        right_servo.setPosition(1);
         grippers.setPosition(1);
     }
 
@@ -96,38 +97,38 @@ public class AxonPickupTest3 extends OpMode {
 
     public void runLeftServoToEncoderPos(double position){
         double encoder_pos = getLeftServoEncoderPosition();
-        ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, 2);
+        ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, 0);
         if (elbowRangeState == ElbowRangeState.IN_RANGE){
             telemetry.addLine("Left servo is in range.");
-            LEFT_SERVO_POSITION = LEFT_SERVO_POSITION - 0.1;
         }
         else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE){
             telemetry.addLine("Left Servo is attempting to go up from " + encoder_pos + " to " + position);
             telemetry.addLine("Left: " + LEFT_SERVO_POSITION + " to " + (LEFT_SERVO_POSITION - 0.1));
-            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION + 0.1);
+            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION + 0.01);
         }
         else {
             telemetry.addLine("Left Servo is attempting to go down from " + encoder_pos + " to " + position);
             telemetry.addLine("Left: " + LEFT_SERVO_POSITION + " to " + (LEFT_SERVO_POSITION + 0.1));
-            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION - 0.1);
+            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION - 0.01);
         }
     }
 
     public void runRightServoToEncoderPos(double position){
         double encoder_pos = getRightServoEncoderPosition();
-        ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, 2);
+        ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, 0);
         if (elbowRangeState == ElbowRangeState.IN_RANGE){
             telemetry.addLine("Right servo is in range.");
         }
         else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE){
             telemetry.addLine("Right Servo is attempting to go down from " + encoder_pos + " to " + position);
             telemetry.addLine("Right: " + RIGHT_SERVO_POSITION + " to " + (RIGHT_SERVO_POSITION + 0.1));
-            RIGHT_SERVO_POSITION = setRightServoPosition(RIGHT_SERVO_POSITION - 0.1);
+            //TODO: Adjust these
+            RIGHT_SERVO_POSITION = setRightServoPosition(RIGHT_SERVO_POSITION - 0.01);
         }
         else {
             telemetry.addLine("Right Servo is attempting to go up from " + encoder_pos + " to " + position);
             telemetry.addLine("Right: " + RIGHT_SERVO_POSITION + " to " + (RIGHT_SERVO_POSITION - 0.1));
-            RIGHT_SERVO_POSITION = setRightServoPosition(RIGHT_SERVO_POSITION  + 0.1);
+            RIGHT_SERVO_POSITION = setRightServoPosition(RIGHT_SERVO_POSITION  + 0.01);
         }
     }
 
