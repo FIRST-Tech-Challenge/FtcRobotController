@@ -179,6 +179,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isScoreSpecimen = false;
         boolean isTx = false;
         boolean isTxDump = false;
+        boolean isClearArmPos = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -263,6 +264,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
             boolean shouldTxDump = gamepad1.x;
             if (shouldTxDump && !isTxDump) {
                 transferAndDrop();
+            }
+            boolean shouldClearArmPos = gamepad2.back;
+            if (shouldClearArmPos && !isClearArmPos) {
+                DcMotor.RunMode mode = hardware.arm.getMode();
+                hardware.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                hardware.arm.setTargetPosition(0);
+                hardware.arm.setMode(mode);
             }
 
             boolean shouldFlipIn = gamepad1.right_trigger > 0.5;
