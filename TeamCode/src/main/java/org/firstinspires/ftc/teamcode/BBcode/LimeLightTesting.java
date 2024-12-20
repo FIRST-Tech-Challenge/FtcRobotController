@@ -1,142 +1,125 @@
 package org.firstinspires.ftc.teamcode.BBcode;
-
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import java.util.List;
-
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
+@TeleOp(name = "LimeLightTesting")
 //@Disabled
 public class LimeLightTesting extends LinearOpMode {
-    private Limelight3A limelight;
-    // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 3.0; //  this is how close the camera should get to the target (inches)
+    //classes
+    MecanumDrivetrain _MecanumDrivetrain;
 
-    //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
-    //  applied to the drive motors to correct the error.
-    //  Drive = Error * Gain    Make these values smaller for smoother control, or larger for a more aggressive response.
-    final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  e.g. Ramp up to 37% power at a 25 degree Yaw error.   (0.375 / 25.0)
-    final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    //vars
+    private Pose3D botPose;
+    private double botYaw;
 
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_STRAFE= 0.5;   //  Clip the strafing speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
+    boolean tagFound = false;
 
-    private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
-    private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
-    private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
-    private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
+    double aError;
+    double xError;
+    double yError;
+
+    double turn;
+    double strafe;
+    double drive;
+
+    //Hardware
+    DcMotorEx _leftFront;
+    DcMotorEx _leftBack;
+    DcMotorEx _rightFront;
+    DcMotorEx _rightBack;
+    Limelight3A limelight;
+
+    //settings
+    final Pose3D targetPose = new Pose3D(new Position(DistanceUnit.INCH, 48, 48, 0,0), new YawPitchRollAngles(AngleUnit.DEGREES, 45, 0, 0, 0));
+    final double turnSpeed = 0.5;
+    final double strafeSpeed = 0.5;
+    final double driveSpeed = 0.5;
+    final double maxTurnSpeed = 1;
+    final double maxStrafeSpeed = 1;
+    final double maxDriveSpeed = 1;
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBack");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
+    public void runOpMode() throws InterruptedException {
+    //Init steps
+        //create instance of external classes
+        _MecanumDrivetrain = new MecanumDrivetrain(this);
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-
+        //Int limelight
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-        /*
-         * Starts polling for data.  If you neglect to call start(), getLatestResult() will return null.
-         */
         limelight.start();
 
-        boolean targetFound = false;    // Set to true when an AprilTag target is detected
-        double  drive = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn = 0;        // Desired turning power/speed (-1 to +1)
+        //Init drive Motors
+        _leftFront = hardwareMap.tryGet(DcMotorEx.class, "leftFront");
+        _leftBack = hardwareMap.tryGet(DcMotorEx.class, "leftBack");
+        _rightFront = hardwareMap.tryGet(DcMotorEx.class, "rightFront");
+        _rightBack = hardwareMap.tryGet(DcMotorEx.class, "rightBack");
+
         waitForStart();
 
+    //run steps
         while (opModeIsActive()) {
-            LLResult result = limelight.getLatestResult();
-            Pose3D botpose = null;
-            if (result != null) {
-                // Access BotPose information
-                botpose = result.getBotpose();
-                targetFound = true;
-                telemetry.addData("BotPose", botpose);
+            //Manage LimeLight
+            LLResult lLResult = limelight.getLatestResult();
+            if (lLResult != null) {
+                tagFound = true;
+                botPose = lLResult.getBotpose();
+                botYaw = botPose.getOrientation().getYaw();
+                telemetry.addData("BotPose", botPose);
             }
             else {
+                tagFound = false;
                 telemetry.addData("Limelight", "No data available");
-                targetFound = false;
             }
-            if (gamepad1.left_bumper && targetFound) {
 
-                // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double  rangeError      = (botpose.getPosition().y - DESIRED_DISTANCE);
-                double  headingError    = botpose.getOrientation().getYaw();
-                double  yawError        = botpose.getPosition().x;
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
-            } else {
-
-                // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
-                drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
-                strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
-                turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+            //Auto drive
+            if (tagFound && gamepad1.left_bumper) {
+                DriveToAprilTag();
             }
+
+            //Manual drive
+            _MecanumDrivetrain.Drive();
+
             telemetry.update();
-
-            // Apply desired axes motions to the drivetrain.
-            moveRobot(drive, strafe, turn);
-            sleep(10);
         }
         limelight.stop();
     }
 
-    /**
-     * Move robot according to desired axes motions
-     * <p>
-     * Positive X is forward
-     * <p>
-     * Positive Y is strafe left
-     * <p>
-     * Positive Yaw is counter-clockwise
-     */
-    public void moveRobot(double x, double y, double yaw) {
-        // Calculate wheel powers.
-        double leftFrontPower = x - y - yaw;
-        double rightFrontPower = x + y + yaw;
-        double leftBackPower = x + y - yaw;
-        double rightBackPower = x - y + yaw;
+    private void DriveToAprilTag() {
+        //calc pose error
+        //aError
+        aError = targetPose.getOrientation().getYaw() - botYaw;
+        if (Math.abs(aError) > 180) {aError = -1 * (Math.signum(aError) * (180 - (Math.abs(aError) % 180)));}
+        //xError
+        xError = targetPose.getPosition().x - botPose.getPosition().x;
+        //yError
+        yError = targetPose.getPosition().y - botPose.getPosition().y;
 
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
+        //calc movement magnitudes
+        //turn
+        turn = Range.clip(turnSpeed * aError, (-1 * maxTurnSpeed), maxTurnSpeed);
+        //strafe
+        double xCorrectionByStrafe = (xError * ((90 - Math.abs(botYaw)) / 90)); // the amount of x error corrected by strafing
+        double yCorrectionByStrafe = (yError * (Math.signum(botYaw) * Math.abs((Math.abs(botYaw))) - 90) / 90);
+        strafe = Range.clip(strafeSpeed * (yCorrectionByStrafe + xCorrectionByStrafe), -1 * maxStrafeSpeed, maxStrafeSpeed);
+        //drive
+        double xCorrectionByDrive = (xError * (Math.signum(botYaw) * Math.abs((Math.abs(botYaw))) - 90) / 90);
+        double yCorrectionByDrive = (yError * ((90 - Math.abs(botYaw)) / 90));
+        drive = Range.clip(driveSpeed * (yCorrectionByDrive + xCorrectionByDrive), -1 * maxDriveSpeed, maxDriveSpeed);
 
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-
-        // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        //sets motor powers
+        _leftFront.setPower(Range.clip((drive + turn + strafe), -1, 1));
+        _leftBack.setPower(Range.clip((drive + turn - strafe), -1, 1));
+        _rightFront.setPower(Range.clip((drive - turn - strafe), -1, 1));
+        _rightBack.setPower(Range.clip((drive - turn + strafe), -1, 1));
     }
 }
