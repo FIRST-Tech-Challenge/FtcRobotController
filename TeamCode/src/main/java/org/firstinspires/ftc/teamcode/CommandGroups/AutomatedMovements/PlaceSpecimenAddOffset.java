@@ -34,7 +34,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets arm to specimen place position
                 new SpecimenPlacePos(),
                 //sets the slides to low
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
+               // new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
 
                 //new Pause(1),
                 //max speed = 1
@@ -67,15 +67,17 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 new InstantCommand(()-> {
                     Pose2d position = RobotContainer.odometry.getCurrentPos();
                     Pose2d correctedPosition;
-                    if(RobotContainer.isRedAlliance)
-                        correctedPosition = new Pose2d(position.getX(),-0.565-0.20-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
-                    else
-                        correctedPosition = new Pose2d(position.getX(),0.565+0.20+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+                    if (RobotContainer.frontDistance.getDistance()<=7.0){
+                        if(RobotContainer.isRedAlliance)
+                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.01-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+                        else
+                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.01+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
 
-                    RobotContainer.odometry.setCurrentPos(correctedPosition);
+                        RobotContainer.odometry.setCurrentPos(correctedPosition);
+                    }
                 }),
 
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
+              //  new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
 
                 new Pause(0.5),
 
@@ -83,7 +85,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 new Pause(0.25),
 
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
+                //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
 
                 //new Pause(1),
 
