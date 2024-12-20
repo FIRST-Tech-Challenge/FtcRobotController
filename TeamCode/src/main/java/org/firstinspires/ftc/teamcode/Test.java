@@ -35,14 +35,15 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Values can be customized
-            double drive = gamepad1.left_stick_y * 0.5;
-            double strafe = -gamepad1.left_stick_x * 0.7;
+            double drive = -gamepad1.left_stick_y * 0.5; // Y stick is reversed
+            double strafe = gamepad1.left_stick_x * 0.7;
             double spin = gamepad1.right_stick_x * 0.4;
 
-            frontLeftDrive.setPower(drive + strafe - spin);
+
+            frontLeftDrive.setPower(drive + strafe + spin);
             frontRightDrive.setPower(drive - strafe + spin);
             backLeftDrive.setPower(drive - strafe - spin);
-            backRightDrive.setPower(drive + strafe + spin);
+            backRightDrive.setPower(drive + strafe - spin);
 
             if (gamepad1.dpad_up) {
 //                armMotor.setPower(0.5);
