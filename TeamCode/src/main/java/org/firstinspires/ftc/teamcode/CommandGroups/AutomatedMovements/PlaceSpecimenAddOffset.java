@@ -38,28 +38,6 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 //new Pause(1),
                 //max speed = 1
-                new FollowPath(
-                        2.0,
-                        1.2,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(0.0, 1.2, new Rotation2d(Math.toRadians(-90)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
-
-
-                new InstantCommand(()-> {
-                    Pose2d position = RobotContainer.odometry.getCurrentPos();
-                    Pose2d correctedPosition;
-                    if(RobotContainer.isRedAlliance)
-                        correctedPosition = new Pose2d(position.getX(),-1.78435+0.20+0.01*RobotContainer.backDistance.getDistance(), position.getRotation());
-                    else
-                        correctedPosition = new Pose2d(position.getX(),1.78435-0.20-0.01*RobotContainer.backDistance.getDistance(), position.getRotation());
-
-                    RobotContainer.odometry.setCurrentPos(correctedPosition);
-                }),
-
                 new GoToNextDropOff(
                         2.0,
                         1.2,
@@ -70,19 +48,32 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.770, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
-                // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
+
+//                // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
+//                new InstantCommand(()-> {
+//                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+//                    Pose2d correctedPosition;
+//                    if(RobotContainer.isRedAlliance)
+//                        correctedPosition = new Pose2d(position.getX(), -0.755, position.getRotation());
+//                    else
+//                        correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
+//
+//                    RobotContainer.odometry.setCurrentPos(correctedPosition);
+//                }),
+
+                new Pause(1),
+
+                //reseting Y based on front distance sensor
                 new InstantCommand(()-> {
                     Pose2d position = RobotContainer.odometry.getCurrentPos();
                     Pose2d correctedPosition;
                     if(RobotContainer.isRedAlliance)
-                        correctedPosition = new Pose2d(position.getX(), -0.755, position.getRotation());
+                        correctedPosition = new Pose2d(position.getX(),-0.565-0.20-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
                     else
-                        correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
+                        correctedPosition = new Pose2d(position.getX(),0.565+0.20+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
 
                     RobotContainer.odometry.setCurrentPos(correctedPosition);
                 }),
-
-                new Pause(1),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
 

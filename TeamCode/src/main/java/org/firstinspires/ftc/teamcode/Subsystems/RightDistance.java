@@ -8,18 +8,18 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
 /** Subsystem */
-public class SideDistance extends SubsystemBase {
+public class RightDistance extends SubsystemBase {
 
     // Local objects and variables here
 
     private final DistanceSensor testDistance;
-    private static double rightWallDistance;
+    private static double rightDistance;
 
     /** Place code here to initialize subsystem */
-    public SideDistance() {
+    public RightDistance() {
 
         testDistance =  RobotContainer.ActiveOpMode.hardwareMap.get(DistanceSensor.class, "rightDistance");
-        rightWallDistance = 0.0;
+        rightDistance = 0.0;
     }
 
     /** Method called periodically by the scheduler
@@ -27,7 +27,7 @@ public class SideDistance extends SubsystemBase {
     @Override
     public void periodic() {
 
-        rightWallDistance = 0.4*rightWallDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+        rightDistance = 0.4*rightDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
 
         RobotContainer.DBTelemetry.addData("RightDistance cm ", getDistance());
         RobotContainer.DBTelemetry.update();
@@ -38,7 +38,7 @@ public class SideDistance extends SubsystemBase {
 
     public double getDistance(){
 
-        return rightWallDistance;
+        return rightDistance;
     }
 
 }
