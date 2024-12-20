@@ -101,6 +101,13 @@ public class linearOpMode extends LinearOpMode {
         wristPower = slideExtendPower * .80;
       }
 
+      //theory
+      /*
+       wristPower = gamepad2.left_trigger
+       wristPower = -gamepad2.right_trigger
+
+      */
+
       // drive train controls
       double y = -gamepad1.left_stick_y;
       double x = gamepad1.left_stick_x * 1.1;
