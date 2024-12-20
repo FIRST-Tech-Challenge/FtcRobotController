@@ -62,6 +62,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private Speed2Power speed2Power;
     private LiftProxy liftProxy;
     private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
+    private double heading = 0.0;
 
     /**
      * Forces any tasks using this lock to be stopped immediately.
@@ -93,8 +94,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 scheduler, hardware, offset, tracker, loopTimer, speed2Power, ramps, telemetry
         );
     }
-
-    private double heading = 0.0;
 
     private void hardwareInit() {
         tracker = new EncoderTracking(hardware);
@@ -176,6 +175,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isFlipOut = false;
         boolean isSpecimenPick = false;
         boolean isScoreHigh = false;
+        boolean isScoreHigh2 = false;
         boolean isScoreSpecimen = false;
         boolean isTx = false;
         boolean isTxDump = false;
@@ -240,9 +240,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
             lift();
             arm();
 
-            boolean shouldScoreHigh = gamepad2.y;
+            boolean shouldScoreHigh = gamepad2.left_trigger > 0.5;
+            boolean shouldScoreHigh2 = gamepad2.right_trigger > 0.5;
             if (shouldScoreHigh && !isScoreHigh) {
-                ScoreHighBasket();
+                ScoreHighBasket1();
+            }
+            if (shouldScoreHigh2 && !isScoreHigh2) {
+                ScoreHighBasket2();
             }
             boolean shouldSpecimenPick = gamepad2.b;
             if (shouldSpecimenPick && !isSpecimenPick) {
@@ -270,6 +274,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isFlipIn = shouldFlipIn;
             isFlipOut = shouldFlipOut;
             isScoreHigh = shouldScoreHigh;
+            isScoreHigh2 = shouldScoreHigh2;
             isScoreSpecimen = shouldScoreSpecimen;
             isTx = shouldTx;
             isTxDump = shouldTxDump;
@@ -415,29 +420,38 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    public void ScoreHighBasket() {
+    public void ScoreHighBasket1() {
         abandonLock(Locks.ArmAssembly);
         abandonLock(liftProxy.CONTROL);
         scheduler.add(
                 groupOf(inner -> inner.add(liftProxy.moveTo(highBasketTicks, 5, 2.0))
                                 .then(run(() -> hardware.arm.setTargetPosition(222)))
-                                .then(await(500))
-                                .then(run(() -> hardware.wrist.setPosition(0.94)))
-                                .then(await(700))
 //                        .then(run(() -> hardware.claw.setPosition(0.02)))
 //                        .then(await(500))
-                                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                                .then(await(100))
-                                .then(run(() -> hardware.wrist.setPosition(0.28)))
-                                .then(await(500))
-                                .then(run(() -> hardware.arm.setTargetPosition(0)))
-                                .then(await(500))
-                                .then(liftProxy.moveTo(0, 5, 2.0))
+                        // broken into two here
                 ).extraDepends(
                         Locks.ArmAssembly,
                         liftProxy.CONTROL
                 )
         );
+    }
+
+    public void ScoreHighBasket2() {
+        abandonLock(Locks.ArmAssembly);
+        abandonLock(liftProxy.CONTROL);
+        scheduler.add(groupOf(inner -> inner.add(run(() -> hardware.wrist.setPosition(0.94)))
+                .then(await(700))
+                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                .then(await(100))
+                .then(run(() -> hardware.wrist.setPosition(0.28)))
+                .then(await(500))
+                .then(run(() -> hardware.arm.setTargetPosition(0)))
+                .then(await(500))
+                .then(liftProxy.moveTo(0, 5, 2.0)))
+                .extraDepends(
+                        Locks.ArmAssembly,
+                        liftProxy.CONTROL
+                ));
     }
 
     private void stepper() {
@@ -567,7 +581,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                                     hardware.arm.setTargetPosition(0);
                                 }))
                 ).extraDepends(
-                    Locks.ArmAssembly
+                        Locks.ArmAssembly
                 ));
     }
 
