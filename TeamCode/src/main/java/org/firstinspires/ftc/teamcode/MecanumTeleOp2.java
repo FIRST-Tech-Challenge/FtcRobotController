@@ -50,7 +50,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
      */
     public static final double PUSH_TO_BYPASS = 0.20;
     double wristPos = 0.28;
-    double twistPos = 0.17;
     double VerticalSlideSpeed = 1.00;
     int highChamberTicks = 790;
     int highBasketTicks = 2180;
@@ -125,7 +124,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.3);
         hardware.wrist.setPosition(0.28);
-        hardware.twist.setPosition(twistPos);
 
         navxMicro = hardware.gyro;
     }
@@ -231,7 +229,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
             lamps();
             wrist();
             claw();
-//            twist();
             stepper();
             lift();
             arm();

@@ -39,7 +39,6 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(Hardware.ARM_POWER);
         hardware.wrist.setPosition(0.28);
-        //  hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -107,7 +106,6 @@ public class MecanumTeleOp extends LinearOpMode {
             wrist();
             trasfer(hardware);
             servoMoves();
-            // twist();
             stepper(hardware);
             lift(hardware);
             HSlide(hardware);

@@ -58,7 +58,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
         /// The components that make up the main arm assembly:
         /// * the `arm` motor
-        /// * the `wrist`, `twist`, and `claw` servos
+        /// * the `wrist` and `claw` servos
         public static final SharedResource ArmAssembly = new SharedResource("ArmAssembly");
 
         /// The `horizontalSlide` and `horizontalLeft` servos.
@@ -126,9 +126,6 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("claw")
     public Servo claw;
-
-    @HardwareName("twist")
-    public Servo twist;
 
     @HardwareName("wrist")
     public Servo wrist;

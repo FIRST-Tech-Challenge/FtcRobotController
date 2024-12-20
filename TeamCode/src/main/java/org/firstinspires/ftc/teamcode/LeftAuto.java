@@ -185,7 +185,6 @@ public class LeftAuto extends LinearOpMode {
         private final DcMotor verticalSlide;
         private final DcMotor arm;
         private final Servo wrist;
-        private final Servo twist;
         private final Servo claw;
         private ITask target = null;
         private final List<ITask> subTasks = new ArrayList<>();
@@ -196,7 +195,6 @@ public class LeftAuto extends LinearOpMode {
             verticalSlide = hardware.verticalSlide;
             arm = hardware.arm;
             wrist = hardware.wrist;
-            twist = hardware.twist;
             claw = hardware.claw;
             ITask head = scheduler
                     .task((Task that) -> {
@@ -273,7 +271,6 @@ public class LeftAuto extends LinearOpMode {
         private final DcMotor verticalSlide;
         private final DcMotor arm;
         private final Servo wrist;
-        private final Servo twist;
         private final Servo claw;
         private ITask target = null;
         private List<ITask> subTasks = new ArrayList<>();
@@ -284,7 +281,6 @@ public class LeftAuto extends LinearOpMode {
             verticalSlide = hardware.verticalSlide;
             arm = hardware.arm;
             wrist = hardware.wrist;
-            twist = hardware.twist;
             claw = hardware.claw;
             ITask head = scheduler
                     .task(that -> {
@@ -455,7 +451,6 @@ public class LeftAuto extends LinearOpMode {
         scheduler.add(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
-            hardware.twist.setPosition(0.17);
         }));
         scheduler
                 .add(moveTo(scheduler, SCORE_HIGH_BASKET))

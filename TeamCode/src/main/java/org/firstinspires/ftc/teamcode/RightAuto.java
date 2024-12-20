@@ -171,7 +171,6 @@ public class RightAuto extends LinearOpMode {
     private final Runnable setup = () -> {
         hardware.claw.setPosition(CLAW_CLOSE);
         hardware.wrist.setPosition(0.28);
-        hardware.twist.setPosition(0.17);
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
