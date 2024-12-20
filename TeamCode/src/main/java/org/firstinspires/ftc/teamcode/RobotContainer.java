@@ -30,7 +30,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.BackDistance;
 //import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
 import org.firstinspires.ftc.teamcode.Subsystems.OperatingMode;
-import org.firstinspires.ftc.teamcode.Subsystems.SideDistance;
+import org.firstinspires.ftc.teamcode.Subsystems.FrontDistance;
+import org.firstinspires.ftc.teamcode.Subsystems.RightDistance;
 import org.firstinspires.ftc.teamcode.Subsystems.Vision.Camera;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.ClawTouchSensor;
@@ -98,7 +99,8 @@ public class RobotContainer {
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
     public static BackDistance backDistance;
-    public static SideDistance sideDistance;
+    public static RightDistance rightDistance;
+    public static FrontDistance frontDistance;
     public static OperatingMode operatingMode;
 
 
@@ -257,7 +259,8 @@ public class RobotContainer {
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
         backDistance = new BackDistance();
-        sideDistance = new SideDistance();
+        rightDistance = new RightDistance();
+        frontDistance = new FrontDistance();
         operatingMode = new OperatingMode();
 
         if (isRedAlliance){
