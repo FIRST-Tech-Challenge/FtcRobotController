@@ -437,6 +437,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     public void ScoreHighBasket2() {
+        // prevent doing this by accident
+        if (liftProxy.lift.getCurrentPosition() < 1000) return;
         abandonLock(Locks.ArmAssembly);
         abandonLock(liftProxy.CONTROL);
         scheduler.add(groupOf(inner -> inner.add(run(() -> hardware.wrist.setPosition(0.94)))
