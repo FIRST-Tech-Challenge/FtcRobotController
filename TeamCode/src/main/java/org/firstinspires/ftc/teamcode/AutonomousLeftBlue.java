@@ -200,7 +200,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
             driveToPosition( 3.0, 0.0, 0.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG, 1.0 );
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0 );
             driveToPosition( 6.0, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
@@ -222,7 +222,7 @@ public class AutonomousLeftBlue extends AutonomousBase {
         // Rotate lift down to get specimen close to bar
         if( opModeIsActive() ) {
             //robot.geckoServo.setPower(-0.50); // hold it while we clip
-            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_AUTO2_DEG,0.80 );
+            autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN2_DEG,0.80 );
             do {
                 if( !opModeIsActive() ) break;
                 // wait for lift/tilt to finish...

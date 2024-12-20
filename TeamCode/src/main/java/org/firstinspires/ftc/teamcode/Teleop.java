@@ -223,7 +223,6 @@ public abstract class Teleop extends LinearOpMode {
 //          processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
-            //processCollectorControls();
             processClaw();
             processLevel2Ascent();
             performEveryLoopTeleop();
@@ -244,8 +243,8 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
             telemetry.addData("Tilt", "%d counts %.1f deg %.1f raw deg", robot.wormTiltMotorPos, robot.armTiltAngle, robot.computeRawAngle(robot.armTiltEncoder.getVoltage()));
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
-            telemetry.addData("Elbow", "%.1f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
-            telemetry.addData("Wrist", "%.1f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
+            telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
+            telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
@@ -708,56 +707,6 @@ public abstract class Teleop extends LinearOpMode {
     }  // ProcessLiftControls
 
     /*---------------------------------------------------------------------------------*/
-    void processCollectorControls() {
-        // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
-        // - rotates the wrist/elbow to the floor collection orientation
-        // TO DO: check tilt motor for safe height above floor for wrist rotation!
-        if( gamepad2_circle_now && !gamepad2_circle_last)
-        {
-            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
-            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-        }
-        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button
-        // - rotates the wrist/elbow to the horizontal transport position
-        // TO DO: check tilt motor for safe height above floor for wrist rotation!
-        if( gamepad2_cross_now && !gamepad2_cross_last)
-        {
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_COLLECT_DEG);
-        }
-        // Check for an OFF-to-ON toggle of the gamepad2 SQUARE button
-        // - rotates the wrist/elbow to the vertical init position
-        if( gamepad2_square_now && !gamepad2_square_last )
-        {
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN_DEG);
-        }
-        // Check for an OFF-to-ON toggle of the gamepad2 left or right bumpers
-        // - right enables the collector intake servo in FORWARD/collect mode
-        // - left enables the collector intake servo in REVERSE/eject/score mode
-        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
-        {
-            if( geckoServoEjecting ) {
-               //robot.geckoServo.setPower( 0.0 );  // toggle eject OFF
-               geckoServoEjecting = false;
-            } else /* not ejecting */ {
-               //robot.geckoServo.setPower( 1.0 );  // toggle eject ON
-               geckoServoEjecting = true;
-            }
-            geckoServoCollecting = false;      // (we can't be doing this)
-        } // l_bumper
-        else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
-        {
-            if( geckoServoCollecting ) {
-               //robot.geckoServo.setPower( 0.0 );  // toggle collect OFF
-               geckoServoCollecting = false;
-            } else /* not collecting */ {
-               //robot.geckoServo.setPower( -1.0 ); // toggle collect ON
-               geckoServoCollecting = true;
-            }
-            geckoServoEjecting = false;           // (we can't be doing this)
-        } // r_bumper
-
-    }  // processCollectorControls
-
     void processClaw() {
 
         // Left Bumper = OPEN claw
@@ -769,7 +718,7 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last) {
             robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
         }
-
+/*
         // Manually tweak claw servo position
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last ) {
             clawServoPosAdj += 0.010;
@@ -788,7 +737,7 @@ public abstract class Teleop extends LinearOpMode {
             clawServoPosAdj -= 0.010;
             robot.clawServo.setPosition( clawServoPosAdj );
         }
-
+*/
     } // processClaw
 
     /*---------------------------------------------------------------------------------*/
@@ -833,13 +782,8 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_READY :
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
-                    //robot.geckoServo.setPower( 0.0 );  // we accidentally turn this on
-                    //=== METHOD 1 ===
+                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );  // we accidentally open the claw
                     robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, robot.VIPER_RAISE_POWER, robot.VIPER_RAISE_POWER );
-                    //=== METHOD 2 ===
-//                  robot.viperMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                  robot.viperMotor.setPower(-1.00);
-                    //================
                     ascent2state = ASCENT_STATE_LEVEL2;
                 }
                 break;
@@ -849,13 +793,6 @@ public abstract class Teleop extends LinearOpMode {
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
                     ascent2state = ASCENT_STATE_IDLE;
                 }
-                //=== METHOD 2 ===
-//              if( robot.viperMotor.getCurrentPosition() < Hardware2025Bot.VIPER_EXTEND_HANG2  ) {
-//                  robot.viperMotor.setPower(-0.80);
-//                  robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
-//                  ascent2state = ASCENT_STATE_IDLE;
-//              }
-                //================
                 break;
         } // switch()
 
@@ -906,7 +843,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Check to see if arm is in the range to start changing the viper length
                 // and the intake will be ok
                 if((robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_ZERO_DEG) &&
-                        (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
+                   (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
                     robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_GRAB);
                     hoverArmState = Hover_Arm_Steps.EXTENDING_ARM;
                 }
@@ -963,7 +900,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Check to see if arm is in the range to start changing the viper length
                 // and the intake will be ok
                 if((robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_ZERO_DEG) &&
-                        (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
+                   (robot.armTiltAngle < Hardware2025Bot.TILE_ANGLE_BASKET_SAFE_DEG)) {
                     if(robot.viperMotorPos < Hardware2025Bot.VIPER_EXTEND_SAFE)  {
                         robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_SAFE);
                     }
@@ -1025,28 +962,35 @@ public abstract class Teleop extends LinearOpMode {
     public void processScoreArm() {
         switch(scoreArmState) {
             case ROTATING_ARM:
-                // Check to see if arm is past upright value, or above low value
-                // to start viper retraction
-                if(robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_RAISED_DEG) {
+                // Don't rotate arm over the full range of angles when FULLY EXTENDED!
+                // CASE 1 - Arm past vertical (skip the temporary retracting viper to SAFE)
+                // CASE 2 - Arm below vertical (retract viper to SAFE before extending to BASKET)
+                if(robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_VERTICAL_DEG) {
                     scoreArmState = Score_Arm_Steps.RETRACTING_ARM;
                 } else if ((robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_ZERO_DEG) &&
-                        (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_RAISED_DEG)) {
+                           (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_VERTICAL_DEG)) {
                     robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_SAFE);
                     scoreArmState = Score_Arm_Steps.RETRACTING_ARM;
                 }
                 break;
             case RETRACTING_ARM:
-                // Check if the arm is past the upright angle to extend viper slides.
-                if(robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_RAISED_DEG) {
+                // This state does two things:
+                // 1) Allows the arm to retract to the SAFE position
+                // 2) Waits for tilt to reach the VERTICAL angle (then start to extend to BASKET)
+                if(robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_VERTICAL_DEG) {
                     robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_BASKET);
                     scoreArmState = Score_Arm_Steps.EXTENDING_ARM;
                 }
                 break;
             case EXTENDING_ARM:
-                // Check to see if the arm is out far enough to swing the intake
+                // This state does two things:
+                // 1) Wait viper extension to BASKET to complete
+                // 2) *ASSUMES* that tilt arm has reached the final angle
+                // Once fully extended above the basket, flip the elbow/wrist to scoring positions
+                // Start a timer (used to reset back to IDLE state)
                 if(!robot.viperMotorBusy) {
-                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_SAFE);
-                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_SAFE);
+                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BASKET);
+                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET);
                     scoreTimer.reset();
                     scoreArmState = Score_Arm_Steps.POSITION_INTAKE;
                 }
@@ -1082,7 +1026,7 @@ public abstract class Teleop extends LinearOpMode {
     public void startScoreArmSpec(){
         if(scoreArmSpecState == Score_Arm_Spec_Steps.IDLE) {
             terminateAutoArmMovements();
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_AUTO1_DEG);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG);
             scoreArmSpecState = Score_Arm_Spec_Steps.ROTATING_ARM;
             //robot.geckoServo.setPower(-0.3);
         }
@@ -1101,8 +1045,8 @@ public abstract class Teleop extends LinearOpMode {
             case EXTENDING_ARM:
                 // Check to see if the arm is out far enough to swing the intake
                 if(robot.viperMotorPos > Hardware2025Bot.VIPER_EXTEND_SAFE) {
-                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
+                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
+                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
                     scoreSpecTimer.reset();
                     scoreArmSpecState = Score_Arm_Spec_Steps.POSITION_INTAKE;
                 }

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
+//import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -113,38 +113,22 @@ public class Hardware2025Bot
     //                  94.5 deg 3896 encoder counts range
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
 
-    /* Values for the GECKO WHEEL collector
     public final static double TILT_ANGLE_HW_MAX_DEG      = 95.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
-    public final static double TILT_ANGLE_ASCENT2_DEG     = 48.00; // Arm at rotation back to the low bar for ascent level 2
+    public final static double TILT_ANGLE_ASCENT2_DEG     = 75.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
-    public final static double TILT_ANGLE_RAISED_DEG      = 54.50; // Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
     public final static double TILT_ANGLE_ZERO_DEG        =  7.00; // Arm for parking fully reset in auto
     public final static double TILT_ANGLE_DRIVE_DEG       = 11.80; // Arm for parking in auto or driving around
-    public final static double TILT_ANGLE_AUTO1_DEG       = 54.80; // Arm tilted up for autonomous specimen scoring (above bar)
-    public final static double TILT_ANGLE_AUTO2_DEG       = 49.60; // Arm tilted up for autonomous specimen scoring (clipped)
+    public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
+    public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // (NEW) Angle for scoring specimens (above bar)
+    public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // (NEW) Angle for scoring specimens (clipped)
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_SPECIMEN_DEG    =  4.60; // Arm to collect specimens at ground level
-*/
-    /* Values for the CLAW collector */
-    public final static double TILT_ANGLE_HW_MAX_DEG      = 95.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
-    public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
-    public final static double TILT_ANGLE_ASCENT2_DEG     = 48.00; // Arm at rotation back to the low bar for ascent level 2
-    public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
-    public final static double TILT_ANGLE_RAISED_DEG      = 54.50; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_ZERO_DEG        =  7.00; // Arm for parking fully reset in auto
-    public final static double TILT_ANGLE_DRIVE_DEG       = 11.80; // Arm for parking in auto or driving around
-    public final static double TILT_ANGLE_AUTO1_DEG       = 64.30; // (NEW) Arm tilted up for autonomous specimen scoring (above bar)
-    public final static double TILT_ANGLE_AUTO2_DEG       = 67.10; // (NEW) Arm tilted up for autonomous specimen scoring (clipped)
-    public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
-    public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_SPECIMEN_DEG    = 64.30; // (54.5) NEW Arm to collect specimens at ground level
-    public final static double TILT_ANGLE_SPECIMEN_DEG2   = 67.10; // (60.30) NEW Arm to collect specimens at ground level
+    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // Arm to where motor touches wall
+
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -159,46 +143,31 @@ public class Hardware2025Bot
     public ElapsedTime  viperSlideTimer  = new ElapsedTime();
     public ElapsedTime  wormTiltTimer    = new ElapsedTime();
 
-    public boolean      viperMotorAutoMove = false;  // have we commanded an automatic lift movement?
+    public boolean      viperMotorAutoMove = false;    // have we commanded an automatic extension movement?
     public boolean      viperMotorBusy     = false;
-    public boolean      wormTiltMotorAutoMove = false;  // have we commanded an automatic lift movement?
+    public boolean      wormTiltMotorAutoMove = false; // have we commanded an automatic tilt movement?
     public boolean      wormTiltMotorBusy     = false;
     public double       VIPER_RAISE_POWER  =  1.000; // Motor power used to EXTEND viper slide
     public double       VIPER_HOLD_POWER   =  0.001; // Motor power used to HOLD viper slide at current extension
     public double       VIPER_LOWER_POWER  = -0.500; // Motor power used to RETRACT viper slide
 
-    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230.3 counts
-    // Encoder counts for 312 RPM lift motors theoretical max ??? rev * 537.7  ticks/rev = ?? counts
+    // Encoder counts for 435 RPM lift motors theoretical max 5.8 rev * 384.54 ticks/rev = 2230 counts
+    // Encoder counts for 312 RPM lift motors theoretical max 5.8 rev * 537.7  ticks/rev = 3118 counts
+    // Encoder counts for 223 RPM lift motors theoretical max 5.8 rev * 751.8  ticks/rev = 4360 counts
 
-    /* Values for the GECKO WHEEL collector
-    final public static int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    final public static int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
-    final public static int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
-    final public static int          VIPER_EXTEND_HANG1 = 1100;   // extend to this to prepare for level 2 ascent
-    final public static int          VIPER_EXTEND_HANG2 =  430;   // retract to this extension during level 2 ascent
-    final public static int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
-    final public static int          VIPER_EXTEND_SECURE=  350;   // Intake is tucked into robot to be safe
-    final public static int          VIPER_EXTEND_SAFE  =  750;   // Intake is far enough it can safely swing
-    final public static int          VIPER_EXTEND_AUTO1 = 1400;   // raised to where the specimen hook is above the high bar
-    final public static int          VIPER_EXTEND_AUTO2 =  850;   // retract to clip the specimen to the bar
-    final public static int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
-    final public static int          VIPER_EXTEND_FULL1 = 2000;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
-    final public static int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
-*/
-    /* Values for the CLAW collector */
-    final public static int          VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    final public static int          VIPER_EXTEND_AUTO_READY  = 1000;    // extend for collecting during auto
-    final public static int          VIPER_EXTEND_AUTO_COLLECT  = 2000;    // extend for collecting during auto
-    final public static int          VIPER_EXTEND_HANG1 = 1100;   // extend to this to prepare for level 2 ascent
-    final public static int          VIPER_EXTEND_HANG2 =  430;   // retract to this extension during level 2 ascent
-    final public static int          VIPER_EXTEND_GRAB  = 1000;   // extend for collection from submersible
-    final public static int          VIPER_EXTEND_SECURE=  350;   // Intake is tucked into robot to be safe
-    final public static int          VIPER_EXTEND_SAFE  =  750;   // Intake is far enough it can safely swing
-    final public static int          VIPER_EXTEND_AUTO1 = 1314;   // (1160) NEW raised to where the specimen hook is above the high bar
-    final public static int          VIPER_EXTEND_AUTO2 = 1636;   // (1143) NEW retract to clip the specimen to the bar
-    final public static int          VIPER_EXTEND_BASKET= 3000;   // raised to basket-scoring height
-    final public static int          VIPER_EXTEND_FULL1 = 2000;   // extended 36" forward (max for 20"x42" limit) 2310 with overshoot
-    final public static int          VIPER_EXTEND_FULL2 = 3010;   // hardware fully extended (never exceed this count!)
+    public final static int    VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
+    public final static int    VIPER_EXTEND_AUTO_READY  = 1400;    // extend for collecting during auto
+    public final static int    VIPER_EXTEND_AUTO_COLLECT  = 2800;    // extend for collecting during auto
+    public final static int    VIPER_EXTEND_HANG1 = 1250;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_HANG2 =  602;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_GRAB  = 1400;   // extend for collection from submersible
+    public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
+    public final static int    VIPER_EXTEND_SAFE  = 1050;   // Intake is far enough out to safely rotate down
+    public final static int    VIPER_EXTEND_AUTO1 = 1980;   // NEW raised to where the specimen hook is above the high bar
+    public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
+    public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
+    public final static int    VIPER_EXTEND_FULL1 = 2800;   // extended 36" forward (max for 20"x42" limit at horizontal)
+    public final static int    VIPER_EXTEND_FULL2 = 4214;   // hardware fully extended (never exceed this count!)
 
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
@@ -213,66 +182,37 @@ public class Hardware2025Bot
     public AnalogInput elbowServoPos = null;
     public Servo elbowServo = null;
 
-    /* Values for the GECKO WHEEL collector
-    final public static double ELBOW_SERVO_INIT = 0.350;
-    final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
-    final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
-    final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
-    final public static double ELBOW_SERVO_GRAB = 0.340;  // For collecting off the field
-    final public static double ELBOW_SERVO_GRAB_ANGLE = 231.0;
-    final public static double ELBOW_SERVO_DROP = 0.330;  // For scoring in the basket
-    final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
-    final public static double ELBOW_SERVO_BAR1 = 0.525;  // For scoring a specimen on the submersible bar (partial rotate)
-    final public static double ELBOW_SERVO_BAR2 = 0.700;  // For scoring a specimen on the sumersible bar (fully rotated)
-    final public static double ELBOW_SERVO_BAR_ANGLE = 116.0;
-*/
-    /* Values for the CLAW collector */
-    final public static double ELBOW_SERVO_INIT = 0.500;
-    final public static double ELBOW_SERVO_INIT_ANGLE = 229.0;
-    final public static double ELBOW_SERVO_SAFE = 0.370;  // Safe orientation for driving
-    final public static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
-    final public static double ELBOW_SERVO_GRAB = 0.340;  // For collecting off the field
-    final public static double ELBOW_SERVO_GRAB_ANGLE = 231.0;
-    final public static double ELBOW_SERVO_DROP = 0.330;  // For scoring in the basket
-    final public static double ELBOW_SERVO_DROP_ANGLE = 234.0;
-    final public static double ELBOW_SERVO_BAR1 = 0.525;  // For scoring a specimen on the submersible bar (partial rotate)
-    final public static double ELBOW_SERVO_BAR2 = 0.700;  // For scoring a specimen on the sumersible bar (fully rotated)
-    final public static double ELBOW_SERVO_BAR_ANGLE = 116.0;
+    public final static double ELBOW_SERVO_INIT = 0.500;
+    public final static double ELBOW_SERVO_INIT_ANGLE = 180.0;
+    public final static double ELBOW_SERVO_SAFE = 0.370;       // Safe orientation for driving
+    public final static double ELBOW_SERVO_SAFE_ANGLE = 224.0;
+    public final static double ELBOW_SERVO_GRAB = 0.340;       // For grabbing samples from the field floor
+    public final static double ELBOW_SERVO_GRAB_ANGLE = 231.0;
+    public final static double ELBOW_SERVO_BASKET = 0.500;     // For scoring samples in the basket
+    public final static double ELBOW_SERVO_BASKET_ANGLE = 100.0;
+    public final static double ELBOW_SERVO_BAR1 = 0.520;       // NEW specimen bar (above)
+    public final static double ELBOW_SERVO_BAR1_ANGLE = 174.0;
+    public final static double ELBOW_SERVO_BAR2 = 0.520;       // NEW specimen bar (clipped)
+    public final static double ELBOW_SERVO_BAR2_ANGLE = 174.0;
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
 
-    /* Values for the GECKO WHEEL collector
-    final public static double WRIST_SERVO_INIT = 0.159;          // rotation can hit the floor
-    final public static double WRIST_SERVO_INIT_ANGLE = 288.0;
-    final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
-    final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
-    final public static double WRIST_SERVO_GRAB = 0.860;
-    final public static double WRIST_SERVO_AUTO_SCORE = 0.600;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 67.0;
-    final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
-    final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
-    final public static double WRIST_SERVO_DROP = 0.350;
-    final public static double WRIST_SERVO_DROP_ANGLE = 228.0;
-    final public static double WRIST_SERVO_BAR1 = 0.400;
-    final public static double WRIST_SERVO_BAR2 = 0.640;
-    final public static double WRIST_SERVO_BAR_ANGLE = 134.0;
-*/
-    /* Values for the CLAW collector */
-    final public static double WRIST_SERVO_INIT = 0.159;          // rotation can hit the floor
-    final public static double WRIST_SERVO_INIT_ANGLE = 288.0;
-    final public static double WRIST_SERVO_SAFE = 0.340;    // Safe orientation for driving
-    final public static double WRIST_SERVO_SAFE_ANGLE = 234.0;
-    final public static double WRIST_SERVO_GRAB = 0.860;
-    final public static double WRIST_SERVO_AUTO_SCORE = 0.600;
-    final public static double WRIST_SERVO_GRAB_ANGLE = 67.0;
-    final public static double WRIST_SERVO_RAISE = 0.570;    // Safe orientation for driving
-    final public static double WRIST_SERVO_RAISE_ANGLE = 157.0;
-    final public static double WRIST_SERVO_DROP = 0.350;
-    final public static double WRIST_SERVO_DROP_ANGLE = 228.0;
-    final public static double WRIST_SERVO_BAR1 = 0.400;
-    final public static double WRIST_SERVO_BAR2 = 0.640;
-    final public static double WRIST_SERVO_BAR_ANGLE = 134.0;
+    public final static double WRIST_SERVO_INIT = 0.159;        // stored (pointing up)
+    public final static double WRIST_SERVO_INIT_ANGLE = 288.0;
+    public final static double WRIST_SERVO_SAFE = 0.340;        // safe orientation for driving
+    public final static double WRIST_SERVO_SAFE_ANGLE = 234.0;
+    public final static double WRIST_SERVO_GRAB = 0.710;        // grab floor sample (pointing down)
+    public final static double WRIST_SERVO_GRAB_ANGLE = 67.0;
+    public final static double WRIST_SERVO_AUTO_SCORE = 0.600;
+    public final static double WRIST_SERVO_RAISE = 0.570;
+    public final static double WRIST_SERVO_RAISE_ANGLE = 157.0;
+    public final static double WRIST_SERVO_BASKET = 0.500;
+    public final static double WRIST_SERVO_BASKET_ANGLE = 100.0;
+    public final static double WRIST_SERVO_BAR1 = 0.640;        // NEW specimen bar (above)
+    public final static double WRIST_SERVO_BAR1_ANGLE = 173.0;
+    public final static double WRIST_SERVO_BAR2 = 0.640;        // NEW specimen bar (clipped)
+    public final static double WRIST_SERVO_BAR2_ANGLE = 173.0;
 
     // horizontal = 0.440
     // straight down = 0.710
@@ -282,16 +222,16 @@ public class Hardware2025Bot
     //===== Claw servo =====
     public Servo clawServo = null;
 
-    final public static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
-    final public static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
-    final public static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
-    final public static double CLAW_SERVO_OPEN_W  = 0.830;  // claw opened wide (fully open)
+    public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
+    public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
+    public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
+    public final static double CLAW_SERVO_OPEN_W  = 0.830;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {
         CLAW_INIT,
         CLAW_OPEN_NARROW,
         CLAW_OPEN_WIDE,
-        CLAW_OPEN,
+        CLAW_OPEN,       /* used to toggle between OPEN_NARROW and OPEN_WIDE */
         CLAW_CLOSED
     }
 
@@ -398,22 +338,22 @@ public class Hardware2025Bot
         }
         viperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        elbowServo = hwMap.servo.get("ElbowServo");             // servo port 0 (Expansion Hub)
+        elbowServo    = hwMap.servo.get("ElbowServo");          // servo port 0 (Expansion Hub)
         elbowServoPos = hwMap.analogInput.get("ElbowServoPos"); // Analog port 1 (Expansion Hub)
 
-        wristServo = hwMap.servo.get("WristServo");             // servo port 1 (Expansion Hub)
+        wristServo    = hwMap.servo.get("WristServo");          // servo port 1 (Expansion Hub)
         wristServoPos = hwMap.analogInput.get("WristServoPos"); // Analog port 0 (Expansion Hub)
+
+        clawServo     = hwMap.servo.get("ClawServo");           // servo port 2 (Expansion Hub)
 
         if( isAutonomous ) {
             elbowServo.setPosition(ELBOW_SERVO_INIT);
             wristServo.setPosition(WRIST_SERVO_INIT);
+            clawServo.setPosition(CLAW_SERVO_INIT);
         }
+
 //      geckoServo = hwMap.crservo.get("GeckoServo");           // servo port 2 (Expansion Hub)
 //      geckoServo.setPower(0.0);
-
-        // Claw Servo initialization
-        clawServo = hwMap.servo.get("ClawServo");               // servo port 2 (Expansion Hub)
-        clawServo.setPosition(CLAW_SERVO_INIT);
 
         // Initialize REV Control Hub IMU
         initIMU();
@@ -436,6 +376,8 @@ public class Hardware2025Bot
 
         elbowServo.setPosition(ELBOW_SERVO_INIT);
         wristServo.setPosition(WRIST_SERVO_INIT);
+        clawServo.setPosition(CLAW_SERVO_INIT);
+
     } // resetEncoders
 
     /*--------------------------------------------------------------------------------------------*/
@@ -855,207 +797,7 @@ public class Hardware2025Bot
     } // abortViperSlideExtension
 
     /*--------------------------------------------------------------------------------------------*/
- /*
- 
-    private int liftMoveTarget;
 
-    private ElapsedTime liftMoveTimer   = new ElapsedTime();
-    private ElapsedTime liftStoreTimer  = new ElapsedTime();
-
-    public enum LiftMoveActivity {
-        IDLE,
-        LIFTING_SAFE,
-        LIFTING,
-        ROTATING
-    }
-    public LiftMoveActivity liftMoveState = LiftMoveActivity.IDLE;
-
-    public enum LiftStoreActivity {
-        IDLE,
-        ROTATING,
-        LOWERING
-    }
-    public LiftStoreActivity liftStoreState = LiftStoreActivity.IDLE;
-
-    //--------------------------------------------------------------------------------------------
-    public void startLiftMove(int liftTarget)
-    {
-        // Ensure pre-conditions are met
-        if( (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
-            (pixelGrabState == PixelGrabActivity.IDLE) &&
-            (pixelScoreState == PixelScoreActivity.IDLE) ) {
-            // startViperSlideExtension handles lift power vs lower power
-            liftMoveTarget = liftTarget;
-            startViperSlideExtension(liftMoveTarget);
-            liftMoveTimer.reset();
-            liftMoveState = LiftMoveActivity.LIFTING_SAFE;
-        }
-    } // startLiftMove
-
-    //--------------------------------------------------------------------------------------------
-
-    public void liftMotorSetPower( double motorPower )
-    {
-        // Are we stopping? (allow that no matter what the current liftAngle or power setting)
-        if( Math.abs(motorPower) <= 0.0001 ) {
-            viperMotorSetPwr = 0.0;
-        }
-        else {
-            // Limit motor acceleration by clamping how big a change we can do in one cycle
-            viperMotorSetPwr = restrictDeltaPower( motorPower, viperMotorSetPwr, 0.333 );
-        }
-        viperMotor.setPower( viperMotorSetPwr );
-    } // liftMotorSetPower
-
-    public void liftPIDPosRun( boolean teleopMode )
-    {
-        // Has an automatic movement been initiated?
-        if(liftMotorPIDAuto) {
-            // Keep track of how long we've been doing this
-            liftMotorCycles++;
-            // Current distance from target (angle degrees)
-            int ticksToGo = liftTarget - viperMotorPos;
-            int ticksToGoAbs = Math.abs(ticksToGo);
-            int waitCycles = (teleopMode) ? 2 : 2;
-            double power = liftPidController.update(liftTarget, viperMotorPos);
-            liftMotorSetPower(power);
-            // Have we achieved the target?
-            // (temporarily limit to 16 cycles when verifying any major math changes!)
-//          if( liftMotorCycles >= 16 ) {
-            if( ticksToGoAbs <= 10 ) {
-                liftMotorSetPower( 0.0 );
-                if( ++liftMotorWait >= waitCycles ) {
-                    liftMotorPIDAuto = false;
-//                  writeLiftLog();
-                }
-            }
-            // No, still not within tolerance of desired target
-            else {
-                // Reset the wait count back to zero
-                liftMotorWait = 0;
-            }
-        } // liftMotorPIDAuto
-    } // liftPIDPosRun
-
-    public void processLiftMove() {
-        switch(liftMoveState){
-            // Make sure we are over the bin to rotate
-            case LIFTING_SAFE:
-                // We are above the pixel bin and can start rotating
-                if(viperMotorPos >= VIPER_EXTEND_GRAB) {
-                    // This shouldn't happen, but make sure we aren't moving below
-                    // the pixel bin height before starting wrist movement. Moving below
-                    // pixel bin should use the store activity.
-                    if(liftMoveTarget >= VIPER_EXTEND_GRAB) {
-                        wristServo.setPosition(WRIST_SERVO_DROP);
-                    }
-                    liftMoveTimer.reset();
-                    liftMoveState = LiftMoveActivity.LIFTING;
-                }
-                // This is a timeout, the lift could not get above the bin, we probably
-                // want to stop here.
-                else if(liftMoveTimer.milliseconds() > 2000.0) {
-//                    telemetry.addData("processLiftMove", "Timed out lifting safe");
-//                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d", liftMoveTarget, viperMotorsPos);
-//                    telemetry.update();
-//                    telemetrySleep();
-                    liftMoveTimer.reset();
-                    liftMoveState = LiftMoveActivity.IDLE;
-                }
-                break;
-            case LIFTING:
-                // We are at our desired height
-                if(!viperMotorBusy) {
-                    liftMoveTimer.reset();
-                    liftMoveState = LiftMoveActivity.ROTATING;
-                }
-                // This is a timeout, the lift could not get to target, we got above the  bin
-                // so we can do our thing, but not sure why we didn't hit target.
-                else if(liftMoveTimer.milliseconds() > 5000.0) {
-//                    telemetry.addData("processLiftMove", "Timed out lifting");
-//                    telemetry.addData("processLiftMove", "Lift Target: %d Lift Position: %d", liftMoveTarget, viperMotorsPos);
-//                    telemetry.update();
-//                    telemetrySleep();
-                    liftMoveTimer.reset();
-                    liftMoveState = LiftMoveActivity.ROTATING;
-                }
-                break;
-            case ROTATING:
-                // We have rotated to the desired position
-                if(getWristServoAngle() <= WRIST_SERVO_DROP_ANGLE) {
-                    liftMoveState = LiftMoveActivity.IDLE;
-                }
-                // This is a timeout, can't think of any other error than angle is wrong? I think for
-                // now we proceed as if we rotated.
-                else if(liftMoveTimer.milliseconds() > 1000.0) {
-//                    telemetry.addData("processLiftMove", "Timed out rotating");
-//                    telemetry.addData("processLiftMove", "Wrist: %.2f", getWristServoAngle());
-                    // Pull back to the safe/stored position
-//                    telemetry.update();
-//                    telemetrySleep();
-                    liftMoveState = LiftMoveActivity.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    } // processLiftMove
-
-    public void startLiftStore()
-    {
-        // Ensure pre-conditions are met
-        if(  (pixelScoreAutoState == PixelScoreAutoActivity.IDLE) &&
-             (pixelGrabState == PixelGrabActivity.IDLE) &&
-             (pixelScoreState == PixelScoreActivity.IDLE) &&
-             (viperMotorPos >= VIPER_EXTEND_GRAB)) {
-            // Rotate elbow/wrist to safe position
-            elbowServo.setPosition(ELBOW_SERVO_SAFE);
-            wristServo.setPosition(WRIST_SERVO_SAFE);
-            liftStoreTimer.reset();
-            liftStoreState = LiftStoreActivity.ROTATING;
-        }
-    } // startLiftStore
-
-    public void processLiftStore() {
-        switch(liftStoreState){
-            // Make sure the fingers are in a safe position
-            case ROTATING:
-                if( (getPushServoAngle() >= PUSH_SERVO_SAFE_ANGLE) &&
-                    (getWristServoAngle() >= WRIST_SERVO_GRAB_ANGLE)) {
-                    liftStoreState = LiftStoreActivity.LOWERING;
-                    startViperSlideExtension(VIPER_EXTEND_ZERO);
-                    liftStoreTimer.reset();
-                }
-                // This is a timeout, the fingers are not safe, abort.
-                else if(liftStoreTimer.milliseconds() > 1500.0) {
-//                    telemetry.addData("processLiftStore", "Timed out rotating");
-//                    telemetry.addData("processLiftStore", "Push: %.2f Wrist: %.2f", getPushServoAngle(), getWristServoAngle());
-//                    telemetry.update();
-//                    telemetrySleep();
-                    liftStoreState = LiftStoreActivity.IDLE;
-                }
-                break;
-            case LOWERING:
-                // We are at our desired height
-                if(!viperMotorBusy) {
-                    liftStoreState = LiftStoreActivity.IDLE;
-                }
-                // This is a timeout, the lift could not fully lower.
-                else if(liftStoreTimer.milliseconds() > 5000.0) {
-//                    telemetry.addData("processLiftStore", "Timed out lowering");
-//                    telemetry.addData("processLiftStore", "Lift Position: %d", viperMotorsPos);
-//                    telemetry.update();
-//                    telemetrySleep();
-                    liftStoreState = LiftStoreActivity.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    } // processLiftStore
-*/
     /***
      *
      * waitForTick implements a periodic delay. However, this acts like a metronome with a regular

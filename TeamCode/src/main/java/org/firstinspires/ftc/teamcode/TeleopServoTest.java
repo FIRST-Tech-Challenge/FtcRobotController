@@ -42,10 +42,10 @@ public class TeleopServoTest extends LinearOpMode {
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
 
-        // Initialize robot hardware
+        // Initialize robot hardware (autonomous=true initializes servos)
         robot.init(hardwareMap,true);
 
-        // Start each value at the initialization position
+        // Preload each variable with the initialization position
         elbowPos = robot.ELBOW_SERVO_INIT;
         wristPos = robot.WRIST_SERVO_INIT;
         clawPos  = robot.CLAW_SERVO_INIT;

@@ -370,7 +370,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             // wait a little longer
         }
         return viperMoving;
-    } // autoViperMotorWaitToComplete
+    } // autoViperMotorMoving
 
     /*---------------------------------------------------------------------------------*/
     void autoTiltMotorMoveToTarget(double targetArmAngle )
@@ -399,7 +399,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
-        else if( autoTiltMotorTimer.milliseconds() > 3000 ) {
+        else if( autoTiltMotorTimer.milliseconds() > 4000 ) {
             tiltMoving = false;
             robot.wormTiltMotor.setPower( 0.0 );
         }
@@ -407,7 +407,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             // wait a little longer
         }
         return tiltMoving;
-    } // autoTiltMotorWaitToComplete
+    } // autoTiltMotorMoving
 
     /*---------------------------------------------------------------------------------*/
     void autoPanMotorMoveToTarget(int targetEncoderCount )
@@ -437,7 +437,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             // wait a little longer
         }
         return panMoving;
-    } // autoPanMotorWaitToComplete
+    } // autoPanMotorMoving
 
     /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
