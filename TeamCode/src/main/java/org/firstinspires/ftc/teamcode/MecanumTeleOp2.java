@@ -525,6 +525,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(Locks.ArmAssembly);
         abandonLock(Locks.DriveMotors);
 
+
+        // if something else takes the locks between these it's the driver's fault smh
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
                         .then(liftProxy.moveTo(710, 5, 1.0))
