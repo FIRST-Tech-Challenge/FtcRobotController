@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
 import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveRelTask;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -61,7 +60,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
     private LiftProxy liftProxy;
-    private @Nullable ITaskWithResult<Boolean> aButtonTask = null;
     private double heading = 0.0;
 
     /**
@@ -180,6 +178,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isTx = false;
         boolean isTxDump = false;
         boolean isClearArmPos = false;
+        boolean isResetVL = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -278,6 +277,11 @@ public class MecanumTeleOp2 extends LinearOpMode {
             boolean shouldFlipOut = gamepad1.left_trigger > 0.5;
             if (shouldFlipOut && !isFlipOut) Flipout();
 
+            boolean shouldResetVL = gamepad2.a;
+            if (shouldResetVL && !isResetVL) {
+                resetAll();
+            }
+
             isSpecimenPick = shouldSpecimenPick;
             isFlipIn = shouldFlipIn;
             isFlipOut = shouldFlipOut;
@@ -286,6 +290,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isScoreSpecimen = shouldScoreSpecimen;
             isTx = shouldTx;
             isTxDump = shouldTxDump;
+            isResetVL = shouldResetVL;
 
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
 
@@ -352,15 +357,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private void lift() {
         liftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
-
-        if (gamepad2.a) {
-            if (aButtonTask == null || aButtonTask.getState() != ITask.State.Ticking) {
-                if (aButtonTask != null) {
-                    aButtonTask.requestStop(true);
-                }
-                aButtonTask = targetLift(0);
-            }
-        }
     }
 
     private double getArmPosDeg() {
@@ -425,6 +421,16 @@ public class MecanumTeleOp2 extends LinearOpMode {
             abandonLock(Locks.ArmAssembly);
             hardware.claw.setPosition(close);
         }
+    }
+
+    public void resetAll() {
+        abandonLock(Locks.ArmAssembly);
+        abandonLock(liftProxy.CONTROL);
+        scheduler.add(liftProxy.moveTo(0, 5, 1.0));
+        scheduler.add(groupOf(it->it.add(run(() -> {
+            hardware.arm.setTargetPosition(0);
+            hardware.wrist.setPosition(Hardware.WRIST_UP);
+        })).then(await(700))).extraDepends(Locks.ArmAssembly));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
