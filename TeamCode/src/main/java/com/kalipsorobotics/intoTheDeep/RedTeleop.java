@@ -238,6 +238,7 @@ import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.tensorflow.CameraCapture;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -281,6 +282,7 @@ public class RedTeleop extends LinearOpMode {
         MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
         IntakeTransferAction intakeTransferAction = null;
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
+        CameraCapture cameraCapture = new CameraCapture();
 
         boolean prevGamePad2Y = false;
         boolean prevGamePad2X = false;
@@ -572,6 +574,9 @@ public class RedTeleop extends LinearOpMode {
             if (-gamepad2.right_stick_y != 0) {
                 MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
             }
+
+            // Capture pictures from webcam every 500 milliseconds
+            cameraCapture.capture();
 
             wheelOdometry.updatePosition();
             maintainOuttakeGlobalPos.update();

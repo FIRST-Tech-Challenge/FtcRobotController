@@ -24,7 +24,7 @@ public class CameraCapture {
     // Internal state
     boolean lastX;
     int frameCount;
-    long capReqTime;
+    long capReqTime = 0;
     VisionPortal portal;
 
     public CameraCapture() {
@@ -33,9 +33,17 @@ public class CameraCapture {
                 .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build();
     }
+
     public void capture() {
-        portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
-        Log.d("Camera", "writing to CameraFrameCapture. frame count: " + frameCount);
-        capReqTime = System.currentTimeMillis();
+        if (capReqTime == 0) {
+            portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
+            Log.d("Camera", "writing to CameraFrameCapture. frame count: " + frameCount);
+            capReqTime = System.currentTimeMillis();
+        }
+
+        if (capReqTime != 0 && System.currentTimeMillis() - capReqTime > 500)
+        {
+            capReqTime = 0;
+        }
     }
 }
