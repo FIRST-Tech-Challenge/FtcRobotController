@@ -29,9 +29,7 @@ public class AxonPickupTest2 extends OpMode {
     public int GRIPPERS_CLOSED = 1;
     public int GRIPPERS_OPEN = 0;
     public double LEFT_SERVO_ZERO = diffConstantsV1.LEFT_SERVO_UP;
-    //TODO: REPLACE THESE VALUES WITH CORRECT VALUES
     public double RIGHT_SERVO_ZERO = diffConstantsV1.RIGHT_SERVO_UP;
-
     public double RIGHT_SERVO_POSITION = 1;
     public double LEFT_SERVO_POSITION = 1;
 
@@ -77,8 +75,8 @@ public class AxonPickupTest2 extends OpMode {
             }
         }
         else {
-                left_servo.setPosition(1);
-                right_servo.setPosition(1);
+            left_servo.setPosition(1);
+            right_servo.setPosition(1);
         }
         telemetry.addData("Left Servo Position:",left_servo.getPosition());
         telemetry.addData("Right Servo Position:",right_servo.getPosition());
