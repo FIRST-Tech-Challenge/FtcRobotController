@@ -51,9 +51,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     public static final double PUSH_TO_BYPASS = 0.20;
     double wristPos = 0.28;
     double VerticalSlideSpeed = 1.00;
-    int highChamberTicks = 790;
     int highBasketTicks = 2180;
-    int liftMinClearanceTicks = 350;
     private Hardware hardware;
     private MultitaskScheduler scheduler;
     private NavxMicroNavigationSensor navxMicro;
@@ -124,6 +122,15 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.3);
         hardware.wrist.setPosition(0.28);
+        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
+
+        // we don't have the proxy object to handle this for us
+        // so manually implement the inversion
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+
+        hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
+        hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
 
         navxMicro = hardware.gyro;
     }

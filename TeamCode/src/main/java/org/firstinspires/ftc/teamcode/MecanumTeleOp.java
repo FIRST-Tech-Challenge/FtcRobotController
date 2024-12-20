@@ -198,12 +198,6 @@ public class MecanumTeleOp extends LinearOpMode {
             return;
         }
 
-        /*
-        if (gamepad2.b) {
-            targetLift(hardware, highChamberTicks);
-        }
-        */
-
         if (gamepad2.a) {
             targetLift(hardware, 0);
             maintainHeightTicks = 0;

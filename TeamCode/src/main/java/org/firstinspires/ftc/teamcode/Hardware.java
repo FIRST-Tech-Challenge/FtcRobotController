@@ -41,6 +41,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double LAMP_BLUE = 0.611;
     public static final double LAMP_RED = 0.28;
     public static final double LAMP_YELLOW = 0.36;
+    public static final double LAMP_PURPLE = 0.700;
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
