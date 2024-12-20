@@ -17,11 +17,12 @@ public class SpecimentAuto extends CommandAutoOpMode {
     protected Command createCommand() {
                 return new SequentialCommandGroup(
                         new ParallelCommandGroup(
-                             commandFactory.driveToTarget(650, 200, 0, .05, .6, 30),
+                             commandFactory.driveToTarget(740, 200, 0, .05, .6, 30),
                                 commandFactory.pivotToSpecimenDelivery(),
                              commandFactory.elbowToSpecimenPosition(),
                                 commandFactory.extendSliderToSpecimen()
                         ),
+
                         commandFactory.extendSliderToDeliverSpecimen(),
 
                         new ParallelCommandGroup(
@@ -35,21 +36,52 @@ public class SpecimentAuto extends CommandAutoOpMode {
 
                         commandFactory.driveToTarget(1300, -600, 0, .05, .5, 100),
                         commandFactory.driveToTarget(1300, -900, 0, .05, .5, 50),
-                        commandFactory.driveToTarget(370, -900, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(320, -900, 0, .05, .5, 100),
                         // sample 2
                         commandFactory.driveToTarget(1300, -900, 0, .05, .5, 100),
                         commandFactory.driveToTarget(1300, -1100, 0, .05, .5, 50),
-                        commandFactory.driveToTarget(370, -1100, 0, .05, .5, 100),
-                        // sample 3
-                        commandFactory.driveToTarget(1300, -1100, 0, .05, .5, 100),
-                        commandFactory.driveToTarget(1300, -1270, 0, .05, .5, 50),
-                        commandFactory.driveToTarget(370, -1270, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(320, -1100, 0, .05, .5, 100),
 
-                        commandFactory.driveToTarget(600, -1000, 0, .05, .5, 100),
+                        commandFactory.driveToTarget(600, -1000, 180, .05, .7, 30),
+                        commandFactory.driveToTarget(400, -1000, 180, .05, .4, 30),
 
+                        commandFactory.pivotToSpecimenInTake(),
+
+                        commandFactory.intakeFromWall(),
+
+
+                        new ParallelCommandGroup(
+                                commandFactory.driveToTarget(740, 270, 0, .05, .7, 30, 4000),
+                                commandFactory.pivotToSpecimenDelivery(),
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.extendSliderToSpecimen()
+                        ),
+
+                        commandFactory.extendSliderToDeliverSpecimen(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.collapseSlider(),
+                                commandFactory.driveToTarget(600, -1000, 180, .05, .7, 30)
+                        ),
+
+                        new ParallelCommandGroup(
+                            commandFactory.driveToTarget(400, -1000, 180, .05, .7, 30),
+                            commandFactory.pivotToSpecimenInTake()
+                        ),
+
+                        commandFactory.intakeFromWall(),
+
+                        new ParallelCommandGroup(
+                                commandFactory.driveToTarget(740, 130, 0, .05, .7, 30, 4000),
+                                commandFactory.pivotToSpecimenDelivery(),
+                                commandFactory.elbowToSpecimenPosition(),
+                                commandFactory.extendSliderToSpecimen()
+                        ),
+
+                        commandFactory.extendSliderToDeliverSpecimen(),
 
                         commandFactory.pivotToStart()
 
-                        );
+                );
     }
 }

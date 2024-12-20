@@ -13,6 +13,13 @@ public abstract class SounderBotCommandBase extends CommandBase {
 
     long startTime = -1;
 
+    public  SounderBotCommandBase() {
+    }
+
+    public SounderBotCommandBase(long timeOut) {
+        TIME_OUT_MS = timeOut;
+    }
+
     @Override
     public final boolean isFinished() {
         return finished || isTargetReached();

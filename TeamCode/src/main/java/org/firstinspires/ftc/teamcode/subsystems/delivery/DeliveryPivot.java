@@ -40,6 +40,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int StartPositionFromStart = 0;
 
+    public static int SpecimenPickupFromStart = -350;
+
 
     private boolean isTeleop = true;
 
@@ -157,7 +159,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public void AutoToStart() {
         SetAuto();
-        this.currentTarget =100;
+        this.currentTarget = SpecimenPickupFromStart;
     }
 
     double previousPosition = -1000000.0;

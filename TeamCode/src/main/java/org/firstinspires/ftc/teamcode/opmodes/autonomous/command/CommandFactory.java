@@ -69,6 +69,10 @@ public class CommandFactory {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance);
     }
 
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut);
+    }
+
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading) {
         return driveToTarget(targetX, targetY, targetHeading, 0.1);
     }
@@ -98,7 +102,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSliderToDeliverSpecimen() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition-600, DeliverySlider.Direction.EXPANDING);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 250, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -135,9 +139,10 @@ public class CommandFactory {
     }
 
     public MovePivotCommand pivotToSpecimenDelivery() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.StartPositionFromStart - 55);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SpecimenPickupFromStart);
 
     }
+
 
     public SingleRunCommand stopDriveTrain() {
         return new SingleRunCommand(driveTrain::stop, driveTrain);
@@ -165,6 +170,10 @@ public class CommandFactory {
 
     public IntakeFromGround intakeFromGround() {
         return new IntakeFromGround(intake, pivot);
+    }
+
+    public IntakeFromWall intakeFromWall() {
+        return new IntakeFromWall(driveTrain, intake);
     }
 
     public RoboticCentricDriveCommand driveRobotCentric(double strafeSpeed, double forwardSpeed, double rotSpeed, long timeToDriveMs) {

@@ -39,7 +39,7 @@ public class DeliverySlider extends SonicSubsystemBase {
     public static int BasketDeliveryPosition = 1000;
     public static int CollapsedPosition = -10;
 
-    public static int StartPosition = 400;
+    public static int StartPosition = 125;
 
     private int ExtendLimit = 880;
 
@@ -152,7 +152,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         if(!isTeleop) {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
 
-            if(Math.abs(currentTarget - position) < 50) {
+            if(Math.abs(currentTarget - position) < 30) {
                 motor.set(0);
                 motor2.set(0);
             }

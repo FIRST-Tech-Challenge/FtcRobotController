@@ -38,6 +38,12 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     }
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
+        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance,  1500);
+    }
+
+    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
+        super(timeOut);
+
         this.driveTrain = driveTrain;
         this.odo = driveTrain.getOdo();
         this.telemetry = telemetry;

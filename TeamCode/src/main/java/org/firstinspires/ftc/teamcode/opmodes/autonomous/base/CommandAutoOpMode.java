@@ -30,13 +30,13 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         assert launchIntent != null;
         final boolean barebone = launchIntent.getBooleanExtra("barebone", false);
         DriverFeedback feedback = barebone ? null : new DriverFeedback(hardwareMap, driverGamePad, operatorGamePad, telemetry);
-        LimeLight limeLight = barebone ? null : new LimeLight(hardwareMap, telemetry);
-        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, null, limeLight);
+        //LimeLight limeLight = barebone ? null : new LimeLight(hardwareMap, telemetry);
+        AutoMecanumDriveTrain driveTrain = new AutoMecanumDriveTrain(hardwareMap, driverGamePad, telemetry, null, null);
         RollingIntake rollingIntake = barebone ? null : new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
         DeliveryPivot pivot = barebone ? null : new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback, rollingIntake);
         DeliverySlider slider = barebone ? null : new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
 
-        commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, limeLight, pivot,slider);
+        commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, null, pivot,slider);
         schedule(createCommand());
     }
 
