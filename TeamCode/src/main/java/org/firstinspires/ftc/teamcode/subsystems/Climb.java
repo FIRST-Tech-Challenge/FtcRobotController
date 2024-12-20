@@ -16,6 +16,7 @@ public class Climb {
     }
 
     public void moveClimb(double power){
+
         climb.setPower(power);
     }
 

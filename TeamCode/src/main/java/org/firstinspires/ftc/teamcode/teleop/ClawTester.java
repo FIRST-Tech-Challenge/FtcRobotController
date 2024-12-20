@@ -24,13 +24,14 @@ public class ClawTester extends LinearOpMode {
         telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-            if(controller.a.onPress()){
-                claw.release();
-            }else if(controller.b.onPress()){
-                claw.close(clawPos);
+            if(controller.b.onPress()){
+                //close
+                claw.toggle();
+                telemetry.addData("Claw is Open", claw.getIsOpen());
             }
 
-            telemetry.addData("Claw Position", clawPos);
+//            telemetry.addData("Claw Position", clawPos);
+            telemetry.update();
             controller.update();
         }
     }

@@ -50,7 +50,7 @@ public class SampleParkAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(12,-60,1.5708));
 
         waitForStart();
-        claw.close(clawPos);
+        claw.close();
         arm.setPosition(0);
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(12,-60,1.5708))

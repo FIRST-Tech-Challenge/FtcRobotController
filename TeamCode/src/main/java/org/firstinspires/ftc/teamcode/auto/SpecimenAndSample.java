@@ -52,35 +52,56 @@ public class SpecimenAndSample extends LinearOpMode {
         int specimenLiftPos = -1100;
 //
         waitForStart();
-        claw.close(clawPos);
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(0, -60, 1.5708))
+                        .stopAndAdd(()->claw.toggle())
 //                        .stopAndAdd(()->lift.setPosition(specimenLiftPos))
-//                        .stopAndAdd(()-> claw.close(-1))
+//                        .stopAndAdd(()-> claw.close())
 //                        .stopAndAdd(()->arm.setPosition(specimenArmPos))
 //                        .lineToY(-20)
 ////                        .waitSeconds(1000)
 //                        .stopAndAdd(()->lift.setPosition(-400))
 //                        .waitSeconds(2)
-//                        .stopAndAdd(()-> claw.close(1)) //
+//                        .stopAndAdd(()-> claw.close()) //
 ////                        .waitSeconds(1.5) //
 //                        .stopAndAdd(()->lift.setPosition(0))
+//                        .stopAndAdd(()->arm.setPosition(0))
 //                        .waitSeconds(0.7)
-//                        .lineToY(-39)
-//                        .strafeTo(new Vector2d( -69, -39))
-//                        .waitSeconds(0.001)
-//                        .lineToY(-37)
-//                        .stopAndAdd(()->claw.close(0.6)) //
-//                        .stopAndAdd(()-> arm.setPosition(0.5))
-//                        .stopAndAdd(()-> arm.setPosition(0.5))
-                        .waitSeconds(1)
-                        .stopAndAdd(()-> arm.setPosition(0))
-                        .stopAndAdd(()->claw.close(1))
+//                        .strafeTo(new Vector2d( -65, -30))
+//                        .waitSeconds(0.01)
+////                        .lineToX(-69)
+//                        .waitSeconds(0.01)
+//                        .lineToY(-30)
+//                        .waitSeconds(0.01)
+//                        .lineToY(-27)
+//                        .waitSeconds(0.1)
+
+//                        .waitSeconds(0.1)
+//                        .stopAndAdd(()->claw.toggle())
+//                        .waitSeconds(0.5)
+//                        .stopAndAdd(()-> arm.setPosition(0.8))
+//                        .waitSeconds(1)
+
+//                        .stopAndAdd(()-> arm.setPosition(1))
+//                        .waitSeconds(0.5)
+
+//                        .stopAndAdd(()->claw.toggle())
+//                        .waitSeconds(0.5)
+//                        .stopAndAdd(()-> arm.setPosition(0))
+
                         //After grabbing first sample
+//                        .strafeTo(new Vector2d( -79, -39))
+//                        .turn(Math.toRadians(-135))
 //                        .lineToY(-40)
 //                        .turn(Math.toRadians(180))
 //                        .waitSeconds(0.001)
 //                        .lineToY(-55)
+//                        .stopAndAdd(()-> lift.setPosition(-4000))
+//                        .waitSeconds(3)
+//                        .stopAndAdd(()->arm.setPosition(0.7))
+//                        .waitSeconds(1)
+//                        .stopAndAdd(()->claw.release())
+//                        .stopAndAdd(()->lift.setPosition(0))
                         //after scoring first sample
                         .build());
 

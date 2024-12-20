@@ -51,7 +51,7 @@ public class SpecimenAndParkAuto extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(12,-60,1.5708));
 
         waitForStart();
-        claw.close(clawPos);
+        claw.close();
         arm.setPosition(0.15);
         lift.setPosition(-1200);
         sleep(750);
@@ -68,6 +68,7 @@ public class SpecimenAndParkAuto extends LinearOpMode {
         Actions.runBlocking(
                 drive.actionBuilder(new Pose2d(6,-24,1.5708))
                         .strafeTo(new Vector2d(18,-24))
+                        .waitSeconds(0.1)
                         .lineToY(-20)
 
                         .build());

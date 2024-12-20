@@ -48,7 +48,7 @@ public class FarSideClawAuto extends LinearOpMode {
         sleep(5000);
 
         //set arm to middle
-        claw.close(clawPos);
+        claw.close();
         armPosition = 0.7;
         arm.setPosition(armPosition);
 

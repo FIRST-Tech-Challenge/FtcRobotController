@@ -45,7 +45,7 @@ public class nearSideClawAuto extends LinearOpMode {
         clawPos = 0.6;
 
 
-        claw.close(clawPos);
+        claw.close();
         armPosition = 0.7;
         arm.setPosition(armPosition);
 
