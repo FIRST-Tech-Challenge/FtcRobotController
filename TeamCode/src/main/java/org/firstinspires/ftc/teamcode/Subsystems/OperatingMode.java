@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -23,12 +24,8 @@ public class OperatingMode extends SubsystemBase {
     @Override
     public void periodic() {
 
-        // get trigger value from joystick - uses guide button
-        double trigger = 0.0;
-        if (RobotContainer.driverOp.gamepad.guide) trigger=1.0;
-
-        // alternative if using l-trigger button
-        //double trigger = RobotContainer.driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+        // get trigger value from l-trigger
+        double trigger = RobotContainer.driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
 
         if (!prevTriggerState && trigger > 0.75) {
             prevTriggerState=true;
