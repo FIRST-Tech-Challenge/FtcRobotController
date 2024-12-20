@@ -533,8 +533,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(run(() -> hardware.wrist.setPosition(1)))
                         // comment out rest of this chain if Liam doesn't want to move automatically
                         .then(await(1000))
-                        .then(moveRel(new Pose(-3.5, 0, 0)))
-                        .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                ).extraDepends(
+                        liftProxy.CONTROL,
+                        Locks.ArmAssembly
+                )
+        ).then(
+                moveRel(new Pose(-3.5, 0, 0))
+        ).then(
+                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(500))
                         // Maybe let the rest of this be async
                         .then(run(() -> {
@@ -545,8 +551,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(liftProxy.moveTo(0, 5, .25))
                 ).extraDepends(
                         liftProxy.CONTROL,
-                        Locks.ArmAssembly,
-                        Locks.DriveMotors
+                        Locks.ArmAssembly
                 )
         );
     }
