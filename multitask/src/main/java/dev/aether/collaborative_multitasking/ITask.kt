@@ -44,7 +44,7 @@ interface ITask {
 
     fun then(configure: Task.() -> Unit): Task {
         val task = Task(scheduler)
-        task.name = MultitaskScheduler.getCaller()
+        task.name = getCaller()
         task.configure()
         task waitsFor this
         task.register() // ready to go

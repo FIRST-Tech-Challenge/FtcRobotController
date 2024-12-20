@@ -6,6 +6,21 @@ import kotlin.math.ceil
 import kotlin.math.max
 import dev.aether.collaborative_multitasking.ITask.State
 
+internal fun getCaller(): String {
+    try {
+        throw Exception()
+    } catch (e: Exception) {
+        val stack = e.stackTrace
+        for (frame in stack) {
+            if (frame.className.contains("dev.aether.collaborative_multitasking")) continue
+            return "${
+                frame.className.split(".").last()
+            }.${frame.methodName} line ${frame.lineNumber}"
+        }
+    }
+    return "<unknown source>"
+}
+
 open class MultitaskScheduler
 @JvmOverloads constructor(private val throwDebuggingErrors: Boolean = false) : Scheduler() {
     private val locks: MutableMap<String, Int?> = mutableMapOf()
@@ -19,21 +34,6 @@ open class MultitaskScheduler
         private fun <T : Comparable<T>, N : List<T>> percentile(k: N, l: Double): T {
             val index = ceil(l * k.size).toInt()
             return k[max(0, index - 1)]
-        }
-
-        internal fun getCaller(): String {
-            try {
-                throw Exception()
-            } catch (e: Exception) {
-                val stack = e.stackTrace
-                for (frame in stack) {
-                    if (frame.className.contains("dev.aether.collaborative_multitasking")) continue
-                    return "${
-                        frame.className.split(".").last()
-                    }.${frame.methodName} line ${frame.lineNumber}"
-                }
-            }
-            return "<unknown source>"
         }
     }
 

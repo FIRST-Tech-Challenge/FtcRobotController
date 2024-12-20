@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.firstinspires.ftc.teamcode.mmooover.Ramps;
 import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
 import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveRelTask;
-import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveToTask;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,20 +92,17 @@ public class MecanumTeleOp2 extends LinearOpMode {
         return new TaskGroup(scheduler).with(contents);
     }
 
-    private MoveToTask moveTo(Pose target) {
-        return new MoveToTask(
-                scheduler, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
-        );
-    }
-
     private MoveRelTask moveRel(Pose offset) {
         return new MoveRelTask(
                 scheduler, hardware, offset, tracker, loopTimer, speed2Power, ramps, telemetry
         );
     }
 
+    private double heading = 0.0;
+
     private void hardwareInit() {
         tracker = new EncoderTracking(hardware);
+        tracker.setOrientationProvider(() -> heading);
         loopTimer = new LoopStopwatch();
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.20 seconds
         ramps = new Ramps(
@@ -188,6 +184,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             }
             double botheading = angles.firstAngle - yaw_offset;
             telemetry.addData("Heading", formatAngle(angles.angleUnit, botheading));
+            heading = botheading;
 //                    .addData("heading", formatAngle(angles.angleUnit, angles.firstAngle))
 //                    .addData("roll", formatAngle(angles.angleUnit, angles.secondAngle))
 //                    .addData("pitch", "%s deg", formatAngle(angles.angleUnit, angles.thirdAngle))
@@ -526,6 +523,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
                         .then(await(1000))
                         .then(run(() -> hardware.wrist.setPosition(1)))
+                        // comment out rest of this chain if Liam doesn't want to move automatically
                         .then(await(1000))
                         .then(moveRel(new Pose(-3.5, 0, 0)))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
