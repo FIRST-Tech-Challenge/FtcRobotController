@@ -25,4 +25,5 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'org.ftclib.ftclib:core:2.1.1'
 }

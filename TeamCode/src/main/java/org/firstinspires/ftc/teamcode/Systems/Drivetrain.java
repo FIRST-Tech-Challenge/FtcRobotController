@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Wrappers.Controller;
 
 public class Drivetrain {
 
@@ -17,24 +18,13 @@ public class Drivetrain {
 
     private GoBildaPinpointDriver pinPoint;
 
-    // Controller Joystick coefficients | {rx, ry, lx, ly}
-    final private double[] pS4 = {1, -1, 1, -1};
-    final private double[] xBox = {-1, -1, -1, -1};
-    private double[] stickCoefficients = {0, 0, 0, 0};
-
-    // Joystick Positions | {rx, ry, lx, ly}
     private double[] sticks = {0, 0, 0, 0};
+    private double heading = 0;
 
-    public enum Controller {
-        xBox,
-        pS4
-    }
+    Controller gamepad;
 
 
-    Gamepad gamepad;
-
-
-    public Drivetrain(Hardware hardware, Gamepad gamepad, Controller controller) {
+    public Drivetrain(Hardware hardware, Controller gamepad) {
         this.hardware = hardware;
 
         LF = hardware.LF;
@@ -43,34 +33,22 @@ public class Drivetrain {
         LB = hardware.LB;
 
         pinPoint = hardware.pinPoint;
-
-        switch(controller) {
-            case xBox:
-                stickCoefficients = xBox;
-                break;
-            case pS4:
-                stickCoefficients = pS4;
-                break;
-        }
-
         this.gamepad = gamepad;
     }
 
     public void update() {
+        pinPoint.update();
+        heading = pinPoint.getHeading();
 
-        sticks[0] = gamepad.right_stick_x;
-        sticks[1] = gamepad.right_stick_y;
-        sticks[2] = gamepad.left_stick_x;
-        sticks[3] = gamepad.left_stick_y;
+        sticks[0] = gamepad.getRSX();
+        sticks[1] = gamepad.getRSY();
+        sticks[2] = gamepad.getLSX();
+        sticks[3] = gamepad.getLSY();
+    }
 
-        for (int i = 0; i < sticks.length; i++) {
-            sticks [i] *= stickCoefficients[i];
-        }
-
-        double heading = -1 * pinPoint.getHeading();
-
-        double rotX = sticks[2] * Math.cos(-heading) - sticks[3] * Math.sin(-heading);
-        double rotY = sticks[2] * Math.sin(-heading) + sticks[3] * Math.cos(-heading);
+    public void command() {
+        double rotX = sticks[2] * Math.cos(heading) - sticks[3] * Math.sin(heading);
+        double rotY = sticks[2] * Math.sin(heading) + sticks[3] * Math.cos(heading);
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(sticks[0]), 1);
         double LFPower = (rotY + rotX + sticks[0]) / denominator;
@@ -83,4 +61,9 @@ public class Drivetrain {
         RB.setPower(RBPower);
         LB.setPower(LBPower);
     }
+
+    public Pose2D getPos2D() {
+        return  pinPoint.getPosition();
+    }
+
 }
