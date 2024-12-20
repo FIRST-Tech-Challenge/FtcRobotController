@@ -36,9 +36,9 @@ public class Blinkin extends SubsystemBase {
     public void periodic() {
         // blink counter
         counter +=1;
-        if (counter>15)
+        if (counter>8)
             counter=0;
-        boolean blink = (counter>8);
+        boolean blink = (counter>4);
 
         // set blinkin for team color
         if (RobotContainer.operatingMode.getSelectedMode() && blink)
