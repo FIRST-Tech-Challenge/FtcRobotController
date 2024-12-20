@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Systems.Drivetrain;
 
 
 @TeleOp
-public class DrivetrainTestOpmode extends OpMode {
+public class DrivetrainTestOpMode extends OpMode {
     Hardware hardware = new Hardware();
     Drivetrain drivetrain;
     Controller controller;

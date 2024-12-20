@@ -36,7 +36,7 @@ public class Hardware   {
 
     public CRServo armRight;
     public CRServo armLeft;
-    public CRServo claw;
+    public Servo claw;
 
     public AnalogInput armRightEnc;
     public AnalogInput armLeftEnc;
@@ -103,7 +103,7 @@ public class Hardware   {
 
         armRight = hardwareMap.get(CRServo.class, "CH-Servo-0");
         armLeft = hardwareMap.get(CRServo.class, "CH-Servo-1");
-        claw = hardwareMap.get(CRServo.class, "CH-Servo-2");
+        claw = hardwareMap.get(Servo.class, "CH-Servo-2");
 
         armRightEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-0");
         armLeftEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-1");
