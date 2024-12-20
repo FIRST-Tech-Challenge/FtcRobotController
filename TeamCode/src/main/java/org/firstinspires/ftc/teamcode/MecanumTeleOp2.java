@@ -50,7 +50,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
      */
     public static final double PUSH_TO_BYPASS = 0.20;
     double wristPos = 0.28;
-    double VerticalSlideSpeed = 1.00;
     int highBasketTicks = 2180;
     private Hardware hardware;
     private MultitaskScheduler scheduler;
@@ -179,6 +178,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         boolean isScoreHigh = false;
         boolean isScoreSpecimen = false;
         boolean isTx = false;
+        boolean isTxDump = false;
 
         double yaw_offset = 0.0;
         while (opModeIsActive()) {
@@ -256,6 +256,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
             if (shouldTx && !isTx) {
                 transfer();
             }
+            boolean shouldTxDump = gamepad1.x;
+            if (shouldTxDump && !isTxDump) {
+                transferAndDrop();
+            }
 
             boolean shouldFlipIn = gamepad1.right_trigger > 0.5;
             if (shouldFlipIn && !isFlipIn) Flipin();
@@ -268,6 +272,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isScoreHigh = shouldScoreHigh;
             isScoreSpecimen = shouldScoreSpecimen;
             isTx = shouldTx;
+            isTxDump = shouldTxDump;
 
             int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
 
@@ -435,32 +440,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         );
     }
 
-    public void PickUpYellow() {
-        // Scheduled to be rewritten -miles
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        hardware.verticalSlide.setTargetPosition(224);
-        sleep(500);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        hardware.arm.setTargetPosition(67);
-        sleep(500);
-        hardware.wrist.setPosition(0.94);
-        sleep(500);
-        hardware.claw.setPosition(0.02);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(110);
-        sleep(500);
-        hardware.claw.setPosition(0.55);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(200);
-        sleep(500);
-        hardware.wrist.setPosition(0.28);
-        sleep(500);
-        hardware.arm.setTargetPosition(0);
-        sleep(500);
-    }
-
     private void stepper() {
         // this deals with the horizontal slide stuff. we don't have locks (yet) so it's remaining
         // as-is for now
@@ -547,6 +526,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         );
     }
 
+    /* // might need for Left Auto
     public void Horizontalpick() {
         double hslideout = 0.35;
         double flipdown = 0.04;
@@ -566,6 +546,29 @@ public class MecanumTeleOp2 extends LinearOpMode {
         sleep(500);
         hardware.horizontalSlide.setPosition(hslidein);
         sleep(500);
+    }
+    */
+
+    // TODO: Reject while running
+    public void transferAndDrop() {
+        abandonLock(hClawProxy.CONTROL_CLAW);
+        abandonLock(liftProxy.CONTROL);
+        abandonLock(Locks.ArmAssembly);
+        transferInternal()
+                .then(groupOf(
+                        it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(35))))
+                                .then(await(1000))
+                                .then(run(() -> hardware.wrist.setPosition(0.75)))
+                                .then(await(250))
+                                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                                .then(await(500))
+                                .then(run(() -> {
+                                    hardware.wrist.setPosition(Hardware.WRIST_BACK);
+                                    hardware.arm.setTargetPosition(0);
+                                }))
+                ).extraDepends(
+                    Locks.ArmAssembly
+                ));
     }
 
     public void Flipout() {
@@ -597,11 +600,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
         ));
     }
 
-    public void transfer() {
-        abandonLock(hClawProxy.CONTROL_CLAW);
-        abandonLock(liftProxy.CONTROL);
-        abandonLock(Locks.ArmAssembly);
-        scheduler.add(groupOf(
+    private TaskGroup transferInternal() {
+        return scheduler.add(groupOf(
                 it -> it.add(liftProxy.moveTo(0, 5, 1.0))
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
@@ -627,6 +627,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 liftProxy.CONTROL,
                 Locks.ArmAssembly
         ));
+    }
+
+    public void transfer() {
+        abandonLock(hClawProxy.CONTROL_CLAW);
+        abandonLock(liftProxy.CONTROL);
+        abandonLock(Locks.ArmAssembly);
+        transferInternal();
     }
 
     private static class LiftProxy extends TaskTemplate {
