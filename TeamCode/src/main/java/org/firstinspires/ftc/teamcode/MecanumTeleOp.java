@@ -19,19 +19,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
-    public static final double RIGHT_SLIDE_OUT = 0.72;
-    public static final double LEFT_SLIDE_OUT = 0.28;
-    public static final double LEFT_SLIDE_IN = 0.55;
-    public static final double RIGHT_SLIDE_IN = 0.45;
     private Hardware hardware;
     double Wristpos = 0.28;
-    double Twistpos = 0.17;
     double VerticalSlideSpeed = 0.75;
     double ClawFrontPos = 0.5;
     double ClawFlipPos = 1.0;
- //   double hslidepos = 0.5;
-    double hslideleftpos = 0.5;
-    double clawPos = 0.02;
 
     @Override
     public void runOpMode() {
@@ -45,9 +37,8 @@ public class MecanumTeleOp extends LinearOpMode {
         hardware.arm.setTargetPosition(0);
         armTargetPosDeg = 0.0;
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.2);
+        hardware.arm.setPower(Hardware.ARM_POWER);
         hardware.wrist.setPosition(0.28);
-        //  hardware.twist.setPosition(Twistpos);
         IntegratingGyroscope gyro;
         NavxMicroNavigationSensor navxMicro;
         ElapsedTime timer = new ElapsedTime();
@@ -115,7 +106,6 @@ public class MecanumTeleOp extends LinearOpMode {
             wrist();
             trasfer(hardware);
             servoMoves();
-            // twist();
             stepper(hardware);
             lift(hardware);
             HSlide(hardware);
@@ -208,13 +198,6 @@ public class MecanumTeleOp extends LinearOpMode {
             return;
         }
 
-        /*
-        if (gamepad2.b) {
-            targetLift(hardware, highChamberTicks);
-            maintainHeightTicks = highChamberTicks;
-        }
-        */
-
         if (gamepad2.a) {
             targetLift(hardware, 0);
             maintainHeightTicks = 0;
@@ -260,60 +243,28 @@ public class MecanumTeleOp extends LinearOpMode {
         // Negative: towards front;
         // Positive: towards back.
         // Exclusion zone 0 to -25deg whe lift < 6in.
-        boolean emerg = false;
 
-        if (false/*hardware.encoderVerticalSlide.getCurrentPosition() <= liftMinClearanceTicks*/) {
-            // get outta there
-            // we are always "outta there" now
-            if (stick_pos > 0.7 && (armTargetPosDeg <= 5 || (armTargetPosDeg >= 35 && armTargetPosDeg <= 110))) {
-                armTargetPosDeg += 1;
-            }
-            if (stick_pos < -0.7 && (armTargetPosDeg >= 35 || (armTargetPosDeg >= -110 && armTargetPosDeg <= 5))) {
-                armTargetPosDeg -= 1;
-            }
-
-            if (armTargetPosDeg > 5 && armTargetPosDeg < 12.5) {
-                emerg = true;
-                armTargetPosDeg = 5;
-            } else if (armTargetPosDeg >= 12.5 && armTargetPosDeg < 35) {
-                emerg = true;
-                armTargetPosDeg = 35;
-            }
-        } else {
-            // Full* clearance
-            if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
-                armTargetPosDeg += 1;
-            }
-            if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
-                armTargetPosDeg -= 1;
-            }
+        // Full* clearance
+        if (stick_pos > 0.7 && armTargetPosDeg <= 110) {
+            armTargetPosDeg += 1;
+        }
+        if (stick_pos < -0.7 && armTargetPosDeg >= -110) {
+            armTargetPosDeg -= 1;
         }
 
         arm.setTargetPosition(Hardware.deg2arm(armTargetPosDeg));
-        arm.setPower(emerg ? 1.0 : 0.3);
+        arm.setPower(0.3);
         telemetry.addData("arm deg", degrees);
 
 
     }
     public void horizontalslidein(){
     double overrotateamount = 0.05;
-        hardware.horizontalLeft.setPosition(LEFT_SLIDE_IN+overrotateamount);
-        hardware.horizontalSlide.setPosition(RIGHT_SLIDE_IN-overrotateamount);
+        hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_IN+overrotateamount);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN-overrotateamount);
         sleep(1000);//this shoud be reduced and 200 not enough so between 200 & 1000
-        hardware.horizontalLeft.setPosition(LEFT_SLIDE_IN);
-        hardware.horizontalSlide.setPosition(RIGHT_SLIDE_IN);
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void twist() {
-        if (gamepad2.left_stick_x >= 0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
-            Twistpos += 0.01;
-            hardware.twist.setPosition(Twistpos);
-        } else if (gamepad2.left_stick_x <= -0.5 && gamepad2.left_stick_y >= -0.25 && gamepad2.left_stick_y <= 0.25) {
-            Twistpos -= 0.01;
-            hardware.twist.setPosition(Twistpos);
-        }
-        //  telemetry.addData("Twist Position",Twistpos);
-
+        hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_IN);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
     }
 
     public void wrist() {
@@ -331,12 +282,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
     public void servoMoves() {
         Servo servo = hardwareMap.get(Servo.class, "claw");
-        final double open = 0.02;
-        final double close = 0.55;
         if (gamepad2.left_bumper) {
-            servo.setPosition(open);
+            servo.setPosition(Hardware.CLAW_CLOSE);
         } else if (gamepad2.right_bumper) {
-            servo.setPosition(close);
+            servo.setPosition(Hardware.CLAW_OPEN);
 
         }
     }
@@ -355,7 +304,7 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
         hardware.wrist.setPosition(0.94);
         sleep(700);
-        hardware.claw.setPosition(0.55);
+        hardware.claw.setPosition(Hardware.CLAW_OPEN);
         sleep(100);
         hardware.wrist.setPosition(0.28);
         sleep(500);
@@ -377,12 +326,12 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
         hardware.wrist.setPosition(0.94);
         sleep(500);
-        hardware.claw.setPosition(0.02);
+        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(110);
         maintainHeightTicks = 25;
         sleep(500);
-        hardware.claw.setPosition(0.55);
+        hardware.claw.setPosition(Hardware.CLAW_OPEN);
         sleep(500);
         hardware.verticalSlide.setTargetPosition(200);
         maintainHeightTicks = 200;
@@ -393,48 +342,13 @@ public class MecanumTeleOp extends LinearOpMode {
         sleep(500);
     }
 
-    private void PickUpSpecimen(Hardware hardware) {
-        // Lift --> arm out --> Lift to 0 --> move wrist --> open claw
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.verticalSlide.setPower(VerticalSlideSpeed);
-        hardware.verticalSlide.setTargetPosition(224);
-        maintainHeightTicks = 224;
-        sleep(500);
-        hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.arm.setPower(0.5);
-        hardware.arm.setTargetPosition(90);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(0);
-        maintainHeightTicks = 0;
-        sleep(500);
-        hardware.wrist.setPosition(1);
-        sleep(500);
-        hardware.claw.setPosition(0.02); // TBD
-        sleep(500);
-        hardware.twist.setPosition(0.17);
-        sleep(500);
-        hardware.arm.setTargetPosition(145);
-        sleep(500);
-        hardware.claw.setPosition(0.55);
-        sleep(500);
-        hardware.wrist.setPosition(0.5);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(300);
-        sleep(500);
-        hardware.arm.setTargetPosition(0);
-        sleep(500);
-        hardware.verticalSlide.setTargetPosition(0);
-        sleep(500);
-        armTargetPosDeg = 0;
-    }
-
 
     private void stepper(Hardware hardware) {
         if (gamepad1.dpad_left) {
-            ClawFrontPos = 0.33;
+            ClawFrontPos = Hardware.FRONT_OPEN;
         }
         if (gamepad1.dpad_right) {
-            ClawFrontPos = 0.07;
+            ClawFrontPos = Hardware.FRONT_CLOSE;
         }
         if (gamepad1.dpad_down) {
             ClawFlipPos -= 0.01;
@@ -460,8 +374,8 @@ public class MecanumTeleOp extends LinearOpMode {
     public void HSlide(Hardware hardware) {
 
         if (gamepad1.y) {
-        hardware.horizontalSlide.setPosition(RIGHT_SLIDE_OUT);
-        hardware.horizontalLeft.setPosition(LEFT_SLIDE_OUT);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_OUT);
         }
         if (gamepad1.a) {
         horizontalslidein();
@@ -472,27 +386,21 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     public void specimenWallPick(Hardware hardware) {
-        double clawopen = 0.55;
-        double clawclose = 0.02;
-        double wristup = 0.46;
-        double wristback = 0.30;
-        double slideup = 200;
-        double armout = 23.94;
-        hardware.claw.setPosition(clawopen);
+        hardware.claw.setPosition(Hardware.CLAW_OPEN);
         sleep(1000);
-        hardware.wrist.setPosition(wristup);
+        hardware.wrist.setPosition(Hardware.WRIST_UP);
         sleep(1000);
         hardware.arm.setTargetPosition(45);
         armTargetPosDeg = 45;
         sleep(500);
-        hardware.claw.setPosition(clawclose);
+        hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         sleep(1000);
         hardware.verticalSlide.setTargetPosition(300);
         hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.verticalSlide.setPower(VerticalSlideSpeed);
         maintainHeightTicks = 300;
         sleep(1000);
-        hardware.wrist.setPosition(wristback);
+        hardware.wrist.setPosition(Hardware.WRIST_BACK);
         sleep(1000);
         hardware.arm.setTargetPosition(10);
         armTargetPosDeg = 10;
@@ -504,7 +412,7 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     private void score(Hardware hardware) {
-        double clawclose = 0.02;
+        double clawclose = Hardware.CLAW_CLOSE;
 
         hardware.claw.setPosition(clawclose);
         hardware.verticalSlide.setTargetPosition(710);
@@ -520,76 +428,66 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     public void Horizontalpick(Hardware hardware) {
-
-        double flipdown = 0.04;
-        double frontopen = 0.33;
-        double frontclose = 0.07;
-        double flipup = 0.98;
-        double hslidein = 0.1;
-        hardware.horizontalSlide.setPosition(RIGHT_SLIDE_OUT);
-        hardware.horizontalLeft.setPosition(LEFT_SLIDE_OUT);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_OUT);
         sleep(500);
-        hardware.clawFlip.setPosition(flipdown);
+        hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
         sleep(500);
-        hardware.clawFront.setPosition(frontopen);
+        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
         sleep(500);
-        hardware.clawFront.setPosition(frontclose);
-        ClawFrontPos = frontclose;
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+        ClawFrontPos = Hardware.FRONT_CLOSE;
         sleep(500);
-        hardware.clawFlip.setPosition(flipup);
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         sleep(500);
         horizontalslidein();
         sleep(500);
     }
 
     public void Flipout(Hardware hardware) {
-        double flipdown = 0.04;
-        hardware.horizontalSlide.setPosition(RIGHT_SLIDE_OUT);
-        hardware.horizontalLeft.setPosition(LEFT_SLIDE_OUT);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(Hardware.LEFT_SLIDE_OUT);
         sleep(500);
-        hardware.clawFlip.setPosition(flipdown);
-        ClawFlipPos = flipdown;
+        hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
+        ClawFlipPos = Hardware.FLIP_DOWN;
         sleep(500);
     }
 
     public void Flipin(Hardware hardware) {
-        double flipup = 0.98;
-        double hslidein = 0.0;
-        double fliponethird =0.66;
+        double fliponethird = 0.66;
         hardware.clawFlip.setPosition(fliponethird);
         ClawFlipPos = fliponethird;
         sleep(500);
         horizontalslidein();
         sleep(500);
-        hardware.clawFlip.setPosition(flipup);
-        ClawFlipPos = flipup;
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+        ClawFlipPos = Hardware.FLIP_UP;
         sleep(500);
     }
 
+    boolean lastX = false;
+
     public void trasfer(Hardware hardware){
-        if (gamepad2.x) {
-            double frontopen = 0.33;
-            double frontclosed = 0.07;
-            double clawopen = 0.55;
-            double clawclose = 0.02;
-            hardware.clawFront.setPosition(frontclosed);
-            ClawFrontPos = frontclosed;
-            hardware.claw.setPosition(clawopen);
+        boolean x = gamepad2.x;
+        if (x && !lastX) {
+            hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+            ClawFrontPos = Hardware.FRONT_CLOSE;
+            hardware.claw.setPosition(Hardware.CLAW_OPEN);
             sleep(500);
             hardware.wrist.setPosition(0);
             sleep(500);
             hardware.arm.setTargetPosition(-28);
             armTargetPosDeg = -8;
             sleep(1000);
-            hardware.claw.setPosition(clawclose);
+            hardware.claw.setPosition(Hardware.CLAW_CLOSE);
             sleep(500);
-            hardware.clawFront.setPosition(frontopen);
+            hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
             sleep(500);
             hardware.arm.setTargetPosition(0);
             armTargetPosDeg=0;
             sleep(500);
             hardware.wrist.setPosition(0.28);
-            ClawFrontPos=frontopen;
+            ClawFrontPos = Hardware.FRONT_OPEN;
         }
     }
 }

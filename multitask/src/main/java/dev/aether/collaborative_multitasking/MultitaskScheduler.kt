@@ -6,7 +6,22 @@ import kotlin.math.ceil
 import kotlin.math.max
 import dev.aether.collaborative_multitasking.ITask.State
 
-class MultitaskScheduler
+internal fun getCaller(): String {
+    try {
+        throw Exception()
+    } catch (e: Exception) {
+        val stack = e.stackTrace
+        for (frame in stack) {
+            if (frame.className.contains("dev.aether.collaborative_multitasking")) continue
+            return "${
+                frame.className.split(".").last()
+            }.${frame.methodName} line ${frame.lineNumber}"
+        }
+    }
+    return "<unknown source>"
+}
+
+open class MultitaskScheduler
 @JvmOverloads constructor(private val throwDebuggingErrors: Boolean = false) : Scheduler() {
     private val locks: MutableMap<String, Int?> = mutableMapOf()
     private val tasks: MutableMap<Int, ITask> = mutableMapOf()
@@ -20,43 +35,32 @@ class MultitaskScheduler
             val index = ceil(l * k.size).toInt()
             return k[max(0, index - 1)]
         }
-
-        internal fun getCaller(): String {
-            try {
-                throw Exception()
-            } catch (e: Exception) {
-                val stack = e.stackTrace
-                for (frame in stack) {
-                    if (frame.className.contains("dev.aether.collaborative_multitasking")) continue
-                    return "${
-                        frame.className.split(".").last()
-                    }.${frame.methodName} line ${frame.lineNumber}"
-                }
-            }
-            return "<unknown source>"
-        }
     }
 
     val tickTimes: MutableList<Double> = mutableListOf()
 
-    override var nextId: Int = 0
+    final override var nextId: Int = 0
         private set
     private var tickCount = 0
 
-    private fun selectState(state: State): List<ITask> {
+    protected fun selectState(state: State): List<ITask> {
         return tasks.values.filter { it.state == state }
     }
 
-    private fun allFreed(requirements: Set<SharedResource>): Boolean {
+    protected fun allFreed(requirements: Set<SharedResource>): Boolean {
         return requirements.all { locks[it.id] == null }
     }
 
-    private fun tickMarkStartable() {
+    protected fun tickMarkStartable() {
         selectState(State.NotStarted)
             .filter {
                 it.invokeCanStart()
             }
             .forEach {
+                if (it.isBypass()) {
+                    val idsToStop = it.requirements().map { locks[it.id] }.filterNotNull()
+                    filteredStop { it.myId in idsToStop }
+                }
                 if (allFreed(it.requirements())) {
                     it.transition(State.Starting)
                     // acquire locks
@@ -73,11 +77,13 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickStartMarked() {
+    protected fun tickStartMarked() {
         selectState(State.Starting)
             .forEach {
                 try {
                     it.invokeOnStart()
+                    if (it.state != State.Starting) // cancelled
+                        return@forEach
                     if (it.invokeIsCompleted()) {
                         it.transition(State.Finishing)
                     } else {
@@ -95,7 +101,7 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickTick() {
+    protected fun tickTick() {
         selectState(State.Ticking)
             .forEach {
                 try {
@@ -108,12 +114,12 @@ class MultitaskScheduler
             }
     }
 
-    private fun tickFinish() {
+    protected fun tickFinish() {
         val candidates = selectState(State.Finishing)
         candidates.forEach(::release)
     }
 
-    private fun release(task: ITask, cancel: Boolean = false) {
+    protected fun release(task: ITask, cancel: Boolean = false) {
         val targetState = if (cancel) State.Cancelled else State.Finished
         if (task.state == State.NotStarted) {
             task.transition(targetState)
@@ -190,16 +196,23 @@ class MultitaskScheduler
         )
     }
 
-    private fun displayTaskNoStatus(task: ITask, indent: Int, writeLine: (String) -> Unit) {
+    protected fun displayTaskNoStatus(task: ITask, indent: Int, writeLine: (String) -> Unit) {
         writeLine(buildString {
             append(" ".repeat(indent))
             append("#%d (%s)".format(task.myId, task.name))
-            if(task.daemon) append(" daemon")
-            if(task.onRequest()) append(" startReq")
+            if (task.daemon) append(" daemon")
+            if (task.onRequest()) append(" startReq")
         })
+        task.display(indent + 4, writeLine)
     }
 
-    fun displayStatus(withFinished: Boolean, withNotStarted: Boolean, writeLine: (String) -> Unit) {
+    @JvmOverloads
+    fun displayStatus(
+        withFinished: Boolean,
+        withNotStarted: Boolean,
+        writeLine: (String) -> Unit,
+        indent: Int = 0
+    ) {
         val notStartedList: MutableList<ITask> = mutableListOf()
         val inProgressList: MutableList<ITask> = mutableListOf()
         val finishedList: MutableList<ITask> = mutableListOf()
@@ -209,38 +222,54 @@ class MultitaskScheduler
         var done = 0
         var cancelled = 0
         var total = tasks.size
+
+        val spaces = " ".repeat(indent)
+
         for (task in tasks.values) {
             when (task.state) {
                 State.NotStarted -> {
                     waiting++
                     notStartedList.add(task)
                 }
+
                 State.Finished -> {
                     done++
                     finishedList.add(task)
                 }
+
                 State.Cancelled -> {
                     cancelled++
                     cancelledList.add(task)
                 }
+
                 else -> {
                     progress++
                     inProgressList.add(task)
                 }
             }
         }
-        writeLine("%d tasks: %d WAIT > %d RUN > %d STOP (%d done, %d cancel)".format(total, waiting, progress, done + cancelled, done, cancelled))
+        writeLine(
+            "%s%d tasks: %d WAIT > %d RUN > %d STOP (%d done, %d cancel)".format(
+                spaces,
+                total,
+                waiting,
+                progress,
+                done + cancelled,
+                done,
+                cancelled
+            )
+        )
         if (withNotStarted) {
-            writeLine("%d not started:".format(waiting))
-            for (task in notStartedList) displayTaskNoStatus(task, 4, writeLine)
+            writeLine("%s%d not started:".format(spaces, waiting))
+            for (task in notStartedList) displayTaskNoStatus(task, indent + 4, writeLine)
         }
-        writeLine("%d in progress:".format(progress))
-        for (task in inProgressList) displayTaskNoStatus(task, 4, writeLine)
+        writeLine("%s%d in progress:".format(spaces, progress))
+        for (task in inProgressList) displayTaskNoStatus(task, indent + 4, writeLine)
         if (withFinished) {
-            writeLine("%d finished:".format(done))
-            for (task in finishedList) displayTaskNoStatus(task, 4, writeLine)
-            writeLine("%d cancelled:".format(cancelled))
-            for (task in cancelledList) displayTaskNoStatus(task, 4, writeLine)
+            writeLine("%s%d finished:".format(spaces, done))
+            for (task in finishedList) displayTaskNoStatus(task, indent + 4, writeLine)
+            writeLine("%s%d cancelled:".format(spaces, cancelled))
+            for (task in cancelledList) displayTaskNoStatus(task, indent + 4, writeLine)
         }
     }
 
@@ -256,7 +285,8 @@ class MultitaskScheduler
         return task
     }
 
-    override fun task(t: ITask): ITask {
+    override fun <T : ITask> add(t: T): T {
+        t.scheduler = this
         t.name = getCaller()
         t.register()
         return t
@@ -275,6 +305,21 @@ class MultitaskScheduler
 
     override fun isResourceInUse(resource: SharedResource): Boolean {
         return locks[resource.id] != null
+    }
+
+    override fun manualAcquire(resource: SharedResource): Boolean {
+        if (locks[resource.id] != null) return false
+        locks[resource.id] = -1
+        return true
+    }
+
+    override fun manualRelease(resource: SharedResource) {
+        if (locks[resource.id] != -1) {
+            if (throwDebuggingErrors) throw IllegalStateException("Cannot manually release: lock not held by [-1], or was already released")
+            else println("ERROR [suppressed]: Cannot manually release: lock not held by [-1], or was already released")
+            return
+        }
+        locks[resource.id] = null
     }
 
     override fun panic() {
@@ -317,7 +362,7 @@ class MultitaskScheduler
             }
         if (dropNonStarted) {
             val dropped = tasks.filterInPlace { k, v ->
-                v.state == State.NotStarted && predicate(v)
+                !(v.state == State.NotStarted && predicate(v))
             }
             println("dropped ${dropped.size} tasks: ${dropped.joinToString(", ")}")
         }

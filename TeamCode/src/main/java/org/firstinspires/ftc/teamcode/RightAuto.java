@@ -1,34 +1,28 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.mmooover.EncoderTracking;
 import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.firstinspires.ftc.teamcode.mmooover.Ramps;
 import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
+import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveRelTask;
+import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveToTask;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 import dev.aether.collaborative_multitasking.ITask;
 import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.Scheduler;
-import dev.aether.collaborative_multitasking.SharedResource;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
 import kotlin.Pair;
@@ -72,136 +66,6 @@ public class RightAuto extends LinearOpMode {
         public void invokeOnTick() {
             timer.click();
             tracker.step();
-        }
-    }
-
-    static class MoveToTask extends TaskTemplate {
-        protected Pose target;
-        protected final EncoderTracking tracker;
-        protected final Speed2Power speed2Power;
-        protected final Ramps ramps;
-        protected final Telemetry telemetry;
-        protected final LoopStopwatch loopTimer;
-        protected final Hardware hardware;
-        protected ElapsedTime targetTime = new ElapsedTime();
-        protected ElapsedTime runTime = new ElapsedTime();
-        protected boolean finished = false;
-
-        public MoveToTask(
-                @NotNull Scheduler scheduler,
-                @NotNull Hardware hardware,
-                @NotNull Pose target,
-                @NotNull EncoderTracking tracker,
-                @NotNull LoopStopwatch loopTimer,
-                @NotNull Speed2Power speed2Power,
-                @NotNull Ramps ramps,
-                @NotNull Telemetry telemetry
-        ) {
-            super(scheduler);
-            this.target = target;
-            this.tracker = tracker;
-            this.speed2Power = speed2Power;
-            this.ramps = ramps;
-            this.telemetry = telemetry;
-            this.loopTimer = loopTimer;
-            this.hardware = hardware;
-        }
-
-        @Override
-        public void invokeOnStart() {
-            targetTime.reset();
-            runTime.reset();
-        }
-
-        @Override
-        public void invokeOnTick() {
-            Pose current = tracker.getPose();
-
-            double linear = current.linearDistanceTo(target);
-            double angular = current.subtractAngle(target);
-            if (linear > ACCEPT_DIST || abs(angular) > ACCEPT_TURN) {
-                targetTime.reset();
-            }
-            // Waits at the target for one second
-            if (targetTime.time() > .5) {
-                finished = true;
-                return;
-            }
-            // figure out how to get to the target position
-            Motion action = tracker.getMotionToTarget(target, hardware);
-            double dToTarget = sqrt(
-                    action.forward() * action.forward()
-                            + action.right() * action.right()
-                            + action.turn() * action.turn());
-            double now = runTime.time();
-            double speed = ramps.ease(
-                    now,
-                    dToTarget,
-                    0.75
-            );
-            action.apply(hardware.driveMotors, CALIBRATION, speed, speed2Power);
-            telemetry.addData("forward", action.forward());
-            telemetry.addData("right", action.right());
-            telemetry.addData("turn (deg)", Math.toDegrees(action.turn()));
-            String message = String.format(
-                    "##%.3f##{\"pose\":[%.6f,%.6f,%.6f],\"motion\":[%.6f,%.6f,%.6f],\"speed\":%.6f," +
-                            "\"frontLeft\":%.6f,\"frontRight\":%.6f,\"backLeft\":%.6f,\"backRight\":%.6f," +
-                            "\"dToTarget\":%.6f,\"timer\":%.4f,\"avgTickTime\":%.6f}##",
-                    System.currentTimeMillis() / 1000.0,
-                    current.x(), current.y(), current.heading(),
-                    action.forward(), action.right(), action.turn(),
-                    speed,
-                    action.getLastFL(), action.getLastFR(), action.getLastBL(), action.getLastBR(),
-                    dToTarget, now,
-                    loopTimer.getAvg() * 1000
-            );
-            Log.d("DataDump", message);
-        }
-
-        @Override
-        public boolean invokeIsCompleted() {
-            return finished;
-        }
-
-        @Override
-        public void invokeOnFinish() {
-            hardware.driveMotors.setAll(0.0);
-        }
-
-        private static final Set<SharedResource> REQUIREMENTS = Set.of(
-                Hardware.Locks.DriveMotors
-        );
-
-        @Override
-        public @NotNull Set<SharedResource> requirements() {
-            return REQUIREMENTS;
-        }
-    }
-
-    static class MoveRelTask extends MoveToTask {
-
-        @NotNull
-        private final Pose offset;
-
-        public MoveRelTask(
-                @NotNull Scheduler scheduler,
-                @NotNull Hardware hardware,
-                @NotNull Pose offset,
-                @NotNull EncoderTracking tracker,
-                @NotNull LoopStopwatch loopTimer,
-                @NotNull Speed2Power speed2Power,
-                @NotNull Ramps ramps,
-                @NotNull Telemetry telemetry
-        ) {
-            super(scheduler, hardware, new Pose(0, 0, 0), tracker, loopTimer, speed2Power, ramps, telemetry);
-            this.offset = offset;
-        }
-
-        @Override
-        public void invokeOnStart() {
-            Pose current = tracker.getPose();
-            target = current.add(offset);
-            super.invokeOnStart();
         }
     }
 
@@ -253,7 +117,7 @@ public class RightAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> specimenWallPick() {
-        ITask first = scheduler.task(run(() -> hardware.claw.setPosition(CLAW_OPEN)));
+        ITask first = scheduler.add(run(() -> hardware.claw.setPosition(CLAW_OPEN)));
         ITask last = first
                 .then(wait(1.000))
                 .then(run(() -> hardware.wrist.setPosition(WRIST_UP)))
@@ -277,7 +141,7 @@ public class RightAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> scoreSpecimen() {
-        ITask first = scheduler.task(run(() -> {
+        ITask first = scheduler.add(run(() -> {
             hardware.claw.setPosition(CLAW_CLOSE);
             hardware.verticalSlide.setTargetPosition(710);
             hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -307,14 +171,13 @@ public class RightAuto extends LinearOpMode {
     private final Runnable setup = () -> {
         hardware.claw.setPosition(CLAW_CLOSE);
         hardware.wrist.setPosition(0.28);
-        hardware.twist.setPosition(0.17);
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.2);
     };
 
     public void runAuto() {
-        scheduler.task(new OneShot(scheduler, setup))
+        scheduler.add(new OneShot(scheduler, setup))
                 .then(moveTo(new Pose(30, 12, 0)))
                 .then(scoreSpecimen())
 //                .then(wait(2.0))
@@ -340,7 +203,7 @@ public class RightAuto extends LinearOpMode {
         double doneIn = 0;
 
         // queue everything up
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
 //        mainAuto();

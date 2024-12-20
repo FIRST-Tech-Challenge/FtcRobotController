@@ -46,7 +46,7 @@ typealias Runnable = () -> Unit
 
 class Task(
     override var scheduler: Scheduler,
-): TaskWithWaitFor() {
+): TaskWithChaining() {
     override var state: State = State.NotStarted
         private set
 
@@ -195,6 +195,14 @@ class Task(
     override fun toString(): String {
         return "task $myId '$name'"
     }
+
+    private var bypass = false
+
+    fun bypass() {
+        bypass = true
+    }
+
+    override fun isBypass() = bypass
 
     override fun hashCode() = (myId ?: 0) * name.hashCode()
     override fun equals(other: Any?) = this === other

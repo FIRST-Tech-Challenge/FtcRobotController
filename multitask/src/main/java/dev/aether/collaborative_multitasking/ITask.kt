@@ -12,13 +12,15 @@ interface ITask {
         Cancelled(4),
     }
 
-    val scheduler: Scheduler
+    var scheduler: Scheduler
     val state: State
     val myId: Int?
     var name: String
     val daemon: Boolean
     val isStartRequested: Boolean
     fun onRequest() = isStartRequested
+
+    fun isBypass() = false
 
     // Lifecycle
     fun transition(newState: State)
@@ -35,21 +37,22 @@ interface ITask {
 
     fun requestStart()
     fun requestStop(cancel: Boolean) {
-        scheduler.filteredStop({ it == this }, cancel)
+        scheduler.filteredStop({ it === this }, cancel)
     }
 
     fun requestStop() = requestStop(true)
 
     fun then(configure: Task.() -> Unit): Task {
         val task = Task(scheduler)
-        task.name = MultitaskScheduler.getCaller()
+        task.name = getCaller()
         task.configure()
         task waitsFor this
         task.register() // ready to go
         return task
     }
 
-    fun then(task: ITask): ITask {
+    fun <T : ITask> then(task: T): T {
+        task.scheduler = scheduler
         task waitsFor this
         task.register()
         return task
@@ -59,9 +62,11 @@ interface ITask {
         this.then(polyChain.first)
         return polyChain.second
     }
+
+    fun display(indent: Int, write: (String) -> Unit) {}
 }
 
-abstract class TaskWithWaitFor() : ITask {
+abstract class TaskWithChaining() : ITask {
 
     private var waitFor: MutableSet<ITask> = mutableSetOf()
 
@@ -78,10 +83,15 @@ abstract class TaskWithWaitFor() : ITask {
     }
 }
 
-abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor(), ITask {
+abstract class TaskTemplate(override var scheduler: Scheduler) : TaskWithChaining(), ITask {
     final override var state = State.NotStarted
     final override var myId: Int? = null
-    override var name: String = "unnamed task"
+    private var name2 = "unnamed task"
+    override var name: String
+        get() = name2
+        set(value) {
+            name2 = value
+        }
 
     var startedAt = 0
         private set
@@ -95,7 +105,7 @@ abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor
         if (state == newState) return
         when (newState) {
             State.Starting -> startedAt = scheduler.getTicks()
-            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - (startedAt ?: 0)} ticks)")
+            State.Finishing -> println("$this: finishing at ${scheduler.getTicks()} (run for ${scheduler.getTicks() - startedAt} ticks)")
             else -> {}
         }
         state = newState
@@ -122,4 +132,37 @@ abstract class TaskTemplate(override val scheduler: Scheduler) : TaskWithWaitFor
     override fun invokeCanStart() = super.invokeCanStart()
 
     override val daemon: Boolean = false
+
+    override fun toString(): String {
+        return "task $myId '$name'"
+    }
 }
+
+abstract class ConsumingTaskTemplate<T>(scheduler: Scheduler) : TaskTemplate(scheduler),
+    ITaskConsumer<T> {
+    private val typedUpstreams: MutableList<ITaskWithResult<T>> = mutableListOf()
+
+    override fun upstreamTyped(provider: ITaskWithResult<T>) {
+        typedUpstreams.add(provider)
+    }
+
+    protected val weakResult: T?
+        get() = nullableFindReadyUpstream(typedUpstreams)
+    protected val result: T
+        get() = findReadyUpstream(typedUpstreams)
+}
+
+private fun <T> nullableFindReadyUpstream(providers: List<ITaskWithResult<T>>): T? {
+    var result: T? = null
+    for (item in providers) {
+        item.getResultMaybe().let {
+            if (result != null) throw IllegalStateException("More than one upstream result is available")
+            result = it
+        }
+    }
+    return result
+}
+
+private fun <T> findReadyUpstream(providers: List<ITaskWithResult<T>>): T =
+    nullableFindReadyUpstream(providers)
+        ?: throw IllegalStateException("No upstream results available yet")

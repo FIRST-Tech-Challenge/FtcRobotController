@@ -106,6 +106,6 @@ def pushPaths = tasks.register("pushPaths", Exec) {
 
 afterEvaluate {
     tasks.named("assembleDebug").configure {
-        finalizedBy(":TeamCode:pushPaths")
+//        finalizedBy(":TeamCode:pushPaths")
     }
 }

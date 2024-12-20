@@ -31,6 +31,7 @@ import dev.aether.collaborative_multitasking.MultitaskScheduler;
 import dev.aether.collaborative_multitasking.OneShot;
 import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.SharedResource;
+import dev.aether.collaborative_multitasking.Task;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
 import kotlin.Pair;
@@ -184,7 +185,6 @@ public class LeftAuto extends LinearOpMode {
         private final DcMotor verticalSlide;
         private final DcMotor arm;
         private final Servo wrist;
-        private final Servo twist;
         private final Servo claw;
         private ITask target = null;
         private final List<ITask> subTasks = new ArrayList<>();
@@ -195,10 +195,9 @@ public class LeftAuto extends LinearOpMode {
             verticalSlide = hardware.verticalSlide;
             arm = hardware.arm;
             wrist = hardware.wrist;
-            twist = hardware.twist;
             claw = hardware.claw;
             ITask head = scheduler
-                    .task(that -> {
+                    .task((Task that) -> {
                         that.canStart(() -> this.getState() == State.Ticking);
                         that.isCompleted(() -> true);
                         return Unit.INSTANCE;
@@ -272,7 +271,6 @@ public class LeftAuto extends LinearOpMode {
         private final DcMotor verticalSlide;
         private final DcMotor arm;
         private final Servo wrist;
-        private final Servo twist;
         private final Servo claw;
         private ITask target = null;
         private List<ITask> subTasks = new ArrayList<>();
@@ -283,7 +281,6 @@ public class LeftAuto extends LinearOpMode {
             verticalSlide = hardware.verticalSlide;
             arm = hardware.arm;
             wrist = hardware.wrist;
-            twist = hardware.twist;
             claw = hardware.claw;
             ITask head = scheduler
                     .task(that -> {
@@ -386,7 +383,7 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> flipOut() {
-        ITask first = scheduler.task(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
+        ITask first = scheduler.add(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
         ITask last = first
                 .then(wait(0.500))
                 .then(run(() -> hardware.clawFlip.setPosition(FLIP_DOWN)))
@@ -395,7 +392,7 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private Pair<ITask, ITask> flipIn() {
-        ITask first = scheduler.task(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
+        ITask first = scheduler.add(run(() -> hardware.clawFlip.setPosition(FLIP_UP)));
         ITask last = first
                 .then(wait(0.500))
                 .then(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_IN)))
@@ -448,16 +445,15 @@ public class LeftAuto extends LinearOpMode {
                 Ramps.LimitMode.SCALE
         );
 
-        scheduler.task(new BackgroundTasks(
+        scheduler.add(new BackgroundTasks(
                 scheduler, tracker, loopTimer
         ));
-        scheduler.task(new OneShot(scheduler, () -> {
+        scheduler.add(new OneShot(scheduler, () -> {
             hardware.claw.setPosition(0.55);
             hardware.wrist.setPosition(0.28);
-            hardware.twist.setPosition(0.17);
         }));
         scheduler
-                .task(moveTo(scheduler, SCORE_HIGH_BASKET))
+                .add(moveTo(scheduler, SCORE_HIGH_BASKET))
                 .then(scoreHighBasket(scheduler))
                 .then(moveTo(scheduler, new Pose(28, 12, Math.toRadians(-180))))
                 .then(pickUpYellow(scheduler))
