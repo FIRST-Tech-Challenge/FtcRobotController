@@ -576,7 +576,9 @@ public class RedTeleop extends LinearOpMode {
             }
 
             // Capture pictures from webcam every 500 milliseconds
-            cameraCapture.capture();
+            if (gamepad1.dpad_right) {
+                cameraCapture.capture();
+            }
 
             wheelOdometry.updatePosition();
             maintainOuttakeGlobalPos.update();

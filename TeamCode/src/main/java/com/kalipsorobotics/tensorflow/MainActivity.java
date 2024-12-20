@@ -12,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.tensorflow.lite.Interpreter;
@@ -27,7 +28,7 @@ public class MainActivity extends LinearOpMode {
 
     private OpenCvCamera webcam;
     private Interpreter tfliteInterpreter;
-    private static final String MODEL_NAME = "robot_detector.tflite";
+    private static final String MODEL_NAME = "robotv2_model.tflite";
 
     @Override
     public void runOpMode() {
@@ -56,9 +57,9 @@ public class MainActivity extends LinearOpMode {
 
                 // Display results on telemetry
                 if (output[0][0] > 0.5) {
-                    telemetry.addData("Detection", "Robot Detected!");
+                    Log.d("Detection", "Robot Detected!");
                 } else {
-                    telemetry.addData("Detection", "No Robot Detected");
+                    Log.d("Detection", "No Robot Detected");
                 }
                 telemetry.update();
 
@@ -66,7 +67,18 @@ public class MainActivity extends LinearOpMode {
             }
         });
 
-        //webcam.openCameraDeviceAsync(() -> webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT));
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error", "Camera failed to open: " + errorCode);
+                telemetry.update();
+            }
+        });
 
         telemetry.addData("Status", "Waiting for start...");
         telemetry.update();
