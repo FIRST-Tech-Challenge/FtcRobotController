@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware.Wrappers;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Controller {

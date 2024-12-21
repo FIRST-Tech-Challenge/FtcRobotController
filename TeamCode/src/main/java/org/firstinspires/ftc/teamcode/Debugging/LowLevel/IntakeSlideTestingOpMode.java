@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Debugging;
+package org.firstinspires.ftc.teamcode.Debugging.LowLevel;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 @TeleOp
-public class IntakeSlideTuner extends OpMode {
+public class IntakeSlideTestingOpMode extends OpMode {
 
     public static double
             p = IntakeConstants.sp,

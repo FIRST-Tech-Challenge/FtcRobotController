@@ -34,8 +34,8 @@ public class Hardware   {
     public DcMotorEx depositSlideRight;
     public DcMotorEx depositSlideLeft;
 
-    public CRServo armRight;
-    public CRServo armLeft;
+    public Servo armRight;
+    public Servo armLeft;
     public Servo claw;
 
     public AnalogInput armRightEnc;
@@ -97,12 +97,15 @@ public class Hardware   {
         depositSlideRight = hardwareMap.get(DcMotorEx.class, "CH-Motor-0");
         depositSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        depositSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
-        depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        depositSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armRight = hardwareMap.get(CRServo.class, "CH-Servo-0");
-        armLeft = hardwareMap.get(CRServo.class, "CH-Servo-1");
+        armRight = hardwareMap.get(Servo.class, "CH-Servo-0");
+        armLeft = hardwareMap.get(Servo.class, "CH-Servo-1");
         claw = hardwareMap.get(Servo.class, "CH-Servo-2");
 
         armRightEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-0");
