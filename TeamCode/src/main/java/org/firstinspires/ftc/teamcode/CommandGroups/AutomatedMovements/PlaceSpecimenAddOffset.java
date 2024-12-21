@@ -34,16 +34,16 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets arm to specimen place position
                 new SpecimenPlacePos(),
                 //sets the slides to low
-               // new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
 
-                //new Pause(1),
+                //new Pause(0.5),
                 //max speed = 1
                 new GoToNextDropOff(
-                        2.0,
-                        1.2,
+                        1.5,
+                        1.0,
                         0.0,
                         0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-35))),
                         new ArrayList<Translation2d>() {{ }},
                         AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.770, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
@@ -77,17 +77,19 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                     }
                 }),
 
-              //  new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN)),
+               // new Pause(0.5),
 
-                new Pause(0.5),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN, true)),
+
+                new Pause(1),
 
                 new OpenClaw(),
 
                 new Pause(0.25),
 
-                //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO, true)),
 
-                //new Pause(1),
+                new Pause(1),
 
                 new ArmStowHigh()
         );

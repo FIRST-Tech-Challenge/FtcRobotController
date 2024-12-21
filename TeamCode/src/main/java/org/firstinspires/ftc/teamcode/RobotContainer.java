@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 //import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
@@ -142,7 +143,7 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.START).whenPressed(new InstantCommand(()->climb.moveTo(ClimbTargetHeight.SAMPLE_LIFT)));
+        driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new FullClimb());
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO)));
 
@@ -156,9 +157,9 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
 
         driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
 
