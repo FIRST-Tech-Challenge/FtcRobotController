@@ -459,7 +459,8 @@ public class RedTeleop extends LinearOpMode {
             if (gamepad2.left_stick_y != 0) {
                 maintainOuttakeGlobalPos.brake();
                 MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -gamepad2.left_stick_y);
-            } else {
+            }
+            else {
                 maintainOuttakeGlobalPos.brake();
                 MoveOuttakeLSAction.incrementGlobal(0);
             }
