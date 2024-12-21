@@ -8,6 +8,8 @@ import java.util.TimerTask;
 public class SmartIntakeCommand extends SounderBotCommandBase {
 
     public SmartIntakeCommand(RollingIntake intake) {
+        super(4000);
+
         this.intake = intake;
         addRequirements(intake);
     }

@@ -41,7 +41,9 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public static int StartPosition = 125;
 
-    private int ExtendLimit = 880;
+    public static int SpecimenPosition = 145;
+
+    private int ExtendLimit = 420;
 
     private int currentTarget = 0;
 
@@ -122,7 +124,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public void MoveToDeliverySpecimanPosition() {
         SetAuto();
-        currentTarget = StartPosition;
+        currentTarget = SpecimenPosition;
     }
 
     public void MoveToDeliverySamplePosition() {

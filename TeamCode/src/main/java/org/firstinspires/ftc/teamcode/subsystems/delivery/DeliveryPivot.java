@@ -79,7 +79,6 @@ public class DeliveryPivot extends SonicSubsystemBase {
     public double GetDepth() {
         if (colorSensor instanceof DistanceSensor) {
             double depth = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
-            //telemetry.addData("Left distance (mm)", "%.3f", depth);
             return depth;
         }
 
@@ -106,11 +105,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.stopper.setPosition(0.875);
     }
 
-    private void SetTelop() {
+    public void SetTelop() {
         this.isTeleop = true;
     }
 
-    private void SetAuto() {
+    public void SetAuto() {
         this.isTeleop = false;
     }
 
@@ -147,6 +146,20 @@ public class DeliveryPivot extends SonicSubsystemBase {
         this.currentTarget = StartPositionFromCalibration;
     }
 
+    public void SetTargetToCurrent(int target) {
+        SetAuto();
+        this.currentTarget = target;
+    }
+
+    public boolean IsTargetReached() {
+        return Math.abs(currentTarget - getPosition()) < 30;
+    }
+
+    public void AutoToGroundPickup() {
+        SetAuto();
+        this.currentTarget = IntakePositionFromStart - 300;
+    }
+
     public void AutoToDelivery() {
         SetAuto();
         this.currentTarget = DeliveryPositionFromStart;
@@ -169,11 +182,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
         super.periodic();
 
         double position = motor.encoder.getPosition();
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
 
         if(addTelemetry) {
             telemetry.addData("pivot target", currentTarget);
             telemetry.addData("pivot current", position);
+            telemetry.addData("pivot color  depth", GetDepth());
         }
 
         if(position < DeliveryPositionFromStart - 300) {
@@ -191,11 +205,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
             double power = pidController.calculatePIDAlgorithm(currentTarget - position);
             //telemetry.addData("power", power);
 
-            telemetry.addData("pivot color  depth", GetDepth());
-            telemetry.update();
 
-            if(Math.abs(currentTarget - position) < 15 || (GetDepth() < 27 && currentTarget >  500)) {
-                //telemetry.addData("done", true);
+            if(Math.abs(currentTarget - position) < 30 || (GetDepth() < 27 && currentTarget >  500)) {
+                telemetry.addData("done", true);
                 motor.set(0);
             }
             else {
@@ -219,7 +231,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 //            }
         }
 
-        //telemetry.update();
+        telemetry.update();
     }
 
     public void MoveToIntakeInAuto() {

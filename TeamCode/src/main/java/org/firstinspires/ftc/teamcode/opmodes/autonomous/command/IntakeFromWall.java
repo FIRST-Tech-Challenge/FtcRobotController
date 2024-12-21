@@ -22,7 +22,7 @@ public class IntakeFromWall extends SounderBotCommandBase {
     public void initialize() {
         intake.IntakeInAuto();
         sleep(200);
-        driveTrain.setWheelsPower(.15, .15, .15, .15);
+        driveTrain.setWheelsPower(.2, .2, .2, .2);
     }
 
     @Override

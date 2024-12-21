@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
@@ -101,8 +103,12 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
     }
 
+    public MoveSliderCommand extendSliderToSpecimenSecondRounnd() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition - 50, DeliverySlider.Direction.EXPANDING);
+    }
+
     public MoveSliderCommand extendSliderToDeliverSpecimen() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 250, DeliverySlider.Direction.EXPANDING);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 200, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -122,7 +128,7 @@ public class CommandFactory {
     }
 
     public MovePivotCommand pivotToSpecimenInTake() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 250);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 450);
     }
 
     public MovePivotCommand pivotToGroundInTakeBegin() {
@@ -156,6 +162,10 @@ public class CommandFactory {
         return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
     }
 
+    public SingleRunCommand elbowToStartPosition() {
+        return new SingleRunCommand(intake::SetElbowInInStart);
+    }
+
     public SingleRunCommand elbowToSpecimenPosition() {
         return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
     }
@@ -169,7 +179,26 @@ public class CommandFactory {
     }
 
     public IntakeFromGround intakeFromGround() {
-        return new IntakeFromGround(intake, pivot);
+        return new IntakeFromGround(intake, pivot, telemetry);
+    }
+
+    private void Wait(long timeout) {
+        try {
+            synchronized (this) {
+                wait(timeout);
+            }
+        } catch (java.lang.InterruptedException e) {
+        }
+    }
+    public MovePivotCommand AutoToGround(int waitTime) {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 600, 100, waitTime,  .4);
+    }
+
+    public ParallelRaceGroup intakeFromGround2(int waitTime) {
+        return new ParallelRaceGroup(
+                intake(),
+                AutoToGround(waitTime)
+        );
     }
 
     public IntakeFromWall intakeFromWall() {

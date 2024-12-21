@@ -136,7 +136,6 @@ public class MainTeleop extends OpModeTemplate {
                     .whenPressed(new MovePivotRelativelyCommand(deliveryPivot, MovePivotRelativelyCommand.Direction.ToPickup, deliveryPivot.DeliveryPositionFromStart - 400, telemetry)
                             .andThen(new InstantCommand(deliveryPivot::resetEncoder, deliveryPivot)));
 
-
         //driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //        .whenPressed(new InstantCommand(driveTrain::AlignTx, driveTrain));
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.intake;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -90,14 +92,16 @@ public class RollingIntake extends SonicSubsystemBase {
                     this.leftServo.setPower(-1);
                     this.rightServo.setPower(1);
                 } else if(state == IntakeState.IntakeAuto) {
-                    this.leftServo.setPower(-.35);
-                    this.rightServo.setPower(.35);
+                    this.leftServo.setPower(-.3);
+                    this.rightServo.setPower(.3);
                 }
 
             } else {
-                if(state == IntakeState.Intake) {
+                if(state == IntakeState.Intake | state == IntakeState.IntakeAuto) {
                     this.leftServo.setPower(-0.3);
                     this.rightServo.setPower(0.3);
+                    Sleep(40);
+
                 } else {
                     this.leftServo.setPower(0);
                     this.rightServo.setPower(0);
@@ -149,6 +153,15 @@ public class RollingIntake extends SonicSubsystemBase {
         }
     }
 
+    public void Sleep(long timeout) {
+        try {
+            synchronized (this) {
+                wait(timeout);
+            }
+        } catch (java.lang.InterruptedException e) {
+        }
+    }
+
     public boolean IsSampleIntaken() {
         double d = GetDepth();
         return d < 50;
@@ -161,15 +174,15 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInSpecimenDeliveryPosition() {
-        this.elbowServo.setPosition(.3);
+        this.elbowServo.setPosition(0.15);
     }
 
     public void SetElbowInSampleDeliveryPosition() {
-        this.elbowServo.setPosition(.2);
+        this.elbowServo.setPosition(0.20);
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.5);
+        this.elbowServo.setPosition(.55);
     }
 
     public void SetElbowInInStart() {

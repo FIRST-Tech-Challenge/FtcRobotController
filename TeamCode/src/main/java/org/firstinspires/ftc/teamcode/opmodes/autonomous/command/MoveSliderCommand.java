@@ -45,13 +45,21 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     boolean resetEncoder = false;
 
+    int timeout = 4000;
+
     DeliverySlider.Direction direction;
 
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, DeliverySlider.Direction direction) {
         this(slider, telemetry, target, false, direction);
     }
 
-    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction direction) {
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction directio) {
+        this(slider, telemetry, target, resetEncoder, directio, 2000);
+    }
+
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction direction, int timeout) {
+        super(timeout);
+
         this.slider = slider;
         this.telemetry = telemetry;
         this.target = target;

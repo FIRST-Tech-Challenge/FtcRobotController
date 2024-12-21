@@ -14,13 +14,27 @@ public class MovePivotCommand extends SounderBotCommandBase{
     double position, previousPosition = 1000000;
     Motor motor;
     SonicPIDFController pidController;
+    int startDelayMs = 0;
+    int endDelayMs = 0;
+
+    double maxPower = 1;
 
     public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target) {
+        this(pivot,telemetry, target, 0, 0, 1);
+    }
+
+    public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target, int startDelayMs, int endDelayMs, double maxPower) {
+        super(3000);
+
         this.pivot = pivot;
         this.telemetry = telemetry;
         this.target = target;
         this.motor = pivot.getMotor();
         this.pidController = pivot.getPidController();
+        this.startDelayMs = startDelayMs;
+        this.endDelayMs = endDelayMs;
+        this.maxPower = maxPower;
+
         addRequirements(pivot);
     }
 
@@ -38,12 +52,20 @@ public class MovePivotCommand extends SounderBotCommandBase{
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+
+        sleep(this.startDelayMs);
+    }
+
+    @Override
     public void doExecute() {
         position = motor.encoder.getPosition();
         double power = pidController.calculatePIDAlgorithm(target - position);
         if (isTargetReached()) {
             motor.set(0);
             finished = true;
+            sleep(endDelayMs);
         } else {
             double minPower = .2;
 
@@ -51,6 +73,9 @@ public class MovePivotCommand extends SounderBotCommandBase{
                 //telemetry.addData("minPower", true);
 
                 power = minPower * Math.signum(power);
+            } else{
+
+                power = Math.min(power, 1) * maxPower;
             }
 
             motor.set(power);
