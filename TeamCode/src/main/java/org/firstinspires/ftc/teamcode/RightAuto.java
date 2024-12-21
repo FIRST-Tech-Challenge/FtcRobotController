@@ -106,7 +106,15 @@ public class RightAuto extends LinearOpMode {
         return new BlinkLightsTask(
                 scheduler, hardware,
                 seconds, true, 4 /* Hz */,
-                Hardware.LAMP_RED, 0.0, Hardware.LAMP_PURPLE
+                Hardware.LAMP_RED, Hardware.LAMP_ORANGE, Hardware.LAMP_PURPLE
+        );
+    }
+
+    private BlinkLightsTask lightColor(double color) {
+        return new BlinkLightsTask(
+                scheduler, hardware,
+                0.0 , false, 0,
+                0, 0, color
         );
     }
 
@@ -215,9 +223,8 @@ public class RightAuto extends LinearOpMode {
 
     private ITask drop() {
         return groupOf(it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(35))))
-                .then(await(700))
                 .then(run(() -> hardware.wrist.setPosition(0.75)))
-                .then(await(100))
+                .then(await(600))
                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                 .then(await(500))
                 .then(run(() -> {
@@ -253,7 +260,7 @@ public class RightAuto extends LinearOpMode {
                         .then(run(() -> hardware.arm.setTargetPosition(50)))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
-                        .then(await(500))
+                        .then(await(200))
                         .then(vLiftProxy.moveTo(225, 5, 0.4))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
 //                        .then(await(200))
@@ -270,24 +277,28 @@ public class RightAuto extends LinearOpMode {
                 .then(moveTo(new Pose(15.5, -36, 0)))
                 .then(grab())
                 .then(groupOf(a -> {
-                    a.add(transfer());
+                    a.add(transfer())
+                            .then(drop());
                     a.add(moveTo(new Pose(11.5, -36, 0)));
                 }))
-                .then(drop())
-                .then(moveTo(new Pose(15.5, -46.25, 0)))
-                .then(grab())
-                .then(groupOf(a -> {
-                    a.add(transfer());
-                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
-                }))
-                .then(drop())
+//                .then(moveTo(new Pose(15.5, -46.25, 0)))
+//                .then(grab())
+//                .then(groupOf(a -> {
+//                    a.add(transfer())
+//                            .then(drop());
+//                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
+//                }))
                 .then(moveTo(new Pose(13.5, -27, 0)))
-                .then(blinkenlights(2.00))
+                .then(blinkenlights(3.0))
                 .then(moveToSlow(new Pose(3, -27, 0)))
                 .then(run(() -> hardware.driveMotors.setAll(-0.35)))
                 .then(await(700))
                 .then(run(() -> hardware.driveMotors.setAll(0)))
-                .then(pickSpecimen());
+                .then(pickSpecimen())
+                .then(lightColor(Hardware.LAMP_PURPLE))
+                .then(moveTo(new Pose(30, 6, 0)))
+                .then(scoreSpecimen())
+                .then(moveTo(new Pose(6, -27, 0)));
     }
 
     @Override
