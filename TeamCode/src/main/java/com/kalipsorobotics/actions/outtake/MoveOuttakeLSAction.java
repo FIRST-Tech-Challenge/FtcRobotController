@@ -30,6 +30,13 @@ public class MoveOuttakeLSAction extends Action {
     private double currentTicks;
     private static double overridePower = 0;
 
+    public MoveOuttakeLSAction(Outtake outtake) {
+        this.outtake = outtake;
+        linearSlide1 = outtake.linearSlide1;
+        linearSlide2 = outtake.linearSlide2;
+        this.targetTicks = 0;
+        this.pidOuttakeLS = null;
+    }
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
         ERROR_TOLERANCE_TICKS =  CalculateTickPer.mmToTicksLS(5);
         double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
@@ -154,6 +161,7 @@ public class MoveOuttakeLSAction extends Action {
             power = overridePower;
             Log.d("Outtake_LS", "power overrided to " + power);
         }
+        brake();
 
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
@@ -191,5 +199,8 @@ public class MoveOuttakeLSAction extends Action {
         overridePower = power;
         Log.d("Outtake_LS", "override power is " + overridePower);
     }
-
+    public void brake() {
+        linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
 }
