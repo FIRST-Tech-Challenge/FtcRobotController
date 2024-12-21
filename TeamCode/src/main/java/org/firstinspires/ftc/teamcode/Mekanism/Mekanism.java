@@ -153,7 +153,11 @@ public class Mekanism {
 
   public void homeArm() {
     pivotTimer.reset();
+<<<<<<< HEAD
     while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500) {
+=======
+    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2.5) {
+>>>>>>> origin/FixSwerve
       pivot.setPower(-.75);
       slide.setPower(-0.5);
     }
