@@ -30,11 +30,11 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
     public static final double SLIDE_OVERSHOOT = 0.05;
     public static final double FLIP_DOWN = 0.05;
-    public static final double FRONT_OPEN = 0.33;
+    public static final double FRONT_OPEN = 0.25;
     public static final double FRONT_CLOSE = 0.07;
     public static final double FLIP_UP = 0.98;
-    public static final double CLAW_CLOSE = 0.02;
-    public static final double CLAW_OPEN = 0.55;
+    public static final double CLAW_CLOSE = 0.28;
+    public static final double CLAW_OPEN = 0.5;
     public static final double WRIST_UP = 0.42;
     public static final double WRIST_BACK = 0.30;
     public static final double ARM_POWER = 0.2;
