@@ -36,83 +36,119 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-/*
- * This OpMode scans a single servo back and forward until Stop is pressed.
- * The code is structured as a LinearOpMode
- * INCREMENT sets how much to increase/decrease the servo position each cycle
- * CYCLE_MS sets the update period.
- *
- * This code assumes a Servo configured with the name "left_hand" as is found on a Robot.
- *
- * NOTE: When any servo position is set, ALL attached servos are activated, so ensure that any other
- * connected servos are able to move freely before running this test.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
+import org.firstinspires.ftc.teamcode.GoBuilda.GoBuildaDriveToPointExample;
+import org.firstinspires.ftc.teamcode.Robot.ScaledServo;
+import org.firstinspires.ftc.teamcode.Robot.TT_RobotHardware;
+
 @TeleOp(name = "Servo Test", group = "Testing")
 
 public class ServoTesting extends LinearOpMode {
 
-    static final double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final double INCREMENT = 0.05;     // amount to slew servo each CYCLE_MS cycle
     static final int CYCLE_MS = 50;     // period of each cycle
-    //static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MAX_POS = 0.3;
-    static final double MIN_POS = 0.0;     // Minimum rotational position
 
     // Define class members
-    Servo servo;
-    DigitalChannel button;
+    public Servo servo;
+    public Servo extension = null;
+    public Servo extensionArm = null;
+    public Servo extensionSpin = null;
+    public Servo liftArm = null;
+    public Servo light = null;
+    //DigitalChannel button;
+    double servo_position;
 
-    double position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    boolean rampUp = true;
-
+    enum StateMachine {
+        WAITING_FOR_START,
+        LIFT_ARM,
+        EXTENSION,
+        EXTENSION_ARM,
+        EXTENSION_SPIN,
+        BUTTON
+    }
+    boolean dpadPressed = false;
+    boolean abPressed = false;
 
     @Override
     public void runOpMode() {
+        StateMachine stateMachine;
+        stateMachine = StateMachine.LIFT_ARM;
+        extension = hardwareMap.get(Servo.class, "Extension");
+        extensionArm = hardwareMap.get(Servo.class, "Extension Arm");
+        extensionSpin = hardwareMap.get(Servo.class, "Extension Spin");
+        liftArm = hardwareMap.get(Servo.class, "Lift Arm");
+        light = hardwareMap.get(Servo.class, "Light");
+        servo = liftArm;
+        servo_position = servo.getPosition();
 
-        // Connect to servo (Assume Robot Left Hand)
-        // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "test");
-        button = hardwareMap.get(DigitalChannel.class, "button");
-        button.setMode(DigitalChannel.Mode.INPUT);
-        //if (servo.get)
-        position = 0.5; //servo.getPosition();
-        // Wait for the start button
+        telemetry.addData("State", stateMachine.toString());
+        telemetry.addData("Servo Position", "%5.2f", liftArm.getPosition());
+        telemetry.addData("Servo Target", "%5.2f", servo_position);
+        //telemetry.addData("Button Pressed", "%s", button.getState());
         telemetry.addData(">", "Press Start to scan Servo.");
         telemetry.update();
+        // Wait for the start button
         waitForStart();
-
 
         // Scan servo till stop pressed.
         while (opModeIsActive()) {
-
-            if (!button.getState() || button.getState()) {
-                // slew the servo, according to the rampUp (direction) variable.
-                if (gamepad1.a) {
-                    // Keep stepping up until we hit the max value.
-                    position += INCREMENT;
-                } else if (gamepad1.b) {
-                    // Keep stepping down until we hit the min value.
-                    position -= INCREMENT;
+            if (gamepad1.dpad_up) {
+                if (!dpadPressed) {
+                    switch (stateMachine) {
+                        case LIFT_ARM:
+                            stateMachine = StateMachine.EXTENSION;
+                            servo = extension;
+                            servo_position = extension.getPosition();
+                            break;
+                        case EXTENSION:
+                            stateMachine = StateMachine.EXTENSION_ARM;
+                            servo = extensionArm;
+                            servo_position = extensionArm.getPosition();
+                            break;
+                        case EXTENSION_ARM:
+                            stateMachine = StateMachine.EXTENSION_SPIN;
+                            servo = extensionSpin;
+                            servo_position = extensionSpin.getPosition();
+                            break;
+                        case EXTENSION_SPIN:
+                            stateMachine = StateMachine.LIFT_ARM;
+                            servo = liftArm;
+                            servo_position = liftArm.getPosition();
+                            break;
+                    }
                 }
-
-
+                dpadPressed = true;
             } else {
-                position = 0.5;
+                if (!abPressed) {
+                    //if (!button.getState() || button.getState()) {
+                    // slew the servo, according to the rampUp (direction) variable.
+                    if (gamepad1.a) {
+                        // Keep stepping up until we hit the max value.
+                        servo_position = servo.getPosition() + INCREMENT;
+                        abPressed = true;
+                    } else if (gamepad1.b) {
+                        // Keep stepping down until we hit the min value.
+                        servo_position = servo.getPosition() - INCREMENT;
+                        abPressed = true;
+                    }
+                }
+                else {
+                    abPressed = false;
+                }
+                dpadPressed = false;
             }
-
-            servo.setPosition(position);
+           // servo.setPosition(servo_position);
 
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", servo.getPosition());
-            telemetry.addData("Servo Target", "%5.2f", position);
-            telemetry.addData("Button Pressed", "%s", button.getState());
 
+            telemetry.addData("State", stateMachine.toString());
+            telemetry.addData("Servo Position", "%5.2f", servo.getPosition());
+            telemetry.addData("Servo Target", "%5.2f", servo_position);
+            //telemetry.addData("Button Pressed", "%s", button.getState());
             telemetry.addData(">", "Press Stop to end test.");
             telemetry.update();
             sleep(CYCLE_MS);
             idle();
         }
+
     }
 }

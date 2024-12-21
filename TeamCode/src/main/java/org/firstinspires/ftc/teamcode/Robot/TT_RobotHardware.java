@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -42,25 +43,6 @@ import org.firstinspires.ftc.teamcode.GoBuilda.GoBuildaPinpointDriver;
 
 import java.util.Locale;
 
-/*
- * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
- * Please read the explanations in that Sample about how to use this class definition.
- *
- * This file defines a Java Class that performs all the setup and configuration for a sample robot's hardware (motors and sensors).
- * It assumes three motors (left_drive, right_drive and arm) and two servos (left_hand and right_hand)
- *
- * This one file/class can be used by ALL of your OpModes without having to cut & paste the code each time.
- *
- * Where possible, the actual hardware objects are "abstracted" (or hidden) so the OpMode code just makes calls into the class,
- * rather than accessing the internal hardware directly. This is why the objects are declared "private".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with *exactly the same name*.
- *
- * Or... In OnBot Java, add a new file named RobotHardware.java, select this sample, and select Not an OpMode.
- * Also add a new OpMode, select the sample ConceptExternalHardwareClass.java, and select TeleOp.
- *
- */
-
 public class TT_RobotHardware {
 
     /* Declare OpMode members. */
@@ -70,27 +52,32 @@ public class TT_RobotHardware {
     public DcMotor leftBackDrive = null;
     public DcMotor rightFrontDrive = null;
     public DcMotor rightBackDrive = null;
+    public DcMotor leftLift = null;  //  Used to control the left back drive wheel
+    public DcMotor rightLift = null;  //  Used to control the left back drive wheel
 
     public GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public GoBuildaDriveToPoint nav; //OpMode member for the point-to-point navigation class
-    private DcMotor leftLift = null;  //  Used to control the left back drive wheel
-    private DcMotor rightLift = null;  //  Used to control the left back drive wheel
 
-    private ScaledServo extension = null;
-    private ScaledServo extensionArm = null;
-    private boolean extensionArmUp = true;
+    public DigitalChannel liftSafetyButton = null;
+    public ScaledServo extension = null;
+    public ScaledServo extensionArm = null;
+    public ScaledServo extensionSpin = null;
+    public ScaledServo liftArm = null;
+    public ScaledServo light = null;
+
+    // Initialize servo settings
+    public boolean extensionArmUp = true;
     private boolean extensionArmButtonPress = false;
-    private ScaledServo extensionSpin = null;
-    private ScaledServo liftArm = null;
+    private boolean lift = true;
     private boolean liftArmUp = true;
     private boolean liftArmButtonPress = false;
-    private ScaledServo light = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO = 0.5;
     public static final double HAND_SPEED = 0.02;  // sets rate to move servo
     public static final double ARM_UP_POWER = 0.45;
     public static final double ARM_DOWN_POWER = -0.45;
+    private boolean liftEnabled = false;
     public int liftHeight = 0;
     public int liftHeightMax = 1500;
     public int liftHeightMin = 0;
@@ -151,6 +138,11 @@ public class TT_RobotHardware {
         leftLift.setTargetPosition(liftHeight);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftSafetyButton = myOpMode.hardwareMap.get(DigitalChannel.class, "Lift Safety Button");
+        liftSafetyButton.setMode(DigitalChannel.Mode.INPUT);
+        if (!liftSafetyButton.getState()) {
+            liftEnabled = true;
+        }
 
         odo = myOpMode.hardwareMap.get(GoBuildaPinpointDriver.class, "odo");
         odo.setOffsets(-145.0, -200.0); //these are tuned for 3110-0002-0001 Product Insight #1
@@ -161,11 +153,11 @@ public class TT_RobotHardware {
         nav = new GoBuildaDriveToPoint(myOpMode);
         nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
 
-        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.0, 1.0);
+        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.27, 0.5);
         extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension", 0, 1);
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.3, 0.5);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.28, 0.55);
         light = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Light"), "Light", 0.0, 1.0);
-        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Arm"), "Arm", 0.38, .55);
+        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Arm", 0.38, .55);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.addData("X offset", odo.getXOffset());
@@ -176,7 +168,7 @@ public class TT_RobotHardware {
     }
 
     public void moveLiftArm() {
-        if (myOpMode.gamepad1.x) {
+        if (myOpMode.gamepad1.right_stick_button) {
             if (!liftArmButtonPress) {
                 light.setTargetPosition(.300);
                 if (liftArmUp) {
@@ -193,7 +185,17 @@ public class TT_RobotHardware {
     }
 
     public void moveExtensionArm() {
-        if (myOpMode.gamepad1.y) {
+        if (myOpMode.gamepad1.b) {
+            // positioned over blocks for easy viewing
+            extensionArm.setTargetPosition(.75);
+        } else if (myOpMode.gamepad1.a) {
+            // pickup the block
+            extensionArm.setTargetPosition(1);
+        } else if (myOpMode.gamepad1.x) {
+            // bring arm back for returning block.
+            extensionArm.setTargetPosition(0);
+        }
+        /*
             if (!extensionArmButtonPress) {
                 light.setTargetPosition(.38);
                 if (extensionArmUp) {
@@ -207,33 +209,45 @@ public class TT_RobotHardware {
         } else {
             extensionArmButtonPress = false;
         }
+        */
     }
 
     public void moveExtension() {
+
         if (myOpMode.gamepad1.right_trigger > 0) {
-            extension.setTargetPosition(.5 - ( myOpMode.gamepad1.right_trigger / 2));
+            extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 10));
         } else if (myOpMode.gamepad1.left_trigger > 0) {
-            extension.setTargetPosition(.5 + ( myOpMode.gamepad1.left_trigger / 2));
+            extension.setTargetPosition(extension.getPosition()  + (myOpMode.gamepad1.left_trigger/10));
         } else {
-            extension.setTargetPosition(.5);
+            extension.setTargetPosition(extension.getPosition());
         }
     }
 
     public void moveExtensionSpin() {
-        if (myOpMode.gamepad1.dpad_left) {
+        if (myOpMode.gamepad1.left_bumper) {
             extensionSpin.setTargetPosition(.75);
-        } else if (myOpMode.gamepad1.dpad_right) {
+        } else if (myOpMode.gamepad1.right_bumper) {
             extensionSpin.setTargetPosition(.25);
+        } else {
+            extensionSpin.setTargetPosition(.5);
         }
     }
 
     public void drivelift() {
-        if (myOpMode.gamepad1.a) {
-            light.setTargetPosition(.6);
-            raiseLift();
-        } else if (myOpMode.gamepad1.b) {
-            light.setTargetPosition(.6);
-            lowerLift();
+        if (liftEnabled) {
+            if (myOpMode.gamepad1.dpad_down) {
+                light.setTargetPosition(.6);
+                setLiftPosition(liftHeightMin);
+                //raiseLift();
+            } else if (myOpMode.gamepad1.dpad_up) {
+                light.setTargetPosition(.6);
+                setLiftPosition(liftHeightMax);
+                //lowerLift();
+            } else if (myOpMode.gamepad1.dpad_right) {
+                light.setTargetPosition(.6);
+                setLiftPosition(750);
+                //lowerLift();
+            }
         }
         //setLiftPosition((int)myOpMode.gamepad1.right_trigger * liftHeightMax );
     }
@@ -321,8 +335,7 @@ public class TT_RobotHardware {
 
     }
 
-    public void setDrivePower(double leftFront, double rightFront, double leftBack,
-                              double rightBack) {
+    public void setDrivePower(double leftFront, double rightFront, double leftBack, double rightBack) {
         // Output the values to the motor drives.
         leftFrontDrive.setPower(leftFront);
         rightFrontDrive.setPower(rightFront);
@@ -345,6 +358,8 @@ public class TT_RobotHardware {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             myOpMode.telemetry.addData("Position", data);
             myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            myOpMode.telemetry.addData("Servos", "Ext %1.1f Ext Arm %1.1f", extension.getPosition(), extensionArm.getPosition());
+
             myOpMode.telemetry.update();
         } catch (Exception ex) {
         }
