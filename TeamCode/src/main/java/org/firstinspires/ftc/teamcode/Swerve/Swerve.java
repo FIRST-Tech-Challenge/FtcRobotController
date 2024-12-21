@@ -35,7 +35,7 @@ public class Swerve {
   private final SwerveDriveKinematics kinematics;
   private final double drivebaseRadius;
 
-  private final Module[] modules = new Module[4];
+  public final Module[] modules = new Module[4];
 
   private final Telemetry telemetry;
 
@@ -195,7 +195,7 @@ public class Swerve {
         odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY ? "OK" : odometryStatus.name());
   }
 
-  private static final class Module {
+  public static final class Module {
     private static final double conversionFactor;
 
     String pos = "";
