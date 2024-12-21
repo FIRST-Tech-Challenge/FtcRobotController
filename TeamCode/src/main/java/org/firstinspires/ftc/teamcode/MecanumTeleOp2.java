@@ -598,7 +598,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(35))))
                                 .then(await(1000))
                                 .then(run(() -> hardware.wrist.setPosition(0.75)))
-                                .then(await(250))
+                                .then(await(100))
                                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                                 .then(await(500))
                                 .then(run(() -> {
@@ -676,7 +676,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     private static class LiftProxy extends TaskTemplate {
-        private static final double SPEED = .75;
+        private static final double SPEED = 1.0;
         private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
         private static final int MIN_VERTICAL_LIFT_TICKS = 0;
         private static final Set<SharedResource> requires = Set.of(Locks.VerticalSlide);
