@@ -5,11 +5,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
@@ -20,14 +23,21 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 public class TuneFeedForwardLift  extends LinearOpMode {
 //    Encoder encoder;
     Lift lift;
-    public static double height = 12;
+    public static double height = 34;
+    public static double height2 = 12;
     public void runOpMode() throws InterruptedException {
         Battery battery = new Battery(hardwareMap);
         lift = new Lift(hardwareMap, battery);
 
         waitForStart();
 
-                Actions.runBlocking((lift.moveToHeight(height)));
+                Actions.runBlocking(
+                        new SequentialAction(
+                        lift.moveToHeight(height),
+                        lift.moveToHeight(height2),
+                        lift.ionoinoniinpn()
+                        )
+                );
 //                if (Timer.seconds() > 3) {
 //                    Actions.runBlocking(lift.moveToHeight(currentPosition));
 //

@@ -32,17 +32,17 @@ public class Lift {
     public DcMotorAdvanced liftMotorRight;
     Encoder encoder;
     TouchSensor limiter;
-    public static double kA=0;
-    public static double kV=0;
+    public static double kA=0.1;
+    public static double kV=0.1;
     public static double kG=0.1;
     public static double kP = 0;
     public static double kI = 0;
     public static double kD = 0;
     public static double liftThreshold = 0.1;
     double spoolRadius =  0.702; // [in]
-    public static double maxAcceleration = 50.0;
-    public static double maxDeceleration = 50.0;
-    public static double maxVelocity = 60;
+    public static double maxAcceleration = 5;
+    public static double maxDeceleration = 5;
+    public static double maxVelocity = 6;
     private final double ticksPerRev = 384.5;
     private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
@@ -109,6 +109,7 @@ public class Lift {
 
             ElapsedTime t = new ElapsedTime();
             double initialPos = currentPosition;
+
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 //                checkLimit();
@@ -120,9 +121,9 @@ public class Lift {
                 motorPower = pidPower + ffPower + kG;
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
-                if (targetHeight == 0 && Math.abs(targetHeight - currentPosition) < liftThreshold){
-                    liftMotorLeft.setPower(0);
-                    liftMotorRight.setPower(0);
+                if (Math.abs(targetHeight - currentPosition) < liftThreshold){
+                    liftMotorLeft.setPower(kG);
+                    liftMotorRight.setPower(kG);
                 }
                 packet.put("Current Height: ", currentPosition);
                 packet.put("Target Height: ", targetHeight);
@@ -134,7 +135,6 @@ public class Lift {
     }
     public Action manualControl(double power) {
         return new Action() {
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 liftMotorLeft.setPower(power+kG);
@@ -145,6 +145,13 @@ public class Lift {
             }
         };
     }
-
+    public Action ionoinoniinpn(){
+        return new Action(){
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                return true;
+            }
+        };
+    }
     // Write another action that uses the joystick to move up and down.
 }
