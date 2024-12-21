@@ -137,20 +137,19 @@ public class Swerve {
     var rotationalScalar = MathUtil.interpolate(1, .5, translationalMagnitude);
 
     fieldRelativeDrive(
-    new ChassisSpeeds(
+        new ChassisSpeeds(
             xInput * Module.maxDriveSpeedMetersPerSec * speedMult,
             yInput * Module.maxDriveSpeedMetersPerSec * speedMult,
             yawInput
-                    * (Module.maxDriveSpeedMetersPerSec
+                * (Module.maxDriveSpeedMetersPerSec
                     * speedMult
                     * rotationalScalar
                     / drivebaseRadius)),
-            dt);
+        dt);
 
-    if(yawInput == 0 && odometry.getHeading().getRadians()!=lastHeading)
-        telemetry.addData("Unwanted rotation: ",true);
-    else
-        telemetry.addData("Unwanted rotation: ",false);
+    if (yawInput == 0 && odometry.getHeading().getRadians() != lastHeading)
+      telemetry.addData("Unwanted rotation: ", true);
+    else telemetry.addData("Unwanted rotation: ", false);
   }
 
   public Pose2d getPose() {

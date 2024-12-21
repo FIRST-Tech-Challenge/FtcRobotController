@@ -40,8 +40,12 @@ public class Swerve_components {
   final double gearRatio = 1.7; // gear ratio
 
   protected boolean driveTurn = true; // if true drive straight or false wheels 45 deg turn
-  protected static final double degInc = 0.02; // sets Servo turn degrees
-  protected static final double degSlope = 0.005556; // (outend - outstrt)/(inpend - inpstrt)
+  protected static final double degInc =
+      0.05; // sets Servo turn degrees TODO: Why is this implemented, but not used
+  protected static final double degSlope =
+      0.005556
+          * 5.0; // (outend - outstrt)/(inpend - inpstrt) Turning while driving speed TODO: What
+  // does the equation mean
 
   public static double desV = 0.0; // distance to travel
   public static double angV = 0.0; // angle to turn
