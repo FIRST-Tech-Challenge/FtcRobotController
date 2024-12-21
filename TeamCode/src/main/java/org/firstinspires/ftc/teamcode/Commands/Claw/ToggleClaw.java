@@ -35,7 +35,10 @@ public class ToggleClaw extends CommandBase {
     public void execute() {
 
         // get new button state
-        boolean newButtonState = RobotContainer.driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5;
+        boolean newButtonState = RobotContainer.driverOp.getButton(GamepadKeys.Button.RIGHT_BUMPER);
+
+        // previous - was using l-trigger
+        //boolean newButtonState = RobotContainer.driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5;
 
         if (newButtonState && !CurrentButtonState && debounce.seconds() > 0.5) {
 
