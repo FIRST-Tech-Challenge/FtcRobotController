@@ -114,20 +114,23 @@ public class Hardware2025Bot
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
 
     public final static double TILT_ANGLE_HW_MAX_DEG      = 95.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
-    public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // Arm at rotation back to the basket for scoring
-    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // Arm almost at  basket (start to slow; avoid wobble)
+    public final static double TILT_ANGLE_BASKET_DEG      = 95.00; // ??? Arm at rotation back to the basket for scoring
+    public final static double TILT_ANGLE_AUTO_PRE_DEG    = 88.00; // ??? Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
     public final static double TILT_ANGLE_ASCENT2_DEG     = 75.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
     public final static double TILT_ANGLE_ZERO_DEG        =  7.00; // Arm for parking fully reset in auto
-    public final static double TILT_ANGLE_DRIVE_DEG       = 11.80; // Arm for parking in auto or driving around
+    public final static double TILT_ANGLE_DRIVE_DEG       = 11.80; // ??? Arm for parking in auto or driving around
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
-    public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // (NEW) Angle for scoring specimens (above bar)
-    public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // (NEW) Angle for scoring specimens (clipped)
+    public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
+    public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  2.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // Arm to where motor touches wall
+    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // AUTO: Angle where motor touches wall
+    public final static double TILT_ANGLE_WALL0_DEG        = 21.50; // Grab specimen off wall in autonomous
+    public final static double TILT_ANGLE_WALL1_DEG        = 32.30; // Grab specimen off wall in autonomous
+    public final static double TILT_ANGLE_WALL2_DEG        = 20.20; // Grab specimen off wall in autonomous
 
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
@@ -168,6 +171,9 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
     public final static int    VIPER_EXTEND_FULL1 = 2800;   // extended 36" forward (max for 20"x42" limit at horizontal)
     public final static int    VIPER_EXTEND_FULL2 = 4214;   // hardware fully extended (never exceed this count!)
+    public final static int    VIPER_EXTEND_WALL0 = 25;   // Grab specimen off wall in autonomous
+    public final static int    VIPER_EXTEND_WALL1 = 230;   // Grab specimen off wall in autonomous
+    public final static int    VIPER_EXTEND_WALL2 = 0;   // Grab specimen off wall in autonomous
 
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
@@ -194,6 +200,12 @@ public class Hardware2025Bot
     public final static double ELBOW_SERVO_BAR1_ANGLE = 174.0;
     public final static double ELBOW_SERVO_BAR2 = 0.520;       // NEW specimen bar (clipped)
     public final static double ELBOW_SERVO_BAR2_ANGLE = 174.0;
+    public final static double ELBOW_SERVO_WALL0 = 0.500;       // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_WALL0_ANGLE = 180.0; // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_WALL1 = 0.510;       // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_WALL1_ANGLE = 176.0; // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_WALL2 = 0.500;       // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_WALL2_ANGLE = 180.0; // Grab specimen off wall in autonomous
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -213,6 +225,12 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_BAR1_ANGLE = 173.0;
     public final static double WRIST_SERVO_BAR2 = 0.640;        // NEW specimen bar (clipped)
     public final static double WRIST_SERVO_BAR2_ANGLE = 173.0;
+    public final static double WRIST_SERVO_WALL0 = 0.500;        // Grab specimen off wall in autonomous
+    public final static double WRIST_SERVO_WALL0_ANGLE = 180.0;  // Grab specimen off wall in autonomous
+    public final static double WRIST_SERVO_WALL1 = 0.519;        // Grab specimen off wall in autonomous
+    public final static double WRIST_SERVO_WALL1_ANGLE = 173.0;  // Grab specimen off wall in autonomous
+    public final static double WRIST_SERVO_WALL2 = 0.500;        // Grab specimen off wall in autonomous
+    public final static double WRIST_SERVO_WALL2_ANGLE = 180.0;  // Grab specimen off wall in autonomous
 
     // horizontal = 0.440
     // straight down = 0.710
@@ -547,18 +565,18 @@ public class Hardware2025Bot
     /*--------------------------------------------------------------------------------------------*/
     public void updateAscendMotorAmps() {
 
-        // monitor the viper slide motor current needed to lift robot during ascent       
+        // monitor the viper slide motor current needed to lift robot during ascent
         viperMotorAmps = viperMotor.getCurrent(CurrentUnit.AMPS);
         if( viperMotorAmps > viperMotorAmpsPk ) viperMotorAmpsPk = viperMotorAmps;
 
-        // monitor the arm tilt motor current needed fold robot up from floor during ascent       
+        // monitor the arm tilt motor current needed fold robot up from floor during ascent
         wormTiltMotorAmps = wormTiltMotor.getCurrent(CurrentUnit.AMPS);
         if( wormTiltMotorAmps > wormTiltMotorAmpsPk ) wormTiltMotorAmpsPk = wormTiltMotorAmps;
 
-        // monitor the arm pan motor current needed to keep arm from rotating during ascent       
+        // monitor the arm pan motor current needed to keep arm from rotating during ascent
         wormPanMotorAmps = wormPanMotor.getCurrent(CurrentUnit.AMPS);
         if( wormPanMotorAmps > wormPanMotorAmpsPk ) wormPanMotorAmpsPk = wormPanMotorAmps;
-        
+
     } // updateAscendMotorAmps
 
     /*--------------------------------------------------------------------------------------------*/
@@ -643,7 +661,7 @@ public class Hardware2025Bot
         // Return the verified power setting
         return powerNext;
     } // restrictDeltaPower
-    
+
     /*--------------------------------------------------------------------------------------------*/
     /* setRunToPosition()                                                                         */
     /* - driveY -   true = Drive forward/back; false = Strafe right/left                          */
@@ -778,7 +796,7 @@ public class Hardware2025Bot
             }
         }
     } // processViperSlideExtension
-    
+
     public void abortViperSlideExtension()
     {
         // Have we commanded an AUTOMATIC lift movement that we need to terminate so we

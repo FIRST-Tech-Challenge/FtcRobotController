@@ -98,7 +98,7 @@ public abstract class Teleop extends LinearOpMode {
 	
     Gamepad.RumbleEffect visibleAprilTagRumble1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect rumblePixelBinSingle;
-    Gamepad.RumbleEffect rumblePixelBinDouble;
+    Gamepad.RumbleEffect rumbleAscentReady;
 
     // sets unique behavior based on alliance
     public abstract void setAllianceSpecificBehavior();
@@ -116,7 +116,7 @@ public abstract class Teleop extends LinearOpMode {
                 .addStep(1.0, 0.0, 250)  //  Rumble LEFT motor 100% for 250 mSec
                 .build();   // use different sides for SINGLE and DOUBLE in case they're signalled back-to-back
 
-        rumblePixelBinDouble = new Gamepad.RumbleEffect.Builder()
+        rumbleAscentReady = new Gamepad.RumbleEffect.Builder()
                 .addStep(0.0, 1.0, 250)  //  Rumble RIGHT motor 100% for 250 mSec
                 .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
                 .addStep(0.0, 1.0, 250)  //  Rumble RIGHT motor 100% for 250 mSec
@@ -777,6 +777,7 @@ public abstract class Teleop extends LinearOpMode {
             case ASCENT_STATE_MOVING :
                 if( !robot.viperMotorBusy && !robot.wormTiltMotorBusy ) {
                     // Ready for phase 2
+                    gamepad2.runRumbleEffect(rumbleAscentReady);
                     ascent2state = ASCENT_STATE_READY;
                 }
                 break;
