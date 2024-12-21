@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 
 @TeleOp
-
+@Disabled
 public class UtilityCameraFrameCapture extends LinearOpMode {
     /*
      * EDIT THESE PARAMETERS AS NEEDED

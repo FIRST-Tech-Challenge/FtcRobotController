@@ -32,12 +32,13 @@ public class CameraCapture {
                 .setCamera(INTERNAL_CAM_DIR)
                 .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build();
+        capReqTime = 0;
     }
 
     public void capture() {
         if (capReqTime == 0) {
             portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d", frameCount++));
-            Log.d("Camera", "writing to CameraFrameCapture. frame count: " + frameCount);
+            Log.d("Camera TF", "writing to CameraFrameCapture. frame count: " + frameCount);
             capReqTime = System.currentTimeMillis();
         }
 

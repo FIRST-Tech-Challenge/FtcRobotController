@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 
 import androidx.annotation.CallSuper;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -37,6 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.opencv.core.Size;
 
+@Disabled
 @TeleOp
 public class TensorflowDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "robotv2_model.tflite";

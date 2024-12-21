@@ -1,9 +1,11 @@
 package com.kalipsorobotics.test;
 
 import com.kalipsorobotics.tensorflow.RobotDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp
 public class RobotDetectionTest extends LinearOpMode {
     RobotDetector robotDetector = new RobotDetector(telemetry);
