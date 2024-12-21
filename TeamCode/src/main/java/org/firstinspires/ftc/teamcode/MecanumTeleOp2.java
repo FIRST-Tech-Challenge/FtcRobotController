@@ -424,14 +424,15 @@ public class MecanumTeleOp2 extends LinearOpMode {
     public void resetAll() {
         abandonLock(Locks.ArmAssembly);
         abandonLock(liftProxy.CONTROL);
-        scheduler.add(groupOf(it->it.add(run(() -> {
-            hardware.claw.setPosition(Hardware.CLAW_OPEN);
-            sleep(200);
-            hardware.arm.setTargetPosition(0);
-            hardware.wrist.setPosition(Hardware.WRIST_UP);
-            sleep(200);
-            scheduler.add(liftProxy.moveTo(0, 5, 1.0));
-        })).then(await(700))).extraDepends(Locks.ArmAssembly));
+        scheduler.add(groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                .then(await(200))
+                .then(run(() -> {
+                    hardware.arm.setTargetPosition(0);
+                    hardware.wrist.setPosition(Hardware.WRIST_UP);
+                }))
+                .then(await(200))
+                .then(liftProxy.moveTo(0, 5, 1.0))
+        ).extraDepends(Locks.ArmAssembly, liftProxy.CONTROL));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
