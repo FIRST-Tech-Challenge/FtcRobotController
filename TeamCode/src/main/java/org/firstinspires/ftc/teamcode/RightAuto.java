@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.BlinkLightsTask;
 import org.firstinspires.ftc.teamcode.hardware.HClawProxy;
 import org.firstinspires.ftc.teamcode.hardware.HSlideProxy;
 import org.firstinspires.ftc.teamcode.hardware.VLiftProxy;
@@ -63,6 +64,7 @@ public class RightAuto extends LinearOpMode {
     private HSlideProxy hSlideProxy;
     private HClawProxy hClawProxy;
     private Ramps ramps;
+    private Ramps rampsSlowEdition;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
     private MultitaskScheduler scheduler;
@@ -94,6 +96,19 @@ public class RightAuto extends LinearOpMode {
                 scheduler, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
         );
     }
+    private MoveToTask moveToSlow(Pose target) {
+        return new MoveToTask(
+                scheduler, hardware, target, tracker, loopTimer, speed2Power, rampsSlowEdition, telemetry
+        );
+    }
+
+    private BlinkLightsTask blinkenlights(double seconds) {
+        return new BlinkLightsTask(
+                scheduler, hardware,
+                seconds, true, 4 /* Hz */,
+                Hardware.LAMP_RED, 0.0, Hardware.LAMP_PURPLE
+        );
+    }
 
     private void hardwareInit() {
         tracker = new EncoderTracking(hardware);
@@ -101,6 +116,12 @@ public class RightAuto extends LinearOpMode {
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.20 seconds
         ramps = new Ramps(
                 Ramps.linear(2.0),
+                Ramps.linear(1 / 12.0),
+//                Easing.power(3.0, 12.0),
+                Ramps.LimitMode.SCALE
+        );
+        rampsSlowEdition = new Ramps(
+                x -> 0.25,
                 Ramps.linear(1 / 12.0),
 //                Easing.power(3.0, 12.0),
                 Ramps.LimitMode.SCALE
@@ -224,24 +245,49 @@ public class RightAuto extends LinearOpMode {
         );
     }
 
+    private ITask pickSpecimen() {
+        return groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                        .then(await(200))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
+                        .then(await(500))
+                        .then(run(() -> hardware.arm.setTargetPosition(50)))
+                        .then(await(500))
+                        .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
+                        .then(await(500))
+                        .then(vLiftProxy.moveTo(225, 5, 0.4))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
+//                        .then(await(200))
+                        .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
+                        .then(await(200))
+                        .then(vLiftProxy.moveTo(0, 5, 0))
+        );
+    }
+
     public void runAuto() {
         scheduler.add(new OneShot(scheduler, setup))
                 .then(moveTo(new Pose(30, 12, 0)))
                 .then(scoreSpecimen())
-                .then(moveTo(new Pose(16.5, -36, 0)))
+                .then(moveTo(new Pose(15.5, -36, 0)))
                 .then(grab())
                 .then(groupOf(a -> {
                     a.add(transfer());
                     a.add(moveTo(new Pose(11.5, -36, 0)));
                 }))
                 .then(drop())
-                .then(moveTo(new Pose(16.5, -46.25, 0)))
+                .then(moveTo(new Pose(15.5, -46.25, 0)))
                 .then(grab())
                 .then(groupOf(a -> {
                     a.add(transfer());
                     a.add(moveTo(new Pose(11.5, -46.25, 0)));
                 }))
-                .then(drop());
+                .then(drop())
+                .then(moveTo(new Pose(13.5, -27, 0)))
+                .then(blinkenlights(2.00))
+                .then(moveToSlow(new Pose(3, -27, 0)))
+                .then(run(() -> hardware.driveMotors.setAll(-0.35)))
+                .then(await(700))
+                .then(run(() -> hardware.driveMotors.setAll(0)))
+                .then(pickSpecimen());
     }
 
     @Override
