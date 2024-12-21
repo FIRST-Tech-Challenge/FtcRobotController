@@ -79,4 +79,9 @@ public class HClawProxy extends TaskTemplate {
     public ITask aSetFlipClaw(double flip, double claw) {
         return new OneShot(scheduler, () -> setFlipClaw(flip, claw));
     }
+
+    @Override
+    public boolean getDaemon() {
+        return true;
+    }
 }

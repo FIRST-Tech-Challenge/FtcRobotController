@@ -57,7 +57,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     private Ramps ramps;
     private LoopStopwatch loopTimer;
     private Speed2Power speed2Power;
-    private org.firstinspires.ftc.teamcode.hardware.VLiftProxy VLiftProxy;
+    private org.firstinspires.ftc.teamcode.hardware.VLiftProxy vLiftProxy;
     private double heading = 0.0;
 
     /**
@@ -156,7 +156,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         // this is the scheduler that will be used during the main program
         scheduler = new MultitaskScheduler();
-        VLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalSlide));
+        vLiftProxy = scheduler.add(new VLiftProxy(scheduler, hardware.verticalSlide));
         hSlideProxy = scheduler.add(new HSlideProxy(scheduler, hardware));
         hClawProxy = scheduler.add(new HClawProxy(scheduler, hardware));
 
@@ -321,8 +321,8 @@ public class MecanumTeleOp2 extends LinearOpMode {
     // lifts the vertical slides to a target position in ticks
 
     private ITaskWithResult<Boolean> targetLift(int targetPosition) {
-        abandonLock(VLiftProxy.CONTROL);
-        return scheduler.add(VLiftProxy.moveTo(targetPosition, 5, 3.0));
+        abandonLock(vLiftProxy.CONTROL);
+        return scheduler.add(vLiftProxy.moveTo(targetPosition, 5, 3.0));
     }
 
     private void lamps() {
@@ -354,7 +354,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     private void lift() {
-        VLiftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
+        vLiftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
     }
 
     private double getArmPosDeg() {
@@ -421,7 +421,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     public void resetAll() {
         abandonLock(Locks.ArmAssembly);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         scheduler.add(groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                 .then(await(200))
                 .then(run(() -> {
@@ -429,23 +429,23 @@ public class MecanumTeleOp2 extends LinearOpMode {
                     hardware.wrist.setPosition(Hardware.WRIST_UP);
                 }))
                 .then(await(200))
-                .then(VLiftProxy.moveTo(0, 5, 1.0))
-        ).extraDepends(Locks.ArmAssembly, VLiftProxy.CONTROL));
+                .then(vLiftProxy.moveTo(0, 5, 1.0))
+        ).extraDepends(Locks.ArmAssembly, vLiftProxy.CONTROL));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     public void ScoreHighBasket1() {
         abandonLock(Locks.ArmAssembly);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         scheduler.add(
-                groupOf(inner -> inner.add(VLiftProxy.moveTo(highBasketTicks, 5, 2.0))
+                groupOf(inner -> inner.add(vLiftProxy.moveTo(highBasketTicks, 5, 2.0))
                                 .then(run(() -> hardware.arm.setTargetPosition(222)))
 //                        .then(run(() -> hardware.claw.setPosition(0.02)))
 //                        .then(await(500))
                         // broken into two here
                 ).extraDepends(
                         Locks.ArmAssembly,
-                        VLiftProxy.CONTROL
+                        vLiftProxy.CONTROL
                 )
         );
     }
@@ -455,7 +455,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         if (hardware.verticalSlide.getCurrentPosition() < 1000) return;
         if (hardware.arm.getCurrentPosition() < 190) return;
         abandonLock(Locks.ArmAssembly);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         scheduler.add(groupOf(inner -> inner.add(run(() -> hardware.wrist.setPosition(0.94)))
                 .then(await(700))
                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
@@ -464,10 +464,10 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 .then(await(500))
                 .then(run(() -> hardware.arm.setTargetPosition(0)))
                 .then(await(500))
-                .then(VLiftProxy.moveTo(0, 5, 2.0)))
+                .then(vLiftProxy.moveTo(0, 5, 2.0)))
                 .extraDepends(
                         Locks.ArmAssembly,
-                        VLiftProxy.CONTROL
+                        vLiftProxy.CONTROL
                 ));
     }
 
@@ -501,7 +501,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     public void specimenWallPick() {
         abandonLock(Locks.ArmAssembly);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                                 .then(await(200))
@@ -511,15 +511,15 @@ public class MecanumTeleOp2 extends LinearOpMode {
                                 .then(await(500))
                                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                                 .then(await(500))
-                                .then(VLiftProxy.moveTo(225, 5, 0.4))
+                                .then(vLiftProxy.moveTo(225, 5, 0.4))
                                 .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
 //                        .then(await(200))
                                 // TODO: investigate if 10 ticks or 10 degrees is the right number
                                 .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
                                 .then(await(200))
-                                .then(VLiftProxy.moveTo(0, 5, 0))
+                                .then(vLiftProxy.moveTo(0, 5, 0))
                 ).extraDepends(
-                        VLiftProxy.CONTROL,
+                        vLiftProxy.CONTROL,
                         Locks.ArmAssembly
                 )
         );
@@ -527,7 +527,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private void score() {
         double clawclose = 0.02;
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         abandonLock(Locks.ArmAssembly);
         abandonLock(Locks.DriveMotors);
 
@@ -535,14 +535,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
         // if something else takes the locks between these it's the driver's fault smh
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
-                        .then(VLiftProxy.moveTo(710, 5, 1.0))
+                        .then(vLiftProxy.moveTo(710, 5, 1.0))
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
                         .then(await(1000))
                         .then(run(() -> hardware.wrist.setPosition(1)))
                         // comment out rest of this chain if Liam doesn't want to move automatically
                         .then(await(1000))
                 ).extraDepends(
-                        VLiftProxy.CONTROL,
+                        vLiftProxy.CONTROL,
                         Locks.ArmAssembly
                 )
         ).then(
@@ -556,9 +556,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
                             hardware.arm.setTargetPosition(Hardware.deg2arm(0));
                         }))
                         .then(await(1000))
-                        .then(VLiftProxy.moveTo(0, 5, .25))
+                        .then(vLiftProxy.moveTo(0, 5, .25))
                 ).extraDepends(
-                        VLiftProxy.CONTROL,
+                        vLiftProxy.CONTROL,
                         Locks.ArmAssembly
                 )
         );
@@ -590,7 +590,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
     // TODO: Reject while running
     public void transferAndDrop() {
         abandonLock(hClawProxy.CONTROL_CLAW);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         abandonLock(Locks.ArmAssembly);
         transferInternal()
                 .then(groupOf(
@@ -640,7 +640,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     private TaskGroup transferInternal() {
         return scheduler.add(groupOf(
-                it -> it.add(VLiftProxy.moveTo(0, 5, 1.0))
+                it -> it.add(vLiftProxy.moveTo(0, 5, 1.0))
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
@@ -662,14 +662,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
         ).extraDepends(
                 hClawProxy.CONTROL_CLAW,
-                VLiftProxy.CONTROL,
+                vLiftProxy.CONTROL,
                 Locks.ArmAssembly
         ));
     }
 
     public void transfer() {
         abandonLock(hClawProxy.CONTROL_CLAW);
-        abandonLock(VLiftProxy.CONTROL);
+        abandonLock(vLiftProxy.CONTROL);
         abandonLock(Locks.ArmAssembly);
         transferInternal();
     }
