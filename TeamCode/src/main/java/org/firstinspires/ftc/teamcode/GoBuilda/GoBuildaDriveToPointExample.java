@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.GoBuilda;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,15 +13,15 @@ import java.util.Locale;
 @Autonomous(name="Pinpoint Navigation Example", group="Pinpoint")
 //@Disabled
 
-public class SensorPinpointDriveToPoint extends LinearOpMode {
+public class GoBuildaDriveToPointExample extends LinearOpMode {
 
     DcMotor leftFrontDrive;
     DcMotor rightFrontDrive;
     DcMotor leftBackDrive;
     DcMotor rightBackDrive;
 
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    DriveToPoint nav = new DriveToPoint(this); //OpMode member for the point-to-point navigation class
+    GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    GoBuildaDriveToPoint nav = new GoBuildaDriveToPoint(this); //OpMode member for the point-to-point navigation class
 
     enum StateMachine {
         WAITING_FOR_START,
@@ -34,11 +33,11 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
         DRIVE_TO_TARGET_5
     }
 
-    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.MM,2000,20,AngleUnit.DEGREES,0);
-    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, 2600, -20, AngleUnit.DEGREES, -90);
-    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM,2600,-2600, AngleUnit.DEGREES,-90);
-    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, 100, -2600, AngleUnit.DEGREES, 90);
-    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, 100, 0, AngleUnit.DEGREES, 0);
+    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.MM,1000,20,AngleUnit.DEGREES,0);
+    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, 1000, -20, AngleUnit.DEGREES, -90);
+    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM,1000,-40, AngleUnit.DEGREES,-180);
+    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, 2000, -40, AngleUnit.DEGREES, -180);
+    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, 2000, 0, AngleUnit.DEGREES, 0);
 
 
     @Override
@@ -47,29 +46,29 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        leftBackDrive   = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        rightBackDrive  = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "Left Front");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "Left Back");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "Right Front");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "Right Back");
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo = hardwareMap.get(GoBuildaPinpointDriver.class,"odo");
         odo.setOffsets(-142.0, 120.0); //these are tuned for 3110-0002-0001 Product Insight #1
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderResolution(GoBuildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBuildaPinpointDriver.EncoderDirection.FORWARD, GoBuildaPinpointDriver.EncoderDirection.FORWARD);
 
         odo.resetPosAndIMU();
 
-        //nav.setXYCoefficients(0.02,0.002,0.0,DistanceUnit.MM,12);
-        //nav.setYawCoefficients(1,0,0.0, AngleUnit.DEGREES,2);
-        nav.setDriveType(DriveToPoint.DriveType.MECANUM);
+        nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
 
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
@@ -133,10 +132,10 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
 
 
             //nav calculates the power to set to each motor in a mecanum or tank drive. Use nav.getMotorPower to find that value.
-            leftFrontDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.LEFT_FRONT));
-            rightFrontDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.RIGHT_FRONT));
-            leftBackDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.LEFT_BACK));
-            rightBackDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.RIGHT_BACK));
+            leftFrontDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_FRONT));
+            rightFrontDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_FRONT));
+            leftBackDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_BACK));
+            rightBackDrive.setPower(nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_BACK));
 
             telemetry.addData("current state:",stateMachine);
 

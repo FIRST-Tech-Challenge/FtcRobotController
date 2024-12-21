@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.GoBuilda;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.MM;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 
-public class DriveToPoint {
+public class GoBuildaDriveToPoint {
 
     public enum DriveType {
         MECANUM,
@@ -67,7 +67,7 @@ public class DriveToPoint {
 
     private DriveType selectedDriveType = DriveType.MECANUM;
 
-    public DriveToPoint(LinearOpMode opmode){
+    public GoBuildaDriveToPoint(LinearOpMode opmode){
         myOpMode = opmode;
     }
 

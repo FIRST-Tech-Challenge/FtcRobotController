@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.GoBuilda;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -60,9 +60,9 @@ For support, contact tech@gobilda.com
 @TeleOp(name="goBILDA® PinPoint Odometry Example", group="Linear OpMode")
 //@Disabled
 
-public class SensorGoBildaPinpointExample extends LinearOpMode {
+public class GoBuildaPinpointExample extends LinearOpMode {
 
-    GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
+    GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
 
     double oldTime = 0;
 
@@ -73,7 +73,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        odo = hardwareMap.get(GoBuildaPinpointDriver.class,"odo");
 
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
@@ -91,7 +91,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
         number of ticks per mm of your odometry pod.
          */
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderResolution(GoBuildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         //odo.setEncoderResolution(13.26291192);
 
 
@@ -100,7 +100,7 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBuildaPinpointDriver.EncoderDirection.FORWARD, GoBuildaPinpointDriver.EncoderDirection.REVERSED);
 
 
         /*
@@ -125,7 +125,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
         waitForStart();
         resetRuntime();
 
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -140,7 +139,6 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
             pull any other data. Only the heading (which you can pull with getHeading() or in getPosition().
              */
             //odo.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
-
 
             if (gamepad1.a){
                 odo.resetPosAndIMU(); //resets the position to 0 and recalibrates the IMU
