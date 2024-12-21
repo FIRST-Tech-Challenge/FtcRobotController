@@ -30,13 +30,12 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -66,7 +65,7 @@ import java.util.List;
  *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
  *   below the name of the Limelight on the top level configuration screen.
  */
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
+@TeleOp(name = "Sensor: Limelight3A", group = "Testing")
 //@Disabled
 public class SensorLimelight3A extends LinearOpMode {
 
@@ -75,7 +74,7 @@ public class SensorLimelight3A extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
-        limelight = hardwareMap.get(Limelight3A.class, "Limelight 3A");
+        limelight = hardwareMap.get(Limelight3A.class, "Camera");
 
         telemetry.setMsTransmissionInterval(11);
 
@@ -92,13 +91,11 @@ public class SensorLimelight3A extends LinearOpMode {
 
         while (opModeIsActive()) {
             LLStatus status = limelight.getStatus();
-            telemetry.addData("Name", "%s",
-                    status.getName());
+            //telemetry.addData("Name", "%s",status.getName());
             telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
                     status.getTemp(), status.getCpu(),(int)status.getFps());
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
-
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
@@ -106,18 +103,16 @@ public class SensorLimelight3A extends LinearOpMode {
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
-                telemetry.addData("LL Latency", captureLatency + targetingLatency);
-                telemetry.addData("Parse Latency", parseLatency);
-                telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
+                //telemetry.addData("LL Latency", captureLatency + targetingLatency);
+                //telemetry.addData("Parse Latency", parseLatency);
+                //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
                 
                 if (result.isValid()) {
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("txnc", result.getTxNC());
-                    telemetry.addData("ty", result.getTy());
-                    telemetry.addData("tync", result.getTyNC());
 
+                    telemetry.addData("Camera", "Centered %4.2f  Elevation %4.2f", result.getTx(), result.getTy());//telemetry.addData("txnc", result.getTxNC());
+                    //telemetry.addData("tync", result.getTyNC());
+                    telemetry.addData("Close", result.getTa());    // how "big" or how close it is.
                     telemetry.addData("Botpose", botpose.toString());
-
                     // Access barcode results
                     List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
                     for (LLResultTypes.BarcodeResult br : barcodeResults) {
@@ -146,6 +141,7 @@ public class SensorLimelight3A extends LinearOpMode {
                     List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
                     for (LLResultTypes.ColorResult cr : colorResults) {
                         telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
+                        //telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetCorners(), cr.getTargetYDegrees());
                     }
                 }
             } else {
@@ -153,6 +149,7 @@ public class SensorLimelight3A extends LinearOpMode {
             }
 
             telemetry.update();
+            sleep(1000);
         }
         limelight.stop();
     }

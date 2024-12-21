@@ -39,6 +39,7 @@ public class ScaledServo {
     public double getServoMax() { return servoMax; }
     public void setServoMax(double servoMax) {
         this.servoMax = Math.min(1.0, Math.max(servoMin + 0.01, servoMax));
+
         updateServoPosition();
     }
     public void adjustServoMax(double delta) {
