@@ -167,7 +167,8 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new OpenClaw());
+        // commented-out: right bumper is now monitored by ToggleClaw command
+        //driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenHeld(new OpenClaw());
 
 
         // Controls the claw using bumpers
