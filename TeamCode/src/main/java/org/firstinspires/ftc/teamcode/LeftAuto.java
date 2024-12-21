@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.mmooover.Motion;
 import org.firstinspires.ftc.teamcode.mmooover.Pose;
 import org.firstinspires.ftc.teamcode.mmooover.Ramps;
 import org.firstinspires.ftc.teamcode.mmooover.Speed2Power;
+import org.firstinspires.ftc.teamcode.mmooover.tasks.MoveToTask;
 import org.firstinspires.ftc.teamcode.utilities.LoopStopwatch;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,109 +76,6 @@ public class LeftAuto extends LinearOpMode {
         public void invokeOnTick() {
             timer.click();
             tracker.step();
-        }
-    }
-
-    final static class MoveToTask extends TaskTemplate {
-        private final Pose target;
-        private final EncoderTracking tracker;
-        private final Speed2Power speed2Power;
-        private final Ramps ramps;
-        private final Telemetry telemetry;
-        private final LoopStopwatch loopTimer;
-        private final Hardware hardware;
-        private ElapsedTime targetTime = new ElapsedTime();
-        private ElapsedTime runTime = new ElapsedTime();
-        private boolean finished = false;
-
-        public MoveToTask(
-                @NotNull Scheduler scheduler,
-                @NotNull Hardware hardware,
-                @NotNull Pose target,
-                @NotNull EncoderTracking tracker,
-                @NotNull LoopStopwatch loopTimer,
-                @NotNull Speed2Power speed2Power,
-                @NotNull Ramps ramps,
-                @NotNull Telemetry telemetry
-        ) {
-            super(scheduler);
-            this.target = target;
-            this.tracker = tracker;
-            this.speed2Power = speed2Power;
-            this.ramps = ramps;
-            this.telemetry = telemetry;
-            this.loopTimer = loopTimer;
-            this.hardware = hardware;
-        }
-
-        @Override
-        public void invokeOnStart() {
-            targetTime.reset();
-            runTime.reset();
-        }
-
-        @Override
-        public void invokeOnTick() {
-            Pose current = tracker.getPose();
-
-            double linear = current.linearDistanceTo(target);
-            double angular = current.subtractAngle(target);
-            if (linear > ACCEPT_DIST || abs(angular) > ACCEPT_TURN) {
-                targetTime.reset();
-            }
-            // Waits at the target for one second
-            if (targetTime.time() > .5) {
-                finished = true;
-                return;
-            }
-            // figure out how to get to the target position
-            Motion action = tracker.getMotionToTarget(target, hardware);
-            double dToTarget = sqrt(
-                    action.forward() * action.forward()
-                            + action.right() * action.right()
-                            + action.turn() * action.turn());
-            double now = runTime.time();
-            double speed = ramps.ease(
-                    now,
-                    dToTarget,
-                    0.75
-            );
-            action.apply(hardware.driveMotors, CALIBRATION, speed, speed2Power);
-            telemetry.addData("forward", action.forward());
-            telemetry.addData("right", action.right());
-            telemetry.addData("turn (deg)", Math.toDegrees(action.turn()));
-            String message = String.format(
-                    "##%.3f##{\"pose\":[%.6f,%.6f,%.6f],\"motion\":[%.6f,%.6f,%.6f],\"speed\":%.6f," +
-                            "\"frontLeft\":%.6f,\"frontRight\":%.6f,\"backLeft\":%.6f,\"backRight\":%.6f," +
-                            "\"dToTarget\":%.6f,\"timer\":%.4f,\"avgTickTime\":%.6f}##",
-                    System.currentTimeMillis() / 1000.0,
-                    current.x(), current.y(), current.heading(),
-                    action.forward(), action.right(), action.turn(),
-                    speed,
-                    action.getLastFL(), action.getLastFR(), action.getLastBL(), action.getLastBR(),
-                    dToTarget, now,
-                    loopTimer.getAvg() * 1000
-            );
-            Log.d("DataDump", message);
-        }
-
-        @Override
-        public boolean invokeIsCompleted() {
-            return finished;
-        }
-
-        @Override
-        public void invokeOnFinish() {
-            hardware.driveMotors.setAll(0.0);
-        }
-
-        private static final Set<SharedResource> REQUIREMENTS = Set.of(
-                Hardware.Locks.DriveMotors
-        );
-
-        @Override
-        public @NotNull Set<SharedResource> requirements() {
-            return REQUIREMENTS;
         }
     }
 
@@ -381,6 +279,9 @@ public class LeftAuto extends LinearOpMode {
     private ITask wait(double seconds) {
         return new Pause(scheduler, seconds);
     }
+    private ITask await(double milliseconds) {
+        return wait(milliseconds / 1000);
+    }
 
     private Pair<ITask, ITask> flipOut() {
         ITask first = scheduler.add(run(() -> hardware.horizontalSlide.setPosition(H_SLIDE_OUT)));
@@ -405,6 +306,7 @@ public class LeftAuto extends LinearOpMode {
 
     Hardware hardware;
     EncoderTracking tracker;
+    // +- 3/sqrt2
     final Pose SCORE_HIGH_BASKET = new Pose(12, 16, Math.toRadians(-45));
     final Pose PARK = new Pose(12, 16, Math.toRadians(0));
     private Ramps ramps;
