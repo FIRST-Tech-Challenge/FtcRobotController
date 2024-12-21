@@ -412,14 +412,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
     }
 
     public void claw() {
-        final double open = 0.02;
-        final double close = 0.55;
         if (gamepad2.left_bumper) {
             abandonLock(Locks.ArmAssembly);
-            hardware.claw.setPosition(open);
+            hardware.claw.setPosition(Hardware.CLAW_OPEN);
         } else if (gamepad2.right_bumper) {
             abandonLock(Locks.ArmAssembly);
-            hardware.claw.setPosition(close);
+            hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         }
     }
 
