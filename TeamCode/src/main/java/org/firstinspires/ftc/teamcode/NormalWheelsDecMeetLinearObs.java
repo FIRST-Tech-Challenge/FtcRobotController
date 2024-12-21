@@ -3,8 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 
@@ -16,63 +16,31 @@ public class NormalWheelsDecMeetLinearObs extends LinearOpMode {
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
-   // DcMotorEx slidesJoint;
-  //  DcMotorEx slides; //clockwise
-   // Servo claw;
+    DcMotorEx armbotJoint;
+    DcMotorEx armmidJoint;
+    DcMotorEx armtopJoint;
+    Servo claw;
 
 
-  //  public static double jointPos = 0;
+  public static double jointbotPos = 0;
+  public static double jointmidPos = 0;
+  public static double jointopPos = 0;
+
 
 
     int frontLeftPos;
     int frontRightPos;
     int backLeftPos;
     int backRightPos;
+    long lastTime;
 
-
-  //  public static double spinnyWheelsTargetPower = 0;
-
-  //  public static double speedDivider = 2;
-
-    //slide hard stops
-//    public static int maxSlidePos = 4800;
-  //  public static int minSlidePos = 0;
-
-    // PID coefficients
-    //public static double Kp = 0.019;   // Proportional Gain
-   // public static double Ki = 0.00015;    // Integral Gain
-    //public static double Kd = 0.00001;    // Derivative Gain
-
-    // Integral and previous error for PID calculation
-   // private double setpoint = 0;   // PID target position
-   // private double integralSum = 0;
-  //  private double lastError = 0;
-
-
-    // Time tracking for PID calculation
-    private long lastTime;
-
-    // Predefined positions for the arm
-    //public static int armInitPos = 0;
- //   public static int armIntakePos = 735;
-  //  public static int armDeliverPos = 460;
-  //  public static int armDriveAroundPos = 170;
-
-    boolean pidac = false;
-
-
-    // Predefined positions for the arm
-   // public static int slidesJInitPos = 0;
-  //  public static int slidesJIntakePos = 850;
-    //need to figure out highest pos
-   // public static int slidesJDeliverPos = 4800;
-
-    // PID variables
-    private double targetPosition;
-    private double error;
-    private double previousError;
-    private double integral;
-    private double derivative;
+    //hard stop
+    public static int maxjbPos = 4800;
+    public static int minjbPos = 0;
+    public static int maxjmPos = 2000;
+    public static int minjmPos = 0;
+    public static int maxjtPos = 3000;
+    public static int minjtPos = 0;
 
 
     public void runOpMode() throws InterruptedException {
@@ -80,14 +48,19 @@ public class NormalWheelsDecMeetLinearObs extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-      //  claw = hardwareMap.get(Servo.class, "claw");
-      //  slides = hardwareMap.get(DcMotorEx.class, "slides");
-      //  slidesJoint = hardwareMap.get(DcMotorEx.class, "slidesJoint");
+        claw = hardwareMap.get(Servo.class, "claw");
+        armbotJoint = hardwareMap.get(DcMotorEx.class, "armbotJoint");
+        armmidJoint = hardwareMap.get(DcMotorEx.class, "armmidJoint");
+        armtopJoint = hardwareMap.get(DcMotorEx.class, "armtopJoint");
 
-        //slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-      //  slidesJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //slidesJoint.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armmidJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armbotJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        armtopJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        armmidJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armbotJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armtopJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -126,7 +99,10 @@ public class NormalWheelsDecMeetLinearObs extends LinearOpMode {
         //drive forward to sub
         drive(1000, 1000, 1000, 1000, 0.4);
         //put specimen
-        sleep(2000);
+        armBasket();
+        movearmMid(2000,0.5);
+        claw.setPosition(0.2);
+        //method
         //move backwards
         drive(-500,500,-500,-500, 0.4);
         //turn 90 degrees right
@@ -138,6 +114,7 @@ public class NormalWheelsDecMeetLinearObs extends LinearOpMode {
         //drive forward
         drive(420, 420, 420, 420, 0.4);
         //pick specimen
+
         sleep(2000);
         //drive backward
         drive(-420, -420, -420, -420, 0.4);
@@ -218,6 +195,51 @@ public class NormalWheelsDecMeetLinearObs extends LinearOpMode {
         }
 
     }
+    private void movearmBot(int position, double power){
+        armbotJoint.setTargetPosition(position);
+        armbotJoint.setPower(power);
+
+        while (armbotJoint.isBusy() && opModeIsActive()) {
+            telemetry.addData("armbotPosition", armbotJoint.getCurrentPosition());
+            telemetry.update();
+        }
+
+        armbotJoint.setPower(0);
+    }
+    private void movearmMid(int position, double power){
+        armbotJoint.setTargetPosition(position);
+        armbotJoint.setPower(power);
+
+        while (armbotJoint.isBusy() && opModeIsActive()) {
+            telemetry.addData("armbotPosition", armbotJoint.getCurrentPosition());
+            telemetry.update();
+        }
+
+        armbotJoint.setPower(0);
+    }
+    private void movearmTop(int position, double power){
+        armbotJoint.setTargetPosition(position);
+        armbotJoint.setPower(power);
+
+        while (armbotJoint.isBusy() && opModeIsActive()) {
+            telemetry.addData("armbotPosition", armbotJoint.getCurrentPosition());
+            telemetry.update();
+        }
+
+        armbotJoint.setPower(0);
+    }
+    private void armChamber(){
+        movearmBot(2000,0.5);
+        movearmMid(1000,0.5);
+        movearmTop(500,0.5);
+    }
+    private void armBasket(){
+        movearmBot(3000,0.5);
+        movearmMid(1000,0.5);
+        movearmTop(500,0.5);
+    }
+
+
 
     /*
     private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed) {

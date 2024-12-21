@@ -46,36 +46,64 @@ public class AutoNearBasketPosSub extends LinearOpMode {
         //9.44 Tick/Degree
         //14.38 Tick/cm
 
-        //Strafing Left 10 cm
-       drive(143.8,-143.8,143.8,-143.8,0.5);
-       //Backwards 90 cm
-        drive(-1490,-1490,-1490,-1490,0.5);
-        sleep(500);
-        //Forward 32 cm
-        drive(355.16, 355.16, 355.16, 355.16, 0.7);
-       //Strafe Left 119 cm
-        drive(2410, -2410, 2410, -2410, 0.7);
-        //Turn Left 60 degrees
-        drive(-600.4, 600.4, 600.4, -600.4, 0.7);
-        //Backward 117cm
-        drive(-1990.11, -1990.11, -1990.11, -1990.11, 0.5);
-        sleep(500);
-        //Forward 117cm
-
-        drive(1890.11, 1890.11, 1890.11, 1890.11, 0.5);
-        //Turn 30 degrees Left
-        drive(-305.6, 305.6, 305.6, -305.6, 0.7);
-        //Strafe Left
-        drive(1100,-1100,1100,-1100,0.5);
-        //Drive Back
-        drive(-1700.11, -1700.11, -1700.11, -1700.11, 0.5);
-        sleep(500);
-        //sleep(12000);
-        //Strafe Right 9 ft
-
-        drive(1700.11, 1700.11, 1700.11, 1700.11, 0.5);
-        drive(-906, 906, 906, -906, 0.7);
-        drive(-850, -850, -850, -850, 0.5);
+       drive(1000, 1000, 1000, 1000, 0.4);
+        //put specimen
+       sleep(2000);
+        //move backwards
+        drive(-500,500,-500,-500, 0.4);
+        //turn 90 degrees right
+        drive(850,-850,-850,850, 0.4);
+        //drive forward
+        drive(1602.8,1602.8,1602.8, 1602.8, 0.4);
+        //turn right
+        drive(850,-850,-850,850,0.4);
+        //drive forward
+        drive(420, 420, 420, 420, 0.4);
+        //pick specimen
+        sleep(2000);
+        //drive backward
+        drive(-420, -420, -420, -420, 0.4);
+        //turn left
+        drive(-850, 850, 850, -850, 0.4);
+        //drive backwards
+        drive(-1902, -1902, -1902, -1902, 0.4);
+        //turn 90 degrees left
+        drive(-850, 850, 850, -850, 0.4);
+        //drive forward
+        drive(500, 500, 500, 500, 0.4);
+        //put specimen
+        sleep(2000);
+        //move backwards
+        drive(-500,500,-500,-500, 0.4);
+        //turn 90 degrees right
+        drive(850,-850,-850,850, 0.4);
+        //drive forward
+        drive(1902.8,1902.8,1902.8, 1902.8, 0.4);
+        //turn left 90 degrees
+        drive(-850, 850, 850, -850,0.4);
+        //drive forward
+        drive(640,640,640,640, 0.4);
+        //turn right 90
+        drive(850, -850, -850, 850, 0.4);
+        //drive forward
+        drive(250, 250, 250, 250, 0.4);
+        //turn left 90
+        drive(-850, 850, 850, -850, 0.4);
+        //drive backwards
+        drive(-1120, -1120, -1120, -1120, 0.4);
+        sleep(2000);
+        //drive forwards
+        drive(1120, 1120, 1120, 1120, 0.4);
+        //turn right 90
+        drive(850, -850, -850, 850, 0.4);
+        //drive forward
+        drive(180, 180, 180, 180, 0.4);
+        //turn left 90
+        drive(-850, 850, 850, -850, 0.4);
+        //drive backwards
+        drive(-1120, -1120, -1120, -1120, 0.4);
+        //drive backwards
+        drive(-100, -100, -100, -100, 0.4);
 
     }
         private void drive(double bLeftTarget, double bRightTarget, double fRightTarget, double fLeftTarget, double speed ) {

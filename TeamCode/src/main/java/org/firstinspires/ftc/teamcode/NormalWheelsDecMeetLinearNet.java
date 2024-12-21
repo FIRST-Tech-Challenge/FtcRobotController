@@ -3,8 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 
@@ -16,26 +16,35 @@ public class NormalWheelsDecMeetLinearNet extends LinearOpMode {
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
- //   DcMotorEx slidesJoint;
- //   DcMotorEx slides; //clockwise
- //   Servo claw;
+    DcMotorEx armbotJoint;
+    DcMotorEx armmidJoint;
+    DcMotorEx armtopJoint;
+    Servo claw;
 
 
-    public static double jointPos = 0;
+    public static double jointbotPos = 0;
+    public static double jointmidPos = 0;
+    public static double jointtopPos = 0;
 
 
     int frontLeftPos;
     int frontRightPos;
     int backLeftPos;
     int backRightPos;
+    long lastTime;
 
-  //  public static double spinnyWheelsTargetPower = 0;
+    //  public static double spinnyWheelsTargetPower = 0;
 
-  //  public static double speedDivider = 2;
+    //  public static double speedDivider = 2;
 
-    //slide hard stops
- //   public static int maxSlidePos = 4800;
- //   public static int minSlidePos = 0;
+    //hard stop
+    public static int maxjbPos = 4800;
+    public static int minjbPos = 0;
+    public static int maxjmPos = 2000;
+    public static int minjmPos = 0;
+    public static int maxjtPos = 3000;
+    public static int minjtPos = 0;
+
 
     // PID coefficients
 //    public static double Kp = 0.019;   // Proportional Gain
@@ -43,13 +52,13 @@ public class NormalWheelsDecMeetLinearNet extends LinearOpMode {
 //    public static double Kd = 0.00001;    // Derivative Gain
 
     // Integral and previous error for PID calculation
- //   private double setpoint = 0;   // PID target position
+    //   private double setpoint = 0;   // PID target position
 //    private double integralSum = 0;
- //   private double lastError = 0;
+    //   private double lastError = 0;
 
 
     // Time tracking for PID calculation
-    private long lastTime;
+    //  private long lastTime;
 
     // Predefined positions for the arm
 //    public static int armInitPos = 0;
@@ -79,29 +88,33 @@ public class NormalWheelsDecMeetLinearNet extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-       // claw = hardwareMap.get(Servo.class, "claw");
-        //slides = hardwareMap.get(DcMotorEx.class, "slides");
-        //slidesJoint = hardwareMap.get(DcMotorEx.class, "slidesJoint");
+        claw = hardwareMap.get(Servo.class, "claw");
+        armbotJoint = hardwareMap.get(DcMotorEx.class, "armbotJoint");
+        armmidJoint = hardwareMap.get(DcMotorEx.class, "armmidJoint");
+        armtopJoint = hardwareMap.get(DcMotorEx.class, "armtopJoint");
 
-        //slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //slidesJoint.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //slidesJoint.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armmidJoint.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armbotJoint.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armtopJoint.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        armmidJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armbotJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armtopJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-      //  slidesJoint.setDirection(DcMotorSimple.Direction.REVERSE);
+        //slidesJoint.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         int slidesTargetPos = 0;
-      //  slides.setTargetPosition(slidesTargetPos);
-      //  slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //slides.setTargetPosition(slidesTargetPos);
+        // slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeftPos = 0;
         frontRightPos = 0;
@@ -109,53 +122,64 @@ public class NormalWheelsDecMeetLinearNet extends LinearOpMode {
         backRightPos = 0;
         lastTime = System.currentTimeMillis();
 
+        claw.setPosition(0.2);
 
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
         waitForStart();
-        //850 Ticks for 90 degrees
+
+        //400 Ticks for 90 degrees
+        //allign end of bottom left third tooth and bottom first right tooth
         //9.44 Tick/Degree
-        //14.38 Tick/cm
+        //43.38 Tick/cm
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0; // Time elapsed in milliseconds
         long timeThreshold = 7000;
         //bring slides up
         //drive forward to sub
-        drive(1000, 1000, 1000, 1000, 0.4);
+        drive(1300, 1300, 1300, 1300, 0.4);
         //put specimen
-        sleep(2000);
+       // movearmBot(2000,0.5);
+       // movearmMid(1000, 0.5);
+        //movearmTop(200,0.5);
+      //  claw.setPosition(0.2);
         //move backwards
-        drive(-300,-300,-300,-300, 0.4);
+        drive(-300, -300, -300, -300, 0.4);
         //turn left 90 degrees left
-        drive(-850,850,850,-850, 0.4);
+        drive(-390, 390, 390, -390, 0.4);
         //drive forward
-        drive(2102.8,2102.8,2102.8, 2102.8, 0.4);
+        drive(1702.8, 1702.8, 1702.8, 1702.8, 0.4);
         //turn right
-        drive(850,-850,-850,850,0.4);
+        drive(400, -400, -400, 400, 0.4);
         sleep(2000);
         //pick sample
         //turn left
-        drive(-1321.6,1321.6,1321.6, -1321.6, 0.4);
+        drive(-601.6, 601.6, 601.6, -501.6, 0.4);
         //drive forward
-        drive(700,700,700,700,0.4);
+        drive(400, 400, 400, 400, 0.4);
         //drop sample
         //drive back
-        drive(-700,-700,-700,-700, 0.4);
+        drive(-500, -500, -500, -300, 0.4);
         //turn right
-        drive(944,-944,-944,944,0.4);
+        drive(354, -354, -354, 354, 0.4);
+        sleep(1000);
         //drive forward
-        drive(400,400,400,400,0.4);
+        drive(350, 350, 350, 350, 0.4);
+        sleep(1000);
         //pick sample
         //drive back
-        drive(-400,-400,-400,-400,0.4);
+        drive(-400, -400, -400, -400, 0.4);
+        sleep(1000);
         //turn left
-        drive(-944,944,944,-944, 0.4);
+        drive(-454, 454, 454, -454, 0.4);
+        sleep(1000);
         //drive forward
-        drive(700,700,700,700,0.4);
+        drive(450, 450, 450, 450, 0.4);
         //put sample in high basket
+        sleep(1000);
         //drop sample
-        drive(-300,-300,-300,-300,0.4);
+        drive(-300, -300, -300, -300, 0.4);
 
 
         // Check if the elapsed time has reached the threshold
@@ -185,58 +209,71 @@ public class NormalWheelsDecMeetLinearNet extends LinearOpMode {
         backLeft.setPower(speed);
         backRight.setPower(speed);
         while (opModeIsActive() && frontLeft.isBusy() && frontRight.isBusy() && backRight.isBusy() && backLeft.isBusy()) {
-            if (pidac) {
-                /*
-                double currentPosition = slidesJoint.getCurrentPosition();
-                double error = setpoint - currentPosition;
-                // Calculate time step (delta time)
-                long currentTime = System.currentTimeMillis();
-                double deltaTime = (currentTime - lastTime) / 1000.0;  // Convert to seconds
-                lastTime = currentTime;
+            idle();
+        }
+    }
+        private void movearmBot( int position, double power){
+            armbotJoint.setTargetPosition(position);
+            armbotJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
+            armmidJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armbotJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armtopJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armbotJoint.setPower(power);
 
-                // Proportional term
-                double pTerm = Kp * error;
-
-                // Integral term
-                integralSum += error * deltaTime;
-                double iTerm = Ki * integralSum;
-
-                // Derivative term
-                double derivative = (error - lastError) / deltaTime;
-                double dTerm = Kd * derivative;
-
-                // Calculate final PID output
-                double output = Math.max(-1, Math.min(pTerm + iTerm + dTerm, 1));
-
-
-                // Set motor power based on PID output
-                slidesJoint.setPower(output / speedDivider);
-
-                lastError = error;
-
-
-                // Send telemetry to the dashboard
-                telemetry.addData("Target", slidesJoint.getTargetPosition());
-                telemetry.addData("Current Position", currentPosition);
-                telemetry.addData("Error", error);
-                telemetry.addData("PID Output", output);
+            while (armbotJoint.isBusy() && opModeIsActive()) {
+                telemetry.addData("armbotPosition", armbotJoint.getCurrentPosition());
                 telemetry.update();
-                */
-                idle();
             }
-        }
 
+            armbotJoint.setPower(0);
+        }
+        private void movearmMid ( int position, double power){
+            armmidJoint.setTargetPosition(position);
+            armmidJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            armmidJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armbotJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armtopJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            armmidJoint.setPower(power);
+
+            while (armmidJoint.isBusy() && opModeIsActive()) {
+                telemetry.addData("armmidPosition", armmidJoint.getCurrentPosition());
+                telemetry.update();
+            }
+
+            armbotJoint.setPower(0);
+        }
+        private void movearmTop ( int position, double power){
+            armtopJoint.setTargetPosition(position);
+            armtopJoint.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+            armmidJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armbotJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armtopJoint.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            armtopJoint.setPower(power);
+
+            while (armtopJoint.isBusy() && opModeIsActive()) {
+                telemetry.addData("armtopPosition", armtopJoint.getCurrentPosition());
+                telemetry.update();
+            }
+
+            armbotJoint.setPower(0);
+        }
+        private void armChamber () {
+            movearmBot(2000, 0.5);
+            movearmMid(1000, 0.5);
+            movearmTop(500, 0.5);
+        }
+        private void armBasket () {
+            movearmBot(3000, 0.5);
+            movearmMid(1000, 0.5);
+            movearmTop(500, 0.5);
+        }
     }
 
-    public static void executeStatementFor(long durationInMillis, Runnable actions) {
-        long startTime = System.currentTimeMillis();  // Record the start time
 
-        // Loop that continues until the specified duration has passed
-        while (System.currentTimeMillis() - startTime < durationInMillis) {
-            // Execute the actions passed as a Runnable
-            actions.run();
-        }
-    }
-}
+
 
