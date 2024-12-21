@@ -147,9 +147,11 @@ public class Swerve {
                     / drivebaseRadius)),
         dt);
 
-    if (yawInput == 0 && odometry.getHeading().getRadians() != lastHeading)
-      telemetry.addData("Unwanted rotation: ", true);
-    else telemetry.addData("Unwanted rotation: ", false);
+    if(yawInput == 0 && odometry.getHeading().getRadians()!=lastHeading)
+        telemetry.addData("Unwanted rotation: ",true);
+    else
+        telemetry.addData("Unwanted rotation: ",false);
+    lastHeading = odometry.getHeading().getRadians();
   }
 
   public Pose2d getPose() {
