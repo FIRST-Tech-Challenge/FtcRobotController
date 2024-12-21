@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+// a class for handling A DcMotorEx and it's simplified functions for it
 public class MotorEx {
     public String motorname;
     public DcMotorEx motor;
@@ -9,7 +10,7 @@ public class MotorEx {
     public MotorEx(String name){
         this.motorname = name;
     }
-
+    //setup for when init hit in auto
     public void setMotor(DcMotorEx motor) {
         this.motor = motor;
     }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+// all functions for adjusting power as the robot moves with ticks
 public class UpdatePowerTypes{
     private static final double minPower = 0.15;
     private static final double maxPower = 0.8;

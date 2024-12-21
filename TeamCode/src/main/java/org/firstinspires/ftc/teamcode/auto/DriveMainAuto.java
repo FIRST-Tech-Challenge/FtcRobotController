@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.CheckDriveStraight;
 
 import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -17,19 +15,8 @@ public interface DriveMainAuto extends MotorUtils {
     OdometryMotor sideways = new OdometryMotor("sideways", OdometryMotor.WHEELTYPE.MM, 48, OdometryMotor.TYPE.TICKPERREV, 2000 );
     InterfaceErrorIMU imu = new InterfaceErrorIMU("imu");
     double turnMaxSpeed = 0.5;
-    double curYaw = 0;
-
-    double frontRightLinearDrive = 0;
-    double backRightLinearDrive = 0;
-    double frontLeftLinearDrive = 0;
-    double backLeftLinearDrive = 0;
-
-    double rotationLeft = 0;
-
-
 
     default void loadMotors(HardwareMap hardwareMap, ImuOrientationOnRobot imuOrientationOnRobot){
-
         //load imu
         imu.setImu(hardwareMap.get(IMU.class,"imu"));
         IMU.Parameters parameters = new IMU.Parameters(imuOrientationOnRobot);
@@ -45,11 +32,12 @@ public interface DriveMainAuto extends MotorUtils {
         backLeftDrive.setMotor(hardwareMap.get(DcMotor.class, backLeftDrive.motorname));
         backLeftDrive.setupMotor();
 
-        //load odometry Motors
+        //load odometer Motors
         straight.setMotor(hardwareMap.get(DcMotorEx.class, straight.motorname));
         sideways.setMotor(hardwareMap.get(DcMotorEx.class, sideways.motorname));
 
-        imu.getImu().resetYaw();
+        //reseting for a new run
+        imu.resetYaw();
         sideways.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         straight.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

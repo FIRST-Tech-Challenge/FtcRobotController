@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+// a utils class to load all drive motors and group motor functions
 public interface MotorUtils {
     Motor frontRightDrive = new Motor("frontright", true, true);
     Motor backRightDrive = new Motor("backright", false, true);

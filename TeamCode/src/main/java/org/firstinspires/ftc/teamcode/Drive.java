@@ -3,98 +3,64 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.auto.BasicRobot;
 
 
 @TeleOp
-public class Drive extends LinearOpMode {
+public class Drive extends LinearOpMode implements BasicRobot {
+
+    //motors for drive
+    private DcMotor frontrightDrive = null;
+    private DcMotor backrightDrive = null;
+    private DcMotor frontleftDrive = null;
+    private DcMotor backleftDrive = null;
+
+    // variables for movement of robot;
+    private float y ;
+    private float x ;
+    private float rx;
 
     private boolean claws = false;
     private boolean bpressed = true;
     private boolean apressed = true;
-
     private boolean ypressed = true;
-    private int iop = 0;
+    private boolean gpdpressed = true;
+    private boolean abort = false;
 
-    private double TRANSFERINTAKE = 0.73;
-    private double RETRIEV = 0.08;
-    private double MOTION = 0.5;
-    //"PLACE" EFFECTS THE FLIP OUT, "TRANSFEROUTTAKE" EFFECTS THE TRANSFER POSITION
-    private double PLACE = 0.58;
-    private double UP = 0.5;
-    private double TRANSFEROUTTAKE = 0.44;
+    private final double maxPower = 0.6;
 
-
-    private enum intakeClawPosition{
-
-        open(0.0),
-        close(0.117);
-
-        private double position;
-
-        intakeClawPosition(double v) {
-            this.position = v;
+    public void drive(){//DcMotor backleftDrive, DcMotor backrightDrive, DcMotor frontleftDrive, DcMotor frontrightDrive) {
+        if((rx<0)){
+            rx=-0.65F;
+        }if((rx>0)){
+            rx=0.65F;
         }
-    }
+        backleftDrive.setPower(RangeLimit(y+(x)-rx)); //backR
+        backrightDrive.setPower(RangeLimit(y-(x)+rx)); //frontL
+        frontleftDrive.setPower(RangeLimit(y-(x)-rx));  //frontR
+        frontrightDrive.setPower(RangeLimit(y+(x)+rx));
+        telemetry.addData("drive", RangeLimit(y+x+rx));
 
-    private enum outtakeClawPosition{
-
-        open(0.036),
-        close(0.28);
-
-        private double position;
-
-        outtakeClawPosition(double v) {
-            this.position = v;
-        }
-    }
-
-
-
-    private final double DEADZONE = .1;
-    private final double speedDivider = 2;
-    private final double maxPower = 0.72;
-
-
-    public void drive(DcMotor backleftDrive, DcMotor backrightDrive, DcMotor frontleftDrive, DcMotor frontrightDrive) {
-        backleftDrive.setPower(backLeftPower()); //backR
-        backrightDrive.setPower(backRightPower()); //frontL
-        frontleftDrive.setPower(frontLeftPower());  //frontR
-        frontrightDrive.setPower(frontRightPower());
-        telemetry.addData("drive", gamepad1.left_stick_y);
-
-    }
-    private double backLeftPower(){
-        double power=RangeLimit(gamepad1.left_stick_y+gamepad1.left_stick_x-gamepad1.right_stick_x);
-        telemetry.addData("backLeftPower", power);
-        return power;
-    }
-    private double backRightPower(){
-        double power=RangeLimit(gamepad1.left_stick_y-gamepad1.left_stick_x+gamepad1.right_stick_x);
-        telemetry.addData("backRightPower", power);
-        return power;
-    }
-    private double frontLeftPower(){
-        double power=RangeLimit(gamepad1.left_stick_y-gamepad1.left_stick_x-gamepad1.right_stick_x);
-        telemetry.addData("frontLeftPower", power);
-        return power;
-    }
-    private double frontRightPower(){
-        double power=RangeLimit(gamepad1.left_stick_y+gamepad1.left_stick_x+gamepad1.right_stick_x);
-        telemetry.addData("frontRightPower", power);
-        return power;
     }
 
     private double RangeLimit(double value){
-        double denominator = Math.max(Math.abs(gamepad1.left_stick_y) + Math.abs(gamepad1.left_stick_x) + Math.abs(gamepad1.right_stick_x), 1);
+        double denominator = 0;
+
+        if(Math.abs(y) > 0.2){
+            denominator++;
+        }
+        if(Math.abs(x) > 0.2){
+            denominator++;
+        }
+        if(!(rx==0)){
+            denominator++;
+        }
+        telemetry.addData(" dem", denominator);
         return (value /  denominator) * maxPower;
 
     }
@@ -107,40 +73,44 @@ public class Drive extends LinearOpMode {
 
         ElapsedTime runtime = new ElapsedTime();
         //define robots attachments to work
-        DcMotor frontrightDrive = hardwareMap.get(DcMotor.class, "frontright");
-        DcMotor backrightDrive = hardwareMap.get(DcMotor.class, "backright");
-        DcMotor frontleftDrive = hardwareMap.get(DcMotor.class, "frontleft");
-        DcMotor backleftDrive = hardwareMap.get(DcMotor.class, "backleft");
-
-        Servo outtakeAngle = hardwareMap.get(Servo.class, "outtakeAngle");
-        Servo outtakeClaw = hardwareMap.get(Servo.class, "outtakeClaw");
-
-        Servo intakeAngle = hardwareMap.get(Servo.class, "intakeAngle");
-        Servo intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
-
-        Servo intakeSlide1 = hardwareMap.get(Servo.class, "intakeSlide1");
-        Servo intakeSlide2 = hardwareMap.get(Servo.class, "intakeSlide2");
-
+        frontrightDrive = hardwareMap.get(DcMotor.class, "frontright");
+        backrightDrive = hardwareMap.get(DcMotor.class, "backright");
+        frontleftDrive = hardwareMap.get(DcMotor.class, "frontleft");
+        backleftDrive = hardwareMap.get(DcMotor.class, "backleft");
+        //load other motors
         DcMotor elavator1 = hardwareMap.get(DcMotor.class, "elavator1");
         DcMotor elavator2 = hardwareMap.get(DcMotor.class, "elavator2");
+
+        //load servos
+        outtakeAngle.setServo(hardwareMap.get(Servo.class, outtakeAngle.servoName));
+        intakeAngle.setServo(hardwareMap.get(Servo.class, intakeAngle.servoName));
+        intakeSlide1.setServo(hardwareMap.get(Servo.class, intakeSlide1.servoName));
+        intakeSlide2.setServo(hardwareMap.get(Servo.class, intakeSlide2.servoName));
+        outtakeClaw.setServo(hardwareMap.get(Servo.class, outtakeClaw.servoName));
+        intakeClaw.setServo(hardwareMap.get(Servo.class, intakeClaw.servoName));
+//        Servo outtakeClaw = hardwareMap.get(Servo.class, "outtakeClaw");
+//        Servo intakeClaw = hardwareMap.get(Servo.class, "intakeClaw");
+
 
         //reverse correct motor so power of 1 makes robot go forward
         frontrightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //set start position for teleOp
-        intakeAngle.setPosition(MOTION);
-        outtakeAngle.setPosition(TRANSFEROUTTAKE);
-        intakeClaw.setPosition(intakeClawPosition.open.position);
-        outtakeClaw.setPosition(outtakeClawPosition.close.position);
+        intakeSlide1.startServo();
+        intakeSlide2.startServo();
+        intakeAngle.set(TRANSFER);
+        outtakeAngle.set(TRANSFER);
+        intakeClaw.set(OPEN);//intakeClawPosition.open.position);
+        outtakeClaw.set(CLOSE);//outtakeClawPosition.close.position);
+        claws=false;
 
-        IMU imu = hardwareMap.get(IMU.class,"imu");
 
+        //imu setup
+        IMU imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         imu.initialize(parameters);
-
-        Orientation start = imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
         //send telemetry data and wait for start
         telemetry.update();
@@ -148,97 +118,141 @@ public class Drive extends LinearOpMode {
         runtime.reset();
 
         while (opModeIsActive()) {
+            //is used a constant, so it stay at its current position
             double elavatorPower = 0.1;
-            drive(backleftDrive, backrightDrive, frontleftDrive, frontrightDrive);
-            telemetry.addData("left_stick_x", gamepad1.left_stick_x);
-            telemetry.addData("left_stick_y", gamepad1.left_stick_y);
-            telemetry.addData("Servo Position", (double)intakeAngle.getPosition());
-            telemetry.addData("Servo Position out", (double)outtakeAngle.getPosition());
 
+            //define the controller positions
+            y = gamepad1.left_stick_y;
+            x = gamepad1.left_stick_x;
+            rx = gamepad1.right_stick_x;
+            if(gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_right || gamepad2.dpad_left){
+                y = 0;
+                x = 0;
+                rx = 0;
+                if (gamepad1.dpad_up){
+                    y= -0.35F;
+                }
+                if (gamepad1.dpad_down){
+                    y= 0.35F;
+                }
+                if (gamepad1.dpad_left){
+                    x= -0.35F;
+                }
+                if (gamepad1.dpad_right){
+                    x= 0.35F;
+                }
+                drive();
+            } else {
+                drive();
+            }
+            telemetry.addData("Servo Position 2", (double) intakeSlide2.getPos());
+            telemetry.addData("Servo Position 1", (double) intakeSlide1.getPos());
+            telemetry.addData("preref", gamepad1.dpad_left);
+            //pressed
             telemetry.addData("bpressed", bpressed);
+            telemetry.addData("apressed", apressed);
             telemetry.addData("ypressed", ypressed);
-            telemetry.addData("iop", iop);
 
-            if(gamepad2.a && apressed ==true){
-                if(!claws){
-                    intakeClaw.setPosition(intakeClawPosition.close.position);
-                    wait(0.3, runtime);
-                    outtakeClaw.setPosition(outtakeClawPosition.open.position);
+            if (gamepad2.a && apressed == true) {
+                if (!claws) {
+                    intakeClaw.set(CLOSE);//intakeClawPosition.close.position);
+                    waitMe(0.4, runtime);
+                    outtakeClaw.set(OPEN);
+//                    outtakeClaw.setPosition(outtakeClawPosition.open.position);
                     claws = true;
-                } else if(claws) {
-                    outtakeClaw.setPosition(outtakeClawPosition.close.position);
-                    wait(0.3, runtime);
-                    intakeClaw.setPosition(intakeClawPosition.open.position);
-
+                } else if (claws) {
+                    outtakeClaw.set(CLOSE);
+//                    outtakeClaw.setPosition(outtakeClawPosition.close.position);
+                    waitMe(0.4, runtime);
+                    intakeClaw.set(OPEN);
+//                    intakeClaw.setPosition(intakeClawPosition.open.position);
                     claws = false;
                 }
-                apressed =false;
+                apressed = false;
+            }
+            if (gamepad2.b && bpressed == true) {
+                if (intakeAngle.get(GRAB) + 0.1 > intakeAngle.getPos() && intakeAngle.get(GRAB) - 0.1 < intakeAngle.getPos()) {
+                    intakeAngle.set(TRANSFER);
+                } else if (intakeAngle.get(TRANSFER) + 0.1 > intakeAngle.getPos() && intakeAngle.get(TRANSFER) - 0.1 < intakeAngle.getPos()) {
+                    intakeAngle.set(GRAB);
+                }
+                bpressed = false;
+            }
+            if (gamepad2.y && ypressed == true) {
+                if (outtakeAngle.get(PLACE) + 0.05 > outtakeAngle.getPos() && outtakeAngle.get(PLACE) - 0.05 < outtakeAngle.getPos()) {
+                    outtakeAngle.set(0);
+                } else if (outtakeAngle.get(TRANSFER) + 0.05 > outtakeAngle.getPos() && outtakeAngle.get(TRANSFER) - 0.05 < outtakeAngle.getPos()) {
+                    outtakeAngle.set(1);
+                }
+                ypressed = false;
+            }
+            if (gamepad2.dpad_down && gpdpressed == true) {
+                outtakeClaw.set(OPEN);//outtakeClawPosition.open.position);
+                intakeClaw.set(CLOSE);//intakeClawPosition.close.position);
+                claws=true;
+                waitMe(0.3, runtime);
+                if(abort){break;}
+                intakeAngle.set(TRANSFER);
+                waitMe(0.3, runtime);
+                if(abort){break;}
+                intakeSlide1.set(0.0);
+                intakeSlide2.set(1.0);
+                waitMe(0.6, runtime);
+                if(abort){break;}
+                outtakeClaw.set(CLOSE);//outtakeClawPosition.close.position);
+                waitMe(0.3, runtime);
+                if(abort){break;}
+                intakeClaw.set(OPEN);//intakeClawPosition.open.position);
+                claws=false;
+
+            }
+            if (gamepad2.right_trigger > 0.2) {
+//                intakeSlide1.setPosition(0.35/*-0.15*/);
+//                intakeSlide2.setPosition(0.65/*+0.15*/);
+
+                intakeSlide1.decrease();
+                intakeSlide2.increase();
             }
 
-
-            if(gamepad2.right_trigger > 0.2){
-                intakeSlide1.setPosition(0.35/*-0.15*/);
-                intakeSlide2.setPosition(0.65/*+0.15*/);
-            }
-            if(gamepad2.left_trigger > 0.2){
-                intakeSlide1.setPosition(0);
-                intakeSlide2.setPosition(1);
-
-            }
-            if(gamepad2.b && bpressed ==true){
-//                if (MOTION+0.1>intakeAngle.getPosition() && MOTION-0.1<intakeAngle.getPosition()){
-                    intakeAngle.setPosition(RETRIEV);
-//                }
-                if (RETRIEV+0.1>intakeAngle.getPosition()&& RETRIEV-0.1<intakeAngle.getPosition()){
-                    intakeAngle.setPosition(TRANSFERINTAKE);
-                }
-                else if (TRANSFERINTAKE+0.1>intakeAngle.getPosition() && TRANSFERINTAKE-0.1<intakeAngle.getPosition()){
-                    intakeAngle.setPosition(RETRIEV);
-                }
-                bpressed =false;
-            }
-            if(gamepad2.y && ypressed==true){
-                if (PLACE +0.05>outtakeAngle.getPosition() && PLACE -0.05<outtakeAngle.getPosition()){
-                    outtakeAngle.setPosition(TRANSFEROUTTAKE);
-                    iop++;
-                }
-                else if (TRANSFEROUTTAKE +0.05>outtakeAngle.getPosition()&& TRANSFEROUTTAKE -0.05<outtakeAngle.getPosition()){
-                    outtakeAngle.setPosition(PLACE);
-                    iop++;
-                }
-                ypressed=false;
+            if (gamepad2.left_trigger > 0.2) {
+                intakeSlide1.increase();
+                intakeSlide2.decrease();
             }
 
-            if(gamepad2.left_stick_y < -0.2){
+            if (gamepad2.left_stick_y < -0.2) {
                 elavatorPower = 0.9;
             }
-            if(gamepad2.left_stick_y > 0.2){
+            if (gamepad2.left_stick_y > 0.2) {
                 elavatorPower = -0.7;
             }
 
+            //if not pressed button change
+            if (!gamepad2.b) {
+                bpressed = true;
+            }
+            if (!gamepad2.y) {
+                ypressed = true;
+            }
+            if (!gamepad2.a) {
+                apressed = true;
+            }
+            if(!gamepad2.dpad_down){
+                gpdpressed = true;
+            }
+            if(gamepad2.x) {
+                abort = true;
+            }
 
-            if(!gamepad2.b){
-                bpressed =true;
-            }
-            if(!gamepad2.y){
-                ypressed=true;
-            }
-            if(!gamepad2.a){
-                apressed =true;
-            }
+            //set motor power
             elavator2.setPower(elavatorPower);
             elavator1.setPower(-elavatorPower);
-            telemetry.addData("x", start.firstAngle - imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle);
-            telemetry.addData("y", start.secondAngle - imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
-            telemetry.addData("z", start.thirdAngle - imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle);
             telemetry.update();
-
         }
     }
-    private void wait(double sec, ElapsedTime runtime){
+    private void waitMe(double sec, ElapsedTime runtime){
         runtime.reset();
-        while(runtime.seconds() < sec){
-
+        while (runtime.seconds() < sec && abort==false) {
         }
     }
 }
+

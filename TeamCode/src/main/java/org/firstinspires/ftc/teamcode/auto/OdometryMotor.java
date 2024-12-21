@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+// a class for handling odometry motor and it calculations
+// it extends the MotorEx class because a odometry motor is not powered and so it use the motor functions in that calss
 public class OdometryMotor extends MotorEx {
-
-    public final int inRangeTicks = 5;
-    public static int j = 0;
-
     public enum WHEELTYPE{
         MM,
         INCHES
@@ -14,43 +12,31 @@ public class OdometryMotor extends MotorEx {
         TICKPERREV
     }
 
-    public static double mmToInches = 0.03937008;
-    private double tolerance = 0.5;
-
-
+    public static double mmToInches = 0.0393701;
     public double inchesPerCount = 0;
 
+    //all the math for converting ticks to inches for any motor
     public OdometryMotor(String name, WHEELTYPE wheeltype, int wheelDiameter, TYPE type, int tick){
         super(name);
-        if(wheeltype==WHEELTYPE.MM || type==TYPE.TICKPERREV){
+        if(wheeltype==WHEELTYPE.MM && type==TYPE.TICKPERREV){
             inchesPerCount = Math.PI * wheelDiameter*mmToInches / tick;
         }
-        if(wheeltype==WHEELTYPE.MM || type==TYPE.PPR){
+        if(wheeltype==WHEELTYPE.MM && type==TYPE.PPR){
             inchesPerCount = Math.PI * wheelDiameter*mmToInches / (tick * 4);
         }
-        if(wheeltype==WHEELTYPE.INCHES || type==TYPE.TICKPERREV){
+        if(wheeltype==WHEELTYPE.INCHES && type==TYPE.TICKPERREV){
             inchesPerCount = Math.PI * wheelDiameter / tick;
         }
-        if(wheeltype==WHEELTYPE.INCHES || type==TYPE.PPR){
+        if(wheeltype==WHEELTYPE.INCHES && type==TYPE.PPR){
             inchesPerCount = Math.PI * wheelDiameter / (tick * 4);
         }
     }
 
 
-    private double getDesiredInches(int ticks){
+    //pass in the ticks and it returns the amount of inches those ticks are
+    private double getInches(int ticks){
         return inchesPerCount * ticks;
     }
-
-    public boolean BUSY(){
-        double target2 = Math.abs(motor.getTargetPosition()*inchesPerCount - motor.getCurrentPosition()*inchesPerCount);
-//        return motorEx.isBusy();
-        return target2 < tolerance;
-    }
-
-    public void changeTolerance(double tolerance){
-        this.tolerance = tolerance;
-    }
-
     public void move(double inches) {
         double ticks = inches / inchesPerCount;
         int position = motor.getCurrentPosition() + (int)ticks;

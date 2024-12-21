@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.auto.DriveMainAuto;
 
 import static org.firstinspires.ftc.teamcode.CheckDriveStraight.isWithinTolerance;
+import static org.firstinspires.ftc.teamcode.CheckDriveStraight.turnToCorrectSide;
 
 @Autonomous
 public class NewAuto extends LinearOpMode implements DriveMainAuto {
@@ -34,46 +35,24 @@ public class NewAuto extends LinearOpMode implements DriveMainAuto {
         //send update data
         telemetry.update();
         waitForStart();
-        double ticks = 3 / straight.getInchesPerCount();
-        int position = straight.getMotor().getCurrentPosition() + (int)ticks;
-        straight.getMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        straight.getMotor().setTargetPosition(position);
-        straight.getMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(!isWithinTolerance(straight.getMotor().getCurrentPosition(), straight.getMotor().getTargetPosition(), 20)){
-            frontRightDrive.setPower(-0.4);
-            frontLeftDrive.setPower(-0.4);
-            backLeftDrive.setPower(-0.4);
-            backRightDrive.setPower(-0.4);
-            frontRightDrive.setPower(UpdatePowerTypes.startEndUpdatePower(motorEx, CUR));
-            backRightDrive.setPower(UpdatePowerTypes.startEndUpdatePower(motorEx, CUR));
-            frontLeftDrive.setPower(UpdatePowerTypes.startEndUpdatePower(motorEx, CUR));
-            backLeftDrive.setPower(UpdatePowerTypes.startEndUpdatePower(motorEx, CUR));
-            telemetry.addData("tar", straight.getMotor().getTargetPosition());
-            telemetry.addData("cur", straight.getMotor().getCurrentPosition());
-            telemetry.addData("busy", straight.getMotor().isBusy());
-            telemetry.addData("zero", !isWithinTolerance(straight.getMotor().getCurrentPosition(), straight.getMotor().getTargetPosition(), 10));
+
+        int target = 180;
+        while(facing(target)){
+            telemetry.addData("hello", "1");
+            telemetry.addData("hello222", rotationLeft);
+            telemetry.addData("cur", (int)imu.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+180);
+            telemetry.addData("frontLeftDrive", frontLeftDrive.getMotor().getPower());
+            telemetry.addData("frontRightDrive", frontRightDrive.getMotor().getPower());
+            telemetry.addData("backRightDrive", backRightDrive.getMotor().getPower());
+            telemetry.addData("backLeftDrive", backLeftDrive.getMotor().getPower());
+
 
             telemetry.update();
+            drive(getRotationLeft(target));
         }
-        stopMotors();
-
-
-//        while(facing(90)){
-//            telemetry.addData("hello", "1");
-//            telemetry.addData("hello222", rotationLeft);
-//            telemetry.addData("cur", (int)imu.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+180);
-//            telemetry.addData("frontLeftDrive", frontLeftDrive.getMotor().getPower());
-//            telemetry.addData("frontRightDrive", frontRightDrive.getMotor().getPower());
-//            telemetry.addData("backRightDrive", backRightDrive.getMotor().getPower());
-//            telemetry.addData("backLeftDrive", backLeftDrive.getMotor().getPower());
-//
-//
-//            telemetry.update();
-//            drive();
-//        }
-//        rotationLeft=0;
-//        drive();
-//        waitt(1, runtime);
+        rotationLeft=0;
+        drive(getRotationLeft(1));
+        waitMe(1, runtime);
 //
 //        while(facing(45)){
 //            telemetry.addData("hello", "2");
@@ -122,7 +101,7 @@ public class NewAuto extends LinearOpMode implements DriveMainAuto {
         boolean correctDriction=false;
         double power = 0.05;
         int cur = (int)imu.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+180;
-        if (!isWithinTolerance(cur, target, 5)){
+        if (!isWithinTolerance(cur, target, 3)){
             rotationLeft+=power/4;
             correctDriction=true;
         }
@@ -138,43 +117,24 @@ public class NewAuto extends LinearOpMode implements DriveMainAuto {
         return correctDriction;
     }
 
-    public void drive() {
-        backLeftDrive.setPower(-rotationLeft); //backR
-        backRightDrive.setPower(+rotationLeft); //frontL
-        frontLeftDrive.setPower(-rotationLeft);  //frontR
-        frontRightDrive.setPower(+rotationLeft);
-        telemetry.addData("drive", gamepad1.left_stick_y);
+    public double getRotationLeft(int target) {
+        return rotationLeft*(turnToCorrectSide(imu.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+180, target) ? 1 : -1);
+
 
     }
 
-    private void waitt(double sec, ElapsedTime runtime){
+    public void drive(double rl) {
+        backLeftDrive.setPower(rl); //backR
+        backRightDrive.setPower(-rl); //frontL
+        frontLeftDrive.setPower(+rl);  //frontR
+        frontRightDrive.setPower(-rl);
+    }
+    private void waitMe(double sec, ElapsedTime runtime){
         runtime.reset();
-        while(runtime.seconds() < sec){
-
+        while (runtime.seconds() < sec) {
         }
     }
 
-    public boolean hasReachedTarget(int startValue, int target, int tickIncrement) {
-        int currentValue = startValue;
-
-        // Check direction based on the relationship between startValue and target
-        if (tickIncrement > 0) {
-            // If increment is positive, loop until currentValue >= target
-            while (currentValue < target) {
-//                currentValue += tickIncrement;
-                telemetry.addData("Current value: ", currentValue); // Print current value
-            }
-        } else if (tickIncrement < 0) {
-            // If increment is negative, loop until currentValue <= target
-            while (currentValue > target) {
-//                currentValue += tickIncrement;
-                telemetry.addData("Current value: ", currentValue); // Print current value
-            }
-        }
-
-        // Return true because the loop only exits when the target is reached or surpassed
-        return (tickIncrement > 0 && currentValue >= target) || (tickIncrement < 0 && currentValue <= target);
-    }
 
 
 }
