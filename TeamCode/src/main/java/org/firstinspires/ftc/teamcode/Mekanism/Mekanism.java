@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.MathUtil;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.util.Units;
@@ -153,11 +152,7 @@ public class Mekanism {
 
   public void homeArm() {
     pivotTimer.reset();
-<<<<<<< HEAD
     while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500) {
-=======
-    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2.5) {
->>>>>>> origin/FixSwerve
       pivot.setPower(-.75);
       slide.setPower(-0.5);
     }
