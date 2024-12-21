@@ -54,48 +54,14 @@ public class TeleopWithActions extends OpMode {
     @Override
     public void loop() {
         TelemetryPacket packet = new TelemetryPacket();
-        if(gamepad1.right_trigger > 0){
-            if (!runningActions.contains(extension.servoExtension(Extension.extensionState.RETRACT))) {
-                runningActions.add(extension.servoExtension(Extension.extensionState.EXTEND));
-            }
-        }
-        if(gamepad1.left_trigger > 0){
-            if (!runningActions.contains(extension.servoExtension(Extension.extensionState.EXTEND))) {
-                runningActions.add(extension.servoExtension(Extension.extensionState.RETRACT));
-            }
-        }
-        if(gamepad2.left_bumper){
-            if (!runningActions.contains(claw.servoClaw(Claw.clawState.CLOSE))) {
-                runningActions.add(claw.servoClaw(Claw.clawState.OPEN));
-            }
-        }
-        if(gamepad2.right_bumper){
-            if (!runningActions.contains(claw.servoClaw(Claw.clawState.OPEN))) {
-                runningActions.add(claw.servoClaw(Claw.clawState.CLOSE));
-            }
-        }
-        if(gamepad1.left_bumper){
-            if (!runningActions.contains(robot.intakeMove(Intake.intakeState.OUTTAKE))) {
-                runningActions.add(robot.intakeMove(Intake.intakeState.INTAKE));
-            }
-        } else if(gamepad1.right_bumper){
-            if (!runningActions.contains(robot.intakeMove(Intake.intakeState.INTAKE))) {
-                runningActions.add(robot.intakeMove(Intake.intakeState.OUTTAKE));
-            }
-        } else {
-            runningActions.add(robot.intakeMove(Intake.intakeState.STOP));
-        }
-        if(gamepad2.triangle){
-            runningActions.add(arm.servoArm());
-        }
-        if(gamepad2.cross){
-            runningActions.add(arm.servoArmSpec());
-        }
-        if(gamepad2.left_stick_y > 0.2 ||gamepad2.left_stick_y < -0.2){
-            runningActions.add(lift.manualControl(-gamepad2.left_stick_y));
-        } else {
-            runningActions.add(lift.manualControl(0));
-        }
+        manageAction(extension.servoExtension(gamepad1.right_trigger > 0.2 ? Extension.extensionState.EXTEND : Extension.extensionState.RETRACT));
+        manageAction(claw.servoClaw(gamepad2.left_bumper ? Claw.clawState.OPEN : gamepad2.right_bumper ? Claw.clawState.CLOSE : null));
+        manageAction(robot.intakeMove(gamepad1.left_bumper ? Intake.intakeState.INTAKE : gamepad1.right_bumper ? Intake.intakeState.OUTTAKE : Intake.intakeState.STOP));
+        manageAction(gamepad2.cross ? arm.servoArmSpec() : null);
+        manageAction(gamepad2.triangle ? arm.servoArm() : null);
+        manageAction(lift.manualControl(Math.abs(gamepad2.left_stick_y) > 0.2 ? -gamepad2.left_stick_y : 0));
+        manageAction(drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+
         //if(gamepad2.right_stick_y >= 0){
         //}
         // updated based on gamepads
@@ -113,5 +79,23 @@ public class TeleopWithActions extends OpMode {
         runningActions = newActions;
 
         dash.sendTelemetryPacket(packet);
+    }
+    private void manageAction(Action newAction) {
+        if (newAction == null) return;
+
+        // Prevent duplicate actions
+        if (runningActions.contains(newAction)) return;
+
+        // Check for conflicting actions
+        runningActions.removeIf(existingAction -> isConflicting(existingAction, newAction));
+
+        // Add the new action
+        runningActions.add(newAction);
+    }
+
+    private boolean isConflicting(Action action1, Action action2) {
+        // Define conflict logic here. For example:
+        // Actions controlling the same mechanism (e.g., extension, claw, intake) should not run simultaneously.
+        return action1.getClass().equals(action2.getClass());
     }
 }
