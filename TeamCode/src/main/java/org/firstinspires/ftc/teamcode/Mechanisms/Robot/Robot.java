@@ -23,9 +23,6 @@ public class Robot {
         this.pivot = new Pivot(hardwareMap);
         this.intake = new Intake(hardwareMap);
     }
-    public enum intakeMechState {
-        INTAKE, STOP, OUTTAKE
-    }
     public Action intakeMove(Intake.intakeState intakeMechState){
         return new SequentialAction(
                 pivot.flippyFlip(intakeMechState),
