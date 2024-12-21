@@ -20,7 +20,7 @@ public class Encoder {
         storedPos = encoder.getCurrentPosition();
     }
     public int getCurrentPosition(){
-        return getCurrentPosition() - storedPos;
+        return encoder.getCurrentPosition() - storedPos;
     }
     public double getVelocity(){
         return encoder.getVelocity();

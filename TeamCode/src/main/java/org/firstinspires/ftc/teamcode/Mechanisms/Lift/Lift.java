@@ -27,10 +27,10 @@ public class Lift {
     FeedForward feedForwardDown;
     PID pid;
     double motorPower;
-    public int currentPosition;
+    public int currentPosition = 0;
     public DcMotorAdvanced liftMotorLeft;
     public DcMotorAdvanced liftMotorRight;
-//    Encoder encoder;
+    Encoder encoder;
     TouchSensor limiter;
     public static double kA=0;
     public static double kV=0;
@@ -40,10 +40,11 @@ public class Lift {
     public static double kD = 0;
     public static double liftThreshold = 0.1;
     double spoolRadius =  0.702; // [in]
-    int ticksPerRev = 1024;
     public static double maxAcceleration = 50.0;
     public static double maxDeceleration = 50.0;
     public static double maxVelocity = 60;
+    private final double ticksPerRev = 384.5;
+    private final double ticksPerInch = ticksPerRev / (2 * Math.PI * spoolRadius);
     boolean reverse;
     public static double maxVoltage = 12.5;
 
@@ -55,7 +56,7 @@ public class Lift {
 
         this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
-//        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
+        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -84,9 +85,8 @@ public class Lift {
         }
     }
 
-    // You should not need this. Do your control with respect to height in inches
-    private int inchesToTicks(double inches) {
-        return (int) ((inches / (2 * Math.PI * spoolRadius)) * ticksPerRev);
+    public double ticksToInches(double ticks){
+        return ticks/ticksPerInch;
     }
 
     // See above but rename the parameter to targetHeight
@@ -97,24 +97,23 @@ public class Lift {
         // the basket height. You should get the sign of the difference between target and
         // current, then use that to set the reverse boolean in the motion profile. Then use the
         // absolute value of the difference to set the distance.
+        double currentPosition = ticksToInches(encoder.getCurrentPosition());
+        boolean reverse = !(targetHeight - currentPosition >= 0);
+        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
 
 
         return new Action() {
-            boolean reverse = !(targetHeight - currentPosition >= 0);
-
-            MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
 
             // When you call getPos from the motion profile, you're getting a distance NOT a target. How
             // can you solve this? Hint: add two things.
 
             ElapsedTime t = new ElapsedTime();
-            int initialPos = currentPosition;
+            double initialPos = currentPosition;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 //                checkLimit();
-//                int currentPosition = encoder.getCurrentPosition();
-                int currentPosition = 0;
 
+                double currentPosition = ticksToInches(encoder.getCurrentPosition());
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
@@ -138,10 +137,10 @@ public class Lift {
 
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                liftMotorLeft.setPower(power);
-                liftMotorRight.setPower(power);
+                liftMotorLeft.setPower(power+kG);
+                liftMotorRight.setPower(power+kG);
 
-                packet.put("Motor Power", power);
+                packet.put("Motor Power", power+kG);
                 return false;
             }
         };

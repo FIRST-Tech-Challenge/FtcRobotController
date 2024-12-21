@@ -22,15 +22,12 @@ public class TuneFeedForwardLift  extends LinearOpMode {
     Lift lift;
     public static double height = 12;
     public void runOpMode() throws InterruptedException {
-//        this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"));
-        int currentPosition = 0;
-        ElapsedTime Timer = new ElapsedTime();
         Battery battery = new Battery(hardwareMap);
-        Lift lift = new Lift(hardwareMap, battery);
+        lift = new Lift(hardwareMap, battery);
 
         waitForStart();
 
-                Actions.runBlocking((lift.moveToHeight(12)));
+                Actions.runBlocking((lift.moveToHeight(height)));
 //                if (Timer.seconds() > 3) {
 //                    Actions.runBlocking(lift.moveToHeight(currentPosition));
 //
