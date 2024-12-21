@@ -19,6 +19,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTracking;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
+import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 
 /**
  * FE!N FE!N FE!N
@@ -39,13 +40,7 @@ public class TestAuton extends LinearOpMode {
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         ElapsedTime looptime = new ElapsedTime();
-        SimpleMatrix desiredPose = new SimpleMatrix(
-                new double [][]{
-                        new double[]{0},
-                        new double[]{24},
-                        new double[]{0}
-                }
-        );
+        SimpleMatrix desiredPose = Utils.makePoseVector(0,24,0);
         telemetry.addData("x", 0);
         telemetry.addData("y", 0);
         telemetry.addData("theta", 0);
