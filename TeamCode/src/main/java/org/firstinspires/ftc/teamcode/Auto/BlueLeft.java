@@ -59,11 +59,11 @@ public class BlueLeft extends LinearOpMode {
         ));
         AccelConstraint baseAccelConstraint = new ProfileAccelConstraint(-25.0, 40);
 
-        VelConstraint slowVelConstraint = new MinVelConstraint(Arrays.asList(
-                new TranslationalVelConstraint(10),
-                new AngularVelConstraint(Math.PI / 2)
-        ));
-        AccelConstraint slowAccelConstraint = new ProfileAccelConstraint(-10, 20);
+//        VelConstraint slowVelConstraint = new MinVelConstraint(Arrays.asList(
+//                new TranslationalVelConstraint(10),
+//                new AngularVelConstraint(Math.PI / 2)
+//        ));
+//        AccelConstraint slowAccelConstraint = new ProfileAccelConstraint(-10, 20);
 
         double scorexPos = 10.5;
         double scoreyPos = 18.0;

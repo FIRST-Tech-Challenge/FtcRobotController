@@ -61,6 +61,11 @@ public class ViperSlide {
         // initialize
         leftBucket.setPosition(1);
         rightBucket.setPosition(0);
+
+        leftViper.setTargetPosition(-2000);
+        rightViper.setTargetPosition(2000);
+
+        openBucket();
     }
 
     public void setPower(double power) {
@@ -78,7 +83,9 @@ public class ViperSlide {
             Boolean openBucket,
             Boolean closeBucket,
             Boolean grabSpecimen,
-            Boolean releaseSpecimen
+            Boolean releaseSpecimen,
+            Boolean goToPositionUp,
+            Boolean goToPositionDown
     ) {
         // Move Viper
         if (retractSpeed != 0) {
@@ -90,7 +97,8 @@ public class ViperSlide {
         else {
             stop();
         }
-        telemetry.addData("Viper Position: ", rightViper.getCurrentPosition());
+        telemetry.addData("Left Viper Position: ", leftViper.getCurrentPosition());
+        telemetry.addData("Right Viper Position: ", rightViper.getCurrentPosition());
         telemetry.addData("Viper power: ", rightViper.getCurrent(CurrentUnit.AMPS));
 
         // Hold Position
@@ -138,6 +146,15 @@ public class ViperSlide {
         else if(releaseSpecimen) {
             // release specimen
         }
+
+        if(goToPositionUp) {
+            goToPositionTest(2000);
+        }
+
+        if(goToPositionDown) {
+            goToPositionTest(0);
+        }
+
     }
 
     public void stop() {
@@ -202,6 +219,24 @@ public class ViperSlide {
         stop();
     }
 
+    public void goToPositionTest(int position) {
+
+        leftViper.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rightViper.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+//        if (position < rightViper.getCurrentPosition()) {
+//            setPower(-1);
+//        }
+//
+//        if (position > rightViper.getCurrentPosition()) {
+//            setPower(1);
+//        }
+
+        setPower(1);
+
+        stop();
+    }
+
     public void goToRest() {
         while ((rightViper.getCurrentPosition() > 200) && (rightViper.getCurrent(CurrentUnit.AMPS) < 6)) {
             setPower(-1);
@@ -252,12 +287,12 @@ public class ViperSlide {
         setBucketPosition(.49, .51);
     }
 
-    public void openBucket() {
-        setBucketFlapPosition(1);
+    public void closeBucket() {
+        setBucketFlapPosition(.55);
     }
 
-    public void closeBucket() {
-        setBucketFlapPosition(.4 ); // .75
+    public void openBucket() {
+        setBucketFlapPosition(.4);
     }
 
 
