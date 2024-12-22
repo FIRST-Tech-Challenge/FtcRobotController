@@ -126,7 +126,7 @@ public class VLiftProxy extends TaskTemplate {
     public ITaskWithResult<Boolean> moveTo(int target, int range, double maxDuration) {
         ITaskWithResult<Boolean> result;
         // This version has a timer
-        if (maxDuration > 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
+        if (maxDuration >= 0) result = new TaskWithResultTemplate<Boolean>(scheduler) {
             private final ElapsedTime t = new ElapsedTime();
 
             @Override

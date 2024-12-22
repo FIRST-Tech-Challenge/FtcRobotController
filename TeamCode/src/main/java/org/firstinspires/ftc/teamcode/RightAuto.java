@@ -96,6 +96,7 @@ public class RightAuto extends LinearOpMode {
                 scheduler, hardware, target, tracker, loopTimer, speed2Power, ramps, telemetry
         );
     }
+
     private MoveToTask moveToSlow(Pose target) {
         return new MoveToTask(
                 scheduler, hardware, target, tracker, loopTimer, speed2Power, rampsSlowEdition, telemetry
@@ -113,7 +114,7 @@ public class RightAuto extends LinearOpMode {
     private BlinkLightsTask lightColor(double color) {
         return new BlinkLightsTask(
                 scheduler, hardware,
-                0.0 , false, 0,
+                0.0, false, 0,
                 0, 0, color
         );
     }
@@ -234,21 +235,27 @@ public class RightAuto extends LinearOpMode {
         );
     }
 
-    private ITask scoreSpecimen() {
+    private ITask preScoreSpecimen() {
         return groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                 .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
-                .then(vLiftProxy.moveTo(710, 5, 1.0))
-                .then(run(() -> hardware.wrist.setPosition(1)))
-                .then(await(300))
-                .then(moveRel(new Pose(-4.0, 0, 0)))
-                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                .then(await(200))
-                .then(run(() -> {
+                .then(vLiftProxy.moveTo(710, 5, 1.0)));
+    }
+
+    private ITask postScoreSpecimen() {
+        return groupOf(it -> it.add(run(() -> {
                     hardware.wrist.setPosition(0.28);
                     hardware.arm.setTargetPosition(Hardware.deg2arm(0));
                 }))
                 .then(await(450))
-                .then(vLiftProxy.moveTo(0, 5, .25))
+                .then(vLiftProxy.moveTo(0, 5, .25)));
+    }
+
+    private ITask scoreSpecimen() {
+        return groupOf(it -> it.add(run(() -> hardware.wrist.setPosition(1)))
+                .then(await(300))
+                .then(moveRel(new Pose(-4.0, 0, 0)))
+                .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
+                .then(await(200))
         );
     }
 
@@ -256,7 +263,7 @@ public class RightAuto extends LinearOpMode {
         return groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(200))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
-                        .then(await(500))
+                        .then(await(200))
                         .then(run(() -> hardware.arm.setTargetPosition(50)))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
@@ -272,9 +279,15 @@ public class RightAuto extends LinearOpMode {
 
     public void runAuto() {
         scheduler.add(new OneShot(scheduler, setup))
-                .then(moveTo(new Pose(30, 12, 0)))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(30, 12, 0)));
+                    a.add(preScoreSpecimen());
+                }))
                 .then(scoreSpecimen())
-                .then(moveTo(new Pose(15.5, -36, 0)))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(15.5, -36, 0)));
+                    a.add(postScoreSpecimen());
+                }))
                 .then(grab())
                 .then(groupOf(a -> {
                     a.add(transfer())
@@ -288,7 +301,25 @@ public class RightAuto extends LinearOpMode {
                             .then(drop());
                     a.add(moveTo(new Pose(11.5, -46.25, 0)));
                 }))
-                .then(moveTo(new Pose(6, -27, 0)));
+//                .then(moveTo(new Pose(14, -27, 0)))
+//                .then(await(500))
+                .then(moveTo(new Pose(6, -27, 0)))
+                .then(blinkenlights(1.0))
+                .then(moveToSlow(new Pose(2, -27, 0)))
+                .then(run(() -> hardware.driveMotors.setAll(-0.40)))
+                .then(await(500))
+                .then(run(() -> hardware.driveMotors.setAll(0)))
+                .then(pickSpecimen())
+                .then(lightColor(Hardware.LAMP_PURPLE))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(30, 6, 0)));
+                    a.add(preScoreSpecimen());
+                }))
+                .then(scoreSpecimen())
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(6, -27, 0)));
+                    a.add(postScoreSpecimen());
+                }));
     }
 
     @Override
