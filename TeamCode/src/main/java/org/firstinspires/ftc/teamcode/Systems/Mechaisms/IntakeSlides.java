@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Systems.Mechaisms;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+
 public class IntakeSlides {
 
     private DcMotorEx intakeSlideMotor;
@@ -14,8 +16,8 @@ public class IntakeSlides {
 
     private double targetCM = 0;
 
-    public IntakeSlides (DcMotorEx motor) {
-        intakeSlideMotor = motor;
+    public IntakeSlides (Hardware hardware) {
+        intakeSlideMotor = hardware.intakeSlideMotor;
     }
 
     public void command() {
@@ -26,4 +28,6 @@ public class IntakeSlides {
         targetCM = cm;
     }
 
+    public void update() {
+    }
 }

@@ -46,7 +46,7 @@ public class Hardware   {
     public DcMotorEx intakeSlideMotor;
     public DcMotorEx intakeRoller;
 
-    public CRServo intakePivot;
+    public Servo intakePivot;
     public Servo intakeDoor;
 
     public AnalogInput intakePivotEnc;
@@ -122,7 +122,7 @@ public class Hardware   {
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
         intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        intakePivot = hardwareMap.get(CRServo.class, "CH-Servo-3");
+        intakePivot = hardwareMap.get(Servo.class, "CH-Servo-3");
         intakeDoor = hardwareMap.get(Servo.class, "CH-Servo-4");
 
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");

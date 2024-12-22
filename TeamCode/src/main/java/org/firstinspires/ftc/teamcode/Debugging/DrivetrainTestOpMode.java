@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Debugging;
 
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Hardware.Wrappers.Controller;
 import org.firstinspires.ftc.teamcode.Systems.Drivetrain;
 
 
@@ -13,12 +13,12 @@ import org.firstinspires.ftc.teamcode.Systems.Drivetrain;
 public class DrivetrainTestOpMode extends OpMode {
     Hardware hardware = new Hardware();
     Drivetrain drivetrain;
-    Controller controller;
+    GamepadEx controller;
 
     @Override
     public void init() {
         hardware.init(hardwareMap);
-        controller = new Controller(gamepad1, Controller.xBox);
+        controller = new GamepadEx(gamepad1);
         drivetrain = new Drivetrain(hardware, controller);
     }
 

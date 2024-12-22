@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Hardware.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Hardware.Wrappers.Controller;
 
 public class Drivetrain {
 
@@ -21,10 +21,10 @@ public class Drivetrain {
     private double[] sticks = {0, 0, 0, 0};
     private double heading = 0;
 
-    Controller gamepad;
+    GamepadEx gamepad;
 
 
-    public Drivetrain(Hardware hardware, Controller gamepad) {
+    public Drivetrain(Hardware hardware, GamepadEx gamepad) {
         this.hardware = hardware;
 
         LF = hardware.LF;
@@ -40,10 +40,10 @@ public class Drivetrain {
         pinPoint.update();
         heading = pinPoint.getHeading();
 
-        sticks[0] = gamepad.getRSX();
-        sticks[1] = gamepad.getRSY();
-        sticks[2] = gamepad.getLSX();
-        sticks[3] = gamepad.getLSY();
+        sticks[0] = -gamepad.getRightX();
+        sticks[1] = gamepad.getRightY();
+        sticks[2] = -gamepad.getLeftX();
+        sticks[3] = gamepad.getLeftY();
     }
 
     public void command() {

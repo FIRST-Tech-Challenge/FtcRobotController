@@ -19,14 +19,19 @@ public class Deposit {
         sampleDeposit;
     }
 
+    public enum ClawState {
+        released,
+        gripped;
+    }
+
     private TargetState targetState;
+    private ClawState clawState;
 
     public Deposit(Hardware hardware){
         claw = new Claw(hardware);
         arm = new Arm(hardware);
         slides = new DepositSlides(hardware);
 
-        goToTransfer();
     }
 
     public void goToTransfer() {
@@ -64,6 +69,18 @@ public class Deposit {
         slides.setTargetCM(DepositConstants.slideSpecClippedPos);
     }
 
+    public void release() {
+        clawState = ClawState.released;
+
+        claw.setPosition(DepositConstants.clawOpenPos);
+    }
+
+    public void grip() {
+        clawState = ClawState.gripped;
+
+        claw.setPosition(DepositConstants.clawClosedPos);
+    }
+
     public void update() {
         slides.update();
     }
@@ -74,5 +91,13 @@ public class Deposit {
 
     public TargetState getTargetState() {
         return targetState;
+    }
+
+    public ClawState getClawState() {
+        return clawState;
+    }
+
+    public double getSlidePos() {
+        return slides.getPosition();
     }
 }

@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Debugging;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Hardware.Wrappers.Controller;
 import org.firstinspires.ftc.teamcode.Systems.Deposit;
 import org.firstinspires.ftc.teamcode.Systems.Drivetrain;
 
@@ -13,13 +14,13 @@ public class DepositTestingOpMode extends OpMode {
     private Hardware hardware = new Hardware();
     private Deposit deposit;
     private Drivetrain drivetrain;
-    private Controller controller;
+    private GamepadEx controller;
 
 
     @Override
     public void init() {
         hardware.init(hardwareMap);
-        controller = new Controller(gamepad1, Controller.xBox);
+        controller = new GamepadEx(gamepad1);
         deposit = new Deposit(hardware);
         drivetrain = new Drivetrain(hardware, controller);
 
@@ -27,19 +28,21 @@ public class DepositTestingOpMode extends OpMode {
 
     @Override
     public void loop() {
+        hardware.clearCache();
         drivetrain.update();
         deposit.update();
+        controller.readButtons();
 
-        if (controller.getA()){
+        if (controller.getButton(GamepadKeys.Button.A) && controller.wasJustPressed(GamepadKeys.Button.A)){
 
             deposit.goToTransfer();
 
-        } else if (controller.getB()) {
+        } else if (controller.getButton(GamepadKeys.Button.B) && controller.wasJustPressed(GamepadKeys.Button.B)) {
             deposit.goToSpecIntake();
 
-        } else if (controller.getY()) {
+        } else if (controller.getButton(GamepadKeys.Button.Y) && controller.wasJustPressed(GamepadKeys.Button.Y)) {
             deposit.goToSampleDeposit();
-        } else if (controller.getX()) {
+        } else if (controller.getButton(GamepadKeys.Button.X) && controller.wasJustPressed(GamepadKeys.Button.X)) {
 
 
             if (deposit.getTargetState() != Deposit.TargetState.specDepositReady) {
@@ -50,6 +53,15 @@ public class DepositTestingOpMode extends OpMode {
 
         }
 
+        if (controller.getButton(GamepadKeys.Button.RIGHT_BUMPER) && controller.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+
+            if (deposit.getClawState() == Deposit.ClawState.released) {
+                deposit.grip();
+            } else {
+                deposit.release();
+            }
+        }
+        telemetry.addData("SlidePos: ", deposit.getSlidePos());
         drivetrain.command();
         deposit.command();
 

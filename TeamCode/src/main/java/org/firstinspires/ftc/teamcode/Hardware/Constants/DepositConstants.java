@@ -9,9 +9,9 @@ public class DepositConstants {
 
     // Arm Positions
     public static final double
-            armRightTransferPos = 0.82,
+            armRightTransferPos = 0.821,
             armRightSpecIntakePos = 0.1,
-            armRightSpecDepositPos = 0.7,
+            armRightSpecDepositPos = 0.81,
             armRightSampleDepositPos = 0.3;
 
     // Deposit Slide PID Constants
@@ -23,11 +23,11 @@ public class DepositConstants {
 
     // Deposit Slides Positions in cm
     public static final double
-            slideTransferPos = 0.00,
+            slideTransferPos = 8.89,
             slideSpecIntakePos = 0.00,
-            slideSpecDepositReadyPos = 0.00,
-            slideSpecClippedPos = 0.00,
-            slideSampleDepositPos = 0.00;
+            slideSpecDepositReadyPos = 48.00,
+            slideSpecClippedPos = 65.50,
+            slideSampleDepositPos = 72;
 
 
 
