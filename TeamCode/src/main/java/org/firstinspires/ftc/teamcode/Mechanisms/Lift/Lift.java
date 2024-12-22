@@ -32,8 +32,8 @@ public class Lift {
     public DcMotorAdvanced liftMotorRight;
     Encoder encoder;
     TouchSensor limiter;
-    public static double kA=0.1;
-    public static double kV=0.1;
+    public static double kA=0.2;
+    public static double kV=0.2;
     public static double kG=0.1;
     public static double kP = 0;
     public static double kI = 0;
@@ -81,7 +81,7 @@ public class Lift {
     // FUNCTION TO RESET CURRENT ENCODER POSITION WHEN LIMIT SWITCHES ARE HIT
     private void checkLimit(){
         if (limiter.isPressed()){
-//            encoder.reset();
+            encoder.reset();
         }
     }
 
@@ -109,16 +109,19 @@ public class Lift {
 
             ElapsedTime t = new ElapsedTime();
             double initialPos = currentPosition;
-
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-//                checkLimit();
+                checkLimit();
 
                 double currentPosition = ticksToInches(encoder.getCurrentPosition());
                 // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
-                motorPower = pidPower + ffPower + kG;
+                if (reverse) {
+                    motorPower = pidPower + kG;
+                } else {
+                    motorPower = pidPower + ffPower + kG;
+                }
                 liftMotorLeft.setPower(motorPower);
                 liftMotorRight.setPower(motorPower);
                 if (Math.abs(targetHeight - currentPosition) < liftThreshold){
@@ -128,6 +131,9 @@ public class Lift {
                 packet.put("Current Height: ", currentPosition);
                 packet.put("Target Height: ", targetHeight);
                 packet.put("Motor Power", motorPower);
+                packet.put("Target Pos", motionProfile.getPos(t.seconds()));
+                packet.put("Velocity: ", liftMotorLeft.getVelocity()/ticksPerInch);
+                packet.put("Target Velocity: ", motionProfile.getVelocity(t.seconds()));
 
                 return Math.abs(targetHeight - currentPosition) > liftThreshold;
             }
@@ -145,7 +151,7 @@ public class Lift {
             }
         };
     }
-    public Action ionoinoniinpn(){
+    public Action infiniteHold(){
         return new Action(){
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {

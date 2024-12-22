@@ -61,6 +61,30 @@ public class Arm {
             }
         };
     }
+    public Action armClose(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet) {
+
+                        servoArmLeft.setPosition(armRetract);
+                        servoArmRight.setPosition(armRetract);
+                        servoWrist.setPosition(wristRetract);
+                        armPos = armState.RETRACT;
+                return false;
+            }
+        };
+    }
+    public Action armOpen(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet) {
+                servoArmLeft.setPosition(armSpecimenExtend);
+                servoArmRight.setPosition(armSpecimenExtend);
+                servoWrist.setPosition(armSpecimenExtend);
+                return false;
+            }
+        };
+    }
     public Action servoArmSpec(){
         return new Action() {
             @Override
