@@ -539,24 +539,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
                         .then(await(1000))
                         .then(run(() -> hardware.wrist.setPosition(1)))
-                        // comment out rest of this chain if Liam doesn't want to move automatically
-                        .then(await(1000))
-                ).extraDepends(
-                        vLiftProxy.CONTROL,
-                        Locks.ArmAssembly
-                )
-        ).then(
-                moveRel(new Pose(-3.5, 0, 0))
-        ).then(
-                groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                        .then(await(500))
-                        // Maybe let the rest of this be async
-                        .then(run(() -> {
-                            hardware.wrist.setPosition(0.28);
-                            hardware.arm.setTargetPosition(Hardware.deg2arm(0));
-                        }))
-                        .then(await(1000))
-                        .then(vLiftProxy.moveTo(0, 5, .25))
                 ).extraDepends(
                         vLiftProxy.CONTROL,
                         Locks.ArmAssembly
