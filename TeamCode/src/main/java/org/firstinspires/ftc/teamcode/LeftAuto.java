@@ -42,7 +42,8 @@ public class LeftAuto extends LinearOpMode {
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
     final Pose SCORE_HIGH_BASKET = new Pose(9.8786797, 18.1213203, Math.toRadians(-45));
-    final Pose PARK = new Pose(12, 16, Math.toRadians(0));
+    final Pose PARK1 = new Pose(57.5, 6, Math.toRadians(0));
+    final Pose PARK2 = new Pose(55.5, -11, Math.toRadians(0));
     Hardware hardware;
     EncoderTracking tracker;
     private VLiftProxy vLiftProxy;
@@ -120,7 +121,7 @@ public class LeftAuto extends LinearOpMode {
                     a.add(run(() -> hardware.arm.setTargetPosition(222)));
                 }))
                         .then(run(() -> hardware.wrist.setPosition(0.94)))
-                        .then(await(700))
+                        .then(await(200))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(100))
                         .then(run(() -> hardware.wrist.setPosition(0.28)))
@@ -199,7 +200,16 @@ public class LeftAuto extends LinearOpMode {
 //                .then(moveTo(SCORE_HIGH_BASKET))
 //                .then(scoreHighBasket())
 //                .then(new OneShot(scheduler, () -> scoredIn.set(finalizeTimer.time())))
-                .then(moveTo(PARK));
+                .then(moveTo(PARK1))
+                .then(moveTo(PARK2))
+                .then(run(() -> {
+                    hardware.frontLeft.setPower(0.55);
+                    hardware.frontRight.setPower(-0.55);
+                    hardware.backLeft.setPower(-0.55);
+                    hardware.backRight.setPower(0.55);
+                }))
+                .then(wait(.5))
+                .then(run(() -> hardware.driveMotors.setAll(0)));
 //                .then(moveTo(scheduler,
 //                        new Pose(65, -12, Math.toRadians(0))))
         ;
