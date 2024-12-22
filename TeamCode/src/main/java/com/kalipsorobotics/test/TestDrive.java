@@ -2,6 +2,10 @@ package com.kalipsorobotics.test;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
@@ -12,7 +16,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+
+@Config
+class RobotConfig {
+    public static String robotName = "jimmeh";
+    public static String color = "red";
+}
+@TeleOp
 public class TestDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,11 +32,20 @@ public class TestDrive extends LinearOpMode {
         SparkfunOdometry sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, Math.toRadians(0));
         DriveAction driveAction = new DriveAction(driveTrain);
+
+
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+
         waitForStart();
         while (opModeIsActive()) {
 
             sparkfunOdometry.updatePosition();
             wheelOdometry.updatePosition();
+
+
             Log.d("purepursaction_debug_odo_sparkfun", sparkfunOdometry.getCurrentPosition().toString());
 
             if (true) {
@@ -38,11 +57,22 @@ public class TestDrive extends LinearOpMode {
                         wheelOdometry.getCurrentPosition().getTheta(),
                         wheelOdometry.getCurrentImuHeading()));
             }
-            driveAction.move(gamepad1);
 
+            telemetry.addData("position", wheelOdometry.getCurrentPosition());
+            telemetry.addData("theta", wheelOdometry.getCurrentImuHeading());
+            telemetry.addLine("Hello, " + RobotConfig.robotName);
+
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.fieldOverlay()
+                    .setAlpha(0.25)
+                    .setFill(RobotConfig.color)
+                    .fillRect(
+                            wheelOdometry.getCurrentPosition().getX(),
+                            wheelOdometry.getCurrentPosition().getY(),
+                            14, 14);
+            dashboard.sendTelemetryPacket(packet);
+            driveAction.move(gamepad1);
+            telemetry.update();
         }
     }
-
-
-
 }
