@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import java.util.Objects;
 import java.util.Timer;
 
 public class ViperSlide {
@@ -23,6 +24,8 @@ public class ViperSlide {
     private Servo leftBucket;
     private Servo rightBucket;
     private Servo bucketFlap;
+    private Servo leftSpecimen;
+    private Servo rightSpecimen;
 
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
@@ -33,6 +36,7 @@ public class ViperSlide {
     private ElapsedTime bucketCooldownTimer;
 
     double lastPosition;
+    String specimenGrabberPos = "closed";
 
 
 
@@ -47,6 +51,11 @@ public class ViperSlide {
         leftBucket = hardwareMap.get(Servo.class, "leftBucket");
         rightBucket = hardwareMap.get(Servo.class, "rightBucket");
         bucketFlap = hardwareMap.get(Servo.class, "bucketFlapServo");
+
+        leftSpecimen = hardwareMap.get(Servo.class, "leftSpecimen");
+        rightSpecimen = hardwareMap.get(Servo.class, "rightSpecimen");
+
+
 
         leftViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         rightViper.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -113,7 +122,8 @@ public class ViperSlide {
 
         // Bucket
         if(bucketScore) {
-            if(getPos() > minFlipLimit) {
+            if(getPos() > minFlipLimit && Objects.equals(specimenGrabberPos, "closed")) {
+                closeBucket();
                 bucketScore();
             }
             else {
@@ -122,7 +132,10 @@ public class ViperSlide {
         }
 
         if(bucketRest) {
-            bucketRest();
+            if(getPos() > 300 && Objects.equals(specimenGrabberPos, "closed")) {
+                bucketRest();
+            }
+
 //            if(bucketCooldownTimer != null && bucketCooldownTimer.seconds() < 1)
 //                bucketRest();
 //            else
@@ -141,10 +154,14 @@ public class ViperSlide {
         }
 
         if(grabSpecimen) {
-            // grab specimen
+            specimenGrabberPos = "closed";
+            leftSpecimen.setPosition(0);
+            rightSpecimen.setPosition(1);
         }
         else if(releaseSpecimen) {
-            // release specimen
+            specimenGrabberPos = "open";
+            leftSpecimen.setPosition(0.6);
+            rightSpecimen.setPosition(0.4);
         }
 
         if(goToPositionUp) {
