@@ -104,8 +104,8 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad2.right_trigger,       // extend
                     gamepad2.guide,               // reset encoders
                     gamepad2.back,                // hold viper position
-                    gamepad2.y,                   // bucket rest
-                    gamepad2.x,                   // bucket score
+                    gamepad2.x,                   // bucket rest
+                    gamepad2.y,                   // bucket score
                     gamepad2.b,                   // open bucket
                     gamepad2.a,                   // close bucket
                     gamepad2.dpad_up,             // grab specimen
