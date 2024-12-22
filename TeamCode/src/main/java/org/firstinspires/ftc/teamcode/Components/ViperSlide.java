@@ -175,16 +175,16 @@ public class ViperSlide {
     }
 
     public void holdPosition(double holdPosition) {
-        double holdPower = 0.1;
+        double holdPower = 0.4;
         double holdPowerIncrement = 0.2;
 
 
         telemetry.addData("Holding", holdPosition);
 
-        if(lastPosition < getPos()) {
+        if(lastPosition > getPos()) {
             telemetry.addData("dropped " + (getPos() - lastPosition), " since last update");
         }
-        else if(lastPosition > getPos()) {
+        else if(lastPosition < getPos()) {
             telemetry.addData("raised " + (lastPosition - getPos()), " since last update");
         }
         else {
