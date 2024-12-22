@@ -179,13 +179,13 @@ public class ViperSlide {
         double holdPowerIncrement = 0.2;
 
 
-        telemetry.addData("Holding", holdPosition);
+        telemetry.addData("Holding at", holdPosition);
 
         if(lastPosition > getPos()) {
-            telemetry.addData("dropped " + (getPos() - lastPosition), " since last update");
+            telemetry.addData("Slide fell: " + (getPos() - lastPosition), " since last update");
         }
         else if(lastPosition < getPos()) {
-            telemetry.addData("raised " + (lastPosition - getPos()), " since last update");
+            telemetry.addData("Slide raised: " + (lastPosition - getPos()), " since last update");
         }
         else {
             telemetry.addData("not moving", "since last update");
@@ -198,12 +198,12 @@ public class ViperSlide {
             holdPower = -holdPowerIncrement;
             leftViper.setPower(-holdPower);
             rightViper.setPower(holdPower);
-            telemetry.addData("holdPower", holdPower);
+            telemetry.addData("slide", holdPower);
         } else if(rightViper.getCurrentPosition() < holdPosition) {
             holdPower = -holdPowerIncrement;
             leftViper.setPower(holdPower);
             rightViper.setPower(holdPower);
-            telemetry.addData("holdPower", holdPower);
+            telemetry.addData("slide going up at", holdPower);
         } else {
             stop();
         }
