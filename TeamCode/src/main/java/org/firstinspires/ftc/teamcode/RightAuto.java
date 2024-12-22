@@ -222,11 +222,11 @@ public class RightAuto extends LinearOpMode {
     }
 
     private ITask drop() {
-        return groupOf(it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(35))))
+        return groupOf(it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
                 .then(run(() -> hardware.wrist.setPosition(0.75)))
-                .then(await(600))
+                .then(await(200))
                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                .then(await(500))
+                .then(await(200))
                 .then(run(() -> {
                     hardware.wrist.setPosition(Hardware.WRIST_BACK);
                     hardware.arm.setTargetPosition(0);
@@ -239,7 +239,7 @@ public class RightAuto extends LinearOpMode {
                 .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
                 .then(vLiftProxy.moveTo(710, 5, 1.0))
                 .then(run(() -> hardware.wrist.setPosition(1)))
-                .then(await(700))
+                .then(await(300))
                 .then(moveRel(new Pose(-4.0, 0, 0)))
                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                 .then(await(200))

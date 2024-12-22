@@ -457,7 +457,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(Locks.ArmAssembly);
         abandonLock(vLiftProxy.CONTROL);
         scheduler.add(groupOf(inner -> inner.add(run(() -> hardware.wrist.setPosition(0.94)))
-                .then(await(700))
+                .then(await(200))
                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                 .then(await(100))
                 .then(run(() -> hardware.wrist.setPosition(0.28)))
@@ -506,7 +506,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                                 .then(await(200))
                                 .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
-                                .then(await(500))
+                                .then(await(200))
                                 .then(run(() -> hardware.arm.setTargetPosition(50)))
                                 .then(await(500))
                                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
@@ -576,12 +576,12 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(Locks.ArmAssembly);
         transferInternal()
                 .then(groupOf(
-                        it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(35))))
-                                .then(await(1000))
+                        it -> it.add(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
+                                .then(await(100))
                                 .then(run(() -> hardware.wrist.setPosition(0.75)))
                                 .then(await(100))
                                 .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
-                                .then(await(500))
+                                .then(await(300))
                                 .then(run(() -> {
                                     hardware.wrist.setPosition(Hardware.WRIST_BACK);
                                     hardware.arm.setTargetPosition(0);
@@ -632,7 +632,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                             hardware.wrist.setPosition(0);
                             hardware.arm.setTargetPosition(-28);
                         }))
-                        .then(await(500))
+                        .then(await(300))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(250))
                         .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
