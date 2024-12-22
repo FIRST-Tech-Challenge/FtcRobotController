@@ -7,12 +7,11 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
-
-import java.util.Set;
 
 public class Intake {
 
@@ -25,7 +24,8 @@ public class Intake {
     private boolean isSpecimen;
     private boolean IS_DEBUG = false;
     private double power = 0;
-    private CRServo intake = null;
+    private CRServo intakeRight = null;
+    private CRServo intakeLeft = null;
     private CheckAlliance alliance;
     private ColorSensorOur colorSensorOur;
     private Telemetry telemetry;
@@ -36,7 +36,8 @@ public class Intake {
         this.IS_DEBUG = IS_DEBUG;
         telemetry = opMode.telemetry;
         //colorSensorOur = new ColorSensorOur(opMode, IS_DEBUG);
-        intake = opMode.hardwareMap.get(CRServo.class, "intake");
+        intakeRight = opMode.hardwareMap.get(CRServo.class, "IR");
+        intakeLeft = opMode.hardwareMap.get(CRServo.class, "IL");
         this.isRed = isRed;
         telemetry.addData("isRed", isRed);
         telemetry.update();
@@ -49,6 +50,7 @@ public class Intake {
     public void init() {
         //TODO change directions if needed
         //intake.setDirection(CRServo.Direction.FORWARD);
+        intakeLeft.setDirection(CRServo.Direction.REVERSE);
         if (IS_DEBUG) {
             telemetry.addData("IntakeInit", true);
         }
@@ -111,12 +113,12 @@ public class Intake {
         this.power = power;
     }
 
-    public CRServo getIntake() {
-        return intake;
+    public CRServo getIntakeRight() {
+        return intakeRight;
     }
 
-    public void setIntake(CRServo intake) {
-        this.intake = intake;
+    public void setIntakeRight(CRServo intakeRight) {
+        this.intakeRight = intakeRight;
     }
 
     public CheckAlliance getAlliance() {
@@ -151,6 +153,14 @@ public class Intake {
         this.timer = timer;
     }
 
+    public CRServo getIntakeLeft() {
+        return intakeLeft;
+    }
+
+    public void setIntakeLeft(CRServo intakeLeft) {
+        this.intakeLeft = intakeLeft;
+    }
+
     //intake action that is active as long as i press a button
     public Action intake() {
         this.buttonPressed = buttonPressed;
@@ -182,7 +192,8 @@ public class Intake {
         }
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            intake.setPower(power);
+            intakeRight.setPower(power);
+            intakeLeft.setPower(power);
             return false;
         }
     }
@@ -198,11 +209,13 @@ public class Intake {
             boolean isIn = dis < 2;
 
             if (!isIn && !outtaking) {
-                intake.setPower(INTAKE_SPEED);
+                intakeRight.setPower(INTAKE_SPEED);
+                intakeLeft.setPower(INTAKE_SPEED);
             } else if (colorCheek) {
-                intake.setPower(0);
+                intakeRight.setPower(0);
+                intakeLeft.setPower(0);
             } else {
-                intake.setPower(OUTTAKE_SPEED);
+                intakeRight.setPower(OUTTAKE_SPEED);
                 if (!outtaking) {
                     timer.reset();
                     outtaking = true;

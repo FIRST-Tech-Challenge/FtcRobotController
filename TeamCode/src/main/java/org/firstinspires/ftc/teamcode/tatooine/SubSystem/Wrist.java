@@ -38,9 +38,9 @@ public class Wrist {
     private boolean shouldStayParralal = false;
 
     public Wrist(OpMode opMode, boolean IS_DEBUG) {
-        this.wristLeft = opMode.hardwareMap.get(Servo.class, "wristLeft");
-        this.wristRight = opMode.hardwareMap.get(Servo.class, "wristRight");
-        this.angleServo = opMode.hardwareMap.get(CRServo.class, "angleServo");
+        this.wristLeft = opMode.hardwareMap.get(Servo.class, "WL");
+        this.wristRight = opMode.hardwareMap.get(Servo.class, "WR");
+        this.angleServo = opMode.hardwareMap.get(CRServo.class, "AS");
         this.telemetry = opMode.telemetry;
         this.IS_DEBUG = IS_DEBUG;
         this.angleSensor = opMode.hardwareMap.get(AnalogInput.class, "angleSensor");

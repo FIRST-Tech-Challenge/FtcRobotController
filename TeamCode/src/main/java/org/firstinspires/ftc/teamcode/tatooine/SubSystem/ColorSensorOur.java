@@ -26,7 +26,7 @@ public class ColorSensorOur {
         this.IS_DEBUG = IS_DEBUG;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
-        colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "CS");
         colorSensor.setGain(gain);
         init();
         if (IS_DEBUG) {
