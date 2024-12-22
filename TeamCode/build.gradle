@@ -59,6 +59,7 @@ dependencies {
 dependencies {
     implementation 'com.google.ai.edge.litert:litert-support-api:1.0.1'
     implementation 'com.google.ai.edge.litert:litert:1.0.1'
+    implementation 'org.openftc:easyopencv:1.5.2'
 //    implementation 'com.google.ai.edge.litert:litert:1.0.1'
 //    implementation 'com.google.ai.edge.litert:litert-support-api:1.0.1'
 //    implementation 'androidx.room:room-compiler:2.6.1'
