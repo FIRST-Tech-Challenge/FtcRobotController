@@ -281,23 +281,13 @@ public class RightAuto extends LinearOpMode {
                             .then(drop());
                     a.add(moveTo(new Pose(11.5, -36, 0)));
                 }))
-//                .then(moveTo(new Pose(15.5, -46.25, 0)))
-//                .then(grab())
-//                .then(groupOf(a -> {
-//                    a.add(transfer())
-//                            .then(drop());
-//                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
-//                }))
-                .then(moveTo(new Pose(13.5, -27, 0)))
-                .then(blinkenlights(3.0))
-                .then(moveToSlow(new Pose(3, -27, 0)))
-                .then(run(() -> hardware.driveMotors.setAll(-0.35)))
-                .then(await(700))
-                .then(run(() -> hardware.driveMotors.setAll(0)))
-                .then(pickSpecimen())
-                .then(lightColor(Hardware.LAMP_PURPLE))
-                .then(moveTo(new Pose(30, 6, 0)))
-                .then(scoreSpecimen())
+                .then(moveTo(new Pose(15.5, -46.25, 0)))
+                .then(grab())
+                .then(groupOf(a -> {
+                    a.add(transfer())
+                            .then(drop());
+                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
+                }))
                 .then(moveTo(new Pose(6, -27, 0)));
     }
 
