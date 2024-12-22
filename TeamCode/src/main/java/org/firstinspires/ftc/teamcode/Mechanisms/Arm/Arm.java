@@ -69,7 +69,6 @@ public class Arm {
                         servoArmLeft.setPosition(armRetract);
                         servoArmRight.setPosition(armRetract);
                         servoWrist.setPosition(wristRetract);
-                        armPos = armState.RETRACT;
                 return false;
             }
         };
@@ -78,9 +77,9 @@ public class Arm {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                servoArmLeft.setPosition(armSpecimenExtend);
-                servoArmRight.setPosition(armSpecimenExtend);
-                servoWrist.setPosition(armSpecimenExtend);
+                servoArmLeft.setPosition(armExtend);
+                servoArmRight.setPosition(armExtend);
+                servoWrist.setPosition(wristExtend);
                 return false;
             }
         };

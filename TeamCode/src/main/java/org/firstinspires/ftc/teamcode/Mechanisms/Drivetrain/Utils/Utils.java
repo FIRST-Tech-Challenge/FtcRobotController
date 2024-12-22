@@ -54,7 +54,7 @@ public class Utils {
             new double[][]{
                 new double[]{posX},
                 new double[]{posY},
-                new double[]{posTheta}
+                new double[]{Math.toRadians(posTheta)}
             }
         );
     }

@@ -58,7 +58,7 @@ public class TunePoseController extends LinearOpMode {
                     new double [][]{
                             new double[]{desiredX},
                             new double[]{desiredY},
-                            new double[]{desiredTheta}
+                            new double[]{Math.toRadians(desiredTheta)}
                     }
             );
             drivetrain.localize();

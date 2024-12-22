@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Lift.Tuners;
 
+import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.makePoseVector;
+
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -36,6 +38,7 @@ public class TuneFeedForwardLift  extends LinearOpMode {
     public static double height = 24;
     public static double height2 = 12;
     FtcDashboard dashboard;
+    Drivetrain drivetrain;
     public void runOpMode() throws InterruptedException {
         Battery battery = new Battery(hardwareMap);
         lift = new Lift(hardwareMap, battery);
@@ -45,6 +48,7 @@ public class TuneFeedForwardLift  extends LinearOpMode {
         claw = new Claw(hardwareMap);
         extension = new Extension(hardwareMap);
         pivot = new Pivot(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap, battery);
         ElapsedTime looptime = new ElapsedTime();
 
 
@@ -55,7 +59,8 @@ public class TuneFeedForwardLift  extends LinearOpMode {
 
                 Actions.runBlocking(
                         new SequentialAction(
-                        /*extension.servoExtension(Extension.extensionState.RETRACT),
+                        drivetrain.goToPose(makePoseVector(10, 20, 0)),
+                        extension.servoExtension(Extension.extensionState.RETRACT),
                         pivot.flippyFlip(Intake.intakeState.STOP),
                         new SleepAction(1),
                         arm.armClose(),
@@ -67,10 +72,10 @@ public class TuneFeedForwardLift  extends LinearOpMode {
                         arm.armOpen(),
                         new SleepAction(1),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        lift.infiniteHold()*/
-                        lift.moveToHeight(24),
-                                new SleepAction(1),
-                                lift.moveToHeight(12)
+                        lift.infiniteHold()
+                        //lift.moveToHeight(24),
+                                //new SleepAction(1),
+                                //lift.moveToHeight(12)
                         )
                 );
 //                if (Timer.seconds() > 3) {

@@ -141,7 +141,7 @@ public class Lift {
     }
     public Action manualControl(double power) {
         return new Action() {
-            @Override 
+            @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 liftMotorLeft.setPower(power+kG);
                 liftMotorRight.setPower(power+kG);
