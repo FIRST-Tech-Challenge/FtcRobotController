@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -70,7 +71,7 @@ public class Main extends LinearOpMode {
     public DcMotor      leftBackDrive    = null;
     public DcMotor      rightBackDrive   = null;
     public DcMotor      armMotor         = null; //the arm motor
-    public DcMotor      liftMotor        = null; //
+    public DcMotor      liftMotor        = null; // the viper slide motor
     public CRServo      intake           = null; //the active intake servo
     public Servo        wrist            = null; //the wrist servo
     public SparkFunOTOS odometry         = null;
@@ -92,7 +93,7 @@ public class Main extends LinearOpMode {
     //                 * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
     //                 * 1/360.0; // we want ticks per degree, not per rotation
 
-    //for the 223 motor we have the following:
+    //for the 223rpm motor we have the following:
     final double ARM_TICKS_PER_DEGREE =
 
             753.2 // This is the exact gear ratio of the (26.9:1) Yellow Jacket gearbox
@@ -114,7 +115,7 @@ public class Main extends LinearOpMode {
 
     final double ARM_COLLAPSED_INTO_ROBOT  = 0;
     final double ARM_COLLECT               = 5 * ARM_TICKS_PER_DEGREE;
-    final double ARM_CLEAR_BARRIER         = 15 * ARM_TICKS_PER_DEGREE;
+    final double ARM_CLEAR_BARRIER         = 20 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SPECIMEN        = 90 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SAMPLE_IN_LOW   = 90 * ARM_TICKS_PER_DEGREE;
     final double ARM_ATTACH_HANGING_HOOK   = 110 * ARM_TICKS_PER_DEGREE;
@@ -136,11 +137,17 @@ public class Main extends LinearOpMode {
     double armPosition = (int)ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
 
-    final double LIFT_TICKS_PER_MM = (111132.0 / 289.0) / 120.0;
+    /*
+     * 312 rpm motor: 537.7 ticks per revolution
+     * 4 stage viper slide (240mm): 5,8 rotations to fully expand
+     * max travel distance: 696mm
+     * ticks per mm = (537,7 * 5,8) ticks / (696) mm = 4,48 ticks / mm
+     */
+    final double LIFT_TICKS_PER_MM = (537.7 * 5.8) / 696;
 
     final double LIFT_COLLAPSED = 0 * LIFT_TICKS_PER_MM;
     final double LIFT_SCORING_IN_LOW_BASKET = 0 * LIFT_TICKS_PER_MM;
-    final double LIFT_SCORING_IN_HIGH_BASKET = 480 * LIFT_TICKS_PER_MM;
+    final double LIFT_SCORING_IN_HIGH_BASKET = 480 * LIFT_TICKS_PER_MM; // 480
 
     double liftPosition = LIFT_COLLAPSED;
 
@@ -154,7 +161,7 @@ public class Main extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        pos = odometry.getPosition();
+//        pos = odometry.getPosition();
         /*
         These variables are private to the OpMode, and are used to control the drivetrain.
          */
@@ -170,9 +177,9 @@ public class Main extends LinearOpMode {
         leftBackDrive   = hardwareMap.dcMotor.get("left_back");
         rightFrontDrive = hardwareMap.dcMotor.get("right_front");
         rightBackDrive  = hardwareMap.dcMotor.get("right_back");
-        // liftMotor       = hardwareMap.dcMotor.get("liftMotor");
+        liftMotor       = hardwareMap.dcMotor.get("lift_motor");
         armMotor        = hardwareMap.get(DcMotor.class, "dc_arm"); //the arm motor
-        odometry        = hardwareMap.get(SparkFunOTOS.class, "odometry");
+//        odometry        = hardwareMap.get(SparkFunOTOS.class, "odometry");
 
 
 
@@ -182,7 +189,7 @@ public class Main extends LinearOpMode {
         */
 
         // OTOS initialization
-        configureOtos();
+//        configureOtos();
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -205,13 +212,15 @@ public class Main extends LinearOpMode {
         Then we'll set the RunMode to RUN_TO_POSITION. And we'll ask it to stop and reset encoder.
         If you do not have the encoder plugged into this motor, it will not run in this code. */
         armMotor.setTargetPosition(0);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        // liftMotor.setTargetPosition(0);
-        // liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE); // ----------- | risky | ---------
+        liftMotor.setTargetPosition(0);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake_servo");
@@ -229,11 +238,12 @@ public class Main extends LinearOpMode {
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
         /* Wait for the game driver to press play */
         waitForStart();
+
 
         /* Run until the driver presses stop */
         while (opModeIsActive())
@@ -318,7 +328,7 @@ public class Main extends LinearOpMode {
             if(gamepad1.a){
                 /* This is the intaking/collecting arm position */
                 armPosition = ARM_COLLECT;
-                //liftPosition = LIFT_COLLAPSED;
+                liftPosition = LIFT_COLLAPSED;
                 wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
             }
@@ -334,14 +344,14 @@ public class Main extends LinearOpMode {
             else if (gamepad1.x){
                 /* This is the correct height to score the sample in the HIGH BASKET */
                 armPosition = ARM_SCORE_SAMPLE_IN_LOW;
-                //liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
+                liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
             }
 
             else if (gamepad1.dpad_left) {
                     /* This turns off the intake, folds in the wrist, and moves the arm
                     back to folded inside the robot. This is also the starting configuration */
                 armPosition = ARM_COLLAPSED_INTO_ROBOT;
-                //liftPosition = LIFT_COLLAPSED;
+                liftPosition = LIFT_COLLAPSED;
                 intake.setPower(INTAKE_OFF);
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
@@ -354,7 +364,7 @@ public class Main extends LinearOpMode {
 
             else if (gamepad1.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
-                // armPosition = ARM_ATTACH_HANGING_HOOK;
+                armPosition = ARM_ATTACH_HANGING_HOOK;
                 intake.setPower(INTAKE_OFF);
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
@@ -381,12 +391,12 @@ public class Main extends LinearOpMode {
             to a value.
              */
 
-            //  if (armPosition < 45 * ARM_TICKS_PER_DEGREE){
-            //    armLiftComp = (0.25568 * liftPosition);
-            //   }
-            //   else{
-            //   armLiftComp = 0;
-            //   }
+            if (armPosition < 45 * ARM_TICKS_PER_DEGREE){
+                armLiftComp = (0.25568 * liftPosition);
+            }
+            else{
+                armLiftComp = 0;
+            }
 
            /* Here we set the target position of our arm to match the variable that was selected
             by the driver. We add the armPosition Variable to our armPositionFudgeFactor, before adding
@@ -395,7 +405,7 @@ public class Main extends LinearOpMode {
 
             //
 
-            armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor)); // + armLiftComp
+            armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armLiftComp)); // + armLiftComp
 
             ((DcMotorEx) armMotor).setVelocity(300);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -420,32 +430,32 @@ public class Main extends LinearOpMode {
             we are only incrementing it a small amount each cycle.
              */
 
-            /* if (gamepad2.right_bumper){
-                liftPosition += 2800 * cycletime;
+            if (gamepad2.right_bumper){
+                liftPosition += 100 * cycleTime; // 2800
             }
             else if (gamepad2.left_bumper){
-                liftPosition -= 2800 * cycletime;
+                liftPosition -= 100 * cycleTime; // 2800
             }
             /*here we check to see if the lift is trying to go higher than the maximum extension.
-           if it is, we set the variable to the max. 
-            
+           if it is, we set the variable to the max. */
+
             if (liftPosition > LIFT_SCORING_IN_HIGH_BASKET){
-                   liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
+                liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
             }
             //same as above, we see if the lift is trying to go below 0, and if it is, we set it to 0.
-           if (liftPosition < 0){
-                   liftPosition = 0;
-            }*/
+            if (liftPosition < 0){
+                liftPosition = 0;
+            }
 
-            //   liftMotor.setTargetPosition((int) (liftPosition));
+            liftMotor.setTargetPosition((int) (liftPosition));
 
-            //   ((DcMotorEx) liftMotor).setVelocity(2100);
-            //   liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            ((DcMotorEx) liftMotor).setVelocity(200); // 2100 velocity of the viper slide
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             /* Check to see if our arm is over the current limit, and report via telemetry. */
             if (((DcMotorEx) armMotor).isOverCurrent()){
-                telemetry.addLine("MOTOR EXCEEDED CURRENT LIMIT!");
+                telemetry.addLine("ARM MOTOR EXCEEDED CURRENT LIMIT!!");
             }
 
             /* at the very end of the stream, we added a linear actuator kit to try to hang the robot on.
@@ -473,19 +483,19 @@ public class Main extends LinearOpMode {
             telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
             telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
             telemetry.addData("lift variable", liftPosition);
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
-            //   telemetry.addData("Lift Target Position",liftMotor.getTargetPosition());
-            //   telemetry.addData("lift current position", liftMotor.getCurrentPosition());
-            //   telemetry.addData("liftMotor Current:",((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+            // telemetry.addData("X coordinate", pos.x);
+            // telemetry.addData("Y coordinate", pos.y);
+            // telemetry.addData("Heading angle", pos.h);
+            telemetry.addData("Lift Target Position",liftMotor.getTargetPosition());
+            telemetry.addData("lift current position", liftMotor.getCurrentPosition());
+            telemetry.addData("liftMotor Current:",((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
             telemetry.update();
 
 
 
         }
     }
-
+/*
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
         telemetry.update();
@@ -495,9 +505,9 @@ public class Main extends LinearOpMode {
         // set, the default is inches and degrees. Note that this setting is not
         // persisted in the sensor, so you need to set at the start of all your
         // OpModes if using the non-default value.
-        // myOtos.setLinearUnit(DistanceUnit.METER);
+        odometry.setLinearUnit(DistanceUnit.METER);
         odometry.setLinearUnit(DistanceUnit.INCH);
-        // myOtos.setAngularUnit(AnguleUnit.RADIANS);
+//         odometry.setAngularUnit(AnguleUnit.RADIANS);
         odometry.setAngularUnit(AngleUnit.DEGREES);
 
         // Assuming you've mounted your sensor to a robot and it's not centered,
@@ -567,4 +577,5 @@ public class Main extends LinearOpMode {
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.update();
     }
+    */
 }
