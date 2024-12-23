@@ -36,9 +36,6 @@ public class EviumMainTeleop extends OpMode {
     private ServoImplEx LSLower;
     private ServoImplEx LSTop;
 
-    // Constants for mecanum drive
-    private final double DRIVE_SENSITIVITY = 1.0;
-
     @Override
     public void init() {
         frontLeftMotor = hardwareMap.get(DcMotor.class, "leftFront");
@@ -117,11 +114,22 @@ public class EviumMainTeleop extends OpMode {
         }
 
         // Set power to motors
-//        double heading = Math.toRadians(odometry.getPosition().h);
         frontLeftMotor.setPower(y + x + rx);
         backLeftMotor.setPower(y - x + rx);
         frontRightMotor.setPower(y - x - rx);
         backRightMotor.setPower(y + x - rx);
+        if (gamepad2.x) {
+            LSLower.setPosition(0 + lolclock);
+            LSTop.setPosition(1 - lolclock);
+        }
+        if (gamepad2.a) {
+            LSLower.setPosition(1 - lolclock);
+            LSTop.setPosition(0 + lolclock);
+        }
+        if (gamepad2.y) {
+            LSLower.setPosition(0.5 - lolclock);
+            LSTop.setPosition(0.5 + lolclock);
+        }
         if (cap.getCurrentPosition() > 675) {
             capPower = -0.25;
         } else {
@@ -137,32 +145,6 @@ public class EviumMainTeleop extends OpMode {
             cap.setPower(capPower * 0.1);
         }
         spindle.setPower(-gamepad2.left_stick_y * 0.75);
-        // Linear Slide Lower
-        if ((gamepad2.x || gamepad1.x) && !LSLowerToggling) {
-            LSLowerOut = !LSLowerOut;
-            LSLowerToggling = true;
-        }
-        if ((!gamepad2.x) && (!gamepad1.x)) {
-            LSLowerToggling = false;
-        }
-        // Linear Servo Top
-        if ((gamepad2.a ||gamepad1.a) && !LSTopToggling) {
-            LSTopOut = !LSTopOut;
-            LSTopToggling = true;
-        }
-        if ((!gamepad2.a) && (!gamepad1.a)) {
-            LSTopToggling = false;
-        }
-        if (LSTopOut) {
-            LSTop.setPosition(0.75 + lolclock);
-        } else {
-            LSTop.setPosition(0 + lolclock);
-        }
-        if (LSLowerOut) {
-            LSLower.setPosition(0.9 + lolclock);
-        } else {
-            LSLower.setPosition(0.2 + lolclock);
-        }
         // Telemetry for debugging
         SparkFunOTOS.Pose2D pos = odometry.getPosition();
         telemetry.addData("OdoX", pos.x);
