@@ -68,7 +68,6 @@ public class KServo {
 
     public void setPosition(double position) {
         servo.setPosition(position);
-
     }
 
 

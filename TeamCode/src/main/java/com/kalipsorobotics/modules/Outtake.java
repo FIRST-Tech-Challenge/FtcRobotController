@@ -34,12 +34,12 @@ public class Outtake {
     private void setUpHardware() {
         linearSlide1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
         linearSlide2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
-        outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivotServo"), 60/0.11, 300,
+        outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivot"), 60/0.11, 300,
                 0, false);
-        outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("clawServo"), 60/0.25, 300,
+        outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakeClaw"), 60/0.25, 300,
                 0, false);
-        outtakePigeonServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo"), 60/0.25, 300,
-                0, false);
+//        outtakePigeonServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo"), 60/0.25, 300,
+//                0, false);
         hangHook1 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang1"), 60/0.25, 300,
                 0, false);
         hangHook2 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang2"), 60/0.25, 300,
@@ -66,7 +66,7 @@ public class Outtake {
     public KServo getOuttakePivotServo() {
         return outtakePivotServo;
     }
-    public KServo getOuttakeClawServo() {
+    public KServo getOuttakeClaw() {
         return outtakeClawServo;
     }
     public KServo getOuttakePigeonServo() {

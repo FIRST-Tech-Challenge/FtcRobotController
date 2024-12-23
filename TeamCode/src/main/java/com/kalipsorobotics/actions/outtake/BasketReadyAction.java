@@ -8,7 +8,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class BasketReadyAction extends KActionSet {
     public BasketReadyAction(Outtake outtake) {
-        KServoAutoAction outtakeClawActionClose = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction outtakeClawActionClose = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);

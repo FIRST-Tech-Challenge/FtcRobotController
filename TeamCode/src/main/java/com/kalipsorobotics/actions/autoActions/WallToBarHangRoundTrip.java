@@ -40,7 +40,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         lowerSlidesHalf.setDependentActions(specimenHangReady, moveWallToBar);
         this.addAction(lowerSlidesHalf);
 
-        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw.setName("openClaw");
         openClaw.setDependentActions(lowerSlidesHalf);

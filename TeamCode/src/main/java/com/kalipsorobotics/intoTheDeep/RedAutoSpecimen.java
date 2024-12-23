@@ -68,7 +68,7 @@ public class RedAutoSpecimen extends LinearOpMode {
         waitAfterHang.setDependentActions(lowerSlidesHalf1);
         redAutoSpecimen.addAction(waitAfterHang);
 
-        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw.setName("openClaw");
         openClaw.setDependentActions(waitAfterHang);

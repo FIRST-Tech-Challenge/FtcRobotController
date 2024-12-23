@@ -21,7 +21,6 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -80,7 +79,7 @@ public class RedAutoBasket extends LinearOpMode {
         waitAfterHang.setDependentActions(lowerSlidesHalf1);
         redAutoBasket.addAction(waitAfterHang);
 
-        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw.setName("openClaw");
         openClaw.setDependentActions(waitAfterHang);
@@ -133,7 +132,7 @@ public class RedAutoBasket extends LinearOpMode {
         outtakePivotActionOut1.setDependentActions(basketReady1);
         redAutoBasket.addAction(outtakePivotActionOut1);
 
-        KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClawServo(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
+        KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw1.setName("openClaw1");
         openClaw1.setDependentActions(outtakePivotActionOut1);
         redAutoBasket.addAction(openClaw1);
@@ -191,7 +190,7 @@ public class RedAutoBasket extends LinearOpMode {
         outtakePivotActionOut2.setDependentActions(basketReady2);
         redAutoBasket.addAction(outtakePivotActionOut2);
 
-        KServoAutoAction openClaw2 = new KServoAutoAction(outtake.getOuttakeClawServo(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
+        KServoAutoAction openClaw2 = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw2.setName("openClaw2");
         openClaw2.setDependentActions(outtakePivotActionOut2);
         redAutoBasket.addAction(openClaw2);
@@ -248,7 +247,7 @@ public class RedAutoBasket extends LinearOpMode {
         outtakePivotActionOut3.setDependentActions(basketReady3);
         redAutoBasket.addAction(outtakePivotActionOut3);
 
-        KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClawServo(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
+        KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         openClaw3.setName("openClaw3");
         openClaw3.setDependentActions(outtakePivotActionOut3);
         redAutoBasket.addAction(openClaw3);

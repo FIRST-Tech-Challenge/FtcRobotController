@@ -20,7 +20,7 @@ public class OuttakeDownReady extends KActionSet {
         outtakePivotActionClose.setName("outtakePivotActionCloseOuttakeReady");
         this.addAction(outtakePivotActionClose);
 
-        KServoAutoAction outtakeClawActionOpen = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction outtakeClawActionOpen = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
         outtakeClawActionOpen.setName("outtakeClawActionOpenOuttakeReady");
         this.addAction(outtakeClawActionOpen);

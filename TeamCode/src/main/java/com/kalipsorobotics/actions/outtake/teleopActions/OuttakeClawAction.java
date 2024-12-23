@@ -2,7 +2,7 @@ package com.kalipsorobotics.actions.outtake.teleopActions;
 
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.KServo;
-import com.qualcomm.robotcore.hardware.Servo;
+
 //open 0.85
 //closed 0.95
 public class OuttakeClawAction {
@@ -15,7 +15,7 @@ public class OuttakeClawAction {
     private boolean isClosed = true;
     public OuttakeClawAction(Outtake outtake) {
         this.outtake = outtake;
-        this.outtakeClawServo = outtake.getOuttakeClawServo();
+        this.outtakeClawServo = outtake.getOuttakeClaw();
     }
 
     public void setPosition(double position) {

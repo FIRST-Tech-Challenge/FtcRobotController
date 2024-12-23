@@ -10,7 +10,7 @@ public class SpecimenHangReady extends KActionSet {
 
     public SpecimenHangReady(Outtake outtake) {
 
-        KServoAutoAction outtakeClawActionClose = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction outtakeClawActionClose = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);

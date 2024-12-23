@@ -5,10 +5,8 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.Outtake;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class InitAuto extends KActionSet {
 
@@ -23,7 +21,7 @@ public class InitAuto extends KActionSet {
         intakePivotUp.setName("intakePivotUp");
         this.addAction(intakePivotUp);
 
-        KServoAutoAction clawClose = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction clawClose = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
         clawClose.setName("clawClose");
         this.addAction(clawClose);

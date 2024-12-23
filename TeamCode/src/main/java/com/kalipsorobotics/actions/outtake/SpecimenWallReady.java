@@ -26,7 +26,7 @@ public class SpecimenWallReady extends KActionSet {
         pivotToWallPos.setDependentActions(waitOneSec);
         this.addAction(pivotToWallPos);
 
-        KServoAutoAction closeClaw = new KServoAutoAction(outtake.getOuttakeClawServo(),
+        KServoAutoAction closeClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
                 OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
         closeClaw.setName("closeClaw");
         closeClaw.setDependentActions(lowerSlidesZero);
