@@ -237,6 +237,7 @@ import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
+import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
 import com.kalipsorobotics.utilities.OpModeUtilities;
@@ -247,11 +248,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp
 public class RedTeleop extends LinearOpMode {
 
-
-
     protected boolean isRed = true;
     protected boolean takeInYellow = true;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -263,36 +261,30 @@ public class RedTeleop extends LinearOpMode {
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
         AngleLockTeleOp angleLockTeleOp = null;
-        Intake intake = new Intake(opModeUtilities);
-        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
-        IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
-        IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
+        //Intake intake = new Intake(opModeUtilities);
+        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
+//        IntakeNoodleAction intakeNoodleAction = new IntakeNoodleAction(intake, 0, false);
+//        IntakePivotAction intakePivotAction = new IntakePivotAction(intake);
+//        IntakeDoorAction intakeDoorAction = new IntakeDoorAction(intake);
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
-        OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
-        OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
+        //OuttakeClawAction outtakeClawAction = new OuttakeClawAction(outtake);
+        //OuttakePigeonAction outtakePigeonAction = new OuttakePigeonAction(outtake);
         ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
         SpecimenHangReady specimenHangReady = null;
         SpecimenWallReady specimenWallReady = null;
         // Target should always be 0
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         MoveOuttakeLSAction maintainOuttakeGlobalPos = new MoveOuttakeLSAction(outtake, 0);
-        MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
-        MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
+//        MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+//        MoveIntakeLSAction maintainIntakeGlobalPos = new MoveIntakeLSAction(intake, 0);
         IntakeTransferAction intakeTransferAction = null;
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
 
-        boolean prevGamePad2Y = false;
-        boolean prevGamePad2X = false;
-        boolean prevGamePad2B = false;
-        boolean prevGamePad2A = false;
-        boolean prevDpadLeft2 = false;
-        boolean prevDpadUp2 = false;
-        boolean prevDpadRight2 = false;
-        boolean prevDpadDown2 = false;
-        boolean retracted = true;
+        boolean intakePosPressed = false;
+        boolean retractPosPressed = false;
         boolean hangPressed = false;
         boolean rightTriggerPressed = false;
         boolean leftTriggerPressed = false;
@@ -300,6 +292,29 @@ public class RedTeleop extends LinearOpMode {
         double targetHangPos = 0;
 
         double hangStartPosition = 0;
+
+        double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.777;
+        double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.83;
+
+        double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
+        double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
+
+        double intakeLinkagePos = 0.95;
+        double intakeBigSweepPos = 0.5;
+        double intakeBigPivotPos = INTAKE_BIG_PIVOT_RETRACT_POS;
+        double intakeSmallPivotPos = INTAKE_SMALL_PIVOT_RETRACT_POS;
+        double intakeSmallSweepPos = 0.5;
+        double intakeClawPos = 0.5;
+        intakeClaw.getIntakeLinkageServo().setPosition(0.95);
+        intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
+        intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+        intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+        intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos );
+        //intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
+
+        double outtakeClawPos = 0.5;
+
+        outtake.getOuttakeClaw().setPosition(outtakeClawPos);
 
 
         //CHANGE ACCORDING TO ALLIANCE
@@ -309,17 +324,17 @@ public class RedTeleop extends LinearOpMode {
 
 
 
-        intakePivotAction.moveUp();
-        intakeDoorAction.close();
+//        intakePivotAction.moveUp();
+//        intakeDoorAction.close();
 
-        outtakeClawAction.close();
+        //outtakeClawAction.close();
         outtakePivotAction.moveWall();
 
         outtake.getHangHook1().setPosition(Outtake.HOOK1_DOWN_POS);
         outtake.getHangHook2().setPosition(Outtake.HOOK2_DOWN_POS);
 
         //Pigeon
-        outtakePigeonAction.setPosition(OuttakePigeonAction.OUTTAKE_PIGEON_IN_POS);
+        //outtakePigeonAction.setPosition(OuttakePigeonAction.OUTTAKE_PIGEON_IN_POS);
 
         waitForStart();
 
@@ -478,11 +493,11 @@ public class RedTeleop extends LinearOpMode {
                 outtake.getLinearSlide1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 CalculateTickPer.MIN_RANGE_LS_TICKS = outtake.getLinearSlide1().getCurrentPosition() - mmToTicksLS(25);
 
-                //intake slide
-                intake.getLinkageMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                intake.getLinkageMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                CalculateTickPer.MIN_RANGE_INTAKE_TICKS =
-                        intake.getLinkageMotor().getCurrentPosition() - degToTicksIntakeLS(10);
+//                //intake slide
+//                intake.getLinkageMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                intake.getLinkageMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                CalculateTickPer.MIN_RANGE_INTAKE_TICKS =
+//                        intake.getLinkageMotor().getCurrentPosition() - degToTicksIntakeLS(10);
             }
 
 
@@ -525,60 +540,173 @@ public class RedTeleop extends LinearOpMode {
             }
 
 
-            if (gamepad2.left_bumper) {
-                outtakeClawAction.open();
-            } else {
-                outtakeClawAction.close();
-            }
+//            if (gamepad2.left_bumper) {
+//                outtakeClawAction.open();
+//            } else {
+//                outtakeClawAction.close();
+//            }
 
             //=============INTAKE===============
 
-            if (gamepad2.right_trigger > 0.5) {
-                colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
-            } else if (gamepad2.right_bumper) {
-                intakeNoodleAction.reverse();
-            } else {
-                intakeNoodleAction.stop();
-            }
+//            if (gamepad2.right_trigger > 0.5) {
+//                colorDetector.cycle(isRed, takeInYellow, intakeNoodleAction);
+//            } else if (gamepad2.right_bumper) {
+//                intakeNoodleAction.reverse();
+//            } else {
+//                intakeNoodleAction.stop();
+//            }
 
-            //intake pivot
-            if (gamepad2.y && !prevGamePad2Y) {
-                intakePivotAction.moveUp();
-            } else if (gamepad2.a && !prevGamePad2A) {
-                intakePivotAction.moveDown();
-            }
+//            //intake pivot
+//            if (gamepad2.y && !prevGamePad2Y) {
+//                intakePivotAction.moveUp();
+//            } else if (gamepad2.a && !prevGamePad2A) {
+//                intakePivotAction.moveDown();
+//            }
 
             //intake door + transfer
-            if (gamepad2.b) {
-                if (!(isTransferRunning(intakeTransferAction))) {
-                    intakeTransferAction = new IntakeTransferAction(intake, outtake);
-                    intakeTransferAction.setName("intakeTransferAction");
-                }
-            } else {
-                if (gamepad2.x) {
-                    if (intakeTransferAction != null) {
-                        intakeTransferAction.setIsDone(true);
-                    }
-                    intakeDoorAction.open();
+//            if (gamepad2.b) {
+//                if (!(isTransferRunning(intakeTransferAction))) {
+//                    intakeTransferAction = new IntakeTransferAction(intake, outtake);
+//                    intakeTransferAction.setName("intakeTransferAction");
+//                }
+//            } else {
+//                if (gamepad2.x) {
+//                    if (intakeTransferAction != null) {
+//                        intakeTransferAction.setIsDone(true);
+//                    }
+//                    intakeDoorAction.open();
+//
+//                } else if (!(isTransferRunning(intakeTransferAction))) {
+//                    intakeDoorAction.close();
+//                }
+//            }
+//
+//            if (isGamePadIntakeJoystickZero()) {
+//                if (intakeTransferAction != null) {
+//                    intakeTransferAction.update();
+//                }
+//            } else {
+//                if (intakeTransferAction != null) {
+//                    intakeTransferAction.setIsDone(true);
+//                }
+//            }
 
-                } else if (!(isTransferRunning(intakeTransferAction))) {
-                    intakeDoorAction.close();
-                }
+            if (gamepad2.x && !gamepad2.right_bumper) {
+                //close
+                intakeClawPos = intakeClawPos + 0.001;
+                intakeClaw.getIntakeClawServo().setPosition(0.365);
+            } else if (gamepad2.b && !gamepad2.right_bumper) {
+                //open
+                intakeClawPos = intakeClawPos - 0.001;
+                intakeClaw.getIntakeClawServo().setPosition(0.05);
             }
 
-            if (isGamePadIntakeJoystickZero()) {
-                if (intakeTransferAction != null) {
-                    intakeTransferAction.update();
-                }
-            } else {
-                if (intakeTransferAction != null) {
-                    intakeTransferAction.setIsDone(true);
-                }
-            }
+//            if (-gamepad2.right_stick_y != 0) {
+//                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
+//            }
+
 
             if (-gamepad2.right_stick_y != 0) {
-                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
+                intakeLinkagePos += 0.01 * gamepad2.right_stick_y;
+                if (intakeLinkagePos < 0.57) {
+                    intakeLinkagePos = 0.57;
+                }
+                if (intakeLinkagePos > 0.95) {
+                    intakeLinkagePos = 0.95;
+                }
+                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             }
+
+//            if (-gamepad2.right_stick_y > 0.5) {
+//                //extend
+//                intakeLinkagePos += 0.001;
+//                intakeClaw.getIntakeLinkageServo().setPosition(0.57);
+//            } else if (-gamepad2.right_stick_y < -0.5) {
+//                //retract
+//                intakeLinkagePos -= 0.001;
+//                intakeClaw.getIntakeLinkageServo().setPosition(0.95);
+//
+//            }
+
+            if (-gamepad2.right_stick_x > 0.5) {
+                intakeBigSweepPos -= 0.001;
+                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
+            } else if (-gamepad2.right_stick_x < -0.5) {
+                intakeBigSweepPos += 0.001;
+                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
+
+            }
+
+            if (gamepad2.y) {
+                intakeBigPivotPos += 0.005;
+            } else if (gamepad2.a) {
+                intakeBigPivotPos -= 0.005;
+            }
+
+            if (gamepad2.right_bumper && !gamepad2.b && !gamepad2.x) {
+                intakeSmallPivotPos += 0.005;
+            } else if (gamepad2.right_trigger > 0) {
+                intakeSmallPivotPos -= 0.005;
+            }
+
+            if (intakeSmallPivotPos > 1) {
+                intakeSmallPivotPos = 1;
+            } else if(intakeSmallPivotPos < 0) {
+                intakeSmallPivotPos = 0;
+            }
+
+            if (gamepad2.right_bumper && gamepad2.b) {
+                intakeSmallSweepPos += 0.01;
+                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+            } else if (gamepad2.right_bumper && gamepad2.x) {
+                intakeSmallSweepPos -= 0.01;
+                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+            }
+
+            if(gamepad2.start) {
+                intakePosPressed = true;
+            }
+
+            if(intakePosPressed) {
+                intakeBigPivotPos = INTAKE_BIG_PIVOT_INTAKE_READY_POS;
+                intakeSmallPivotPos = INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
+                intakePosPressed = false;
+            }
+
+            if(gamepad2.back) {
+                retractPosPressed = true;
+            }
+
+            if(retractPosPressed) {
+                intakeBigPivotPos = INTAKE_BIG_PIVOT_RETRACT_POS;
+                intakeSmallPivotPos = INTAKE_SMALL_PIVOT_RETRACT_POS;
+                retractPosPressed = false;
+            }
+
+//            if(gamepad2.x) {
+//                intakeSmallPivotPos -= 0.005;
+//                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+//
+//                intakeBigPivotPos += 0.005;
+//                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+//            } else if(gamepad2.b) {
+//                intakeSmallPivotPos += 0.005;
+//                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+//
+//                intakeBigPivotPos -= 0.005;
+//                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+//            }
+
+            intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+            intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+
+            telemetry.addData("outtakeClawPos", outtakeClawPos);
+            telemetry.addData("intakeClawPos", intakeClawPos);
+            telemetry.addData("intakeSmallPivotPos", intakeSmallPivotPos);
+            telemetry.addData("intakeBigPivotPos", intakeBigPivotPos);
+            telemetry.addData("intakeSmallSweepPos", intakeSmallSweepPos);
+            telemetry.addData("intakeLinkagePos", intakeLinkagePos);
+            telemetry.update();
 
             // Capture pictures from webcam every 500 milliseconds if holding dpad right with gamepad 1
             //DO NOT USE ALL HOLD FOR TOO LONG it will take up to much space.
@@ -588,7 +716,7 @@ public class RedTeleop extends LinearOpMode {
 
             wheelOdometry.updatePosition();
             maintainOuttakeGlobalPos.update();
-            maintainIntakeGlobalPos.update();
+            //maintainIntakeGlobalPos.update();
 /*
 
 

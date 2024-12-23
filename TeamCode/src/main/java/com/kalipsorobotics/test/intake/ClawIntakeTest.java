@@ -5,6 +5,7 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ServoController;
 
 @TeleOp
 public class ClawIntakeTest extends LinearOpMode {
@@ -14,11 +15,11 @@ public class ClawIntakeTest extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
         Outtake outtake = new Outtake(opModeUtilities);
-
+        ServoController servoController = intakeClaw.getIntakeBigPivotServo().getServo().getController();
 
         double intakeLinkagePos = 0.5;
-        double intakeBigSweepPos = 0.5;
-        double intakeBigPivotPos = 0.5;
+        double intakeBigSweepPos = 0.1;
+        double intakeBigPivotPos = 0.1;
         double intakeSmallPivotPos = 0.5;
         double intakeSmallSweepPos = 0.5;
         double intakeClawPos = 0.5;
@@ -122,6 +123,9 @@ public class ClawIntakeTest extends LinearOpMode {
             telemetry.addData("intakeLinkagePos", intakeLinkagePos);
             telemetry.update();
         }
+
+        servoController.pwmDisable();
+
     }
 
 }
