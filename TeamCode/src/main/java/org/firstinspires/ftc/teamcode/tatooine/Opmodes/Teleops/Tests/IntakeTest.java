@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "IntakeTest",group = "Tests")
+@TeleOp(name = "IntakeTest1",group = "Tests")
 public class IntakeTest extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();

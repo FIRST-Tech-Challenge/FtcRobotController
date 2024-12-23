@@ -2,150 +2,99 @@ package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
+import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 
 public class ColorSensorOur {
 
-    //add variables
-    private final double dalta = 40;
+    // Constants and configuration
+    private static final String SUBSYSTEM_NAME = "ColorSensorOur";
+    private static final double DEFAULT_DELTA = 40;
+    private static final int DEFAULT_GAIN = 51;
+
+    // Color data
     private final double[] myCol = new double[3];
-    private final int gain = 51;
-    private final boolean isRightColor = false;
-    private int col;
-    private boolean isRed = false;
-    private OpMode opMode;
-    private RevColorSensorV3 colorSensor = null;
-    private boolean IS_DEBUG = false;
-    private Telemetry telemetry;
+    private final double delta;
 
-    //color sensor constructor
-    public ColorSensorOur(OpMode opMode, boolean IS_DEBUG) {
-        this.IS_DEBUG = IS_DEBUG;
-        this.opMode = opMode;
+    // Color sensor hardware and state
+    private final RevColorSensorV3 colorSensor;
+    private final Telemetry telemetry;
+    private final boolean debugMode;
+    private boolean isRedAlliance;
+
+    // Constructor with optional debug mode
+    public ColorSensorOur(OpMode opMode, boolean debugMode) {
+        this.delta = DEFAULT_DELTA;
         this.telemetry = opMode.telemetry;
-        colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "CS");
-        colorSensor.setGain(gain);
-        init();
-        if (IS_DEBUG) {
-            telemetry.addData("(CS)Constructor", true);
-        }
+        this.debugMode = debugMode;
+        this.colorSensor = opMode.hardwareMap.get(RevColorSensorV3.class, "CS");
+        this.colorSensor.setGain(DEFAULT_GAIN);
+        initializeAlliance();
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Constructor initialized with debug mode", debugMode);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Delta", delta);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Gain", DEFAULT_GAIN);
     }
 
+    // Overloaded constructor without debug mode
     public ColorSensorOur(OpMode opMode) {
-        new ColorSensorOur(opMode, false);
+        this(opMode, false);
     }
 
-    //checks if im red or blue
-    public void init() {
-        isRed = CheckAlliance.isRed();
-        if (IS_DEBUG) {
-            telemetry.addData("(CS)Init", true);
-        }
+    // Initialize alliance color (red or blue)
+    private void initializeAlliance() {
+        this.isRedAlliance = CheckAlliance.isRed();
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Alliance Initialized", isRedAlliance ? "Red" : "Blue");
     }
 
-    //returns the distance of the object from the sensor in Centimeters
+    // Get the distance to the object in centimeters
     public double getDistance() {
-        if (IS_DEBUG) {
-            telemetry.addData("Distance", DistanceUnit.CM);
-        }
-        return colorSensor.getDistance(DistanceUnit.CM);
+        double distance = colorSensor.getDistance(DistanceUnit.CM);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Distance (cm)", distance);
+        return distance;
     }
 
-    public double getDalta() {
-        return dalta;
-    }
-
-    public double[] getMyCol() {
-        return myCol;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
-    }
-
-    public int getGain() {
-        return gain;
-    }
-
-    public boolean isRed() {
-        return isRed;
-    }
-
-    public void setRed(boolean red) {
-        isRed = red;
-    }
-
-    public boolean isRightColor() {
-        return isRightColor;
-    }
-
-    public OpMode getOpMode() {
-        return opMode;
-    }
-
-    public void setOpMode(OpMode opMode) {
-        this.opMode = opMode;
-    }
-
-    public RevColorSensorV3 getColorSensor() {
-        return colorSensor;
-    }
-
-    public void setColorSensor(RevColorSensorV3 colorSensor) {
-        this.colorSensor = colorSensor;
-    }
-
-    public boolean isIS_DEBUG() {
-        return IS_DEBUG;
-    }
-
-    public void setIS_DEBUG(boolean IS_DEBUG) {
-        this.IS_DEBUG = IS_DEBUG;
-    }
-
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-    //checks if the color of the object is right by Specimen or not
+    // Check if the detected color matches the expected color (specimen or general check)
     public boolean isRightColor(boolean isSpecimen) {
-        col = checkColors();
-        if (IS_DEBUG) {
-            telemetry.addData("color", col);
-        }
-        if (isRed && isSpecimen) {
-            return col == 0;
-        } else if (isRed) {
-            return col == 0 || col == 1;
-        } else if (isSpecimen) {
-            return col == 2;
+        DominantColor currentColor = detectDominantColor();
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Detected Color", currentColor);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Alliance", isRedAlliance ? "Red" : "Blue");
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Specimen Check", isSpecimen);
+
+        boolean result = (isRedAlliance && (isSpecimen ? currentColor == DominantColor.RED : currentColor == DominantColor.RED || currentColor == DominantColor.YELLOW)) ||
+                (!isRedAlliance && (isSpecimen ? currentColor == DominantColor.BLUE : currentColor == DominantColor.BLUE || currentColor == DominantColor.YELLOW));
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Is Correct Color", result);
+        return result;
+    }
+
+    // Detect the dominant color from the sensor
+    public DominantColor detectDominantColor() {
+        // Retrieve normalized color values and scale to 0-255
+        myCol[0] = colorSensor.getNormalizedColors().red * 255;   // Red channel
+        myCol[1] = colorSensor.getNormalizedColors().green * 255; // Green channel
+        myCol[2] = colorSensor.getNormalizedColors().blue * 255;  // Blue channel
+
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Red Channel", myCol[0]);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Green Channel", myCol[1]);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Blue Channel", myCol[2]);
+        DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Delta Threshold", delta);
+
+        // Determine dominant color
+        if (myCol[0] > myCol[1] + delta && myCol[0] > myCol[2] + delta) {
+            DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Dominant Color", "Red");
+            return DominantColor.RED;
+        } else if (myCol[2] > myCol[0] + delta && myCol[2] > myCol[1] + delta) {
+            DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Dominant Color", "Blue");
+            return DominantColor.BLUE;
         } else {
-            return col == 2 || col == 1;
+            DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Dominant Color", "Yellow (Default)");
+            return DominantColor.YELLOW;
         }
     }
 
-    //returns the color that the sensor gets blue yellow or red
-    public int checkColors() {
-        myCol[0] = colorSensor.getNormalizedColors().red * 255;
-        myCol[1] = colorSensor.getNormalizedColors().green * 255;
-        myCol[2] = colorSensor.getNormalizedColors().blue * 255;
-        if (myCol[0] > (myCol[1] + dalta) && myCol[0] > (myCol[2] + dalta)) {
-            return 0;
-        } else if (myCol[2] > (myCol[0] + dalta) && myCol[2] > (myCol[1] + dalta)) {
-            return 2;
-        } else {
-            return 1;
-        }
+    // Enum representing possible dominant colors
+    public enum DominantColor {
+        RED, YELLOW, BLUE
     }
 }

@@ -13,366 +13,406 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
 public class Arm {
 
-    //add variables
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
+    private static final String SUBSYSTEM_NAME = "Arm";
 
-    //TODO change values to real ones (touch grass)
-    private final double ANGLE_TOLERANCE = 2;//deg
-    private final double EXTEND_TOLERANCE = 0.1;
-    private final double EXTEND_CPR = 0;
-    private final double ANGLE_CPR = 1425.1 * 3;
-    private final double SPOOL_DIM = 0;//mm
-    private final double AMP_LIMIT = 0;
-    private final double angleOffSet = -26;
-    private final boolean IS_DEBUG;
-    private final double KF = 0.01;
-    public Telemetry telemetry;
-    private PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
-    private PIDFController extendPID = new PIDFController(0.03, 0, 0, 0);
-    private DcMotorEx angleLeft;
-    private DcMotorEx angleRight;
-    private DcMotorEx extendLeft;
-    private DcMotorEx extendRight;
-    private TouchSensor touchSensor = null;
-    private double angleTimeout = 0;
-    private double extendTimeout = 0;
-    private double F = 0;
+    // PID Tolerances
+    private static final double ANGLE_TOLERANCE = 2.0;    // degrees
+    private static final double EXTEND_TOLERANCE = 0.1;   // centimeters or appropriate unit
 
+    // Encoder Counts Per Revolution (CPR)
+    private static final double ANGLE_CPR = 28 * 70 * (44.0 / 16); // Arm angle motor
+    private static final double EXTEND_CPR = 28 * 19.2;            // Arm extension motor
 
-    //arm constructor
-    public Arm(OpMode opMode, boolean IS_DEBUG) {
+    // Physical Dimensions
+    private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
+    private static final double ANGLE_OFFSET = -26;  // degrees, initial offset
 
-        telemetry = opMode.telemetry;
+    // Feedforward
+    private static final double KF = 0.01;  // feedforward constant
 
-        this.IS_DEBUG = IS_DEBUG;
-        if (IS_DEBUG) {
-            opMode.telemetry.addData("second constructor", true);
-        }
+    // Current Limit (if applicable; set as needed)
+    private static final double AMP_LIMIT = 0;  // TODO: Set correct value if using current-limiting logic
 
-        angleLeft = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AL");
-        angleRight = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "AR");
-        extendLeft = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "EL");
-        extendRight = (DcMotorEx) opMode.hardwareMap.get(DcMotor.class, "ER");
-        touchSensor = opMode.hardwareMap.get(TouchSensor.class, "TS");
+    // ---------------------------------------------------------------------------------------------
+    // Hardware Components
+    // ---------------------------------------------------------------------------------------------
+    private final DcMotorEx angleLeft;
+    private final DcMotorEx angleRight;
+    private final DcMotorEx extendLeft;
+    private final DcMotorEx extendRight;
+    private final TouchSensor touchSensor;   // TODO: Initialize if needed
 
+    // ---------------------------------------------------------------------------------------------
+    // PID Controllers
+    // ---------------------------------------------------------------------------------------------
+    private final PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
+    private final PIDFController extendPID = new PIDFController(0.03, 0, 0, 0);
+
+    // ---------------------------------------------------------------------------------------------
+    // State Variables
+    // ---------------------------------------------------------------------------------------------
+    private double angleTimeout;
+    private double extendTimeout;
+    private double F;  // Feedforward dynamic value
+    private final boolean isDebugMode;
+
+    // ---------------------------------------------------------------------------------------------
+    // Telemetry
+    // ---------------------------------------------------------------------------------------------
+    private final Telemetry telemetry;
+
+    // ---------------------------------------------------------------------------------------------
+    // Constructors
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Creates an Arm subsystem instance with optional debug logging.
+     *
+     * @param opMode the active OpMode
+     * @param isDebugMode whether to enable debug telemetry logging
+     */
+    public Arm(OpMode opMode, boolean isDebugMode) {
+        this.telemetry = opMode.telemetry;
+        this.isDebugMode = isDebugMode;
+
+        // Retrieve motors from hardware map
+        this.angleLeft = opMode.hardwareMap.get(DcMotorEx.class, "AL");
+        this.angleRight = opMode.hardwareMap.get(DcMotorEx.class, "AR");
+        this.extendLeft = opMode.hardwareMap.get(DcMotorEx.class, "EL");
+        this.extendRight = opMode.hardwareMap.get(DcMotorEx.class, "ER");
+
+        // Retrieve touch sensor if present (set to null by default)
+        this.touchSensor = null; // TODO: Initialize if needed
+
+        // Perform initialization
         init();
 
-
+        // Debug info
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Constructor Initialized", "Success");
     }
 
+    /**
+     * Creates an Arm subsystem instance with debug mode disabled by default.
+     *
+     * @param opMode the active OpMode
+     */
     public Arm(OpMode opMode) {
         this(opMode, false);
     }
 
-
-    //init function
+    // ---------------------------------------------------------------------------------------------
+    // Initialization
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Initializes the Arm subsystem (motor directions, zero-power behavior, PID tolerances, etc.).
+     */
     public void init() {
-        //TODO change directions if needed
+        // Set motor directions (adjust as needed)
         angleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        angleLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        angleRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        extendLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        // Set zero-power behavior to BRAKE
+        angleLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        angleRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Configure PID tolerances
         anglePID.setTolerance(ANGLE_TOLERANCE);
         extendPID.setTolerance(EXTEND_TOLERANCE);
 
+        // Reset encoders at initialization
         resetEncoders();
-        if (IS_DEBUG) {
-            telemetry.addData("Motor (AL) Direction", angleLeft.getDirection());
-            telemetry.addData("Motor (AR) Direction", angleRight.getDirection());
-            telemetry.addData("Motor (EL) Direction", extendLeft.getDirection());
-            telemetry.addData("Motor (ER) Direction", extendRight.getDirection());
-            telemetry.addData("resetEncoderInit", true);
-        }
+
+        // Debug info
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Initialization", "Completed");
     }
 
-    // resets all encoders
+    public boolean isDebugMode(){
+        return isDebugMode;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Encoder Management
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Resets both angle and extension encoders.
+     */
     public void resetEncoders() {
-        if (IS_DEBUG) {
-            telemetry.addData("resetEncoders", true);
-        }
         resetAngleEncoder();
         resetExtendEncoders();
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Encoders Reset", "Success");
     }
 
-    //resets the angle encoder
+    /**
+     * Resets angle encoders for both angle motors.
+     */
     public void resetAngleEncoder() {
-        if (IS_DEBUG) {
-            telemetry.addData("angleEncoderReset", true);
-        }
         angleLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         angleLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        angleRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Angle Encoder Reset", "Success");
     }
 
+    /**
+     * Resets extension encoders for both extension motors.
+     */
     public void resetExtendEncoders() {
-        if (IS_DEBUG) {
-            telemetry.addData("extendEncoderReset", true);
-        }
         extendLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        extendLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Extend Encoder Reset", "Success");
     }
 
-    //returns the angle(transforms ticks to degrees)
+    // ---------------------------------------------------------------------------------------------
+    // Angle Functions
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Calculates the current average angle of the arm by reading both angle encoders.
+     *
+     * @return the arm angle in degrees (average of both motors)
+     */
     public double getAngle() {
-        if (IS_DEBUG) {
-            telemetry.addData("arm angle", (((MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + angleOffSet) + MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + angleOffSet)) / 2);
-        }
-        return (((MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + angleOffSet) + MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + angleOffSet)) / 2;
+        double leftAngle = MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
+        double rightAngle = MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + ANGLE_OFFSET;
+        double angle = (leftAngle + rightAngle) / 2;
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Angle (Left)", leftAngle);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Angle (Right)", rightAngle);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Angle (Average)", angle);
+
+        return angle;
     }
 
-    public double getExtend() {
-        if (IS_DEBUG) {
-            telemetry.addData("arm extend", true);
-        }
-        return (MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendLeft.getCurrentPosition()) + MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendRight.getCurrentPosition())) / 2;
+    /**
+     * Sets power for both angle motors.
+     *
+     * @param power the power to apply to angle motors
+     */
+    public void setPowerAngle(double power) {
+        angleLeft.setPower(power);
+        angleRight.setPower(power);
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Set Power Angle", power);
     }
 
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-    public boolean isIS_DEBUG() {
-        return IS_DEBUG;
-    }
-
-    public PIDFController getAnglePID() {
-        return anglePID;
-    }
-
-    public void setAnglePID(PIDFController anglePID) {
-        this.anglePID = anglePID;
-    }
-
-    public DcMotorEx getAngleLeft() {
-        return angleLeft;
-    }
-
-    public void setAngleLeft(DcMotorEx angleLeft) {
-        this.angleLeft = angleLeft;
-    }
-
-    public double getANGLE_TOLERANCE() {
-        return ANGLE_TOLERANCE;
-    }
-
-    public double getEXTEND_TOLERANCE() {
-        return EXTEND_TOLERANCE;
-    }
-
-
-    public TouchSensor getTouchSensor() {
-        return touchSensor;
-    }
-
-    public void setTouchSensor(TouchSensor touchSensor) {
-        this.touchSensor = touchSensor;
-    }
-
-    public double getAMP_LIMIT() {
-        return AMP_LIMIT;
-    }
-
-    public double getSPOOL_DIM() {
-        return SPOOL_DIM;
-    }
-
-    public double getANGLE_CPR() {
-        return ANGLE_CPR;
-    }
-
-    public double getEXTEND_CPR() {
-        return EXTEND_CPR;
-    }
-
-    public double getF() {
-        return F;
-    }
-
-    public void setF(double f) {
-        F = f;
-    }
-
-    public double getKF() {
-        return KF;
-    }
-
-    public double getExtendTimeout() {
-        return extendTimeout;
-    }
-
-    public void setExtendTimeout(double extendTimeout) {
-        this.extendTimeout = extendTimeout;
-    }
-
-    public double getAngleTimeout() {
-        return angleTimeout;
-    }
-
-    public void setAngleTimeout(double angleTimeout) {
-        this.angleTimeout = angleTimeout;
-    }
-
-    public double getAngleOffSet() {
-        return angleOffSet;
-    }
-
-    public PIDFController getExtendPID() {
-        return extendPID;
-    }
-
-    public void setExtendPID(PIDFController extendPID) {
-        this.extendPID = extendPID;
-    }
-
-    public DcMotorEx getAngleRight() {
-        return angleRight;
-    }
-
-    public void setAngleRight(DcMotorEx angleRight) {
-        this.angleRight = angleRight;
-    }
-
-    public DcMotorEx getExtendLeft() {
-        return extendLeft;
-    }
-
-    public void setExtendLeft(DcMotorEx extendLeft) {
-        this.extendLeft = extendLeft;
-    }
-
-    public DcMotorEx getExtendRight() {
-        return extendRight;
-    }
-
-    public void setExtendRight(DcMotorEx extendRight) {
-        this.extendRight = extendRight;
-    }
-
+    /**
+     * Calculates the feedforward term (F) based on the current angle of the arm.
+     *
+     * @return the feedforward value to help hold the arm in place against gravity
+     */
     public double calculateF() {
-        if (IS_DEBUG) {
-            telemetry.addData("F", Math.cos(Math.toRadians(getAngle())) * KF);
-        }
-        return Math.cos(Math.toRadians(getAngle())) * KF;
+        double feedforward = Math.cos(Math.toRadians(getAngle())) * KF;
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Calculate F", feedforward);
+
+        return feedforward;
     }
 
-    //an actions that sets the angle of the arm to the desired angle
+    // ---------------------------------------------------------------------------------------------
+    // Extension Functions
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Calculates the current extension length by reading both extension encoders.
+     *
+     * @return the average extension in centimeters (or relevant unit)
+     */
+    public double getExtend() {
+        double leftExtend = MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM,
+                extendLeft.getCurrentPosition());
+        double rightExtend = MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM,
+                extendRight.getCurrentPosition());
+        double extend = (leftExtend + rightExtend) / 2;
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Extend (Left)", leftExtend);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Extend (Right)", rightExtend);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Extend (Average)", extend);
+
+        return extend;
+    }
+
+    /**
+     * Sets power for both extension motors.
+     *
+     * @param power the power to apply to extension motors
+     */
+    public void setPowerExtend(double power) {
+        extendLeft.setPower(power);
+        extendRight.setPower(power);
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Set Power Extend", power);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Actions to Control Arm
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Creates an Action to move the arm angle to a desired setpoint.
+     *
+     * @param angle the target angle in degrees
+     * @return an Action that moves the arm angle
+     */
     public Action setAngle(double angle) {
-        MoveAngle moveAngle = new MoveAngle(angle);
-        if (IS_DEBUG) {
-            telemetry.addData("the new ang ", angle);
-        }
-        return moveAngle;
+        return new MoveAngle(angle);
     }
 
-    //an actions that sets the extension of the arm to the desired position
+    /**
+     * Creates an Action to move the arm extension to a desired setpoint.
+     *
+     * @param extension the target extension in centimeters (or relevant unit)
+     * @return an Action that moves the arm extension
+     */
     public Action setExtension(double extension) {
-        moveExtension move = new moveExtension(extension);
-        if (IS_DEBUG) {
-            telemetry.addData("the new extension ", extension);
-        }
-        return move;
+        return new MoveExtension(extension);
     }
 
+    /**
+     * Example action sequence to score a specimen:
+     * 1. Raise arm to 60 degrees
+     * 2. Sleep for 3 seconds
+     * 3. Retract extension to 0
+     * 4. Sleep for 3 seconds
+     * 5. Move arm to 45 degrees
+     *
+     * @return a SequentialAction representing the entire specimen scoring routine
+     */
     public Action scoreSpecimenAction() {
-        return new SequentialAction(setAngle(60), new SleepAction(3), setExtension(0), new SleepAction(3), setAngle(45));
+        return new SequentialAction(
+                setAngle(60),
+                new SleepAction(3),
+                setExtension(0),
+                new SleepAction(3),
+                setAngle(45)
+        );
     }
 
+    /**
+     * Example action sequence to score a sample:
+     * 1. Raise arm to 90 degrees
+     * 2. Sleep for 3 seconds
+     * 3. Retract extension to 0
+     *
+     * @return a SequentialAction representing the sample scoring routine
+     */
     public Action scoreSampleAction() {
-        return new SequentialAction(setAngle(90), new SleepAction(3), setExtension(0));
+        return new SequentialAction(
+                setAngle(90),
+                new SleepAction(3),
+                setExtension(0)
+        );
     }
 
+    /**
+     * Closes or resets the arm by:
+     * 1. Retracting extension to 0
+     * 2. Moving arm angle to -15 degrees
+     *
+     * @return a SequentialAction representing the 'close' routine
+     */
     public Action closeAction() {
-        return new SequentialAction(setExtension(0), setAngle(-15));
+        return new SequentialAction(
+                setExtension(0),
+                setAngle(-15)
+        );
     }
 
+    /**
+     * Positions the arm for intake by:
+     * 1. Moving arm angle to 0
+     * 2. Retracting extension to 0
+     *
+     * @return a SequentialAction representing the 'intake' routine
+     */
     public Action intakeAction() {
-        return new SequentialAction(setAngle(0),setExtension(0));
+        return new SequentialAction(
+                setAngle(0),
+                setExtension(0)
+        );
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner Classes for Actions
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Inner class representing an Action to move the arm extension to a specific setpoint.
+     */
+    public class MoveExtension implements Action {
+        private final double goal;
 
-    public class moveExtension implements Action {
-        private double goal = 0;
-
-        public moveExtension(double goal) {
+        public MoveExtension(double goal) {
             this.goal = goal;
             extendPID.reset();
         }
 
-        public double getGoal() {
-            return goal;
-        }
-
-        public void setGoal(double goal) {
-            this.goal = goal;
-        }
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            extendLeft.setPower(extendPID.calculate(getExtend(), goal));
-            extendRight.setPower(extendPID.calculate(getExtend(), goal));
-            if (IS_DEBUG) {
-                telemetry.addData("tiemout", extendPID.getTimeout());
-                telemetry.addData("motor (EL) power", extendLeft.getPower());
-                telemetry.addData("motor (ER) power", extendRight.getPower());
-            }
+            double power = extendPID.calculate(getExtend(), goal);
+            setPowerExtend(power);
+
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "Move Extension Power", power);
+
+            // Return false until we've reached the setpoint
             return !extendPID.atSetPoint();
         }
     }
 
-    //Sets the angle motor power through PID and F
+    /**
+     * Inner class representing an Action to move the arm angle to a specific setpoint.
+     */
     public class MoveAngle implements Action {
-
-        private double goal = 0;
+        private final double goal;
 
         public MoveAngle(double goal) {
+            this.goal = goal;
             anglePID.reset();
-            this.goal = goal;
-        }
-
-        public double getGoal() {
-            return goal;
-        }
-
-        public void setGoal(double goal) {
-            this.goal = goal;
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            //        if (touchSensor.isPressed()) {
-//            resetAngleEncoder();
-////        }
             double pidPower = anglePID.calculate(getAngle(), goal);
-            if (pidPower < 0) {
-                F = 0;
-            } else {
-                F = calculateF();
-            }
-            angleLeft.setPower(pidPower + F);
-            angleRight.setPower(pidPower + F);
-            if (IS_DEBUG) {
-                telemetry.addData("runtime", anglePID.getRunTime());
-                telemetry.addData("tiemout", anglePID.getTimeout());
-                telemetry.addData("motor (AR) power", angleRight.getPower());
-                telemetry.addData("motor (AL) power", angleLeft.getPower());
-                telemetry.addData("motor (AL) power", angleLeft.getPower());
-                telemetry.addData("pidPower+", pidPower);
-                telemetry.addData("pidPower+F", pidPower + F);
-            }
-            return !anglePID.atSetPoint() && (F == 0 || pidPower < 0);
+            // If we're moving downward (pidPower < 0), set feedforward to zero
+            double feedforward = pidPower < 0 ? 0 : calculateF();
+            setPowerAngle(pidPower + feedforward);
+
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "Move Angle PID Power", pidPower);
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "Move Angle Feedforward", feedforward);
+
+            // Return false until we've reached the setpoint
+            return !anglePID.atSetPoint();
         }
     }
 }

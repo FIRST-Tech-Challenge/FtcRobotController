@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "IntakeTest",group = "Tests")
+@TeleOp(name = "IntookTest",group = "Tests")
 public class IntookTest extends LinearOpMode {
     CRServo one;
     CRServo two;

@@ -10,204 +10,239 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 
 public class Wrist {
-    private final double FRONT = 1;
-    private final double BACK = 0;
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
+    private static final String SUBSYSTEM_NAME = "Wrist";
+    private static final double FRONT = 1;
+    private static final double BACK  = 0;
+    private static final double ANGLE_TOLERANCE = 3;
+    private static final double FULL_RANGE = 291 - 24; // TODO: Verify real values from CAD
 
+    // ---------------------------------------------------------------------------------------------
+    // State Variables
+    // ---------------------------------------------------------------------------------------------
     private double currentPos = 0;
-    private Servo wristLeft = null;
-    private Servo wristRight = null;
-    private CRServo angleServo = null;
-    private Telemetry telemetry;
-    private boolean IS_DEBUG = false;
+    private boolean isDebugMode;
+    private boolean shouldStayParallel = false;
 
-    private PIDFController pid = new PIDFController(0.0025, 0.05, 0.001, 0);
+    // ---------------------------------------------------------------------------------------------
+    // Hardware Components
+    // ---------------------------------------------------------------------------------------------
+    private final Servo wristLeft;
+    private final Servo wristRight;
+    private final CRServo angleServo;
+    private final AnalogInput angleSensor;
 
-    private final double ANGLE_TOLERANCE = 3;
+    // PID controller
+    private final PIDFController pid = new PIDFController(0.0025, 0.05, 0.001, 0);
 
-    private AnalogInput angleSensor = null;
+    // Telemetry
+    private final Telemetry telemetry;
 
-    private double offSet = 0;
+    // ---------------------------------------------------------------------------------------------
+    // Constructors
+    // ---------------------------------------------------------------------------------------------
+    public Wrist(OpMode opMode, boolean isDebugMode) {
+        this.wristLeft  = opMode.hardwareMap.get(Servo.class, "WAL");
+        this.wristRight = opMode.hardwareMap.get(Servo.class, "WAR");
+        this.angleServo = opMode.hardwareMap.get(CRServo.class, "WA");
+        this.angleSensor= opMode.hardwareMap.get(AnalogInput.class, "WAS");
+        this.telemetry  = opMode.telemetry;
+        this.isDebugMode= isDebugMode;
 
-    //TODO Put real valuesx (touch CAD)
-    private final double FULL_RANGE = 291-24;
-
-    private boolean shouldStayParralal = false;
-
-    public Wrist(OpMode opMode, boolean IS_DEBUG) {
-        this.wristLeft = opMode.hardwareMap.get(Servo.class, "WL");
-        this.wristRight = opMode.hardwareMap.get(Servo.class, "WR");
-        this.angleServo = opMode.hardwareMap.get(CRServo.class, "AS");
-        this.telemetry = opMode.telemetry;
-        this.IS_DEBUG = IS_DEBUG;
-        this.angleSensor = opMode.hardwareMap.get(AnalogInput.class, "angleSensor");
-        if (IS_DEBUG) {
-            telemetry.addData("Wrist", "Constructor");
-        }
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Constructor initialized", "Success");
     }
 
     public Wrist(OpMode opMode) {
         this(opMode, false);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Initialization
+    // ---------------------------------------------------------------------------------------------
     public void init() {
         wristLeft.setDirection(Servo.Direction.REVERSE);
         wristRight.setDirection(Servo.Direction.FORWARD);
         pid.setTolerance(ANGLE_TOLERANCE);
         angleServo.setPower(pid.calculate(getAngle(), 0));
-        if (IS_DEBUG) {
-            telemetry.addData("Wrist", "Init");
-        }
+
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Initialization", "Completed");
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Debug Mode
+    // ---------------------------------------------------------------------------------------------
+    public boolean isDebugMode() {
+        return isDebugMode;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Wrist State Control
+    // ---------------------------------------------------------------------------------------------
     public void changeState() {
         if (currentPos == FRONT) {
-            wristLeft.setPosition(BACK);
-            wristRight.setPosition(BACK);
-            currentPos = BACK;
+            close();
         } else {
-            wristLeft.setPosition(FRONT);
-            wristRight.setPosition(FRONT);
-            currentPos = FRONT;
+            open();
         }
-
-        if (IS_DEBUG) {
-            telemetry.addData("Wrist", "Change State");
-            telemetry.addData("Current Pos", currentPos);
-        }
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "State Changed", currentPos);
     }
 
     public void open() {
-        wristLeft.setPosition(FRONT);
-        wristRight.setPosition(FRONT);
+        setPosition(FRONT);
         currentPos = FRONT;
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Wrist Opened", FRONT);
     }
 
     public void close() {
-        wristLeft.setPosition(BACK);
-        wristRight.setPosition(BACK);
+        setPosition(BACK);
         currentPos = BACK;
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Wrist Closed", BACK);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Angle Servo Control
+    // ---------------------------------------------------------------------------------------------
+    public void setPower(double power) {
+        angleServo.setPower(power);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Servo Power Set", power);
     }
 
     public double getAngle() {
-        return MathUtil.voltageToDegrees(angleSensor.getVoltage());
+        double angle = MathUtil.voltageToDegrees(angleSensor.getVoltage());
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Angle Read", angle);
+        return angle;
     }
 
-    public void setPostion(double postion) {
-        wristLeft.setPosition(postion);
-        wristRight.setPosition(postion);
+    // ---------------------------------------------------------------------------------------------
+    // Position Control
+    // ---------------------------------------------------------------------------------------------
+    public void setPosition(double position) {
+        wristLeft.setPosition(position);
+        wristRight.setPosition(position);
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Position Set", position);
     }
-
 
     public double getCurrentPos() {
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Current Position", currentPos);
         return currentPos;
     }
 
     public void setCurrentPos(double currentPos) {
         this.currentPos = currentPos;
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Set Current Position", currentPos);
     }
 
-    public Servo getWristLeft() {
-        return wristLeft;
-    }
-
-    public void setWristLeft(Servo wristLeft) {
-        this.wristLeft = wristLeft;
-    }
-
-    public double getFRONT() {
-        return FRONT;
-    }
-
-    public double getBACK() {
-        return BACK;
-    }
-
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
-    public void setTelemetry(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-    public boolean isIS_DEBUG() {
-        return IS_DEBUG;
-    }
-
-    public void setIS_DEBUG(boolean IS_DEBUG) {
-        this.IS_DEBUG = IS_DEBUG;
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Parallel / Specimen Actions
+    // ---------------------------------------------------------------------------------------------
+    /**
+     * Moves the wrist to a specific angle using the internal PID controller.
+     * @param angle the target angle in degrees
+     * @return an Action that will run until the wrist is at setpoint
+     */
     public Action moveToAngle(double angle) {
         return new MoveAngle(angle);
     }
 
-
-
+    /**
+     * Example 'specimen' action that sets the wrist to some angle suitable for scoring a specimen.
+     * Adjust the angle as needed.
+     */
     public Action specimen() {
-        return new MoveAngle(90);
+        // For demonstration, let's assume 45 degrees is our 'specimen' angle
+        return moveToAngle(45);
     }
 
-    public Action parralalToFloor() {
-        return new ParralalToFloor();
+    /**
+     * Keeps the wrist parallel to the floor, referencing the 'armAngle' inside the Action itself.
+     * Useful if the arm moves and you want the wrist to counteract that motion.
+     */
+    public Action parallelToFloor() {
+        return new ParallelToFloor();
     }
 
-    public void setShouldStayParralal(boolean shouldStayParralal) {
-        this.shouldStayParralal = shouldStayParralal;
+    public void setShouldStayParallel(boolean shouldStayParallel) {
+        this.shouldStayParallel = shouldStayParallel;
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Set Should Stay Parallel", shouldStayParallel);
     }
 
-    public boolean getShouldStayParralal() {
-        return shouldStayParralal;
+    public boolean getShouldStayParallel() {
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Get Should Stay Parallel", shouldStayParallel);
+        return shouldStayParallel;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner Classes (Actions)
+    // ---------------------------------------------------------------------------------------------
     public class MoveAngle implements Action {
-
-        double goal = 0;
+        private final double goal;
 
         public MoveAngle(double goal) {
             pid.reset();
             this.goal = goal;
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "MoveAngle Initialized", goal);
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (IS_DEBUG) {
-                telemetry.addData("angle", getAngle());
-            }
+            double currentAngle = getAngle();
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "MoveAngle Running", currentAngle);
+
             pid.setTimeout(100000000);
-            angleServo.setPower(-pid.calculate(getAngle(), goal));
-            if (pid.atSetPoint()){
+            angleServo.setPower(-pid.calculate(currentAngle, goal));
+
+            if (pid.atSetPoint()) {
                 angleServo.setPower(0);
+                DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                        "MoveAngle Completed", currentAngle);
             }
             return !pid.atSetPoint();
         }
     }
 
-    public class ParralalToFloor implements Action {
-        double armAngle = 0;
+    public class ParallelToFloor implements Action {
+        private double armAngle = 0;
 
+        public ParallelToFloor() {
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "ParallelToFloor Initialized", "Success");
+        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-
-            offSet  = Math.cos(Math.toRadians(armAngle)) * 90 - FRONT;
-            offSet /= FULL_RANGE;
+            double offset = Math.cos(Math.toRadians(armAngle)) * 90 - FRONT;
+            offset /= FULL_RANGE;
             if (armAngle < 0) {
-                offSet += 90/FULL_RANGE;
+                offset += 90 / FULL_RANGE;
             }
 
-            if (offSet > BACK){
-                offSet = BACK;
-            }
-            else if (offSet < FRONT){
-                offSet = FRONT;
-            }
-            setPostion(offSet);
-            return shouldStayParralal;
+            offset = Math.min(Math.max(offset, BACK), FRONT);
+            setPosition(offset);
+
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                    "ParallelToFloor Offset", offset);
+            return shouldStayParallel;
         }
     }
 }

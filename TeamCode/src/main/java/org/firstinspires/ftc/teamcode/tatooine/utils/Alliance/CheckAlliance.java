@@ -3,16 +3,23 @@ package org.firstinspires.ftc.teamcode.tatooine.utils.Alliance;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Utility class for determining if the robot should operate in Red Alliance mode.
+ * It checks the existence of a file named {@code red.txt} on the device storage.
+ */
 public class CheckAlliance {
-    public static boolean isRed() {
-        //sets the file in code location to the path
-        File redFile = new File("/sdcard/FIRST/red.txt");
-        //if there is a file located in the path then returns that i am red team
-        if (redFile.exists()) {
-            return true;
-        } else {
-            return false;
 
-        }
+    // The path to the file used to indicate Red Alliance.
+    private static final String RED_FILE_PATH = "/sdcard/FIRST/red.txt";
+
+    /**
+     * Checks if the red file exists. If it does, returns {@code true} (Red Alliance).
+     * Otherwise, returns {@code false} (Blue Alliance).
+     *
+     * @return {@code true} if {@code red.txt} is found, {@code false} otherwise.
+     */
+    public static boolean isRed() {
+        File redFile = new File(RED_FILE_PATH);
+        return redFile.exists();
     }
 }
