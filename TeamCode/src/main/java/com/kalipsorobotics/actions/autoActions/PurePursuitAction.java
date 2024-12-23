@@ -45,7 +45,7 @@ public class PurePursuitAction extends Action {
 
     private double startTimeMS = System.currentTimeMillis();
 
-    private final double threshold = 10;
+//    private final double threshold = 10;
 
     /**
      * Should not do more than 24 inches or 600mm moves in X and Y (single move)
@@ -139,9 +139,9 @@ public class PurePursuitAction extends Action {
         currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
 
         Position lastPoint = path.getLastPoint();
-        if (lastPoint.distanceTo(wheelOdometry.getCurrentPosition()) > threshold) {  // for small distances
-            currentLookAheadRadius = LAST_RADIUS_MM;
-        }
+//        if (lastPoint.distanceTo(wheelOdometry.getCurrentPosition()) > threshold) {  // for small distances
+//            currentLookAheadRadius = LAST_RADIUS_MM;
+//        }
 
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = LAST_RADIUS_MM;
