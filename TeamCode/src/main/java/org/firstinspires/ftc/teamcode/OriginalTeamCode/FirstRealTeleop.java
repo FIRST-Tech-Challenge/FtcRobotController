@@ -111,6 +111,10 @@ public class FirstRealTeleop extends LinearOpMode{
         telemetry.update();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+
+        waitForStart();
+        runtime.reset();
+
         boolean isGrabbing = false;
         armLifterRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armLifterLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -131,9 +135,6 @@ public class FirstRealTeleop extends LinearOpMode{
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        waitForStart();
-        runtime.reset();
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             linearActuatorMover();
@@ -142,6 +143,8 @@ public class FirstRealTeleop extends LinearOpMode{
 
             double slowMode = gamepad1.left_trigger;
             double slowCoeff = 0.3;
+
+            double fastMode = gamepad1.right_trigger;
 
             double max;
 
@@ -195,13 +198,18 @@ public class FirstRealTeleop extends LinearOpMode{
                 leftBackDrive.setPower(leftBackPower * slowCoeff);
                 rightBackDrive.setPower(rightBackPower * slowCoeff);
 
-            } else {
-
+            } else if(fastMode > 0.2) {
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
                 leftBackDrive.setPower(leftBackPower);
                 rightBackDrive.setPower(rightBackPower);
+            } else {
+                    leftFrontDrive.setPower(leftFrontPower*0.7);
+                    rightFrontDrive.setPower(rightFrontPower*0.7);
+                    leftBackDrive.setPower(leftBackPower*0.7);
+                    rightBackDrive.setPower(rightBackPower*0.7);
 
+                }
             }
 //            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //            armRotate.setPower(gamepad2.left_stick_y);
@@ -271,12 +279,12 @@ public class FirstRealTeleop extends LinearOpMode{
 //            }
 
             //extenders
-            double rightTrig= gamepad2.right_trigger;
+            double rightTrig = gamepad2.right_trigger;
             double leftTrig = gamepad2.left_trigger;
-            if(armPos - rightTrig*75 > -3010) {
-                armPos += -rightTrig*75;
-            } if(armPos + leftTrig < 0){
-                armPos += leftTrig;
+            if(armPos - rightTrig * 75 > -3010) {
+                armPos -= rightTrig * 75;
+            } if(armPos + leftTrig * 75 < 0){
+                armPos += leftTrig * 75;
             }
 //            armLifterLeft.setPower(gamepad2.right_stick_y);
 //            armLifterRight.setPower(gamepad2.right_stick_y);
@@ -291,28 +299,7 @@ public class FirstRealTeleop extends LinearOpMode{
             }
             wrist.setPosition(wristPos);
 
-            //spool
-//            int spoolPow = 0;
-//            if(gamepad2.left_bumper){
-//                spoolPow = 1;
-//            } else if(gamepad2.right_bumper){
-//                spoolPow = -1;
-//            }
-//            spool.setPower(spoolPow);
-
-            //grabbers
-//            if(gamepad2.x){
-////                controlBothGrabbers(1);
-//                sampPickUpLeft.setPower(1);
-//                sampPickUpRight.setPower(1);
-//            } else if (gamepad2.a) {
-////                controlBothGrabbers(-1);
-//                sampPickUpRight.setPower(-1);
-//                sampPickUpLeft.setPower(-1);
-//            } else {
-//                sampPickUpLeft.setPower(0);
-//                sampPickUpRight.setPower(0);
-//            }
+            //grabber
             if(canToggle && gamepad2.x){
                 TimerTask task = new TimerTask() {
                     @Override
@@ -329,12 +316,7 @@ public class FirstRealTeleop extends LinearOpMode{
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("wrist",wrist.getPosition());
-            telemetry.addData("extender", armLifterRight.getCurrentPosition());
 //            telemetry.addData("Wrist wanted set pos", wrist.getPosition());
             telemetry.update();
         }
     }
-
-}
