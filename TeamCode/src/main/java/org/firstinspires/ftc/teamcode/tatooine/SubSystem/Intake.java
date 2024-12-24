@@ -97,8 +97,7 @@ public class Intake {
      * Initializes the Intake subsystem by configuring servo directions.
      */
     public void init() {
-        // Adjust directions if needed
-        // By default, let's set the left servo to REVERSE if they spin in opposite directions.
+        // Adjust directions
         intakeLeft.setDirection(CRServo.Direction.REVERSE);
         // intakeRight.setDirection(CRServo.Direction.FORWARD); // default (no need to set if it's forward)
 
@@ -175,8 +174,6 @@ public class Intake {
 
     /**
      * Returns an Action that sets both intake servos to INTAKE_SPEED.
-     * This action remains active as long as the run() method returns false,
-     * so it can be stopped externally when needed.
      */
     public Action intake() {
         return new SetPowerAction(INTAKE_SPEED);
@@ -184,7 +181,6 @@ public class Intake {
 
     /**
      * Returns an Action that sets both intake servos to OUTTAKE_SPEED.
-     * Similar to intake(), this continues until externally stopped.
      */
     public Action outtake() {
         return new SetPowerAction(OUTTAKE_SPEED);
@@ -216,7 +212,6 @@ public class Intake {
 
     /**
      * An Action that sets both CRServos to a fixed power. This action
-     * never completes on its own (always returns false), so it must be stopped externally.
      */
     public class SetPowerAction implements Action {
         private final double actionPower;
@@ -234,8 +229,8 @@ public class Intake {
 
             DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "SetPowerAction Running", actionPower);
 
-            // Always returns false, so the action never completes on its own
-            return false;
+            // Always returns true, so the action completes imidditly
+            return true;
         }
     }
 

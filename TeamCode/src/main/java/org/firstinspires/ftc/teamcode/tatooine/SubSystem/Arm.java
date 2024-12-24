@@ -116,7 +116,7 @@ public class Arm {
      * Initializes the Arm subsystem (motor directions, zero-power behavior, PID tolerances, etc.).
      */
     public void init() {
-        // Set motor directions (adjust as needed)
+        // Set motor directions
         angleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
         extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -298,7 +298,7 @@ public class Arm {
     }
 
     /**
-     * Example action sequence to score a specimen:
+     * Action sequence to score a specimen:
      * 1. Raise arm to 60 degrees
      * 2. Sleep for 3 seconds
      * 3. Retract extension to 0
@@ -318,7 +318,7 @@ public class Arm {
     }
 
     /**
-     * Example action sequence to score a sample:
+     Action sequence to score a sample:
      * 1. Raise arm to 90 degrees
      * 2. Sleep for 3 seconds
      * 3. Retract extension to 0
