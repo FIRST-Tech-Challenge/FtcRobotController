@@ -625,7 +625,6 @@ public class RedTeleop extends LinearOpMode {
             if (gamepad2.x && !gamepad2.right_bumper) {
                 //close
                 intakeClawPos = INTAKE_CLAW_CLOSE;
-
             } else if (gamepad2.b && !gamepad2.right_bumper) {
                 //open
                 intakeClawPos = INTAKE_CLAW_OPEN;
@@ -718,12 +717,6 @@ public class RedTeleop extends LinearOpMode {
                 intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
 
                 intakeBigPivotPos += 0.005;
-                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
-            } else if(gamepad2.a) {
-                intakeSmallPivotPos += 0.005;
-                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
-
-                intakeBigPivotPos -= 0.005;
                 intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
             }
 
