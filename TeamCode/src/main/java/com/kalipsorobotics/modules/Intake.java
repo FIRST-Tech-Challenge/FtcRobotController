@@ -17,6 +17,7 @@ public class Intake {
     private KServo intakePivotServo;
     private KServo doorServo;
     private KServo linkageServo1, linkageServo2;
+    private KServo bigSweepServo;
 
     private DcMotor linkageMotor;
     private ColorSensor colorSensor;
@@ -38,6 +39,7 @@ public class Intake {
         linkageServo2 = new KServo(opModeUtilities.getHardwareMap().servo.get("linkageServo2"), 60/0.25, 300,
                 0, false);
         linkageMotor = opModeUtilities.getHardwareMap().dcMotor.get("intakeLinkage");
+        bigSweepServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigSweep"), 60/0.25, 300, 0, false);
 
         colorSensor = opModeUtilities.getHardwareMap().colorSensor.get("intakeColorSensor");
 
@@ -81,5 +83,7 @@ public class Intake {
     public ColorSensor getColorSensor() {
         return colorSensor;
     }
+
+    public KServo getBigSweep(){return bigSweepServo;}
 }
 
