@@ -48,9 +48,6 @@ public class IntakeClaw {
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
     public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
 
-    public static final double INTAKE_BIG_PIVOT_TRANSFER_POS = 0.64;
-    public static final double INTAKE_SMALL_PIVOT_TRANSFER_POS = 0.045;
-
     public static final double INTAKE_LINKAGE_IN_POS = 0.95;
     public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
 
@@ -85,6 +82,14 @@ public class IntakeClaw {
         intakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeClaw"), 60/0.25,
                 300,
                 0, false);
+    }
+
+    public void init() {
+        getIntakeLinkageServo().setPosition(IntakeClaw.INTAKE_LINKAGE_IN_POS);
+        getIntakeBigSweepServo().setPosition(0.5);
+        getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS);
+        getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
+        getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
     }
 
 

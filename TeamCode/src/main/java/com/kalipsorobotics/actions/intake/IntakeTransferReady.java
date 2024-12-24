@@ -7,7 +7,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class IntakeTransferReady extends KActionSet {
 
-    public IntakeTransferReady(double intakeLinkageServoPos, IntakeClaw intake, Outtake outtake){
+    public IntakeTransferReady(IntakeClaw intake, Outtake outtake){
 
         KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
         closeClaw.setName("closeClaw");

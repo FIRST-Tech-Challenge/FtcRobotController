@@ -63,6 +63,11 @@ public class Outtake {
         linearSlide2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void init() {
+        getOuttakeClaw().setPosition(OUTTAKE_CLAW_OPEN);
+        getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_DOWN_POS);
+    }
+
     public DcMotor getLinearSlide1() {
         return linearSlide1;
     }
