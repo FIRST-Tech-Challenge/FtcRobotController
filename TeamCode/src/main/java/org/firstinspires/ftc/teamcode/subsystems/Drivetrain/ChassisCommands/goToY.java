@@ -14,6 +14,7 @@ public class goToY extends BTCommand {
         m_chassis = subsystem;
     }
 
-    public void execute(){}
+    public void execute(){
+    };
 }
 

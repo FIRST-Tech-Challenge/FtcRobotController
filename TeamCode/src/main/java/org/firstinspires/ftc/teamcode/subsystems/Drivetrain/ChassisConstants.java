@@ -24,12 +24,10 @@ public static class ChassisConstants {
     public static final BTTranslation2d BLW = new BTTranslation2d();
 
     @Config
-    public static class ChassisFeedForward {
-        public static double ffks = 0;//was 0.12
-        public static double ffkv = 0;
-        public static double ffka = 0;
-        public static double ffminVel = 0;
-    }
+    public static class FeedForwardConstants {
+        public static double ks = 0.085; //values from kkbotz
+        public static double kv = 1;
+        }
 
     public static final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(FLW, FRW, BLW, BRW);
     public static final double robotThetaVelocityMax = 180; //degree per sec
