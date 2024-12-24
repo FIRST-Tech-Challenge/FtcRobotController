@@ -12,7 +12,6 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.77;
 
-    public static final double INTAKE_CLAW_OPEN_POS = 0.5;
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.5;
 
