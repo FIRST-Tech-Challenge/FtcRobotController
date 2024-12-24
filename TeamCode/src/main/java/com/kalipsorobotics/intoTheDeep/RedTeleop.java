@@ -226,6 +226,7 @@ import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
+import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -708,6 +709,8 @@ public class RedTeleop extends LinearOpMode {
 //                intakeBigPivotPos += 0.005;
 //                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
             }
+
+
 
             if (gamepad2.dpad_left){
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
