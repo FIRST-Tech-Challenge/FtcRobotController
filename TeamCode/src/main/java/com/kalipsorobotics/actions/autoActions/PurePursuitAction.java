@@ -45,6 +45,8 @@ public class PurePursuitAction extends Action {
 
     private double startTimeMS = System.currentTimeMillis();
 
+//    private final double threshold = 10;
+
     /**
      * Should not do more than 24 inches or 600mm moves in X and Y (single move)
      * Should not turn more than 90 deg (single move)
@@ -77,24 +79,21 @@ public class PurePursuitAction extends Action {
         Vector currentToTarget = Vector.between(currentPos, target);
 
         double distanceToTarget = currentToTarget.getLength();
-
         double targetDirection = currentToTarget.getHeadingDirection();
         double targetAngle = target.getTheta();
-
         double directionError = MathFunctions.angleWrapRad(targetDirection - currentPos.getTheta());
 
         double angleError = MathFunctions.angleWrapRad(targetAngle - currentPos.getTheta());
-        double powerAngle = pidAngle.getPower(angleError);
-
-
         double xError = Math.cos(directionError) * distanceToTarget;
-        double powerX = pidX.getPower(xError);
-
         double yError = Math.sin(directionError) * distanceToTarget;
+
+        double powerAngle = pidAngle.getPower(angleError);
+        double powerX = pidX.getPower(xError);
         double powerY = pidY.getPower(yError);
 
         Log.d("directionalpower", String.format("power x=%.4f, power y=%.5f, powertheta=%.6f", powerX, powerY,
                 powerAngle));
+
         double fLeftPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
 
@@ -103,8 +102,8 @@ public class PurePursuitAction extends Action {
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
-        driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.7);
-
+        driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.4);
+//        driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);
         prevFollow = Optional.of(target);
     }
@@ -139,6 +138,11 @@ public class PurePursuitAction extends Action {
 
         currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
 
+        Position lastPoint = path.getLastPoint();
+//        if (lastPoint.distanceTo(wheelOdometry.getCurrentPosition()) > threshold) {  // for small distances
+//            currentLookAheadRadius = LAST_RADIUS_MM;
+//        }
+
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = LAST_RADIUS_MM;
         }
@@ -151,11 +155,10 @@ public class PurePursuitAction extends Action {
             targetPosition(follow.get());
 
         } else {
-            Position lastPoint = path.getLastPoint();
-
             if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
                 driveTrain.setPower(0);
                 Log.d("purepursaction_debug_follow", "done");
+                Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
                 isDone = true;
                 if (sleepTimeMS != 0) {
                     try {
