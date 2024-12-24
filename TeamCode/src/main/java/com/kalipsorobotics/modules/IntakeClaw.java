@@ -12,9 +12,8 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.77;
 
-    public static final double INTAKE_CLAW_OPEN_POS = 0.5;
 
-    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.5;
+    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.6;     //increase to retract more
 
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.5;
@@ -24,6 +23,10 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.04;     //decrease to pivot back of the robot, increase to pivot to front
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.77;
+
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.85;     //increase to go down, decrease to go up
+
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.71;    //decrease to move forward, increase to move back
 
 
     private final OpModeUtilities opModeUtilities;

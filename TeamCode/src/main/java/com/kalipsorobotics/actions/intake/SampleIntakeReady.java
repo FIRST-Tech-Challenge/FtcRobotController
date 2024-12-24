@@ -28,7 +28,7 @@ public class SampleIntakeReady extends KActionSet{
             moveSmallSweep.setName("moveSmallSweep");
             this.addAction(moveSmallSweep);
 
-            KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN_POS);
+            KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
             intakeClawOpen.setName("intakeClawOpen");
             this.addAction(intakeClawOpen);
         }
