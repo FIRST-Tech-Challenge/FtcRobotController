@@ -26,9 +26,9 @@ public class ExtensionSubsystem implements Subsystem {
    
     public ExtensionSubsystem(HardwareMap map){
         this.map = map;
-        arm1 = MotorEx(map,"leftExtension")//tbd
-        arm2 = MotorEx(map,"rightExtension")//tbd
-        currentArmLength = encoderToLength*extensionEncoder1.getPosition();
+        arm1 = new MotorEx(map,"leftExtension");//hibur tbd
+        arm2 =  new MotorEx(map,"rightExtension");//hibur tbd
+        currentArmLength = encoderToLength(extensionEncoder1.getPosition());
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);
 
@@ -46,10 +46,7 @@ public class ExtensionSubsystem implements Subsystem {
     {
         return currentArmLength;
     }
-    public double getArmCOM()
-    {
-        return armCOM;
-    }
+    public double getArmCOM(){return armCOM;}
 
     private void updateValues() {
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);

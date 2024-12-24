@@ -14,8 +14,8 @@ public class ArmConstants {
         public static final double pKD = 0;
     }
 
-    public class extensionConstants {
-        public static final double encoderToLength = 0;
+    public static class extensionConstants {
+        public static double encoderToLength(double x){return x;}//find linear function
         public static final double[] segmentLengths = {0,0,0};//todo:find values
         public static final double[] segmentMasses = {0,0,0};//todo:find values
     }
