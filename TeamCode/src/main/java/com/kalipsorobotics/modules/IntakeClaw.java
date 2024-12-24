@@ -6,18 +6,17 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 public class IntakeClaw {
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
-    public static final double INTAKE_BIG_PIVOT_PARALLEL_TO_GROUND_POS = 0.7;       //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.7;       //increase to go down, decrease to go up
 
-    public static final double INTAKE_SMALL_PIVOT_PERPENDICULAR_TO_GROUND_POS = 0.77;
+    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
 
-    public static final double INTAKE_SMALL_SWEEP_PERPENDICULAR_TO_ROBOT_POS = 0.77;
+    public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.77;
 
     public static final double INTAKE_CLAW_OPEN_POS = 0.5;
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.5;
 
     private final OpModeUtilities opModeUtilities;
-
 
     private KServo intakeLinkageServo;
 
@@ -34,8 +33,6 @@ public class IntakeClaw {
     public static final double INTAKE_CLAW_CLOSE = 0.365;
     public static final double INTAKE_CLAW_OPEN = 0.05;
 
-    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.777;
-    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
     public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.77;
 
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;

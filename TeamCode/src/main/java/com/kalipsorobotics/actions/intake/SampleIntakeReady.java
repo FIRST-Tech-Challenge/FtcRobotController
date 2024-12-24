@@ -16,15 +16,15 @@ public class SampleIntakeReady extends KActionSet{
             intakeArmBigSweep.setName("intakeArmBigSweep");
             this.addAction(intakeArmBigSweep);
 
-            KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_PARALLEL_TO_GROUND_POS);
+            KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
             moveBigPivot.setName("moveBigPivot");
             this.addAction(moveBigPivot);
 
-            KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_PERPENDICULAR_TO_GROUND_POS);
+            KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS);
             moveSmallPivot.setName("moveSmallPivot");
             this.addAction(moveSmallPivot);
 
-            KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_PERPENDICULAR_TO_ROBOT_POS);
+            KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_INTAKE_READY_POS);
             moveSmallSweep.setName("moveSmallSweep");
             this.addAction(moveSmallSweep);
 
