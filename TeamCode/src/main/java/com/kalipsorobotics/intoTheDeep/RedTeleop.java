@@ -221,6 +221,7 @@ import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
 import com.kalipsorobotics.actions.hang.HangHookAction;
 import com.kalipsorobotics.actions.intake.IntakeReadyAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferAction;
+import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
@@ -285,6 +286,7 @@ public class RedTeleop extends LinearOpMode {
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
+        IntakeTransferReady intakeTransferReady = null;
 
         boolean intakePosPressed = false;
         boolean retractPosPressed = false;
@@ -610,14 +612,14 @@ public class RedTeleop extends LinearOpMode {
 //            }
 
             if (gamepad2.x && !gamepad2.right_bumper) {
-                //close
-                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+//                //close
+//                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             } else if (gamepad2.b && !gamepad2.right_bumper) {
-                //open
-                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+//                //open
+//                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
             }
 
-            intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
+//            intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
 
 //            if (-gamepad2.right_stick_y != 0) {
 //                MoveIntakeLSAction.incrementGlobal(degToTicksIntakeLS(5) * -gamepad2.right_stick_y);
@@ -625,14 +627,14 @@ public class RedTeleop extends LinearOpMode {
 
 
             if (-gamepad2.right_stick_y != 0) {
-                intakeLinkagePos += 0.01 * gamepad2.right_stick_y;
-                if (intakeLinkagePos < 0.57) {
-                    intakeLinkagePos = 0.57;
-                }
-                if (intakeLinkagePos > 0.95) {
-                    intakeLinkagePos = 0.95;
-                }
-                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
+//                intakeLinkagePos += 0.01 * gamepad2.right_stick_y;
+//                if (intakeLinkagePos < 0.57) {
+//                    intakeLinkagePos = 0.57;
+//                }
+//                if (intakeLinkagePos > 0.95) {
+//                    intakeLinkagePos = 0.95;
+//                }
+//                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             }
 
 //            if (-gamepad2.right_stick_y > 0.5) {
@@ -647,11 +649,11 @@ public class RedTeleop extends LinearOpMode {
 //            }
 
             if (-gamepad2.right_stick_x > 0.5) {
-                intakeBigSweepPos -= 0.001;
-                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
+//                intakeBigSweepPos -= 0.001;
+//                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
             } else if (-gamepad2.right_stick_x < -0.5) {
-                intakeBigSweepPos += 0.001;
-                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
+//                intakeBigSweepPos += 0.001;
+//                intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
 
             }
 
@@ -667,44 +669,44 @@ public class RedTeleop extends LinearOpMode {
 //                intakeSmallPivotPos -= 0.005;
 //            }
 
-            if (intakeSmallPivotPos > 1) {
-                intakeSmallPivotPos = 1;
-            } else if(intakeSmallPivotPos < 0) {
-                intakeSmallPivotPos = 0;
-            }
+//            if (intakeSmallPivotPos > 1) {
+//                intakeSmallPivotPos = 1;
+//            } else if(intakeSmallPivotPos < 0) {
+//                intakeSmallPivotPos = 0;
+//            }
 
             if (gamepad2.right_bumper && gamepad2.b) {
-                intakeSmallSweepPos += 0.01;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+//                intakeSmallSweepPos += 0.01;
+//                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
             } else if (gamepad2.right_bumper && gamepad2.x) {
-                intakeSmallSweepPos -= 0.01;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+//                intakeSmallSweepPos -= 0.01;
+//                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
             }
 
             if(gamepad2.start) {
-                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS;
-                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
-                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+//                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS;
+//                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
+//                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
             }
 
             if(gamepad2.back) {
-                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
-                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
-                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+//                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
+//                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
+//                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             }
 
             if(gamepad2.a) {
-                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_POS;
-                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_POS;
-                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+//                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_POS;
+//                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_POS;
+//                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             }
 
             if(gamepad2.y) {
-                intakeSmallPivotPos -= 0.005;
-                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
-
-                intakeBigPivotPos += 0.005;
-                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+//                intakeSmallPivotPos -= 0.005;
+//                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+//
+//                intakeBigPivotPos += 0.005;
+//                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
             }
 
             if (gamepad2.dpad_left){
@@ -713,8 +715,15 @@ public class RedTeleop extends LinearOpMode {
                     sampleIntakeReady.update();
                 }
             } else{
-                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
-                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+//                intakeClaw.getIntakeSmallPivotServo().setPosition(intakeSmallPivotPos);
+//                intakeClaw.getIntakeBigPivotServo().setPosition(intakeBigPivotPos);
+            }
+
+            if (gamepad2.dpad_right){
+                if (intakeTransferReady == null || intakeTransferReady.getIsDone()){
+                    intakeTransferReady = new IntakeTransferReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw, outtake);
+                    intakeTransferReady.update();
+                }
             }
 
             telemetry.addData("outtakeClawPos", outtakeClawPos);
