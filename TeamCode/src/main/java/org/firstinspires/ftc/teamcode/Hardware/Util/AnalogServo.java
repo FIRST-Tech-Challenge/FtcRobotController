@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Hardware.Wrappers;
+package org.firstinspires.ftc.teamcode.Hardware.Util;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
