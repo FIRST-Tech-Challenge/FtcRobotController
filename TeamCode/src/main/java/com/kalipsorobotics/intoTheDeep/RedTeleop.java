@@ -293,30 +293,13 @@ public class RedTeleop extends LinearOpMode {
 
         double hangStartPosition = 0;
 
-        double INTAKE_CLAW_CLOSE = 0.365;
-        double INTAKE_CLAW_OPEN = 0.05;
 
-        double OUTTAKE_CLAW_CLOSE = 0.84;
-        double OUTTAKE_CLAW_OPEN = 0.5;
-
-        double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.777;
-        double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
-        double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.77;
-
-        double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
-        double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
-
-        double INTAKE_BIG_PIVOT_TRANSFER_POS = 0.64;
-        double INTAKE_SMALL_PIVOT_TRANSFER_POS = 0.045;
-
-        double OUTTAKE_PIVOT_BASKET_POS = 0.89;
-        double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
         double intakeLinkagePos = 0.95;
         double intakeBigSweepPos = 0.5;
-        double intakeBigPivotPos = INTAKE_BIG_PIVOT_RETRACT_POS;
-        double intakeSmallPivotPos = INTAKE_SMALL_PIVOT_RETRACT_POS;
-        double intakeSmallSweepPos = INTAKE_SMALL_SWEEP_RETRACT_POS;
+        double intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
+        double intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
+        double intakeSmallSweepPos = IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS;
         double intakeClawPos = 0.5;
         intakeClaw.getIntakeLinkageServo().setPosition(0.95);
         intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
@@ -478,9 +461,9 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if(gamepad1.back) {
-                outtakeClawPos = OUTTAKE_CLAW_CLOSE;
+                outtakeClawPos = Outtake.OUTTAKE_CLAW_CLOSE;
             } else if (gamepad1.start) {
-                outtakeClawPos = OUTTAKE_CLAW_OPEN;
+                outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
             }
 
             outtake.getOuttakeClaw().setPosition(outtakeClawPos);
@@ -624,10 +607,10 @@ public class RedTeleop extends LinearOpMode {
 
             if (gamepad2.x && !gamepad2.right_bumper) {
                 //close
-                intakeClawPos = INTAKE_CLAW_CLOSE;
+                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             } else if (gamepad2.b && !gamepad2.right_bumper) {
                 //open
-                intakeClawPos = INTAKE_CLAW_OPEN;
+                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
             }
 
             intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
@@ -695,21 +678,21 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if(gamepad2.start) {
-                intakeBigPivotPos = INTAKE_BIG_PIVOT_INTAKE_READY_POS;
-                intakeSmallPivotPos = INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
-                intakeClawPos = INTAKE_CLAW_OPEN;
+                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS;
+                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS;
+                intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
             }
 
             if(gamepad2.back) {
-                intakeBigPivotPos = INTAKE_BIG_PIVOT_RETRACT_POS;
-                intakeSmallPivotPos = INTAKE_SMALL_PIVOT_RETRACT_POS;
-                intakeClawPos = INTAKE_CLAW_CLOSE;
+                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
+                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
+                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             }
 
             if(gamepad2.a) {
-                intakeBigPivotPos = INTAKE_BIG_PIVOT_TRANSFER_POS;
-                intakeSmallPivotPos = INTAKE_SMALL_PIVOT_TRANSFER_POS;
-                intakeClawPos = INTAKE_CLAW_CLOSE;
+                intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_POS;
+                intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_POS;
+                intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
             }
 
             if(gamepad2.y) {

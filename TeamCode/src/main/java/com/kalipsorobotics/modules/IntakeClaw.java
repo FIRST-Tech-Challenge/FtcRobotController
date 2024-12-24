@@ -20,6 +20,23 @@ public class IntakeClaw {
     private KServo intakeClawServo;
 
 
+    public static final double INTAKE_CLAW_CLOSE = 0.365;
+    public static final double INTAKE_CLAW_OPEN = 0.05;
+
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.777;
+    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
+    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.77;
+
+    public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
+    public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
+
+    public static final double INTAKE_BIG_PIVOT_TRANSFER_POS = 0.64;
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_POS = 0.045;
+
+    public static final double INTAKE_LINKAGE_IN_POS = 0.95;
+    public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
+
+
     public IntakeClaw(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         setUpHardware();
