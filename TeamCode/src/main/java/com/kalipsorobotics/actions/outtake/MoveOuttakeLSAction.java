@@ -144,7 +144,7 @@ public class MoveOuttakeLSAction extends Action {
 
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
-            if (globalLinearSlideMaintainTicks < 0) {
+             if (globalLinearSlideMaintainTicks < 0) {
                 power = 0;
             }
         }
@@ -161,7 +161,7 @@ public class MoveOuttakeLSAction extends Action {
             power = overridePower;
             Log.d("Outtake_LS", "power overrided to " + power);
         }
-        brake();
+        //brake();
 
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
@@ -198,9 +198,5 @@ public class MoveOuttakeLSAction extends Action {
         Log.d("Outtake_LS", "override power is set to " + power);
         overridePower = power;
         Log.d("Outtake_LS", "override power is " + overridePower);
-    }
-    public void brake() {
-        linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }
