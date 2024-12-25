@@ -152,19 +152,22 @@ public final class MecanumDrive {
 
     public void fieldDrive(Pose2d powers) {
 
-        double botHeading = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        Vector2d rotateVec = MathUtil.rotateVec(powers.position, botHeading);
-        //squaring the powers to make the robot more responsive
-        rotateVec = new Vector2d(MathUtil.aplayDeadzone(
-                -rotateVec.component1() * Math.abs(rotateVec.component1()),
-                0.1),
-                MathUtil.aplayDeadzone(
-                        -rotateVec.component2() * Math.abs(rotateVec.component2()), 0.1));
-        double turn = -powers.heading.toDouble() * Math.abs(powers.heading.toDouble());
-        turn = MathUtil.aplayDeadzone(turn, 0.1);
-        PoseVelocity2d motorPowers = new PoseVelocity2d(
-                rotateVec, turn
-        );
+        // Retrieve the robot's current heading in radians
+        double botHeading = pose.heading.toDouble();
+
+// Rotate the input vector based on the robot's heading
+        Vector2d rotatedVector = MathUtil.rotateVec(powers.position, botHeading);
+
+// Apply deadzone and square the input values for finer control
+        double xPower = MathUtil.applyDeadzone(-rotatedVector.component1() * Math.abs(rotatedVector.component1()), 0.1);
+        double yPower = MathUtil.applyDeadzone(-rotatedVector.component2() * Math.abs(rotatedVector.component2()), 0.1);
+
+// Calculate the turn component with deadzone applied
+        double turn = MathUtil.applyDeadzone(-powers.heading.toDouble() * Math.abs(powers.heading.toDouble()), 0.1);
+
+// Combine the translated and rotated powers into motor velocities
+        PoseVelocity2d motorPowers = new PoseVelocity2d(new Vector2d(xPower, yPower), turn);
+
 
         setDrivePowers(motorPowers);
 
