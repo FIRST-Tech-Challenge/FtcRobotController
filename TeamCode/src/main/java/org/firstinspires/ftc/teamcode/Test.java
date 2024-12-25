@@ -45,13 +45,13 @@ public class Test extends LinearOpMode {
             backLeftDrive.setPower(drive - strafe - spin);
             backRightDrive.setPower(drive + strafe - spin);
 
-            if (gamepad1.dpad_up) {
+//            if (gamepad1.dpad_up) {
 //                armMotor.setPower(0.5);
-            } else if (gamepad1.dpad_down) {
+//            } else if (gamepad1.dpad_down) {
 //                armMotor.setPower(-0.5);
-            } else {
+//            } else {
 //                armMotor.setPower(0);
-            }
+//            }
             if (gamepad1.a) {
                 armEncoderMovement(0.5, TOP, true);
             } else if (gamepad1.b) {
