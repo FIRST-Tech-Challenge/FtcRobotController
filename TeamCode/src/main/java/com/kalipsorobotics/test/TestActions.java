@@ -458,7 +458,7 @@ public class TestActions extends LinearOpMode {
             //INTAKE
 
             if(intakeClawOpenClose) {
-                if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
+                if((intakeClawPos - IntakeClaw.INTAKE_CLAW_CLOSE) < 0.1) {
                     intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
                     intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
                 } else if (intakeClawPos == IntakeClaw.INTAKE_CLAW_OPEN){
