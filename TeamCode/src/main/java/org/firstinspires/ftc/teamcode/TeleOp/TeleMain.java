@@ -29,6 +29,8 @@ public class TeleMain extends LinearOpMode {
     double prevError = 0;  // Previous error, used for derivative
     double integral = 0;   // Integral term
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -36,7 +38,10 @@ public class TeleMain extends LinearOpMode {
         input = new Input(hardwareMap);
         elapsedTime = new ElapsedTime();
 
-        setPoint = motors.getArmPosition();
+        int ARM_RESTING = motors.getArmPosition();
+        int ARM_REACH = motors.getArmPosition() + 1000; // plus some number idk what it actually is
+
+        setPoint = ARM_RESTING;
         waitForStart();
         double prevTime = elapsedTime.milliseconds();
 
@@ -60,7 +65,12 @@ public class TeleMain extends LinearOpMode {
             input.upArm(armRaise);
 
 
-            setPoint += (int) (gamepad2.left_stick_y * 10);    //multiply the game pad input by 100 so that there are no decimals which doesn't work in the setPoint then turn it into and int
+
+            setPoint += (int) (gamepad2.left_stick_y * 10);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+
+            // Clamp setPoint between resting and reaching positions
+            setPoint = Math.max(ARM_RESTING, Math.min(setPoint, ARM_REACH));
+
             // Get current time and arm position
             double time = elapsedTime.milliseconds();
 
@@ -71,8 +81,6 @@ public class TeleMain extends LinearOpMode {
 
             // Calculate error
             double errorValue = setPoint - processValue;
-
-
 
             // Prevent divide-by-zero errors
             if (dt == 0) {
@@ -92,15 +100,17 @@ public class TeleMain extends LinearOpMode {
             double output = proportional + ki * integral + kd * derivative;
 
             // Apply the motor power
-            output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range
+            output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range and make it so that it will more slowly go to its target position
 
             motors.MoveMotor(Motors.Type.Arm, output);
 
-            // Store current error and time for next iteration
+            if((motors.getArmPosition() == ARM_RESTING) && (gamepad2.left_stick_y <= 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
+                motors.MoveMotor(Motors.Type.Arm,0);                                // This can prevent the motor from overheating like it was doing earlier
+            }
 
+            // Store current error and time for next iteration
             prevError = errorValue;
             prevTime = time;
-
 
 
             // Telemetry
@@ -114,8 +124,6 @@ public class TeleMain extends LinearOpMode {
             telemetry.addData("Derivative", derivative);
             telemetry.addData("PID Output", output);
 
-
-
             telemetry.addData("MOVE:", "left_y (%.2f),", move);
             telemetry.addData("SPIN:", "right_x (%.2f),", spin);
             telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
@@ -125,17 +133,7 @@ public class TeleMain extends LinearOpMode {
         }
     }
 
-//
-//    double prevTime = elapsedTime.milliseconds();
-//    public void implementArmPID(double power) {
-//
-//        double time = elapsedTime.milliseconds();
-//
-//        double deltaTime = (time - prevTime) / 1000.0;  // Convert to seconds
-//        input.ArmPidControl(deltaTime, power);
-//
-//        prevTime = time;
-//    }
+
 }
 
 
