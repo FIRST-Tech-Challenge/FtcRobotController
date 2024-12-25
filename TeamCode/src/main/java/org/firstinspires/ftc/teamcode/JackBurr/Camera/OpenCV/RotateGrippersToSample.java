@@ -7,13 +7,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.Point;
-import org.opencv.core.RotatedRect;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
-public class SampleDetectorV2 extends OpMode {
+public class RotateGrippersToSample extends OpMode {
     SampleDetectorToolkit toolkit;
     SampleDetectorVisionPortalToolkit visionToolkit;
     ColorBlobLocatorProcessor red;
@@ -28,6 +25,7 @@ public class SampleDetectorV2 extends OpMode {
     int MIN_AREA = 50;
     int MAX_AREA = 20000;
     Point center;
+    SampleDetection detection;
     @Override
     public void init() {
         telemetry.setMsTransmissionInterval(50);
@@ -44,19 +42,19 @@ public class SampleDetectorV2 extends OpMode {
 
     @Override
     public void init_loop(){
-        masterList.clear();
         redList = toolkit.filterByArea(MIN_AREA, MAX_AREA, red.getBlobs());
         neutralList = toolkit.filterByArea(MIN_AREA, MAX_AREA, neutral.getBlobs());
         blueList = toolkit.filterByArea(MIN_AREA, MAX_AREA, blue.getBlobs());
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.RED, redList);
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.YELLOW, neutralList);
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.BLUE, blueList);
-        for (SampleDetection detection : masterList){
-            telemetry.addLine("Detected " + detection.color + " sample/specimen:");
-            telemetry.addLine("\t Width: " + detection.width);
-            telemetry.addLine("\t Height: " + detection.height);
-            telemetry.addLine("\t Angle: " + detection.angle);
-        }
+        detection = toolkit.findClosestSample(center, masterList);
+        telemetry.addLine("Detected " + detection.color + " sample/specimen:");
+        telemetry.addLine("\t X Position: " + detection.x);
+        telemetry.addLine("\t Y Position: " + detection.y);
+        telemetry.addLine("\t Width: " + detection.width);
+        telemetry.addLine("\t Height: " + detection.height);
+        telemetry.addLine("\t Angle: " + detection.angle);
     }
 
     @Override

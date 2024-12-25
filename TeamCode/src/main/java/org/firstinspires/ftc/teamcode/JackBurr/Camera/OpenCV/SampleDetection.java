@@ -10,11 +10,16 @@ public class SampleDetection {
     public double width;
     public double height;
     public double angle;
-    public SampleDetection (ColorRange colorRange, RotatedRect rotatedRect){
+    public double x;
+    public double y;
+    public boolean exists = true;
+    public SampleDetection (ColorRange colorRange, RotatedRect rotatedRect, boolean exists){
         this.color = colorRange;
         this.width = rotatedRect.size.width;
         this.height = rotatedRect.size.height;
         this.angle = rotatedRect.angle;
-
+        this.x = rotatedRect.center.x;
+        this.y = rotatedRect.center.y;
+        this.exists = exists;
     }
 }

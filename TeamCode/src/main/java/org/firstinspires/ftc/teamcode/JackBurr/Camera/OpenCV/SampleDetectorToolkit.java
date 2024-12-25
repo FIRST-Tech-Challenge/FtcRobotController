@@ -41,8 +41,28 @@ public class SampleDetectorToolkit {
 
     public List<SampleDetection> addToSampleDetectionList(List<SampleDetection> master, ColorRange color, List<ColorBlobLocatorProcessor.Blob> blobs) {
         for (ColorBlobLocatorProcessor.Blob blob : blobs) {
-            master.add(new SampleDetection(color, blob.getBoxFit()));
+            master.add(new SampleDetection(color, blob.getBoxFit(), true));
         }
         return master;
+    }
+
+    public SampleDetection findClosestSample(Point center, List<SampleDetection> samplesList){
+        double CENTER_X = center.x;
+        double CENTER_Y = center.y;
+        SampleDetection closestSample = null;
+        double CLOSEST_DISTANCE = 9999999999999999999999999.9;
+        for (SampleDetection sample : samplesList){
+            if(closestSample == null){
+                closestSample = sample;
+            }
+            double X_OFFSET = Math.abs(sample.x - CENTER_X);
+            double Y_OFFSET = Math.abs(sample.y - CENTER_Y);
+            double THIS_DISTANCE = X_OFFSET + Y_OFFSET;
+            if(CLOSEST_DISTANCE > THIS_DISTANCE){
+                CLOSEST_DISTANCE = THIS_DISTANCE;
+                closestSample = sample;
+            }
+        }
+        return closestSample;
     }
 }

@@ -97,7 +97,7 @@ public class IntoTheDeepSampleDetector extends OpMode {
         while (blueIterator.hasNext()) {
             ColorBlobLocatorProcessor.Blob b = blueIterator.next();
             RotatedRect boxFit = b.getBoxFit();
-            SampleDetection sample = new SampleDetection(ColorRange.BLUE, boxFit);
+            SampleDetection sample = new SampleDetection(ColorRange.BLUE, boxFit, true);
             if (sample.height > 40 && sample.width > 40) {
                 telemetry.addLine("Blue" + " sample of size " + boxFit.size + " at " + boxFit.center + " with angle " + boxFit.angle);
             }
