@@ -16,7 +16,10 @@ public class KActionSet extends Action {
     @Override
     public void update() {
         if (isDone) {
+            Log.d("action set log", "done for " + name);
+
             return;
+
         }
         for (Action a : actions) {
             if (a.dependentActionsDone()) {
@@ -34,6 +37,13 @@ public class KActionSet extends Action {
             }
         }
         isDone = true;
+        return isDone;
+    }
+
+    @Override
+    public boolean updateCheckDone(){
+        update();
+        checkDoneCondition();
         return isDone;
     }
     public void printWithDependentActions() {

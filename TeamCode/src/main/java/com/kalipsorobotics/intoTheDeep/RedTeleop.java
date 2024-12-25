@@ -247,6 +247,7 @@ import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
+import com.kalipsorobotics.utilities.KGamePad;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -284,6 +285,7 @@ public class RedTeleop extends LinearOpMode {
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
+        KGamePad kGamePad2 = new KGamePad(gamepad2);
 
         double intakeLinkagePos;
         double intakeBigSweepPos;
@@ -349,7 +351,7 @@ public class RedTeleop extends LinearOpMode {
             specimenHangReadyPressed = gamepad2.b;
             intakeClawOpenClose = gamepad2.left_bumper;
             intakeOverrideOn = (gamepad2.left_trigger > 0.99);
-            intakeReadyPressed = gamepad2.dpad_left;
+            intakeReadyPressed = kGamePad2.isToggleDpadLeft();
             intakeTransferReadyPressed = gamepad2.dpad_right;
             transferPressed = gamepad2.dpad_down;
             intakePressed = gamepad2.dpad_up;
@@ -545,7 +547,11 @@ public class RedTeleop extends LinearOpMode {
                     Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
                 }
-                sampleIntakeReady.update();
+
+            }
+            if (sampleIntakeReady != null){
+                Log.d("teleop", "running sample intake  ready");
+                sampleIntakeReady.updateCheckDone();
             }
 
             if(intakePressed) {
@@ -553,7 +559,10 @@ public class RedTeleop extends LinearOpMode {
                     sampleIntakeAction = new SampleIntakeAction(intakeClaw);
                     sampleIntakeAction.setName("sampleIntakeAction");
                 }
-                sampleIntakeAction.update();
+
+            }
+            if (sampleIntakeAction != null){
+                sampleIntakeAction.updateCheckDone();
             }
 
             if (intakeTransferReadyPressed){
@@ -568,7 +577,10 @@ public class RedTeleop extends LinearOpMode {
                     Log.d("teleop", "made new intake transfer ready");
                     intakeTransferReady.setName("intakeTransferReady");
                 }
-                intakeTransferReady.update();
+
+            }
+            if (intakeTransferReady != null){
+                intakeTransferReady.updateCheckDone();
             }
 
             if(transferPressed) {
@@ -576,7 +588,10 @@ public class RedTeleop extends LinearOpMode {
                     transferAction = new TransferAction(intakeClaw, outtake);
                     transferAction.setName("transferAction");
                 }
-                transferAction.update();
+
+            }
+            if (transferAction != null){
+                transferAction.updateCheckDone();
             }
 
             //OUTTAKE
@@ -613,7 +628,10 @@ public class RedTeleop extends LinearOpMode {
                     outtakeTransferReady = new OuttakeTransferReady(outtake);
                     outtakeTransferReady.setName("outtakeTransferReady");
                 }
-                outtakeTransferReady.update();
+
+            }
+            if (outtakeTransferReady != null){
+                outtakeTransferReady.updateCheckDone();
             }
 
             //outtake hang ready
@@ -622,7 +640,10 @@ public class RedTeleop extends LinearOpMode {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
                 }
-                specimenHangReady.update();
+
+            }
+            if (specimenHangReady != null){
+                specimenHangReady.updateCheckDone();
             }
 
             if(specimenDropPressed) {
@@ -634,12 +655,15 @@ public class RedTeleop extends LinearOpMode {
                     basketReadyAction = new BasketReadyAction(outtake);
                     basketReadyAction.setName("basketReadyAction");
                 }
-                basketReadyAction.update();
+
+            }
+            if (basketReadyAction != null){
+                basketReadyAction.updateCheckDone();
             }
 
             if (isGamePadOuttakeJoystickZero()) {
                 if (specimenHangReady != null) {
-                    specimenHangReady.update();
+                    specimenHangReady.updateCheckDone();
                 }
             } else {
                 if (specimenHangReady != null) {

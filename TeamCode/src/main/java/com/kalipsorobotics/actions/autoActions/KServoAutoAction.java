@@ -18,12 +18,17 @@ public class KServoAutoAction extends Action {
 
     @Override
     public void update() {
+        Log.d("servo_action", "running update  " + targetPos + "currentTime  " + kServo.getTime() +
+                "port number  " + kServo.getPortNumber());
         super.update();
         if (isDone) {
+            Log.d("servo_action", "done for  " + targetPos + "currentTime  " + kServo.getTime() +
+                    "port number  " + kServo.getPortNumber());
+
             return;
         }
 
-        Log.d("servo_action", "execute or something  " + targetPos + "currentTime  " + kServo.getTime() +
+        Log.d("servo_action", "not done setting target positions  " + targetPos + "currentTime  " + kServo.getTime() +
                 "port number  " + kServo.getPortNumber());
         kServo.setTargetPosition(targetPos);
 
