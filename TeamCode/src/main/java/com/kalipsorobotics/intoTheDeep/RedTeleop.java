@@ -231,6 +231,7 @@ import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
@@ -282,6 +283,7 @@ public class RedTeleop extends LinearOpMode {
         IntakeTransferReady intakeTransferReady = null;
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
+        OuttakeTransferReady outtakeTransferReady = null;
 
         double intakeLinkagePos;
         double intakeBigSweepPos;
@@ -539,13 +541,9 @@ public class RedTeleop extends LinearOpMode {
 
             if (intakeTransferReadyPressed){
                 if (intakeTransferReady == null || intakeTransferReady.getIsDone()){
-                    intakeTransferReady = new IntakeTransferReady(intakeClaw, outtake);
+                    intakeTransferReady = new IntakeTransferReady(intakeClaw);
                     intakeTransferReady.update();
                 }
-            }
-
-            if (outtakeTransferReadyPressed) {
-                //todo
             }
 
             if(transferPressed) {
@@ -582,6 +580,13 @@ public class RedTeleop extends LinearOpMode {
 //                intake.getLinkageMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //                CalculateTickPer.MIN_RANGE_INTAKE_TICKS =
 //                        intake.getLinkageMotor().getCurrentPosition() - degToTicksIntakeLS(10);
+            }
+
+            if (outtakeTransferReadyPressed) {
+                if (outtakeTransferReady == null || outtakeTransferReady.getIsDone()) {
+                    outtakeTransferReady = new OuttakeTransferReady(outtake);
+                    outtakeTransferReady.setName("specimenHangReady");
+                }
             }
 
             //outtake hang ready

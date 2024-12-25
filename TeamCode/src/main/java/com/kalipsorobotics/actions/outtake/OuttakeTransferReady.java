@@ -6,7 +6,7 @@ import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
 public class OuttakeTransferReady extends KActionSet {
-    public OuttakeTransferReady(double intakeLinkageServoPos, IntakeClaw intake, Outtake outtake){
+    public OuttakeTransferReady(Outtake outtake){
         MoveOuttakeLSAction moveLSDown = new MoveOuttakeLSAction(outtake, Outtake.LS_DOWN_POS);
         moveLSDown.setName("moveLSDown");
         this.addAction(moveLSDown);
