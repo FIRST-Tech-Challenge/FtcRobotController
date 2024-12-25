@@ -55,6 +55,7 @@ public class Wrist {
         this.angleSensor= opMode.hardwareMap.get(AnalogInput.class, "WAS");
         this.telemetry  = opMode.telemetry;
         this.isDebugMode= isDebugMode;
+        init();
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Constructor initialized", "Success");

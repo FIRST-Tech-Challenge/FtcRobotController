@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,11 +13,19 @@ public class CameraTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Camera camera = new Camera(this, false, true);
-        Servo s = hardwareMap.get(Servo.class, "s");
+        Camera camera = new Camera(this, true, true);
+       // Servo s = hardwareMap.get(Servo.class, "s");
         waitForStart();
         while (opModeIsActive()) {
-            s.setPosition(camera.getAngle());
+            //s.setPosition(camera.getAngle());
+            camera.getAngle();
+            if (gamepad1.cross){
+                camera.setSpecimen(true);
+            } else if (gamepad1.circle) {
+                camera.setSpecimen(false);
+            }
+            telemetry.update();
+
         }
     }
 }

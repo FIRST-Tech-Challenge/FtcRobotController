@@ -28,13 +28,13 @@ public class WristCameraTest extends LinearOpMode {
                 runningActions.add(wrist.moveToAngle(camera.getAngle()));
             }
             if (gamepad1.circle){
-                wrist.setShouldStayParralal(true);
+                wrist.setShouldStayParallel(true);
             }
             if (gamepad1.square){
-                wrist.setShouldStayParralal(false);
+                wrist.setShouldStayParallel(false);
             }
-            else if (wrist.getShouldStayParralal()){
-                runningActions.add(wrist.parralalToFloor());
+            else if (wrist.getShouldStayParallel()){
+                runningActions.add(wrist.parallelToFloor());
             }
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

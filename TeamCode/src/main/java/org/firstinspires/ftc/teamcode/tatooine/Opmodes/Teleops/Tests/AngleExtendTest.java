@@ -40,8 +40,8 @@ public class AngleExtendTest extends LinearOpMode {
             telemetry.addData("gamepad1.right_stick_y", -gamepad1.right_stick_y);
             telemetry.addData("gamepad1.left_stick_y", -gamepad1.left_stick_y);
 
-            telemetry.addData("angleLeftTick", MathUtil.convertTicksToDegries(28*70*(44/16), leftAngle.getCurrentPosition()));
-            telemetry.addData("angleRightTick", MathUtil.convertTicksToDegries(28*70*(44/16), rightAngle.getCurrentPosition()));
+            telemetry.addData("angleLeftTick", MathUtil.convertTicksToDegrees(28*70*(44/16), leftAngle.getCurrentPosition()));
+            telemetry.addData("angleRightTick", MathUtil.convertTicksToDegrees(28*70*(44/16), rightAngle.getCurrentPosition()));
             telemetry.addData("extendLeftTick", MathUtil.convertTicksToDistance(537.7,3.8 , leftExtend.getCurrentPosition()));
             telemetry.addData("extendRightTick", MathUtil.convertTicksToDistance(537.7,3.8 , rightExtend.getCurrentPosition()));
 

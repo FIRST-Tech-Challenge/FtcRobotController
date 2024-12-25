@@ -16,7 +16,6 @@ public class DebugUtils {
     public static void logDebug(Telemetry telemetry, boolean debugMode, String subsystem, String label, Object value) {
         if (debugMode && telemetry != null) {
             telemetry.addData("[" + subsystem + "] " + label, value);
-            telemetry.update();
         }
     }
 
@@ -37,7 +36,7 @@ public class DebugUtils {
                     telemetry.addData("[" + subsystem + "] " + label, value);
                 }
             }
-            telemetry.update();
+
         }
     }
 
@@ -52,7 +51,6 @@ public class DebugUtils {
     public static void logDebugMessage(Telemetry telemetry, boolean debugMode, String subsystem, String message) {
         if (debugMode && telemetry != null) {
             telemetry.addLine("[" + subsystem + "] " + message);
-            telemetry.update();
         }
     }
 }

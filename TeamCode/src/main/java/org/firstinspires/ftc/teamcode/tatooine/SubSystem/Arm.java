@@ -195,8 +195,8 @@ public class Arm {
      * @return the arm angle in degrees (average of both motors)
      */
     public double getAngle() {
-        double leftAngle = MathUtil.convertTicksToDegries(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
-        double rightAngle = MathUtil.convertTicksToDegries(ANGLE_CPR, angleRight.getCurrentPosition()) + ANGLE_OFFSET;
+        double leftAngle = MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
+        double rightAngle = MathUtil.convertTicksToDegrees(ANGLE_CPR, angleRight.getCurrentPosition()) + ANGLE_OFFSET;
         double angle = (leftAngle + rightAngle) / 2;
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
