@@ -54,6 +54,7 @@ public class SampleDetectorV2 extends OpMode {
         for (SampleDetection detection : masterList){
             if(!detection.exists){
                 masterList.remove(detection);
+                continue;
             }
             telemetry.addLine("Detected " + detection.color + " sample/specimen:");
             telemetry.addLine("\t Width: " + detection.width);
