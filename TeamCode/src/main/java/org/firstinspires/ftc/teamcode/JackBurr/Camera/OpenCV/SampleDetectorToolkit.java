@@ -40,6 +40,9 @@ public class SampleDetectorToolkit {
     }
 
     public List<SampleDetection> addToSampleDetectionList(List<SampleDetection> master, ColorRange color, List<ColorBlobLocatorProcessor.Blob> blobs) {
+        if(blobs.isEmpty()){
+            master.add((new SampleDetection(color, new RotatedRect(), false)));
+        }
         for (ColorBlobLocatorProcessor.Blob blob : blobs) {
             master.add(new SampleDetection(color, blob.getBoxFit(), true));
         }

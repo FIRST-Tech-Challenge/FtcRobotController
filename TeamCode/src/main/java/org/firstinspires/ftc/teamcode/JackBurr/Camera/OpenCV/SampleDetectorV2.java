@@ -52,6 +52,9 @@ public class SampleDetectorV2 extends OpMode {
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.YELLOW, neutralList);
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.BLUE, blueList);
         for (SampleDetection detection : masterList){
+            if(!detection.exists){
+                masterList.remove(detection);
+            }
             telemetry.addLine("Detected " + detection.color + " sample/specimen:");
             telemetry.addLine("\t Width: " + detection.width);
             telemetry.addLine("\t Height: " + detection.height);

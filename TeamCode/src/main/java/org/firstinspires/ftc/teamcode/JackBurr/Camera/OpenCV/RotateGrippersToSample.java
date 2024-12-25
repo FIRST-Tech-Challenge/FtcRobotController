@@ -8,7 +8,6 @@ import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.Point;
 import java.util.List;
-
 @TeleOp
 public class RotateGrippersToSample extends OpMode {
     SampleDetectorToolkit toolkit;
@@ -55,6 +54,7 @@ public class RotateGrippersToSample extends OpMode {
         telemetry.addLine("\t Width: " + detection.width);
         telemetry.addLine("\t Height: " + detection.height);
         telemetry.addLine("\t Angle: " + detection.angle);
+
     }
 
     @Override
