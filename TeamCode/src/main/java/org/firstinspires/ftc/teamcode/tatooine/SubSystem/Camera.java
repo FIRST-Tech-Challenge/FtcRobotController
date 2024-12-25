@@ -130,7 +130,7 @@ public class Camera {
             // No blobs detected, return previous position to avoid jump
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "No Blobs Detected", "Returning Previous Position: " + prevPosition);
-            return prevPosition;
+            return prevAngle;
         }
 
         // Take the largest blob
