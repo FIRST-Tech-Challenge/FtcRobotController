@@ -14,8 +14,8 @@ public class Input {
     Servos servos;
     ElapsedTime elapsedTime;
 
-    FtcDashboard dashboard;
-    Telemetry dashboardTelemetry;
+//    FtcDashboard dashboard;
+//    Telemetry dashboardTelemetry;
 
     public Input(HardwareMap hardwareMap) {
         motors = new Motors(hardwareMap);
@@ -71,14 +71,14 @@ public class Input {
 
 
     // PID variables
-    public static double kp = 2;  // Proportional gain
-    public static double ki = 0.45;  // Integral gain
-    public static double kd = 0.13;  // Derivative gain
+//    public static double kp = 2;  // Proportional gain
+//    public static double ki = 0.45;  // Integral gain
+//    public static double kd = 0.13;  // Derivative gain
+//
+//    public int setPoint;
 
-    public int setPoint;
-
-    double prevError = 0;  // Previous error, used for derivative
-    double integral = 0;   // Integral term
+//    double prevError = 0;  // Previous error, used for derivative
+//    double integral = 0;   // Integral term
 
 
 //    public void ArmPidControl(double deltaTime, double input) {
