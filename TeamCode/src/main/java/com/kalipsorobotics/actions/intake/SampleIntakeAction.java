@@ -7,7 +7,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class SampleIntakeAction extends KActionSet {
 
-    public SampleIntakeAction(double intakeLinkageServoPos, IntakeClaw intake, Outtake outtake){
+    public SampleIntakeAction(IntakeClaw intake, Outtake outtake){
         KServoAutoAction moveBigPivotDown = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS);
         moveBigPivotDown.setName("moveBigPivotDown");
         this.addAction(moveBigPivotDown);

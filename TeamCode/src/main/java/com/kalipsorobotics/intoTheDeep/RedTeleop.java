@@ -227,7 +227,9 @@ import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.IntakeDoorAction;
 import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
 import com.kalipsorobotics.actions.intake.IntakePivotAction;
+import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
+import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
@@ -270,17 +272,16 @@ public class RedTeleop extends LinearOpMode {
         Outtake outtake = new Outtake(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
-        ColorDetector colorDetector = new ColorDetector(opModeUtilities, hardwareMap);
         SpecimenHangReady specimenHangReady = null;
-        SpecimenWallReady specimenWallReady = null;
         // Target should always be 0
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
-        IntakeTransferAction intakeTransferAction = null;
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
+        SampleIntakeAction sampleIntakeAction = null;
         IntakeTransferReady intakeTransferReady = null;
         TransferAction transferAction = null;
+        BasketReadyAction basketReadyAction = null;
 
         double intakeLinkagePos;
         double intakeBigSweepPos;
@@ -321,6 +322,9 @@ public class RedTeleop extends LinearOpMode {
         boolean intakePressed;
         boolean outtakeTransferReadyPressed;
         boolean outtakeClawOpenClose;
+        boolean basketReadyPressed;
+        boolean specimenDropPressed;
+        boolean specimenReadyPressed;
 
         intakeClaw.init();
 
@@ -348,6 +352,9 @@ public class RedTeleop extends LinearOpMode {
             outtakeTransferReadyPressed = gamepad2.x;
             outtakeClawOpenClose = gamepad2.right_bumper;
             outtakePivotStickValue = gamepad2.right_stick_x;
+            basketReadyPressed = gamepad2.y;
+            specimenDropPressed = gamepad2.a;
+            specimenReadyPressed = gamepad2.b;
 
             //RESET POSITIONS TO CURRENT
             intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getCurrentPosition();
@@ -524,7 +531,10 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if(intakePressed) {
-                //todo
+                if (sampleIntakeAction == null || sampleIntakeAction.getIsDone()){
+                    sampleIntakeAction = new SampleIntakeAction(intakeClaw, outtake);
+                    sampleIntakeAction.update();
+                }
             }
 
             if (intakeTransferReadyPressed){
@@ -579,6 +589,17 @@ public class RedTeleop extends LinearOpMode {
                 if (specimenHangReady == null || specimenHangReady.getIsDone()) {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
+                }
+            }
+
+            if(specimenDropPressed) {
+                //todo
+            }
+
+            if(basketReadyPressed) {
+                if (basketReadyAction == null || basketReadyAction.getIsDone()){
+                    basketReadyAction = new BasketReadyAction(outtake);
+                    basketReadyAction.update();
                 }
             }
 
