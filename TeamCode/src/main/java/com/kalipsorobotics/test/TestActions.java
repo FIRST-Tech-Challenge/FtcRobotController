@@ -223,6 +223,7 @@ import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
@@ -269,6 +270,7 @@ public class TestActions extends LinearOpMode {
         IntakeTransferReady intakeTransferReady = null;
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
+        OuttakeTransferReady outtakeTransferReady = null;
 
         double intakeLinkagePos;
         double intakeBigSweepPos;
@@ -532,7 +534,10 @@ public class TestActions extends LinearOpMode {
             }
 
             if (outtakeTransferReadyPressed) {
-                //todo
+                if (outtakeTransferReady == null || outtakeTransferReady.getIsDone()){
+                    outtakeTransferReady = new OuttakeTransferReady(outtake);
+                    outtakeTransferReady.update();
+                }
             }
 
             if(transferPressed) {
@@ -543,6 +548,7 @@ public class TestActions extends LinearOpMode {
             }
 
             //OUTTAKE
+
 
             //outtake manual LS
             if (outtakeLSStickValue != 0) {
