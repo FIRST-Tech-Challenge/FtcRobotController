@@ -14,20 +14,20 @@ import java.util.List;
 
 @TeleOp
 public class SampleDetectorV2 extends OpMode {
-    SampleDetectorToolkit toolkit;
-    SampleDetectorVisionPortalToolkit visionToolkit;
-    ColorBlobLocatorProcessor red;
-    ColorBlobLocatorProcessor neutral;
-    ColorBlobLocatorProcessor blue;
-    List<ColorBlobLocatorProcessor> processorList;
-    List<ColorBlobLocatorProcessor.Blob> redList;
-    List<ColorBlobLocatorProcessor.Blob> neutralList;
-    List<ColorBlobLocatorProcessor.Blob> blueList;
-    List<SampleDetection> masterList;
-    VisionPortal portal;
-    int MIN_AREA = 50;
-    int MAX_AREA = 20000;
-    Point center;
+    public SampleDetectorToolkit toolkit;
+    public SampleDetectorVisionPortalToolkit visionToolkit;
+    public ColorBlobLocatorProcessor red;
+    public ColorBlobLocatorProcessor neutral;
+    public ColorBlobLocatorProcessor blue;
+    public List<ColorBlobLocatorProcessor> processorList;
+    public List<ColorBlobLocatorProcessor.Blob> redList;
+    public List<ColorBlobLocatorProcessor.Blob> neutralList;
+    public List<ColorBlobLocatorProcessor.Blob> blueList;
+    public List<SampleDetection> masterList;
+    public VisionPortal portal;
+    public int MIN_AREA = 50;
+    public int MAX_AREA = 20000;
+    public Point center;
     @Override
     public void init() {
         telemetry.setMsTransmissionInterval(50);
