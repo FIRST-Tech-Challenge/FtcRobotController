@@ -14,12 +14,9 @@ import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The Camera subsystem uses FTC's VisionPortal to detect color blobs
- * (either Red or Blue) and estimate their orientation (angle).
- */
 public class Camera {
 
     // ---------------------------------------------------------------------------------------------
@@ -27,23 +24,25 @@ public class Camera {
     // ---------------------------------------------------------------------------------------------
     private static final String SUBSYSTEM_NAME = "Camera";
 
+
     // ---------------------------------------------------------------------------------------------
     // State Variables
     // ---------------------------------------------------------------------------------------------
-    private double angle     = 0;   // Current angle
+    private double angle = 0;   // Current angle
     private double prevAngle = 0;   // Previous angle
-    private double position  = 0;   // Current position (some user-defined metric)
+    private double position = 0;   // Current position
     private double prevPosition = 0; // Previous position
 
     private final boolean isDebugMode;
     private final boolean isRedAlliance;
-    private boolean isSpecimen;      // Whether we're looking for a specimen or not (unused in this class, but stored)
+    private boolean isSpecimen; // Whether to include yellow blobs
 
     // ---------------------------------------------------------------------------------------------
-    // VisionPortal and Processor
+    // VisionPortal and Processors
     // ---------------------------------------------------------------------------------------------
     private VisionPortal portal;
-    private ColorBlobLocatorProcessor blobLocatorProcessor;
+    private ColorBlobLocatorProcessor allianceProcessor;
+    private ColorBlobLocatorProcessor yellowProcessor;
 
     // ---------------------------------------------------------------------------------------------
     // OpMode & Telemetry
@@ -55,7 +54,7 @@ public class Camera {
     // Constructor
     // ---------------------------------------------------------------------------------------------
     /**
-     * Constructs a Camera subsystem to detect either Red or Blue blobs.
+     * Constructs a Camera subsystem to detect Red, Blue, and Yellow blobs.
      *
      * @param opMode     the active OpMode
      * @param isDebug    whether debug logging is enabled
@@ -78,11 +77,11 @@ public class Camera {
     // Initialization
     // ---------------------------------------------------------------------------------------------
     /**
-     * Initializes the vision portal and the blob locator processor.
+     * Initializes the vision portal and the blob locator processors.
      */
     private void initVision() {
-        // Build a ColorBlobLocatorProcessor with appropriate color range (Red or Blue).
-        blobLocatorProcessor = new ColorBlobLocatorProcessor.Builder()
+        // Alliance Processor
+        allianceProcessor = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(isRedAlliance ? ColorRange.RED : ColorRange.BLUE)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setRoi(ImageRegion.entireFrame())
@@ -90,10 +89,20 @@ public class Camera {
                 .setBlurSize(5)
                 .build();
 
-        // Build a VisionPortal using the configured processor.
+        // Yellow Processor
+        yellowProcessor = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.YELLOW)
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                .setRoi(ImageRegion.entireFrame())
+                .setDrawContours(false)
+                .setBlurSize(5)
+                .build();
+
+        // Vision Portal
         portal = new VisionPortal.Builder()
-                .addProcessor(blobLocatorProcessor)
-                .setCameraResolution(new Size(320, 240))    // Adjust resolution as needed
+                .addProcessor(allianceProcessor)
+                .addProcessor(yellowProcessor)
+                .setCameraResolution(new Size(320, 240)) // Adjust resolution as needed
                 .setCamera(opMode.hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
 
@@ -105,7 +114,8 @@ public class Camera {
     // Main Functionality
     // ---------------------------------------------------------------------------------------------
     /**
-     * Retrieves the angle of the largest detected color blob, if any.
+     * Retrieves the angle of the largest detected blob, prioritizing alliance blobs,
+     * or yellow + alliance blobs when in specimen mode.
      *
      * @return the current angle in degrees (or the previous position if no blob is detected).
      */
@@ -113,11 +123,8 @@ public class Camera {
         prevAngle = angle;
         prevPosition = position;
 
-        // Retrieve all detected blobs
-        List<ColorBlobLocatorProcessor.Blob> blobs = blobLocatorProcessor.getBlobs();
-
-        // Filter out very small blobs, e.g., areas < 50 or > 20,000
-        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+        // Detect blobs based on current mode
+        List<ColorBlobLocatorProcessor.Blob> blobs = detectBlobs();
 
         if (blobs.isEmpty()) {
             // No blobs detected, return previous position to avoid jump
@@ -126,13 +133,12 @@ public class Camera {
             return prevPosition;
         }
 
-        // Take the first blob (presumably the largest)
+        // Take the largest blob
         ColorBlobLocatorProcessor.Blob blob = blobs.get(0);
 
         // Extract the rectangle corners
         Point[] pt = new Point[4];
         blob.getBoxFit().points(pt);
-
 
         // Compute distances between rectangle corners
         double d03 = Math.sqrt(Math.pow(pt[0].x - pt[3].x, 2) + Math.pow(pt[0].y - pt[3].y, 2));
@@ -145,9 +151,7 @@ public class Camera {
             angle = Math.toDegrees(Math.atan2(pt[0].y - pt[1].y, pt[0].x - pt[1].x));
         }
 
-
         // Convert the angle to some 'position' metric for your application
-        // Here we do (optimizedAngle/180) + 0.5, as an example
         double optimizedAngle = MathUtil.optimizeAngle(angle, prevAngle);
         position = (optimizedAngle / 180) + 0.5;
 
@@ -168,6 +172,39 @@ public class Camera {
         return optimizedAngle;
     }
 
+    /**
+     * Detects blobs for alliance and yellow ranges, prioritizing based on `isSpecimen`.
+     *
+     * @return a list of filtered blobs.
+     */
+    private List<ColorBlobLocatorProcessor.Blob> detectBlobs() {
+        // Dynamically enable or disable the yellow processor based on specimen mode
+        if (isSpecimen) {
+            if (!portal.getProcessorEnabled(yellowProcessor)) {
+                portal.setProcessorEnabled(yellowProcessor, true);
+                DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "Yellow Processor", "Enabled");
+            }
+        } else {
+            if (portal.getProcessorEnabled(yellowProcessor)) {
+                portal.setProcessorEnabled(yellowProcessor, false);
+                DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "Yellow Processor", "Disabled");
+            }
+        }
+
+        // Retrieve blobs from the alliance processor
+        List<ColorBlobLocatorProcessor.Blob> blobs = new ArrayList<>(allianceProcessor.getBlobs());
+
+        // If the yellow processor is enabled, add its blobs
+        if (portal.getProcessorEnabled(yellowProcessor)) {
+            blobs.addAll(yellowProcessor.getBlobs());
+        }
+
+        // Filter blobs to remove unwanted small or large blobs
+        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+
+        return blobs;
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Getters & Setters
     // ---------------------------------------------------------------------------------------------
@@ -186,30 +223,6 @@ public class Camera {
     public void setSpecimen(boolean specimen) {
         this.isSpecimen = specimen;
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                "Specimen Set", specimen);
-    }
-
-    public double getCurrentAngle() {
-        return angle;
-    }
-
-    public double getPreviousAngle() {
-        return prevAngle;
-    }
-
-    public double getPosition() {
-        return position;
-    }
-
-    public double getPreviousPosition() {
-        return prevPosition;
-    }
-
-    public VisionPortal getPortal() {
-        return portal;
-    }
-
-    public ColorBlobLocatorProcessor getBlobLocatorProcessor() {
-        return blobLocatorProcessor;
+                "Specimen Mode Set", specimen);
     }
 }
