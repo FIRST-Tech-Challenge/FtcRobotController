@@ -49,10 +49,7 @@ public class Motors {
         motors[Type.Pull.getValue()].setDirection(DcMotor.Direction.FORWARD);
 
 
-//        motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);   this has been wrong for so long and we didn't even notice
-//        motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);        this was controlling pull but we don't have an encoder hooked up to it
-
-        motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down from slamming into the ground
+        motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
 
     }
 
