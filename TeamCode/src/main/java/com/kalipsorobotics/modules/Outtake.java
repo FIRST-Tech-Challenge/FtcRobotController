@@ -28,6 +28,10 @@ public class Outtake {
     public static final double OUTTAKE_PIVOT_BASKET_POS = 0.89;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
+    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.16;
+
+    public static final double LS_DOWN_POS = 0;
+
     public static final double OUTTAKE_CLAW_CLOSE = 0.84;
     public static final double OUTTAKE_CLAW_OPEN = 0.5;
 
