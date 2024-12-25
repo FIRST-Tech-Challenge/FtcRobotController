@@ -528,29 +528,33 @@ public class RedTeleop extends LinearOpMode {
             if(intakeReadyPressed) {
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
                     sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, outtake);
-                    sampleIntakeReady.update();
+                    sampleIntakeReady.setName("sampleIntakeReady");
                 }
+                sampleIntakeReady.update();
             }
 
             if(intakePressed) {
                 if (sampleIntakeAction == null || sampleIntakeAction.getIsDone()){
                     sampleIntakeAction = new SampleIntakeAction(intakeClaw, outtake);
-                    sampleIntakeAction.update();
+                    sampleIntakeAction.setName("sampleIntakeAction");
                 }
+                sampleIntakeAction.update();
             }
 
             if (intakeTransferReadyPressed){
                 if (intakeTransferReady == null || intakeTransferReady.getIsDone()){
                     intakeTransferReady = new IntakeTransferReady(intakeClaw);
-                    intakeTransferReady.update();
+                    intakeTransferReady.setName("intakeTransferReady");
                 }
+                intakeTransferReady.update();
             }
 
             if(transferPressed) {
                 if (transferAction == null || transferAction.getIsDone()){
                     transferAction = new TransferAction(intakeClaw, outtake);
-                    transferAction.update();
+                    transferAction.setName("transferAction");
                 }
+                transferAction.update();
             }
 
             //OUTTAKE
@@ -585,8 +589,9 @@ public class RedTeleop extends LinearOpMode {
             if (outtakeTransferReadyPressed) {
                 if (outtakeTransferReady == null || outtakeTransferReady.getIsDone()) {
                     outtakeTransferReady = new OuttakeTransferReady(outtake);
-                    outtakeTransferReady.setName("specimenHangReady");
+                    outtakeTransferReady.setName("outtakeTransferReady");
                 }
+                outtakeTransferReady.update();
             }
 
             //outtake hang ready
@@ -595,6 +600,7 @@ public class RedTeleop extends LinearOpMode {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
                 }
+                specimenHangReady.update();
             }
 
             if(specimenDropPressed) {
@@ -604,8 +610,9 @@ public class RedTeleop extends LinearOpMode {
             if(basketReadyPressed) {
                 if (basketReadyAction == null || basketReadyAction.getIsDone()){
                     basketReadyAction = new BasketReadyAction(outtake);
-                    basketReadyAction.update();
+                    basketReadyAction.setName("basketReadyAction");
                 }
+                basketReadyAction.update();
             }
 
             if (isGamePadOuttakeJoystickZero()) {
