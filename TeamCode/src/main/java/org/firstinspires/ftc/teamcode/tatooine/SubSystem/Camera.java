@@ -165,7 +165,7 @@ public class Camera {
             telemetry.addData("ang", optimizedAngle);
         }
 
-        return angle;
+        return optimizedAngle;
     }
 
     // ---------------------------------------------------------------------------------------------
