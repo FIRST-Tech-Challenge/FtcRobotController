@@ -13,11 +13,12 @@ public class TransferAction extends KActionSet{
 
         KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
         openIntakeClaw.setName("openIntakeClaw");
+        openIntakeClaw.setDependentActions(closeOuttakeClaw);
         this.addAction(openIntakeClaw);
 
-        KServoAutoAction pullIntake = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS - 0.1);
-        pullIntake.setName("pullIntake");
-        pullIntake.setDependentActions(openIntakeClaw);
-        this.addAction(pullIntake);
+//        KServoAutoAction pullIntake = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS - 0.1);
+//        pullIntake.setName("pullIntake");
+//        pullIntake.setDependentActions(openIntakeClaw);
+//        this.addAction(pullIntake);
     }
 }

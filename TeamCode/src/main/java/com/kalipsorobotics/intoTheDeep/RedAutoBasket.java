@@ -103,7 +103,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         //TODO INTAKE ACTION
 
-        IntakeReadyAction intakeReady1 = new IntakeReadyAction(10, intake, outtake);
+        IntakeReadyAction intakeReady1 = new IntakeReadyAction(10, intake);
         intakeReady1.setName("intakeReady1");
         intakeReady1.setDependentActions(moveToSample1);
         redAutoBasket.addAction(intakeReady1);
@@ -162,7 +162,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         //TODO INTAKE ACTION
 
-        IntakeReadyAction intakeReady2 = new IntakeReadyAction(10, intake, outtake);
+        IntakeReadyAction intakeReady2 = new IntakeReadyAction(10, intake);
         intakeReady2.setName("intakeReady2");
         intakeReady2.setDependentActions(moveToSample2);
         redAutoBasket.addAction(intakeReady2);
@@ -219,7 +219,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         //TODO INTAKE ACTION
 
-        IntakeReadyAction intakeReady3 = new IntakeReadyAction(10, intake, outtake);
+        IntakeReadyAction intakeReady3 = new IntakeReadyAction(10, intake);
         intakeReady3.setName("intakeReady3");
         intakeReady3.setDependentActions(moveToSample3);
         redAutoBasket.addAction(intakeReady3);

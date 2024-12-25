@@ -7,7 +7,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class IntakeReadyAction extends KActionSet {
 
-    public IntakeReadyAction(double degreeExtend, Intake intake, Outtake outtake) {
+    public IntakeReadyAction(double degreeExtend, Intake intake) {
         MoveIntakeLSAction moveIntakeLSOut = new MoveIntakeLSAction(intake, degreeExtend);
         moveIntakeLSOut.setName("moveIntakeLSOut");
         this.addAction(moveIntakeLSOut);

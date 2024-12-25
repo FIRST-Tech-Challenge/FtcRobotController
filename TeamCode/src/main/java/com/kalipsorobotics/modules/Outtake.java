@@ -44,7 +44,7 @@ public class Outtake {
     private void setUpHardware() {
         linearSlide1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
         linearSlide2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
-        outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivot"), 60/0.11, 300,
+        outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivot"), 60/0.11, 255,
                 0, false);
         outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakeClaw"), 60/0.25, 300,
                 0, false);
@@ -63,8 +63,8 @@ public class Outtake {
         linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlide1.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearSlide2.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void init() {

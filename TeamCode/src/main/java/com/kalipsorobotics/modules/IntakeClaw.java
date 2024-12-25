@@ -63,19 +63,19 @@ public class IntakeClaw {
     private void setUpHardware() {
 
         intakeLinkageServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeLinkage"), 60/0.25,
-                300,
+                130,
                 0, false);
 
         intakeBigSweepServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigSweep"), 60/0.25,
                 300,
                 0, false);
 
-        intakeBigPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigPivot"), 60/0.25,
-                300,
+        intakeBigPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigPivot"), 60/0.11,
+                130,
                 0, false);
 
-        intakeSmallPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeSmallPivot"), 60/0.25,
-                300,
+        intakeSmallPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeSmallPivot"), 60/0.11,
+                255,
                 0, false);
 
         intakeSmallSweepServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeSmallSweep"), 60/0.25,

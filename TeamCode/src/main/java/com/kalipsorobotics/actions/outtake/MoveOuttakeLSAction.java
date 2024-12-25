@@ -150,10 +150,10 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         Log.d("Outtake_LS", String.format(
-                "Setting power, targetErrorTicks=%.3f, errorTolerance=%.3f, currentTargetTicks=%.3f" +
+                "Setting power, %s targetErrorTicks=%.3f, errorTolerance=%.3f, currentTargetTicks=%.3f" +
                         "currentTicks=%.3f, " +
                         "power=%.3f",
-                targetErrorTicks, ERROR_TOLERANCE_TICKS, currentTargetTicks,
+                name, targetErrorTicks, ERROR_TOLERANCE_TICKS, currentTargetTicks,
                 currentTicks, power));
 
         Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);

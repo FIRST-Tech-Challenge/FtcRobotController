@@ -290,9 +290,9 @@ public class RedTeleop extends LinearOpMode {
         double intakeBigPivotPos;
         double intakeSmallPivotPos;
         double intakeSmallSweepPos;
-        double intakeClawPos;
+        double intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
 
-        double outtakeClawPos;
+        double outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
         double outtakePivotPos;
 
 
@@ -317,6 +317,7 @@ public class RedTeleop extends LinearOpMode {
         boolean outtakeOverrideOn;
         boolean specimenHangReadyPressed;
         boolean intakeClawOpenClose;
+        boolean intakeClawOpenCloseWasPressed = false;
         boolean intakeOverrideOn;
         boolean intakeReadyPressed;
         boolean intakeTransferReadyPressed;
@@ -324,6 +325,7 @@ public class RedTeleop extends LinearOpMode {
         boolean intakePressed;
         boolean outtakeTransferReadyPressed;
         boolean outtakeClawOpenClose;
+        boolean outtakeClawOpenCloseWasPressed = false;
         boolean basketReadyPressed;
         boolean specimenDropPressed;
         boolean specimenReadyPressed;
@@ -364,8 +366,6 @@ public class RedTeleop extends LinearOpMode {
             intakeBigPivotPos = intakeClaw.getIntakeBigPivotServo().getCurrentPosition();
             intakeSmallPivotPos = intakeClaw.getIntakeSmallPivotServo().getCurrentPosition();
             intakeSmallSweepPos = intakeClaw.getIntakeSmallSweepServo().getCurrentPosition();
-            intakeClawPos = intakeClaw.getIntakeClawServo().getCurrentPosition();
-            outtakeClawPos = outtake.getOuttakeClaw().getCurrentPosition();
             outtakePivotPos = outtake.getOuttakePivotServo().getCurrentPosition();
 
             //=========DRIVER 1==========
@@ -471,13 +471,21 @@ public class RedTeleop extends LinearOpMode {
             //INTAKE
 
             if(intakeClawOpenClose) {
-                if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
-                    intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
-                    intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
-                } else if (intakeClawPos == IntakeClaw.INTAKE_CLAW_OPEN){
-                    intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
-                    intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
+                intakeClawOpenCloseWasPressed = true;
+            }
+
+            if(!intakeClawOpenClose) {
+                if(intakeClawOpenCloseWasPressed) {
+                    if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
+                        intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+                        intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
+                    } else if (intakeClawPos == IntakeClaw.INTAKE_CLAW_OPEN){
+                        intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+                        intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
+                    }
                 }
+
+                intakeClawOpenCloseWasPressed = false;
             }
 
             if (-intakeStickValue != 0) {
@@ -488,10 +496,10 @@ public class RedTeleop extends LinearOpMode {
                 if (intakeLinkagePos > 0.95) {
                     intakeLinkagePos = 0.95;
                 }
+                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             }
 
             if (-sweepStickValue > 0.5) {
-                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
                 intakeBigSweepPos -= 0.001;
                 intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
             } else if (-sweepStickValue < -0.5) {
@@ -526,8 +534,15 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if(intakeReadyPressed) {
+                if(sampleIntakeReady != null) {
+                    Log.d("teleop", "sample intake ready done: " + sampleIntakeReady.getIsDone());
+                } else {
+                    Log.d("teleop", "sample intake ready null");
+                }
+
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
                     sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, outtake);
+                    Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
                 }
                 sampleIntakeReady.update();
@@ -535,15 +550,22 @@ public class RedTeleop extends LinearOpMode {
 
             if(intakePressed) {
                 if (sampleIntakeAction == null || sampleIntakeAction.getIsDone()){
-                    sampleIntakeAction = new SampleIntakeAction(intakeClaw, outtake);
+                    sampleIntakeAction = new SampleIntakeAction(intakeClaw);
                     sampleIntakeAction.setName("sampleIntakeAction");
                 }
                 sampleIntakeAction.update();
             }
 
             if (intakeTransferReadyPressed){
+                if(intakeTransferReady != null) {
+                    Log.d("teleop", "intake transfer ready done: " + intakeTransferReady.getIsDone());
+                } else {
+                    Log.d("teleop", "intake transfer ready null");
+                }
+
                 if (intakeTransferReady == null || intakeTransferReady.getIsDone()){
                     intakeTransferReady = new IntakeTransferReady(intakeClaw);
+                    Log.d("teleop", "made new intake transfer ready");
                     intakeTransferReady.setName("intakeTransferReady");
                 }
                 intakeTransferReady.update();
@@ -626,12 +648,20 @@ public class RedTeleop extends LinearOpMode {
             }
 
             if(outtakeClawOpenClose) {
-                if(outtakeClawPos == Outtake.OUTTAKE_CLAW_CLOSE) {
-                    outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
-                    outtake.getOuttakeClaw().setPosition(outtakeClawPos);
-                } else if (outtakeClawPos == Outtake.OUTTAKE_CLAW_OPEN){
-                    outtakeClawPos = Outtake.OUTTAKE_CLAW_CLOSE;
-                    outtake.getOuttakeClaw().setPosition(outtakeClawPos);
+                outtakeClawOpenCloseWasPressed = true;
+            }
+
+            if(!outtakeClawOpenClose) {
+                if(outtakeClawOpenCloseWasPressed){
+                    if(outtakeClawPos == Outtake.OUTTAKE_CLAW_CLOSE) {
+                        outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
+                        outtake.getOuttakeClaw().setPosition(outtakeClawPos);
+                    } else if (outtakeClawPos == Outtake.OUTTAKE_CLAW_OPEN){
+                        outtakeClawPos = Outtake.OUTTAKE_CLAW_CLOSE;
+                        outtake.getOuttakeClaw().setPosition(outtakeClawPos);
+                    }
+
+                    outtakeClawOpenCloseWasPressed = false;
                 }
             }
 

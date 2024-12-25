@@ -521,7 +521,7 @@ public class TestActions extends LinearOpMode {
 
             if(intakePressed) {
                 if (sampleIntakeAction == null || sampleIntakeAction.getIsDone()){
-                    sampleIntakeAction = new SampleIntakeAction(intakeClaw, outtake);
+                    sampleIntakeAction = new SampleIntakeAction(intakeClaw);
                     sampleIntakeAction.update();
                 }
             }
