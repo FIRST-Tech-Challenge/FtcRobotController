@@ -286,6 +286,7 @@ public class RedTeleop extends LinearOpMode {
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
+        KGamePad kGamePad1 = new KGamePad(gamepad1);
 
         double intakeLinkagePos;
         double intakeBigSweepPos;
@@ -338,29 +339,31 @@ public class RedTeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // GAMEPAD 1 ASSIGNMENTS ==============================================
-            resetWheelOdomPressed = gamepad1.dpad_up;
-            angleLockPressed = gamepad1.y;
-            hangHooksUpPressed = (gamepad1.right_trigger == 1);
-            hangHooksDownPressed = (gamepad1.left_trigger == 1);
+            resetWheelOdomPressed = kGamePad1.isToggleDpadUp();
+            angleLockPressed = kGamePad1.isToggleButtonY();
+            hangHooksUpPressed = kGamePad1.isRightTriggerPressed();
+
+            hangHooksUpPressed = kGamePad1.isRightTriggerPressed();
+            hangHooksDownPressed = kGamePad1.isLeftTriggerPressed();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
             intakeStickValue = gamepad2.left_stick_y;
             sweepStickValue = gamepad2.left_stick_x;
-            outtakeOverrideOn = (gamepad2.right_trigger > 0.99);
-            specimenHangReadyPressed = gamepad2.b;
-            intakeClawOpenClose = gamepad2.left_bumper;
-            intakeOverrideOn = (gamepad2.left_trigger > 0.99);
+            outtakeOverrideOn = kGamePad2.isRightTriggerPressed();
+            specimenHangReadyPressed = kGamePad2.isToggleButtonB();
+            intakeClawOpenClose = kGamePad2.isToggleLeftBumper();
+            intakeOverrideOn = kGamePad2.isLeftTriggerPressed();
             intakeReadyPressed = kGamePad2.isToggleDpadLeft();
-            intakeTransferReadyPressed = gamepad2.dpad_right;
-            transferPressed = gamepad2.dpad_down;
-            intakePressed = gamepad2.dpad_up;
-            outtakeTransferReadyPressed = gamepad2.x;
-            outtakeClawOpenClose = gamepad2.right_bumper;
+            intakeTransferReadyPressed = kGamePad2.isToggleDpadRight();
+            transferPressed = kGamePad2.isToggleDpadUp();
+            intakePressed = kGamePad2.isToggleDpadDown();
+            outtakeTransferReadyPressed = kGamePad2.isToggleButtonX();
+            outtakeClawOpenClose = kGamePad2.isToggleRightBumper();
             outtakePivotStickValue = gamepad2.right_stick_x;
-            basketReadyPressed = gamepad2.y;
-            specimenDropPressed = gamepad2.a;
-            specimenReadyPressed = gamepad2.b;
+            basketReadyPressed = kGamePad2.isToggleButtonY();
+            specimenDropPressed = kGamePad2.isToggleButtonA();
+            specimenReadyPressed = kGamePad2.isToggleButtonB();
 
             //RESET POSITIONS TO CURRENT
             intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getCurrentPosition();

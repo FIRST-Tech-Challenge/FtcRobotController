@@ -146,7 +146,12 @@ public class MoveOuttakeLSAction extends Action {
             power = 0;
              if (globalLinearSlideMaintainTicks < 0) {
                 power = 0;
-            }
+            } else if (globalLinearSlideMaintainTicks > MAX_RANGE_LS_TICKS/2){
+                 power = 0.15;
+             } else if (globalLinearSlideMaintainTicks > MAX_RANGE_LS_TICKS*(2/3)){
+                 power = 0.3;
+             }
+
         }
 
         Log.d("Outtake_LS", String.format(
