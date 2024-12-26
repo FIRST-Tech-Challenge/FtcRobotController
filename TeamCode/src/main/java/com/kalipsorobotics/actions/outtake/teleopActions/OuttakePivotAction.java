@@ -11,13 +11,7 @@ public class OuttakePivotAction {
 
     final private Outtake outtake;
     private final KServo outtakePivotServo;
-    public static double OUTTAKE_PIVOT_IN_POS = 1.0;
-    public static double OUTTAKE_PIVOT_OUT_POS = 0.05;
-    public static double OUTTAKE_PIVOT_HALF_POS = 0.5;
 
-    final static public double OUTTAKE_PIVOT_BASKET_POS = 0.2;
-
-    public static double OUTTAKE_PIVOT_WALL_POS = 0.17;
 
 
     private boolean isIn = true;
@@ -32,18 +26,17 @@ public class OuttakePivotAction {
     }
 
     public void moveIn() {
-        setPosition(OUTTAKE_PIVOT_HALF_POS);
-        setPosition(OUTTAKE_PIVOT_IN_POS);
+        setPosition(Outtake.OUTTAKE_PIVOT_DOWN_POS);
         isIn = true;
     }
 
     public void moveOut() {
-        setPosition(OUTTAKE_PIVOT_OUT_POS);
+        setPosition(Outtake.OUTTAKE_PIVOT_BASKET_POS);
         isIn = false;
     }
 
     public void moveWall() {
-        setPosition(OUTTAKE_PIVOT_WALL_POS);
+        setPosition(Outtake.OUTTAKE_PIVOT_DOWN_POS);
         isIn = false;
     }
 

@@ -232,6 +232,7 @@ import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
+import com.kalipsorobotics.actions.outtake.SpecimanHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
@@ -276,6 +277,7 @@ public class RedTeleop extends LinearOpMode {
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
+        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 0);
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         AutoHangAction autoHangAction = new AutoHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
@@ -285,6 +287,7 @@ public class RedTeleop extends LinearOpMode {
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
+        SpecimanHang specimanHang = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
 
@@ -330,10 +333,11 @@ public class RedTeleop extends LinearOpMode {
         boolean outtakeClawOpenClose;
         boolean outtakeClawOpenCloseWasPressed = false;
         boolean basketReadyPressed;
-        boolean specimenDropPressed;
+        boolean specimenHangPressed;
         boolean specimenReadyPressed;
 
         intakeClaw.init();
+        outtake.init();
 
         waitForStart();
 
@@ -362,7 +366,7 @@ public class RedTeleop extends LinearOpMode {
             outtakeClawOpenClose = kGamePad2.isToggleRightBumper();
             outtakePivotStickValue = gamepad2.right_stick_x;
             basketReadyPressed = kGamePad2.isToggleButtonY();
-            specimenDropPressed = kGamePad2.isToggleButtonA();
+            specimenHangPressed = kGamePad2.isToggleButtonA();
             specimenReadyPressed = kGamePad2.isToggleButtonB();
 
             //RESET POSITIONS TO CURRENT
@@ -651,8 +655,15 @@ public class RedTeleop extends LinearOpMode {
                 specimenHangReady.updateCheckDone();
             }
 
-            if(specimenDropPressed) {
-                //todo
+            if(specimenHangPressed) {
+                if(specimanHang == null || specimanHang.getIsDone()){
+                   specimanHang = new SpecimanHang(outtake);
+                   specimanHang.setName("specimanHang");
+                }
+            }
+
+            if(specimanHang != null){
+                specimanHang.updateCheckDone();
             }
 
             if(basketReadyPressed) {
@@ -697,6 +708,7 @@ public class RedTeleop extends LinearOpMode {
             if (outtakePivotStickValue != 0) {
                 outtakePivotPos += 0.01 * outtakePivotStickValue;
                 outtake.getOuttakePivotServo().setPosition(outtakePivotPos);
+                Log.d("outtake", " this is outtake pivot" + outtakePivotPos);
             }
 
 
@@ -705,7 +717,7 @@ public class RedTeleop extends LinearOpMode {
             if (gamepad1.dpad_right) {
                 cameraCapture.capture();
             }
-
+            moveOuttakeLSAction.update();
             wheelOdometry.updatePosition();
 
         }

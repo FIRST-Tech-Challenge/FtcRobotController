@@ -78,11 +78,11 @@ public class MoveOuttakeLSAction extends Action {
         double lowestPower = 0.1;
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(200)) {
-            lowestPower = 0.3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
+            lowestPower = 0.15                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {
-            lowestPower = 0.4;
+            lowestPower = 0.2;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
@@ -113,10 +113,10 @@ public class MoveOuttakeLSAction extends Action {
         double currentTargetTicks;
         this.currentTicks = linearSlide1.getCurrentPosition();
 
+        Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
 
         if (isDone) {
             currentTargetTicks = globalLinearSlideMaintainTicks;
-            Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
         } else {
             currentTargetTicks = this.targetTicks;
         }
@@ -144,13 +144,15 @@ public class MoveOuttakeLSAction extends Action {
 
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
-             if (globalLinearSlideMaintainTicks < 0) {
-                power = 0;
-            } else if (globalLinearSlideMaintainTicks > MAX_RANGE_LS_TICKS/2){
-                 power = 0.15;
-             } else if (globalLinearSlideMaintainTicks > MAX_RANGE_LS_TICKS*(2/3)){
+             if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.8)) {
                  power = 0.3;
-             }
+            } else if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.5)){
+                 power = 0.15;
+             } else if (globalLinearSlideMaintainTicks > 0){
+                 power = 0.1;
+             } else {
+                power = 0;
+            }
 
         }
 
@@ -167,7 +169,7 @@ public class MoveOuttakeLSAction extends Action {
             Log.d("Outtake_LS", "power overrided to " + power);
         }
         //brake();
-
+        Log.d("Outtake_LS", "power set to " + power);
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
     }

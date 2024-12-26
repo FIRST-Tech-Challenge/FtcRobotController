@@ -30,10 +30,17 @@ public class Outtake {
 
     public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.35;         //increase to go pivot up, decrease to pivot down
 
+    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_READY_POS = 1;   //decrease to go towards robot, increase to do away from robot
+//    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
+
+    public static final double LS_SPECIMAN_HANG_READY_MM = 360;
     public static final double LS_DOWN_POS = 0;
+    public static final double LS_SPECIMAN_CLIP_POS = 240;
 
     public static final double OUTTAKE_CLAW_CLOSE = 0.84;
     public static final double OUTTAKE_CLAW_OPEN = 0.5;
+
+
 
     public Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
@@ -68,8 +75,8 @@ public class Outtake {
     }
 
     public void init() {
-        getOuttakeClaw().setPosition(OUTTAKE_CLAW_OPEN);
-        getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_DOWN_POS);
+        getOuttakeClaw().setPosition(OUTTAKE_CLAW_CLOSE);
+        getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_TRANSFER_READY_POS);
     }
 
     public DcMotor getLinearSlide1() {

@@ -127,7 +127,7 @@ public class RedAutoBasket extends LinearOpMode {
         redAutoBasket.addAction(basketReady1);
 
         KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_BASKET_POS);
+                Outtake.OUTTAKE_PIVOT_BASKET_POS);
         outtakePivotActionOut1.setName("outtakePivotActionOut1");
         outtakePivotActionOut1.setDependentActions(basketReady1);
         redAutoBasket.addAction(outtakePivotActionOut1);
@@ -185,7 +185,7 @@ public class RedAutoBasket extends LinearOpMode {
         redAutoBasket.addAction(basketReady2);
 
         KServoAutoAction outtakePivotActionOut2 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_BASKET_POS);
+                Outtake.OUTTAKE_PIVOT_BASKET_POS);
         outtakePivotActionOut2.setName("outtakePivotActionOut2");
         outtakePivotActionOut2.setDependentActions(basketReady2);
         redAutoBasket.addAction(outtakePivotActionOut2);
@@ -242,7 +242,7 @@ public class RedAutoBasket extends LinearOpMode {
         redAutoBasket.addAction(basketReady3);
 
         KServoAutoAction outtakePivotActionOut3 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_BASKET_POS);
+                Outtake.OUTTAKE_PIVOT_BASKET_POS);
         outtakePivotActionOut3.setName("outtakePivotActionOut3");
         outtakePivotActionOut3.setDependentActions(basketReady3);
         redAutoBasket.addAction(outtakePivotActionOut3);

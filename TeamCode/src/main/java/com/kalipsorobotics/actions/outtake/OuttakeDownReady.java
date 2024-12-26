@@ -4,7 +4,6 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.modules.Outtake;
 
 public class OuttakeDownReady extends KActionSet {
@@ -16,7 +15,7 @@ public class OuttakeDownReady extends KActionSet {
         this.addAction(wait100);
 
         KServoAutoAction outtakePivotActionClose = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_IN_POS);
+                Outtake.OUTTAKE_PIVOT_SPECIMAN_HANG_READY_POS);
         outtakePivotActionClose.setName("outtakePivotActionCloseOuttakeReady");
         this.addAction(outtakePivotActionClose);
 

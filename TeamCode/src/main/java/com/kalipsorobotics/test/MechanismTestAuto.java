@@ -32,7 +32,7 @@ public class MechanismTestAuto extends LinearOpMode {
         );
 
         KServoAutoAction outtakePivotActionIn = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                OuttakePivotAction.OUTTAKE_PIVOT_OUT_POS);
+                Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
 
         KActionSet redAutoSpecimen = new KActionSet();
 
