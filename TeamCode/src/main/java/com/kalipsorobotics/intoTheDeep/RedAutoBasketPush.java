@@ -19,6 +19,7 @@ import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
+import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -34,7 +35,7 @@ public class RedAutoBasketPush extends LinearOpMode {
         KActionSet redAutoBasket = new KActionSet();
         DriveTrain driveTrain = new DriveTrain(opModeUtilities);
         Outtake outtake = new Outtake(opModeUtilities);
-        Intake intake = new Intake(opModeUtilities);
+        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
         IMUModule imuModule = new IMUModule(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
@@ -44,14 +45,10 @@ public class RedAutoBasketPush extends LinearOpMode {
 //                MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
 
-        MoveIntakeLSAction.setGlobalLinearSlideMaintainTicks(-10);
-        MoveIntakeLSAction maintainIntakeLS= new MoveIntakeLSAction(intake, -10);
-        maintainIntakeLS.setName("maintainIntakeLS");
-
         int basketOuttakeXPos = -175;
         int basketOuttakeYPos = 1075;
 
-        InitAuto initAuto = new InitAuto(intake, outtake);
+        InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
 

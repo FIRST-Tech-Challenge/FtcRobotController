@@ -19,7 +19,7 @@ public class SpecimenHangReady extends KActionSet {
 //        this.addAction(outtakePivotActionOpenHalf);
 
         KServoAutoAction outtakePivotActionOpen = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                Outtake.OUTTAKE_PIVOT_SPECIMAN_HANG_READY_POS);
+                Outtake.OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS);
         outtakePivotActionOpen.setName("outtakePivotActionOpen");
         this.addAction(outtakePivotActionOpen);
         //outtakePivotActionOpen.setDependantActions(outtakePivotActionOpenHalf);

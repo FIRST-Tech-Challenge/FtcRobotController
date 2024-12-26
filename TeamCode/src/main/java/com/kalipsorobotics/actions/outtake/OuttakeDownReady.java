@@ -15,7 +15,7 @@ public class OuttakeDownReady extends KActionSet {
         this.addAction(wait100);
 
         KServoAutoAction outtakePivotActionClose = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                Outtake.OUTTAKE_PIVOT_SPECIMAN_HANG_READY_POS);
+                Outtake.OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS);
         outtakePivotActionClose.setName("outtakePivotActionCloseOuttakeReady");
         this.addAction(outtakePivotActionClose);
 
@@ -24,7 +24,7 @@ public class OuttakeDownReady extends KActionSet {
         outtakeClawActionOpen.setName("outtakeClawActionOpenOuttakeReady");
         this.addAction(outtakeClawActionOpen);
 
-        MoveOuttakeLSAction lowerSlides = new MoveOuttakeLSAction(outtake, 100);
+        MoveOuttakeLSAction lowerSlides = new MoveOuttakeLSAction(outtake, 0);
         lowerSlides.setName("lowerSlidesOuttakeReady");
         this.addAction(lowerSlides);
     }

@@ -7,7 +7,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class SampleIntakeReady extends KActionSet{
 
-        public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, Outtake outtake) {
+        public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake) {
             KServoAutoAction moveIntakeLSOut = new KServoAutoAction(intake.getIntakeLinkageServo(), intakeLinkageServoPos);
             moveIntakeLSOut.setName("moveIntakeLSOut");
             this.addAction(moveIntakeLSOut);

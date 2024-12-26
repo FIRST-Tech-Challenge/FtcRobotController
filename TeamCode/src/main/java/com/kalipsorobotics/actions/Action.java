@@ -84,7 +84,7 @@ public abstract class Action {
     public abstract boolean checkDoneCondition();
 
     //motor power, etc
-    public void update() {
+    protected void update() {
         if (isDone) {
             Log.d("in super", "action done");
         }

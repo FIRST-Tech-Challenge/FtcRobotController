@@ -208,43 +208,31 @@ public class Teleop extends LinearOpMode {
 
 package com.kalipsorobotics.intoTheDeep;
 
-import static com.kalipsorobotics.math.CalculateTickPer.degToTicksIntakeLS;
 import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
 import com.kalipsorobotics.actions.AutoHangAction;
 import com.kalipsorobotics.actions.TransferAction;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
-import com.kalipsorobotics.actions.hang.HangHookAction;
-import com.kalipsorobotics.actions.intake.IntakeReadyAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
-import com.kalipsorobotics.actions.intake.IntakeDoorAction;
-import com.kalipsorobotics.actions.intake.IntakeNoodleAction;
-import com.kalipsorobotics.actions.intake.IntakePivotAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
-import com.kalipsorobotics.actions.outtake.SpecimanHang;
+import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePigeonAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
-import com.kalipsorobotics.modules.ColorDetector;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
@@ -253,7 +241,6 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
 public class RedTeleop extends LinearOpMode {
@@ -287,7 +274,7 @@ public class RedTeleop extends LinearOpMode {
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
-        SpecimanHang specimanHang = null;
+        SpecimenHang specimenHang = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
 
@@ -552,7 +539,7 @@ public class RedTeleop extends LinearOpMode {
                 }
 
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
-                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, outtake);
+                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
                     Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
                 }
@@ -651,19 +638,20 @@ public class RedTeleop extends LinearOpMode {
                 }
 
             }
+
             if (specimenHangReady != null){
                 specimenHangReady.updateCheckDone();
             }
 
             if(specimenHangPressed) {
-                if(specimanHang == null || specimanHang.getIsDone()){
-                   specimanHang = new SpecimanHang(outtake);
-                   specimanHang.setName("specimanHang");
+                if(specimenHang == null || specimenHang.getIsDone()){
+                   specimenHang = new SpecimenHang(outtake);
+                   specimenHang.setName("specimanHang");
                 }
             }
 
-            if(specimanHang != null){
-                specimanHang.updateCheckDone();
+            if(specimenHang != null){
+                specimenHang.updateCheckDone();
             }
 
             if(basketReadyPressed) {

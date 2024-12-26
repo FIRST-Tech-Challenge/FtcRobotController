@@ -514,7 +514,7 @@ public class TestActions extends LinearOpMode {
 
             if(intakeReadyPressed) {
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
-                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, outtake);
+                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
                     sampleIntakeReady.update();
                 }
             }
