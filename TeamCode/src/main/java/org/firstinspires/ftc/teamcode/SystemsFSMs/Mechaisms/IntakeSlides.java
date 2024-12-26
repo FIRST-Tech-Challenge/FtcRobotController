@@ -80,4 +80,8 @@ public class IntakeSlides {
         return currentCM;
     }
 
+    public double getTargetCM() {
+        return targetCM;
+    }
+
 }

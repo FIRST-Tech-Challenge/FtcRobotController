@@ -51,7 +51,7 @@ public class Hardware   {
 
     public AnalogInput intakePivotEnc;
 
-    public RevColorSensorV3 intakeCS;
+    public GobildaBlindToucherV69 intakeCS;
 
 
 
@@ -127,7 +127,7 @@ public class Hardware   {
 
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");
 
-        intakeCS = hardwareMap.get(RevColorSensorV3.class, "CH-I2C-1-0");
+        intakeCS = hardwareMap.get(GobildaBlindToucherV69.class, "CH-I2C-1-0");
     }
 
     public void clearCache() {

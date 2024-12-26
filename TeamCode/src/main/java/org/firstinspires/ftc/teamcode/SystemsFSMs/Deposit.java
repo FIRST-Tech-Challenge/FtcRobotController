@@ -24,10 +24,14 @@ public class Deposit {
         specIntake,
         specDepositReady,
         specDepositClipped,
-        sampleDeposit;
+        sampleDeposit,
+        intermediate;
     }
 
     private TargetState targetState;
+    private TargetState currentState;
+
+    private boolean transfer = false;
 
     public Deposit(Hardware hardware, GamepadEx controller, Logger logger){
         this.logger = logger;
@@ -43,6 +47,8 @@ public class Deposit {
         claw.update();
         arm.update();
         slides.update();
+
+        findState();
     }
 
     public void command() {
@@ -136,6 +142,10 @@ public class Deposit {
 
         }
 
+        if (transfer) {
+            claw.setTargetPosition(DepositConstants.clawClosedPos);
+        }
+
 
 
         claw.command();
@@ -147,6 +157,7 @@ public class Deposit {
         logger.log("-Deposit-", "", Logger.LogLevels.production);
 
         logger.log("Target State", targetState, Logger.LogLevels.production);
+        logger.log("Current State", currentState, Logger.LogLevels.production);
 
         claw.log();
         arm.log();
@@ -157,8 +168,36 @@ public class Deposit {
         targetState = state;
     }
 
+    public TargetState getCurrentState() {
+        return currentState;
+    }
+
     public TargetState getTargetState() {
         return targetState;
+    }
+
+    public void setTransfer(boolean value) {
+        transfer = value;
+    }
+
+    private void findState() {
+
+        if (arm.getStatus() == Arm.Status.TransferPos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slideTransferPos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slideTransferPos) {
+            currentState = TargetState.transfer;
+        } else if (arm.getStatus() == Arm.Status.TransferPos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slidePreTransferPos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slidePreTransferPos) {
+            currentState = TargetState.preTransfer;
+        } else if (arm.getStatus() == Arm.Status.SpecIntakePos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slideSpecIntakePos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slideSpecIntakePos) {
+            currentState = TargetState.specIntake;
+        } else if (arm.getStatus() == Arm.Status.SpecDepositPos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slideSpecDepositReadyPos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slideSpecDepositReadyPos) {
+            currentState = TargetState.specDepositReady;
+        } else if (arm.getStatus() == Arm.Status.SpecDepositPos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slideSpecClippedPos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slideSpecClippedPos) {
+            currentState = TargetState.specDepositClipped;
+        } else if (arm.getStatus() == Arm.Status.SampleDepositPos && PosChecker.atLinearPos(slides.getPosition(), DepositConstants.slideSampleDepositPos, DepositConstants.slidePositionTolerance) && slides.getTargetCM() == DepositConstants.slideSampleDepositPos) {
+            currentState = TargetState.sampleDeposit;
+        } else {
+            currentState =TargetState.intermediate;
+        }
+
     }
 
 }

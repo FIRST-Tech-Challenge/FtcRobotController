@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.Hardware.GobildaBlindToucherV69;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Hardware.Util.ColorUtils;
 import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
@@ -23,7 +24,7 @@ public class SampleDetector {
     private int bufferCounter = 0;
     private double[] buffer = new double[5];
 
-    private RevColorSensorV3 colorSensor;
+    private GobildaBlindToucherV69 colorSensor;
 
     public enum Status {
         sampleDetected,
@@ -49,11 +50,6 @@ public class SampleDetector {
         distance  = colorSensor.getDistance(DistanceUnit.MM);
         buffer[bufferCounter % 5] = distance;
         bufferCounter += 1;
-
-        r = colorSensor.red();
-        g = colorSensor.green();
-        b = colorSensor.blue();
-        a = colorSensor.alpha();
 
         findStatus();
     }
@@ -121,6 +117,13 @@ public class SampleDetector {
     }
 
     private void detectColor()  {
+
+        colorSensor.updateColors();
+
+        r = colorSensor.red();
+        g = colorSensor.green();
+        b = colorSensor.blue();
+        a = colorSensor.alpha();
         double r1 = ColorUtils.Clamp(r,0 ,IntakeConstants.maxR);
         double g1 = ColorUtils.Clamp(g,0 ,IntakeConstants.maxG);
         double b1 = ColorUtils.Clamp(b,0 ,IntakeConstants.maxB);

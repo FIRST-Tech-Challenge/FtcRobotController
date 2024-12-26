@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.util.Timing;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
+import org.firstinspires.ftc.teamcode.Hardware.Util.PosChecker;
 import org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms.Bucket;
 import org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms.SampleDetector;
@@ -24,18 +25,22 @@ public class Intake {
     public enum SystemState {
         Stowed,
         Deployed,
-        Intaking,
-        waiting;
+        Intaking;
     }
 
     private ArrayList<SampleDetector.SampleColor> acceptableColors =  new ArrayList<>();
 
-    private SystemState targetSystemState = SystemState.waiting;
+    private SystemState targetSystemState;
+    private SystemState currentSystemState;
 
     private double feedRate = 0.00;
     private double fedPosition = 0.00;
     private double maxFedPosition = IntakeConstants.maxExtensionPosition - IntakeConstants.readyPosition;
     private double minFedPosition = IntakeConstants.minIntakePosition - IntakeConstants.readyPosition;
+
+    public boolean hasSample = false;
+
+    private SampleDetector.SampleColor lastSeenColor;
 
     private Timing.Timer timer = new Timing.Timer(999999, TimeUnit.MILLISECONDS);
     private double recordedTime = 0.00;
@@ -53,6 +58,7 @@ public class Intake {
         detector.update();
         slides.update();
 
+        findsState();
         recordedTime = timer.elapsedTime();
         timer.start();
     }
@@ -83,6 +89,7 @@ public class Intake {
             case Deployed:
 
                 feed();
+                hasSample = false;
                 bucket.setBucketPosition(IntakeConstants.bucketUpPosition);
                 bucket.setGatePosition(IntakeConstants.gateBlockedPosition);
                 slides.setTargetCM(IntakeConstants.readyPosition + fedPosition);
@@ -116,6 +123,8 @@ public class Intake {
 
                     if (acceptedSample) {
                         targetSystemState = SystemState.Stowed;
+                        lastSeenColor = detector.getSampleColor();
+                        hasSample = true;
                     } else {
                         bucket.setGatePosition(IntakeConstants.gateOpenPosition);
                     }
@@ -124,7 +133,6 @@ public class Intake {
                 } else {
                     bucket.setGatePosition(IntakeConstants.gateBlockedPosition);
                 }
-                // Need to add command for gate position based on sample detection
 
                 break;
 
@@ -139,8 +147,10 @@ public class Intake {
         logger.log("-Intake-", "", Logger.LogLevels.production);
 
         logger.log("Target System State", targetSystemState, Logger.LogLevels.production);
+        logger.log("Current State", currentSystemState, Logger.LogLevels.production);
 
         logger.log("Accepetable Colors", acceptableColors.toString(), Logger.LogLevels.debug);
+        logger.log("Has Sample", hasSample, Logger.LogLevels.debug);
 
         logger.log("Feedrate", feedRate, Logger.LogLevels.developer);
         logger.log("Fed Position", fedPosition, Logger.LogLevels.developer);
@@ -163,10 +173,30 @@ public class Intake {
         acceptableColors = colors;
     }
 
+    public SystemState getCurrentSystemState() {
+        return currentSystemState;
+    }
+
+    public SampleDetector.SampleColor getLastSeenColor() {
+        return lastSeenColor;
+    }
+
     private void feed() {
         feedRate = IntakeConstants.maxFeedRate * -controller.getRightY();
         fedPosition += feedRate * ( recordedTime / 1000.0 );
         fedPosition = Math.min(Math.max(fedPosition, minFedPosition), maxFedPosition);
+    }
+
+    private void findsState() {
+
+        if (PosChecker.atLinearPos(slides.getPosition(), 0.00, IntakeConstants.intakeSlidePositionTolerance) && targetSystemState == SystemState.Stowed) {
+            currentSystemState = SystemState.Stowed;
+        } else if (bucket.getStatus() == Bucket.Status.up) {
+            currentSystemState = SystemState.Deployed;
+        } else {
+            currentSystemState = SystemState.Intaking;
+        }
+
     }
 
 
