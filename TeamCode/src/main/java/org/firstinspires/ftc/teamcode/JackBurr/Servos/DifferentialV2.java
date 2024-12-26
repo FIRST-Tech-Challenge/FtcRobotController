@@ -81,7 +81,7 @@ public class DifferentialV2 {
         } else {
             telemetry.addLine("Bottom Left Servo is attempting to go down from " + encoder_pos + " to " + position);
             telemetry.addLine("Bottom Left: " + BOTTOM_LEFT_SERVO_POSITION + " to " + (BOTTOM_LEFT_SERVO_POSITION + 0.1));
-            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(TOP_LEFT_SERVO_POSITION - 0.01);
+            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(BOTTOM_LEFT_SERVO_POSITION - 0.01);
         }
     }
 
