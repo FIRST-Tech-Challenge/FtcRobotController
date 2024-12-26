@@ -29,15 +29,15 @@ public class Arm {
     private static final double EXTEND_TOLERANCE = 0.1;   // centimeters or appropriate unit
 
     // Encoder Counts Per Revolution (CPR)
-    private static final double ANGLE_CPR = 28 * 70 * (44.0 / 16); // Arm angle motor
-    private static final double EXTEND_CPR = 28 * 19.2;            // Arm extension motor
+    private static final double ANGLE_CPR = 537.7* 70*(8/3); // Arm angle motor
+    private static final double EXTEND_CPR = 19.2 * 0.9166666667;// Arm extension motor
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
-    private static final double ANGLE_OFFSET = -26;  // degrees, initial offset
+    private static final double ANGLE_OFFSET = -9;  // degrees, initial offset
 
     // Feedforward
-    private static final double KF = 0.01;  // feedforward constant
+    private static final double KF = 0;  // feedforward constant
 
     // Current Limit (if applicable; set as needed)
     private static final double AMP_LIMIT = 0;  // TODO: Set correct value if using current-limiting logic
@@ -54,8 +54,8 @@ public class Arm {
     // ---------------------------------------------------------------------------------------------
     // PID Controllers
     // ---------------------------------------------------------------------------------------------
-    private final PIDFController anglePID = new PIDFController(0.03, 0, 0, 0);
-    private final PIDFController extendPID = new PIDFController(0.03, 0, 0, 0);
+    private final PIDFController anglePID = new PIDFController(0.1, 0, 0, 0);
+    private final PIDFController extendPID = new PIDFController(0.1, 0, 0, 0);
 
     // ---------------------------------------------------------------------------------------------
     // State Variables
@@ -117,8 +117,8 @@ public class Arm {
      */
     public void init() {
         // Set motor directions
-        angleLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        angleRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        angleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
         extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         extendRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -186,6 +186,14 @@ public class Arm {
                 "Extend Encoder Reset", "Success");
     }
 
+    public double getLeftAngle() {
+        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
+    }
+
+    public double getRightAngle() {
+        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition())+ ANGLE_OFFSET;
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Angle Functions
     // ---------------------------------------------------------------------------------------------
@@ -195,9 +203,9 @@ public class Arm {
      * @return the arm angle in degrees (average of both motors)
      */
     public double getAngle() {
-        double leftAngle = MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
-        double rightAngle = MathUtil.convertTicksToDegrees(ANGLE_CPR, angleRight.getCurrentPosition()) + ANGLE_OFFSET;
-        double angle = (leftAngle + rightAngle) / 2;
+        double rightAngle = getLeftAngle();
+        double leftAngle = getRightAngle();
+        double angle = (getLeftAngle() + rightAngle) / 2;
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Get Angle (Left)", leftAngle);
@@ -238,18 +246,23 @@ public class Arm {
 
     // ---------------------------------------------------------------------------------------------
     // Extension Functions
-    // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------4
+    public double getLeftExtention(){
+        return MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendLeft.getCurrentPosition());
+    }
+    public double getRightExtention(){
+        return MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendRight.getCurrentPosition());
+    }
     /**
+     *
      * Calculates the current extension length by reading both extension encoders.
      *
      * @return the average extension in centimeters (or relevant unit)
      */
     public double getExtend() {
-        double leftExtend = MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM,
-                extendLeft.getCurrentPosition());
-        double rightExtend = MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM,
-                extendRight.getCurrentPosition());
-        double extend = (leftExtend + rightExtend) / 2;
+        double leftExtend = getLeftExtention();
+        double rightExtend = getRightExtention();
+        double extend = (leftExtend + rightExtend)/2;
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Get Extend (Left)", leftExtend);
