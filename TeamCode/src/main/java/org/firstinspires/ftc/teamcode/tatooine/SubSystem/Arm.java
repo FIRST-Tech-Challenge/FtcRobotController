@@ -117,8 +117,8 @@ public class Arm {
      */
     public void init() {
         // Set motor directions
-        angleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        angleLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        angleRight.setDirection(DcMotorSimple.Direction.FORWARD);
         extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         extendRight.setDirection(DcMotorSimple.Direction.FORWARD);
 

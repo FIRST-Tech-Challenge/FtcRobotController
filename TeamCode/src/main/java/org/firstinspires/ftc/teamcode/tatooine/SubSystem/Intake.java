@@ -98,7 +98,7 @@ public class Intake {
      */
     public void init() {
         // Adjust directions
-        intakeLeft.setDirection(CRServo.Direction.REVERSE);
+        intakeRight.setDirection(CRServo.Direction.REVERSE);
         // intakeRight.setDirection(CRServo.Direction.FORWARD); // default (no need to set if it's forward)
 
         DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Initialization", "Completed");
@@ -114,8 +114,8 @@ public class Intake {
      */
     public void setPowerFun(double power) {
         this.power = power;
-        intakeLeft.setPower(power);
         intakeRight.setPower(power);
+        intakeLeft.setPower(power);
 
         DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "Set Power Fun", power);
     }
