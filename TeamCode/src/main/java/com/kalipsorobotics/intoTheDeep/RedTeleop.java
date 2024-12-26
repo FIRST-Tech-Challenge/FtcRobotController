@@ -288,15 +288,15 @@ public class RedTeleop extends LinearOpMode {
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
 
-        double intakeLinkagePos;
-        double intakeBigSweepPos;
-        double intakeBigPivotPos;
-        double intakeSmallPivotPos;
-        double intakeSmallSweepPos;
+        double intakeLinkagePos = IntakeClaw.INTAKE_LINKAGE_IN_POS;
+        double intakeBigSweepPos = 0.5;
+        double intakeBigPivotPos = IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS;
+        double intakeSmallPivotPos = IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS;
+        double intakeSmallSweepPos = IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS;
         double intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
 
         double outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
-        double outtakePivotPos;
+        double outtakePivotPos = 0;
 
 
         //CHANGE ACCORDING TO ALLIANCE
@@ -366,12 +366,12 @@ public class RedTeleop extends LinearOpMode {
             specimenReadyPressed = kGamePad2.isToggleButtonB();
 
             //RESET POSITIONS TO CURRENT
-            intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getCurrentPosition();
-            intakeBigSweepPos = intakeClaw.getIntakeBigSweepServo().getCurrentPosition();
-            intakeBigPivotPos = intakeClaw.getIntakeBigPivotServo().getCurrentPosition();
-            intakeSmallPivotPos = intakeClaw.getIntakeSmallPivotServo().getCurrentPosition();
-            intakeSmallSweepPos = intakeClaw.getIntakeSmallSweepServo().getCurrentPosition();
-            outtakePivotPos = outtake.getOuttakePivotServo().getCurrentPosition();
+            intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getServo().getPosition();
+            intakeBigSweepPos = intakeClaw.getIntakeBigSweepServo().getServo().getPosition();
+            intakeBigPivotPos = intakeClaw.getIntakeBigPivotServo().getServo().getPosition();
+            intakeSmallPivotPos = intakeClaw.getIntakeSmallPivotServo().getServo().getPosition();
+            intakeSmallSweepPos = intakeClaw.getIntakeSmallSweepServo().getServo().getPosition();
+            outtakePivotPos = outtake.getOuttakePivotServo().getServo().getPosition();
 
             //=========DRIVER 1==========
             driveAction.move(gamepad1);
@@ -504,11 +504,11 @@ public class RedTeleop extends LinearOpMode {
                 intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             }
 
-            if (-sweepStickValue > 0.5) {
-                intakeBigSweepPos -= 0.001;
+            if (-sweepStickValue > 0.5 && intakeOverrideOn) {
+                intakeBigSweepPos -= 0.005;
                 intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
-            } else if (-sweepStickValue < -0.5) {
-                intakeBigSweepPos += 0.001;
+            } else if (-sweepStickValue < -0.5 && intakeOverrideOn) {
+                intakeBigSweepPos += 0.005;
                 intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
             }
 
@@ -530,12 +530,14 @@ public class RedTeleop extends LinearOpMode {
 //                intakeSmallPivotPos = 0;
 //            }
 
-            if ((-sweepStickValue > 0.5) && intakeOverrideOn) {
-                intakeSmallSweepPos -= 0.001;
+            if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
+                intakeSmallSweepPos += 0.005;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
-            } else if ((-sweepStickValue < -0.5) && intakeOverrideOn) {
-                intakeSmallSweepPos += 0.001;
+                Log.d("sweeping",  "" + intakeSmallSweepPos);
+            } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
+                intakeSmallSweepPos -= 0.005;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+                Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
 
             if(intakeReadyPressed) {
