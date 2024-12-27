@@ -28,7 +28,7 @@ public class Outtake {
     public static final double OUTTAKE_PIVOT_BASKET_POS = 0.89;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
-    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.35;         //increase to go pivot up, decrease to pivot down
+    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.38;         //increase to go pivot up, decrease to pivot down
 
     public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;   //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot

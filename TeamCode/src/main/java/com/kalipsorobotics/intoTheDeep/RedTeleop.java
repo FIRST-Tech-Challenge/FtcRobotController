@@ -708,6 +708,11 @@ public class RedTeleop extends LinearOpMode {
             moveOuttakeLSAction.update();
             wheelOdometry.updatePosition();
 
+            telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());
+            telemetry.addData("big sweep pos: ", intakeBigSweepPos);
+            telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
+            telemetry.update();
+
         }
     }
 

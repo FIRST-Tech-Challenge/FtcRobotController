@@ -64,7 +64,7 @@ public class RedAutoBasket extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-725, -350, 0);
+        moveToSpecimenBar.addPoint(-720, -350, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoBasket.addAction(moveToSpecimenBar);
 
@@ -111,7 +111,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample1.setName("moveToSample1");
         moveToSample1.setDependentActions(outtakeTransferReady);
         //bar to sample 1
-        moveToSample1.addPoint(-640, 845, 180);
+        moveToSample1.addPoint(-645, 845, 180);
         redAutoBasket.addAction(moveToSample1);
 
         SampleIntakeReady sampleIntakeReady1 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -188,7 +188,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(-640, 1100, 180);
+        moveToSample2.addPoint(-645, 1100, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -260,15 +260,45 @@ public class RedAutoBasket extends LinearOpMode {
         outtakeTransferReady2.setName("outtakeTransferReady2");
         outtakeTransferReady2.setDependentActions(moveOutBasket2);
         redAutoBasket.addAction(outtakeTransferReady2);
-//
-//        PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
-//        moveToSample3.setName("moveToSample3");
-//        moveToSample3.setDependentActions(outtakeDownReady2);
-//        //move basket to sample 3
-//        moveToSample3.addPoint(-620, 950, 180);
-//        redAutoBasket.addAction(moveToSample3);
-//
-//        //TODO INTAKE ACTION
+
+        PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToSample3.setName("moveToSample3");
+        moveToSample3.setDependentActions(moveOutBasket2);
+        //move basket to sample 2
+        moveToSample3.addPoint(-380, 1035, 180-26);
+        redAutoBasket.addAction(moveToSample3);
+
+        //TODO INTAKE ACTION
+
+        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
+        sampleIntakeReady3.setName("sampleIntakeReady3");
+        sampleIntakeReady3.setDependentActions(moveToSample3);
+        redAutoBasket.addAction(sampleIntakeReady3);
+
+        KServoAutoAction bigPivotToSample3 = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS);
+        bigPivotToSample3.setName("bigPivotToSample3");
+        bigPivotToSample3.setDependentActions(moveToSample3);
+        redAutoBasket.addAction(bigPivotToSample3);
+
+        KServoAutoAction smallPivotToSample3 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_GRAB_SAMPLE_3_POS);
+        smallPivotToSample3.setName("smallPivotToSample3");
+        smallPivotToSample3.setDependentActions(moveToSample3);
+        redAutoBasket.addAction(smallPivotToSample3);
+
+        SampleIntakeAction sampleIntakeAction3 = new SampleIntakeAction(intakeClaw);
+        sampleIntakeAction3.setName("sampleIntakeAction3");
+        sampleIntakeAction3.setDependentActions(sampleIntakeReady3, moveToSample3, bigPivotToSample3, smallPivotToSample3);
+        redAutoBasket.addAction(sampleIntakeAction3);
+
+        IntakeTransferReady intakeTransferReady3 = new IntakeTransferReady(intakeClaw);
+        intakeTransferReady3.setName("intakeTransferReady3");
+        intakeTransferReady3.setDependentActions(sampleIntakeAction3);
+        redAutoBasket.addAction(intakeTransferReady3);
+
+        TransferAction transferAction3 = new TransferAction(intakeClaw, outtake);
+        transferAction3.setName("transferAction3");
+        transferAction3.setDependentActions(intakeTransferReady3);
+        redAutoBasket.addAction(transferAction3);
 //
 //        IntakeReadyAction intakeReady3 = new IntakeReadyAction(10, intake);
 //        intakeReady3.setName("intakeReady3");
@@ -279,38 +309,39 @@ public class RedAutoBasket extends LinearOpMode {
 //        intake3.setName("intake3");
 //        intake3.setDependentActions(intakeReady3);
 //        redAutoBasket.addAction(intake3);
+
+        PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToBasket3.setName("moveToBasket3");
+        moveToBasket3.setDependentActions(sampleIntakeAction3);
+        //move sample 3 to basket
+        moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
+        redAutoBasket.addAction(moveToBasket3);
+
+        BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
+        basketReady3.setName("basketReady3");
+        basketReady3.setDependentActions(moveToBasket3, transferAction3);
+        redAutoBasket.addAction(basketReady3);
 //
-//        PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
-//        moveToBasket3.setName("moveToBasket3");
-//        moveToBasket3.setDependentActions(intake3);
-//        //move sample 1 to basket
-//        moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
-//        redAutoBasket.addAction(moveToBasket3);
-//
-//        BasketReadyAction basketReady3 = new BasketReadyAction(outtake);
-//        basketReady3.setName("basketReady3");
-//        basketReady3.setDependentActions(moveToBasket3);
-//        redAutoBasket.addAction(basketReady3);
-//
-//        KServoAutoAction outtakePivotActionOut3 = new KServoAutoAction(outtake.getOuttakePivotServo(),
+//        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
 //                Outtake.OUTTAKE_PIVOT_BASKET_POS);
-//        outtakePivotActionOut3.setName("outtakePivotActionOut3");
-//        outtakePivotActionOut3.setDependentActions(basketReady3);
-//        redAutoBasket.addAction(outtakePivotActionOut3);
-//
-//        KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
-//        openClaw3.setName("openClaw3");
-//        openClaw3.setDependentActions(outtakePivotActionOut3);
-//        redAutoBasket.addAction(openClaw3);
-//
-//        OuttakeDownReady outtakeDownReady4 = new OuttakeDownReady(outtake);
-//        outtakeDownReady4.setName("outtakeDownReady4");
-//        outtakeDownReady4.setDependentActions(openClaw3);
-//        redAutoBasket.addAction(outtakeDownReady4);
+//        outtakePivotActionOut1.setName("outtakePivotActionOut1");
+//        outtakePivotActionOut1.setDependentActions(basketReady1);
+//        redAutoBasket.addAction(outtakePivotActionOut1);
+
+        KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
+        openClaw3.setName("openClaw3");
+        openClaw3.setDependentActions(basketReady3);
+        redAutoBasket.addAction(openClaw3);
 
 //        moveToSpecimenBar.addPoint(0, 0, 0);
 //        moveToSpecimenBar.addPoint(-740, -300, 0);
 
+        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
+        park.setName("park");
+        park.setDependentActions(outtakeTransferReady2);
+        park.addPoint(-1525, 610, 0);
+        park.addPoint(-1825, 310, 0);
+        //redAutoBasket.addAction(park);
 
         //bar to sample 1
 

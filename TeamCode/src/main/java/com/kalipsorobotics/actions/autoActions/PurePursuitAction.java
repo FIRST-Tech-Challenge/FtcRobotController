@@ -14,6 +14,7 @@ import com.kalipsorobotics.math.Segment;
 import com.kalipsorobotics.math.Vector;
 
 import com.kalipsorobotics.modules.DriveTrain;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,13 @@ public class PurePursuitAction extends Action {
 
     private double startTimeMS = System.currentTimeMillis();
 
+    private Position lastPosition;
+    private double lastMilli = 0;
+    ElapsedTime timeoutTimer;
+
+    private double xVelocity;
+    private double yVelocity;
+    private double thetaVelocity;
 //    private final double threshold = 10;
 
     /**
@@ -61,6 +69,8 @@ public class PurePursuitAction extends Action {
         this.pidX = new PidNav(1.0/600.0, 0, 0);
         this.pidY = new PidNav(1.0/600.0, 0, 0);
         this.pidAngle = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+
+        this.timeoutTimer = new ElapsedTime();
 
         this.prevFollow = Optional.empty();
 
@@ -124,6 +134,8 @@ public class PurePursuitAction extends Action {
             path = new Path(pathPoints);
             startTimeMS = System.currentTimeMillis();
             hasStarted = true;
+            lastPosition = wheelOdometry.getCurrentPosition();
+            timeoutTimer.reset();
         }
 
 
@@ -156,22 +168,42 @@ public class PurePursuitAction extends Action {
 
         } else {
             if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
-                driveTrain.setPower(0);
-                Log.d("purepursaction_debug_follow", "done");
-                Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
-                isDone = true;
-                if (sleepTimeMS != 0) {
-                    try {
-                        Thread.sleep(sleepTimeMS);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                finishedMoving();
             } else {
                 Log.d("purepursaction_debug_follow",
                         "locking final angle:  " + lastPoint);
                 Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
                 targetPosition(lastPoint);
+            }
+        }
+
+        xVelocity = (Math.abs(lastPosition.getX() - wheelOdometry.getCurrentPosition().getX())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        yVelocity = (Math.abs(lastPosition.getY() - wheelOdometry.getCurrentPosition().getY())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        thetaVelocity = (Math.abs(lastPosition.getTheta() - wheelOdometry.getCurrentPosition().getTheta())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+
+        if(xVelocity < 0.0075 && yVelocity < 0.0075 && thetaVelocity < 0.0075) {
+            if(timeoutTimer.milliseconds() > 2000) {
+                finishedMoving();
+            }
+        } else {
+            timeoutTimer.reset();
+        }
+
+        lastMilli = timeoutTimer.milliseconds();
+        lastPosition = wheelOdometry.getCurrentPosition();
+
+    }
+
+    public void finishedMoving() {
+        driveTrain.setPower(0);
+        Log.d("purepursaction_debug_follow", "timeout");
+        Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
+        isDone = true;
+        if (sleepTimeMS != 0) {
+            try {
+                Thread.sleep(sleepTimeMS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
