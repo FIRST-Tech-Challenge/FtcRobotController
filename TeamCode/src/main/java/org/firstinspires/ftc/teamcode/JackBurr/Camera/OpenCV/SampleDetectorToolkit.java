@@ -1,23 +1,27 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Camera.OpenCV;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SampleDetectorToolkit {
-    public SampleDetectorVisionPortalToolkit visionToolkit = new SampleDetectorVisionPortalToolkit();
+    public HardwareMap hardwareMap;
+    public SampleDetectorVisionPortalToolkit visionToolkit;
+    public SampleDetectorToolkit (HardwareMap hardwareMap){
+        this.hardwareMap = hardwareMap;
+    }
     public void init(){
-        this.visionToolkit = new SampleDetectorVisionPortalToolkit();
+        this.visionToolkit = new SampleDetectorVisionPortalToolkit(hardwareMap);
     }
 
-    public ColorBlobLocatorProcessor getNewProcessor(ColorRange range) {
+    public ColorBlobLocatorProcessor getNewProcessor(ColorRange range, int minArea, int maxArea) {
         init();
-        return visionToolkit.createNewProcessor(range);
+        return visionToolkit.createNewProcessor(range, minArea, maxArea);
     }
 
     public List<ColorBlobLocatorProcessor.Blob> filterByArea(int minArea, int maxArea, List<ColorBlobLocatorProcessor.Blob> blobs) {
@@ -33,8 +37,35 @@ public class SampleDetectorToolkit {
         return boxFit.angle;
     }
 
+    public String getColorName(SampleDetection detection){
+        if(detection.color == ColorRange.RED){
+            return "RED";
+        }
+        else if(detection.color == ColorRange.BLUE){
+            return "BLUE";
+        }
+        else {
+            return "YELLOW";
+        }
+    }
+
     public Point getSampleCenter(RotatedRect boxFit) {
         return boxFit.center;
+    }
+
+    public String findNeededRotation(RotatedRect boxFit){
+        double degrees = findNeededRotationDegrees(boxFit);
+        if(degrees < 0){
+            return "Rotate left " + degrees + "º";
+        }
+        else {
+           return "Rotate right " + degrees + "º";
+        }
+    }
+
+    public double findNeededRotationDegrees(RotatedRect boxFit){
+        double angle  = boxFit.angle;
+        return 90 - angle;
     }
 
     public Point getCenter(int width, int height) {

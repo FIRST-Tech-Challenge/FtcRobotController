@@ -12,6 +12,7 @@ public class SampleDetection {
     public double angle;
     public double x;
     public double y;
+    public RotatedRect boxFit;
     public boolean exists = true;
     public SampleDetection (ColorRange colorRange, RotatedRect rotatedRect, boolean exists){
         this.color = colorRange;
@@ -21,5 +22,6 @@ public class SampleDetection {
         this.x = rotatedRect.center.x;
         this.y = rotatedRect.center.y;
         this.exists = exists;
+        this.boxFit = rotatedRect;
     }
 }

@@ -17,9 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SampleDetectorVisionPortalToolkit {
+    public HardwareMap hardwareMap;
+    public SampleDetectorVisionPortalToolkit(HardwareMap hardwareMap){
+        this.hardwareMap = hardwareMap;
+    }
 
-    public ColorBlobLocatorProcessor createNewProcessor(ColorRange color) {
+    public ColorBlobLocatorProcessor createNewProcessor(ColorRange color, int minArea, int maxArea) {
         ColorBlobLocatorProcessor locatorProcessor;
+        ColorBlobLocatorProcessor.BlobFilter myAreaFilter = new ColorBlobLocatorProcessor.BlobFilter(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, minArea, maxArea);
         locatorProcessor = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(color)
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
@@ -28,6 +33,7 @@ public class SampleDetectorVisionPortalToolkit {
                 .setBlurSize(5)
                 .setDilateSize(5)
                 .build();
+        locatorProcessor.addFilter(myAreaFilter);
         return locatorProcessor;
     }
 
@@ -39,10 +45,11 @@ public class SampleDetectorVisionPortalToolkit {
         for(VisionProcessor processor : processorsList) {
             portalBuilder.addProcessor(processor);
         }
+        portalBuilder.setLiveViewContainerId(hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
         return portalBuilder.build();
     }
 
-    public VisionPortal createVisionPortal(HardwareMap hardwareMap, VisionProcessor processor, String webcamName){
+    public VisionPortal createVisionPortal(VisionProcessor processor, String webcamName){
         VisionPortal portal;
         portal = new VisionPortal.Builder()
                     .addProcessor(processor)
