@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositPose;
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
@@ -14,7 +13,6 @@ import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
-
 import java.util.ArrayList;
 
 // Example Sequential Command Group

@@ -53,8 +53,8 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
 
-        RobotContainer.DBTelemetry.addData("ClimbPose ", climb.getCurrentPosition());
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("ClimbPose ", climb.getCurrentPosition());
+        //RobotContainer.DBTelemetry.update();
 
     }
 

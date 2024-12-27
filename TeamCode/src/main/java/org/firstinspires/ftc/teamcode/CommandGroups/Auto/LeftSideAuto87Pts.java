@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.GroundCyclingAuto;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
@@ -14,7 +13,6 @@ import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
-
 import java.util.ArrayList;
 
 // Example Sequential Command Group
@@ -149,4 +147,3 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
     }
 
 }
-
