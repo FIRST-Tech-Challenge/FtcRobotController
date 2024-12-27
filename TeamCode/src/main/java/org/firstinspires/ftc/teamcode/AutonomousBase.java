@@ -162,6 +162,15 @@ public abstract class AutonomousBase extends LinearOpMode {
         boolean prevEntry = (gamepad1_dpad_up_now    && !gamepad1_dpad_up_last);
         boolean nextValue = (gamepad1_dpad_right_now && !gamepad1_dpad_right_last);
         boolean prevValue = (gamepad1_dpad_left_now  && !gamepad1_dpad_left_last);
+        double  startTiltAngle = robot.armTiltAngle;
+        boolean startTiltOkay;
+        
+        // Are we below TILT_ANGLE_WALL_DEG (but not too far?)
+        if( (startTiltAngle > 10.0) && (startTiltAngle < 14.0) ) {
+            startTiltOkay = true;
+        } else {
+            startTiltOkay = false;
+        }
 
         // Force RED alliance?
         if( gamepad1_circle_now && !gamepad1_circle_last ) {
@@ -279,6 +288,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
         telemetry.addData("Odometry","x=%.2f y=%.2f angle=%.2f",
                 robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, robotOrientationRadians );
+        telemetry.addData("Lift Angle","x=%.1f deg (%s)", startTiltAngle, ((startTiltOkay)? "GOOD":"** BAD **") );
         telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu
@@ -297,9 +307,9 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.readBulkData();
         robot.odom.update();
         Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
-        robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);   // opposite x/y from goBilda pinpoint
+        robotGlobalXCoordinatePosition = pos.getX(DistanceUnit.INCH);
         robotGlobalYCoordinatePosition = pos.getY(DistanceUnit.INCH);
-        robotOrientationRadians        = pos.getHeading(AngleUnit.RADIANS);  // 0deg (straight forward), +90deg CCW
+        robotOrientationRadians        = pos.getHeading(AngleUnit.RADIANS);
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/

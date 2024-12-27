@@ -159,13 +159,19 @@ public abstract class Teleop extends LinearOpMode {
             if( enableOdometry ) {
                 robot.odom.update();
                 Pose2D pos = robot.odom.getPosition();  // x,y pos in inch; heading in degrees
-                curX     = pos.getX(DistanceUnit.INCH);  if(curX<minX){minX=curX;} if(curX>maxX){maxX=curX;}
-                curY     = pos.getY(DistanceUnit.INCH);  if(curY<minY){minY=curY;} if(curY>maxY){maxY=curY;}
+                curX     = pos.getX(DistanceUnit.INCH);
+                curY     = pos.getY(DistanceUnit.INCH);
                 curAngle = pos.getHeading(AngleUnit.DEGREES);
                 String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}", curX, curY, curAngle);
                 telemetry.addData("Position", posStr);
-                telemetry.addData("Odo Circle", "x=%.1f, y=%.1f inches", (maxX-minX), (maxY-minY) );
+                //==== TEMPORARY ODOMETRY CALIBRATION CODE ============================================================
+                if(curX<minX){minX=curX;} if(curX>maxX){maxX=curX;}
+                if(curY<minY){minY=curY;} if(curY>maxY){maxY=curY;}
+                double x_radius_mm = 25.4 * (maxX-minX)/2.0;  // rotate 180deg; max-min is the diameter of the circle
+                double y_radius_mm = 25.4 * (maxY-minY)/2.0;  // of error relative to the true center of the robot
+                telemetry.addData("Odo Circle", "x=%.2f, y=%.2f mm", x_radius_mm, y_radius_mm );
                 Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
+                //=====================================================================================================
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
                      vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Velocity", velStr);
