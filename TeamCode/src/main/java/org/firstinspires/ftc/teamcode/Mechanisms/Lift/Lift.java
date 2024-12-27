@@ -48,8 +48,6 @@ public class Lift {
     boolean reverse;
     public static double maxVoltage = 12.5;
 
-    // FIGURE OUT LIMIT SWITCHES/TOUCH SENSORS THEY SHOULD BE HERE
-
 
     public Lift(HardwareMap hardwareMap, Battery battery){
         this.hardwareMap = hardwareMap;
@@ -59,12 +57,6 @@ public class Lift {
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
         this.liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
-//        this.liftMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//        this.liftMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        this.liftMotorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//        this.liftMotorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         this.liftMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.liftMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -92,20 +84,12 @@ public class Lift {
     // See above but rename the parameter to targetHeight
     public Action moveToHeight(double targetHeight) {
 
-        // You have edge cases. Motion profiles should work with a DISTANCE not target position.
-        // You may run into a case where your current position is not zero and your target is
-        // the basket height. You should get the sign of the difference between target and
-        // current, then use that to set the reverse boolean in the motion profile. Then use the
-        // absolute value of the difference to set the distance.
         double currentPosition = ticksToInches(encoder.getCurrentPosition());
         boolean reverse = !(targetHeight - currentPosition >= 0);
         MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
 
 
         return new Action() {
-
-            // When you call getPos from the motion profile, you're getting a distance NOT a target. How
-            // can you solve this? Hint: add two things.
 
             ElapsedTime t = new ElapsedTime();
             double initialPos = currentPosition;
@@ -114,7 +98,6 @@ public class Lift {
                 checkLimit();
 
                 double currentPosition = ticksToInches(encoder.getCurrentPosition());
-                // Edge case where you're moving down and not up. Maybe don't need FF when moving down?
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
                 if (reverse) {
@@ -122,11 +105,12 @@ public class Lift {
                 } else {
                     motorPower = pidPower + ffPower + kG;
                 }
-                liftMotorLeft.setPower(motorPower);
-                liftMotorRight.setPower(motorPower);
                 if (Math.abs(targetHeight - currentPosition) < liftThreshold){
                     liftMotorLeft.setPower(kG);
                     liftMotorRight.setPower(kG);
+                } else {
+                    liftMotorLeft.setPower(motorPower);
+                    liftMotorRight.setPower(motorPower);
                 }
                 packet.put("Current Height: ", currentPosition);
                 packet.put("Target Height: ", targetHeight);
@@ -159,5 +143,4 @@ public class Lift {
             }
         };
     }
-    // Write another action that uses the joystick to move up and down.
 }
