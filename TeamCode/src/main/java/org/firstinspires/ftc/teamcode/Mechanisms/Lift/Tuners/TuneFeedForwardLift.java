@@ -50,10 +50,6 @@ public class TuneFeedForwardLift  extends LinearOpMode {
         pivot = new Pivot(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap, battery);
         ElapsedTime looptime = new ElapsedTime();
-
-
-        telemetry.addLine("Velocity: " + 0);
-        telemetry.addLine("Target Velocity: " + 0);
         telemetry.update();
         waitForStart();
 
