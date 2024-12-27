@@ -16,7 +16,7 @@ public class DifferentialV2 {
     public AnalogInput bottomLeftEncoder;
     public Servo bottomRight;
     public AnalogInput bottomRightEncoder;
-    public int ENCODER_DIFFERENCE = 0;
+    public int ENCODER_DIFFERENCE = 50;
     public Telemetry telemetry = null;
     public enum ElbowState {
         DOWN,
@@ -59,11 +59,11 @@ public class DifferentialV2 {
             telemetry.addLine("Top Left servo is in range.");
         } else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE) {
             telemetry.addLine("Top Left Servo is attempting to go up from " + encoder_pos + " to " + position);
-            telemetry.addLine("Top Left: " + TOP_LEFT_SERVO_POSITION + " to " + (TOP_LEFT_SERVO_POSITION - 0.1));
+            telemetry.addLine("Top Left: " + TOP_LEFT_SERVO_POSITION + " to " + (TOP_LEFT_SERVO_POSITION - 0.01));
             TOP_LEFT_SERVO_POSITION = setTopLeftServoPosition(TOP_LEFT_SERVO_POSITION + 0.01);
         } else {
             telemetry.addLine("Top Left Servo is attempting to go down from " + encoder_pos + " to " + position);
-            telemetry.addLine("Top Left: " + TOP_LEFT_SERVO_POSITION + " to " + (TOP_LEFT_SERVO_POSITION + 0.1));
+            telemetry.addLine("Top Left: " + TOP_LEFT_SERVO_POSITION + " to " + (TOP_LEFT_SERVO_POSITION + 0.01));
             TOP_LEFT_SERVO_POSITION = setTopLeftServoPosition(TOP_LEFT_SERVO_POSITION - 0.01);
         }
     }
@@ -75,13 +75,13 @@ public class DifferentialV2 {
             telemetry.addLine("Bottom Left servo is in range.");
         } else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE) {
             telemetry.addLine("Bottom Left Servo is attempting to go up from " + encoder_pos + " to " + position);
-            telemetry.addLine("Bottom Left: " + BOTTOM_LEFT_SERVO_POSITION + " to " + (BOTTOM_LEFT_SERVO_POSITION - 0.1));
+            telemetry.addLine("Bottom Left: " + BOTTOM_LEFT_SERVO_POSITION + " to " + (BOTTOM_LEFT_SERVO_POSITION - 0.01));
             //TODO: Switch these signs if needed
-            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(BOTTOM_LEFT_SERVO_POSITION + 0.01);
+            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(BOTTOM_LEFT_SERVO_POSITION - 0.01);
         } else {
             telemetry.addLine("Bottom Left Servo is attempting to go down from " + encoder_pos + " to " + position);
-            telemetry.addLine("Bottom Left: " + BOTTOM_LEFT_SERVO_POSITION + " to " + (BOTTOM_LEFT_SERVO_POSITION + 0.1));
-            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(TOP_LEFT_SERVO_POSITION - 0.01);
+            telemetry.addLine("Bottom Left: " + BOTTOM_LEFT_SERVO_POSITION + " to " + (BOTTOM_LEFT_SERVO_POSITION + 0.01));
+            BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(TOP_LEFT_SERVO_POSITION + 0.01);
         }
     }
 
@@ -93,12 +93,12 @@ public class DifferentialV2 {
         }
         else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE){
             telemetry.addLine("Top Right Servo is attempting to go down from " + encoder_pos + " to " + position);
-            telemetry.addLine("Top Right: " + TOP_RIGHT_SERVO_POSITION + " to " + (TOP_RIGHT_SERVO_POSITION + 0.1));
+            telemetry.addLine("Top Right: " + TOP_RIGHT_SERVO_POSITION + " to " + (TOP_RIGHT_SERVO_POSITION - 0.01));
             TOP_RIGHT_SERVO_POSITION = setTopRightServoPosition(TOP_RIGHT_SERVO_POSITION - 0.01);
         }
         else {
             telemetry.addLine("Top Right Servo is attempting to go up from " + encoder_pos + " to " + position);
-            telemetry.addLine("Top Right: " + TOP_RIGHT_SERVO_POSITION + " to " + (TOP_RIGHT_SERVO_POSITION - 0.1));
+            telemetry.addLine("Top Right: " + TOP_RIGHT_SERVO_POSITION + " to " + (TOP_RIGHT_SERVO_POSITION + 0.01));
             TOP_RIGHT_SERVO_POSITION = setTopRightServoPosition(TOP_RIGHT_SERVO_POSITION  + 0.01);
         }
     }
@@ -111,13 +111,13 @@ public class DifferentialV2 {
         }
         else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE){
             telemetry.addLine("Bottom Right Servo is attempting to go down from " + encoder_pos + " to " + position);
-            telemetry.addLine("Bottom Right: " + BOTTOM_RIGHT_SERVO_POSITION + " to " + (BOTTOM_RIGHT_SERVO_POSITION + 0.1));
+            telemetry.addLine("Bottom Right: " + BOTTOM_RIGHT_SERVO_POSITION + " to " + (BOTTOM_RIGHT_SERVO_POSITION - 0.01));
             //TODO: Switch these signs if needed
             BOTTOM_RIGHT_SERVO_POSITION = setBottomRightServoPosition(BOTTOM_RIGHT_SERVO_POSITION - 0.01);
         }
         else {
             telemetry.addLine("Bottom Right Servo is attempting to go up from " + encoder_pos + " to " + position);
-            telemetry.addLine("Bottom Right: " + BOTTOM_RIGHT_SERVO_POSITION + " to " + (BOTTOM_RIGHT_SERVO_POSITION - 0.1));
+            telemetry.addLine("Bottom Right: " + BOTTOM_RIGHT_SERVO_POSITION + " to " + (BOTTOM_RIGHT_SERVO_POSITION + 0.01));
             BOTTOM_RIGHT_SERVO_POSITION = setBottomRightServoPosition(BOTTOM_RIGHT_SERVO_POSITION  + 0.01);
         }
     }
@@ -192,12 +192,13 @@ public class DifferentialV2 {
     }
 
     public void topServosUp(){
-        runTopLeftServoToEncoderPos(diffConstantsV2.TOP_LEFT_SERVO_UP);
-        runTopRightServoToEncoderPos(diffConstantsV2.TOP_RIGHT_SERVO_UP);
+        setTopLeftServoPosition(0);
+        setTopRightServoPosition(0);
     }
     public void topServosDown(){
-        runTopLeftServoToEncoderPos(diffConstantsV2.TOP_LEFT_SERVO_DOWN);
-        runTopRightServoToEncoderPos(diffConstantsV2.TOP_RIGHT_SERVO_DOWN);
+        setTopLeftServoPosition(0.95);
+        setTopRightServoPosition(0.95);
+
     }
 
     public ElbowRangeState getElbowRangeState(double number, double target_number, double difference){

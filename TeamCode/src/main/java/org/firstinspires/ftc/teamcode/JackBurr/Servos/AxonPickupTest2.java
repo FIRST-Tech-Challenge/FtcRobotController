@@ -45,6 +45,7 @@ public class AxonPickupTest2 extends OpMode {
         left_servo.setPosition(1);
         right_servo.setPosition(1);
         grippers.setPosition(1);
+        telemetry.setMsTransmissionInterval(50);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class AxonPickupTest2 extends OpMode {
         if(elbowState == ElbowState.UP){
             if(servoTimer.seconds() > 0.3) {
                 run_left_servo_to_zero();
-                right_servo.setPosition(0);
+                run_right_servo_to_zero();
             }
         }
         else {
@@ -87,8 +88,8 @@ public class AxonPickupTest2 extends OpMode {
     }
     public void run_left_servo_to_zero(){
         double encoder_pos = left_servo_encoder.getVoltage() / 3.3 * 360;
-        if (!is_in_range(encoder_pos, LEFT_SERVO_ZERO - 2, LEFT_SERVO_ZERO + 2)){
-            if (encoder_pos < LEFT_SERVO_ZERO - 2){
+        if (!is_in_range(encoder_pos, LEFT_SERVO_ZERO - 10, LEFT_SERVO_ZERO + 10)){
+            if (encoder_pos < LEFT_SERVO_ZERO - 10){
                 double target = LEFT_SERVO_POSITION - 0.1;
                 if(target < 0){
                     target = 0;
@@ -97,10 +98,10 @@ public class AxonPickupTest2 extends OpMode {
                 LEFT_SERVO_POSITION = target;
                 telemetry.addData("Left Servo is left of zero. Moving from " + left_servo.getPosition() + " to: ", target);
             }
-            else if (encoder_pos > LEFT_SERVO_ZERO + 2){
+            else if (encoder_pos > LEFT_SERVO_ZERO + 10){
                 double target = LEFT_SERVO_POSITION + 0.1;
-                if(target > 0) {
-                    target = 0;
+                if(target > 1) {
+                    target = 1;
                 }
                 left_servo.setPosition(target);
                 LEFT_SERVO_POSITION = target;
@@ -108,25 +109,43 @@ public class AxonPickupTest2 extends OpMode {
             }
         }
         else {
-            telemetry.addLine("Servo is in range.");
+            telemetry.addLine("Left Servo is in range.");
         }
     }
 
     public void run_right_servo_to_zero(){
         double encoder_pos = right_servo_encoder.getVoltage() / 3.3 * 360;
-        if (!is_in_range(encoder_pos, RIGHT_SERVO_ZERO - 2, RIGHT_SERVO_ZERO + 2)){
-            if (encoder_pos < RIGHT_SERVO_ZERO - 2){
-                double target = right_servo.getPosition() - 0.1;
+        if (!is_in_range(encoder_pos, RIGHT_SERVO_ZERO - 10, RIGHT_SERVO_ZERO + 10)){
+            if (encoder_pos < RIGHT_SERVO_ZERO - 10){
+                double target = RIGHT_SERVO_POSITION + 0.1;
+                if(target < 0){
+                    target = 0;
+                }
+                if(target > 1){
+                    target = 1;
+                }
                 right_servo.setPosition(target);
-                telemetry.addData("Left Servo is left of zero. Moving from " + right_servo.getPosition() + " to: ", target);
+                RIGHT_SERVO_POSITION = target;
+                telemetry.addData("Right Servo is left of zero. Moving from " + right_servo.getPosition() + " to: ", target);
             }
-            else if (encoder_pos > RIGHT_SERVO_ZERO + 2){
-                double target = right_servo.getPosition() + 0.1;
+            else if (encoder_pos > RIGHT_SERVO_ZERO + 10){
+                double target = RIGHT_SERVO_POSITION - 0.1;
+                if(target < 0){
+                    target = 0;
+                }
+                if(target > 1) {
+                    target = 1;
+                }
                 right_servo.setPosition(target);
-                telemetry.addData("Left Servo is right of zero. Moving from " + right_servo.getPosition() + " to: ", target);
+                RIGHT_SERVO_POSITION = target;
+                telemetry.addData("Right Servo is right of zero. Moving from " + right_servo.getPosition() + " to: ", target);
             }
         }
+        else {
+            telemetry.addLine("Right Servo is in range.");
+        }
     }
+
 
     public boolean is_in_range(double number, double left_number, double right_number){
         if(number > left_number && number < right_number) {

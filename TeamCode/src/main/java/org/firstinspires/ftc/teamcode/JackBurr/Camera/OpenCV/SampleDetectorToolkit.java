@@ -10,9 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SampleDetectorToolkit {
-    public SampleDetectorVisionPortalToolkit visionToolkit;
+    public SampleDetectorVisionPortalToolkit visionToolkit = new SampleDetectorVisionPortalToolkit();
+    public void init(){
+        this.visionToolkit = new SampleDetectorVisionPortalToolkit();
+    }
 
     public ColorBlobLocatorProcessor getNewProcessor(ColorRange range) {
+        init();
         return visionToolkit.createNewProcessor(range);
     }
 

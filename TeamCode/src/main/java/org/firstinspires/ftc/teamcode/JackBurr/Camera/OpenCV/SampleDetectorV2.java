@@ -10,6 +10,7 @@ import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @TeleOp
@@ -19,19 +20,20 @@ public class SampleDetectorV2 extends OpMode {
     public ColorBlobLocatorProcessor red;
     public ColorBlobLocatorProcessor neutral;
     public ColorBlobLocatorProcessor blue;
-    public List<ColorBlobLocatorProcessor> processorList;
-    public List<ColorBlobLocatorProcessor.Blob> redList;
-    public List<ColorBlobLocatorProcessor.Blob> neutralList;
-    public List<ColorBlobLocatorProcessor.Blob> blueList;
-    public List<SampleDetection> masterList;
+    public List<ColorBlobLocatorProcessor> processorList = new ArrayList<>();
+    public List<ColorBlobLocatorProcessor.Blob> redList = new ArrayList<>();
+    public List<ColorBlobLocatorProcessor.Blob> neutralList = new ArrayList<>();
+    public List<ColorBlobLocatorProcessor.Blob> blueList = new ArrayList<>();
+    public List<SampleDetection> masterList = new ArrayList<>();
     public VisionPortal portal;
-    public int MIN_AREA = 50;
+    public int MIN_AREA = 500;
     public int MAX_AREA = 20000;
     public Point center;
     @Override
     public void init() {
         telemetry.setMsTransmissionInterval(50);
         toolkit = new SampleDetectorToolkit();
+        visionToolkit = new SampleDetectorVisionPortalToolkit();
         red = toolkit.getNewProcessor(ColorRange.RED);
         neutral = toolkit.getNewProcessor(ColorRange.YELLOW);
         blue = toolkit.getNewProcessor(ColorRange.BLUE);
@@ -51,12 +53,14 @@ public class SampleDetectorV2 extends OpMode {
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.RED, redList);
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.YELLOW, neutralList);
         masterList = toolkit.addToSampleDetectionList(masterList, ColorRange.BLUE, blueList);
-        for (SampleDetection detection : masterList){
-            if(!detection.exists){
-                masterList.remove(detection);
+        Iterator<SampleDetection> iterator = masterList.iterator();
+        while (iterator.hasNext()) {
+            SampleDetection detection = iterator.next();
+            if (!detection.exists) {
+                iterator.remove();
                 continue;
             }
-            telemetry.addLine("Detected " + detection.color + " sample/specimen:");
+            telemetry.addLine("Detected " + detection.color.toString() + " sample/specimen:");
             telemetry.addLine("\t Width: " + detection.width);
             telemetry.addLine("\t Height: " + detection.height);
             telemetry.addLine("\t Angle: " + detection.angle);

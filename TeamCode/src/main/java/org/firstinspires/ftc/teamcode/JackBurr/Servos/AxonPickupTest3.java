@@ -104,12 +104,12 @@ public class AxonPickupTest3 extends OpMode {
         else if (elbowRangeState == ElbowRangeState.LEFT_OF_RANGE){
             telemetry.addLine("Left Servo is attempting to go up from " + encoder_pos + " to " + position);
             telemetry.addLine("Left: " + LEFT_SERVO_POSITION + " to " + (LEFT_SERVO_POSITION - 0.1));
-            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION + 0.01);
+            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION - 0.01);
         }
         else {
             telemetry.addLine("Left Servo is attempting to go down from " + encoder_pos + " to " + position);
             telemetry.addLine("Left: " + LEFT_SERVO_POSITION + " to " + (LEFT_SERVO_POSITION + 0.1));
-            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION - 0.01);
+            LEFT_SERVO_POSITION = setLeftServoPosition(LEFT_SERVO_POSITION + 0.01);
         }
     }
 
