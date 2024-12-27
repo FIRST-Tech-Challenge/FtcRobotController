@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -27,10 +27,16 @@ public class RightDistance extends SubsystemBase {
     @Override
     public void periodic() {
 
-        rightDistance = 0.4*rightDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+        // get current robot position
+        Pose2d CurrentPose = RobotContainer.odometry.getCurrentPos();
 
-        RobotContainer.DBTelemetry.addData("RightDistance cm ", getDistance());
-        RobotContainer.DBTelemetry.update();
+        // only get distance measurements if robot in human player zone
+        if (Math.abs(CurrentPose.getX())>1.0 && Math.abs(CurrentPose.getY())>0.5 )
+        {
+            rightDistance = 0.4*rightDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+            RobotContainer.DBTelemetry.addData("RightDistance cm ", getDistance());
+            RobotContainer.DBTelemetry.update();
+        }
 
     }
 

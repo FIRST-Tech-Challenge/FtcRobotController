@@ -124,10 +124,10 @@ public class VirtualOdometry extends SubsystemBase {
         RobotContainer.DashBoard.sendTelemetryPacket(field);
 
         // show robot position on dashboard
-        RobotContainer.DBTelemetry.addData("Robot x pos: ", fieldX);
-        RobotContainer.DBTelemetry.addData("Robot y pos: ", fieldY);
-        RobotContainer.DBTelemetry.addData("Robot angle: ", Math.toDegrees(fieldAngle));
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("Robot x pos: ", fieldX);
+        //RobotContainer.DBTelemetry.addData("Robot y pos: ", fieldY);
+       // RobotContainer.DBTelemetry.addData("Robot angle: ", Math.toDegrees(fieldAngle));
+        //RobotContainer.DBTelemetry.update();
 
         //RobotContainer.DBTelemetry.addData("Robot y pos: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
         //RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);

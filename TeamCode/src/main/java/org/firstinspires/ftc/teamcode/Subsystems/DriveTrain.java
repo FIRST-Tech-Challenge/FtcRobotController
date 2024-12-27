@@ -8,15 +8,14 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 /** DriveTrain Subsystem */
 public class DriveTrain extends SubsystemBase {
 
     // constants for Tetrix DC Motor
-    final double MAXRPM = 6000.0;
-    final double MAXRPS = MAXRPM/60.0;
+    final double MAXRPM = 5500.0;
+    final double MAXRPS = MAXRPM / 60.0;
 
     // motor speed ticks per revolution to m/s travel speed
     final double TICKS_PER_ROTATION = (28.0);       // encoder pulses per motor revolution
@@ -33,13 +32,20 @@ public class DriveTrain extends SubsystemBase {
     private MecanumDriveKinematics driveKinematics;
 
     // create Mecanum drive and its motors
-    private DcMotorEx leftFrontDrive = null;
-    private DcMotorEx leftBackDrive = null;
-    private DcMotorEx rightFrontDrive = null;
-    private DcMotorEx rightBackDrive = null;
+    private DcMotorEx leftFrontDrive;
+    private DcMotorEx leftBackDrive;
+    private DcMotorEx rightFrontDrive;
+    private DcMotorEx rightBackDrive;
 
+    // individual motor PIF controls
+    private MotorControl leftFrontControl;
+    private MotorControl leftBackControl;
+    private MotorControl rightFrontControl;
+    private MotorControl rightBackControl;
 
-    /** Place code here to initialize subsystem */
+    /**
+     * Place code here to initialize subsystem
+     */
     public DriveTrain() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -57,7 +63,7 @@ public class DriveTrain extends SubsystemBase {
 
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
-        leftBackDrive  = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftBackDrive");
+        leftBackDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
         rightBackDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightBackDrive");
 
@@ -67,23 +73,17 @@ public class DriveTrain extends SubsystemBase {
         rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // set motor speed control PID coefficients
-        leftFrontDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
-        leftBackDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
-        rightFrontDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
-        rightBackDrive.setVelocityPIDFCoefficients (18.0, 0.0, 0.0, 11.7);
-
         // set motor to closed-loop speed control mode
-        leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set initial speeds to zero
-        leftFrontDrive.setVelocity(0.0);
-        leftBackDrive.setVelocity(0.0);
-        rightFrontDrive.setVelocity(0.0);
-        rightBackDrive.setVelocity(0.0);
+        leftFrontDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
+        rightFrontDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
 
         // set motor braking mode
         leftFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -91,13 +91,20 @@ public class DriveTrain extends SubsystemBase {
         rightFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        // create motor PIF controls
+        leftFrontControl = new MotorControl();
+        leftBackControl = new MotorControl();
+        rightFrontControl = new MotorControl();
+        rightBackControl = new MotorControl();
     }
 
-    /** Method called periodically by the scheduler
-     * Place any code here you wish to have run periodically */
+    /**
+     * Method called periodically by the scheduler
+     * Place any code here you wish to have run periodically
+     */
     @Override
     public void periodic() {
-        //.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Robot Left Front Speed: ", "%.2f", GetWheelSpeeds().frontLeftMetersPerSecond);
         //RobotContainer.DBTelemetry.addData("Robot Left Back Speed: ", "%.2f", GetWheelSpeeds().rearLeftMetersPerSecond);
         //RobotContainer.DBTelemetry.addData("Robot Right Front Speed: ", "%.2f", GetWheelSpeeds().frontRightMetersPerSecond);
         //RobotContainer.DBTelemetry.addData("Robot Right Back Speed: ", "%.2f", GetWheelSpeeds().rearRightMetersPerSecond);
@@ -105,72 +112,95 @@ public class DriveTrain extends SubsystemBase {
     }
 
 
-
-    /** drive robot in field coordinates
-     * Inputs: X, y and Rotation speed - all -1 to +1 */
-    public void FieldDrive (double Vx, double Vy, double Omega){
+    /**
+     * drive robot in field coordinates
+     * Inputs: X, y and Rotation speed - all -1 to +1
+     */
+    public void FieldDrive(double Vx, double Vy, double Omega) {
         FieldDrive(Vx, Vy, Omega, 1.0);
     }
 
-    public void FieldDrive (double Vx, double Vy, double Omega, double powerFactor) {
+    public void FieldDrive(double Vx, double Vy, double Omega, double powerFactor) {
 
         // get angle of vector rotation angle
         // i.e. neg of gyro angle - in rad
         double rotAngRad = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
         // rotate speed vector by negative of gyro angle
-        double x = Vx*Math.cos(-rotAngRad) - Vy*Math.sin(-rotAngRad);
-        double y = Vx*Math.sin(-rotAngRad) + Vy*Math.cos(-rotAngRad);
+        double x = Vx * Math.cos(-rotAngRad) - Vy * Math.sin(-rotAngRad);
+        double y = Vx * Math.sin(-rotAngRad) + Vy * Math.cos(-rotAngRad);
 
         // x,y now in robot coordinates - call robot drive
         RobotDrive(x, y, Omega, powerFactor);
     }
 
-    public void RobotDrive (double Vx, double Vy, double Omega){
+    public void RobotDrive(double Vx, double Vy, double Omega) {
         RobotDrive(Vx, Vy, Omega, 1.0);
     }
 
-    /** drive robot in robot coordinates
-     * Inputs: X, y and Rotation speed */
-    public void RobotDrive (double Vx, double Vy, double Omega, double powerFactor) {
+    /**
+     * drive robot in robot coordinates
+     * Inputs: X, y and Rotation speed
+     */
+    public void RobotDrive(double Vx, double Vy, double Omega, double powerFactor) {
         // create a chassis speed object and populate with x, y, and omega
         ChassisSpeeds driveChassisSpeeds = new ChassisSpeeds(Vx * powerFactor,
                 Vy * powerFactor, Omega * powerFactor);
 
         // determine desired wheel speeds from the chassis speeds
         // rotate around center of robot (i.e. coordinate 0,0)
-        MecanumDriveWheelSpeeds WheelSpeeds;
-        WheelSpeeds = driveKinematics.toWheelSpeeds(driveChassisSpeeds, new Translation2d(0,0));
+        MecanumDriveWheelSpeeds RefWheelSpeeds;
+        RefWheelSpeeds = driveKinematics.toWheelSpeeds(driveChassisSpeeds, new Translation2d(0, 0));
 
         // normalize wheel speeds so no wheel exceeds maximum attainable (in m/s)
-        WheelSpeeds.normalize(MAX_SPEED);
-
-        // set individual motor speeds
-        double requestedLeftFrontDriveVelocity = WheelSpeeds.frontLeftMetersPerSecond;
-        double requestedRightFrontDriveVelocity = WheelSpeeds.frontRightMetersPerSecond;
-        double requestedLeftBackDriveVelocity = WheelSpeeds.rearLeftMetersPerSecond;
-        double requestedRightBackDriveVelocity = WheelSpeeds.rearRightMetersPerSecond;
+        RefWheelSpeeds.normalize(MAX_SPEED);
+        double max = Math.max(Math.abs(RefWheelSpeeds.frontLeftMetersPerSecond), Math.abs(RefWheelSpeeds.frontRightMetersPerSecond));
+        max = Math.max(max, Math.abs(RefWheelSpeeds.rearRightMetersPerSecond));
+        max = Math.max(max, Math.abs(RefWheelSpeeds.rearLeftMetersPerSecond));
+        if (max > MAX_SPEED) {
+            double factor = MAX_SPEED/max;
+            RefWheelSpeeds.frontLeftMetersPerSecond *= factor;
+            RefWheelSpeeds.frontRightMetersPerSecond *= factor;
+            RefWheelSpeeds.rearRightMetersPerSecond *= factor;
+            RefWheelSpeeds.rearLeftMetersPerSecond *= factor;
+        }
 
         // update telemetry to requested velocities
         //RobotContainer.DBTelemetry.addData("Vx Speed: ", "%.2f", Vx * powerFactor);
         //RobotContainer.DBTelemetry.addData("Vy Speed: ", "%.2f", Vy * powerFactor);
         //RobotContainer.DBTelemetry.addData("Omega: ", "%.2f", Omega);
-        //RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", requestedLeftFrontDriveVelocity);
-        //RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", requestedRightFrontDriveVelocity);
-        //RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", requestedLeftBackDriveVelocity);
-        //RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", requestedRightBackDriveVelocity);
+        //RobotContainer.DBTelemetry.addData("Requested Left Front Velocity: ", "%.2f", RefWheelSpeeds.frontLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Requested Right Front Velocity: ", "%.2f", RefWheelSpeeds.rearRightMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Requested Left Back Velocity: ", "%.2f", RefWheelSpeeds.rearLeftMetersPerSecond);
+        //RobotContainer.DBTelemetry.addData("Requested Right Back Velocity: ", "%.2f", RefWheelSpeeds.rearRightMetersPerSecond);
         //RobotContainer.DBTelemetry.update();
 
-        // set motor velocities to requested velocities
-        leftFrontDrive.setVelocity(MPS_TO_TICKSPS * requestedLeftFrontDriveVelocity);
-        rightFrontDrive.setVelocity(MPS_TO_TICKSPS * requestedRightFrontDriveVelocity);
-        leftBackDrive.setVelocity(MPS_TO_TICKSPS * requestedLeftBackDriveVelocity);
-        rightBackDrive.setVelocity(MPS_TO_TICKSPS * requestedRightBackDriveVelocity);
+        // desired wheel RPM from MPS
+        double MPStoRPM = GEAR_RATIO * 60.0 / (WHEEL_DIA * Math.PI);
+        double RefLeftFrontRPM = MPStoRPM * RefWheelSpeeds.frontLeftMetersPerSecond;
+        double RefRightFrontRPM = MPStoRPM * RefWheelSpeeds.frontRightMetersPerSecond;
+        double RefLeftBackRPM = MPStoRPM * RefWheelSpeeds.rearLeftMetersPerSecond;
+        double RefRightBackRPM = MPStoRPM * RefWheelSpeeds.rearRightMetersPerSecond;
+
+        // current motor speeds in rpm
+        double TickstoRPM = 60.0/TICKS_PER_ROTATION;
+        double CurrentLeftFrontRPM = TickstoRPM * leftFrontDrive.getVelocity();
+        double CurrentRightFrontRPM = TickstoRPM * rightFrontDrive.getVelocity();
+        double CurrentLeftBackRPM = TickstoRPM * leftBackDrive.getVelocity();
+        double CurrentRightBackRPM = TickstoRPM * rightBackDrive.getVelocity();
+
+        // calculate PIDs and set powers of each motor
+        leftFrontDrive.setPower(leftFrontControl.calculate(RefLeftFrontRPM,CurrentLeftFrontRPM));
+        rightFrontDrive.setPower(rightFrontControl.calculate(RefRightFrontRPM,CurrentRightFrontRPM));
+        leftBackDrive.setPower(leftBackControl.calculate(RefLeftBackRPM,CurrentLeftBackRPM));
+        rightBackDrive.setPower(rightBackControl.calculate(RefRightBackRPM, CurrentRightBackRPM));
+
     }
 
-    /** returns current speeds of mecanum drive wheels in m/s */
-    public MecanumDriveWheelSpeeds GetWheelSpeeds()
-    {
+    /**
+     * returns current speeds of mecanum drive wheels in m/s
+     */
+    public MecanumDriveWheelSpeeds GetWheelSpeeds() {
         // motor speeds are in encoder ticks/s - convert to m/s
         MecanumDriveWheelSpeeds speeds = new MecanumDriveWheelSpeeds();
         speeds.rearLeftMetersPerSecond = TICKSPS_TO_MPS * leftBackDrive.getVelocity();
@@ -184,6 +214,59 @@ public class DriveTrain extends SubsystemBase {
     /* returns the defined mecanum drive kinematics */
     public MecanumDriveKinematics GetKinematics() {
         return driveKinematics;
+    }
+
+    // Special motor control class - specifically tailored for drive motor control
+    // implemented as subclass to facilitate application to all four drive motors
+    // Motor controller class
+    private class MotorControl {
+        // motor max no-load speed = 6000rpm
+        // motor full power control = 1
+        // open loop control/rpm = 1.0/6000.0 = 0.00016667
+        private double Pgain = 1.5 * 0.00016667;  // was 1.5
+        private double Igain = 0.50 * 0.00016667;
+        private double Fgain = 1.30 * 0.00016667;  // was 1.2 // use 90% to assume battery voltage typ. at 13V and not 12.
+
+
+        // Integrated Error
+        private double IntegratedError;
+
+        private MotorControl() {
+            IntegratedError = 0.0;
+        }
+
+        // run the motor control, return control action
+        private double calculate(double ReferenceSpeed, double CurrentSpeed) {
+            // current error in speed
+            double error = ReferenceSpeed - CurrentSpeed;
+
+            /////////
+            // I controller with non-linear gain
+            double ierror = error;
+            //if (ierror > 250.0) ierror = 250.0;
+            //if (ierror < -250.0) ierror = -250.0;
+            if (Math.abs(error) < 250)
+                IntegratedError += Igain * ierror;
+            else
+                IntegratedError += Igain * 0.15 * ierror;
+
+            // anti-windup logic
+            if (error > 400.0 && IntegratedError < 0.0)
+                IntegratedError = 0.0;
+            if (error < -400.0 && IntegratedError > 0.0)
+                IntegratedError = 0.0;
+
+            // if integrated error is over-compensating, then help reduce over time
+            if (error < 0.0 && IntegratedError > 0.0)
+                IntegratedError *= 0.98;
+            if (error > 0.0 && IntegratedError < 0.0)
+                IntegratedError *= 0.98;
+
+            ///// end I controller special logic
+
+            // implement PIF controller and return the desired control action
+            return (Fgain * ReferenceSpeed) + (Pgain * error) + (IntegratedError);
+        }
     }
 
 }

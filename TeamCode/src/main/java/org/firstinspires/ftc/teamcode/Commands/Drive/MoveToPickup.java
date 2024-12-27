@@ -4,7 +4,6 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
@@ -17,8 +16,8 @@ public class MoveToPickup extends CommandBase {
     ElapsedTime timer;
     // constructor
     public MoveToPickup() {
-        xControl = new PIDController(0.0032, 0, 0.000245);
-        yControl = new PIDController(0.0032, 0, 0.000245);
+        xControl = new PIDController(0.0016, 0, 0.000245);  // was 0.0032
+        yControl = new PIDController(0.0016, 0, 0.000245);  // was 0.0032
 
         timer = new ElapsedTime();
         // add subsystem requirements (if any) - for example:
@@ -51,9 +50,9 @@ public class MoveToPickup extends CommandBase {
         if (xError>20 || yError>20) {
             timer.reset();
         }
-        RobotContainer.DBTelemetry.addData("xSpeed", xSpeed);
-        RobotContainer.DBTelemetry.addData("ySpeed", ySpeed);
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.addData("xSpeed", xSpeed);
+        //RobotContainer.DBTelemetry.addData("ySpeed", ySpeed);
+        //RobotContainer.DBTelemetry.update();
     }
 
     // This method to return true only when command is to finish. Otherwise return false

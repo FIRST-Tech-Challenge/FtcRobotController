@@ -76,13 +76,13 @@ public class ClawCamera extends SubsystemBase {
     private void initializeDashboard() {
         // Set up a fixed number of slots on the dashboard for detected colors
         for (int i = 0; i < 4; i++) { // Assuming a maximum of 4 color detections
-            RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), "null");
-            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Center", "(null, null)");
-            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Angle", "null");
-            RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " YBR", "[Y=null, B=null, R=null]");
+            //RobotContainer.DBTelemetry.addData("Detected Color " + (i + 1), "null");
+            //RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Center", "(null, null)");
+            //RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " Angle", "null");
+            //RobotContainer.DBTelemetry.addData("Color " + (i + 1) + " YBR", "[Y=null, B=null, R=null]");
         }
         // Update the telemetry to show the initial layout
-        RobotContainer.DBTelemetry.update();
+        //RobotContainer.DBTelemetry.update();
     }
 
     // Method to update the dashboard with actual detected values

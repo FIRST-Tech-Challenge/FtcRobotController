@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Commands.Drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.Utils;
 
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.utility.Utils;
 public class ManualDrive extends CommandBase {
 
     // PID controller used to counteract rotational drift due to misalignment of wheels
-    private PIDController m_headingPID = new PIDController(0.05, 0.0005, 0);
+    private PIDController m_headingPID = new PIDController(0.07, 0.0005, 0); // was p0.05
     private Double m_PIDTarget = null;    // Use Double class so it can be set to null
     private long m_pidDelay = -1;
 
@@ -18,12 +19,19 @@ public class ManualDrive extends CommandBase {
     double basePowerFacter = 0.45;
     double boostPowerFacter = 0.55;
 
+    final double MAX_ACCEL = 1.0;  // max accel in m/s2
 
-    // construtcor
+    double old_dX, old_dY;
+
+    ElapsedTime deltat;
+
+    // constructor
     public ManualDrive() {
 
         // this command requires mecanum drive subsystem
         addRequirements(RobotContainer.drivesystem);
+
+        deltat = new ElapsedTime();
     }
 
     // This method is called once when command is started
@@ -31,6 +39,9 @@ public class ManualDrive extends CommandBase {
     public void initialize() {
         m_PIDTarget = null;
         m_pidDelay = 10;
+        old_dX=0.0;
+        old_dY = 0.0;
+        deltat.reset();
     }
 
     // This method is called periodically while command is active
@@ -84,8 +95,30 @@ public class ManualDrive extends CommandBase {
         // to MAX_SPEED values.
         powerFactor = powerFactor * RobotContainer.drivesystem.MAX_SPEED;
 
+        // include power factor to get full x,y and omega speeds beings requested
+        dX *= powerFactor;
+        dY *= powerFactor;
+        omega *= powerFactor;
+
+        // limit acceleration of robot to MAX_ACCEL - to reduce change of wheel-slide
+        double t = deltat.seconds();
+        if ((dX > old_dX + t*MAX_ACCEL) && (old_dX>0))
+            dX = old_dX + t*MAX_ACCEL;
+        if ((dX <  old_dX - t*MAX_ACCEL) && (old_dX<0))
+            dX = old_dX - t*MAX_ACCEL;
+
+        if ((dY > old_dY + t*MAX_ACCEL) && (old_dY>0))
+            dY = old_dY + t*MAX_ACCEL;
+        if ((dY <  old_dY - t*MAX_ACCEL) && (old_dY<0))
+            dY = old_dY - t*MAX_ACCEL;
+
+        // save speeds for use next time
+        old_dX = dX;
+        old_dY = dY;
+        deltat.reset();
+
         // drive robot
-        RobotContainer.drivesystem.FieldDrive(dX, dY, omega, powerFactor);
+        RobotContainer.drivesystem.FieldDrive(dX, dY, omega, 1.0);
     }
 
     // This method to return true only when command is to finish. Otherwise return false

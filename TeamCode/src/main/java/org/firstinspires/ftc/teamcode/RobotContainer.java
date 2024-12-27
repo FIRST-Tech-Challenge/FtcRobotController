@@ -11,9 +11,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-//import org.firstinspires.ftc.teamcode.Commands.LinearSlideMiddle;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
-//import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
@@ -23,12 +21,8 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickU
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Drive.ManualDrive;
-//import org.firstinspires.ftc.teamcode.Commands.ToggleClaw;
-//import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
-import org.firstinspires.ftc.teamcode.Subsystems.BackDistance;
-//import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
-//import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
+import org.firstinspires.ftc.teamcode.Commands.SelectCommandOnMode;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
 import org.firstinspires.ftc.teamcode.Subsystems.OperatingMode;
 import org.firstinspires.ftc.teamcode.Subsystems.FrontDistance;
@@ -38,7 +32,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Claw.ClawTouchSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.Climb;
 import org.firstinspires.ftc.teamcode.Subsystems.ClimbTargetHeight;
-//import org.firstinspires.ftc.teamcode.Subsystems.Climb;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Elbow.ElbowJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Wrist.FlappyFlappyWrist;
@@ -49,11 +42,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.GyroAndOdometry.Odometry;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Wrist.PivotingWrist;
 import org.firstinspires.ftc.teamcode.Subsystems.Arm.Shoulder.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
-import org.firstinspires.ftc.teamcode.utility.VisionProcessorMode;
 import org.firstinspires.ftc.teamcode.vision.ColorAndOrientationDetect;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
-
-//import org.firstinspires.ftc.teamcode.Subsystems.LinearSlideSubsystem;
 
 
 public class RobotContainer {
@@ -84,7 +74,6 @@ public class RobotContainer {
     public static OctQuad odometryPod;
     public static Odometry odometry;
     public static Camera clawCamera;
-    //public static ClawCamera clawCamera;
     //public static VirtualOdometry odometry;
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
@@ -99,12 +88,9 @@ public class RobotContainer {
     public static Climb climb;
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
-    public static BackDistance backDistance;
     public static RightDistance rightDistance;
     public static FrontDistance frontDistance;
     public static OperatingMode operatingMode;
-
-
 
     //Angle of the robot at the start of auto
     public static double RedStartAngle = 90;
@@ -153,7 +139,11 @@ public class RobotContainer {
 
         driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new WallPickUp());
+        // Zoe: This provided as example use of mode switch to assign two commands to single button
+        driverOp.getGamepadButton(GamepadKeys.Button.A).whenHeld(new SelectCommandOnMode(
+                                                                new WallPickUp(),   // run this command when manual mode is off (default case)
+                                                                null)               // run this command when manual mode is active (blinking LEDs)
+                                                                );
 
         //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
 
@@ -260,16 +250,15 @@ public class RobotContainer {
         climb = new Climb();
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
-        backDistance = new BackDistance();
         rightDistance = new RightDistance();
         frontDistance = new FrontDistance();
         operatingMode = new OperatingMode();
 
-        if (isRedAlliance){
-            clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
-        } else {
-            clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
-        }
+        //if (isRedAlliance){
+        //    clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
+        //} else {
+        //    clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
+        //}
 
         GoToNextDropOff.initializeDestinationDecrement();
     }
@@ -295,23 +284,12 @@ public class RobotContainer {
         }
 
 
-        DBTelemetry.addData("Angle", piece_angle);
-        DBTelemetry.addData("Center X", piece_center_X);
-        DBTelemetry.addData("Center Y", piece_center_Y);
-        DBTelemetry.addData("Target X", (315 + 330) /2);
-        DBTelemetry.addData("Target Y", (325 + 315) /2);
-        //DBTelemetry.addData("width", )
-        DBTelemetry.update();
-
-//        if (isRedAlliance){
-//            piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Red"));
-//            piece_center = new ColorAndOrientationDetect().calCenter("Red");
-//        } else {
-//            piece_angle = (int) Math.round(new ColorAndOrientationDetect().calAngle("Blue"));
-//            piece_center = new ColorAndOrientationDetect().calCenter("Blue");
-//        }
-        //piece_center_X = piece_center[0];
-        //piece_center_Y = piece_center[1];
+        //DBTelemetry.addData("Angle", piece_angle);
+        //DBTelemetry.addData("Center X", piece_center_X);
+        //DBTelemetry.addData("Center Y", piece_center_Y);
+        //DBTelemetry.addData("Target X", (315 + 330) /2);
+        //DBTelemetry.addData("Target Y", (325 + 315) /2);
+        //DBTelemetry.update();
 
 
         // actual interval time
@@ -332,8 +310,6 @@ public class RobotContainer {
             // report time interval on robot controller
             RCTelemetry.addData("interval time(ms)", intervaltime);
             RCTelemetry.addData("execute time(ms)", exectimer.milliseconds());
-            RCTelemetry.addData("blue", new ColorAndOrientationDetect().calAngle("Blue"));
-            RCTelemetry.addData("piece angle", piece_angle);
             RCTelemetry.update();
         }
     }

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
@@ -27,10 +27,16 @@ public class FrontDistance extends SubsystemBase {
     @Override
     public void periodic() {
 
-        frontDistance = 0.4*frontDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+        // get current robot position
+        Pose2d CurrentPose = RobotContainer.odometry.getCurrentPos();
 
-        RobotContainer.DBTelemetry.addData("FrontDistance cm ", getDistance());
-        RobotContainer.DBTelemetry.update();
+        // only get distance measurements if robot in sub dropoff zone
+        if (CurrentPose.getX()>=-0.6 && CurrentPose.getX()<=0.6)
+        {
+            frontDistance = 0.4*frontDistance+0.6*testDistance.getDistance(DistanceUnit.CM);
+            RobotContainer.DBTelemetry.addData("FrontDistance cm ", getDistance());
+            RobotContainer.DBTelemetry.update();
+        }
 
     }
 
