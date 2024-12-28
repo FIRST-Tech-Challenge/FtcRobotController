@@ -24,7 +24,7 @@ public class TeleMain extends LinearOpMode {
     public static double kd = 0;  // Derivative gain
 
 
-    public static int setPoint;
+    public int setPoint;
 
     double prevError = 0;  // Previous error, used for derivative
     double integral = 0;   // Integral term
@@ -64,7 +64,7 @@ public class TeleMain extends LinearOpMode {
 
             input.upArm(armRaise);
 
-
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
             setPoint += (int) (gamepad2.left_stick_y * 10);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
 
@@ -102,10 +102,11 @@ public class TeleMain extends LinearOpMode {
             // Apply the motor power
             output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range and make it so that it will more slowly go to its target position
 
-            motors.MoveMotor(Motors.Type.Arm, output);
-
-            if((motors.getArmPosition() == ARM_RESTING) && (gamepad2.left_stick_y <= 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
+            if((motors.getArmPosition() == ARM_RESTING) && (gamepad2.left_stick_y == 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
                 motors.MoveMotor(Motors.Type.Arm,0);                                // This can prevent the motor from overheating like it was doing earlier
+            }
+            else {
+                motors.MoveMotor(Motors.Type.Arm, output);
             }
 
             // Store current error and time for next iteration
