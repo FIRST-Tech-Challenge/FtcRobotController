@@ -18,9 +18,7 @@ public class ITDTeleopLM2 extends LinearOpMode {
 
     public DcMotor lift;
     public CRServo claw;
-    //public Servo rotateClaw;
     public DcMotor liftPivot;
-    public DcMotor liftPivotRight;
     public CRServo claw2;
 
 
@@ -40,22 +38,15 @@ public class ITDTeleopLM2 extends LinearOpMode {
         //drive.setPoseEstimate(startPose);
 
         lift = hardwareMap.get(DcMotor.class, "lift");
-        liftPivotRight = hardwareMap.get(DcMotor.class, "liftPivotRight");
         liftPivot = hardwareMap.get(DcMotor.class, "liftPivot");
         claw = hardwareMap.get(CRServo.class, "claw");
         claw2 = hardwareMap.get(CRServo.class, "claw2");
-        //rotateClaw = hardwareMap.servo.get("rotateClaw");
 
         liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftPivot.setTargetPosition(0);
-        liftPivotRight.setTargetPosition(0);
-        liftPivotRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftPivot.setPower(0.5);
-        liftPivotRight.setPower(0.5);
 
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,7 +89,6 @@ public class ITDTeleopLM2 extends LinearOpMode {
             rightBack.setPower(backRightPower);
 
             lift.setPower(gamepad2.left_stick_y);
-            liftPivotRight.setPower(-0.7*gamepad2.right_stick_y);
             liftPivot.setPower(-0.7*gamepad2.right_stick_y);
 
             if (gamepad2.a) {
@@ -107,12 +97,10 @@ public class ITDTeleopLM2 extends LinearOpMode {
             }
 
             else if (gamepad2.y) {
-                liftPivotRight.setTargetPosition(900);
                 liftPivot.setTargetPosition(900);
             }
             else if (gamepad2.b) {
                 liftPivot.setTargetPosition(0);
-                liftPivotRight.setTargetPosition(0);
             }
 
             else if (gamepad2.x) {

@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "RedRightSpeciman")
+@Autonomous(name = "RedRightTripleSpeciman")
 public class RedRightTripleSpeciman extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
@@ -45,9 +45,9 @@ public class RedRightTripleSpeciman extends LinearOpMode {
                 .lineToX(34)
                 .turn(Math.toRadians(-90))
                 .strafeTo(new Vector2d(34,-4))
-                .strafeTo(new Vector2d(48,-4))
-                .strafeTo(new Vector2d(48,-58))
-                .strafeTo(new Vector2d(48,-4))
+                .strafeTo(new Vector2d(44,-4))
+                .strafeTo(new Vector2d(44,-58))
+                .strafeTo(new Vector2d(44,-4))
                 .strafeTo(new Vector2d(56,-4))
                 .strafeTo(new Vector2d(56,-58))
                 .strafeTo(new Vector2d(56,-4))

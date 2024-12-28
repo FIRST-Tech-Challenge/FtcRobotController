@@ -18,9 +18,7 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
 
     public DcMotor lift;
     public CRServo claw;
-    //public Servo rotateClaw;
     public DcMotor liftPivot;
-    public DcMotor liftPivotRight;
     public CRServo claw2;
 
 
@@ -40,15 +38,12 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
         //drive.setPoseEstimate(startPose);
 
         lift = hardwareMap.get(DcMotor.class, "lift");
-        liftPivotRight = hardwareMap.get(DcMotor.class, "liftPivotRight");
         liftPivot = hardwareMap.get(DcMotor.class, "liftPivot");
         claw = hardwareMap.get(CRServo.class, "claw");
         claw2 = hardwareMap.get(CRServo.class, "claw2");
         //rotateClaw = hardwareMap.servo.get("rotateClaw");
 
         liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -90,7 +85,6 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             rightBack.setPower(backRightPower);
 
             lift.setPower(gamepad2.left_stick_y);
-            liftPivotRight.setPower(-0.7*gamepad2.right_stick_y);
             liftPivot.setPower(0.7*gamepad2.right_stick_y);
 
             if (gamepad2.a) {
