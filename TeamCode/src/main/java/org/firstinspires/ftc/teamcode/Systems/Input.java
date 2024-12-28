@@ -58,14 +58,17 @@ public class Input {
             servos.moveServo(Servos.Type.Claw, 270);
         }
         else if (grabButton) {
-            servos.moveServo(Servos.Type.Claw, 182.25);
+            servos.moveServo(Servos.Type.Claw, 0);
         }
     }
 
     public void upArm(double power) {
-        double thing = -(Math.abs(motors.getArmPosition() - 440)) / 5.6;
+        double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 
-        motors.MoveMotor(Motors.Type.Pull, power);
+        double restingUpArm = motors.getUpArmPosition();
+
+        double realPower = Math.max(restingUpArm, Math.min(power, thing));
+        motors.MoveMotor(Motors.Type.Pull, realPower);
     }
 
 
