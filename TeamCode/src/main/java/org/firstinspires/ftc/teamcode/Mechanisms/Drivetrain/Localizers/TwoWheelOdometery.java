@@ -41,7 +41,7 @@ public class TwoWheelOdometery {
         this.odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         this.odo.setOffsets(xOffset, yOffset);
         this.odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        this.odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        this.odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         this.odo.resetPosAndIMU();
     }
         public SimpleMatrix calculate(){
