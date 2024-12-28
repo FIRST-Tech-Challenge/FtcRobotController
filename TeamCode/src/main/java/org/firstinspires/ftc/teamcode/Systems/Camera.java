@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "Concept: AprilTag", group = "Concept")
+@TeleOp(name = "Camera")
 @Disabled
 public class Camera extends LinearOpMode {
 
@@ -23,12 +24,13 @@ public class Camera extends LinearOpMode {
     /**
      * The variable to store our instance of the AprilTag processor.
      */
-    private AprilTagProcessor aprilTag;
+    public AprilTagProcessor aprilTag;
 
+    public Telemetry telemetry;
     /**
      * The variable to store our instance of the vision portal.
      */
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
 
     Input input = new Input(hardwareMap);
 
@@ -71,7 +73,7 @@ public class Camera extends LinearOpMode {
     /**
      * Initialize the AprilTag processor.
      */
-    private void initAprilTag() {
+    public void initAprilTag() {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
@@ -136,23 +138,63 @@ public class Camera extends LinearOpMode {
 
     }   // end method initAprilTag()
 
+    public void centerAprilRotation() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        while(currentDetections.isEmpty()) {
+            sleep(500);
+            currentDetections = aprilTag.getDetections();
+        }
+        AprilTagDetection detection = currentDetections.get(0);
+        double yaw = detection.ftcPose.yaw - 90;
+        if (yaw > -0.5 && yaw < 0.5) {
+            do {
+                input.Spin(-1*yaw);
+            } while (yaw > -0.5 && yaw < 0.5);
+        }
+    }
+    public void centerAprilTagStrafe() {
+
+        //replace "x" with whatever direction is sidey-side
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        while(currentDetections.isEmpty()) {
+            sleep(500);
+            currentDetections = aprilTag.getDetections();
+        }
+        AprilTagDetection detection = currentDetections.get(0);
+        double direction = detection.ftcPose.x;
+        while (direction < -0.5 || direction > 0.5) {
+            input.Strafe(-1*direction);
+            sleep(150);
+            input.Strafe(0);
+            direction = detection.ftcPose.x;
+        }
+    }
+
+    /// dist. in inches
+    public void aprilDistance(double goalDistance, double tolerance) {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        while(currentDetections.isEmpty()) {
+            sleep(500);
+            currentDetections = aprilTag.getDetections();
+        }
+        AprilTagDetection detection = currentDetections.get(0);
+
+        double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
+
+        while(error > tolerance || error < -1*tolerance) {
+            input.Move(error*10);
+            error = detection.ftcPose.z - goalDistance;
+        }
+    }
 
     /**
      * Add telemetry about AprilTag detections.
      */
-    private void centerAprilTag() {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        if(!currentDetections.isEmpty()) {
-            AprilTagDetection detection = currentDetections.get(0);
-            double yaw = detection.ftcPose.yaw;
-            if (yaw > -0.5 && yaw < 0.5) {
-                do {
-                    input.Spin(-1*yaw);
-                } while (yaw > -0.5 && yaw < 0.5);
-            }
-        }
-    }
-    private void telemetryAprilTag() {
+
+
+    public void telemetryAprilTag() {
+
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
