@@ -138,53 +138,57 @@ public class Camera extends LinearOpMode {
 
     }   // end method initAprilTag()
 
-    public void centerAprilRotation() {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        while(currentDetections.isEmpty()) {
-            sleep(500);
-            currentDetections = aprilTag.getDetections();
-        }
-        AprilTagDetection detection = currentDetections.get(0);
-        double yaw = detection.ftcPose.yaw - 90;
-        if (yaw > -0.5 && yaw < 0.5) {
-            do {
-                input.Spin(-1*yaw);
-            } while (yaw > -0.5 && yaw < 0.5);
+    public void centerAprilRotation(boolean buttonPress) {
+        if(buttonPress) {
+            //replace "x" with whatever direction is sidey-side
+
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            if(!currentDetections.isEmpty()) {
+                AprilTagDetection detection = currentDetections.get(0);
+                double yaw = detection.ftcPose.yaw;
+                while (yaw < 89.5 || yaw > 90.5) {
+                    input.Spin(-1*(yaw-90));
+                    sleep(150);
+                    input.Spin(0);
+                    yaw = detection.ftcPose.x;
+                }
+            }
         }
     }
-    public void centerAprilTagStrafe() {
+    public void centerAprilTagStrafe(boolean buttonPress) {
+        if(buttonPress) {
+            //replace "x" with whatever direction is sidey-side
 
-        //replace "x" with whatever direction is sidey-side
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        while(currentDetections.isEmpty()) {
-            sleep(500);
-            currentDetections = aprilTag.getDetections();
-        }
-        AprilTagDetection detection = currentDetections.get(0);
-        double direction = detection.ftcPose.x;
-        while (direction < -0.5 || direction > 0.5) {
-            input.Strafe(-1*direction);
-            sleep(150);
-            input.Strafe(0);
-            direction = detection.ftcPose.x;
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            if(!currentDetections.isEmpty()) {
+                AprilTagDetection detection = currentDetections.get(0);
+                double direction = detection.ftcPose.x;
+                while (direction < -0.5 || direction > 0.5) {
+                    input.Strafe(-1*direction);
+                    sleep(150);
+                    input.Strafe(0);
+                    direction = detection.ftcPose.x;
+                }
+            }
         }
     }
 
     /// dist. in inches
-    public void aprilDistance(double goalDistance, double tolerance) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        while(currentDetections.isEmpty()) {
-            sleep(500);
-            currentDetections = aprilTag.getDetections();
-        }
-        AprilTagDetection detection = currentDetections.get(0);
+    public void aprilDistance(boolean buttonPress, double goalDistance, double tolerance) {
+        if(buttonPress) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            while(currentDetections.isEmpty()) {
+                sleep(500);
+                currentDetections = aprilTag.getDetections();
+            }
+            AprilTagDetection detection = currentDetections.get(0);
 
-        double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
+            double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
 
-        while(error > tolerance || error < -1*tolerance) {
-            input.Move(Math.sqrt(error));
-            error = detection.ftcPose.z - goalDistance;
+            while(error > tolerance || error < -1*tolerance) {
+                input.Move(Math.sqrt(error));
+                error = detection.ftcPose.z - goalDistance;
+            }
         }
     }
 
