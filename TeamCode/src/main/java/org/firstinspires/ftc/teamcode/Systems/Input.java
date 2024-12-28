@@ -63,6 +63,8 @@ public class Input {
     }
 
     public void upArm(double power) {
+        double thing = -(Math.abs(motors.getArmPosition() - 440)) / 5.6;
+
         motors.MoveMotor(Motors.Type.Pull, power);
     }
 
