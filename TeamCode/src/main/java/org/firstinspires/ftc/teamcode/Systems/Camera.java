@@ -183,7 +183,7 @@ public class Camera extends LinearOpMode {
         double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
 
         while(error > tolerance || error < -1*tolerance) {
-            input.Move(error*10);
+            input.Move(Math.sqrt(error));
             error = detection.ftcPose.z - goalDistance;
         }
     }
