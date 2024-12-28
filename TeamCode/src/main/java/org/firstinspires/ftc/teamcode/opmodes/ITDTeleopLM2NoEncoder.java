@@ -85,7 +85,7 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             rightBack.setPower(backRightPower);
 
             lift.setPower(gamepad2.left_stick_y);
-            liftPivot.setPower(0.7*gamepad2.right_stick_y);
+            liftPivot.setPower(gamepad2.right_stick_y);
 
             if (gamepad2.a) {
                 claw.setPower(1);
