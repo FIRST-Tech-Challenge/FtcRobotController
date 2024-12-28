@@ -64,4 +64,9 @@ public class Motors {
         return motors[Type.Arm.getValue()].getCurrentPosition();
     }
 
+    public int getUpArmPosition()
+    {
+        return motors[Type.Pull.getValue()].getCurrentPosition();
+    }
+
 }
