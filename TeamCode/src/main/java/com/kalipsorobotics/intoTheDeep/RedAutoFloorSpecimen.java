@@ -100,9 +100,6 @@ public class RedAutoFloorSpecimen extends LinearOpMode {
         moveFloorSamples.addPoint(-530, -1170, -180);//move back out to avoid sample carry
         moveFloorSamples.addPoint(-530,-770,-180); //avoid going into observation zone
 
-        //depot to floor for specimen
-//        moveFloorSamples.addPoint(FloorToBarHangRoundTrip.MOVE_TO_FLOOR_SPECIMEN_X, FloorToBarHangRoundTrip.MOVE_TO_FLOOR_SPECIMEN_Y, FloorToBarHangRoundTrip.MOVE_TO_FLOOR_SPECIMEN_HEADING);
-
         redAutoSpecimen.addAction(moveFloorSamples);
         //==============end of pushing================
 

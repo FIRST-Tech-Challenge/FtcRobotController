@@ -20,7 +20,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class FloorToBarHangRoundTrip extends KActionSet {
 
-    public static final double SPECIMEN_HANG_POS_X = -670;
+    public static final double SPECIMEN_HANG_POS_X = -685;
     public static final double MOVE_TO_FLOOR_SPECIMEN_X = -77;
     public static final double MOVE_TO_FLOOR_SPECIMEN_Y = -216;
     public static final double MOVE_TO_FLOOR_SPECIMEN_HEADING = -89.4;
@@ -33,13 +33,14 @@ public class FloorToBarHangRoundTrip extends KActionSet {
         moveToFloor1.addPoint(MOVE_TO_FLOOR_SPECIMEN_X, MOVE_TO_FLOOR_SPECIMEN_Y, MOVE_TO_FLOOR_SPECIMEN_HEADING);
         this.addAction(moveToFloor1);
 
-        WaitAction waitAtWall = new WaitAction(200);
+        WaitAction waitAtWall = new WaitAction(0);
         waitAtWall.setName("waitAtWall");
         this.addAction(waitAtWall);
 
         //intake ready
         SampleIntakeReady sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
         sampleIntakeReady.setDependentActions(waitAtWall);
+        sampleIntakeReady.setName("sampleIntakeReady");
         this.addAction(sampleIntakeReady);
 
         SampleIntakeAction sampleIntakeAction = new SampleIntakeAction(intakeClaw);
@@ -87,13 +88,6 @@ public class FloorToBarHangRoundTrip extends KActionSet {
         outtakeTransferReady.setName("outtakeTransferReady");
         outtakeTransferReady.setDependentActions(specimenHang);
         this.addAction(outtakeTransferReady);
-
-        PurePursuitAction moveToFloor2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToFloor2.setName("moveToFloor2");
-        moveToFloor2.setMaxTimeOutMS(3500);
-        moveToFloor2.addPoint(MOVE_TO_FLOOR_SPECIMEN_X, MOVE_TO_FLOOR_SPECIMEN_Y, MOVE_TO_FLOOR_SPECIMEN_HEADING);
-        moveToFloor2.setDependentActions(specimenHang);
-        this.addAction(moveToFloor2);
 
     }
 
