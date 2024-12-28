@@ -108,7 +108,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSliderToDeliverSpecimen() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 200, false, DeliverySlider.Direction.EXPANDING, 1500);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 250, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
     public MoveSliderCommand collapseSlider() {
