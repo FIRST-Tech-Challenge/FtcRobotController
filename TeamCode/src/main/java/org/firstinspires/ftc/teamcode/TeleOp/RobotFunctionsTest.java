@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Systems.Camera;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 
@@ -17,6 +18,7 @@ public class RobotFunctionsTest extends LinearOpMode {
     Motors motors;
     Input input;
     ElapsedTime elapsedTime;
+    Camera camera;
 
     // PID variables
     public static double kp = 2;  // Proportional gain
@@ -37,6 +39,7 @@ public class RobotFunctionsTest extends LinearOpMode {
         motors = new Motors(hardwareMap);
         input = new Input(hardwareMap);
         elapsedTime = new ElapsedTime();
+        camera = new Camera();
 
         int ARM_RESTING = motors.getArmPosition();
         int ARM_REACH = motors.getArmPosition() + 1000; // plus some number idk what it actually is
@@ -60,7 +63,7 @@ public class RobotFunctionsTest extends LinearOpMode {
             input.Spin(spin);
             input.Strafe(strafe);
 
-            input.Claw(gamepad2.a, gamepad2.b);
+            camera.aprilDistance(gamepad2.a, 20, 0.5);
 
 
             setPoint += (int) (gamepad2.left_stick_y * 10);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
@@ -131,9 +134,4 @@ public class RobotFunctionsTest extends LinearOpMode {
     }
 
 
-}
-
-
-
-public class RobotFunctionsTest {
 }

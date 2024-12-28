@@ -148,8 +148,6 @@ public class Camera extends LinearOpMode {
                 double yaw = detection.ftcPose.yaw;
                 while (yaw < 89.5 || yaw > 90.5) {
                     input.Spin(-1*(yaw-90));
-                    sleep(150);
-                    input.Spin(0);
                     yaw = detection.ftcPose.x;
                 }
             }
@@ -165,8 +163,6 @@ public class Camera extends LinearOpMode {
                 double direction = detection.ftcPose.x;
                 while (direction < -0.5 || direction > 0.5) {
                     input.Strafe(-1*direction);
-                    sleep(150);
-                    input.Strafe(0);
                     direction = detection.ftcPose.x;
                 }
             }
@@ -177,17 +173,15 @@ public class Camera extends LinearOpMode {
     public void aprilDistance(boolean buttonPress, double goalDistance, double tolerance) {
         if(buttonPress) {
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            while(currentDetections.isEmpty()) {
-                sleep(500);
-                currentDetections = aprilTag.getDetections();
-            }
-            AprilTagDetection detection = currentDetections.get(0);
+            if(!currentDetections.isEmpty()) {
+                AprilTagDetection detection = currentDetections.get(0);
 
-            double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
+                double error = detection.ftcPose.z - goalDistance; /// if too far, this should be positive
 
-            while(error > tolerance || error < -1*tolerance) {
-                input.Move(Math.sqrt(error));
-                error = detection.ftcPose.z - goalDistance;
+                while(error > tolerance || error < -1*tolerance) {
+                    input.Move(Math.sqrt(error));
+                    error = detection.ftcPose.z - goalDistance;
+                }
             }
         }
     }
