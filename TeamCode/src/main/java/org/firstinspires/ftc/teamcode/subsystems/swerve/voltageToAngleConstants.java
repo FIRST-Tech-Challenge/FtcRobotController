@@ -100,53 +100,53 @@ public class voltageToAngleConstants {
     }
     Map<Double,Double> bl = new LinkedHashMap<Double, Double>() {{ // Voltage up, degrees down
         put(0.0, 114.0);
-        put(0.228, 90.0);
-        put(0.777, 45.0);
-        put(1.047, 0.0);
-        put(1.048, 360.0); //synthetic
-        put(1.457, 315.0);
-        put(1.892, 270.0);
-        put(2.271, 225.0);
-        put(2.686, 180.0);
-        put(3.147, 135.0);
+        put(0.220, 90.0);
+        put(0.634, 45.0);
+        put(1.046, 0.0);
+        put(1.047, 360.0); //synthetic
+        put(1.461, 315.0);
+        put(1.874, 270.0);
+        put(2.287, 225.0);
+        put(2.701, 180.0);
+        put(3.114, 135.0);
         put(3.307, 114.0);
     }};
-    Map<Double,Double> fr = new LinkedHashMap<Double, Double>() {{ // Voltage up, degrees up
+    Map<Double,Double> fr = new LinkedHashMap<Double, Double>() {{ // Voltage up, degrees not up
         put(0.0, 18.0);
-        put(0.134, 0.0); //synthetic
-        put(0.135, 360.0);
-        put(0.536, 315.0);
-        put(0.918, 270.0);
-        put(1.335, 225.0);
-        put(1.78, 180.0);
-        put(2.181, 135.0);
-        put(2.584, 90.0);
-        put(3.056, 45.0);
+        put(0.165, 0.0); //synthetic
+        put(0.166, 360.0);
+        put(0.579, 315.0);
+        put(0.992, 270.0);
+        put(1.405, 225.0);
+        put(1.819, 180.0);
+        put(2.232, 135.0);
+        put(2.646, 90.0);
+        put(3.059, 45.0);
         put(3.307, 18.0);
     }};
     Map<Double,Double> fl = new LinkedHashMap<Double, Double>() {{ // Voltage up, degrees down.
         put(0.0, 90.0);
-        put(0.415, 45.0);
-        put(0.875, 0.0);
-        put(0.876, 360.0);
-        put(1.28, 315.0);
-        put(1.692, 270.0);
-        put(2.107, 225.0);
-        put(2.499, 180.0);
-        put(2.89, 131.0);
+        put(0.413, 45.0);
+        put(0.827, 0.0);
+        put(0.828, 360.0);
+        put(1.240, 315.0);
+        put(1.654, 270.0);
+        put(2.067, 225.0);
+        put(2.480, 180.0);
+        put(2.894, 131.0);
         put(3.307, 90.0);
     }};
     Map<Double,Double> br = new LinkedHashMap<Double, Double>() {{ // voltage up deg down (not side dependent)
         put(0.0, 55.0);
-        put(0.073, 45.0);
-        put(0.482, 0.0);
-        put(0.483, 360.0);
-        put(0.916, 315.0);
-        put(1.367, 270.0);
-        put(1.681, 225.0);
-        put(2.213, 180.0);
-        put(2.529, 135.0);
-        put(3.046, 90.0);
+        put(0.092, 45.0);
+        put(0.505, 0.0);
+        put(0.506, 360.0);
+        put(0.919, 315.0);
+        put(1.332, 270.0);
+        put(1.745, 225.0);
+        put(2.159, 180.0);
+        put(2.572, 135.0);
+        put(2.985, 90.0);
         put(3.307, 55.0);
     }};
     List<Map<Double, Double>> modulesTable = new ArrayList<Map<Double, Double>>() {{

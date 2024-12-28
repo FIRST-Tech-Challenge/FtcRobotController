@@ -27,7 +27,8 @@ import kotlin.collections.ArrayDeque;
 @Config
 public class testFtcLibTrajFollowing extends OpMode {
     Trajectory traj1;
-    PIDController tPID;
+    PIDController txPID;
+    PIDController tyPID;
     PIDController rotPID;
     FtcDashboard dash;
     Telemetry t2;
@@ -42,8 +43,8 @@ public class testFtcLibTrajFollowing extends OpMode {
     double xPower;
     double yPower;
     SwerveDrive drive;
-    public static double tP = 0;
-    public static double tI = 0;
+    public static double tP = 1.2;
+    public static double tI = 0.2;
     public static double tD = 0;
     public static double rP = 0;
     public static double rI = 0;
@@ -51,9 +52,6 @@ public class testFtcLibTrajFollowing extends OpMode {
     public static double P = 0.06;
     public static double I = 0.01;
     public static double D = 0.005;
-    public static double dP = 1e-5;
-    public static double dI = 1e-5;
-    public static double dD = 1e-5;
     OptimalAngleCalculator angleCalculator;
     String[] encoderNames = {
             "fl_encoder",
@@ -76,21 +74,22 @@ public class testFtcLibTrajFollowing extends OpMode {
     @Override
     public void init() {
         drive = new SwerveDrive(
-                18, 18, 12, 12,
+                11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, dP, dI, dD);
-        List<Translation2d> tlist = new ArrayList<Translation2d>();
+                encoderNames, driveNames, angleNames, P, I, D);
+        List<Translation2d> tlist = new ArrayList<>();
 //                Arrays.asList((new Translation2d(1,1)));
-        TrajectoryConfig traj1Config = new TrajectoryConfig(0.5, 0.5);
+        TrajectoryConfig traj1Config = new TrajectoryConfig(0.6, 0.5);
         traj1 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.PI/2)),
+                new Pose2d(new Translation2d(0, 0), new Rotation2d(0)),
                 tlist,
-                new Pose2d(new Translation2d(1.5,0), new Rotation2d(Math.PI/2)),
+                new Pose2d(new Translation2d(.75,0), new Rotation2d(0)),
                 traj1Config
                 );
         dash = FtcDashboard.getInstance();
         t2 = dash.getTelemetry();
-        tPID = new PIDController(tP, tI, tD);
+        txPID = new PIDController(tP, tI, tD);
+        tyPID = new PIDController(tP, tI, tD);
         rotPID = new PIDController(rP, rI, rD);
         angleCalculator = new OptimalAngleCalculator();
     }
@@ -104,12 +103,13 @@ public class testFtcLibTrajFollowing extends OpMode {
         Trajectory.State nowTraj = traj1.sample(drive.timer.seconds());
         trajPose = nowTraj.poseMeters;
         now = drive.nowPose;
-        xDiff = trajPose.getX() - now.getX();
-        yDiff = trajPose.getY() - now.getY();
+        // TODO: for highlight: don't try to make this 0 because it goes negative like crazy
+//        xDiff = trajPose.getX() - now.getX(); // don
+//        yDiff = trajPose.getY() - now.getY();
         rotDist = (Math.toDegrees(now.getHeading()) - angleCalculator.calculateOptimalAngle(Math.toDegrees(now.getHeading()), Math.toDegrees(trajPose.getHeading())));
         rotPower = rotPID.calculate(rotDist, 0);
-        xPower = tPID.calculate(xDiff, 0);
-        yPower = tPID.calculate(yDiff, 0);
+        xPower = txPID.calculate(now.getX(), trajPose.getX());
+        yPower = tyPID.calculate(now.getY(), trajPose.getY());
 
         if (gamepad1.a) { eStop = true;}
         if (!eStop) { drive.loop(yPower, xPower, rotPower); }
@@ -120,15 +120,18 @@ public class testFtcLibTrajFollowing extends OpMode {
         doTelemetry(telemetry);
         doTelemetry(t2);
 //        drive.getTelemetry(t2);
-        tPID.setPID(tP, tI, tD);
+        txPID.setPID(tP, tI, tD);
+        tyPID.setPID(tP, tI, tD);
         rotPID.setPID(rP, rI, rD);
     }
 
     public void doTelemetry(Telemetry t) {
-        t.addData("trajPose", trajPose);
-        t.addData("nowPose", now);
-        t.addData("xDiff", xDiff);
-        t.addData("yDiff", yDiff);
+        t.addData("trajRot", trajPose.getRotation().getDegrees());
+        t.addData("nowRot", now.getRotation().getDegrees());
+        t.addData("trajX", trajPose.getX());
+        t.addData("trajY", trajPose.getY());
+        t.addData("nowX", now.getX());
+        t.addData("nowY", now.getY());
         t.addData("degDiff", rotDist);
         t.addData("powx", xPower);
         t.addData("powy", yPower);
@@ -136,7 +139,6 @@ public class testFtcLibTrajFollowing extends OpMode {
         t.addData("FL Angle", drive.states[0].angle.getDegrees());
         t.addData("FL Velocity", drive.states[0].speedMetersPerSecond);
         t.addData("FL Ticks", drive.driveMotors[0].getCurrentPosition());
-        t.addData("FL timer", drive.motorTimers[0].seconds());
         t.update();
     }
 }

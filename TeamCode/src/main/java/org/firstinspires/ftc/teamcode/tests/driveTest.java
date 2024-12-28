@@ -14,9 +14,6 @@ public class driveTest extends OpMode {
     public static double P = 0.06;
     public static double I = 0.01;
     public static double D = 0.005;
-    public static double dP = 1e-5;
-    public static double dI = 1e-5;
-    public static double dD = 1e-5;
     org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDrive SwerveDrive;
     Telemetry telemetry2;
     FtcDashboard dash;
@@ -44,7 +41,7 @@ public class driveTest extends OpMode {
         SwerveDrive = new SwerveDrive(
                 18, 18, 12, 12,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, dP, dI, dD);
+                encoderNames, driveNames, angleNames, P, I, D);
         dash = FtcDashboard.getInstance();
         telemetry2 = dash.getTelemetry();
     }
@@ -55,7 +52,7 @@ public class driveTest extends OpMode {
     @Override
     public void loop() {
         SwerveDrive.loop(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x);
-        SwerveDrive.setPID(P, I, D, dP, dI, dD);
+        SwerveDrive.setPID(P, I, D);
         SwerveDrive.getTelemetry(telemetry2);
         telemetry.update();
         telemetry2.update();

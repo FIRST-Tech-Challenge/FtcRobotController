@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems.swerve;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public class gamepadToVectors {
-    public double maxTranslationSpeed = 1;
-    public double maxRotationSpeed = 1;
+    public double maxTranslationSpeed = 12;
+    public double maxRotationSpeed = 12;
     public double ROBOT_LENGTH = 1.0;  // Length
     public double ROBOT_WIDTH = 1.0;   // Width
     IMU imu;
