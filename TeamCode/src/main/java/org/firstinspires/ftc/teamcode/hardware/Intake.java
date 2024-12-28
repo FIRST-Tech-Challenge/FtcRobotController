@@ -41,7 +41,7 @@ public class Intake {
         // center the wrist(whatever center is)
         wrist.setPosition(0.0);
     }
-    public void WristRotateLeft() {
+   public void WristRotateLeft() {
         double currentPos = wrist.getPosition();
         wrist.setPosition(currentPos -= 0.01);
     }
