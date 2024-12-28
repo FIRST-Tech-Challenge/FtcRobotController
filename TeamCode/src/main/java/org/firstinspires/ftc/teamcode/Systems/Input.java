@@ -3,16 +3,21 @@ package org.firstinspires.ftc.teamcode.Systems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Config
 public class Input {
 
     Motors motors;
     Servos servos;
     ElapsedTime elapsedTime;
+
+    public static double SERVO_CLOSED = 270;
+    public static double SERVO_OPEN = 110;
 
 //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
@@ -55,10 +60,10 @@ public class Input {
     public void claw(boolean grabButton, boolean releaseButton) {
 
         if (releaseButton) {
-            servos.moveServo(Servos.Type.Claw, 270);
+            servos.moveServo(Servos.Type.Claw, SERVO_OPEN);
         }
         else if (grabButton) {
-            servos.moveServo(Servos.Type.Claw, 0);
+            servos.moveServo(Servos.Type.Claw, SERVO_CLOSED);
         }
     }
 

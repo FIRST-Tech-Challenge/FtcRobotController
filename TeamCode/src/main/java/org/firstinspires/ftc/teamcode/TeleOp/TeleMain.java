@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
+import org.firstinspires.ftc.teamcode.Systems.Servos;
 
 @TeleOp(name="Teleop-Main")
 
@@ -39,6 +40,7 @@ public class TeleMain extends LinearOpMode {
         motors = new Motors(hardwareMap);
         input = new Input(hardwareMap);
         elapsedTime = new ElapsedTime();
+        Servos servos = new Servos(hardwareMap);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();  //REMOVE THIS
         Telemetry dashboardTelemetry = dashboard.getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
@@ -138,6 +140,9 @@ public class TeleMain extends LinearOpMode {
             telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
             telemetry.addData("ARM:", "arm_Power (%.2f),", intake);
             telemetry.addData("ARM position:", "arm_pos (%.2f),", armPos);
+
+            telemetry.addData("Servo position:", "servo_pos (%.2f),", servos.getServoPosition(Servos.Type.Claw));
+
             telemetry.update(); // telemtryy
 
             dashboardTelemetry.addData("Set Point", setPoint);
