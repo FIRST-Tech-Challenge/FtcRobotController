@@ -22,10 +22,5 @@ public class SpecimenHang extends KActionSet {
         clawOpen.setName("clawOpen");
         clawOpen.setDependentActions(moveLsToClip);
         this.addAction(clawOpen);
-
-        MoveOuttakeLSAction moveLsDown = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMEN_HANG_DONE_MM);
-        moveLsDown.setName("moveLsDown");
-        moveLsDown.setDependentActions(clawOpen);
-        this.addAction(moveLsDown);
     }
 }

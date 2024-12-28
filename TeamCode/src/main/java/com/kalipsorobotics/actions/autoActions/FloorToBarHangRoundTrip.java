@@ -61,7 +61,7 @@ public class FloorToBarHangRoundTrip extends KActionSet {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBar1.setName("moveToBar2");
         moveToBar1.setMaxTimeOutMS(3500);
-        moveToBar1.setDependentActions(transferAction);
+        moveToBar1.setDependentActions(sampleIntakeAction);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, hangPosY, 0);
         this.addAction(moveToBar1);
 
