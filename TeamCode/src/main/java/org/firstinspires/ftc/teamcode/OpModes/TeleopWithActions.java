@@ -55,12 +55,11 @@ public class TeleopWithActions extends OpMode {
     @Override
     public void loop() {
         TelemetryPacket packet = new TelemetryPacket();
-        if (gamepad1.right_trigger > 0.2||gamepad1.right_trigger<-0.2){
-            if (Math.signum(gamepad1.right_trigger)>0){
+        if (gamepad1.right_trigger > 0.5){
                 runningActions.put("extension.extensionState", extension.servoExtension(Extension.extensionState.EXTEND));
-            } else {
-                runningActions.put("extension.extensionState", extension.servoExtension(Extension.extensionState.RETRACT));
-            }
+        }
+        if (gamepad1.left_trigger>0.5){
+            runningActions.put("extension.extensionState", extension.servoExtension(Extension.extensionState.RETRACT));
         }
         if (gamepad2.left_bumper){
             runningActions.put("claw.ClawState", claw.servoClaw(Claw.clawState.OPEN));
@@ -70,14 +69,17 @@ public class TeleopWithActions extends OpMode {
         }
         if (gamepad1.left_bumper){
             runningActions.put("intake.intakeState", robot.intakeMove(Intake.intakeState.INTAKE));
-        }
-        if (gamepad1.right_bumper){
+        } else if (gamepad1.right_bumper){
             runningActions.put("intake.intakeState", robot.intakeMove(Intake.intakeState.OUTTAKE));
+        } else {
+            runningActions.put("intake.intakeState", robot.intakeMove(Intake.intakeState.STOP));
         }
         if(gamepad2.cross) { runningActions.put("arm.servoArm", arm.servoArmSpec());}
         if(gamepad2.triangle) {runningActions.put("arm.servoArm", arm.servoArm());}
         if (Math.abs(gamepad2.left_stick_y) > 0.2) {
-            runningActions.put("lift.manualControl", lift.manualControl(-gamepad2.left_stick_y));
+            runningActions.put("lift.manualControl", lift.manualControl(gamepad2.left_stick_y));
+        } else {
+            runningActions.put("lift.manualControl", lift.manualControl(0));
         }
         runningActions.put(
                 "drivetrain.manualControl",
