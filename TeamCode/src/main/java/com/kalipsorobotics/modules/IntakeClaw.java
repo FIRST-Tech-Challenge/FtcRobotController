@@ -47,16 +47,19 @@ public class IntakeClaw {
     private KServo intakeClawServo;
 
 
-    public static final double INTAKE_CLAW_CLOSE = 0.365;
-    public static final double INTAKE_CLAW_OPEN = 0.05;
+    public static final double INTAKE_CLAW_CLOSE = 0.36;
+    public static final double INTAKE_CLAW_OPEN = 0.06; //increase to close claw more
 
     public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.77;
+    public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS =0.645;
 
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
     public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
 
     public static final double INTAKE_LINKAGE_IN_POS = 0.95;
     public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
+
+
 
 
     public IntakeClaw(OpModeUtilities opModeUtilities) {
@@ -86,8 +89,8 @@ public class IntakeClaw {
                 300,
                 0, false);
 
-        intakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeClaw"), 60/0.25,
-                300,
+        intakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeClaw"), 60/0.11,     //mini axon
+                255,
                 0, false);
     }
 
@@ -97,6 +100,7 @@ public class IntakeClaw {
         getIntakeBigPivotServo().setPosition(IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS);
         getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
         getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
+        getIntakeClawServo().setPosition(IntakeClaw.INTAKE_CLAW_OPEN);
     }
 
 

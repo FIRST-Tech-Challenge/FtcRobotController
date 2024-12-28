@@ -38,7 +38,7 @@ public class Outtake {
     public static final double LS_SPECIMEN_CLIP_POS = 230;
 
     public static final double OUTTAKE_CLAW_CLOSE = 0.84;
-    public static final double OUTTAKE_CLAW_OPEN = 0.5;
+    public static final double OUTTAKE_CLAW_OPEN = 0.65;     //increase to make claw close more, decrease to open more
 
 
 
@@ -53,7 +53,7 @@ public class Outtake {
         linearSlide2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
         outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivot"), 60/0.11, 255,
                 0, false);
-        outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakeClaw"), 60/0.25, 300,
+        outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakeClaw"), 60/0.11, 255, //mini axon
                 0, false);
 //        outtakePigeonServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo"), 60/0.25, 300,
 //                0, false);

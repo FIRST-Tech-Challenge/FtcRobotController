@@ -712,6 +712,9 @@ public class RedTeleop extends LinearOpMode {
             telemetry.addData("big sweep pos: ", intakeBigSweepPos);
             telemetry.addData("small sweep pos: ", intakeSmallSweepPos);
             telemetry.update();
+            Log.d("teleopforauto", "odometry " + wheelOdometry.getCurrentPosition().toString());
+            Log.d("teleopforauto", "big sweep " + intakeClaw.getIntakeBigSweepServo().getPosition());
+            Log.d("teleopforauto", "small sweep " + intakeClaw.getIntakeSmallSweepServo().getPosition());
 
         }
     }

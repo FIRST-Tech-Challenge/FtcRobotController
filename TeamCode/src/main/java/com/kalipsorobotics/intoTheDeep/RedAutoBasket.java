@@ -53,8 +53,8 @@ public class RedAutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
-        int outtakeXPos = -185;
-        int outtakeYPos = 995;
+        int outtakeXPos = -200;
+        int outtakeYPos = 1045;
 
         //================begin of first specimen====================
         WaitAction waitAtStart = new WaitAction(300);
@@ -111,7 +111,8 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample1.setName("moveToSample1");
         moveToSample1.setDependentActions(outtakeTransferReady);
         //bar to sample 1
-        moveToSample1.addPoint(-645, 845, 180);
+        moveToSample1.addPoint(-420, 0, 90);
+        moveToSample1.addPoint(-715, 825, 180);
         redAutoBasket.addAction(moveToSample1);
 
         SampleIntakeReady sampleIntakeReady1 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -188,7 +189,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(-645, 1100, 180);
+        moveToSample2.addPoint(-735, 1060, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -265,29 +266,19 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(moveOutBasket2);
         //move basket to sample 2
-        moveToSample3.addPoint(-380, 1035, 180-26);
+        moveToSample3.addPoint(-500, 1024.35, 180-27.6);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
 
-        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
+        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
         sampleIntakeReady3.setDependentActions(moveToSample3);
         redAutoBasket.addAction(sampleIntakeReady3);
 
-        KServoAutoAction bigPivotToSample3 = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS);
-        bigPivotToSample3.setName("bigPivotToSample3");
-        bigPivotToSample3.setDependentActions(moveToSample3);
-        redAutoBasket.addAction(bigPivotToSample3);
-
-        KServoAutoAction smallPivotToSample3 = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_GRAB_SAMPLE_3_POS);
-        smallPivotToSample3.setName("smallPivotToSample3");
-        smallPivotToSample3.setDependentActions(moveToSample3);
-        redAutoBasket.addAction(smallPivotToSample3);
-
         SampleIntakeAction sampleIntakeAction3 = new SampleIntakeAction(intakeClaw);
         sampleIntakeAction3.setName("sampleIntakeAction3");
-        sampleIntakeAction3.setDependentActions(sampleIntakeReady3, moveToSample3, bigPivotToSample3, smallPivotToSample3);
+        sampleIntakeAction3.setDependentActions(sampleIntakeReady3, moveToSample3, sampleIntakeReady3);
         redAutoBasket.addAction(sampleIntakeAction3);
 
         IntakeTransferReady intakeTransferReady3 = new IntakeTransferReady(intakeClaw);
