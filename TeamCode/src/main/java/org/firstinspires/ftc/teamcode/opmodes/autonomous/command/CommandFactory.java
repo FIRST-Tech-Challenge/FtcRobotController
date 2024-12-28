@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -111,6 +112,10 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 250, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
+    public MoveSliderCommand extendSliderToIntakeSample3() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 200, false, DeliverySlider.Direction.EXPANDING, 1500);
+    }
+
     public MoveSliderCommand collapseSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
     }
@@ -133,6 +138,10 @@ public class CommandFactory {
 
     public MovePivotCommand pivotToGroundInTakeBegin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
+    }
+
+    public MovePivotCommand pivotToGroundInTakeSample3Begin() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 230);
     }
 
     public MovePivotCommand pivotToStart() {
@@ -194,10 +203,21 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 600, 100, waitTime,  .4);
     }
 
+    public MovePivotCommand AutoToGroundForSample3(int waitTime) {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 650, 100, waitTime,  .4);
+    }
+
     public ParallelRaceGroup intakeFromGround2(int waitTime) {
         return new ParallelRaceGroup(
                 intake(),
                 AutoToGround(waitTime)
+        );
+    }
+
+    public ParallelCommandGroup intakeFromGroundForSample3(int waitTime) {
+        return new ParallelCommandGroup(
+                intake(),
+                AutoToGroundForSample3(waitTime)
         );
     }
 
