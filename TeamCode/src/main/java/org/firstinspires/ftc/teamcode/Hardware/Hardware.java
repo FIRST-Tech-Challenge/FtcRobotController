@@ -11,11 +11,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
+
 import java.util.List;
 
 public class Hardware   {
 
     private static Hardware instance = null;
+    private Logger logger;
     private boolean enabled;
 
     private HardwareMap hardwareMap;
@@ -63,8 +66,9 @@ public class Hardware   {
         return instance;
     }
 
-    public void init(final HardwareMap map) {
+    public void init(final HardwareMap map, Logger logger) {
         hardwareMap = map;
+        this.logger = logger;
 
         // Drivetrain
         LF = hardwareMap.get(DcMotorEx.class, "EH-Motor-0");
@@ -134,6 +138,10 @@ public class Hardware   {
         for (LynxModule hub : hubs) {
             hub.clearBulkCache();
         }
+    }
+
+    public void log() {
+
     }
 
 }

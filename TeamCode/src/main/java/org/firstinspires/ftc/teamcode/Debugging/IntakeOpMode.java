@@ -40,7 +40,7 @@ public class IntakeOpMode extends OpMode {
 
         intake.setAcceptableColors(colors);
 
-        drivetrain = new Drivetrain(hardware, controller, logger);
+        drivetrain = new Drivetrain(hardware, controller, logger, false);
     }
 
     @Override

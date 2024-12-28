@@ -27,6 +27,8 @@ public class Arm {
     private double rightEncPosition;
     private double leftEncPosition;
 
+    private boolean safeSlideDown;
+
     private Status status;
 
     public Arm(Hardware hardware, Logger logger) {
@@ -41,6 +43,12 @@ public class Arm {
         leftEncPosition = leftServo.getPos();
 
         findState();
+
+        if (rightEncPosition >= DepositConstants.armRightEncSlideDownSafePos || status == Status.TransferPos) {
+            safeSlideDown = true;
+        } else {
+            safeSlideDown = false;
+        }
     }
 
     public void command() {
@@ -49,9 +57,10 @@ public class Arm {
     }
 
     public void log() {
-        logger.log("Arm", "", Logger.LogLevels.production);
+        logger.log("<b>" + "Arm" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Status", status, Logger.LogLevels.debug);
+        logger.log("Slides Retract Safe", safeSlideDown, Logger.LogLevels.debug);
 
         logger.log("Right Target Pos", rightServoTargetPosition, Logger.LogLevels.developer);
         logger.log("Left Target Pos", leftServoTargetPosition, Logger.LogLevels.developer);
@@ -70,6 +79,10 @@ public class Arm {
 
     public double getRightSetPosition() {
         return rightServoTargetPosition;
+    }
+
+    public boolean getSlideSafeDown() {
+        return safeSlideDown;
     }
 
     private void findState() {

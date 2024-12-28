@@ -36,7 +36,7 @@ public class Claw {
     }
 
     public void log() {
-        logger.log("Claw", "", Logger.LogLevels.production);
+        logger.log("<b>" + "Claw" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Status", status, Logger.LogLevels.debug);
 
@@ -48,8 +48,8 @@ public class Claw {
         targetPosition = position;
     }
 
-    public double getPosition() {
-        return encoderPos;
+    public double getTargetPosition() {
+        return targetPosition;
     }
 
     public Status getStatus() {
@@ -57,7 +57,7 @@ public class Claw {
     }
 
     private void findStatus() {
-        if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncOpenPos, DepositConstants.clawEncPosTolerance)) {
+        if (encoderPos >= (DepositConstants.clawClosedPos - DepositConstants.clawEncPosTolerance)) {
             status = Status.released;
         } else if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncClosedPos, DepositConstants.clawEncPosTolerance)) {
             status = Status.gripped;

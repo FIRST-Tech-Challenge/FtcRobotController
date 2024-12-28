@@ -55,10 +55,15 @@ public class Intake {
 
     public void update() {
         bucket.update();
-        detector.update();
         slides.update();
 
         findsState();
+
+        // Only if intaking then update the detector
+        if (currentSystemState == SystemState.Intaking) {
+            detector.update();
+        }
+
         recordedTime = timer.elapsedTime();
         timer.start();
     }
@@ -75,7 +80,7 @@ public class Intake {
                     slides.setTargetCM(IntakeConstants.stowedPosition);
                 }
 
-                if (detector.getStatus() == SampleDetector.Status.sampleDetected) {
+                if (hasSample) {
                     bucket.setRollerPower(IntakeConstants.stallingPower);
                     bucket.setGatePosition(IntakeConstants.gateBlockedPosition);
                 } else {
@@ -83,7 +88,6 @@ public class Intake {
                     bucket.setGatePosition(IntakeConstants.gateOpenPosition);
                 }
 
-                // Need to figure out how to command the gate position
                 break;
 
             case Deployed:
@@ -144,7 +148,7 @@ public class Intake {
     }
 
     public void log(){
-        logger.log("-Intake-", "", Logger.LogLevels.production);
+        logger.log("<b>" + "-Intake-" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Target System State", targetSystemState, Logger.LogLevels.production);
         logger.log("Current State", currentSystemState, Logger.LogLevels.production);

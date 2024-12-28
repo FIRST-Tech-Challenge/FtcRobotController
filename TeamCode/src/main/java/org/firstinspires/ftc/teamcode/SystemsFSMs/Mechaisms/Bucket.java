@@ -55,13 +55,13 @@ public class Bucket {
     }
 
     public void log() {
-        logger.log("Bucket", "", Logger.LogLevels.production);
-        logger.log("Status: ", status, Logger.LogLevels.debug);
+        logger.log("<b>" + "Bucket" + "</b>", "", Logger.LogLevels.production);
+        logger.log("Status", status, Logger.LogLevels.debug);
 
-        logger.log("Bucket Servo Target Pos: ", bucketTargetPos, Logger.LogLevels.developer);
-        logger.log("Bucket Servo Pos: ", bucketServoEncPosition, Logger.LogLevels.developer);
-        logger.log("Gate Servo Target Pos: ", gateTargetPos, Logger.LogLevels.developer);
-        logger.log("Roller Power: ", rollerPower, Logger.LogLevels.developer);
+        logger.log("Bucket Servo Target Pos", bucketTargetPos, Logger.LogLevels.developer);
+        logger.log("Bucket Servo Pos", bucketServoEncPosition, Logger.LogLevels.developer);
+        logger.log("Gate Servo Target Pos", gateTargetPos, Logger.LogLevels.developer);
+        logger.log("Roller Power", rollerPower, Logger.LogLevels.developer);
         logger.log("Roller Current", current, Logger.LogLevels.developer);
     }
 
@@ -88,7 +88,7 @@ public class Bucket {
     private void findStatus() {
         if (PosChecker.atAngularPos(bucketServoEncPosition, IntakeConstants.bucketEncUpPosition, IntakeConstants.bucketEncPositionTolerance)) {
             status = Status.up;
-        } else if (PosChecker.atAngularPos(bucketServoEncPosition, IntakeConstants.bucketEncDownPosition, IntakeConstants.bucketEncPositionTolerance)) {
+        } else if (bucketServoEncPosition <= IntakeConstants.bucketEncDownPartialPosition) {
             status = Status.down;
         } else {
             status = Status.intermediate;

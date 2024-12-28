@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.DepositConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
@@ -27,6 +29,8 @@ public class DepositSlides {
     private double rightCurrent = 0;
     private double leftCurrent = 0;
     private double totalCurrent = 0;
+    private boolean encoderReset = false;
+    private double velocity = 0;
 
     private double
             p = DepositConstants.sp,
@@ -48,11 +52,23 @@ public class DepositSlides {
     public void update() {
         currentTicks = rightMotor.getCurrentPosition();
         currentCM = -currentTicks * ticksToCm;
+        velocity = rightMotor.getVelocity(AngleUnit.DEGREES);
+
 
         rightCurrent = rightMotor.getCurrent(CurrentUnit.MILLIAMPS);
         leftCurrent = leftMotor.getCurrent(CurrentUnit.MILLIAMPS);
         totalCurrent = rightCurrent + leftCurrent;
 
+//        if (targetCM == 0 && velocity <= 1  && totalCurrent >= 10000 && !encoderReset ) {
+//            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//            encoderReset = true;
+//        }
+
+        if (targetCM != 0) {
+            encoderReset = false;
+        }
 
     }
 
@@ -66,13 +82,15 @@ public class DepositSlides {
     }
 
     public void log() {
-        logger.log("Deposit Slides", "", Logger.LogLevels.production);
+        logger.log("<b>" + "Deposit Slides" + "</b>", "", Logger.LogLevels.production);
 
-        logger.log("Current CM", currentCM, Logger.LogLevels.debug);
-        logger.log("Target CM", targetCM, Logger.LogLevels.debug);
+        logger.log("Depo Current CM", currentCM, Logger.LogLevels.debug);
+        logger.log("Depo Target CM", targetCM, Logger.LogLevels.debug);
 
-        logger.log("Ranged Target CM", rangedTarget, Logger.LogLevels.developer);
-        logger.log("Power", power, Logger.LogLevels.developer);
+        logger.log("Depo Ranged Target CM", rangedTarget, Logger.LogLevels.developer);
+        logger.log("Depo Power", power, Logger.LogLevels.developer);
+        logger.log("Encoder Reset", encoderReset, Logger.LogLevels.developer);
+        logger.log("Velocity (Degrees)", velocity, Logger.LogLevels.developer);
         logger.log("Right Current", rightCurrent, Logger.LogLevels.developer);
         logger.log("Left Current", leftCurrent, Logger.LogLevels.developer);
         logger.log("Total Current", totalCurrent, Logger.LogLevels.developer);

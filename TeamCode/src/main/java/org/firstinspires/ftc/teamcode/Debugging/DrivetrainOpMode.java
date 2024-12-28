@@ -23,7 +23,7 @@ public class DrivetrainOpMode extends OpMode {
         hardware.init(hardwareMap);
         controller = new GamepadEx(gamepad1);
         logger = new Logger(telemetry, controller);
-        drivetrain = new Drivetrain(hardware, controller, logger);
+        drivetrain = new Drivetrain(hardware, controller, logger, true);
     }
 
     @Override

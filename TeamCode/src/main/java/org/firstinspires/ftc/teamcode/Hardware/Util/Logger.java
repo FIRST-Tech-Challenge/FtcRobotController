@@ -25,6 +25,7 @@ public class Logger {
         this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         state = LogLevels.production;
         this.controller = controller;
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
     }
 
     public void log(String label, Object data, LogLevels level) {

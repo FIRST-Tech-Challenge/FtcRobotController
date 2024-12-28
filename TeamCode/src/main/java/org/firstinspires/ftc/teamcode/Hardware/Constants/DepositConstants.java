@@ -25,6 +25,7 @@ public class DepositConstants {
             armRightEncSpecIntakePos = 308.20,
             armRightEncSpecDepositPos = 79.00,
             armRightEncSampleDepositPos = 243.70,
+            armRightEncSlideDownSafePos = 165.00,
             armRightPositionTolerance = 10.00;
 
     // Deposit Slide PID Constants
@@ -41,7 +42,7 @@ public class DepositConstants {
 
     // Deposit Slides Positions in cm
     public static final double
-            slideTransferPos = 8.89,
+            slideTransferPos = 8.50,
             slidePreTransferPos = 21.50,
             slideSpecIntakePos = 0.00,
             slideSpecDepositReadyPos = 48.00,

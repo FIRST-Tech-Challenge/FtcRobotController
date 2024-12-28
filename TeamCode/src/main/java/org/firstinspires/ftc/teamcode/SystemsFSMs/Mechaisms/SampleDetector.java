@@ -55,7 +55,7 @@ public class SampleDetector {
     }
 
     public void log() {
-        logger.log("Sample Detector", "", Logger.LogLevels.production);
+        logger.log("<b>" + "Sample Detector" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Status", status, Logger.LogLevels.debug);
         logger.log("AO5 Distance", aO5(), Logger.LogLevels.debug);
@@ -124,6 +124,7 @@ public class SampleDetector {
         g = colorSensor.green();
         b = colorSensor.blue();
         a = colorSensor.alpha();
+
         double r1 = ColorUtils.Clamp(r,0 ,IntakeConstants.maxR);
         double g1 = ColorUtils.Clamp(g,0 ,IntakeConstants.maxG);
         double b1 = ColorUtils.Clamp(b,0 ,IntakeConstants.maxB);

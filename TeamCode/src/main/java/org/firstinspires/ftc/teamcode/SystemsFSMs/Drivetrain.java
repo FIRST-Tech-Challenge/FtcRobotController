@@ -24,6 +24,7 @@ public class Drivetrain {
     private double heading = 0;
 
     private Pose2D position;
+    private boolean readPos = false;
 
     GamepadEx gamepad;
 
@@ -33,7 +34,7 @@ public class Drivetrain {
     private double LBPower = 0.00;
 
 
-    public Drivetrain(Hardware hardware, GamepadEx gamepad, Logger logger) {
+    public Drivetrain(Hardware hardware, GamepadEx gamepad, Logger logger, boolean readPos) {
         this.logger = logger;
 
         LF = hardware.LF;
@@ -43,10 +44,17 @@ public class Drivetrain {
 
         pinPoint = hardware.pinPoint;
         this.gamepad = gamepad;
+
+        this.readPos = readPos;
     }
 
     public void update() {
-        pinPoint.update();
+        if (readPos) {
+            pinPoint.update();
+        } else {
+            pinPoint.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
+        }
+
         heading = pinPoint.getHeading();
         position = pinPoint.getPosition();
 
@@ -73,7 +81,7 @@ public class Drivetrain {
     }
 
     public void log() {
-        logger.log("-Drivetrain-", "", Logger.LogLevels.production);
+        logger.log("<b>" + "-Drivetrain-" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Heading", heading, Logger.LogLevels.debug);
         logger.log("Position", position, Logger.LogLevels.debug);

@@ -42,6 +42,8 @@ public class IntakeSlides {
         currentCM = currentTicks * ticksToCm;
 
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
+
+
     }
 
     public void command() {
@@ -53,7 +55,7 @@ public class IntakeSlides {
     }
 
     public void log() {
-        logger.log("Intake Slides", "", Logger.LogLevels.production);
+        logger.log("<b>" + "Intake Slides" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Current CM", currentCM, Logger.LogLevels.debug);
         logger.log("Target CM", targetCM, Logger.LogLevels.debug);

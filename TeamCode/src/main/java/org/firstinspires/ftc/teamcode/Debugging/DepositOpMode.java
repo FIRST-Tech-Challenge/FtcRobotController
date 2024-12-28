@@ -28,7 +28,7 @@ public class DepositOpMode extends OpMode {
         controller = new GamepadEx(gamepad1);
         logger = new Logger(telemetry, controller);
         deposit = new Deposit(hardware, controller, logger);
-        drivetrain = new Drivetrain(hardware, controller, logger);
+        drivetrain = new Drivetrain(hardware, controller, logger, false);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         deposit.setTargetState(Deposit.TargetState.transfer);
