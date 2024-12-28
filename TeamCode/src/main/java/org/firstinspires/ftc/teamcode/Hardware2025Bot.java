@@ -118,6 +118,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_AUTO_PRE_DEG    = 83.00; // Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
     public final static double TILT_ANGLE_ASCENT2_DEG     = 75.00; // Arm at rotation back to the low bar for ascent level 2
+    public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
     public final static double TILT_ANGLE_ZERO_DEG        =  6.00; // Arm for parking fully reset in auto
@@ -127,6 +128,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  6.00; // Arm to collect samples at ground level
+    public final static double TILT_ANGLE_SAMPLE3_DEG     =  6.00; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_WALL_DEG        = 13.60; // AUTO: motor tilted back and touches wall
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
     public final static double TILT_ANGLE_WALL1_DEG       = 32.30; // AUTO: grab specimen off wall (lift off)
@@ -158,13 +160,15 @@ public class Hardware2025Bot
     // Encoder counts for 223 RPM lift motors theoretical max 5.8 rev * 751.8  ticks/rev = 4360 counts
 
     public final static int    VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
-    public final static int    VIPER_EXTEND_AUTO_READY  = 800;    // extend for collecting during auto
-    public final static int    VIPER_EXTEND_AUTO_COLLECT  = 800;    // extend for collecting during auto
+    public final static int    VIPER_EXTEND_AUTO_READY  = 1600;    // extend for collecting during auto
+    public final static int    VIPER_EXTEND_AUTO_COLLECT = 1600;    // extend for collecting during auto
+    public final static int    VIPER_EXTEND_SAMPLE3  = 1500;  // extend for collecting during auto (3rd sample along wall)
     public final static int    VIPER_EXTEND_HANG1 = 1250;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_PARK = 3410;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_HANG2 =  602;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_GRAB  = 800;    // extend for collection from submersible  FIX LATER FOR TELEOP!!!
+    public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
-    public final static int    VIPER_EXTEND_SAFE  =  750;   // Viper is out far enough to safely rotate claw down
+    public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
     public final static int    VIPER_EXTEND_AUTO1 = 1980;   // NEW raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
     public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
@@ -192,6 +196,8 @@ public class Hardware2025Bot
     public final static double ELBOW_SERVO_SAFE_ANGLE = 180.0;
     public final static double ELBOW_SERVO_GRAB = 0.510;       // For grabbing samples from the field floor
     public final static double ELBOW_SERVO_GRAB_ANGLE = 180.0;
+    public final static double ELBOW_SERVO_GRAB3 = 0.580;      // For grabbing 3rd sample from field floor (against wall)
+    public final static double ELBOW_SERVO_GRAB3_ANGLE = 180.0;
     public final static double ELBOW_SERVO_BASKET = 0.500;     // For scoring samples in the basket
     public final static double ELBOW_SERVO_BASKET_ANGLE = 180.0;
     public final static double ELBOW_SERVO_BAR1 = 0.520;       // NEW specimen bar (above)
@@ -214,11 +220,12 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_SAFE_ANGLE = 234.0;
     public final static double WRIST_SERVO_GRAB = 0.730;        // grab floor sample (pointing down)
     public final static double WRIST_SERVO_GRAB_ANGLE = 67.0;
-    public final static double WRIST_SERVO_AUTO_SCORE = 0.600;
+    public final static double WRIST_SERVO_BASKET1 = 0.600;     // AUTO/TELE: lifting arm toward basket
+    public final static double WRIST_SERVO_BASKET1_ANGLE = 157.0;
     public final static double WRIST_SERVO_RAISE = 0.570;
     public final static double WRIST_SERVO_RAISE_ANGLE = 157.0;
-    public final static double WRIST_SERVO_BASKET = 0.220;
-    public final static double WRIST_SERVO_BASKET_ANGLE = 270.0;
+    public final static double WRIST_SERVO_BASKET2 = 0.220;     // AUTO/TELE: scoring in basket
+    public final static double WRIST_SERVO_BASKET2_ANGLE = 270.0;
     public final static double WRIST_SERVO_BAR1 = 0.640;         // AUTO: specimen bar (when above)
     public final static double WRIST_SERVO_BAR1_ANGLE = 173.0;
     public final static double WRIST_SERVO_BAR2 = 0.640;         // AUTO: specimen bar (when clipped)
@@ -239,7 +246,7 @@ public class Hardware2025Bot
     public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
     public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
-    public final static double CLAW_SERVO_OPEN_W  = 0.830;  // claw opened wide (fully open and above samples on floor)
+    public final static double CLAW_SERVO_OPEN_W  = 0.850;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {
         CLAW_INIT,

@@ -997,7 +997,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Start a timer (used to reset back to IDLE state)
                 if(!robot.viperMotorBusy) {
                     robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BASKET);
-                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET);
+                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET2);
                     scoreTimer.reset();
                     scoreArmState = Score_Arm_Steps.POSITION_INTAKE;
                 }
