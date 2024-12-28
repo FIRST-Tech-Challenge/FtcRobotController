@@ -33,7 +33,7 @@ public class FullClimb extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(180))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(0.45, 0.2, new Rotation2d(Math.toRadians(180.0)))),
+                        AutoFunctions.redVsBlue(new Pose2d(0.58, 0.25, new Rotation2d(Math.toRadians(180.0)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(0.0)))),
 
                 new Pause(1),

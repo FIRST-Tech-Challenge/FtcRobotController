@@ -80,7 +80,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN, true)),
 
-                new Pause(1),
+                new Pause(0.5),
 
                 new OpenClaw(),
 

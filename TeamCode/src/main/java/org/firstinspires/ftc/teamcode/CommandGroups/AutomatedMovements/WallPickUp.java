@@ -43,13 +43,13 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(35)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(24)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
                 // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(100)),
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(105)),
 
                 // powers the wrist and moves it to straight position
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(0)),
@@ -65,21 +65,21 @@ public class WallPickUp extends SequentialCommandGroup {
                     Pose2d position = RobotContainer.odometry.getCurrentPos();
                     Pose2d correctedPosition;
                     if(RobotContainer.isRedAlliance)
-                        correctedPosition = new Pose2d(1.78435-0.19+0.03-0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                        correctedPosition = new Pose2d(1.78435-0.19+0.0-0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
                     else
-                        correctedPosition = new Pose2d(-1.78435+0.19-0.03+0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                        correctedPosition = new Pose2d(-1.78435+0.19-0.0+0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
 
                     RobotContainer.odometry.setCurrentPos(correctedPosition);
                 }),
 
                 new FollowPath(
-                        0.5,
+                        0.3,
                         1.0,
                         0.0,
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.4, new Rotation2d(Math.toRadians(90.0)))),
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.43, new Rotation2d(Math.toRadians(90.0)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new Pause(0.35),

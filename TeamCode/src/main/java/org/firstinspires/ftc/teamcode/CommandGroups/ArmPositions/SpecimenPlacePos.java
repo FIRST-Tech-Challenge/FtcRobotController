@@ -20,10 +20,10 @@ public class SpecimenPlacePos extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(128)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(125)),
 
                 // folds the elbow in 270
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(255)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(275)),
 
                 // folds the wrist in 0
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
