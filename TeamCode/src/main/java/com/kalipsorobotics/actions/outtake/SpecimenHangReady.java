@@ -13,20 +13,14 @@ public class SpecimenHangReady extends KActionSet {
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);
 
-//        KServoAutoAction outtakePivotActionOpenHalf = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                OuttakePivotAction.OUTTAKE_PIVOT_HALF_POS);
-//        outtakePivotActionOpenHalf.setName("outtakePivotActionOpenHalf");
-//        this.addAction(outtakePivotActionOpenHalf);
+        MoveOuttakeLSAction raiseSlides = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_HANG_READY_MM); //450
+        raiseSlides.setName("raiseSlides");
+        this.addAction(raiseSlides);
 
         KServoAutoAction outtakePivotActionOpen = new KServoAutoAction(outtake.getOuttakePivotServo(),
                 Outtake.OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS);
         outtakePivotActionOpen.setName("outtakePivotActionOpen");
         this.addAction(outtakePivotActionOpen);
-        //outtakePivotActionOpen.setDependantActions(outtakePivotActionOpenHalf);
-
-        MoveOuttakeLSAction raiseSlides = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_HANG_READY_MM); //450
-        raiseSlides.setName("raiseSlides");
-        this.addAction(raiseSlides);
 
     }
 

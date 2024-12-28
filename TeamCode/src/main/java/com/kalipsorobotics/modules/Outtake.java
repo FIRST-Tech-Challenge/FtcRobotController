@@ -35,6 +35,7 @@ public class Outtake {
 
     public static final double LS_SPECIMAN_HANG_READY_MM = 380;
     public static final double LS_DOWN_POS = 1;
+    public static final double LS_SPECIMEN_HANG_DONE_MM = 30;
     public static final double LS_SPECIMEN_CLIP_POS = 230;
 
     public static final double OUTTAKE_CLAW_CLOSE = 0.84;

@@ -4,6 +4,7 @@ package com.kalipsorobotics.intoTheDeep;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
@@ -64,7 +65,7 @@ public class RedAutoBasket extends LinearOpMode {
         PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(-720, -350, 0);
+        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, -350, 0);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoBasket.addAction(moveToSpecimenBar);
 
@@ -77,31 +78,6 @@ public class RedAutoBasket extends LinearOpMode {
         specimenHang1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoBasket.addAction(specimenHang1);
 
-        OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
-        outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(specimenHang1);
-        redAutoBasket.addAction(outtakeTransferReady);
-
-//        MoveOuttakeLSAction lowerSlidesHalf1 = new MoveOuttakeLSAction(outtake, 200);
-//        lowerSlidesHalf1.setName("lowerSlidesHalf1");
-//        lowerSlidesHalf1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
-//        redAutoBasket.addAction(lowerSlidesHalf1);
-//
-//        WaitAction waitAfterHang = new WaitAction(500);
-//        waitAfterHang.setName("waitAfterHang");
-//        waitAfterHang.setDependentActions(lowerSlidesHalf1);
-//        redAutoBasket.addAction(waitAfterHang);
-//
-//        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
-//                OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
-//        openClaw.setName("openClaw");
-//        openClaw.setDependentActions(waitAfterHang);
-//        redAutoBasket.addAction(openClaw);
-
-//        OuttakeDownReady outtakeDownReady1 = new OuttakeDownReady(outtake);
-//        outtakeDownReady1.setName("outtakeDownReady1");
-//        outtakeDownReady1.setDependentActions(openClaw);
-//        redAutoBasket.addAction(outtakeDownReady1);
         //===============end of first specimen===============
 
 
@@ -109,11 +85,16 @@ public class RedAutoBasket extends LinearOpMode {
         //================begin of first basket====================
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
-        moveToSample1.setDependentActions(outtakeTransferReady);
+        moveToSample1.setDependentActions(specimenHang1);
         //bar to sample 1
         moveToSample1.addPoint(-420, 0, 90);
         moveToSample1.addPoint(-715, 825, 180);
         redAutoBasket.addAction(moveToSample1);
+
+        OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
+        outtakeTransferReady.setName("outtakeTransferReady");
+        outtakeTransferReady.setDependentActions(specimenHang1);
+        redAutoBasket.addAction(outtakeTransferReady);
 
         SampleIntakeReady sampleIntakeReady1 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
         sampleIntakeReady1.setName("sampleIntakeReady1");

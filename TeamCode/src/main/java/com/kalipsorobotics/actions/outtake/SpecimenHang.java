@@ -8,13 +8,9 @@ import com.kalipsorobotics.modules.Outtake;
 public class SpecimenHang extends KActionSet {
 
     public SpecimenHang(Outtake outtake){
-//        KServoAutoAction pivotOuttake = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_SPECIMAN_HANG_POS);
-//        pivotOuttake.setName("pivotOuttake");
-//        this.addAction(pivotOuttake);
 
         WaitAction waitAction = new WaitAction(10);
         waitAction.setName("waitAction");
-//        waitAction.setDependentActions(pivotOuttake);
         this.addAction(waitAction);
 
         MoveOuttakeLSAction moveLsToClip = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMEN_CLIP_POS);
@@ -27,7 +23,7 @@ public class SpecimenHang extends KActionSet {
         clawOpen.setDependentActions(moveLsToClip);
         this.addAction(clawOpen);
 
-        MoveOuttakeLSAction moveLsDown = new MoveOuttakeLSAction(outtake, Outtake.LS_DOWN_POS);
+        MoveOuttakeLSAction moveLsDown = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMEN_HANG_DONE_MM);
         moveLsDown.setName("moveLsDown");
         moveLsDown.setDependentActions(clawOpen);
         this.addAction(moveLsDown);
