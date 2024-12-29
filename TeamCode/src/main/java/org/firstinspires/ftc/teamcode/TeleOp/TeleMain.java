@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
+import org.firstinspires.ftc.teamcode.Systems.Servos;
 
 @TeleOp(name="Teleop-Main")
 
@@ -19,9 +22,9 @@ public class TeleMain extends LinearOpMode {
     ElapsedTime elapsedTime;
 
     // PID variables
-    public static double kp = 2;  // Proportional gain
-    public static double ki = 0.45;  // Integral gain
-    public static double kd = 0;  // Derivative gain
+    public static double kp = 1.5;  // Proportional gain
+    public static double ki = 0.04;  // Integral gain
+    public static double kd = 0.03;  // Derivative gain
 
 
     public int setPoint;
@@ -37,9 +40,13 @@ public class TeleMain extends LinearOpMode {
         motors = new Motors(hardwareMap);
         input = new Input(hardwareMap);
         elapsedTime = new ElapsedTime();
+        Servos servos = new Servos(hardwareMap);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();  //REMOVE THIS
+        Telemetry dashboardTelemetry = dashboard.getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
 
         int ARM_RESTING = motors.getArmPosition();
-        int ARM_REACH = motors.getArmPosition() + 1000; // plus some number idk what it actually is
+        int ARM_REACH = motors.getArmPosition() + 1145; // plus some number idk what it actually is
 
         setPoint = ARM_RESTING;
         waitForStart();
@@ -48,6 +55,7 @@ public class TeleMain extends LinearOpMode {
         while (opModeIsActive())
         {
             double armPos = motors.getArmPosition(); // comment out this line when actual probably
+
 
             double move = gamepad1.left_stick_y * 100;
             double spin = gamepad1.right_stick_x * 100;
@@ -66,7 +74,7 @@ public class TeleMain extends LinearOpMode {
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
 
-            setPoint += (int) (gamepad2.left_stick_y * 10);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+            setPoint += (int) (-gamepad2.left_stick_y * 35);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
 
             // Clamp setPoint between resting and reaching positions
             setPoint = Math.max(ARM_RESTING, Math.min(setPoint, ARM_REACH));
@@ -109,6 +117,8 @@ public class TeleMain extends LinearOpMode {
                 motors.MoveMotor(Motors.Type.Arm, output);
             }
 
+
+
             // Store current error and time for next iteration
             prevError = errorValue;
             prevTime = time;
@@ -130,7 +140,21 @@ public class TeleMain extends LinearOpMode {
             telemetry.addData("STRAFE:", "left_x (%.2f),", strafe);
             telemetry.addData("ARM:", "arm_Power (%.2f),", intake);
             telemetry.addData("ARM position:", "arm_pos (%.2f),", armPos);
+
+            telemetry.addData("Servo position:", "servo_pos (%.2f),", servos.getServoPosition(Servos.Type.Claw));
+
             telemetry.update(); // telemtryy
+
+            dashboardTelemetry.addData("Set Point", setPoint);
+            dashboardTelemetry.addData("Process Value", processValue);
+            dashboardTelemetry.addData("Proportional Gain", kp);
+            dashboardTelemetry.addData("Integral Gain", ki);
+            dashboardTelemetry.addData("Derivative Gain", kd);
+            dashboardTelemetry.addData("Proportional", proportional);
+            dashboardTelemetry.addData("Integral", integral);
+            dashboardTelemetry.addData("Derivative", derivative);
+            dashboardTelemetry.addData("PID Output", output);
+            dashboardTelemetry.update();
         }
     }
 

@@ -34,13 +34,12 @@ public class Servos {
     {
         double actualPosition = position / 270;
 
-        //servos[servoNum].setPosition(actualPosition);
-        servos[servoName.getValue()].setPosition(position);
+        servos[servoName.getValue()].setPosition(actualPosition);
     }
 
-//    public double getServoPosition(int servoNum)
-//    {
-//        return servos[servoNum].getPosition();
-//    }
+    public double getServoPosition(Type servoName)
+    {
+        return servos[servoName.getValue()].getPosition();
+    }
 
 }

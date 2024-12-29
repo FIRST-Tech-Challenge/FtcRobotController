@@ -28,9 +28,9 @@ public class ArmPIDTest extends LinearOpMode {
     ElapsedTime elapsedTime;
 
     // PID variables
-     static double kp = 2;  // Proportional gain
-     static double ki = 0.45;  // Integral gain
-     static double kd = 0.13;  // Derivative gain
+     public static double kp = 2;  // Proportional gain
+     public static double ki = 0.45;  // Integral gain
+     public static double kd = 0.13;  // Derivative gain
 
 
      static int setPoint;
