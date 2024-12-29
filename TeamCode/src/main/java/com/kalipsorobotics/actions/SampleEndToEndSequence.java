@@ -43,7 +43,7 @@ public class SampleEndToEndSequence extends KActionSet{
 
         KServoAutoAction closeOuttakeClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
         closeOuttakeClaw.setName("closeOuttakeClaw");
-        closeOuttakeClaw.setDependentActions(moveBigPivot1, moveSmallPivot, moveSmallSweep, openOuttakeClaw);
+        closeOuttakeClaw.setDependentActions(moveBigPivot1, moveSmallPivot, moveSmallSweep, openOuttakeClaw, linkageRetract);
         this.addAction(closeOuttakeClaw);
 
         KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);

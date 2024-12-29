@@ -29,15 +29,25 @@ public class KServo {
     private double prevPosition;
     private double prevTime;
     private double startTime;
+    private double estimatedFinishTime;
 
     private int counter = 0;
 
+    public double estimateTime(double currentPosition, double targetPosition) {
+        double deltaPosition = Math.abs(targetPosition - currentPosition);
+        //(0.5)*255*(0.111*60)
+        double time = deltaPosition * rangeDegrees * (1/servoSpeed);
+        return time;
+        //0.5 * 300deg * 0.25sec/60deg
+    }
+
     public void setTargetPosition(double position) {
-        servo.setPosition(position);
         targetPosition = position;
         if (counter == 0) {
+            estimatedFinishTime = estimateTime(servo.getPosition(), position) + 150;
             startTime = System.currentTimeMillis();
         }
+        servo.setPosition(position);
         counter = counter + 1;
 //        time.reset();
     }
@@ -58,8 +68,10 @@ public class KServo {
     }
 
     public boolean isDone() {
-        Log.d("isDone", "time" + (getTime() - startTime));
-        if ((getTime() - startTime) > 500) {
+        double deltaTime = (getTime() - startTime);
+        Log.d("isDone", "time" + deltaTime);
+        if (deltaTime > estimatedFinishTime) {
+            Log.d("isDone", "done time " + deltaTime + ", port# " + getPortNumber());
             counter = 0;
             return true;
         }

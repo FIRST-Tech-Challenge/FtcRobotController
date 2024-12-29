@@ -24,7 +24,7 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.77;
 
-    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.85;     //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.88;     //increase to go down, decrease to go up
 
     public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.71;   //decrease to move forward, increase to move back
 
@@ -69,7 +69,7 @@ public class IntakeClaw {
 
     private void setUpHardware() {
 
-        intakeLinkageServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeLinkage"), 60/0.25,
+        intakeLinkageServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeLinkage"), 45/1,
                 130,
                 0, false);
 

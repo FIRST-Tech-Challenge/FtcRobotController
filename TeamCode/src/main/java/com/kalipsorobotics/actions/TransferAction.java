@@ -16,10 +16,10 @@ public class TransferAction extends KActionSet{
         openIntakeClaw.setDependentActions(closeOuttakeClaw);
         this.addAction(openIntakeClaw);
 
-        KServoAutoAction moveBigPivot = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
-        moveBigPivot.setName("moveBigPivot");
-        moveBigPivot.setDependentActions(closeOuttakeClaw,openIntakeClaw);
-        this.addAction(moveBigPivot);
+//        KServoAutoAction moveBigPivot = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
+//        moveBigPivot.setName("moveBigPivot");
+//        moveBigPivot.setDependentActions(closeOuttakeClaw,openIntakeClaw);
+//        this.addAction(moveBigPivot);
 
 //        KServoAutoAction pullIntake = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS - 0.1);
 //        pullIntake.setName("pullIntake");

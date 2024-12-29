@@ -54,7 +54,7 @@ public class RedAutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
-        final int INTAKE_SAMPLE_X = -665;
+        final int INTAKE_SAMPLE_X = -655;
         int outtakeXPos = -200;
         int outtakeYPos = 1045;
 
@@ -170,7 +170,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(INTAKE_SAMPLE_X, 1075, 180);
+        moveToSample2.addPoint(INTAKE_SAMPLE_X, 1085, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
