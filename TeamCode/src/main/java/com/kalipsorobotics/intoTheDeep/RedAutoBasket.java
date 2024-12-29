@@ -54,6 +54,7 @@ public class RedAutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
+        final int INTAKE_SAMPLE_X = -665;
         int outtakeXPos = -200;
         int outtakeYPos = 1045;
 
@@ -86,8 +87,8 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample1.setName("moveToSample1");
         moveToSample1.setDependentActions(specimenHang1);
         //bar to sample 1
-        moveToSample1.addPoint(-420, 0, 90);
-        moveToSample1.addPoint(-715, 825, 180);
+        moveToSample1.addPoint(-420, 200, 90);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X, 840, 180);
         redAutoBasket.addAction(moveToSample1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -169,7 +170,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(-735, 1060, 180);
+        moveToSample2.addPoint(INTAKE_SAMPLE_X, 1075, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -246,7 +247,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(moveOutBasket2);
         //move basket to sample 2
-        moveToSample3.addPoint(-500, 1024.35, 180-27.6);
+        moveToSample3.addPoint(-450, 1039.35, 180-27.6);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION

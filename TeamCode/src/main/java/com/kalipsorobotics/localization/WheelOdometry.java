@@ -99,7 +99,7 @@ public class WheelOdometry {
                 String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
                         arcTanDeltaTheta));
 
-        double blendedDeltaTheta = (0.5 * encoderDeltaTheta) + (0 * imuDeltaTheta) + (0.5 * arcTanDeltaTheta);
+        double blendedDeltaTheta = (0.1 * encoderDeltaTheta) + (0.8 * imuDeltaTheta) + (0.1 * arcTanDeltaTheta);
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;

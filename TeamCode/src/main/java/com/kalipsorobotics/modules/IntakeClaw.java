@@ -6,7 +6,7 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 public class IntakeClaw {
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
-    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.5;       //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.67;       //increase to go down, decrease to go up
 
     public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
 

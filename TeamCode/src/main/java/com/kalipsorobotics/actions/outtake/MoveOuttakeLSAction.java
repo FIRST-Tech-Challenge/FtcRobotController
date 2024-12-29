@@ -157,7 +157,7 @@ public class MoveOuttakeLSAction extends Action {
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
              if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.8)) {
-                 power = 0.3;
+                 power = 0.26;
             } else if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.5)){
                  power = 0.15;
              } else if (globalLinearSlideMaintainTicks > 0){

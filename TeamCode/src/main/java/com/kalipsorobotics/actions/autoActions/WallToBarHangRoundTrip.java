@@ -22,7 +22,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         closeOuttakeForSpecimen.setName("closeOuttakeForSpecimen");
         this.addAction(closeOuttakeForSpecimen);
 
-        WaitAction waitAtWall = new WaitAction(1500);
+        WaitAction waitAtWall = new WaitAction(100);
         waitAtWall.setName("waitAtWall");
         this.addAction(waitAtWall);
 
@@ -53,9 +53,14 @@ public class WallToBarHangRoundTrip extends KActionSet {
 //        openClaw.setDependentActions(lowerSlidesHalf);
 //        this.addAction(openClaw);
 
+        MoveOuttakeLSAction raiseSpecimen = new MoveOuttakeLSAction(outtake, 50);
+        raiseSpecimen.setName("raiseSpecimen");
+        raiseSpecimen.setDependentActions(waitAtWall);
+        this.addAction(raiseSpecimen);
+
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
         specimenHangReady.setName("hangSpecimenReady");
-        specimenHangReady.setDependentActions(waitAtWall);
+        specimenHangReady.setDependentActions(raiseSpecimen);
         this.addAction(specimenHangReady);
 
         //waits for everything to finish to prevent specimen from getting caught in bar
@@ -80,14 +85,14 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(specimenHang);
-        moveBarToWall.addPoint(-380, -745, -180); //-205, 700
+        moveBarToWall.addPoint(-380, -750, -180); //-205, 700
         this.addAction(moveBarToWall);
 
         PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2000.0);
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveBarToWall, specimenWallReady);
         //to depot for specimen
-        moveToDepot.addPoint(-135, -745, -180); //-130, -615
+        moveToDepot.addPoint(-135, -750, -180); //-130, -615
         this.addAction(moveToDepot);
 
     }
