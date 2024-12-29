@@ -11,24 +11,31 @@ public class AutoRobotHangAction extends KActionSet {
         moveOuttakeBack.setName("moveOuttakeBack");
         this.addAction(moveOuttakeBack);
 
-        MoveOuttakeLSAction moveLsUp = new MoveOuttakeLSAction(outtake, 920-120);
+        MoveOuttakeLSAction moveLsUp = new MoveOuttakeLSAction(outtake, 730);
         moveLsUp.setName("moveLsUp");
         this.addAction(moveLsUp);
 
-        MoveOuttakeLSAction pullUp = new MoveOuttakeLSAction(outtake, 635);//733 ticks //311
-        pullUp.setName("pullUp");
-        pullUp.setDependentActions(moveLsUp);
-        this.addAction(pullUp);
+        WaitAction waitForLs = new WaitAction(500);
+        waitForLs.setName("waitForLs");
+        waitForLs.setDependentActions(moveLsUp, moveOuttakeBack);
+        this.addAction(waitForLs);
+
+        MoveOuttakeLSAction pullRobotUp = new MoveOuttakeLSAction(outtake, 535);//733 ticks //311
+        pullRobotUp.setName("pullRobotUp");
+        pullRobotUp.setDependentActions(moveLsUp);
+        this.addAction(pullRobotUp);
 
         KServoAutoAction hanghook1 = new KServoAutoAction(outtake.getHangHook1(), Outtake.HOOK1_HANG_POS);
         hanghook1.setName("hanghook1");
-        hanghook1.setDependentActions(pullUp);
+        hanghook1.setDependentActions(pullRobotUp);
         this.addAction(hanghook1);
 
         KServoAutoAction hanghook2 = new KServoAutoAction(outtake.getHangHook2(), Outtake.HOOK2_HANG_POS);
         hanghook2.setName("hanghook2");
-        hanghook2.setDependentActions(pullUp);
+        hanghook2.setDependentActions(pullRobotUp);
         this.addAction(hanghook2);
+
+        pullRobotUp.setOverridePower(1);
 
         MoveOuttakeLSAction moveLsUp2 = new MoveOuttakeLSAction(outtake, 635+40);
         moveLsUp2.setName("moveLsUp2");

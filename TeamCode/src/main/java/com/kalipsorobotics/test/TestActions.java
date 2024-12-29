@@ -414,9 +414,9 @@ public class TestActions extends LinearOpMode {
             }
 
             if (!gamepad1.x && !gamepad1.dpad_down){
-                MoveOuttakeLSAction.setOverridePower(0);
+//                MoveOuttakeLSAction.setOverridePower(0);
             } else if(gamepad1.x && !gamepad1.dpad_down) {
-                MoveOuttakeLSAction.setOverridePower(-0.1);
+//                MoveOuttakeLSAction.setOverridePower(-0.1);
 //                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
                 MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition());
                 //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
@@ -424,14 +424,14 @@ public class TestActions extends LinearOpMode {
                 if (!prevGamepad2DpadDown) {
                     outtake.getHangHook1().setPosition(0.245);
                     outtake.getHangHook2().setPosition(0.65);
-                    MoveOuttakeLSAction.setOverridePower(-1);
+//                    MoveOuttakeLSAction.setOverridePower(-1);
 //                    MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(1);
                     targetHangPos = outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(47);
                     MoveOuttakeLSAction.setGlobal(targetHangPos);
                     prevGamepad2DpadDown = true;
                 } else {
                     if (Math.abs(outtake.getLinearSlide1().getCurrentPosition() - targetHangPos) <= MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS){
-                        MoveOuttakeLSAction.setOverridePower(0);
+//                        MoveOuttakeLSAction.setOverridePower(0);
                     }
                 }
 //                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {

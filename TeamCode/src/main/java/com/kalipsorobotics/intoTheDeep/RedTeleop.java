@@ -267,7 +267,7 @@ public class RedTeleop extends LinearOpMode {
         // Target should always be 0
         MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 0);
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
-        AutoRobotHangAction autoRobotHangAction = new AutoRobotHangAction(outtake);
+        AutoRobotHangAction autoRobotHangAction = null;
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
         SampleIntakeAction sampleIntakeAction = null;
@@ -331,7 +331,7 @@ public class RedTeleop extends LinearOpMode {
             // GAMEPAD 1 ASSIGNMENTS ==============================================
             resetWheelOdomPressed = kGamePad1.isToggleDpadUp();
             angleLockPressed = kGamePad1.isToggleButtonY();
-            hangPressed = kGamePad1.isToggleButtonY();
+            hangPressed = kGamePad1.isToggleButtonB();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -404,15 +404,19 @@ public class RedTeleop extends LinearOpMode {
             if (autoRobotHangAction != null){
                 Log.d("teleop", "running auto robot hang action");
                 autoRobotHangAction.updateCheckDone();
+
             }
 
             if(hangPressed) {
                 if (autoRobotHangAction == null || autoRobotHangAction.getIsDone()){
                     autoRobotHangAction = new AutoRobotHangAction(outtake);
+
                     autoRobotHangAction.setName("autoRobotHangAction");
                 }
 
             }
+
+
 
             //===============DRIVER 2===============
 

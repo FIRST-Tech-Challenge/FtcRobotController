@@ -28,7 +28,7 @@ public class MoveOuttakeLSAction extends Action {
     private final PidNav pidOuttakeLS;
     final double targetTicks;
     private double currentTicks;
-    private static double overridePower = 0;
+    private double overridePower = 0;
 
     public MoveOuttakeLSAction(Outtake outtake) {
         this.outtake = outtake;
@@ -94,11 +94,11 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(650)) {
-            lowestPower = 0.4;
+            lowestPower = 0.35;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
-            lowestPower = 0.5;
+            lowestPower = 0.4;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -178,10 +178,17 @@ public class MoveOuttakeLSAction extends Action {
                 currentTicks, power));
 
         Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);
-        if (overridePower < 0) {
-            power = overridePower;
-            Log.d("Outtake_LS", "power overrided to " + power);
+        if (overridePower != 0){
+            if (power < 0) { //goes down
+                power = overridePower * (-1);
+                Log.d("Outtake_LS", "power overrided to " + power);
+            }
+
+            if (power > 0){ //goes up
+                power = overridePower;
+            }
         }
+
         //brake();
         Log.d("Outtake_LS", "power set to " + power);
         linearSlide1.setPower(power);
@@ -215,7 +222,7 @@ public class MoveOuttakeLSAction extends Action {
         pidOuttakeLS.setErrorIntegral(0);
     }
 
-    public static void setOverridePower(double power) {
+    public void setOverridePower(double power) {
         Log.d("Outtake_LS", "override power is set to " + power);
         overridePower = power;
         Log.d("Outtake_LS", "override power is " + overridePower);
