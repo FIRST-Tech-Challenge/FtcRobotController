@@ -28,21 +28,23 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
         // start pos (0.25, 1.6, -90) on field
         addCommands (
                 // sets the starting position
-                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(AutoFunctions.redVsBlue(new Pose2d(0.82, 1.57, new Rotation2d(Math.toRadians(-90)))))),
+                new InstantCommand(() -> RobotContainer.odometry.setCurrentPos(AutoFunctions.redVsBlue(new Pose2d(0.8, 1.57, new Rotation2d(Math.toRadians(-90)))))),
 
                 // makes sure the claw is closed
                 new CloseClaw(),
 
                 // put arm into stow position
                 // powers shoulder
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(120)),
                 // folds the elbow in 225
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(135)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
                 // folds the wrist in 45
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),
+
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
 
                 // move slide up to get ready for drop off
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+                //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
 
                 // drop off first sample into bucket
