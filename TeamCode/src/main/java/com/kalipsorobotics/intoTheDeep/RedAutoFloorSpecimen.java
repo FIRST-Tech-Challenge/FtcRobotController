@@ -65,18 +65,16 @@ public class RedAutoFloorSpecimen extends LinearOpMode {
         specimenHang1.setName("specimenHang1");
         specimenHang1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoSpecimen.addAction(specimenHang1);
-
-        OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
-        outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(specimenHang1);
-        redAutoSpecimen.addAction(outtakeTransferReady);
-
-
         //===============end of first specimen===============
 
 
 
         //================beginning of push================
+        OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
+        outtakeTransferReady.setName("outtakeTransferReady");
+        outtakeTransferReady.setDependentActions(specimenHang1);
+        redAutoSpecimen.addAction(outtakeTransferReady);
+
         PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry);
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setDependentActions(specimenHang1);

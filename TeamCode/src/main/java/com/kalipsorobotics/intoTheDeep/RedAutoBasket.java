@@ -77,7 +77,6 @@ public class RedAutoBasket extends LinearOpMode {
         specimenHang1.setName("specimenHang1");
         specimenHang1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
         redAutoBasket.addAction(specimenHang1);
-
         //===============end of first specimen===============
 
 

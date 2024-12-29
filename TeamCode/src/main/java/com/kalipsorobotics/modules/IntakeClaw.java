@@ -54,7 +54,7 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS =0.645;
 
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
-    public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.83;
+    public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.78;
 
     public static final double INTAKE_LINKAGE_IN_POS = 0.95;
     public static final double INTAKE_LINKAGE_OUT_POS = 0.57;

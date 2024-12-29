@@ -79,6 +79,23 @@ public class PurePursuitAction extends Action {
         this.dependentActions.add(new DoneStateAction());
     }
 
+    public PurePursuitAction(DriveTrain driveTrain/*, SparkfunOdometry sparkfunOdometry*/, WheelOdometry wheelOdometry, double pidXY) {
+        this.driveTrain = driveTrain;
+        //this.sparkfunOdometry = sparkfunOdometry;
+        this.wheelOdometry = wheelOdometry;
+        this.pidX = new PidNav(pidXY, 0, 0);
+        this.pidY = new PidNav(pidXY, 0, 0);
+        this.pidAngle = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+
+        this.timeoutTimer = new ElapsedTime();
+
+        this.prevFollow = Optional.empty();
+
+        Log.d("purepursaction", "constructed");
+
+        this.dependentActions.add(new DoneStateAction());
+    }
+
     public void addPoint(double x, double y, double headingDeg) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg)));
         Log.d("purepursaction", "added point " + x + ", " + y);

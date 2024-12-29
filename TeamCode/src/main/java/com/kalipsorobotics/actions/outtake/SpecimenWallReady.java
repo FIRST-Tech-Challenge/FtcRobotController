@@ -10,27 +10,24 @@ import com.kalipsorobotics.modules.Outtake;
 public class SpecimenWallReady extends KActionSet {
 
     public SpecimenWallReady(Outtake outtake) {
-        WaitAction waitOneSec = new WaitAction(1000);
-        waitOneSec.setName("waitOneSec");
-        this.addAction(waitOneSec);
+        WaitAction wait = new WaitAction(200);
+        wait.setName("wait");
+        this.addAction(wait);
 
-        MoveOuttakeLSAction lowerSlidesZero = new MoveOuttakeLSAction(outtake, 0);
+        MoveOuttakeLSAction lowerSlidesZero = new MoveOuttakeLSAction(outtake, -5);
         lowerSlidesZero.setName("lowerSlidesZero");
-        lowerSlidesZero.setDependentActions(waitOneSec);
+        lowerSlidesZero.setDependentActions(wait);
         this.addAction(lowerSlidesZero);
 
-
-        KServoAutoAction pivotToWallPos = new KServoAutoAction(outtake.getOuttakePivotServo(),
-                Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+        KServoAutoAction pivotToWallPos = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
         pivotToWallPos.setName("pivotToWallPos");
-        pivotToWallPos.setDependentActions(waitOneSec);
+        pivotToWallPos.setDependentActions(wait);
         this.addAction(pivotToWallPos);
 
-        KServoAutoAction closeClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
-                OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
-        closeClaw.setName("closeClaw");
-        closeClaw.setDependentActions(lowerSlidesZero);
-        this.addAction(closeClaw);
+        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
+        openClaw.setName("openClaw");
+        openClaw.setDependentActions(lowerSlidesZero);
+        this.addAction(openClaw);
     }
 
 }

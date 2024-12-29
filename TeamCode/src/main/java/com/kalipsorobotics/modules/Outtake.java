@@ -30,11 +30,14 @@ public class Outtake {
 
     public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.38;         //increase to go pivot up, decrease to pivot down
 
-    public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;   //decrease to go towards robot, increase to do away from robot
+    public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;
+
+    public static final double OUTTAKE_PIVOT_WALL_READY_POS = 0.97;
+    //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
 
     public static final double LS_SPECIMAN_HANG_READY_MM = 380;
-    public static final double LS_DOWN_POS = 1;
+    public static final double LS_DOWN_POS = 0;
     public static final double LS_SPECIMEN_HANG_DONE_MM = 30;
     public static final double LS_SPECIMEN_CLIP_POS = 230;
 
