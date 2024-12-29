@@ -25,7 +25,8 @@ public class Outtake {
     public static final double HOOK1_DOWN_POS = 0.555;
     public static final double HOOK2_DOWN_POS = 0.35;
 
-    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.89;
+    public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.85;
+    public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
     public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.38;         //increase to go pivot up, decrease to pivot down

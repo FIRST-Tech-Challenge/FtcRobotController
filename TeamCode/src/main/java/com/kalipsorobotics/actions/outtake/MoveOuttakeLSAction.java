@@ -75,7 +75,7 @@ public class MoveOuttakeLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
-        double lowestPower = 0.1;
+        double lowestPower = 0.12;
 
         if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
             lowestPower = 0.45;
@@ -85,8 +85,8 @@ public class MoveOuttakeLSAction extends Action {
             lowestPower = 0.3;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(200)) {
-            lowestPower = 0.15;
+        if (globalLinearSlideMaintainTicks > mmToTicksLS(100)) {
+            lowestPower = 0.18;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {
@@ -94,11 +94,11 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(650)) {
-            lowestPower = 0.35;
+            lowestPower = 0.22;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
-            lowestPower = 0.4;
+            lowestPower = 0.25;
         }
 
         if (Math.abs(power) < lowestPower) {
@@ -157,7 +157,7 @@ public class MoveOuttakeLSAction extends Action {
         if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) {
             power = 0;
              if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.8)) {
-                 power = 0.26;
+                 power = 0.16;
             } else if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.5)){
                  power = 0.15;
              } else if (globalLinearSlideMaintainTicks > 0){

@@ -43,7 +43,7 @@ public class KServo {
     public void setTargetPosition(double position) {
         targetPosition = position;
         if (counter == 0) {
-            estimatedFinishTime = estimateTimeMs(servo.getPosition(), position) + 10;
+            estimatedFinishTime = estimateTimeMs(servo.getPosition(), position) * 1.2;
             startTime = System.currentTimeMillis();
         }
         servo.setPosition(position);
