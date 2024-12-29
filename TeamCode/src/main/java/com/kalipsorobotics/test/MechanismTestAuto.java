@@ -6,7 +6,6 @@ import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;

@@ -2,10 +2,6 @@ package com.kalipsorobotics.actions.autoActions;
 
 //import com.kalipsorobotics.actions.intake.IntakeLinkageAction;
 import com.kalipsorobotics.actions.KActionSet;
-import com.kalipsorobotics.actions.intake.IntakePivotAction;
-import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 

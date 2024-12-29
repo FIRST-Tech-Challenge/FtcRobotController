@@ -218,7 +218,6 @@ import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
-import com.kalipsorobotics.actions.intake.IntakeTransferAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
@@ -228,8 +227,6 @@ import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeSlideAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -261,8 +258,6 @@ public class Teleop extends LinearOpMode {
         AngleLockTeleOp angleLockTeleOp = null;
         IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
         Outtake outtake = Outtake.getInstance(opModeUtilities);
-        OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
-        OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
         MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 0);
@@ -289,11 +284,6 @@ public class Teleop extends LinearOpMode {
 
         double outtakeClawPos = Outtake.OUTTAKE_CLAW_OPEN;
         double outtakePivotPos = 0;
-
-
-        //CHANGE ACCORDING TO ALLIANCE
-
-        outtakePivotAction.moveWall();
 
         // GAMEPAD 1
         boolean resetWheelOdomPressed;
@@ -702,10 +692,6 @@ public class Teleop extends LinearOpMode {
         }
 
         return false;
-    }
-
-    private boolean isTransferRunning(IntakeTransferAction intakeTransferAction) {
-        return intakeTransferAction != null && !intakeTransferAction.getIsDone();
     }
 
     private boolean isGamePadDriveJoystickZero() {

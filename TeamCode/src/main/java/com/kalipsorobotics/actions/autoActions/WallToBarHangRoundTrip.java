@@ -8,7 +8,6 @@ import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Outtake;

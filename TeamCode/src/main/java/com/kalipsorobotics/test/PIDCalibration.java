@@ -5,11 +5,8 @@ import android.util.Log;
 import com.kalipsorobotics.PID.PIDController;
 
 import com.kalipsorobotics.actions.drivetrain.DriveTrainAction;
-import com.kalipsorobotics.actions.drivetrain.MecanumRobotAction;
-import com.kalipsorobotics.actions.drivetrain.MoveRobotStraightInchesAction;
 
 import com.kalipsorobotics.actions.drivetrain.TurnRobotAction;
-import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.localization.SparkfunOdometry;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -17,8 +14,6 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -46,8 +41,6 @@ public class PIDCalibration extends LinearOpMode {
         PIDController globalController = action.getPidController();
         String tag = String.format("ILC %s", globalController.getName());
 
-        MoveIntakeLSAction maintainIntake = new MoveIntakeLSAction(new Intake(opModeUtilities), -10);
-
         int i = 0;
 
         double accumulatedError = 0;
@@ -60,7 +53,6 @@ public class PIDCalibration extends LinearOpMode {
         while (opModeIsActive()) {
             wheelOdometry.updatePosition();
             action.updateCheckDone();
-            maintainIntake.update();
 
             if (action.getIsDone()) {
                 i++;

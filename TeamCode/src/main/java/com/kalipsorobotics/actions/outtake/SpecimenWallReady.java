@@ -3,8 +3,6 @@ package com.kalipsorobotics.actions.outtake;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.WaitAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.modules.Outtake;
 
 public class SpecimenWallReady extends KActionSet {
@@ -24,7 +22,7 @@ public class SpecimenWallReady extends KActionSet {
         pivotToWallPos.setDependentActions(wait);
         this.addAction(pivotToWallPos);
 
-        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(), OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
+        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw.setName("openClaw");
         openClaw.setDependentActions(lowerSlidesZero);
         this.addAction(openClaw);

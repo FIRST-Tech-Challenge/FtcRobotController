@@ -2,10 +2,7 @@ package com.kalipsorobotics.actions.outtake;
 
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.modules.Outtake;
-import com.kalipsorobotics.utilities.KServo;
 
 public class BasketReadyAction extends KActionSet {
     public BasketReadyAction(Outtake outtake) {
