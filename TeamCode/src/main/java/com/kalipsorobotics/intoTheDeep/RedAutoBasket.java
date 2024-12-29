@@ -40,12 +40,12 @@ public class RedAutoBasket extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoBasket = new KActionSet();
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
-        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
+        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         // Target can always be 0 because Hung said so
         MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);

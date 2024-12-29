@@ -14,6 +14,8 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.kalipsorobotics.modules.DriveTrain;
 
 public class WheelOdometry {
+    private static WheelOdometry single_instance = null;
+
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
     final static private double TRACK_WIDTH_MM = 297;
@@ -36,9 +38,7 @@ public class WheelOdometry {
     private volatile double prevImuHeading;
 //    private final double MM_TO_INCH = 1/25.4;
 
-    public WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule,
-                         double xCoordinate,
-                         double yCoordinate, double thetaDeg) {
+    private WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
         this.opModeUtilities = opModeUtilities;
         this.imuModule = imuModule;
         this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
@@ -52,6 +52,13 @@ public class WheelOdometry {
         prevRightDistanceMM = countRight();
         prevLeftDistanceMM = countLeft();
         prevBackDistanceMM = countBack();
+    }
+
+    public static synchronized WheelOdometry getInstance(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
+        if (single_instance == null) {
+            single_instance = new WheelOdometry(opModeUtilities, driveTrain, imuModule, xCoordinate, yCoordinate, thetaDeg);
+        }
+        return single_instance;
     }
 
     private double ticksToMM(double ticks) {

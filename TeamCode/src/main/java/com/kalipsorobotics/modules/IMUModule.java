@@ -6,12 +6,21 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 public class IMUModule {
+    private static IMUModule single_instance = null;
+
     private final OpModeUtilities opModeUtilities;
     IMU imu;
 
-    public IMUModule(OpModeUtilities opModeUtilities) {
+    private IMUModule(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         setUpHardware();
+    }
+
+    public static synchronized IMUModule getInstance(OpModeUtilities opModeUtilities) {
+        if (single_instance == null) {
+            single_instance = new IMUModule(opModeUtilities);
+        }
+        return single_instance;
     }
 
     private void setUpHardware() {

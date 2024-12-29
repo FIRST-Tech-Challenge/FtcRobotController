@@ -10,6 +10,8 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 
 public class Outtake {
 
+    private static Outtake single_instance = null;
+
     //TODO MAKE PRIVATE
     private final OpModeUtilities opModeUtilities;
     public DcMotor linearSlide1, linearSlide2;
@@ -47,10 +49,17 @@ public class Outtake {
 
 
 
-    public Outtake(OpModeUtilities opModeUtilities) {
+    private Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         Log.d("Outtake_LS", "init Outtake");
         setUpHardware();
+    }
+
+    public static synchronized Outtake getInstance(OpModeUtilities opModeUtilities) {
+        if (single_instance == null) {
+            single_instance = new Outtake(opModeUtilities);
+        }
+        return single_instance;
     }
 
     private void setUpHardware() {

@@ -4,6 +4,8 @@ import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
 public class IntakeClaw {
+    private static IntakeClaw single_instance = null;
+
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
     public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.67;       //increase to go down, decrease to go up
@@ -62,9 +64,16 @@ public class IntakeClaw {
 
 
 
-    public IntakeClaw(OpModeUtilities opModeUtilities) {
+    private IntakeClaw(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         setUpHardware();
+    }
+
+    public static synchronized IntakeClaw getInstance(OpModeUtilities opModeUtilities) {
+        if (single_instance == null) {
+            single_instance = new IntakeClaw(opModeUtilities);
+        }
+        return single_instance;
     }
 
     private void setUpHardware() {

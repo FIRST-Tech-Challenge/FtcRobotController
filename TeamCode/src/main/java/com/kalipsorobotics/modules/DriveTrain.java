@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DriveTrain {
+    private static DriveTrain single_instance = null;
+
     private final OpModeUtilities opModeUtilities;
     //private final DcMotor testMotorDeleteLater;
     private final DcMotor fLeft, fRight, bLeft, bRight;
@@ -21,7 +23,7 @@ public class DriveTrain {
     private final DcMotor rightEncoder;
     private final DcMotor leftEncoder;
 
-    public DriveTrain(OpModeUtilities opModeUtilities) {
+    private DriveTrain(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         fLeft = opModeUtilities.getHardwareMap().dcMotor.get("fLeft");
         fRight = opModeUtilities.getHardwareMap().dcMotor.get("fRight");
@@ -50,7 +52,12 @@ public class DriveTrain {
        // testMotorDeleteLater = opModeUtilities.getHardwareMap().dcMotor.get("testMotor");
     }
 
-
+    public static synchronized DriveTrain getInstance(OpModeUtilities opModeUtilities) {
+        if (single_instance == null) {
+            single_instance = new DriveTrain(opModeUtilities);
+        }
+        return single_instance;
+    }
 
     public void setFLeftPower(double power) { fLeft.setPower(power); }
 
