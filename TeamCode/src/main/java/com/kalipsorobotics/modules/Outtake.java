@@ -40,6 +40,7 @@ public class Outtake {
     public static final double LS_DOWN_POS = 0;
     public static final double LS_SPECIMEN_HANG_DONE_MM = 30;
     public static final double LS_SPECIMEN_CLIP_POS = 230;
+    public static final double LS_SAMPLE_BASKET_READY_POS = 675;
 
     public static final double OUTTAKE_CLAW_CLOSE = 0.84;
     public static final double OUTTAKE_CLAW_OPEN = 0.65;     //increase to make claw close more, decrease to open more

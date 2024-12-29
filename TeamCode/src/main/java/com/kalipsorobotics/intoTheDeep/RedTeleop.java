@@ -213,6 +213,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.AutoHangAction;
+import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
@@ -274,6 +275,7 @@ public class RedTeleop extends LinearOpMode {
         TransferAction transferAction = null;
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
+        SampleEndToEndSequence sampleEndToEndSequence = null;
         SpecimenHang specimenHang = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
@@ -322,6 +324,7 @@ public class RedTeleop extends LinearOpMode {
         boolean basketReadyPressed;
         boolean specimenHangPressed;
         boolean specimenReadyPressed;
+        boolean sampleEndToEndSequencePressed;
 
         intakeClaw.init();
         outtake.init();
@@ -355,6 +358,9 @@ public class RedTeleop extends LinearOpMode {
             basketReadyPressed = kGamePad2.isToggleButtonY();
             specimenHangPressed = kGamePad2.isToggleButtonA();
             specimenReadyPressed = kGamePad2.isToggleButtonB();
+            sampleEndToEndSequencePressed = kGamePad2.isBackButtonPressed();
+
+
 
             //RESET POSITIONS TO CURRENT
             intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getServo().getPosition();
@@ -699,6 +705,16 @@ public class RedTeleop extends LinearOpMode {
                 Log.d("outtake", " this is outtake pivot" + outtakePivotPos);
             }
 
+            if(sampleEndToEndSequencePressed) {
+                if(sampleEndToEndSequence == null || sampleEndToEndSequence.getIsDone()){
+                    sampleEndToEndSequence = new SampleEndToEndSequence(intakeClaw, outtake);
+                    sampleEndToEndSequence.setName("sampleEndToEndSequence");
+                }
+            }
+
+            if(sampleEndToEndSequence != null){
+                sampleEndToEndSequence.updateCheckDone();
+            }
 
             // Capture pictures from webcam every 500 milliseconds if holding dpad right with gamepad 1
             //DO NOT USE ALL HOLD FOR TOO LONG it will take up to much space.
