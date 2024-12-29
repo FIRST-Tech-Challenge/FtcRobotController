@@ -16,13 +16,13 @@ public class WristIntakeTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.cross) {
-                wrist.setPosition(0.5);
+                wrist.changeState();
             }
             if (gamepad1.circle) {
                 intake.setPowerFun(1);
             }
             if (gamepad1.square) {
-                wrist.setPower(1);
+//                wrist.setPower(1);
             }
         }
 

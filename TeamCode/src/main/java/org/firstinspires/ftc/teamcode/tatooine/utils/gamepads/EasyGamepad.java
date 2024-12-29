@@ -59,8 +59,8 @@ public class EasyGamepad {
      * @param gamepad The updated gamepad reference (usually the same gamepad1 or gamepad2).
      */
     public void update(Gamepad gamepad) {
-        this.prevGamepad = this.gamepad;
-        this.gamepad = gamepad;
+        this.prevGamepad.copy(this.gamepad);
+        this.gamepad.copy(gamepad);
     }
 
     // -------------------------------------------------------------------------

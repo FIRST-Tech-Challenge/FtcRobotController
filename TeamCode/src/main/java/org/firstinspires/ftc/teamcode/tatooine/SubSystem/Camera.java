@@ -151,25 +151,13 @@ public class Camera {
             angle = Math.toDegrees(Math.atan2(pt[0].y - pt[1].y, pt[0].x - pt[1].x));
         }
 
-        // Convert the angle to some 'position' metric for your application
-        double optimizedAngle = MathUtil.optimizeAngle(angle, prevAngle);
-        position = (optimizedAngle / 180) + 0.5;
+        if (angle<0){angle = angle +180;}
 
-        // Log debug info
-        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                "Detected Angle", angle);
-        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                "Optimized Angle", optimizedAngle);
-        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                "Position", position);
-
-        // Telemetry if needed
-        if (isDebugMode) {
-            telemetry.addData("pos", position / 5);
-            telemetry.addData("ang", optimizedAngle);
+        if (Math.abs(angle- prevAngle )<10){
+            return  prevAngle;
         }
 
-        return optimizedAngle;
+        return angle;
     }
 
     /**
@@ -218,6 +206,10 @@ public class Camera {
 
     public boolean isSpecimen() {
         return isSpecimen;
+    }
+
+    public double getPrevAngle() {
+        return prevAngle;
     }
 
     public void setSpecimen(boolean specimen) {
