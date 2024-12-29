@@ -212,7 +212,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
-import com.kalipsorobotics.actions.AutoHangAction;
+import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
@@ -267,7 +267,7 @@ public class RedTeleop extends LinearOpMode {
         // Target should always be 0
         MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 0);
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
-        AutoHangAction autoHangAction = new AutoHangAction(outtake);
+        AutoRobotHangAction autoRobotHangAction = new AutoRobotHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
         SampleIntakeAction sampleIntakeAction = null;
@@ -299,10 +299,6 @@ public class RedTeleop extends LinearOpMode {
         boolean resetWheelOdomPressed;
         boolean angleLockPressed;
         boolean hangPressed = false;
-        boolean hangHooksUpPressed;
-        boolean hangHooksDownPressed;
-        boolean prevGamepad2DpadDown = false; //gp2DPadPressed
-        double targetHangPos = 0;
 
         // GAMEPAD 2
         double outtakeLSStickValue;
@@ -335,10 +331,7 @@ public class RedTeleop extends LinearOpMode {
             // GAMEPAD 1 ASSIGNMENTS ==============================================
             resetWheelOdomPressed = kGamePad1.isToggleDpadUp();
             angleLockPressed = kGamePad1.isToggleButtonY();
-            hangHooksUpPressed = kGamePad1.isRightTriggerPressed();
-
-            hangHooksUpPressed = kGamePad1.isRightTriggerPressed();
-            hangHooksDownPressed = kGamePad1.isLeftTriggerPressed();
+            hangPressed = kGamePad1.isToggleButtonY();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -407,66 +400,19 @@ public class RedTeleop extends LinearOpMode {
             }
 
             //HANG
-            if (gamepad1.b) {
-                hangPressed = false;
-                prevGamepad2DpadDown = false;
+
+            if (autoRobotHangAction != null){
+                Log.d("teleop", "running auto robot hang action");
+                autoRobotHangAction.updateCheckDone();
             }
 
-            if(gamepad1.left_bumper && gamepad1.right_bumper) {
-                hangPressed = true;
-                autoHangAction = new AutoHangAction(outtake);
-                //hang initiated
-            }
-
-            if (hangPressed) {
-                if (autoHangAction.getIsDone()) {
-                    hangPressed = false;
-                } else {
-                    autoHangAction.update();
-                    //maintainOuttakeGlobalPos.setPConstant(1);
-                    //update hanging if was pressed and not done
+            if(hangPressed) {
+                if (autoRobotHangAction == null || autoRobotHangAction.getIsDone()){
+                    autoRobotHangAction = new AutoRobotHangAction(outtake);
+                    autoRobotHangAction.setName("autoRobotHangAction");
                 }
+
             }
-
-            if (!gamepad1.x && !gamepad1.dpad_down){
-                MoveOuttakeLSAction.setOverridePower(0);
-            } else if(gamepad1.x && !gamepad1.dpad_down) {
-                MoveOuttakeLSAction.setOverridePower(-0.1);
-//                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
-                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition());
-                //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
-            } else if (gamepad1.dpad_down && !gamepad1.x) {
-                if (!prevGamepad2DpadDown) {
-                    outtake.getHangHook1().setPosition(0.245);
-                    outtake.getHangHook2().setPosition(0.65);
-                    MoveOuttakeLSAction.setOverridePower(-1);
-//                    MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(1);
-                    targetHangPos = outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(47);
-                    MoveOuttakeLSAction.setGlobal(targetHangPos);
-                    prevGamepad2DpadDown = true;
-                } else {
-                    if (Math.abs(outtake.getLinearSlide1().getCurrentPosition() - targetHangPos) <= MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS){
-                        MoveOuttakeLSAction.setOverridePower(0);
-                    }
-                }
-//                if(hangStartPosition - outtake.getLinearSlide1().getCurrentPosition() <= 44.45) {
-//                    //MoveOuttakeLSAction.setOverridePower(-0.85);
-//                    MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(1));
-//                    //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(1) * -1);
-//                }
-            }
-
-            if(hangHooksUpPressed) {
-                outtake.getHangHook1().setPosition(Outtake.HOOK1_HANG_POS);
-                outtake.getHangHook2().setPosition(Outtake.HOOK2_HANG_POS);
-            }
-
-            if(hangHooksDownPressed) {
-                outtake.getHangHook1().setPosition(Outtake.HOOK1_DOWN_POS);
-                outtake.getHangHook2().setPosition(Outtake.HOOK2_DOWN_POS);
-            }
-
-
 
             //===============DRIVER 2===============
 

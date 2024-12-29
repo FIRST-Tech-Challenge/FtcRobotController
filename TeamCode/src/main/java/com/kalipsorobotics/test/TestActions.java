@@ -212,7 +212,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 
 import android.util.Log;
 
-import com.kalipsorobotics.actions.AutoHangAction;
+import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
@@ -263,7 +263,7 @@ public class TestActions extends LinearOpMode {
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
-        AutoHangAction autoHangAction = new AutoHangAction(outtake);
+        AutoRobotHangAction autoRobotHangAction = new AutoRobotHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
         SampleIntakeAction sampleIntakeAction = null;
@@ -399,15 +399,15 @@ public class TestActions extends LinearOpMode {
 
             if(gamepad1.left_bumper && gamepad1.right_bumper) {
                 hangPressed = true;
-                autoHangAction = new AutoHangAction(outtake);
+                autoRobotHangAction = new AutoRobotHangAction(outtake);
                 //hang initiated
             }
 
             if (hangPressed) {
-                if (autoHangAction.getIsDone()) {
+                if (autoRobotHangAction.getIsDone()) {
                     hangPressed = false;
                 } else {
-                    autoHangAction.update();
+                    autoRobotHangAction.update();
                     //maintainOuttakeGlobalPos.setPConstant(1);
                     //update hanging if was pressed and not done
                 }
