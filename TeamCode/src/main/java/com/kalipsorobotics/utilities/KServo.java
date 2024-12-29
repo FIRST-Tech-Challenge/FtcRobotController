@@ -1,6 +1,5 @@
 package com.kalipsorobotics.utilities;
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -33,10 +32,10 @@ public class KServo {
 
     private int counter = 0;
 
-    public double estimateTime(double currentPosition, double targetPosition) {
+    public double estimateTimeMs(double currentPosition, double targetPosition) {
         double deltaPosition = Math.abs(targetPosition - currentPosition);
-        //(0.5)*255*(0.111*60)
-        double time = deltaPosition * rangeDegrees * (1/servoSpeed);
+        double time = deltaPosition * rangeDegrees * (1000 / servoSpeed);
+        //0.2 * 255deg * (0.105sec / 60deg) = 0.0892sec
         return time;
         //0.5 * 300deg * 0.25sec/60deg
     }
@@ -44,7 +43,7 @@ public class KServo {
     public void setTargetPosition(double position) {
         targetPosition = position;
         if (counter == 0) {
-            estimatedFinishTime = estimateTime(servo.getPosition(), position) + 150;
+            estimatedFinishTime = estimateTimeMs(servo.getPosition(), position) + 10;
             startTime = System.currentTimeMillis();
         }
         servo.setPosition(position);
