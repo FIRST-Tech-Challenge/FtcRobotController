@@ -4,41 +4,30 @@ package com.kalipsorobotics.intoTheDeep;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
-import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.actions.intake.IntakeAction;
-import com.kalipsorobotics.actions.intake.IntakeReadyAction;
-import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
-import com.kalipsorobotics.actions.outtake.OuttakeDownReady;
-import com.kalipsorobotics.actions.outtake.BasketReadyAction;
-import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class RedAutoBasketPush extends LinearOpMode {
+public class AutoBasketPush extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoBasket = new KActionSet();
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
-        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
+        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         // Target can always be 0 because Hung said so
         MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);

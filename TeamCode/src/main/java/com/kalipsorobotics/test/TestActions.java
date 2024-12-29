@@ -250,14 +250,14 @@ public class TestActions extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, -180);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, -180);
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
         AngleLockTeleOp angleLockTeleOp = null;
-        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
+        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
         OuttakePivotAction outtakePivotAction = new OuttakePivotAction(outtake);
         OuttakeSlideAction outtakeSlideAction = new OuttakeSlideAction(outtake);
         SpecimenHangReady specimenHangReady = null;
@@ -361,7 +361,7 @@ public class TestActions extends LinearOpMode {
             //RESET POS
             if (resetWheelOdomPressed) {
                 driveTrain.resetWheelOdom();
-                wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
+                wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
                 Log.d("teleop_odo", "   reset odometry");
             }
 

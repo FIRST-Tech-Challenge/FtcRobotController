@@ -8,35 +8,25 @@ import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.actions.intake.IntakeAction;
-import com.kalipsorobotics.actions.intake.IntakeReadyAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.MoveIntakeLSAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
-import com.kalipsorobotics.actions.outtake.OuttakeDownReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakeClawAction;
-import com.kalipsorobotics.actions.outtake.teleopActions.OuttakePivotAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.K;
-
 @Autonomous
-public class RedAutoBasket extends LinearOpMode {
+public class AutoBasket extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -177,7 +167,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(INTAKE_SAMPLE_X-25, 1100, 180);
+        moveToSample2.addPoint(INTAKE_SAMPLE_X+25, 1100, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);

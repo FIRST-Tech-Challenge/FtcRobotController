@@ -22,7 +22,7 @@ public class DriveActionTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap,opMode,telemetry);
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
         DriveAction driveAction = new DriveAction(driveTrain);
 
         SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");

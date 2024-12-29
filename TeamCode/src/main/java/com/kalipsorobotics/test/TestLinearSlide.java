@@ -16,7 +16,7 @@ public class TestLinearSlide extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         //OuttakeSlide linearSlide = new OuttakeSlide(opModeUtilities);
 
-        Outtake outtake2024 = new Outtake(opModeUtilities);
+        Outtake outtake2024 = Outtake.getInstance(opModeUtilities);
 
         double lsStayUpPower = 0.1; //power LS motors need to be at to keep the slides up instead of dropping down
         double armPivotPos = 0.5;

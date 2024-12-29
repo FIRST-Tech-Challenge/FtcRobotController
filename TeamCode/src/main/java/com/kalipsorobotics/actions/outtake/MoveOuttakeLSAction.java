@@ -94,11 +94,11 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(650)) {
-            lowestPower = 0.22;
+            lowestPower = 0.25;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
-            lowestPower = 0.25;
+            lowestPower = 0.28;
         }
 
         if (Math.abs(power) < lowestPower) {

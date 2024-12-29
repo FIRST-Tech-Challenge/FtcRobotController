@@ -24,10 +24,10 @@ public class TestPurePursuitAction extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        driveTrain = new DriveTrain(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        driveTrain = DriveTrain.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
 
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         purePursuitAction.addPoint(0,0,0);

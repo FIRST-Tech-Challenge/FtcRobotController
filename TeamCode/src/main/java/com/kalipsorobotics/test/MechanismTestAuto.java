@@ -23,11 +23,11 @@ public class MechanismTestAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         MoveOuttakeLSAction maintenanceLS = new MoveOuttakeLSAction(outtake, 0
         );
 

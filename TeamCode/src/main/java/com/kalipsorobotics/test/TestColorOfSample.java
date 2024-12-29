@@ -26,10 +26,10 @@ public class TestColorOfSample extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        driveTrain = new DriveTrain(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        driveTrain = DriveTrain.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sparkfunOdometry = new SparkfunOdometry(driveTrain, opModeUtilities, 0, 0, Math.toRadians(0));
-        wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
+        wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule,0,0,Math.toRadians(0));
         //Outtake outtake = new Outtake(opModeUtilities);
 
         ColorDetector sampleColorDetector = new ColorDetector(opModeUtilities, hardwareMap);

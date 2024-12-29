@@ -12,7 +12,7 @@ public class TestHanging extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        Outtake outtake = new Outtake(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
 
         //AutoHangAction autoHangAction = new AutoHangAction(outtake);
 

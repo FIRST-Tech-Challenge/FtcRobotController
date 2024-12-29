@@ -13,8 +13,8 @@ public class ClawIntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        IntakeClaw intakeClaw = new IntakeClaw(opModeUtilities);
-        Outtake outtake = new Outtake(opModeUtilities);
+        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
         ServoController servoController = intakeClaw.getIntakeBigPivotServo().getServo().getController();
 
         double intakeLinkagePos = 0.5;

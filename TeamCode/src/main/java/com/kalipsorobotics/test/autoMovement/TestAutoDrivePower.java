@@ -15,10 +15,10 @@ public class TestAutoDrivePower extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
-        DriveTrain driveTrain = new DriveTrain(opModeUtilities);
-        IMUModule imuModule = new IMUModule(opModeUtilities);
+        DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+        IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
-        WheelOdometry wheelOdometry = new WheelOdometry(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         purePursuitAction.addPoint(0, 0, 0);
         purePursuitAction.addPoint(600, 600, 90);
