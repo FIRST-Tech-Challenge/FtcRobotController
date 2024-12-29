@@ -44,7 +44,7 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180)),
 
                 // move slide up to get ready for drop off
-                //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
+                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
 
 
                 // drop off first sample into bucket
