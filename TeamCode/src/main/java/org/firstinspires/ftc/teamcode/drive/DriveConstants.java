@@ -93,13 +93,13 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = Math.toRadians(187.94061000000002);
     public static double MAX_ANG_ACCEL = Math.toRadians(187.94061000000002);
 
-//    /*
-//     * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
-//     */
-//    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-//            RevHubOrientationOnRobot.LogoFacingDirection.UP;
-//    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-//            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+    /*
+     * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
+     */
+    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
