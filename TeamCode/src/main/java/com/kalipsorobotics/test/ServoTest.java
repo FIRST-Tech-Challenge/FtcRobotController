@@ -10,7 +10,7 @@ public class ServoTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Servo servo = hardwareMap.get(Servo.class, "intakeServoTestRobot");
         double pos = 0;
-
+        servo.setPosition(pos);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -18,7 +18,7 @@ public class ServoTest extends LinearOpMode {
             telemetry.addLine(String.valueOf(pos));
             telemetry.update();
             sleep(1000);
-            pos += 0.05;
+            pos += 0.1;
         }
     }
 }

@@ -15,7 +15,7 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.8; //decrease to move forward, increase to move back
 
 
-    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.67;     //increase to retract more
+    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62;     //increase to retract more
 
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.5;

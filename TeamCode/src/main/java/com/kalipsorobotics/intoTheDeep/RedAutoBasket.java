@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.checker.units.qual.K;
+
 @Autonomous
 public class RedAutoBasket extends LinearOpMode {
 
@@ -54,7 +56,7 @@ public class RedAutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
-        final int INTAKE_SAMPLE_X = -655;
+        final int INTAKE_SAMPLE_X = -645;
         int outtakeXPos = -200;
         int outtakeYPos = 1045;
 
@@ -139,6 +141,11 @@ public class RedAutoBasket extends LinearOpMode {
         basketReady1.setName("basketReady1");
         basketReady1.setDependentActions(moveToBasket1, transferAction1);
         redAutoBasket.addAction(basketReady1);
+
+        WaitAction waitAction1 = new WaitAction(200);
+        waitAction1.setName("waitAction1");
+        waitAction1.setDependentActions(basketReady1);
+        redAutoBasket.addAction(waitAction1);
 //
 //        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
 //                Outtake.OUTTAKE_PIVOT_BASKET_POS);
@@ -148,7 +155,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw1.setName("openClaw1");
-        openClaw1.setDependentActions(basketReady1);
+        openClaw1.setDependentActions(basketReady1, waitAction1);
         redAutoBasket.addAction(openClaw1);
         //===============end of first basket===============
 
@@ -170,7 +177,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         //move basket to sample 2
-        moveToSample2.addPoint(INTAKE_SAMPLE_X, 1085, 180);
+        moveToSample2.addPoint(INTAKE_SAMPLE_X-25, 1100, 180);
         redAutoBasket.addAction(moveToSample2);
 
         SampleIntakeReady sampleIntakeReady2 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_IN_POS, intakeClaw);
@@ -216,6 +223,11 @@ public class RedAutoBasket extends LinearOpMode {
         basketReady2.setName("basketReady2");
         basketReady2.setDependentActions(moveToBasket2, transferAction2);
         redAutoBasket.addAction(basketReady2);
+
+        WaitAction waitAction2 = new WaitAction(200);
+        waitAction2.setName("waitAction2");
+        waitAction2.setDependentActions(basketReady2);
+        redAutoBasket.addAction(waitAction2);
 //
 //        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
 //                Outtake.OUTTAKE_PIVOT_BASKET_POS);
@@ -225,7 +237,7 @@ public class RedAutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw2 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw2.setName("openClaw2");
-        openClaw2.setDependentActions(basketReady2);
+        openClaw2.setDependentActions(basketReady2, waitAction2);
         redAutoBasket.addAction(openClaw2);
         //===============end of second basket===============
 
@@ -247,7 +259,7 @@ public class RedAutoBasket extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(moveOutBasket2);
         //move basket to sample 2
-        moveToSample3.addPoint(-450, 1039.35, 180-27.6);
+        moveToSample3.addPoint(-405, 1039.35, 180-27.6);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
@@ -293,6 +305,11 @@ public class RedAutoBasket extends LinearOpMode {
         basketReady3.setName("basketReady3");
         basketReady3.setDependentActions(moveToBasket3, transferAction3);
         redAutoBasket.addAction(basketReady3);
+
+        WaitAction waitAction3 = new WaitAction(200);
+        waitAction3.setName("waitAction3");
+        waitAction3.setDependentActions(basketReady3);
+        redAutoBasket.addAction(waitAction3);
 //
 //        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
 //                Outtake.OUTTAKE_PIVOT_BASKET_POS);
@@ -302,18 +319,33 @@ public class RedAutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw3.setName("openClaw3");
-        openClaw3.setDependentActions(basketReady3);
+        openClaw3.setDependentActions(basketReady3, waitAction3);
         redAutoBasket.addAction(openClaw3);
 
 //        moveToSpecimenBar.addPoint(0, 0, 0);
 //        moveToSpecimenBar.addPoint(-740, -300, 0);
 
+        OuttakeTransferReady outtakeTransferReady3 = new OuttakeTransferReady(outtake);
+        outtakeTransferReady3.setName("outtakeTransferReady3");
+        outtakeTransferReady3.setDependentActions(openClaw3);
+        redAutoBasket.addAction(outtakeTransferReady3);
+
+        MoveOuttakeLSAction lsTouchBar = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_HANG_READY_MM - 240);
+        lsTouchBar.setName("lsTouchBar");
+        lsTouchBar.setDependentActions(outtakeTransferReady3);
+        redAutoBasket.addAction(lsTouchBar);
+
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
-        park.setDependentActions(outtakeTransferReady2);
-        park.addPoint(-1525, 610, 0);
-        park.addPoint(-1825, 310, 0);
-        //redAutoBasket.addAction(park);
+        park.setDependentActions(outtakeTransferReady3);
+        park.addPoint(-1325, 610, 90);
+        park.addPoint(-1625, 260, 90);
+        redAutoBasket.addAction(park);
+
+        KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
+        pivotOuttakeToBar.setName("pivotOuttakeToBar");
+        pivotOuttakeToBar.setDependentActions(park, lsTouchBar);
+        redAutoBasket.addAction(pivotOuttakeToBar);
 
         //bar to sample 1
 

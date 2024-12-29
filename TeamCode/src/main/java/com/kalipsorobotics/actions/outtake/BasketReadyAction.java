@@ -23,7 +23,7 @@ public class BasketReadyAction extends KActionSet {
 //        outtakePivotActionUp.setName("outtakePivotActionUp");
 //        this.addAction(outtakePivotActionUp);
 
-        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, 675);
+        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, 715);
         raiseSlidesBasket.setName("raiseSlidesBasket");
         this.addAction(raiseSlidesBasket);
 
