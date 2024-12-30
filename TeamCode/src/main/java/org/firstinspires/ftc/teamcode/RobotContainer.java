@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
@@ -145,7 +146,7 @@ public class RobotContainer {
                                                                 null)               // run this command when manual mode is active (blinking LEDs)
                                                                 );
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.A).whenPressed(new DropToGrab());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new DropToGrab());
 
         driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
 

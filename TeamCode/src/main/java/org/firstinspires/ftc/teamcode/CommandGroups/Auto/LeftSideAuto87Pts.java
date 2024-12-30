@@ -76,73 +76,9 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0))),
                         new ArrayList<Translation2d>() {{ }},
                         AutoFunctions.redVsBlue(new Pose2d(0.6, 0.25, new Rotation2d(Math.toRadians(-180)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-180))))
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-180)))),
 
-
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(-90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(0.25, 1.0, new Rotation2d(Math.toRadians(-90.0))),
-//                        new Rotation2d(Math.toRadians(-90))),
-//
-//                //Place specimen
-//                new PlaceSpecimenAddOffset(),
-//
-//                // pickup from submersibule
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-//                        new Rotation2d(Math.toRadians(-90))),
-
-//                new HuntingPos(),
-//
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(-90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(0.25, 0.8, new Rotation2d(Math.toRadians(-90.0))),
-//                        new Rotation2d(Math.toRadians(-90))),
-//
-//                // use camera to orient to sample
-//                // claw will close using touch sensor when it touches a sample
-//
-//                new DropToGrab(),
-//
-//                new Pause(0.5),
-//
-//                new CloseClaw(),
-//
-//                new Pause(0.5),
-//
-//                new HuntingPos(),
-//
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        new Rotation2d(Math.toRadians(90.0)),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        new Pose2d(0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-//                        new Rotation2d(Math.toRadians(-90))),
-
-//                new ArmStowHigh(),
-//
-//                new Pause(0.5),
-//                //  place in high bucket
-//                new BlueSideHighBucketDeposit(),
+                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive())
 
         );
 

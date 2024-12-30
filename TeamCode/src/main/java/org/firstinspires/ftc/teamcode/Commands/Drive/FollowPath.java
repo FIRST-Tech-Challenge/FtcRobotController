@@ -275,7 +275,8 @@ public class FollowPath extends CommandBase {
 
         // if end speed is 0m/s, then stop drive to ensure robot drive is not left 'creeping'
         // Zoe: Try this instead. This will reset motor drives in addition to simply setting speed reference to 0
-        if (endSpeed==0.0)
+        // Ken: tried this and robot went on an adventure (no luck) went walkabout
+        if (endSpeed<=0.0)
             RobotContainer.drivesystem.StopDrive();
         //if (endSpeed==0.0)
         //    RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0);

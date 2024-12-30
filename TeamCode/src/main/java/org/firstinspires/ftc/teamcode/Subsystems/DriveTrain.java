@@ -238,7 +238,7 @@ public class DriveTrain extends SubsystemBase {
         // motor full power control = 1
         // open loop control/rpm = 1.0/6000.0 = 0.00016667
         private double Pgain = 1.5 * 0.00016667;  // was 1.5
-        private double Igain = 0.50 * 0.00016667;
+        private double Igain = 0.0 * 0.00016667;// was o.5
         private double Fgain = 1.30 * 0.00016667;  // was 1.2 // use 90% to assume battery voltage typ. at 13V and not 12.
 
 

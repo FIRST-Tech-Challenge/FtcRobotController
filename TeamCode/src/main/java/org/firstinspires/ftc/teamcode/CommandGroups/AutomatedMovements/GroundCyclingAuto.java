@@ -37,15 +37,17 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.48, 1.05, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
-                new Pause(0.5),
+                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
+
+                //new Pause(0.5),
 
                 new HuntingPos(),
 
                 new DropToGrab(),
-
+                // this timer is for debounce
                 new Pause(0.5),
 
                 new CloseClaw(),
@@ -70,6 +72,8 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
+                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
+
                 new HuntingPos(),
 
                 new DropToGrab(),
@@ -88,15 +92,17 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 new HighBucketDeposit(),
 
 
-                new FollowPath(
-                        1.0,
-                        1.0,
-                        0.0,
-                        0.25,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.3, 0.5, new Rotation2d(Math.toRadians(-45)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(50)))),
+//                new FollowPath(
+//                        1.0,
+//                        1.0,
+//                        0.0,
+//                        0.25,
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        AutoFunctions.redVsBlue(new Pose2d(1.3, 0.5, new Rotation2d(Math.toRadians(-45)))),
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(50)))),
+//
+//                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
 
                 // pick up left
                 new FollowPath(
@@ -104,27 +110,20 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.75,
                         0.25,
                         0.0,
-                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-10))),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                       new ArrayList<Translation2d>() {{ }},
-                      AutoFunctions.redVsBlue(new Pose2d(1.66, 0.28, new Rotation2d(Math.toRadians(0)))),
-                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(60)))),
+                      AutoFunctions.redVsBlue(new Pose2d(1.59, 1.05, new Rotation2d(Math.toRadians(-63)))),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-63)))),
 
+                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
 
-                // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
+                new HuntingPos(),
 
-                // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(170)),
+                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(5)),
 
-                // same as in hunting pos moving wrist 45 degrees
-                new Pause(0.25),
+                new DropToGrab(),
 
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
-
-                // sets wrist rotate to 150
-                new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(170)),
-
-                new Pause(1.45),
+                new Pause(0.5),
 
                 new CloseClaw(),
 

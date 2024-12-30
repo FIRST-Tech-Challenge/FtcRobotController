@@ -20,13 +20,13 @@ public class DropToGrab extends SequentialCommandGroup {
                 // same as in hunting pos moving wrist 45 degrees
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(45)),
 
-                new Pause(0.25),
+                new Pause(0.3),
 
                 // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(173)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(175)),
 
                 // moves shoulder to 165 degrees so slightly down from hunting pos
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(163))
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(158))
 
                 // same as in hunting pos going to 135 degrees straight
                 //new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(180))
