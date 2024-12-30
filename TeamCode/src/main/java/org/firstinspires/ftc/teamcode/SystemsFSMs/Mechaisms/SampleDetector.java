@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms;
 
-import android.graphics.Color;
-
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.GobildaBlindToucherV69;
@@ -19,10 +15,12 @@ public class SampleDetector {
 
     private double distance;
     private double r, g, b, a;
-    private double h, s, v;
+    private double h, hRaw, s, v;
 
-    private int bufferCounter = 0;
-    private double[] buffer = new double[5];
+    private int distanceBufferCounter = 0;
+    private int hueBufferCounter = 0;
+    private double[] distanceBuffer = new double[5];
+    private double[] hueBuffer = new double[5];
 
     private GobildaBlindToucherV69 colorSensor;
 
@@ -47,9 +45,9 @@ public class SampleDetector {
     }
 
     public void update() {
-        distance  = colorSensor.getDistance(DistanceUnit.MM);
-        buffer[bufferCounter % 5] = distance;
-        bufferCounter += 1;
+        distance = colorSensor.getDistance(DistanceUnit.MM);
+        distanceBuffer[distanceBufferCounter % 5] = distance;
+        distanceBufferCounter += 1;
 
         findStatus();
     }
@@ -58,10 +56,10 @@ public class SampleDetector {
         logger.log("<b>" + "Sample Detector" + "</b>", "", Logger.LogLevels.production);
 
         logger.log("Status", status, Logger.LogLevels.debug);
-        logger.log("AO5 Distance", aO5(), Logger.LogLevels.debug);
+        logger.log("AO5 Distance", distanceAVG5(), Logger.LogLevels.debug);
         logger.log("Color", color, Logger.LogLevels.debug);
         logger.log("Distance", distance, Logger.LogLevels.developer);
-        logger.log("Distance Buffer", Arrays.toString(buffer), Logger.LogLevels.developer);
+        logger.log("Distance Buffer", Arrays.toString(distanceBuffer), Logger.LogLevels.developer);
 
         logger.log("r", r, Logger.LogLevels.developer);
         logger.log("g", g, Logger.LogLevels.developer);
@@ -71,6 +69,9 @@ public class SampleDetector {
         logger.log("h", h, Logger.LogLevels.developer);
         logger.log("s", s, Logger.LogLevels.developer);
         logger.log("v", v, Logger.LogLevels.developer);
+        logger.log("Hue Buffer", Arrays.toString(hueBuffer), Logger.LogLevels.debug);
+
+        logger.log("Raw h", hRaw, Logger.LogLevels.developer);
 
     }
 
@@ -80,6 +81,10 @@ public class SampleDetector {
 
     public SampleColor getSampleColor(){
         return color;
+    }
+
+    private void clearHueBuffer() {
+        hueBuffer = new double[5];
     }
 
     private void findStatus() {
@@ -93,18 +98,20 @@ public class SampleDetector {
             status = Status.noSampleDetected;
 
             color = SampleColor.unknown;
+
+            clearHueBuffer();
         }
     }
 
     private boolean sampleDetected() {
-        return (aO5() <= IntakeConstants.detectionDistance);
+        return (distanceAVG5() <= IntakeConstants.detectionDistance);
     }
 
-    private double aO5() {
+    private double distanceAVG5() {
         double total = 0.00;
         double items = 0;
 
-        for (double distance : buffer) {
+        for (double distance : distanceBuffer) {
             if (distance != 0) {
                 total += distance;
                 items += 1;
@@ -114,6 +121,26 @@ public class SampleDetector {
         items = items == 0 ? 1 : items;
 
         return total / items;
+    }
+
+    private double hueAO5() {
+        double min = 0;
+        double max = 0;
+        double total = 0;
+        double items = 0;
+
+        for (double hue : hueBuffer) {
+            if (hue != 0) {
+                total += hue;
+                items += 1;
+
+                min = Math.min(min, hue);
+                max = Math.max(max, hue);
+            }
+        }
+
+        return (total - min - max) / Math.max((items - 1), 1);
+
     }
 
     private void detectColor()  {
@@ -137,11 +164,26 @@ public class SampleDetector {
 
         double[] hsv = ColorUtils.RGBAtoHSV(r1, g1, b1, a1);
 
+        hueBuffer[hueBufferCounter % 5] = hsv[0];
+        hueBufferCounter += 1;
+
+        hRaw = hsv[0];
+
+        hsv[0] = hueAO5();
+
         h = hsv[0];
         s = hsv[1];
         v = hsv[2];
 
-        color = ColorUtils.ClassifyColor(hsv);
+        int items = 0;
+
+        for (double hue : hueBuffer) {
+            if (hue != 0) {
+                items++;
+            }
+        }
+
+        color = items == 5 ? ColorUtils.ClassifyColor(hsv) : SampleColor.unknown;
     }
 
 }

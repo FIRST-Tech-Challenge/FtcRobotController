@@ -9,7 +9,7 @@ public class DepositConstants {
 
     public static final double
             clawEncClosedPos = 307.00,
-            clawEncOpenPos = 189.00,
+            clawEncOpenPos = 191.00,
             clawEncPosTolerance = 3.00;
 
     // Arm Positions

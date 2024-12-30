@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Hardware.Util.AnalogServo;
 import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
 import org.firstinspires.ftc.teamcode.Hardware.Util.PosChecker;
+import org.firstinspires.ftc.teamcode.SystemsFSMs.Deposit;
 
 public class Claw {
     private AnalogServo servo;
@@ -57,9 +58,9 @@ public class Claw {
     }
 
     private void findStatus() {
-        if (encoderPos >= (DepositConstants.clawClosedPos - DepositConstants.clawEncPosTolerance)) {
+        if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncOpenPos, DepositConstants.clawEncPosTolerance)) {
             status = Status.released;
-        } else if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncClosedPos, DepositConstants.clawEncPosTolerance)) {
+        } else if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncClosedPos, DepositConstants.clawEncPosTolerance * 2)) {
             status = Status.gripped;
         } else {
             status = Status.intermediate;

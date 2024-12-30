@@ -32,6 +32,8 @@ public class DepositSlides {
     private boolean encoderReset = false;
     private double velocity = 0;
 
+    private double leftTicks = 0;
+
     private double
             p = DepositConstants.sp,
             i = DepositConstants.si,
@@ -50,25 +52,16 @@ public class DepositSlides {
     }
 
     public void update() {
-        currentTicks = rightMotor.getCurrentPosition();
+        currentTicks = leftMotor.getCurrentPosition();
         currentCM = -currentTicks * ticksToCm;
         velocity = rightMotor.getVelocity(AngleUnit.DEGREES);
 
+        leftTicks = leftMotor.getCurrentPosition();
 
         rightCurrent = rightMotor.getCurrent(CurrentUnit.MILLIAMPS);
         leftCurrent = leftMotor.getCurrent(CurrentUnit.MILLIAMPS);
         totalCurrent = rightCurrent + leftCurrent;
 
-//        if (targetCM == 0 && velocity <= 1  && totalCurrent >= 10000 && !encoderReset ) {
-//            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
-//            encoderReset = true;
-//        }
-
-        if (targetCM != 0) {
-            encoderReset = false;
-        }
 
     }
 
@@ -86,6 +79,8 @@ public class DepositSlides {
 
         logger.log("Depo Current CM", currentCM, Logger.LogLevels.debug);
         logger.log("Depo Target CM", targetCM, Logger.LogLevels.debug);
+
+        logger.log("LeftCurrentCM", leftTicks * ticksToCm, Logger.LogLevels.debug);
 
         logger.log("Depo Ranged Target CM", rangedTarget, Logger.LogLevels.developer);
         logger.log("Depo Power", power, Logger.LogLevels.developer);

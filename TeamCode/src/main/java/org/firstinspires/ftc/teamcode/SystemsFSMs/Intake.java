@@ -129,6 +129,8 @@ public class Intake {
                         targetSystemState = SystemState.Stowed;
                         lastSeenColor = detector.getSampleColor();
                         hasSample = true;
+                    } else if (detector.getSampleColor() == SampleDetector.SampleColor.unknown) {
+                        bucket.setGatePosition(IntakeConstants.gateBlockedPosition);
                     } else {
                         bucket.setGatePosition(IntakeConstants.gateOpenPosition);
                     }
@@ -152,6 +154,7 @@ public class Intake {
 
         logger.log("Target System State", targetSystemState, Logger.LogLevels.production);
         logger.log("Current State", currentSystemState, Logger.LogLevels.production);
+        logger.log("Last seen color", lastSeenColor, Logger.LogLevels.production);
 
         logger.log("Accepetable Colors", acceptableColors.toString(), Logger.LogLevels.debug);
         logger.log("Has Sample", hasSample, Logger.LogLevels.debug);

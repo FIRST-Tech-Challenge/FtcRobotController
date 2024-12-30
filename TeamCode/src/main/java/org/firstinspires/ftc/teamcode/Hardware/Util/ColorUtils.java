@@ -9,7 +9,7 @@ public class ColorUtils {
         //Returns array H [0,255], S [0,100], V [0,100], in array
 
         // RGBA to RGB
-        double[] backgroundColor = {10, 10, 10, .75};
+        double[] backgroundColor = {255, 255, 255, 1};
         double aMix = a + (backgroundColor[3] * (1 - a));
 
         double rMix = ((r * a) + (backgroundColor[0] * backgroundColor[3] * (1 - a))) / aMix;

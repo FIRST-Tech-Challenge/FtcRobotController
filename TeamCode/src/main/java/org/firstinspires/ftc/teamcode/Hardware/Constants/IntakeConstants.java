@@ -20,23 +20,26 @@ public class IntakeConstants {
     public static final double
             maxFeedRate = 200.00;
 
+    public static final double
+            intakeSlideZeroPower = -0.3;
+
 
     // Bucket Servo Positions
     public static final double
-            bucketUpPosition = 0.165,
-            bucketDownPosition = 0.385;
+            bucketUpPosition = 0.145,
+            bucketDownPosition = 0.365;
 
     // Bucket Encoder Positions & Tolerance
     public static final double
-            bucketEncUpPosition = 292.00,
-            bucketEncDownPosition = 219.50,
-            bucketEncDownPartialPosition = (bucketEncUpPosition + bucketDownPosition) / 2,
+            bucketEncUpPosition = 297.00,
+            bucketEncDownPosition = 226.50,
+            bucketEncDownPartialPosition = (bucketEncUpPosition + bucketEncDownPosition) / 2.0,
             bucketEncPositionTolerance = 3.00;
 
     // Gate Positions
     public static final double
-            gateOpenPosition = 0.00,
-            gateBlockedPosition = 0.27;
+            gateOpenPosition = 0.265,
+            gateBlockedPosition = 0.0;
 
     // Intake Motor Powers
     public static final double
@@ -45,7 +48,7 @@ public class IntakeConstants {
 
     // Detection Distance in mm
     public static final double
-            detectionDistance = 30.00;
+            detectionDistance = 25.00;
 
     // SampleDetector max values
     public static final double

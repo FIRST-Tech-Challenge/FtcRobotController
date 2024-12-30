@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.List;
 public class Hardware   {
 
     private static Hardware instance = null;
-    private Logger logger;
     private boolean enabled;
 
     private HardwareMap hardwareMap;
@@ -66,9 +66,8 @@ public class Hardware   {
         return instance;
     }
 
-    public void init(final HardwareMap map, Logger logger) {
+    public void init(final HardwareMap map) {
         hardwareMap = map;
-        this.logger = logger;
 
         // Drivetrain
         LF = hardwareMap.get(DcMotorEx.class, "EH-Motor-0");
@@ -106,6 +105,8 @@ public class Hardware   {
 
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
         depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         depositSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
         armRight = hardwareMap.get(Servo.class, "CH-Servo-0");
@@ -138,10 +139,6 @@ public class Hardware   {
         for (LynxModule hub : hubs) {
             hub.clearBulkCache();
         }
-    }
-
-    public void log() {
-
     }
 
 }

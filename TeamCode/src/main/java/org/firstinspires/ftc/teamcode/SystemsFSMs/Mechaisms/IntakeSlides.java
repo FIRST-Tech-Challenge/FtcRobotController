@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
@@ -24,6 +26,9 @@ public class IntakeSlides {
     private double rangedTarget = 0;
     private double power = 0;
     private double current = 0;
+    private double velocity = 0;
+
+    private boolean encoderReset = false;
 
     private double
             p = IntakeConstants.sp,
@@ -41,9 +46,9 @@ public class IntakeSlides {
         currentTicks = motor.getCurrentPosition();
         currentCM = currentTicks * ticksToCm;
 
+        velocity = motor.getVelocity(AngleUnit.DEGREES);
+
         current = motor.getCurrent(CurrentUnit.MILLIAMPS);
-
-
     }
 
     public void command() {
@@ -51,6 +56,32 @@ public class IntakeSlides {
 
         rangedTarget = Math.min(Math.max(0, targetCM), extensionLimit);
         power = controller.calculate(currentCM * cmToTicks, rangedTarget * cmToTicks);
+
+        // Re-Zero slides whenever target pos is zero
+        if (targetCM == 0) {
+
+            if (!encoderReset) {
+                power = -1.0;
+
+                // Once the motor stalls, reset the encoder and set encoderReset to true
+                if (current >= 7000) {
+                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                    encoderReset = true;
+                }
+
+            } else {
+                power = Math.min(power, IntakeConstants.intakeSlideZeroPower);
+            }
+
+        }
+
+        if (targetCM != 0) {
+            encoderReset = false;
+        }
+
+
         motor.setPower(power);
     }
 
@@ -62,6 +93,7 @@ public class IntakeSlides {
 
         logger.log("Ranged Target CM", rangedTarget, Logger.LogLevels.developer);
         logger.log("Power", power, Logger.LogLevels.developer);
+        logger.log("Intake Slide Velocity", velocity, Logger.LogLevels.developer);
         logger.log("Current", current, Logger.LogLevels.developer);
         logger.log("p", p, Logger.LogLevels.developer);
         logger.log("i", i, Logger.LogLevels.developer);
