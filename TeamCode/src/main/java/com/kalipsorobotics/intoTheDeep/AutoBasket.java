@@ -32,11 +32,21 @@ public class AutoBasket extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoBasket = new KActionSet();
+
+        DriveTrain.setInstanceNull();
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+
+        Outtake.setInstanceNull();
         Outtake outtake = Outtake.getInstance(opModeUtilities);
+
+        IntakeClaw.setInstanceNull();
         IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+
+        IMUModule.setInstanceNull();
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
+
+        WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         // Target can always be 0 because Hung said so
         MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
@@ -46,7 +56,7 @@ public class AutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
-        final int INTAKE_SAMPLE_X = -645;
+        final int INTAKE_SAMPLE_X = -660;
         int outtakeXPos = -200;
         int outtakeYPos = 1045;
 
@@ -145,7 +155,7 @@ public class AutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw1.setName("openClaw1");
-        openClaw1.setDependentActions(basketReady1, waitAction1);
+        openClaw1.setDependentActions(basketReady1);
         redAutoBasket.addAction(openClaw1);
         //===============end of first basket===============
 
@@ -154,7 +164,7 @@ public class AutoBasket extends LinearOpMode {
         //===============start of second basket===============
         PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket1.setName("moveOutBasket1");
-        moveOutBasket1.setDependentActions(openClaw1);
+        moveOutBasket1.setDependentActions(openClaw1, waitAction1);
         moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         redAutoBasket.addAction(moveOutBasket1);
 //
@@ -227,7 +237,7 @@ public class AutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw2 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw2.setName("openClaw2");
-        openClaw2.setDependentActions(basketReady2, waitAction2);
+        openClaw2.setDependentActions(basketReady2);
         redAutoBasket.addAction(openClaw2);
         //===============end of second basket===============
 
@@ -236,7 +246,7 @@ public class AutoBasket extends LinearOpMode {
         //===============start of third basket===============
         PurePursuitAction moveOutBasket2 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket2.setName("moveOutBasket2");
-        moveOutBasket2.setDependentActions(openClaw2);
+        moveOutBasket2.setDependentActions(openClaw2, waitAction2);
         moveOutBasket2.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         redAutoBasket.addAction(moveOutBasket2);
 //
@@ -309,7 +319,7 @@ public class AutoBasket extends LinearOpMode {
 
         KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw3.setName("openClaw3");
-        openClaw3.setDependentActions(basketReady3, waitAction3);
+        openClaw3.setDependentActions(basketReady3);
         redAutoBasket.addAction(openClaw3);
 
 //        moveToSpecimenBar.addPoint(0, 0, 0);
@@ -317,7 +327,7 @@ public class AutoBasket extends LinearOpMode {
 
         OuttakeTransferReady outtakeTransferReady3 = new OuttakeTransferReady(outtake);
         outtakeTransferReady3.setName("outtakeTransferReady3");
-        outtakeTransferReady3.setDependentActions(openClaw3);
+        outtakeTransferReady3.setDependentActions(openClaw3, waitAction3);
         redAutoBasket.addAction(outtakeTransferReady3);
 
         MoveOuttakeLSAction lsTouchBar = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_HANG_READY_MM - 240);
@@ -328,8 +338,8 @@ public class AutoBasket extends LinearOpMode {
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
         park.setDependentActions(outtakeTransferReady3);
-        park.addPoint(-1325, 610, 90);
-        park.addPoint(-1625, 260, 90);
+        park.addPoint(-1325, 610, 45);
+        park.addPoint(-1425, 260, 90);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);

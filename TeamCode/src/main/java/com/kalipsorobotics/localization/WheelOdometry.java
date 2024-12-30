@@ -61,6 +61,10 @@ public class WheelOdometry {
         return single_instance;
     }
 
+    public static void setInstanceNull() {
+        single_instance = null;
+    }
+
     private double ticksToMM(double ticks) {
         final double DEAD_WHEEL_RADIUS_MM = 24;
         final double TICKS_PER_REV = 2000;

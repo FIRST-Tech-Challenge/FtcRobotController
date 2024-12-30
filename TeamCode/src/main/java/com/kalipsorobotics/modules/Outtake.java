@@ -27,11 +27,11 @@ public class Outtake {
     public static final double HOOK1_DOWN_POS = 0.555;
     public static final double HOOK2_DOWN_POS = 0.35;
 
-    public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.85;
+    public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88;
     public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
-    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.38;         //increase to go pivot up, decrease to pivot down
+    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.36;         //increase to go pivot up, decrease to pivot down
 
     public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;
 
@@ -39,8 +39,8 @@ public class Outtake {
     //decrease to go towards robot, increase to do away from robot
 //    public static final double OUTTAKE_PIVOT_SPECIMAN_HANG_POS = 0.8;   //decrease to go towards robot, increase to do away from robot
 
-    public static final double LS_SPECIMAN_HANG_READY_MM = 380;
-    public static final double LS_DOWN_POS = 0;
+    public static final double LS_SPECIMAN_HANG_READY_MM = 425;
+    public static final double LS_DOWN_POS = -3;
     public static final double LS_SPECIMEN_HANG_DONE_MM = 30;
     public static final double LS_SPECIMEN_CLIP_POS = 230;
     public static final double LS_SAMPLE_BASKET_READY_POS = 675;
@@ -61,6 +61,10 @@ public class Outtake {
             single_instance = new Outtake(opModeUtilities);
         }
         return single_instance;
+    }
+
+    public static void setInstanceNull() {
+        single_instance = null;
     }
 
     private void setUpHardware() {

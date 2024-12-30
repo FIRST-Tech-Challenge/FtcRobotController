@@ -165,7 +165,7 @@ public class MoveOuttakeLSAction extends Action {
              } else if (globalLinearSlideMaintainTicks == 0){
                 power = 0;
              } else if (globalLinearSlideMaintainTicks < 0) {
-                 power = -0.3;
+                 power = -0.31;
              }
 
         }

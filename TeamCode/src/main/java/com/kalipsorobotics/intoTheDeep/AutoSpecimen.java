@@ -27,16 +27,24 @@ public class AutoSpecimen extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoSpecimen = new KActionSet();
+        DriveTrain.setInstanceNull();
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+
+        Outtake.setInstanceNull();
         Outtake outtake = Outtake.getInstance(opModeUtilities);
+
+        IntakeClaw.setInstanceNull();
         IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+
+        IMUModule.setInstanceNull();
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
+
+        WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         // Target can always be 0 because Hung said so
         MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
-//                MoveLSAction.globalLinearSlideMaintainTicks);
+        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
@@ -84,8 +92,8 @@ public class AutoSpecimen extends LinearOpMode {
 
         //second sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180); //y -800
-        moveFloorSamples.addPoint(-1330, -1055, -180);// before push
-        moveFloorSamples.addPoint(-375, -1055, -180);
+        moveFloorSamples.addPoint(-1330, -1065, -180);// before push
+        moveFloorSamples.addPoint(-375, -1065, -180);
 
         //third sample to depot
 //        moveFloorSamples.addPoint(-1300, -1050, -180);
@@ -94,29 +102,29 @@ public class AutoSpecimen extends LinearOpMode {
 //        moveFloorSamples.addPoint(-430, -1175, -180);//move back out to avoid sample carry
         redAutoSpecimen.addAction(moveFloorSamples);
 
-//        WaitAction waitBeforeSpecimenReady = new WaitAction(1000);
-//        waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
-//        waitBeforeSpecimenReady.setDependentActions(specimenHang1);
-//        redAutoSpecimen.addAction(waitBeforeSpecimenReady);
+        WaitAction waitBeforeSpecimenReady = new WaitAction(7000);
+        waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
+        waitBeforeSpecimenReady.setDependentActions(specimenHang1);
+        redAutoSpecimen.addAction(waitBeforeSpecimenReady);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);
         specimenWallReady.setName("specimenWallReady");
-        specimenWallReady.setDependentActions(moveFloorSamples);
+        specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2000.0);
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0);
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
         //to depot for specimen
         //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-        moveToDepot.addPoint(-135, -1055, -180); //-130, -615
+        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180); //-130, -615
         redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================
 
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 375); //400 //375
+                outtake, 400); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setDependentActions(moveToDepot);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
@@ -124,7 +132,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 450); //500 //450
+                outtake, 500); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);

@@ -59,6 +59,10 @@ public class DriveTrain {
         return single_instance;
     }
 
+    public static void setInstanceNull() {
+        single_instance = null;
+    }
+
     public void setFLeftPower(double power) { fLeft.setPower(power); }
 
     public void setFRightPower(double power) { fRight.setPower(power); }

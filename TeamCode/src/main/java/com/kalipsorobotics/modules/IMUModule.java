@@ -23,6 +23,10 @@ public class IMUModule {
         return single_instance;
     }
 
+    public static void setInstanceNull() {
+        single_instance = null;
+    }
+
     private void setUpHardware() {
         this.imu = opModeUtilities.getHardwareMap().get(IMU.class, "imu");
 

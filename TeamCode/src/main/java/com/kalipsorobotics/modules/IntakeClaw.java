@@ -26,9 +26,9 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.77;
 
-    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.88;     //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.85;     //increase to go down, decrease to go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.71;   //decrease to move forward, increase to move back
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.73;   //decrease to move forward, increase to move back
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS = 0.455;
 
@@ -74,6 +74,10 @@ public class IntakeClaw {
             single_instance = new IntakeClaw(opModeUtilities);
         }
         return single_instance;
+    }
+
+    public static void setInstanceNull() {
+        single_instance = null;
     }
 
     private void setUpHardware() {
