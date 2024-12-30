@@ -274,8 +274,11 @@ public class FollowPath extends CommandBase {
         RobotContainer.odometry.DisplayTrajectory(null);
 
         // if end speed is 0m/s, then stop drive to ensure robot drive is not left 'creeping'
+        // Zoe: Try this instead. This will reset motor drives in addition to simply setting speed reference to 0
         if (endSpeed==0.0)
-            RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0);
+            RobotContainer.drivesystem.StopDrive();
+        //if (endSpeed==0.0)
+        //    RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0);
 
     }
 
