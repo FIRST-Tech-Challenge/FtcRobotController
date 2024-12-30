@@ -197,6 +197,20 @@ public class DriveTrain extends SubsystemBase {
 
     }
 
+    // use to stop motor drive - resets controllers
+    public void StopDrive() {
+
+        // reset all motor controllers
+        leftFrontControl.reset();
+        rightFrontControl.reset();
+        leftBackControl.reset();
+        rightBackControl.reset();
+
+        // stop drive motors
+        RobotDrive(0.0, 0.0, 0.0);
+    }
+
+
     /**
      * returns current speeds of mecanum drive wheels in m/s
      */
@@ -232,10 +246,18 @@ public class DriveTrain extends SubsystemBase {
         private double IntegratedError;
 
         private MotorControl() {
+            // reset the motor controller
+            reset();
+        }
+
+        // resets the motor controller
+        public void reset() {
+            // reset integrated error
             IntegratedError = 0.0;
         }
 
-        // run the motor control, return control action
+
+        // run the motor control, return desired control action
         private double calculate(double ReferenceSpeed, double CurrentSpeed) {
             // current error in speed
             double error = ReferenceSpeed - CurrentSpeed;
