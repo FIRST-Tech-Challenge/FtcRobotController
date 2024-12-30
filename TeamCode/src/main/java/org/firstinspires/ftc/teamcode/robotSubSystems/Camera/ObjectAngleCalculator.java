@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robotSubSystems.Camera;
-
 import android.graphics.Canvas;
-
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Mat;
@@ -9,7 +7,6 @@ import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
-
 import java.util.ArrayList;
 
 public class ObjectAngleCalculator implements VisionProcessor {

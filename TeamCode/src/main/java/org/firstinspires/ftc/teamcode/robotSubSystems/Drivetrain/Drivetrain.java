@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.robotSubSystems.Drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utils.Angle;
 import org.firstinspires.ftc.teamcode.Utils.Vector;
@@ -23,10 +25,10 @@ public class Drivetrain {
         }
 
         //todo: set reverse directions
-        dtMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        dtMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
-        dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+        dtMotors[0].setDirection(DcMotorSimple.Direction.FORWARD);
+        dtMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
+        dtMotors[2].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
     }
 
@@ -86,7 +88,23 @@ public class Drivetrain {
     public static double cmToTicks(double cm) {
         return cm * 65.19;
     }
-//    public double ticksToCm(double ticks) {
-//        return ticks * DrivetrainConstants.ticksToCM;
-//    }
+
+
+
+    public static void testMotors(Gamepad gamepad){
+       if (gamepad.a) dtMotors[0].setPower(0.2); // lf
+       else dtMotors[0].setPower(0);
+       if (gamepad.b) dtMotors[1].setPower(0.2); // lb
+       else dtMotors[1].setPower(0);
+       if (gamepad.x) dtMotors[2].setPower(0.2); // rf
+       else dtMotors[2].setPower(0);
+       if (gamepad.y) dtMotors[3].setPower(0.2); // rb
+       else dtMotors[3].setPower(0);
+    }
+
+    public static void testDeadWheels(Telemetry telemetry){
+        telemetry.addData("par",dtMotors[0].getCurrentPosition());
+        telemetry.addData("prep",dtMotors[3]);
+    }
+
 }

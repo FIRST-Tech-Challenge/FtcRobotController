@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotSubSystems.Elevator;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -24,7 +19,8 @@ public class Elevator {
             ElevatorConstants.changeLevelKf,
             ElevatorConstants.changeLevelIzone,
             ElevatorConstants.changeLevelMaxSpeed,
-            ElevatorConstants.changeLevelMinSpeed);
+            ElevatorConstants.changeLevelMinSpeed
+    );
 
 
     public static void init(HardwareMap hardwareMap) {

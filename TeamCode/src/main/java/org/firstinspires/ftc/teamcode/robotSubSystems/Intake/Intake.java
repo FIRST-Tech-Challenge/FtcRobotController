@@ -8,9 +8,15 @@ public class Intake {
     public static Servo rightIntakeServo;
     public static Servo leftIntakeServo;
 
+    public static Servo leftWristServo;
+    public static Servo rightWristServo;
+
+
     public static void init(HardwareMap hardwareMap) {
         rightIntakeServo = hardwareMap.servo.get("rightIntakeServo");
         leftIntakeServo = hardwareMap.servo.get("leftIntakeServo");
+        rightWristServo = hardwareMap.servo.get("rightIntakeServo");
+        leftWristServo = hardwareMap.servo.get("leftIntakeServo");
     }
 
     public static void operate(IntakeState state) {

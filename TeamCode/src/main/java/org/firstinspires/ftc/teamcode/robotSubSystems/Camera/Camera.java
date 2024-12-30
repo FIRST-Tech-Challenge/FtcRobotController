@@ -21,7 +21,6 @@ public class Camera {
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         //Creates an object to show the camera view in the Telemetry area
         //Sets the pipeline
-
         camera.setPipeline(new TestPipeline());
         //Opening the camera
         OpenCvCamera finalCamera = camera;
@@ -59,3 +58,4 @@ public class Camera {
         });
     }
 }
+
