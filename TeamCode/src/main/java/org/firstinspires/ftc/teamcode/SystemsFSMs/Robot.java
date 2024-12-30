@@ -32,6 +32,8 @@ public class Robot {
 
     private boolean interference;
 
+    private boolean clawSetForTransfer = false;
+
 
     public Robot(Hardware hardware, GamepadEx controller, Logger logger) {
 
@@ -91,17 +93,31 @@ public class Robot {
 
                 }
 
+                clawSetForTransfer = false;
+
                 break;
 
             case transferReady:
                 deposit.setTargetState(Deposit.TargetState.transfer);
                 intake.setTargetState(Intake.SystemState.Stowed);
 
-                deposit.gripClaw();
 
-                if (deposit.getClawStatus() == Claw.Status.gripped) {
-                    intake.hasSample = false;
+                // TODO: This logic sets the transfer behind by a loop if the claw is already open before transfer begins
+                if (clawSetForTransfer) {
+                    deposit.gripClaw();
+
+                    if (deposit.getClawStatus() == Claw.Status.gripped) {
+                        intake.hasSample = false;
+                    }
+                } else {
+                    deposit.releaseClaw();
+                    if (deposit.getClawStatus() == Claw.Status.released) {
+                        clawSetForTransfer = true;
+                    }
+
                 }
+
+
 
         }
 

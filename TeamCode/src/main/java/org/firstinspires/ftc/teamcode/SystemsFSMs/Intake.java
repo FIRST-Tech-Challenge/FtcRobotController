@@ -189,14 +189,18 @@ public class Intake {
     }
 
     private void feed() {
-        feedRate = IntakeConstants.maxFeedRate * -controller.getRightY();
-        fedPosition += feedRate * ( recordedTime / 1000.0 );
-        fedPosition = Math.min(Math.max(fedPosition, minFedPosition), maxFedPosition);
+
+        // Only if the Y value of the joystick is above 0.2 feed
+        if (Math.abs(controller.getRightY()) >= 0.2) {
+            feedRate = IntakeConstants.maxFeedRate * -controller.getRightY();
+            fedPosition += feedRate * ( recordedTime / 1000.0 );
+            fedPosition = Math.min(Math.max(fedPosition, minFedPosition), maxFedPosition);
+        }
     }
 
     private void findsState() {
 
-        if (PosChecker.atLinearPos(slides.getPosition(), 0.00, IntakeConstants.intakeSlidePositionTolerance) && targetSystemState == SystemState.Stowed) {
+        if ((slides.getPosition() <= (0.0 + IntakeConstants.intakeSlidePositionTolerance)) && targetSystemState == SystemState.Stowed) {
             currentSystemState = SystemState.Stowed;
         } else if (bucket.getStatus() == Bucket.Status.up) {
             currentSystemState = SystemState.Deployed;

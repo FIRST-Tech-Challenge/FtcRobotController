@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.GobildaBlindToucherV69;
@@ -17,12 +19,16 @@ public class SampleDetector {
     private double r, g, b, a;
     private double h, hRaw, s, v;
 
+    private boolean switchPressed = false;
+
     private int distanceBufferCounter = 0;
     private int hueBufferCounter = 0;
     private double[] distanceBuffer = new double[5];
     private double[] hueBuffer = new double[5];
 
     private GobildaBlindToucherV69 colorSensor;
+
+    private DigitalChannel limitSwitch;
 
     public enum Status {
         sampleDetected,
@@ -41,6 +47,7 @@ public class SampleDetector {
 
     public SampleDetector (Hardware hardware, Logger logger) {
         colorSensor = hardware.intakeCS;
+        limitSwitch = hardware.intakeLS;
         this.logger = logger;
     }
 
@@ -48,6 +55,8 @@ public class SampleDetector {
         distance = colorSensor.getDistance(DistanceUnit.MM);
         distanceBuffer[distanceBufferCounter % 5] = distance;
         distanceBufferCounter += 1;
+
+        switchPressed = limitSwitch.getState();
 
         findStatus();
     }
@@ -60,6 +69,8 @@ public class SampleDetector {
         logger.log("Color", color, Logger.LogLevels.debug);
         logger.log("Distance", distance, Logger.LogLevels.developer);
         logger.log("Distance Buffer", Arrays.toString(distanceBuffer), Logger.LogLevels.developer);
+        logger.log("Switch Pressed", switchPressed, Logger.LogLevels.developer);
+
 
         logger.log("r", r, Logger.LogLevels.developer);
         logger.log("g", g, Logger.LogLevels.developer);
@@ -104,7 +115,11 @@ public class SampleDetector {
     }
 
     private boolean sampleDetected() {
-        return (distanceAVG5() <= IntakeConstants.detectionDistance);
+        if (sampleDetected()) {
+            return (distanceAVG5() <= IntakeConstants.detectionDistance);
+        } else {
+            return (distanceAVG5() <= IntakeConstants.detectionDistance) && switchPressed;
+        }
     }
 
     private double distanceAVG5() {

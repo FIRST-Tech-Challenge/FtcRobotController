@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -55,6 +56,8 @@ public class Hardware   {
     public AnalogInput intakePivotEnc;
 
     public GobildaBlindToucherV69 intakeCS;
+
+    public DigitalChannel intakeLS;
 
 
 
@@ -133,6 +136,7 @@ public class Hardware   {
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");
 
         intakeCS = hardwareMap.get(GobildaBlindToucherV69.class, "CH-I2C-1-0");
+        intakeLS = hardwareMap.get(DigitalChannel.class, "CH-Digital-0");
     }
 
     public void clearCache() {

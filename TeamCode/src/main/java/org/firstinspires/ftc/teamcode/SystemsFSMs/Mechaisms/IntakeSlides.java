@@ -58,24 +58,32 @@ public class IntakeSlides {
         power = controller.calculate(currentCM * cmToTicks, rangedTarget * cmToTicks);
 
         // Re-Zero slides whenever target pos is zero
-        if (targetCM == 0) {
+//        if (targetCM == 0) {
+//
+//            if (!encoderReset) {
+//                power = -1.0;
+//
+//                // Once the motor stalls, reset the encoder and set encoderReset to true
+//                if (current >= 7000) {
+//                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                    motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//                    encoderReset = true;
+//                }
+//
+//            } else {
+//                power = Math.min(power, IntakeConstants.intakeSlideZeroPower);
+//            }
+//
+//        }
 
-            if (!encoderReset) {
-                power = -1.0;
-
-                // Once the motor stalls, reset the encoder and set encoderReset to true
-                if (current >= 7000) {
-                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                    encoderReset = true;
-                }
-
-            } else {
-                power = Math.min(power, IntakeConstants.intakeSlideZeroPower);
-            }
-
+        // If not at zero and target is zero, apply at least the slide zeroing power
+        if (targetCM == 0 && currentCM >= 0.00) {
+            power = Math.min(IntakeConstants.intakeSlideZeroPower, power);
+        } else if (targetCM == 0) {
+            power = IntakeConstants.intakeSlideZeroStallPower;
         }
+
 
         if (targetCM != 0) {
             encoderReset = false;
