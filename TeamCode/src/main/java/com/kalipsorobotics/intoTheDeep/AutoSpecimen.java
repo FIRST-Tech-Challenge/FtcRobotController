@@ -59,7 +59,7 @@ public class AutoSpecimen extends LinearOpMode {
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.setMaxTimeOutMS(4000);
         moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, 400, 0); //y 300
+        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, 300, 0); //y 300
         moveToSpecimenBar.setDependentActions(waitAtStart);
         redAutoSpecimen.addAction(moveToSpecimenBar);
 

@@ -10,9 +10,11 @@ import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.math.CalculateTickPer;
+import com.kalipsorobotics.math.Position;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.kalipsorobotics.modules.Outtake;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MoveOuttakeLSAction extends Action {
 
@@ -30,12 +32,20 @@ public class MoveOuttakeLSAction extends Action {
     private double currentTicks;
     private double overridePower = 0;
 
+    private double lastTicks;
+    private double lastMilli = 0;
+    ElapsedTime timeoutTimer;
+
+    private double velocity;
+
+
     public MoveOuttakeLSAction(Outtake outtake) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
         this.targetTicks = 0;
         this.pidOuttakeLS = null;
+        this.timeoutTimer = new ElapsedTime();
     }
     public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
         ERROR_TOLERANCE_TICKS =  CalculateTickPer.mmToTicksLS(5);
@@ -49,6 +59,7 @@ public class MoveOuttakeLSAction extends Action {
             Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
         }
         this.dependentActions.add(new DoneStateAction());
+        this.timeoutTimer = new ElapsedTime();
     }
 
     public MoveOuttakeLSAction(Outtake outtake, double targetMM, double p) {
@@ -63,6 +74,7 @@ public class MoveOuttakeLSAction extends Action {
             Log.e("Outtake_LS", "target over range, target ticks: " + targetTicks + ", target mm: " + targetMM + ", max: " + MAX_RANGE_LS_TICKS);
         }
         this.dependentActions.add(new DoneStateAction());
+        this.timeoutTimer = new ElapsedTime();
     }
 
     public void setPConstant(double P) {
@@ -77,12 +89,12 @@ public class MoveOuttakeLSAction extends Action {
         double power = pidOuttakeLS.getPower(targetError);
         double lowestPower = 0.12;
 
-        if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
-            lowestPower = 0.45;
-        }
-
         if (globalLinearSlideMaintainTicks < mmToTicksLS(30)) {
             lowestPower = 0.3;
+        }
+
+        if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
+            lowestPower = 0.45;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(100)) {
@@ -120,6 +132,8 @@ public class MoveOuttakeLSAction extends Action {
             setGlobalLinearSlideMaintainTicks(targetTicks);
             Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
             hasStarted = true;
+            lastTicks = linearSlide1.getCurrentPosition();
+            timeoutTimer.reset();
         }
 
         double currentTargetTicks;
@@ -165,7 +179,7 @@ public class MoveOuttakeLSAction extends Action {
              } else if (globalLinearSlideMaintainTicks == 0){
                 power = 0;
              } else if (globalLinearSlideMaintainTicks < 0) {
-                 power = -0.31;
+                 power = -0.1;
              }
 
         }
@@ -188,6 +202,19 @@ public class MoveOuttakeLSAction extends Action {
                 power = overridePower;
             }
         }
+
+        velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+
+        if(velocity < 0.0075 && !isDone) {
+            if(timeoutTimer.milliseconds() > 1000) {
+                isDone = true;
+            }
+        } else {
+            timeoutTimer.reset();
+        }
+
+        lastMilli = timeoutTimer.milliseconds();
+        lastTicks = currentTicks;
 
         //brake();
         Log.d("Outtake_LS", "power set to " + power);
