@@ -57,6 +57,8 @@ public class WheelOdometry {
     public static synchronized WheelOdometry getInstance(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
         if (single_instance == null) {
             single_instance = new WheelOdometry(opModeUtilities, driveTrain, imuModule, xCoordinate, yCoordinate, thetaDeg);
+        } else {
+            single_instance.opModeUtilities = opModeUtilities;
         }
         return single_instance;
     }

@@ -13,7 +13,7 @@ public class Outtake {
     private static Outtake single_instance = null;
 
     //TODO MAKE PRIVATE
-    private final OpModeUtilities opModeUtilities;
+    private OpModeUtilities opModeUtilities;
     public DcMotor linearSlide1, linearSlide2;
     public KServo outtakePivotServo;
     public KServo outtakeClawServo;
@@ -60,6 +60,8 @@ public class Outtake {
     public static synchronized Outtake getInstance(OpModeUtilities opModeUtilities) {
         if (single_instance == null) {
             single_instance = new Outtake(opModeUtilities);
+        } else {
+            single_instance.opModeUtilities = opModeUtilities;
         }
         return single_instance;
     }

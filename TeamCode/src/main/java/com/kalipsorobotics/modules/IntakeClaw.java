@@ -35,7 +35,7 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_3_POS = 0.61;
 
 
-    private final OpModeUtilities opModeUtilities;
+    private OpModeUtilities opModeUtilities;
 
     private KServo intakeLinkageServo;
 
@@ -72,6 +72,8 @@ public class IntakeClaw {
     public static synchronized IntakeClaw getInstance(OpModeUtilities opModeUtilities) {
         if (single_instance == null) {
             single_instance = new IntakeClaw(opModeUtilities);
+        } else {
+            single_instance.opModeUtilities = opModeUtilities;
         }
         return single_instance;
     }

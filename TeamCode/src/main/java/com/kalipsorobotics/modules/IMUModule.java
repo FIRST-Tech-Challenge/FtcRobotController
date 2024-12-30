@@ -8,7 +8,7 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 public class IMUModule {
     private static IMUModule single_instance = null;
 
-    private final OpModeUtilities opModeUtilities;
+    private OpModeUtilities opModeUtilities;
     IMU imu;
 
     private IMUModule(OpModeUtilities opModeUtilities) {
@@ -19,6 +19,8 @@ public class IMUModule {
     public static synchronized IMUModule getInstance(OpModeUtilities opModeUtilities) {
         if (single_instance == null) {
             single_instance = new IMUModule(opModeUtilities);
+        } else {
+            single_instance.opModeUtilities = opModeUtilities;
         }
         return single_instance;
     }
