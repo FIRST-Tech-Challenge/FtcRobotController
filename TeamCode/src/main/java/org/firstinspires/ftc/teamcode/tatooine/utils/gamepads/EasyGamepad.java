@@ -27,10 +27,14 @@ public class EasyGamepad {
     // Fields
     // -------------------------------------------------------------------------
 
-    /** The current state of the gamepad. */
+    /**
+     * The current state of the gamepad.
+     */
     private Gamepad gamepad;
 
-    /** The previous state of the gamepad (to detect new presses or state changes). */
+    /**
+     * The previous state of the gamepad (to detect new presses or state changes).
+     */
     private Gamepad prevGamepad;
 
     // -------------------------------------------------------------------------

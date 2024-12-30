@@ -113,6 +113,8 @@ public final class MecanumDrive {
         localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
+
+        init();
     }
 
     public void init() {
@@ -234,17 +236,17 @@ public final class MecanumDrive {
         //public double inPerTick = 0.0029493101;
         // public double inPerTick = UnitConverter.convert(319.3, unit.CM,unit.INCHES);
 
-        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) / 235161;
-        public double lateralInPerTick = 0.00039539862471423004;
+        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) / 233549;
+        public double lateralInPerTick = 0.00037820542457487835;
 
 
         //public double trackWidthTicks = 4537.917767677472;
-        public double trackWidthTicks = 27570.18129770238;
+        public double trackWidthTicks = 26758.093029505824;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.0240415843588462;
-        public double kV = 0.0001038621408312514;
-        public double kA = 0.00002;
+        public double kS = 1.3568357562763138;
+        public double kV = 0.00010730205596792616;
+        public double kA = 0.00003;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 60;
@@ -256,14 +258,14 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain =2;
-        public double lateralGain = 2;
-        public double headingGain = 2; // shared with turn
+        public double axialGain = 0;
+        public double lateralGain = 0;
+        public double headingGain = 0; // shared with turn
 
-        public double axialVelGain = 3;
+        public double axialVelGain = 0;
 
-        public double lateralVelGain = 2;
-        public double headingVelGain = 1; // shared with turn
+        public double lateralVelGain = 0;
+        public double headingVelGain = 0; // shared with turn
     }
 
     public class DriveLocalizer implements Localizer {

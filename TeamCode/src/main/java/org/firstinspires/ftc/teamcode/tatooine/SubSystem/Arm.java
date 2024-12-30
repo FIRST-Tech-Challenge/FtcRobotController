@@ -28,11 +28,11 @@ public class Arm {
 
     // PID Tolerances
     public static double ANGLE_TOLERANCE = 1;// degrees
-    private static final double EXTEND_TOLERANCE = 0;   // centimeters or appropriate unit
+    private static final double EXTEND_TOLERANCE = 2;   // centimeters or appropriate unit
 
     // Encoder Counts Per Revolution (CPR)
     private static final double ANGLE_CPR = 28.0 * 70.0 * (34.0/16.0); // Arm angle motor
-    private static final double EXTEND_CPR = 537.7;// Arm extension motor
+    private static final double EXTEND_CPR = 537.7*(24.0/25.0);// Arm extension motor
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
@@ -45,13 +45,13 @@ public class Arm {
 
     public static double KD = 0;
     // Feedforward
-    private static final double KF = 0.2;  // feedforward constant
+    private static final double KF = 0.21;  // feedforward constant
 
 
     // Current Limit (if applicable; set as needed)
     private static final double AMP_LIMIT = 0;  // TODO: Set correct value if using current-limiting logic
 
-    public static double MAX_EXTEND = 63;
+    public static double MAX_EXTEND = 60;
 
     private final static double MIN_EXTEND = 37;
 
@@ -67,22 +67,20 @@ public class Arm {
     // ---------------------------------------------------------------------------------------------
     // PID Controllers
     // ---------------------------------------------------------------------------------------------
-    public static PIDFController anglePID = new PIDFController(0.02, 0, 0, 0);
-    private final PIDFController extendPID = new PIDFController(0, 0, 0, 0);
+    public static PIDFController anglePID = new PIDFController(0.021, 0, 0, 0);
+    private final PIDFController extendPID = new PIDFController(0.1, 0, 0, 0);
 
     // ---------------------------------------------------------------------------------------------
     // State Variables
     // ---------------------------------------------------------------------------------------------
     private double angleTimeout;
     private double extendTimeout;
-    private double F;  // Feedforward dynamic value
     private final boolean isDebugMode;
 
     // ---------------------------------------------------------------------------------------------
     // Telemetry
     // ---------------------------------------------------------------------------------------------
     private final Telemetry telemetry;
-    private boolean cancelActionAngle;
 
     // ---------------------------------------------------------------------------------------------
     // Constructors
@@ -264,9 +262,7 @@ public class Arm {
         return MAX_EXTEND;
     }
 
-    public boolean isCancelActionAngle() {
-        return cancelActionAngle;
-    }
+
 
 
     /**
@@ -302,11 +298,6 @@ public class Arm {
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Set Power Extend", power);
     }
-
-    public void cancelAngleAction(){
-        cancelActionAngle = true;
-    }
-
     // ---------------------------------------------------------------------------------------------
     // Actions to Control Arm
     // ---------------------------------------------------------------------------------------------
@@ -406,15 +397,16 @@ public class Arm {
         public MoveExtension(double goal) {
             this.goal = goal;
             extendPID.reset();
+            extendPID.setTimeout(1000000 );
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (isDebugMode){
-                extendPID.setP(KP);
-                extendPID.setI(KI);
-                extendPID.setD(KD);
-            }
+//            if (isDebugMode){
+//                extendPID.setP(KP);
+//                extendPID.setI(KI);
+//                extendPID.setD(KD);
+//            }
             double power = extendPID.calculate(getExtend(), goal);
             setPowerExtend(power);
 
@@ -434,7 +426,6 @@ public class Arm {
 
         public MoveAngle(double goal) {
             this.goal = goal;
-            cancelActionAngle = false;
             anglePID.reset();
         }
 
@@ -447,7 +438,6 @@ public class Arm {
 //            anglePID.setD(KD);
 //            }
             double pidPower = anglePID.calculate(getAngle(), goal);
-            anglePID.setTimeout(10000000);
             // If we're moving downward (pidPower < 0), set feedforward to zero
             double feedforward = calculateF();
             setPowerAngle(pidPower + feedforward);
@@ -458,7 +448,7 @@ public class Arm {
                     "Move Angle Feedforward", feedforward);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", goal);
             // Return false until we've reached the setpoint
-            return !anglePID.atSetPoint();
+            return !anglePID.atSetPoint() || !extendPID.atSetPoint();
         }
     }
 
