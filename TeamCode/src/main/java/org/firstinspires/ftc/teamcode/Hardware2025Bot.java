@@ -129,10 +129,10 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  6.00; // Arm to collect samples at ground level
     public final static double TILT_ANGLE_SAMPLE3_DEG     =  6.00; // Arm to collect samples at ground level (3rd one against wall)
-    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // AUTO: motor tilted back and touches wall
+    public final static double TILT_ANGLE_START_DEG       = 11.00; // AUTO: starting position LOW
+    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
-    public final static double TILT_ANGLE_WALL1_DEG       = 32.30; // AUTO: grab specimen off wall (lift off)
-
+    public final static double TILT_ANGLE_WALL1_DEG       = 33.00; // AUTO: grab specimen off wall (lift off)
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;

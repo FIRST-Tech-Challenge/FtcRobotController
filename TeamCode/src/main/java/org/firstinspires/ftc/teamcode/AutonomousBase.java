@@ -89,8 +89,10 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         startDelaySec    = 0;     // 1: wait [seconds] at startup -- applies to both left/rigth starting positions
     int         parkDelaySec     = 0;     // 2: wait [seconds] before parking in observation zone -- applies to that parking zone
 
-    boolean scorePreloadSpecimen = true;  // 3: score preloaded specimen (true=yes; false=no)
-    boolean onlyPark = false;   // 4: only park no scoring (true=yes; false=no)
+    boolean     scorePreloadSpecimen = true;  // 3: score preloaded specimen (true=yes; false=no)
+    boolean     onlyPark             = false;  // 4: only park no scoring (true=yes; false=no)
+    boolean     tiltAdjusted         = false;
+    boolean     clawOpen             = false;
 
     int         spikeSamples     = 0;      // set in each left/right autonomous program
     int         parkLocation     = 0;      // 5: park 0=NONE, 1=OBSERVATION, 2=SUBMERSIBLE
@@ -118,33 +120,6 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_dpad_left_last, gamepad1_dpad_left_now = false;
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
-    // Vision stuff (CHANGE) limelight
-    boolean leftCameraInitialized = false;
-    boolean backCameraInitialized = false;
-    boolean rightCameraInitialized = false;
-
-    protected boolean atBackdropLeftDetected   = false;
-    protected int     atBackdropLeftTag        = 0;
-    protected double  atBackdropLeftDistance   = 0.0;   // inches
-    protected double  atBackdropLeftStrafe     = 0.0;   // inches
-    protected double  atBackdropLeftAngle      = 0.0;   // degrees
-
-    protected boolean atBackdropCenterDetected = false;
-    protected int     atBackdropCenterTag      = 0;
-    protected double  atBackdropCenterDistance = 0.0;   // inches
-    protected double  atBackdropCenterStrafe   = 0.0;   // inches
-    protected double  atBackdropCenterAngle    = 0.0;   // degrees
-
-    protected boolean atBackdropRightDetected  = false;
-    protected int     atBackdropRightTag       = 0;
-    protected double  atBackdropRightDistance  = 0.0;   // inches
-    protected double  atBackdropRightStrafe    = 0.0;   // inches
-    protected double  atBackdropRightAngle     = 0.0;   // degrees
-
-    public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
-
-    int pixelNumber = 0;
-
     /*---------------------------------------------------------------------------------*/
     protected void captureGamepad1Buttons() {
         gamepad1_circle_last     = gamepad1_circle_now;      gamepad1_circle_now     = gamepad1.circle;
@@ -163,13 +138,32 @@ public abstract class AutonomousBase extends LinearOpMode {
         boolean nextValue = (gamepad1_dpad_right_now && !gamepad1_dpad_right_last);
         boolean prevValue = (gamepad1_dpad_left_now  && !gamepad1_dpad_left_last);
         double  startTiltAngle = robot.armTiltAngle;
-        boolean startTiltOkay;
-        
-        // Are we below TILT_ANGLE_WALL_DEG (but not too far?)
-        if( (startTiltAngle > 10.0) && (startTiltAngle < 14.0) ) {
+        boolean startTiltOkay, okayToTiltLower, okayToTiltHigher;
+        double  gamepad1_right_stick = gamepad1.right_stick_y;
+
+        // Is the starting tilt angle HIGH enough to minimize the lift time, but
+        // LOW enough for tilt motor to not rotate back into the field wall?
+        if( (startTiltAngle >= Hardware2025Bot.TILT_ANGLE_START_DEG) &&
+            (startTiltAngle <= Hardware2025Bot.TILT_ANGLE_WALL_DEG) ) {
             startTiltOkay = true;
         } else {
             startTiltOkay = false;
+        }
+
+        // Even if we're in range, is there room to still tweak to 12deg?
+        okayToTiltLower  = (startTiltAngle > Hardware2025Bot.TILT_ANGLE_START_DEG);
+        okayToTiltHigher = (startTiltAngle < Hardware2025Bot.TILT_ANGLE_WALL_DEG);
+
+        // Look for input to tilt turret higher/lower to the proper 12deg start angle
+        if( okayToTiltLower && (gamepad1_right_stick < -0.15) ) {
+            robot.wormTiltMotor.setPower( -0.10 );   // LOWER tilt angle
+            tiltAdjusted = true;
+        } else if( okayToTiltHigher && (gamepad1_right_stick > 0.15) ) {
+            robot.wormTiltMotor.setPower( +0.10 );   // RAISE tilt angle
+            tiltAdjusted = true;
+        } else if( tiltAdjusted ) {
+            robot.wormTiltMotor.setPower( 0.0 );     // stop tilt movement
+            tiltAdjusted = false;
         }
 
         // Force RED alliance?
@@ -289,6 +283,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("Odometry","x=%.2f y=%.2f angle=%.2f",
                 robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, robotOrientationRadians );
         telemetry.addData("Lift Angle","x=%.1f deg (%s)", startTiltAngle, ((startTiltOkay)? "GOOD":"** BAD **") );
+        telemetry.addLine("Right joystick slowly raises/lowers to 12deg.");
+        telemetry.addLine("Right bumper open/close claw to load specimen.");
         telemetry.addData(">","version 100" );
         telemetry.update();
     } // processAutonomousInitMenu

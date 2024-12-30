@@ -17,8 +17,6 @@ public class AutonomousLeftRed extends AutonomousBase {
     static final boolean DRIVE_Y = true;    // Drive forward/backward
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
 
-    boolean clawOpen = false;
-    
     double pos_y=0, pos_x=0, pos_angle=0.0;  // Allows us to specify movement INCREMENTALLY, not ABSOLUTE
 
     @Override
