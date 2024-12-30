@@ -14,7 +14,7 @@ public class FieldOrientedDriveTest extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, 0), 0));
         waitForStart();
         while (opModeIsActive()) {
-            drive.fieldDrive(new Pose2d(new Vector2d(gamepad1.left_stick_x, gamepad1.left_stick_y), gamepad1.right_stick_x));
+            drive.fieldDrive(new Pose2d(new Vector2d(- gamepad1.left_stick_x, - gamepad1.left_stick_y), gamepad1.right_stick_x));
         }
     }
 }

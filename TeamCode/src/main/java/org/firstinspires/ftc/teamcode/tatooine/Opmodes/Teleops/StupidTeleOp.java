@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
+package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -28,11 +28,14 @@ public class StupidTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             gamepadEx1.update(gamepad1);
             gamepadEx2.update(gamepad2);
-            mecanumDrive.fieldDrive(new Pose2d(gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_X), gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y), gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X)));
+            mecanumDrive.fieldDrive(new Pose2d( -gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_X), gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y), gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X)));
             arm.setPowerAngle(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
             arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
+            wrist.setPosAng(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)- gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
             if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 intake.setPowerFun(1);
+            } else if (gamepadEx2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+                intake.setPowerFun(-1);
             } else {
                 intake.setPowerFun(0);
             }
@@ -43,14 +46,10 @@ public class StupidTeleOp extends LinearOpMode {
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
                 wrist.openMin();
             }
-            if (gamepadEx2.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-                wrist.setPosAng(0);
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)){
+                wrist.open();
             }
-            else if (gamepadEx2.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
-                wrist.setPosAng(90);
-            } else if (gamepadEx2.getButton(GamepadKeys.Button.DPAD_LEFT)) {
-                wrist.setPosAng(-90);
-            }
+
         }
 }
 }

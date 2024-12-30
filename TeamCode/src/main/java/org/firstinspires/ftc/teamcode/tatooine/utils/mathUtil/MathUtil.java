@@ -9,8 +9,8 @@ public class MathUtil {
         double cosA = Math.cos(angle);
         double sinA = Math.sin(angle);
         return new Vector2d(
-                vec.component1() * cosA - vec.component2() * sinA,
-                vec.component1() * sinA + vec.component2() * cosA
+                vec.component1() * sinA + vec.component2() * cosA,
+                vec.component1() * cosA - vec.component2() * sinA
         );
     }
 
@@ -56,7 +56,7 @@ public class MathUtil {
             angle -= Math.signum(delta) * 360.0;
         }
         return angle;
-    }
+    }   
 
     // Clamps a value between a minimum and maximum range
     public static double clamp(double value, double min, double max) {

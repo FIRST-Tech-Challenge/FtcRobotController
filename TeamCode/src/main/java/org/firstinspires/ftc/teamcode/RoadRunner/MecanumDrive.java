@@ -140,12 +140,10 @@ public final class MecanumDrive {
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
-
         double maxPowerMag = 1;
         for (DualNum<Time> power : wheelVels.all()) {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
-
         leftFront.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
         leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
         rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
@@ -154,23 +152,10 @@ public final class MecanumDrive {
 
     public void fieldDrive(Pose2d powers) {
 
-        // Retrieve the robot's current heading in radians
-        double botHeading = pose.heading.toDouble();
-
-// Rotate the input vector based on the robot's heading
-        Vector2d rotatedVector = MathUtil.rotateVec(powers.position, botHeading);
-
-// Apply deadzone and square the input values for finer control
-        double xPower = MathUtil.applyDeadzone(-rotatedVector.component1() * Math.abs(rotatedVector.component1()), 0.1);
-        double yPower = MathUtil.applyDeadzone(-rotatedVector.component2() * Math.abs(rotatedVector.component2()), 0.1);
-
-// Calculate the turn component with deadzone applied
-        double turn = MathUtil.applyDeadzone(-powers.heading.toDouble() * Math.abs(powers.heading.toDouble()), 0.1);
-
-// Combine the translated and rotated powers into motor velocities
-        PoseVelocity2d motorPowers = new PoseVelocity2d(new Vector2d(xPower, yPower), turn);
-
-
+        double botHeading = lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        Vector2d rotateVec = MathUtil.rotateVec(powers.position, botHeading);
+        double turn = -powers.heading.toDouble();
+        PoseVelocity2d motorPowers = new PoseVelocity2d(rotateVec, turn);
         setDrivePowers(motorPowers);
 
 
@@ -230,7 +215,7 @@ public final class MecanumDrive {
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
         // drive model parameters
         //public double inPerTick = 0.0029493101;

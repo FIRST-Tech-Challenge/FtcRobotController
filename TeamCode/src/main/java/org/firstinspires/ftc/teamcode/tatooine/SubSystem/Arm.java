@@ -335,7 +335,7 @@ public class Arm {
         return new SequentialAction(
                 setAngle(60),
                 new SleepAction(3),
-                setExtension(0),
+                setExtension(MAX_EXTEND),
                 new SleepAction(3),
                 setAngle(45)
         );
