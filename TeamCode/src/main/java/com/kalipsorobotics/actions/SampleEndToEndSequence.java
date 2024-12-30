@@ -9,7 +9,7 @@ import com.kalipsorobotics.modules.Outtake;
 public class SampleEndToEndSequence extends KActionSet{
     public SampleEndToEndSequence(IntakeClaw intakeClaw, Outtake outtake){
 
-        KServoAutoAction linkageRetract = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);
+        KServoAutoAction linkageRetract = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS + 0.03);
         linkageRetract.setName("linkageRetract");
         this.addAction(linkageRetract);
 

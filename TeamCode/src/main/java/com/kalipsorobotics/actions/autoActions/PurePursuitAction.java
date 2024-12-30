@@ -123,7 +123,6 @@ public class PurePursuitAction extends Action {
 
         double fLeftPower = powerX + powerY + powerAngle;
         double bLeftPower = powerX - powerY + powerAngle;
-
         double fRightPower = powerX - powerY - powerAngle;
         double bRightPower = powerX + powerY - powerAngle;
 
