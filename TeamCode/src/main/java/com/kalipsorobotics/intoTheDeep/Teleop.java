@@ -289,6 +289,7 @@ public class Teleop extends LinearOpMode {
         boolean resetWheelOdomPressed;
         boolean angleLockPressed;
         boolean hangPressed = false;
+        boolean moveWallTeleopPressed = false;
 
         // GAMEPAD 2
         double outtakeLSStickValue;
@@ -322,6 +323,7 @@ public class Teleop extends LinearOpMode {
             resetWheelOdomPressed = kGamePad1.isToggleDpadUp();
             angleLockPressed = kGamePad1.isToggleButtonY();
             hangPressed = kGamePad1.isToggleButtonB();
+            moveWallTeleopPressed = kGamePad1.isToggleButtonA();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -373,13 +375,15 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
-            if (isGamePadDriveJoystickZero()) {
-                if (angleLockTeleOp != null) {
-                    angleLockTeleOp.update();
+            if(moveWallTeleopPressed) {
+                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
+                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
+                    moveWallTeleOp.setName("moveWallTeleop");
                 }
-                if (moveWallTeleOp != null) {
-                    moveWallTeleOp.update();
-                }
+
+            }
+            if (moveWallTeleOp != null){
+                moveWallTeleOp.updateCheckDone();
             } else {  //Manual control override
                 if (angleLockTeleOp != null) {
                     angleLockTeleOp.setIsDone(true);
