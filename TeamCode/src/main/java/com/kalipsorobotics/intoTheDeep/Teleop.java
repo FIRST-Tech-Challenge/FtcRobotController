@@ -272,9 +272,9 @@ public class Teleop extends LinearOpMode {
         AngleLockTeleOp angleLockTeleOp = null;
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-//        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
-//        maintainLS.setName("maintainLS");
-//        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
+        maintainLS.setName("maintainLS");
+        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         AutoRobotHangAction autoRobotHangAction = null;
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
@@ -413,14 +413,18 @@ public class Teleop extends LinearOpMode {
             if (autoRobotHangAction != null){
                 Log.d("teleop", "running auto robot hang action");
                 autoRobotHangAction.updateCheckDone();
+                if (autoRobotHangAction.getIsDone()) {
+                    maintainLS = new MoveOuttakeLSAction(outtake);
+                }
 
             }
 
             if(hangPressed) {
                 if (autoRobotHangAction == null || autoRobotHangAction.getIsDone()){
                     autoRobotHangAction = new AutoRobotHangAction(outtake);
-
                     autoRobotHangAction.setName("autoRobotHangAction");
+
+                    maintainLS = null;
                 }
 
             }
@@ -682,7 +686,9 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            //maintainLS.update();
+            if(maintainLS != null) {
+                maintainLS.update();
+            }
             wheelOdometry.updatePosition();
 
             telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());

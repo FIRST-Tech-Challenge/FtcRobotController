@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -17,18 +18,19 @@ public class DriveTrain {
 
     private OpModeUtilities opModeUtilities;
     //private final DcMotor testMotorDeleteLater;
-    private final DcMotor fLeft, fRight, bLeft, bRight;
-    private final SparkFunOTOS otos;
-    private final DcMotor backEncoder;
-    private final DcMotor rightEncoder;
-    private final DcMotor leftEncoder;
+    private DcMotor fLeft = null;
+    private DcMotor fRight = null;
+    private DcMotor bLeft = null;
+    private DcMotor bRight = null;
+    private SparkFunOTOS otos;
+    private DcMotor backEncoder;
+    private DcMotor rightEncoder;
+    private DcMotor leftEncoder;
 
     private DriveTrain(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
-        fLeft = opModeUtilities.getHardwareMap().dcMotor.get("fLeft");
-        fRight = opModeUtilities.getHardwareMap().dcMotor.get("fRight");
-        bLeft = opModeUtilities.getHardwareMap().dcMotor.get("bLeft");
-        bRight = opModeUtilities.getHardwareMap().dcMotor.get("bRight");
+
+        resetHardwareMap(opModeUtilities.getHardwareMap(), this);
 
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -40,12 +42,7 @@ public class DriveTrain {
         fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        otos = opModeUtilities.getHardwareMap().get(SparkFunOTOS.class, "sprk sensor OTOS");
         sparkResetData(true, Math.toRadians(180));
-
-        rightEncoder = bRight;
-        leftEncoder = bLeft;
-        backEncoder = fRight;
 
         resetWheelOdom();
 
@@ -56,13 +53,26 @@ public class DriveTrain {
         if (single_instance == null) {
             single_instance = new DriveTrain(opModeUtilities);
         } else {
-            single_instance.opModeUtilities = opModeUtilities;
+            resetHardwareMap(opModeUtilities.getHardwareMap(), single_instance);
         }
         return single_instance;
     }
 
     public static void setInstanceNull() {
         single_instance = null;
+    }
+
+    private static void resetHardwareMap(HardwareMap hardwareMap, DriveTrain driveTrain) {
+        driveTrain.fLeft = hardwareMap.dcMotor.get("fLeft");
+        driveTrain.fRight = hardwareMap.dcMotor.get("fRight");
+        driveTrain.bLeft = hardwareMap.dcMotor.get("bLeft");
+        driveTrain.bRight = hardwareMap.dcMotor.get("bRight");
+
+        driveTrain.otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
+
+        driveTrain.rightEncoder = driveTrain.bRight;
+        driveTrain.leftEncoder = driveTrain.bLeft;
+        driveTrain.backEncoder = driveTrain.fRight;
     }
 
     public void setFLeftPower(double power) { fLeft.setPower(power); }
