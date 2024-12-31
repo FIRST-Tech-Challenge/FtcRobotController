@@ -34,7 +34,7 @@ public class ActionTeleOp extends LinearOpMode {
     private boolean isRed = CheckAlliance.isRed();
     private List<Action> runningActions = new ArrayList<>();
     private boolean doOne = true;
-
+    private boolean doStateOne = false;
 
 
     private enum State {
@@ -45,7 +45,7 @@ public class ActionTeleOp extends LinearOpMode {
         SCORE_SAMPLE,
         SCORE_SPECIMEN
     }
-    private State currentState = State.HOME;
+    private State currentState = State.DEFULT;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -88,12 +88,16 @@ public class ActionTeleOp extends LinearOpMode {
 
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)) {
                 currentState = State.HOME;
+                doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT)) {
                 currentState = currentState == State.INTAKING1 ? State.INTAKING2 : State.INTAKING1;
+                doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)) {
                 currentState = State.SCORE_SAMPLE;
+                doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT)) {
                 currentState = State.SCORE_SPECIMEN;
+                doStateOne = true;
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
                 runningActions.add(wrist.moveToAngle(camera.getAngle()));
@@ -106,7 +110,7 @@ public class ActionTeleOp extends LinearOpMode {
             } else if (currentState != State.INTAKING2 || currentState != State.SCORE_SAMPLE) {
                 intake.setPowerFun(0);
             }
-
+        if (doStateOne) {
             switch (currentState) {
                 case HOME:
                     handleHomeState();
@@ -123,6 +127,8 @@ public class ActionTeleOp extends LinearOpMode {
                 case SCORE_SPECIMEN:
                     break;
             }
+            doStateOne = false;
+        }
 
             // Send telemetry updates
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
