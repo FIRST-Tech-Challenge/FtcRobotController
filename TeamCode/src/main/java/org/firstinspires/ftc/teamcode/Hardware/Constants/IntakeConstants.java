@@ -27,12 +27,12 @@ public class IntakeConstants {
 
     // Bucket Servo Positions
     public static final double
-            bucketUpPosition = 0.095,
+            bucketUpPosition = 0.125,
             bucketDownPosition = 0.365;
 
     // Bucket Encoder Positions & Tolerance
     public static final double
-            bucketEncUpPosition = 313.00,
+            bucketEncUpPosition = 303.00,
             bucketEncDownPosition = 226.50,
             bucketEncDownPartialPosition = (bucketEncUpPosition + bucketEncDownPosition) / 2.0,
             bucketEncPositionTolerance = 3.00;
@@ -53,9 +53,9 @@ public class IntakeConstants {
 
     // SampleDetector max values
     public static final double
-            maxR = 620.0,
-            maxG = 1160.00,
-            maxB = 1075.00,
-            maxA = 1000.00;
+            maxR = 1444.0,
+            maxG = 2835.00,
+            maxB = 2370.00,
+            maxA = 2280.00;
 
 }

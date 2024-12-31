@@ -26,6 +26,8 @@ public class SampleDetector {
     private double[] distanceBuffer = new double[5];
     private double[] hueBuffer = new double[5];
 
+    private boolean samplesWasDetected = false;
+
     private GobildaBlindToucherV69 colorSensor;
 
     private DigitalChannel limitSwitch;
@@ -115,11 +117,13 @@ public class SampleDetector {
     }
 
     private boolean sampleDetected() {
-        if (sampleDetected()) {
-            return (distanceAVG5() <= IntakeConstants.detectionDistance);
+        if (samplesWasDetected) {
+            samplesWasDetected = (distanceAVG5() <= IntakeConstants.detectionDistance);
         } else {
-            return (distanceAVG5() <= IntakeConstants.detectionDistance) && switchPressed;
+            samplesWasDetected = (distanceAVG5() <= IntakeConstants.detectionDistance) && switchPressed;
         }
+
+        return samplesWasDetected;
     }
 
     private double distanceAVG5() {
