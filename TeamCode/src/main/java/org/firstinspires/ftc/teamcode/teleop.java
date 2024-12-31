@@ -69,11 +69,13 @@ public class teleop extends OpMode {
     }
 
     // Driver 2 Controls:
-    // a - Clamp intake claw fully
-    // x - Intake to outtake macro
-    // leftstick up and down - move slides up and down respectively
-    // rightstick up and down - move slides up and down respectively
-    // b - move outtake to transfer pos
+    // a - transfer macro
+    // y - toggle claw open and close
+    // b - set outtake to neutral position in the middle of the slides so that it is out of the way
+    // right trigger - spin intake in
+    // left trigger - spin intake out
+    // right stick - intake lift
+    // left stick - outtake lift
 
     ////////////////////////////////////////////////////////////////////////////////
     @Override

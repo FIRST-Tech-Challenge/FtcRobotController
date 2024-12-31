@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @Config
 public class Mechanisms {
@@ -34,7 +34,14 @@ public class Mechanisms {
     Servo intakePivotL;
 
     // color sensor in intake
-    public ModernRoboticsI2cColorSensor intakeColorSensor;
+    ColorSensor intakeColorSensor;
+
+    // color sensor values
+    double redValue;
+    double blueValue;
+    double greenValue;
+    double alphaValue; // light intensity
+    double tarVal = 1000;
 
     // Mechanism stuff
     public double lastClawTime;
@@ -73,7 +80,6 @@ public class Mechanisms {
 
     double brakePosIT = 0;
     boolean brakingIT;
-    boolean servTestActive = false;
 
     double brakePosOT = 0;
     boolean brakingOT = true;
@@ -115,7 +121,8 @@ public class Mechanisms {
         outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+        /*// color sensor
+        intakeColorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");*/
 
         //Intake lift
         inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
@@ -170,15 +177,9 @@ public class Mechanisms {
 
         intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
 
-
-        master = opMode;
-
         brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
 
         intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
-
-        intakeColorSensor = master.hardwareMap.get(ModernRoboticsI2cColorSensor.class, "intakeColorSensor");
-
 
         master = opMode;
     }
@@ -212,6 +213,15 @@ public class Mechanisms {
 
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////
+    /*public void rumbleControllerWhenCorrectPieceIntook()
+    {
+        while(true)
+        {
+            intakeColorSensor.
+            master.telemetry.addData()
+        }
+    }*/
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeLift(){
 
@@ -283,7 +293,8 @@ public class Mechanisms {
 
     public void transferMacro()
     {
-        if (master.gamepad2.a && TransferMacroStateTime.milliseconds() > 100)
+        outTakeClaw.setPosition(OT_CLAW_GRAB); // set the outtake claw to its most closed position
+        if (master.gamepad2.a && TransferMacroStateTime.milliseconds() > 200)
         {
             TransferMacroStateTime.reset();
             if (TransferMacroStateTime.milliseconds() > 100)
@@ -521,7 +532,7 @@ public class Mechanisms {
             // up
             inTakeClaw.setPosition(.76);
         }*/
-        if (master.gamepad2.b)
+        /*if (master.gamepad2.b)
         {
             //grab
             intakePivotL.setPosition(.3);
@@ -533,7 +544,7 @@ public class Mechanisms {
             //put in transfer
             intakePivotL.setPosition(.5);
             intakePivotR.setPosition(.5);
-        }
+        }*/
         /*if (master.gamepad2.dpad_down)
         {
             //put in transfer
