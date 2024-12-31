@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Settings;
 public class VerticalSlide implements ViperSlide {
     private final DcMotor verticalMotor;
     private final BaseRobot baseRobot;
+    private double encoderTarget;
     private VerticalPosition currentPosition;
     private final String LOG_PREFIX = "Vertical Slide: ";
 
@@ -25,6 +26,7 @@ public class VerticalSlide implements ViperSlide {
         // Set to RUN_TO_POSITION mode for position control
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.currentPosition = VerticalPosition.TRANSFER;
+        encoderTarget = verticalMotor.getTargetPosition();
     }
 
     // Sets target position
@@ -67,20 +69,14 @@ public class VerticalSlide implements ViperSlide {
     }
 
     @Override
-    public void setForward() {
-        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        verticalMotor.setPower(1);
+    public void increment() {
+        encoderTarget += 10;
+        setPosition(encoderTarget);
     }
 
     @Override
-    public void setBackward() {
-        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        verticalMotor.setPower(-1);
-    }
-
-    @Override
-    public void stop() {
-        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        verticalMotor.setPower(0);
+    public void decrement() {
+        encoderTarget -= 10;
+        setPosition(encoderTarget);
     }
 }

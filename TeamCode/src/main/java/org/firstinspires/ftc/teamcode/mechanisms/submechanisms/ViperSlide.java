@@ -24,10 +24,10 @@ public interface ViperSlide {
 
     enum VerticalPosition {
         TRANSFER(Settings.Hardware.VerticalSlide.TRANSFER),
-        LOW_BASKET(Settings.Hardware.VerticalSlide.LOW_BASKET),
-        HIGH_BASKET(Settings.Hardware.VerticalSlide.HIGH_BASKET),
         LOW_RUNG(Settings.Hardware.VerticalSlide.LOW_RUNG),
-        HIGH_RUNG(Settings.Hardware.VerticalSlide.HIGH_RUNG);
+        LOW_BASKET(Settings.Hardware.VerticalSlide.LOW_BASKET),
+        HIGH_RUNG(Settings.Hardware.VerticalSlide.HIGH_RUNG),
+        HIGH_BASKET(Settings.Hardware.VerticalSlide.HIGH_BASKET);
 
         private final int value;
 
@@ -50,7 +50,6 @@ public interface ViperSlide {
 
     void max();
 
-    void setForward();
-    void setBackward();
-    void stop();
+    void increment();
+    void decrement();
 }

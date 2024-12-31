@@ -434,6 +434,7 @@ public class Settings {
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
                     buttonMapping.wristDown = GamepadButton.DPAD_LEFT;
                     trigger_threshold = 0.15;
+                    freaky = true;
                 }
             });
 

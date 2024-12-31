@@ -197,15 +197,13 @@ public class BaseRobot {
             } else if (contextualActions.wristDown) {
                 intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
-            if (input.mainSettings.freaky) {
-                if (contextualActions.justExtendHorizontal) {
-                    intake.horizontalSlide.setForward();
+            logger.update("freaky?", String.valueOf(input.subSettings.freaky));
+            if (input.subSettings.freaky) {
+                if (contextualActions.extendHorizontal) {
+                    intake.horizontalSlide.increment();
                 }
-                else if (contextualActions.justRetractHorizontal) {
-                    intake.horizontalSlide.setBackward();
-                }
-                else {
-                    intake.horizontalSlide.stop();
+                else if (contextualActions.retractHorizontal) {
+                    intake.horizontalSlide.decrement();
                 }
             } else {
                 if (contextualActions.justExtendHorizontal) {
@@ -218,15 +216,12 @@ public class BaseRobot {
         }
 
         if (Settings.Deploy.OUTTAKE) {
-            if (input.mainSettings.freaky) {
-                if (contextualActions.justExtendVertical) {
-                    outtake.verticalSlide.setForward();
+            if (input.subSettings.freaky) {
+                if (contextualActions.extendVertical) {
+                    outtake.verticalSlide.increment();
                 }
-                else if (contextualActions.justRetractVertical) {
-                    outtake.verticalSlide.setBackward();
-                }
-                else {
-                    outtake.verticalSlide.stop();
+                else if (contextualActions.retractVertical) {
+                    outtake.verticalSlide.decrement();
                 }
             } else {
                 if (contextualActions.justExtendVertical) {
