@@ -24,8 +24,11 @@ public class Outtake {
     public static final double HOOK1_HANG_POS = 0.105;
     public static final double HOOK2_HANG_POS = 0.79;
 
+    public static final double HOOK1_HANG_READY_POS = 0.3;
+    public static final double HOOK2_HANG_READY_POS = 0.6;
+
     public static final double HOOK1_DOWN_POS = 0.555;
-    public static final double HOOK2_DOWN_POS = 0.35;
+    public static final double HOOK2_DOWN_POS = 0.4;
 
     public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88;
     public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93;
@@ -99,6 +102,8 @@ public class Outtake {
     public void init() {
         getOuttakeClaw().setPosition(OUTTAKE_CLAW_CLOSE);
         getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_TRANSFER_READY_POS);
+        getHangHook1().setPosition(HOOK1_DOWN_POS);
+        getHangHook2().setPosition(HOOK2_DOWN_POS);
     }
 
     public DcMotor getLinearSlide1() {

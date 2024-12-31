@@ -250,18 +250,31 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+
+        DriveTrain.setInstanceNull();
         DriveTrain driveTrain = DriveTrain.getInstance(opModeUtilities);
+
+        Outtake.setInstanceNull();
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
+
+        IntakeClaw.setInstanceNull();
+        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
+
+        IMUModule.setInstanceNull();
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
-        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, -180);
+        sleep(1000);
+
+        WheelOdometry.setInstanceNull();
+        WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
         AngleLockTeleOp angleLockTeleOp = null;
-        IntakeClaw intakeClaw = IntakeClaw.getInstance(opModeUtilities);
-        Outtake outtake = Outtake.getInstance(opModeUtilities);
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 0);
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+//        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
+//        maintainLS.setName("maintainLS");
+//        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         AutoRobotHangAction autoRobotHangAction = null;
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
@@ -472,11 +485,11 @@ public class Teleop extends LinearOpMode {
 //            }
 
             if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
-                intakeSmallSweepPos += 0.005;
+                intakeSmallSweepPos += 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
-                intakeSmallSweepPos -= 0.005;
+                intakeSmallSweepPos -= 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
@@ -665,7 +678,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.dpad_right) {
                 cameraCapture.capture();
             }
-            moveOuttakeLSAction.update();
+
+
+            //maintainLS.update();
             wheelOdometry.updatePosition();
 
             telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());
@@ -706,8 +721,8 @@ public class Teleop extends LinearOpMode {
 
     private boolean isGamePadOuttakeJoystickZero() {
         boolean isGamePadOuttakeJoystickZero =
-                ((gamepad2.left_stick_y == 0));
-    return isGamePadOuttakeJoystickZero;
+                ((gamepad2.right_stick_y == 0));
+        return isGamePadOuttakeJoystickZero;
     }
 
     private boolean isGamePadIntakeJoystickZero() {
