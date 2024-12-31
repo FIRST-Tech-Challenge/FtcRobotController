@@ -42,9 +42,10 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
                 .lineToY(-52)
-                .turn(Math.toRadians(90))
-                .lineToX(-56)
+                .turn(Math.toRadians(85))
+                .lineToX(-59)
                 .turn(Math.toRadians(45))
+                .lineToX(-61)
                 .waitSeconds(3);
 
         Action toSub = toBasket.endTrajectory().fresh()
@@ -112,7 +113,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 // checks lift's current position
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 500.0) {
+                if (pos < 500.00) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -239,7 +240,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos < 500.0) {
+                if (pos < 500.00) {
                     // true causes the action to rerun
                     return true;
                 } else {
