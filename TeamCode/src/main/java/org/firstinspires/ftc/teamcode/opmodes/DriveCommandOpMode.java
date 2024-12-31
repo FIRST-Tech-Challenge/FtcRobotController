@@ -1,40 +1,21 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
-import org.firstinspires.ftc.teamcode.commands.DumpBucketCommand;
-import org.firstinspires.ftc.teamcode.commands.ExtendoCommand;
 import org.firstinspires.ftc.teamcode.commands.MovePincherCommand;
-import org.firstinspires.ftc.teamcode.commands.SetUppiesCommand;
-import org.firstinspires.ftc.teamcode.commands.TiltIntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.ToggleIntakeCommand;
-import org.firstinspires.ftc.teamcode.subsystems.BucketSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.EmergencyArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ExtendoSystem;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PincherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.UppiesSubsystem;
 import org.firstinspires.ftc.teamcode.util.FTCDashboardPackets;
 import org.firstinspires.ftc.teamcode.util.RobotHardwareInitializer;
 
-import java.util.HashMap;
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 @TeleOp(name = "RealestDriverOpMode")
