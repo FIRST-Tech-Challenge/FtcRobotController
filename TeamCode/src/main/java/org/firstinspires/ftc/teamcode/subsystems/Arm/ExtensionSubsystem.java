@@ -51,10 +51,7 @@ public class ExtensionSubsystem implements Subsystem {
     {
         return currentArmLength;
     }
-//    public BTCommand setArmLength(double setpoint)
-//    {
-//        return new InstantCommand(m_extensionPID.calculate(setpoint));
-//    }
+
     public double getArmCOM(){return armCOM;}
 
     private void updateValues() {

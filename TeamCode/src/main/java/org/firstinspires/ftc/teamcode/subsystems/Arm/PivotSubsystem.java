@@ -66,8 +66,8 @@ public class PivotSubsystem implements Subsystem {
         dashboard.addData("pivotEncoder2", pivotEncoder2.getPosition());
     }
 
-    public void setAngle(double setpoint){
-        pivot1.set(setPivotMotor(setpoint));
+    public double setAngle(double setpoint){
+        return m_pivotPID.calculate(setpoint);
     }
 
     private double setPivotMotor(double setpoint) {
