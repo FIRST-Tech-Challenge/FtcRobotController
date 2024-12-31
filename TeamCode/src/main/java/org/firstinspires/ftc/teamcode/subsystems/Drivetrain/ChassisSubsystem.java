@@ -6,16 +6,26 @@ import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConsta
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
+import org.firstinspires.ftc.teamcode.utils.BT.BTHolonomicDriveController;
 import org.firstinspires.ftc.teamcode.utils.PID.ProfiledPIDController;
 import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
+import org.firstinspires.ftc.teamcode.utils.RunCommand;
+import org.firstinspires.ftc.teamcode.utils.geometry.BTRotation2d;
+import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
+
+import java.util.function.DoubleSupplier;
 
 public class ChassisSubsystem implements Subsystem{
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -30,6 +40,8 @@ public class ChassisSubsystem implements Subsystem{
     public RevIMU gyro;
     private HardwareMap map;
     private VoltageSensor voltageSensor;
+    public boolean isFirstTime = true;
+    public ElapsedTime driveTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
     @Config
     public static class SpeedsAndAcc {
@@ -68,17 +80,34 @@ public class ChassisSubsystem implements Subsystem{
 
     public void setMotors(double FL, double FR, double BL, double BR) {
         double compensation = 12.0 / voltageSensor.getVoltage();
-        motor_FR.set(compensation * applyFeedFoward(ks, kv, FR));
-        motor_FL.set(compensation * applyFeedFoward(ks, kv, FL));
-        motor_BR.set(compensation * applyFeedFoward(ks, kv, BR));
-        motor_BL.set(compensation * applyFeedFoward(ks, kv, BL));
+        motor_FR.set(compensation * applyFeedForward(ks, kv, FR));
+        motor_FL.set(compensation * applyFeedForward(ks, kv, FL));
+        motor_BR.set(compensation * applyFeedForward(ks, kv, BR));
+        motor_BL.set(compensation * applyFeedForward(ks, kv, BL));
         dashboardTelemetry.addData("compensation", compensation);
     }
-    public double applyFeedFoward(double ks, double kv, double velocity){
+    public double applyFeedForward(double ks, double kv, double velocity){
 
         double s=velocity<0.01? 0: ks*Math.signum(velocity);// this is from kookybotz
         return s + kv * velocity;
     }
+    private void drive(double frontVel, double sidewayVel, double rotation) {
+        double leftFrontPower  = frontVel + sidewayVel + rotation;
+        double rightFrontPower = frontVel - sidewayVel - rotation;
+        double leftBackPower   = frontVel - sidewayVel + rotation;
+        double rightBackPower  = frontVel + sidewayVel - rotation;
+        setMotors(leftFrontPower, rightFrontPower, leftBackPower,rightBackPower);
+    }
+    public BTCommand fieldRelativeDrive(double frontVel, double sidewayVel, double rotation) {
+        return new RunCommand(() -> {
+
+            BTTranslation2d vector = new BTTranslation2d(sidewayVel, frontVel);
+            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(gyro.getHeading())).times(slowDriver);
+            drive(rotated.getY(), rotated.getX(),  rotation);
+        }, this);
+    }
+
+
 
     @Override
     public void periodic(){
@@ -94,5 +123,32 @@ public class ChassisSubsystem implements Subsystem{
 
     }
 
+    public BTCommand drive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier retaliation) {
+        return new RunCommand(() -> {
+            if (isFirstTime) {
+                driveTimer.reset();
+                isFirstTime = false;
+            }
+            dashboardTelemetry.addData("drive: ", driveTimer.time());
+            drive(frontVel.getAsDouble(), sidewayVel.getAsDouble(), retaliation.getAsDouble());
+        }, this);
+
+    }
+
+    public BTCommand fieldRelativeDrive(DoubleSupplier frontVel, DoubleSupplier sidewayVel, DoubleSupplier rotation) {
+        return new RunCommand(() -> {
+
+            BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
+            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(gyro.getHeading()));
+            drive(rotated.getY(), rotated.getX(),  rotation.getAsDouble());
+        }, this);
+    }
+
+
+    public Command stopMotor() {
+        return new InstantCommand(()->{
+            setMotors(0,0,0,0);
+        });
+    }
 
 }

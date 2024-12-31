@@ -10,11 +10,12 @@ import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
 public class goToY extends BTCommand {
     ChassisSubsystem m_chassis;
 
-    public goToY(Subsystem subsystem){
+    public goToY(ChassisSubsystem subsystem){
         m_chassis = subsystem;
     }
 
     public void execute(){
-    };
+
+    }
 }
 
