@@ -397,7 +397,9 @@ public class Teleop extends LinearOpMode {
             }
             if (moveWallTeleOp != null){
                 moveWallTeleOp.updateCheckDone();
-            } else {  //Manual control override
+            }
+
+            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
                 if (angleLockTeleOp != null) {
                     angleLockTeleOp.setIsDone(true);
                 }
