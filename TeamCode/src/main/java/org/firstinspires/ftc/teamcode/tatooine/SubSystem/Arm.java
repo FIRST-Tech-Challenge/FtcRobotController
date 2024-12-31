@@ -54,6 +54,7 @@ public class Arm {
     public static double MAX_EXTEND = 60;
 
     private final static double MIN_EXTEND = 37;
+    private double goal;
 
     // ---------------------------------------------------------------------------------------------
     // Hardware Components
@@ -235,6 +236,14 @@ public class Arm {
                 "Set Power Angle", power);
     }
 
+    public void setGoal(double goal) {
+        this.goal = goal;
+    }
+
+    public double getGoal() {
+        return goal;
+    }
+
     /**
      * Calculates the feedforward term (F) based on the current angle of the arm.
      *
@@ -308,7 +317,8 @@ public class Arm {
      * @return an Action that moves the arm angle
      */
     public Action setAngle(double angle) {
-        return new MoveAngle(angle);
+        setGoal(angle);
+        return new MoveAngle();
     }
 
     /**
@@ -397,7 +407,6 @@ public class Arm {
         public MoveExtension(double goal) {
             this.goal = goal;
             extendPID.reset();
-            extendPID.setTimeout(1000000 );
         }
 
         @Override
@@ -422,10 +431,8 @@ public class Arm {
      * Inner class representing an Action to move the arm angle to a specific setpoint.
      */
     public class MoveAngle implements Action {
-        private final double goal;
 
-        public MoveAngle(double goal) {
-            this.goal = goal;
+        public MoveAngle() {
             anglePID.reset();
         }
 
@@ -437,7 +444,7 @@ public class Arm {
 //            anglePID.setI(KI);
 //            anglePID.setD(KD);
 //            }
-            double pidPower = anglePID.calculate(getAngle(), goal);
+            double pidPower = anglePID.calculate(getAngle(), getGoal());
             // If we're moving downward (pidPower < 0), set feedforward to zero
             double feedforward = calculateF();
             setPowerAngle(pidPower + feedforward);
@@ -447,8 +454,8 @@ public class Arm {
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle Feedforward", feedforward);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", goal);
-            // Return false until we've reached the setpoint
-            return !anglePID.atSetPoint() || !extendPID.atSetPoint();
+            // always return true for the F to update itself always
+            return true;
         }
     }
 

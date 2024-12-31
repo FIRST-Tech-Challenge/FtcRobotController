@@ -55,7 +55,6 @@ public class CameraTest extends LinearOpMode {
                 runningActions.add(arm.setAngle(25));
                 wrist.openMin();
                 doOne = false;
-
             }
             if (gamepad1.cross) {
                 runningActions.clear();
