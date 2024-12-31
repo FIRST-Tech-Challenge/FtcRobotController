@@ -239,6 +239,8 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
+        public boolean freaky = false;
+
         public final ButtonMapping buttonMapping;
 
         public DefaultGamepadSettings() {
@@ -419,6 +421,7 @@ public class Settings {
                 {
                     dpad_movement_speed = 0.6;
                     bumper_rotation_speed = 0.9;
+                    freaky = true;
                 }
 
                 @Override

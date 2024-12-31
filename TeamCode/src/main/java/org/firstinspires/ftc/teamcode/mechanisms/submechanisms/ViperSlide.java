@@ -49,4 +49,8 @@ public interface ViperSlide {
     void min();
 
     void max();
+
+    void setForward();
+    void setBackward();
+    void stop();
 }

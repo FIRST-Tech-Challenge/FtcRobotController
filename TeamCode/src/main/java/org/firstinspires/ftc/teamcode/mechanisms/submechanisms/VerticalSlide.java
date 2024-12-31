@@ -65,4 +65,22 @@ public class VerticalSlide implements ViperSlide {
     public void max() {
         setPosition(VerticalPosition.HIGH_BASKET);
     }
+
+    @Override
+    public void setForward() {
+        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalMotor.setPower(1);
+    }
+
+    @Override
+    public void setBackward() {
+        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalMotor.setPower(-1);
+    }
+
+    @Override
+    public void stop() {
+        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        verticalMotor.setPower(0);
+    }
 }

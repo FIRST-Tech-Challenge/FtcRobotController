@@ -63,4 +63,22 @@ public class HorizontalSlide implements ViperSlide {
     public void max() {
         setPosition(HorizontalPosition.EXPANDED);
     }
+
+    @Override
+    public void setForward() {
+        horizontalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        horizontalMotor.setPower(1);
+    }
+
+    @Override
+    public void setBackward() {
+        horizontalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        horizontalMotor.setPower(-1);
+    }
+
+    @Override
+    public void stop() {
+        horizontalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        horizontalMotor.setPower(0);
+    }
 }

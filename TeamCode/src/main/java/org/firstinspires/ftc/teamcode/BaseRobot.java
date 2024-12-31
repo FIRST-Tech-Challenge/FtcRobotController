@@ -197,21 +197,44 @@ public class BaseRobot {
             } else if (contextualActions.wristDown) {
                 intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
-
-            if (contextualActions.justExtendHorizontal) {
-                intake.horizontalSlide.extend();
-            }
-            if (contextualActions.justRetractHorizontal) {
-                intake.horizontalSlide.retract();
+            if (input.mainSettings.freaky) {
+                if (contextualActions.justExtendHorizontal) {
+                    intake.horizontalSlide.setForward();
+                }
+                else if (contextualActions.justRetractHorizontal) {
+                    intake.horizontalSlide.setBackward();
+                }
+                else {
+                    intake.horizontalSlide.stop();
+                }
+            } else {
+                if (contextualActions.justExtendHorizontal) {
+                    intake.horizontalSlide.extend();
+                }
+                if (contextualActions.justRetractHorizontal) {
+                    intake.horizontalSlide.retract();
+                }
             }
         }
 
         if (Settings.Deploy.OUTTAKE) {
-            if (contextualActions.justExtendVertical) {
-                outtake.verticalSlide.extend();
-            }
-            if (contextualActions.justRetractVertical) {
-                outtake.verticalSlide.retract();
+            if (input.mainSettings.freaky) {
+                if (contextualActions.justExtendVertical) {
+                    outtake.verticalSlide.setForward();
+                }
+                else if (contextualActions.justRetractVertical) {
+                    outtake.verticalSlide.setBackward();
+                }
+                else {
+                    outtake.verticalSlide.stop();
+                }
+            } else {
+                if (contextualActions.justExtendVertical) {
+                    outtake.verticalSlide.extend();
+                }
+                if (contextualActions.justRetractVertical) {
+                    outtake.verticalSlide.retract();
+                }
             }
         }
 
