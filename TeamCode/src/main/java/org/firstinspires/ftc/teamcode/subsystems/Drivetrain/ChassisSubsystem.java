@@ -102,7 +102,7 @@ public class ChassisSubsystem implements Subsystem{
         return new RunCommand(() -> {
 
             BTTranslation2d vector = new BTTranslation2d(sidewayVel, frontVel);
-            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(gyro.getHeading())).times(slowDriver);
+            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(gyro.getHeading()));
             drive(rotated.getY(), rotated.getX(),  rotation);
         }, this);
     }

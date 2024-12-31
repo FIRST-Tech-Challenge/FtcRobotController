@@ -3,6 +3,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.PIDCons
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensionConstants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -11,6 +12,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.PID.PIDController;
 import org.firstinspires.ftc.teamcode.utils.telescopicArmCOM;
 
@@ -49,10 +51,10 @@ public class ExtensionSubsystem implements Subsystem {
     {
         return currentArmLength;
     }
-    public double setArmLength(double setpoint)
-    {
-        return m_extensionPID.calculate(setpoint);
-    }
+//    public BTCommand setArmLength(double setpoint)
+//    {
+//        return new InstantCommand(m_extensionPID.calculate(setpoint));
+//    }
     public double getArmCOM(){return armCOM;}
 
     private void updateValues() {

@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics
 import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
 
-public static class ChassisConstants {
+public class ChassisConstants {
     public static final TrapezoidProfile.Constraints TrapezoidConstraints = new TrapezoidProfile.Constraints(1.63, 1.47);
     public static final double odometryWheelRadius = 0; //meters
     public static final int tickPerRevolution = 0;
