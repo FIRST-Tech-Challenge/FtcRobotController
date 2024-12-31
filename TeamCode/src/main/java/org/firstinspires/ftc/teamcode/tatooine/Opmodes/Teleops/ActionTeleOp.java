@@ -75,16 +75,16 @@ public class ActionTeleOp extends LinearOpMode {
             }
             runningActions = newActions;
 
-
+            if (doOne){
+                arm.moveAngle();
+                doOne = false;
+            }
             drive.fieldDrive(new Pose2d(
                     -gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_X),
                     gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y),
                     gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X)
             ));
-            if (doOne){
-                arm.moveAngle();
-                doOne = false;
-            }
+            arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
 
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)) {
                 currentState = State.HOME;
@@ -95,7 +95,18 @@ public class ActionTeleOp extends LinearOpMode {
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT)) {
                 currentState = State.SCORE_SPECIMEN;
             }
-            
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
+                runningActions.add(wrist.moveToAngle(camera.getAngle()));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                intake.setPowerFun(1);
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.LEFT_BUMPER)) {
+                intake.setPowerFun(-1);
+            } else if (currentState != State.INTAKING2 || currentState != State.SCORE_SAMPLE) {
+                intake.setPowerFun(0);
+            }
+
             switch (currentState) {
                 case HOME:
                     handleHomeState();
