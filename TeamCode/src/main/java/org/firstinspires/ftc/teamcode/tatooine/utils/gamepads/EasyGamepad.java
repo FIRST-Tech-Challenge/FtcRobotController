@@ -133,6 +133,22 @@ public class EasyGamepad {
                 return gamepad.left_bumper && !prevGamepad.left_bumper;
             case RIGHT_BUMPER:
                 return gamepad.right_bumper && !prevGamepad.right_bumper;
+            case DPAD_UP:
+                return gamepad.dpad_up && !prevGamepad.dpad_up;
+            case DPAD_DOWN:
+                return gamepad.dpad_down && !prevGamepad.dpad_down;
+            case DPAD_LEFT:
+                return gamepad.dpad_left && !prevGamepad.dpad_left;
+            case DPAD_RIGHT:
+                return gamepad.dpad_right && !prevGamepad.dpad_right;
+            case BACK:
+                return gamepad.back && !prevGamepad.back;
+            case START:
+                return gamepad.start && !prevGamepad.start;
+            case LEFT_STICK_BUTTON:
+                return gamepad.left_stick_button && !prevGamepad.left_stick_button;
+            case RIGHT_STICK_BUTTON:
+                return gamepad.right_stick_button && !prevGamepad.right_stick_button;
             default:
                 return false;
         }

@@ -54,7 +54,6 @@ public class Arm {
     public static double MAX_EXTEND = 60;
 
     private final static double MIN_EXTEND = 37;
-    private double goal;
 
     // ---------------------------------------------------------------------------------------------
     // Hardware Components
@@ -77,6 +76,7 @@ public class Arm {
     private double angleTimeout;
     private double extendTimeout;
     private final boolean isDebugMode;
+    private double goal = 0;
 
     // ---------------------------------------------------------------------------------------------
     // Telemetry
@@ -236,14 +236,6 @@ public class Arm {
                 "Set Power Angle", power);
     }
 
-    public void setGoal(double goal) {
-        this.goal = goal;
-    }
-
-    public double getGoal() {
-        return goal;
-    }
-
     /**
      * Calculates the feedforward term (F) based on the current angle of the arm.
      *
@@ -317,9 +309,13 @@ public class Arm {
      * @return an Action that moves the arm angle
      */
     public Action setAngle(double angle) {
-        setGoal(angle);
+        return new AtSetPointAngle(angle);
+    }
+
+    public Action moveAngle() {
         return new MoveAngle();
     }
+
 
     /**
      * Creates an Action to move the arm extension to a desired setpoint.
@@ -439,24 +435,31 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//            if (isDebugMode){
-//            anglePID.setP(KP);
-//            anglePID.setI(KI);
-//            anglePID.setD(KD);
-//            }
-            double pidPower = anglePID.calculate(getAngle(), getGoal());
+            double pidPower = anglePID.calculate(getAngle());
             // If we're moving downward (pidPower < 0), set feedforward to zero
             double feedforward = calculateF();
             setPowerAngle(pidPower + feedforward);
-
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle PID Power", pidPower);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle Feedforward", feedforward);
-            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", goal);
             // always return true for the F to update itself always
             return true;
         }
     }
 
+    public class AtSetPointAngle implements Action {
+        private double goal;
+
+        public AtSetPointAngle(double goal) {
+            this.goal = goal;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            anglePID.setSetPoint(goal);
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", goal);
+            return !anglePID.atSetPoint();
+        }
+    }
 }
