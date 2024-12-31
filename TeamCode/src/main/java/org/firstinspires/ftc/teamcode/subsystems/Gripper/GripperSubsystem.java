@@ -15,7 +15,6 @@ public class GripperSubsystem implements Subsystem {
     Servo servoClaw;
     public boolean isOpen;
     public boolean isPickup;
-
     public GripperSubsystem(HardwareMap map){
         servo1 = map.servo.get("servo1");
         servo2 = map.servo.get("servo2");
@@ -33,7 +32,5 @@ public class GripperSubsystem implements Subsystem {
         servo2.setPosition(isPickup?pickupAngle:0);
         dashboard.addData("gripperOpen: ", isOpen);
     }
-
-
 
 }

@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensi
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,6 +34,7 @@ public class ExtensionSubsystem implements Subsystem {
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);
 
+
     }
 
     @Override
@@ -45,6 +48,10 @@ public class ExtensionSubsystem implements Subsystem {
     public double getArmLength()
     {
         return currentArmLength;
+    }
+    public double setArmLength(double setpoint)
+    {
+        return m_extensionPID.calculate(setpoint);
     }
     public double getArmCOM(){return armCOM;}
 
