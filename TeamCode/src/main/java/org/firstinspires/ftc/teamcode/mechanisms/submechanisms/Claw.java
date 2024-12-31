@@ -43,4 +43,12 @@ public class Claw {
         }
     }
 
+    public void toggle() {
+        if (opened) {
+            close();
+        } else {
+            open();
+        }
+    }
+
 }

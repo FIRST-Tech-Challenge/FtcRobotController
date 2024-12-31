@@ -231,6 +231,11 @@ public class BaseRobot {
                     outtake.verticalSlide.retract();
                 }
             }
+
+            if (contextualActions.justToggleClaw) {
+                outtake.claw.toggle();
+            }
+
         }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
