@@ -493,10 +493,12 @@ public class Teleop extends LinearOpMode {
             if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
                 intakeSmallSweepPos += 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+                intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
                 intakeSmallSweepPos -= 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+                intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
 

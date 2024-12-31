@@ -56,7 +56,7 @@ public class SampleEndToEndSequence extends KActionSet{
         moveBigPivot2.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(moveBigPivot2);
 
-        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, Outtake.LS_SAMPLE_BASKET_READY_POS);
+        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, Outtake.LS_SAMPLE_BASKET_READY_POS + 40);
         raiseSlidesBasket.setName("raiseSlidesBasket");
         raiseSlidesBasket.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(raiseSlidesBasket);
