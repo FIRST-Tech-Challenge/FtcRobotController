@@ -384,7 +384,9 @@ public class Teleop extends LinearOpMode {
             }
             if (moveWallTeleOp != null){
                 moveWallTeleOp.updateCheckDone();
-            } else {  //Manual control override
+            }
+
+            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
                 if (angleLockTeleOp != null) {
                     angleLockTeleOp.setIsDone(true);
                 }
@@ -473,11 +475,11 @@ public class Teleop extends LinearOpMode {
 
             if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
                 intakeSmallSweepPos += 0.005;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+                intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
                 intakeSmallSweepPos -= 0.005;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+                intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
 
