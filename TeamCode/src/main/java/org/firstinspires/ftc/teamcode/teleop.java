@@ -91,20 +91,24 @@ public class teleop extends OpMode {
 
         if (testingActive) {
             driveTrain.runTesting();
-            mechanisms.runTesting();
+            //mechanisms.runTesting();
             //mechanisms.servotesting();
         }
         else {
-            mechanisms.UpMacroAndTransfer();
-            mechanisms.setOutTakeLift();
-            mechanisms.setInTakeLift();
-            mechanisms.setInTakeClawGrab();
-            mechanisms.setInTakeFlip();
-            mechanisms.setOutTakeFlip();
-            mechanisms.setOutTakePivot();
+            mechanisms.transferMacro();
+            mechanisms.setIntakeSpinners();
+            mechanisms.setBaseIntakeLift();
+            mechanisms.setBaseOuttakeLift();
             mechanisms.setOutTakeClawGrab();
-            mechanisms.setInTakeRotator();
-            mechanisms.outTakeMacroAndTransfer();
+            mechanisms.setOuttakeArmToNeutralPos();
+            //mechanisms.setOutTakeLift();
+            //mechanisms.setInTakeLift();
+            //mechanisms.setInTakeClawGrab();
+            //mechanisms.setInTakeFlip();
+            //mechanisms.setOutTakeFlip();
+            //mechanisms.setOutTakePivot();
+            //mechanisms.setInTakeRotator();
+            //mechanisms.outTakeMacroAndTransfer();
 
             //fileRead.readFile();
 

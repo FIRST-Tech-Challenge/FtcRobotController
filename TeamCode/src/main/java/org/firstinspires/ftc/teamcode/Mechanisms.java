@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 
 @Config
 public class Mechanisms {
@@ -25,15 +27,14 @@ public class Mechanisms {
 
     // intake lifts
     DcMotor inTakeLift;
+    DcMotor inTakeSpinners;
 
     // intake servos
-    Servo inTakeClaw;
     Servo intakePivotR;
     Servo intakePivotL;
-    Servo inTakeRotator;
-    boolean HACK = false;
 
-
+    // color sensor in intake
+    public ModernRoboticsI2cColorSensor intakeColorSensor;
 
     // Mechanism stuff
     public double lastClawTime;
@@ -43,6 +44,7 @@ public class Mechanisms {
     public static double DOWN_OT_FLIP_POS = 0;
     public static double BUCKET_OT_PIVOT_POS = .5;
     public static double TRANSFER_OT_PIVOT_POS = .67;
+    public static double MIDDLE_OT_PIV_POS = .5; // still needs to be tuned
     public static double PICKUP_OT_PIVOT_POS = .23;
 
     public static double OT_CLAW_GRAB = .68;
@@ -62,15 +64,16 @@ public class Mechanisms {
     String ITMacroState = "none";
     ElapsedTime inTakeAndUpStateTime = new ElapsedTime();
 
-    String OTMacroState = "none";
-    ElapsedTime outTakeAndUpStateTime = new ElapsedTime();
+    String TransferMacroState = "none";
+    ElapsedTime TransferMacroStateTime = new ElapsedTime();
 
     boolean OTGrabbed = false;
     boolean ITGrabbed = false;
-    ElapsedTime ITGrabTime = new ElapsedTime();
+    ElapsedTime OT_ARM_TO_NEUTRAL_POS_TIME = new ElapsedTime();
 
     double brakePosIT = 0;
     boolean brakingIT;
+    boolean servTestActive = false;
 
     double brakePosOT = 0;
     boolean brakingOT = true;
@@ -83,6 +86,8 @@ public class Mechanisms {
     // intake claw servo 2 control
     // intake rotator servo 3 control
 
+    // to build a custom rumble effect
+    Gamepad.RumbleEffect customRumbleEffect;
 
 
     public static boolean upPivotOT = true;
@@ -112,28 +117,101 @@ public class Mechanisms {
 
 
 
-        // Intake lift
-        //inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
-        //inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //Intake lift
+        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
+        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Intake spinners
+        inTakeSpinners = opMode.hardwareMap.dcMotor.get("its");
+        inTakeSpinners.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //inTakeFlipControl.getController().pwmEnable();
 
         // intake servos
-        intakePivotL = opMode.hardwareMap.servo.get(("itpl")); // port
-        intakePivotR = opMode.hardwareMap.servo.get(("itpr")); // port
-        inTakeRotator = opMode.hardwareMap.servo.get("itr"); // port
-        inTakeClaw = opMode.hardwareMap.servo.get(("itc")); // port
+        intakePivotL = opMode.hardwareMap.servo.get(("itpl"));
+        intakePivotR = opMode.hardwareMap.servo.get(("itpr"));
+
+        brakePosIT = inTakeLift.getCurrentPosition();
+        outTakeLiftRight = opMode.hardwareMap.dcMotor.get("otlr");
+        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outTakeLiftLeft = opMode.hardwareMap.dcMotor.get("otll");
+        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // outtake servos
+        outTakeClaw = opMode.hardwareMap.servo.get(("otc"));
+        outTakeFlip = opMode.hardwareMap.servo.get(("otf"));
+        outTakePivotRight = opMode.hardwareMap.servo.get("otpr");
+        outTakePivotLeft = opMode.hardwareMap.servo.get("otpl");
+
+        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
+        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
+        //Intake lift
+        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
+        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Intake spinners
+        inTakeSpinners = opMode.hardwareMap.dcMotor.get("its");
+        inTakeSpinners.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //inTakeFlipControl.getController().pwmEnable();
+
+        // intake servos
+        intakePivotL = opMode.hardwareMap.servo.get(("itpl"));
+        intakePivotR = opMode.hardwareMap.servo.get(("itpr"));
 
         brakePosIT = inTakeLift.getCurrentPosition();
         brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
 
         intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
-        inTakeClaw.setPosition(CLOSED_IT_POS);
+
+
+        master = opMode;
+
+        brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
+
+        intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
+
+        intakeColorSensor = master.hardwareMap.get(ModernRoboticsI2cColorSensor.class, "intakeColorSensor");
 
 
         master = opMode;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    public void setBaseOuttakeLift()
+    {
+        outTakeLiftLeft.setPower(master.gamepad2.left_stick_y);
+        outTakeLiftRight.setPower(master.gamepad2.left_stick_y);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public void setBaseIntakeLift()
+    {
+        inTakeLift.setPower(master.gamepad2.right_stick_y);
+    }
+    ////////////////////////////////////////////////////////////////////////////////
+    public void setOuttakeArmToNeutralPos()
+    {
+        if (master.gamepad2.b)
+        {
+            if (OT_ARM_TO_NEUTRAL_POS_TIME.milliseconds() > 200)
+            {
+                outTakeFlip.setPosition(DOWN_OT_FLIP_POS); // has to be tuned, the down position to flip the outtake to in order to allow it to pass through the slides
+                OT_ARM_TO_NEUTRAL_POS_TIME.reset();
+            }
+            if (OT_ARM_TO_NEUTRAL_POS_TIME.milliseconds() > 200)
+            {
+                outTakePivotLeft.setPosition(MIDDLE_OT_PIV_POS); // has to be tuned, positions the outtake arm so that it is in between the slides but not in the intake position
+                OT_ARM_TO_NEUTRAL_POS_TIME.reset();
+            }
+
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////
     public void setOutTakeLift(){
 
@@ -203,61 +281,60 @@ public class Mechanisms {
             outTakeFlip.setPosition(UP_OT_FLIP_POS + .15);
     }
 
-    public void
-    UpMacroAndTransfer()
+    public void transferMacro()
     {
-        /*
-        if (master.gamepad2.x && inTakeAndUpStateTime.milliseconds() > 500)
+        if (master.gamepad2.a && TransferMacroStateTime.milliseconds() > 100)
         {
-            ITMacroState = "grab";
-            inTakeAndUpStateTime.reset();
-        }
-        if (ITMacroState.equals("grab"))
-        {
-            if (inTakeAndUpStateTime.milliseconds() > 500) {
-                ITMacroState = "upAndRotate";
-                inTakeAndUpStateTime.reset();
+            TransferMacroStateTime.reset();
+            if (TransferMacroStateTime.milliseconds() > 100)
+            {
+                intakePivotL.setPosition(UP_IT_FLIP_POS); // will have to tune, position the intake in the middle of the drivetrain
             }
-            inTakeClaw.setPosition(CLOSED_IT_POS);
-        }*/
-        /*if (master.gamepad2.x && inTakeAndUpStateTime.milliseconds() > 500)
-        {
-            ITMacroState = "clawup";
-            inTakeAndUpStateTime.reset();
-        }
-        if (ITMacroState.equals("clawup"))
-        {
-            outTakeClaw.setPosition(OT_CLAW_GRAB);
-            if (inTakeAndUpStateTime.milliseconds() > 800) {
-                ITMacroState = "intakeMoveToTransfer";
-                outTakePivotRight.setPosition(TRANSFER_OT_PIVOT_POS);
-                inTakeAndUpStateTime.reset();
-            }
+            TransferMacroStateTime.reset();
             if (intakeToTransfer.milliseconds() > 200)
             {
-                inTakeClaw.setPosition(MIDDLE_IT_POS);
+                outTakeFlip.setPosition(DOWN_OT_FLIP_POS); // will have to tune, meant to be a position to get the outtake flipped to the lowest possible position (arm ready to be moved down)
             }
-            intakePivotL.setPosition(MID_IT_FLIP_POS);
-            inTakeRotator.setPosition(PERP_IT_POS);
-            outTakeFlip.setPosition(DOWN_OT_FLIP_POS);
-        }
-        if (ITMacroState.equals("intakeMoveToTransfer"))
-        {
-            if (inTakeAndUpStateTime.milliseconds() > 800) {
-                ITMacroState = "outtaketransferpos";
-                inTakeAndUpStateTime.reset();
-                outTakeClaw.setPosition(OT_CLAW_RELEASE);
-                outTakeFlip.setPosition(DOWN_OT_FLIP_POS + .12);
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakePivotLeft.setPosition(DOWN_OT_FLIP_POS); // moves whole outtake arm downwards to the position to be transferred
             }
-            inTakeClaw.setPosition(CLOSED_IT_POS);
-            intakePivotL.setPosition(UP_IT_FLIP_POS);
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakeFlip.setPosition(DOWN_OT_FLIP_POS); // will have to tune, meant to be a position to get the outtake flipped to the position so that it is ready to grab the sample
+            }
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakeClaw.setPosition(OT_CLAW_GRAB); // will have to tune, meant to be a middle position to fit inside the intake but still grab the sample inside the intake
+            }
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakeFlip.setPosition(DOWN_OT_FLIP_POS); // will have to tune, meant to move the outtake arm down to get the claw in position to clamp and grab the sample
+            }
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakeClaw.setPosition(OT_CLAW_GRAB); // will have to tune, clamps the sample in the intake
+            }
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakePivotLeft.setPosition(UP_OT_FLIP_POS); // will have to tune, meant to move the outtake arm up to move the claw to the position to outtake, still needs to be flipped
+            }
+            TransferMacroStateTime.reset();
+            if (intakeToTransfer.milliseconds() > 200)
+            {
+                outTakeFlip.setPosition(UP_OT_FLIP_POS); // will have to tune, meant to flip the outtake to the highest position to be able to drop the sample
+            }
+            TransferMacroStateTime.reset();
         }
-
-         */
-
     }
 
-    public void outTakeMacroAndTransfer()
+    /*public void outTakeMacroAndTransfer()
     {
         if (master.gamepad2.a && outTakeAndUpStateTime.milliseconds() > 500 && OTMacroState.equals("none"))
         {
@@ -283,7 +360,7 @@ public class Mechanisms {
                 OTMacroState = "none";
             }
         }
-    }
+    }*/
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -315,7 +392,7 @@ public class Mechanisms {
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    public void setInTakeClawGrab(){
+    /*public void setInTakeClawGrab(){
         if (master.gamepad2.b && ITGrabTime.milliseconds() > 500) {
             if (ITGrabbed) {
                 inTakeClaw.setPosition(OPEN_IT_POS);
@@ -329,10 +406,10 @@ public class Mechanisms {
         }
         if (master.gamepad2.dpad_right)
             inTakeClaw.setPosition(MIDDLE_IT_POS);
-    }
+    }*/
 
     ////////////////////////////////////////////////////////////////////////////////
-    public void setInTakeFlip(){
+    /*public void setInTakeFlip(){
         if (master.gamepad2.dpad_up) {
             intakePivotL.setPosition(UP_IT_FLIP_POS);
            // intakePivotR.setPosition(UP_IT_FLIP_POS);
@@ -347,15 +424,15 @@ public class Mechanisms {
           //  intakePivotR.setPosition(MID_IT_FLIP_POS);
             intakePivotL.setPosition(MID_IT_FLIP_POS);
         }
-    }
+    }*/
 
     ////////////////////////////////////////////////////////////////////////////////
-    public void setInTakeRotator(){
+    /*public void setInTakeRotator(){
         if (master.gamepad2.left_bumper)
             inTakeRotator.setPosition(PAR_IT_POS);
         if (master.gamepad2.right_bumper)
             inTakeRotator.setPosition(PERP_IT_POS);
-    }
+    }*/
 
     ////////////////////////////////////////////////////////////////////////////////
     public void setInTakeLift(){
@@ -375,7 +452,18 @@ public class Mechanisms {
         }
     }
     //////////////////////////////////////////////////////////////////////////////
-    public void transfer() throws InterruptedException{
+    public void setIntakeSpinners()
+    {
+        if (master.gamepad2.right_trigger > 0.4)
+        {
+            inTakeSpinners.setPower(1);
+        }
+        if (master.gamepad2.left_trigger > 0.4)
+        {
+            inTakeSpinners.setPower(-1);
+        }
+    //////////////////////////////////////////////////////////////////////////////
+    /*public void transfer() throws InterruptedException{
         if (intakeToTransfer.milliseconds() > 0 && intakeToTransfer.milliseconds() < 200)
         {
             intakePivotL.setPosition(0);
@@ -402,13 +490,13 @@ public class Mechanisms {
             outTakePivotRight.setPosition(0); // pivot outtake so that it is in the pos where it drops the pixel
             outTakePivotLeft.setPosition(0);
         }
-    }
+    }*/
     //////////////////////////////////////////////////////////////////////////////
-    public void slidePosHigh() {
+    /*public void slidePosHigh() {
         outTakeLiftLeft.setTargetPosition(1); // encoder position of highest position slides need to be
         outTakeLiftRight.setTargetPosition(1);
 
-    }
+    }*/
     /*
     //////////////////////////////////////////////////////////////////////////////
     public void servotesting() {
@@ -426,13 +514,13 @@ public class Mechanisms {
      */
 
     //////////////////////////////////////////////////////////////////////////////
-    public void runTesting()
+    /*public void runTesting()
     {
-        if (master.gamepad2.a)
+        /*if (master.gamepad2.a)
         {
             // up
             inTakeClaw.setPosition(.76);
-        }
+        }*/
         if (master.gamepad2.b)
         {
             //grab
@@ -446,12 +534,12 @@ public class Mechanisms {
             intakePivotL.setPosition(.5);
             intakePivotR.setPosition(.5);
         }
-        if (master.gamepad2.dpad_down)
+        /*if (master.gamepad2.dpad_down)
         {
             //put in transfer
             inTakeRotator.setPosition(.32);
-        }
-        if (master.gamepad2.dpad_left)
+        }*/
+        /*if (master.gamepad2.dpad_left)
         {
             inTakeRotator.setPosition(0);
         }
@@ -463,7 +551,7 @@ public class Mechanisms {
         if (master.gamepad2.y)
         {
             inTakeClaw.setPosition(1);
-        }
+        }*/
         if (master.gamepad2.left_bumper)
         {
             outTakeLiftLeft.setPower(.8);
