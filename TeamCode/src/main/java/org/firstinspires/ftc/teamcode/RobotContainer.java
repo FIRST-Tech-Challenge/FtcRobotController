@@ -42,7 +42,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     public RobotContainer(HardwareMap map, Gamepad gamepad1, Gamepad gamepad2){
         m_extension = new ExtensionSubsystem(map);
         //m_gripper = new GripperSubsystem(map);
-        m_chassis = new ChassisSubsystem(map);
+        //m_chassis = new ChassisSubsystem(map);
         m_pivot = new PivotSubsystem(map, m_extension::getArmLength, m_extension::getArmCOM);
 
         this.gamepad1 = gamepad1;
@@ -55,12 +55,12 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return Math.signum(input)*Math.pow(input,2);
     }
     private void configureBinds() {
-        m_controller.assignCommand(m_chassis.fieldRelativeDrive(
-                        () -> squareInput(-m_controller.left_y.getAsDouble()),
-                        () -> squareInput(m_controller.left_x.getAsDouble()),
-                        () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
-                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
-
+//        m_controller.assignCommand(m_chassis.fieldRelativeDrive(
+//                        () -> squareInput(-m_controller.left_y.getAsDouble()),
+//                        () -> squareInput(m_controller.left_x.getAsDouble()),
+//                        () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
+//                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
+        m_controller.assignCommand(m_pivot.set(),true,BUTTON_RIGHT);
     }
 
     private void resetGyro() {

@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.PIDConstants.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.armPIDConstants.*;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -10,7 +11,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.PID.PIDController;
-import org.firstinspires.ftc.teamcode.utils.PID.PIDFController;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,7 +35,9 @@ public class PivotSubsystem extends SubsystemBase {
     public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, DoubleSupplier armCOM){
         this.map = map;
         pivotLeft = new MotorEx(map,"pivotLeft");//tbd
+        pivotLeft.setInverted(true);
         pivotRight = new MotorEx(map,"pivotRight");//tbd
+        pivotRight.setInverted(false);
         this.armLength = armLength;
         this.armCOM = armCOM;
         currentArmCOM = armCOM.getAsDouble();
@@ -43,6 +45,8 @@ public class PivotSubsystem extends SubsystemBase {
         pivotFF = armMass*g*currentArmCOM*Math.sin(currentArmAngle);
         leftEncoder = pivotLeft.encoder;
         rightEncoder = pivotRight.encoder;
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
 
     @Override
@@ -65,6 +69,7 @@ public class PivotSubsystem extends SubsystemBase {
         dashboardTelemetry.addData("armAngle", currentArmAngle);
         dashboardTelemetry.addData("rightEncoder", rightEncoder.getPosition());
         dashboardTelemetry.addData("rightEncoder rev", rightEncoder.getRevolutions());
+        dashboardTelemetry.addData("leftEncoder rev", leftEncoder.getRevolutions());
         dashboardTelemetry.update();
     }
 
@@ -85,16 +90,25 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     private double akG(DoubleSupplier armLength) {
-        return 0;
+        return 0.26*(armLength.getAsDouble()/totalLength)+0.29;
     }
 
     private double aMaxAngle(DoubleSupplier armLength) {
-        return 0;
+        return -13*(armLength.getAsDouble()/totalLength)+210;
     }
 
     private void calcArmAngle() {
-        currentArmAngle =  -10.4106*rightEncoder.getRevolutions()+110.925;//linear equation (encoder to angle)
+        currentArmAngle = 10.321*leftEncoder.getRevolutions();//linear equation (encoder to angle)
     }
+
+    public void setMotors(){
+        pivotRight.set(kS);
+        pivotLeft.set(kS);
+    }
+    public InstantCommand set(){
+        return new InstantCommand(()->setMotors(),this);
+    }
+
 
 
 }
