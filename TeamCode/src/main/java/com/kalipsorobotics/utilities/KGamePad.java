@@ -27,6 +27,10 @@ public class KGamePad {
         return gamepad;
     }
 
+    public boolean isLeftBumperPressed(){
+        return gamepad.left_bumper;
+    }
+
     public boolean isToggleDpadLeft (){
         boolean current = gamepad.dpad_left;
         boolean toggle = false;

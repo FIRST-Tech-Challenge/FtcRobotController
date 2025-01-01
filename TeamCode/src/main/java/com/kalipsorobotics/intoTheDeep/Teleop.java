@@ -76,6 +76,7 @@ public class Teleop extends LinearOpMode {
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
         SampleEndToEndSequence sampleEndToEndSequence = null;
+        SampleEndToEndSequence sampleEndToEndSequence2 = null;
         SpecimenHang specimenHang = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
@@ -119,6 +120,7 @@ public class Teleop extends LinearOpMode {
         boolean specimenHangPressed;
         boolean specimenReadyPressed;
         boolean sampleEndToEndSequencePressed;
+        boolean sampleEndToEndSequencePressed2;
 
         intakeClaw.init();
         outtake.init();
@@ -142,7 +144,7 @@ public class Teleop extends LinearOpMode {
             specimenHangReadyPressed = kGamePad2.isToggleButtonB();
             intakeClawOpenClose = kGamePad2.isToggleLeftBumper();
             intakeOverrideOn = kGamePad2.isLeftTriggerPressed();
-            intakeReadyPressed = kGamePad2.isToggleDpadLeft();
+            intakeReadyPressed = kGamePad2.isToggleDpadLeft() && !kGamePad2.isLeftTriggerPressed();
             intakeTransferReadyPressed = kGamePad2.isToggleDpadRight();
             transferPressed = kGamePad2.isToggleDpadUp();
             intakePressed = kGamePad2.isToggleDpadDown();
@@ -153,6 +155,15 @@ public class Teleop extends LinearOpMode {
             specimenHangPressed = kGamePad2.isToggleButtonA();
             specimenReadyPressed = kGamePad2.isToggleButtonB();
             sampleEndToEndSequencePressed = kGamePad2.isBackButtonPressed();
+            sampleEndToEndSequencePressed2 = kGamePad2.isToggleDpadLeft() && kGamePad2.isLeftTriggerPressed();
+
+            if(kGamePad2.isLeftBumperPressed()){
+                Log.d ("backButton", " Gamepad" + gamepad2.left_bumper);
+                Log.d ("backButton ", " isLeftBumperPressed" + kGamePad2.isLeftBumperPressed());
+                Log.d ("backButton ", " isBackButtonPressed" + kGamePad2.isBackButtonPressed());
+                Log.d ("backButton ", " sampleEndToEndSequence " + sampleEndToEndSequencePressed2);
+
+            }
 
             //RESET POSITIONS TO CURRENT
             intakeLinkagePos = intakeClaw.getIntakeLinkageServo().getServo().getPosition();
@@ -485,6 +496,19 @@ public class Teleop extends LinearOpMode {
 
             if(sampleEndToEndSequence != null){
                 sampleEndToEndSequence.updateCheckDone();
+            }
+
+            if(sampleEndToEndSequencePressed2) {
+                Log.d("backButton", " " + sampleEndToEndSequencePressed2);
+                if(sampleEndToEndSequence2 == null || sampleEndToEndSequence2.getIsDone()){
+                    sampleEndToEndSequence2 = new SampleEndToEndSequence(intakeClaw, outtake, Outtake.LS_DOWN_POS);
+                    sampleEndToEndSequence2.setName("sampleEndToEndSequence2");
+                    Log.d("backButton", "Creating sequence " + sampleEndToEndSequence2);
+                }
+            }
+
+            if(sampleEndToEndSequence2 != null){
+                sampleEndToEndSequence2.updateCheckDone();
             }
 
             // Capture pictures from webcam every 500 milliseconds if holding dpad right with gamepad 1
