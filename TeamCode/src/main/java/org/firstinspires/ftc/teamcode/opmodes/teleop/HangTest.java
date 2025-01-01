@@ -2,19 +2,13 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
-import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
+import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.Hang;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
-import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
-import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
-import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
-import org.java_websocket.SocketChannelIOHelper;
 
 /**
  * This is old mainTeleop
