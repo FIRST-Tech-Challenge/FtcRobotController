@@ -58,7 +58,7 @@ public class Logger {
 
     public void print() {
 
-        if (controller.wasJustPressed(GamepadKeys.Button.START)) {
+        if (controller.wasJustPressed(GamepadKeys.Button.BACK)) {
 
             if (state == LogLevels.production) {
                 state = LogLevels.debug;

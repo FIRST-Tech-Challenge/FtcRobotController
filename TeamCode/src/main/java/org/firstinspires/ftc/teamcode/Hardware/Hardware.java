@@ -108,8 +108,8 @@ public class Hardware   {
 
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
         depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        depositSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         depositSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
         armRight = hardwareMap.get(Servo.class, "CH-Servo-0");
@@ -143,6 +143,23 @@ public class Hardware   {
         for (LynxModule hub : hubs) {
             hub.clearBulkCache();
         }
+    }
+
+    public void Zero() {
+        depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        depositSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        intakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        pinPoint.resetPosAndIMU();
+    }
+
+    public void zeroPinpoint() {
+        pinPoint.resetPosAndIMU();
     }
 
 }

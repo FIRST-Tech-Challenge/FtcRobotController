@@ -200,7 +200,7 @@ public class Intake {
 
     private void findsState() {
 
-        if ((slides.getPosition() <= (0.0 + IntakeConstants.intakeSlidePositionTolerance)) && targetSystemState == SystemState.Stowed) {
+        if ((slides.getPosition() <= (0.0 + IntakeConstants.intakeSlidePositionTolerance)) && targetSystemState == SystemState.Stowed && slides.getVelocity() <= 1) {
             currentSystemState = SystemState.Stowed;
         } else if (bucket.getStatus() == Bucket.Status.up) {
             currentSystemState = SystemState.Deployed;

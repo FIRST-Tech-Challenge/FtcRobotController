@@ -58,9 +58,9 @@ public class Claw {
     }
 
     private void findStatus() {
-        if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncOpenPos, DepositConstants.clawEncPosTolerance)) {
+        if (encoderPos <= DepositConstants.clawEncOpenPos + DepositConstants.clawEncPosTolerance) {
             status = Status.released;
-        } else if (PosChecker.atAngularPos(encoderPos, DepositConstants.clawEncClosedPos, DepositConstants.clawEncPosTolerance * 2)) {
+        } else if (encoderPos >= DepositConstants.clawClosedPos - DepositConstants.clawEncPosTolerance) {
             status = Status.gripped;
         } else {
             status = Status.intermediate;

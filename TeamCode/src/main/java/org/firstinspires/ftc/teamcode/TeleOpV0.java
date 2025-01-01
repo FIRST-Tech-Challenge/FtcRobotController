@@ -35,6 +35,8 @@ public class TeleOpV0 extends OpMode {
         controller = new GamepadEx(gamepad1);
         logger = new Logger(telemetry, controller);
 
+        hardware.Zero();
+
         robot  = new Robot(hardware, controller, logger);
 
         robot.setDepositDesiredState(Deposit.TargetState.transfer);
@@ -55,6 +57,12 @@ public class TeleOpV0 extends OpMode {
         updateSamples();
 
         robot.update();
+
+        // Zero Pinpoint
+        if (controller.wasJustPressed(GamepadKeys.Button.START)) {
+            hardware.zeroPinpoint();
+        }
+
 
         // Deposit Controls
         // Send deposit to transfer position |A|

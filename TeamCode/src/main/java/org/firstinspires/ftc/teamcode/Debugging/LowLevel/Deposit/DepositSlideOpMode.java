@@ -50,7 +50,11 @@ public class DepositSlideOpMode extends OpMode {
 
         slides.log();
         logger.print();
+    }
 
+    private void callI2C() {
+        hardware.pinPoint.update();
+        hardware.intakeCS.updateColors();
     }
 
 }

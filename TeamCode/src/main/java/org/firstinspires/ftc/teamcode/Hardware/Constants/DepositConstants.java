@@ -8,9 +8,9 @@ public class DepositConstants {
             clawOpenPos = 0.46;
 
     public static final double
-            clawEncClosedPos = 307.00,
-            clawEncOpenPos = 191.00,
-            clawEncPosTolerance = 3.00;
+            clawEncClosedPos = 311.00,
+            clawEncOpenPos = 192.50,
+            clawEncPosTolerance = 4.00;
 
     // Arm Positions
     public static final double
@@ -30,10 +30,10 @@ public class DepositConstants {
 
     // Deposit Slide PID Constants
     public static final double
-            sp = 0.032,
+            sp = 0.02,
             si = 0.05,
-            sd = 0.0005,
-            sf = 0.00;
+            sd = 0.00035,
+            sf = 0.13;
     //Zeros for testing
 //            sp = 0.0,
 //            si = 0.0,
@@ -42,7 +42,7 @@ public class DepositConstants {
 
     // Deposit Slides Positions in cm
     public static final double
-            slideTransferPos = 8.50,
+            slideTransferPos = 7.70,
             slidePreTransferPos = 21.50,
             slideSpecIntakePos = 0.00,
             slideSpecDepositReadyPos = 48.00,
