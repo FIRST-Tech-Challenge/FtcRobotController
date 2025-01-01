@@ -28,7 +28,7 @@ public class AutoRobotHangAction extends KActionSet {
         waitForLs.setDependentActions(moveLsUp, moveOuttakeBack);
         this.addAction(waitForLs);
 
-        MoveOuttakeLSAction pullRobotUp = new MoveOuttakeLSAction(outtake, 535);//733 ticks //311 //535
+        MoveOuttakeLSAction pullRobotUp = new MoveOuttakeLSAction(outtake, 560);//733 ticks //311 //535
         pullRobotUp.setName("pullRobotUp");
         pullRobotUp.setOverridePower(1);
         pullRobotUp.setOverrideOn(true);
