@@ -40,7 +40,6 @@ public class HighBucketDeposit extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Pose2d(1.40, 1.42, new Rotation2d(Math.toRadians(45)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135)))),
 
-                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
                 //new Pause(3),
 
                 //new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_HIGH)),
