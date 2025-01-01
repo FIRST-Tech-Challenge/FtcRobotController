@@ -47,16 +47,9 @@ public class CommandFactory {
         this.slider = slider;
     }
 
-    public AlignToSample alignToSample() {
-        return new AlignToSample(driveTrain, vision, telemetry);
-    }
 
     public TelemetryCommand WriteTelemetry() {
         return  new TelemetryCommand(driveTrain, telemetry);
-    }
-
-    public MotorTurnCommand MotorTest() {
-        return new MotorTurnCommand(driveTrain, telemetry);
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
@@ -73,22 +66,6 @@ public class CommandFactory {
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut);
-    }
-
-    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading) {
-        return driveToTarget(targetX, targetY, targetHeading, 0.1);
-    }
-
-    public DriveToPositionCommand driveToPosition(double targetX, double targetY, double targetheading) {
-        return new DriveToPositionCommand(driveTrain, telemetry).setTargetPosition(targetX, targetY, targetheading);
-    }
-
-    public DriveToTargetCommandAlterate driveToTargetAlternate(double targetX, double targetY, double targetHeading) {
-        return new DriveToTargetCommandAlterate(driveTrain, telemetry, targetX, targetY, targetHeading);
-    }
-
-    public TurnAngleAbsoluteCommand turnAngleAbsolute(double angleInDegrees) {
-        return new TurnAngleAbsoluteCommand(driveTrain, telemetry, angleInDegrees);
     }
 
     public MoveSliderCommand extendSlider() {
@@ -113,10 +90,6 @@ public class CommandFactory {
 
     public MoveSliderCommand collapseSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
-    }
-
-    public TurnAngleRelativeCommand turnAngleRelative(double angleInDegrees) {
-        return new TurnAngleRelativeCommand(driveTrain, telemetry, angleInDegrees);
     }
 
     public SleeperCommand waitFor(long timeInMs) {
@@ -149,11 +122,6 @@ public class CommandFactory {
 
     }
 
-
-    public SingleRunCommand stopDriveTrain() {
-        return new SingleRunCommand(driveTrain::stop, driveTrain);
-    }
-
     public SingleRunCommand elbowToIntakePosition() {
         return new SingleRunCommand(intake::SetElbowInIntakePosition);
     }
@@ -182,14 +150,6 @@ public class CommandFactory {
         return new IntakeFromGround(intake, pivot, telemetry);
     }
 
-    private void Wait(long timeout) {
-        try {
-            synchronized (this) {
-                wait(timeout);
-            }
-        } catch (java.lang.InterruptedException e) {
-        }
-    }
     public MovePivotCommand AutoToGround(int waitTime) {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 600, 100, waitTime,  .4);
     }
@@ -203,10 +163,6 @@ public class CommandFactory {
 
     public IntakeFromWall intakeFromWall() {
         return new IntakeFromWall(driveTrain, intake);
-    }
-
-    public RoboticCentricDriveCommand driveRobotCentric(double strafeSpeed, double forwardSpeed, double rotSpeed, long timeToDriveMs) {
-        return new RoboticCentricDriveCommand(driveTrain, strafeSpeed, forwardSpeed, rotSpeed, timeToDriveMs);
     }
 
     public SleeperCommand sleep(long timeToSleepMs) {
