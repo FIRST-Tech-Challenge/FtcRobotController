@@ -76,9 +76,7 @@ public class LeftSideAuto87Pts extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0))),
                         new ArrayList<Translation2d>() {{ }},
                         AutoFunctions.redVsBlue(new Pose2d(0.6, 0.25, new Rotation2d(Math.toRadians(-180)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-180)))),
-
-                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive())
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-180))))
 
         );
 
