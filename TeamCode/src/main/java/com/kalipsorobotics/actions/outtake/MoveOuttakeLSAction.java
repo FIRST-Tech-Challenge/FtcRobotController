@@ -25,6 +25,7 @@ public class MoveOuttakeLSAction extends Action {
     Outtake outtake;
 
     private static double globalLinearSlideMaintainTicks = 0;
+    private static boolean needMaintenance = true;
     DcMotor linearSlide1, linearSlide2;
     public static double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
@@ -97,7 +98,7 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
-            lowestPower = 0.45;
+            lowestPower = 0.25;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(100)) {
@@ -142,6 +143,7 @@ public class MoveOuttakeLSAction extends Action {
             lastTicks = linearSlide1.getCurrentPosition();
             timeoutTimer.reset();
             startingError = targetTicks - linearSlide1.getCurrentPosition();
+            needMaintenance = false;
         }
 
         double currentTargetTicks;
@@ -173,7 +175,7 @@ public class MoveOuttakeLSAction extends Action {
                             "currentTicks=%.3f, ",
                     this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
                     currentTicks));
-            isDone = true;
+            finish();
         }
 
         Log.d("Outtake_LS", String.format(
@@ -216,8 +218,8 @@ public class MoveOuttakeLSAction extends Action {
         velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
 
         if(velocity < 0.0075 && !isDone) {
-            if(timeoutTimer.milliseconds() > 8000) {
-                isDone = true;
+            if(timeoutTimer.milliseconds() > 2000) {
+                finish();
             }
         } else {
             timeoutTimer.reset();
@@ -230,6 +232,11 @@ public class MoveOuttakeLSAction extends Action {
         Log.d("Outtake_LS_power", name + " final power set to " + power);
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
+    }
+
+    private void finish() {
+        isDone = true;
+        needMaintenance = true;
     }
 
     static public void setGlobalLinearSlideMaintainTicks(double pos) {
@@ -250,6 +257,12 @@ public class MoveOuttakeLSAction extends Action {
     static public void setGlobal(double ticks) {
         setGlobalLinearSlideMaintainTicks(ticks);
     }
+    public static double getGlobal() {
+        return globalLinearSlideMaintainTicks;
+    }
+
+    public static void setNeedMaintenance(boolean maintenanceOn) {needMaintenance = maintenanceOn;}
+    public static boolean getNeedMaintenance() {return needMaintenance;}
 
     public void setOverrideOn(boolean isOverrideOn) {
         overrideOn = isOverrideOn;

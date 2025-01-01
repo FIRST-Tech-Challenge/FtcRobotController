@@ -13,15 +13,8 @@ public class KServo {
     private final double zeroPosition;
     private final boolean flipDirection;
 
-    public KServo(Servo servo, double servoSpeed, double rangeDegrees, double zeroPosition, boolean flipDirection) {
-        this.servo = servo;
-        this.servoSpeed = servoSpeed;
-        this.rangeDegrees = rangeDegrees;
-        this.flipDirection = flipDirection;
-        this.zeroPosition = zeroPosition;
-    }
-
     private double targetPosition;
+    private double lastPosition;
     private final ElapsedTime time = new ElapsedTime();
     private double currentPosition;
     private double currentTime;
@@ -29,6 +22,15 @@ public class KServo {
     private double prevTime;
     private double startTime;
     private double estimatedFinishTime;
+
+    public KServo(Servo servo, double servoSpeed, double rangeDegrees, double zeroPosition, boolean flipDirection) {
+        this.servo = servo;
+        this.servoSpeed = servoSpeed;
+        this.rangeDegrees = rangeDegrees;
+        this.flipDirection = flipDirection;
+        this.zeroPosition = zeroPosition;
+        this.lastPosition = servo.getPosition();
+    }
 
     private int counter = 0;
 
@@ -41,13 +43,13 @@ public class KServo {
     }
 
     public void setTargetPosition(double position) {
+        lastPosition = servo.getPosition();
         targetPosition = position;
-        if (counter == 0) {
-            estimatedFinishTime = estimateTimeMs(servo.getPosition(), position) * 1.2;
+        if(lastPosition != targetPosition) {
+            estimatedFinishTime = estimateTimeMs(lastPosition, targetPosition) * 1.2;
             startTime = System.currentTimeMillis();
+            servo.setPosition(targetPosition);
         }
-        servo.setPosition(position);
-        counter = counter + 1;
 //        time.reset();
     }
 
@@ -71,7 +73,7 @@ public class KServo {
         Log.d("isDone", "time" + deltaTime);
         if (deltaTime > estimatedFinishTime) {
             Log.d("isDone", "done time " + deltaTime + ", port# " + getPortNumber());
-            counter = 0;
+            lastPosition = servo.getPosition();
             return true;
         }
         return false;

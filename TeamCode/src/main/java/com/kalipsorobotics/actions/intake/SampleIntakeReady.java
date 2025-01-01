@@ -29,10 +29,6 @@ public class SampleIntakeReady extends KActionSet{
            moveSmallSweep.setDependentActions(moveBigPivot, moveSmallPivot);
            this.addAction(moveSmallSweep);
 
-            KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
-            intakeClawOpen.setName("intakeClawOpen");
-            this.addAction(intakeClawOpen);
-
             KServoAutoAction moveIntakeLSOut = new KServoAutoAction(intake.getIntakeLinkageServo(), intakeLinkageServoPos);
             moveIntakeLSOut.setName("moveIntakeLSOut");
             moveIntakeLSOut.setDependentActions(moveBigPivot, moveSmallPivot, moveSmallSweep, intakeArmBigSweep);

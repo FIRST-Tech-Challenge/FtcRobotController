@@ -50,7 +50,7 @@ public class Outtake {
     public static final double LS_SPECIMEN_CLIP_POS = 230;
     public static final double LS_SAMPLE_BASKET_READY_POS = 675;
 
-    public static final double OUTTAKE_CLAW_CLOSE = 0.84;
+    public static final double OUTTAKE_CLAW_CLOSE = 0.95;
     public static final double OUTTAKE_CLAW_OPEN = 0.65;     //increase to make claw close more, decrease to open more
 
 
@@ -58,7 +58,14 @@ public class Outtake {
     private Outtake(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         Log.d("Outtake_LS", "init Outtake");
+
         setUpHardware();
+
+        linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     public static synchronized Outtake getInstance(OpModeUtilities opModeUtilities) {
@@ -87,11 +94,6 @@ public class Outtake {
                 0, false);
         hangHook2 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang2"), 60/0.25, 300,
                 0, false);
-
-        linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

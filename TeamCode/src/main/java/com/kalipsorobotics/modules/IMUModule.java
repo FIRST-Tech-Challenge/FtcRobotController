@@ -14,6 +14,8 @@ public class IMUModule {
     private IMUModule(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
         setUpHardware();
+
+        imu.resetYaw();
     }
 
     public static synchronized IMUModule getInstance(OpModeUtilities opModeUtilities) {
@@ -39,7 +41,6 @@ public class IMUModule {
                 )
         ));
 
-        imu.resetYaw();
     }
 
     public IMU getIMU() {

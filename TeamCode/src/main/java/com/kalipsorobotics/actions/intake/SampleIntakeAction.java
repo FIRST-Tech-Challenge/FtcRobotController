@@ -9,8 +9,15 @@ import com.kalipsorobotics.modules.Outtake;
 public class SampleIntakeAction extends KActionSet {
 
     public SampleIntakeAction(IntakeClaw intake){
+
+
+        KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
+        intakeClawOpen.setName("intakeClawOpen");
+        this.addAction(intakeClawOpen);
+
         KServoAutoAction moveSmallPivotDown = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS);
         moveSmallPivotDown.setName("moveSmallPivotDown");
+        moveSmallPivotDown.setDependentActions(intakeClawOpen);
         this.addAction(moveSmallPivotDown);
 
         KServoAutoAction moveBigPivotDown = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS);

@@ -32,16 +32,6 @@ public class DriveTrain {
 
         resetHardwareMap(opModeUtilities.getHardwareMap(), this);
 
-        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         sparkResetData(true, Math.toRadians(180));
 
         resetWheelOdom();
@@ -67,6 +57,21 @@ public class DriveTrain {
         driveTrain.fRight = hardwareMap.dcMotor.get("fRight");
         driveTrain.bLeft = hardwareMap.dcMotor.get("bLeft");
         driveTrain.bRight = hardwareMap.dcMotor.get("bRight");
+
+        Log.d("drive", "fleft port #:" + driveTrain.fLeft.getPortNumber());
+        Log.d("drive", "fRight port #:" + driveTrain.fRight.getPortNumber());
+        Log.d("drive", "bLeft port #:" + driveTrain.bLeft.getPortNumber());
+        Log.d("drive", "bRight port #:" + driveTrain.bRight.getPortNumber());
+
+        driveTrain.fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveTrain.fRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveTrain.bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveTrain.bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        driveTrain.fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveTrain.bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveTrain.fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveTrain.bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         driveTrain.otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
 
