@@ -21,7 +21,6 @@ public class VerticalArm {
     private static final double closeHandLeftPosition = 0.2;
     private static final double openHandRightPosition = 1;
     private static final double closeHandRightPosition = 0.8;
-    private static final long defaultSleep = 100;
 
     public VerticalArm(HardwareMap hardwareMap) {
         handLeftServo = hardwareMap.get(Servo.class, "handLeft");
@@ -31,7 +30,7 @@ public class VerticalArm {
         initializeArmMotor();
     }
 
-    public void moveToHeight(double desiredHeight, boolean shouldWait){
+    public void moveToHeight(double desiredHeight){
         // guard inputs
         if (desiredHeight < minimumHeight) { desiredHeight = minimumHeight; }
         if (desiredHeight > maximumHeight) { desiredHeight = maximumHeight; }
@@ -41,9 +40,6 @@ public class VerticalArm {
         double desiredPosition = desiredRevolutions * countsPerRevolution;
 
         armMotor.setTargetPosition((int)Math.round(desiredPosition));
-
-        if (shouldWait)
-            while (armMotor.isBusy()) { sleep(defaultSleep); }
     }
 
     public void openHand() {
@@ -62,13 +58,5 @@ public class VerticalArm {
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(defaultPower);
-    }
-
-    public final void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }

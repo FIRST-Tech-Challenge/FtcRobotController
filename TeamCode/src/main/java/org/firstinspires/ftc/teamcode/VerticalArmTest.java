@@ -25,8 +25,8 @@ public class VerticalArmTest extends LinearOpMode {
         arm.openHand();
         sleep(defaultWait);
 
-        arm.moveToHeight(5, true);
-        arm.moveToHeight(15, true);
+        arm.moveToHeight(5);
+        arm.moveToHeight(15);
 
         arm.openHand();
         sleep(defaultWait);
@@ -35,6 +35,6 @@ public class VerticalArmTest extends LinearOpMode {
         arm.openHand();
         sleep(defaultWait);
 
-        arm.moveToHeight(0, true);
+        arm.moveToHeight(0);
     }
 }
