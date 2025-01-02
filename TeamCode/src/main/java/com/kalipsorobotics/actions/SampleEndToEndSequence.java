@@ -8,7 +8,9 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class SampleEndToEndSequence extends KActionSet{
     public SampleEndToEndSequence(IntakeClaw intakeClaw, Outtake outtake){
-
+        this(intakeClaw, outtake, Outtake.LS_SAMPLE_BASKET_READY_POS);
+    }
+    public SampleEndToEndSequence (IntakeClaw intakeClaw, Outtake outtake, double lsPos){
         KServoAutoAction linkageRetract = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS + 0.03);
         linkageRetract.setName("linkageRetract");
         this.addAction(linkageRetract);
@@ -56,7 +58,7 @@ public class SampleEndToEndSequence extends KActionSet{
         moveBigPivot2.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(moveBigPivot2);
 
-        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, Outtake.LS_SAMPLE_BASKET_READY_POS + 40);
+        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, lsPos);
         raiseSlidesBasket.setName("raiseSlidesBasket");
         raiseSlidesBasket.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(raiseSlidesBasket);
@@ -65,5 +67,6 @@ public class SampleEndToEndSequence extends KActionSet{
         pivotOuttakeBasket.setName("pivotOuttakeBasket");
         pivotOuttakeBasket.setDependentActions(raiseSlidesBasket, closeOuttakeClaw);
         this.addAction(pivotOuttakeBasket);
+
     }
 }

@@ -142,7 +142,7 @@ public class AutoBasket extends LinearOpMode {
         basketReady1.setDependentActions(moveToBasket1, transferAction1);
         redAutoBasket.addAction(basketReady1);
 
-        WaitAction waitAction1 = new WaitAction(200);
+        WaitAction waitAction1 = new WaitAction(100);
         waitAction1.setName("waitAction1");
         waitAction1.setDependentActions(basketReady1);
         redAutoBasket.addAction(waitAction1);
@@ -224,7 +224,7 @@ public class AutoBasket extends LinearOpMode {
         basketReady2.setDependentActions(moveToBasket2, transferAction2);
         redAutoBasket.addAction(basketReady2);
 
-        WaitAction waitAction2 = new WaitAction(200);
+        WaitAction waitAction2 = new WaitAction(100);
         waitAction2.setName("waitAction2");
         waitAction2.setDependentActions(basketReady2);
         redAutoBasket.addAction(waitAction2);
@@ -296,7 +296,7 @@ public class AutoBasket extends LinearOpMode {
 
         PurePursuitAction moveToBasket3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket3.setName("moveToBasket3");
-        moveToBasket3.setDependentActions(sampleIntakeAction3);
+        moveToBasket3.setDependentActions(sampleIntakeAction3, transferAction3);
         //move sample 3 to basket
         moveToBasket3.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket3);
@@ -306,7 +306,7 @@ public class AutoBasket extends LinearOpMode {
         basketReady3.setDependentActions(moveToBasket3, transferAction3);
         redAutoBasket.addAction(basketReady3);
 
-        WaitAction waitAction3 = new WaitAction(200);
+        WaitAction waitAction3 = new WaitAction(100);
         waitAction3.setName("waitAction3");
         waitAction3.setDependentActions(basketReady3);
         redAutoBasket.addAction(waitAction3);
@@ -325,26 +325,28 @@ public class AutoBasket extends LinearOpMode {
 //        moveToSpecimenBar.addPoint(0, 0, 0);
 //        moveToSpecimenBar.addPoint(-740, -300, 0);
 
-        OuttakeTransferReady outtakeTransferReady3 = new OuttakeTransferReady(outtake);
-        outtakeTransferReady3.setName("outtakeTransferReady3");
-        outtakeTransferReady3.setDependentActions(openClaw3, waitAction3);
-        redAutoBasket.addAction(outtakeTransferReady3);
+        KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
+        pivotOuttakeHalfwayToBar.setName("pivotOuttakeHalfwayToBar");
+        pivotOuttakeHalfwayToBar.setDependentActions(openClaw3, waitAction3);
+        redAutoBasket.addAction(pivotOuttakeHalfwayToBar);
 
         MoveOuttakeLSAction lsTouchBar = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_PARK_MM);
         lsTouchBar.setName("lsTouchBar");
-        lsTouchBar.setDependentActions(outtakeTransferReady3);
+        lsTouchBar.setDependentActions(pivotOuttakeHalfwayToBar);
         redAutoBasket.addAction(lsTouchBar);
 
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
-        park.setDependentActions(outtakeTransferReady3);
+        park.setDependentActions(lsTouchBar);
         park.addPoint(-1325, 610, 45);
         park.addPoint(-1425, 260, 90);
         redAutoBasket.addAction(park);
 
+
+
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
         pivotOuttakeToBar.setName("pivotOuttakeToBar");
-        pivotOuttakeToBar.setDependentActions(park, lsTouchBar);
+        pivotOuttakeToBar.setDependentActions(lsTouchBar, pivotOuttakeHalfwayToBar, park);
         redAutoBasket.addAction(pivotOuttakeToBar);
 
         //bar to sample 1
