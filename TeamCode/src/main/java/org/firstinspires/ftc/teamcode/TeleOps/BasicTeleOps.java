@@ -32,28 +32,13 @@ public class BasicTeleOps extends OpMode {
 
     //Robot Intake & Deposit
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
-    public FiniteMachineStateIntake intakeArmDrive;
+    public FiniteMachineStateIntake intakeArmDrive; //For Robot Intake
 
 
     //Bulk Reading
     private List<LynxModule> allHubs;
 
     //Drive power factor
-    //public static double powerFactor = 0.5;
-
-    //Intake Configure
-    public static double intake_slide_Extension = 0.6;// range(0.3 - 0.65)
-    public static double intake_slide_Retract   = 0.3;
-
-    public static double intake_Rotation        = 0.49;
-
-    public static double intake_Arm_Idle        =0.1;
-    public static double intake_Arm_Initial     = 0.35;//0-0.56
-    public static double intake_Arm_down        = 0.05;
-    public static double intake_Arm_retract     = 0.53;
-
-    public static double intake_Claw_Open       = 0.55;
-    public static double intake_Claw_Close      = 0.3;
 
     //Deposit Config
     public static int deposit_Slide_down_Pos         = 50;   //slides Position Configure
@@ -107,10 +92,7 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2,
-                intake_Arm_Initial, intake_Arm_Idle, intake_Arm_down,intake_Arm_retract,
-                intake_slide_Retract, intake_slide_Extension, intake_Rotation,
-                intake_Claw_Open, intake_Claw_Close);
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2);
         intakeArmDrive.Init();
 
         // get bulk reading
@@ -136,19 +118,18 @@ public class BasicTeleOps extends OpMode {
             if (bulkData != null) {
                 // Example: Reading motor position for each hub
                 if (hub.equals(allHubs.get(0))) { // Assuming the first hub is Control Hub
-                    int frontLeftMotor = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
-                    int frontRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
+                    int liftLeftMotor = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
+                    int liftRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
 
-                    telemetry.addData("Deposit Left Motor Position (Expansion Hub)", frontLeftMotor);
-                    telemetry.addData("Deposit right Motor Position", frontRightMotor);
+                    telemetry.addData("Deposit Left Motor Position (Expansion Hub)", liftLeftMotor);
+                    telemetry.addData("Deposit right Motor Position (Expansion Hub)", liftRightMotor);
                 } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
-                    int liftMotorLeft = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
-                    int liftMotorRight = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
-                    telemetry.addData("Drive Motor FL Motor (Control Hub) Position", liftMotorLeft);
-                    telemetry.addData("Drive Motor FR Motor (Control Hub) Position", liftMotorRight);
+                    int frontLeftMotor = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
+                    int frontRightMotor = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
+                    telemetry.addData("Drive Motor FL Motor (Control Hub) Position", frontLeftMotor);
+                    telemetry.addData("Drive Motor FR Motor (Control Hub) Position", frontRightMotor);
                 }
             }
-
         }
 
         robotDrive.DriveLoop(); // Use RobotDrive methods
@@ -165,8 +146,7 @@ public class BasicTeleOps extends OpMode {
         FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
 
         // Telemetry
-        telemetry.addData("deposit Left Arm Position", robot.depositLeftArmServo.getPosition());
-        telemetry.addData("deposit Right Arm Position", robot.depositRightArmServo.getPosition());
+        telemetry.addData("deposit Left Arm Position", robot.depositArmServo.getPosition());
         telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
         telemetry.addData("Control Mode", currentMode.name());
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());

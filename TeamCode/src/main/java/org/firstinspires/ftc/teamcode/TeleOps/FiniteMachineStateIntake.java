@@ -9,6 +9,7 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -48,48 +49,24 @@ public class FiniteMachineStateIntake {
     private ElapsedTime intakeTimer = new ElapsedTime(); // Timer for controlling dumping time
     private CLAWSTATE clawState = CLAWSTATE.OPEN; //claw default open
 
-    final double intake_Arm_Idle;     // intake when retract
-    final double intake_Arm_Initial;
-    final double intake_Arm_Pick;  // intake arm for pick
-    final double intake_Arm_Trans;
-    final double intake_Slide_Retract; // intake slide retract for drop to transfer
-    final double intake_Slide_Extend;  // intake slide extend for pick
-    final double intake_Rotation_Mid;// rotation position
-    final double intake_Claw_Open;
-    final double intake_Claw_Close;
-
     private double intakeArmPosition;
     private double rotationPosition;
 
-    public FiniteMachineStateIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2,
-                                    double intake_Arm_Initial, double intake_Arm_Idle, double intake_Arm_Pick, double intake_Arm_Trans,
-                                    double intake_Slide_Retract, double intake_Slide_Extend,
-                                    double intake_Rotation_Mid,
-                                    double intake_Claw_Open, double intake_Claw_Close) {
+    public FiniteMachineStateIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2) {
         this.gamepad_1 = gamepad_1;
         this.gamepad_2 = gamepad_2;
-
         this.robot = robot;
-
-        this.intake_Arm_Idle = intake_Arm_Idle;
-        this.intake_Arm_Initial = intake_Arm_Initial;
-        this.intake_Arm_Pick = intake_Arm_Pick;
-        this.intake_Arm_Trans = intake_Arm_Trans;
-        this.intake_Slide_Retract = intake_Slide_Retract;
-        this.intake_Slide_Extend = intake_Slide_Extend;
-        this.intake_Rotation_Mid = intake_Rotation_Mid;
-        this.intake_Claw_Open = intake_Claw_Open;
-        this.intake_Claw_Close = intake_Claw_Close;
     }
 
     //Initialization
     public void Init() {
         intakeTimer.reset();
-        robot.intakeSlideServo.setPosition(intake_Slide_Retract);
-        robot.intakeRightArmServo.setPosition(intake_Arm_Initial);
-        robot.intakeLeftArmServo.setPosition(intake_Arm_Initial);
-        robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
-        robot.intakeClawServo.setPosition(intake_Claw_Open);
+        robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
+        robot.intakeRightSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
+        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Initial);
+        robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
+        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
     }
 
     //Loop Control
@@ -97,27 +74,27 @@ public class FiniteMachineStateIntake {
         // Display current lift state and telemetry feedback
         switch (intakeState) {
             case INTAKE_START:
-                // Debounce the button press for starting the lift extend
-                robot.intakeClawServo.setPosition(intake_Claw_Open);
-                if ((gamepad_1.getButton(DPAD_RIGHT) || gamepad_2.getButton(DPAD_RIGHT))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+                // Debounce the button press 'DPAD_RIGHT' for starting the lift extend
+                if (((gamepad_1.getButton(DPAD_RIGHT) && gamepad_1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1)||
+                        (gamepad_2.getButton(DPAD_RIGHT)&& gamepad_2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1))&&
+                debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
-                    robot.intakeSlideServo.setPosition(intake_Slide_Extend);
-                    robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
-                    robot.intakeLeftArmServo.setPosition(intake_Arm_Idle);
-                    robot.intakeRightArmServo.setPosition(intake_Arm_Idle);
-                    robot.intakeClawServo.setPosition(intake_Claw_Open);
+                    robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Extension);
+                    robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
+                    robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
+                    robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
+                    robot.intakeClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
                     clawState = CLAWSTATE.OPEN;
                     intakeTimer.reset();
                     intakeState = INTAKESTATE.INTAKE_EXTEND;
                 }
                 break;
             case INTAKE_EXTEND:
-                // Check if the lift has reached the high position
+                // after 0.5s intake arm lower for pick up
                 if (intakeTimer.seconds()> 0.5) {
-                    robot.intakeLeftArmServo.setPosition(intake_Arm_Pick);
-                    robot.intakeRightArmServo.setPosition(intake_Arm_Pick);
+                    robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Pick);
+                    robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Pick);
                     rotationPosition = robot.intakeRotationServo.getPosition();
-                    intakeArmPosition = (robot.intakeRightArmServo.getPosition() + robot.intakeLeftArmServo.getPosition()) / 2;
                 }
                 if (intakeTimer.seconds()> 0.75) {
                     // claw rotation
@@ -126,14 +103,12 @@ public class FiniteMachineStateIntake {
                         //use to be 0.01
                         rotationPosition += 0.05;
                         robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
-                        robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
                     }
                     //claw rotation
                     if ((gamepad_1.getButton(RIGHT_BUMPER) || gamepad_2.getButton(RIGHT_BUMPER))&& (debounceTimer.seconds() > DEBOUNCE_THRESHOLD)) {
                         debounceTimer.reset();
                         //use to be 0.01
                         rotationPosition -= 0.05;
-                        robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
                         robot.intakeRotationServo.setPosition(Range.clip(rotationPosition, 0, 1));
                     }
 
@@ -143,15 +118,15 @@ public class FiniteMachineStateIntake {
                         ToggleClaw();
                     }
                     if (clawState == CLAWSTATE.OPEN){
-                        robot.intakeClawServo.setPosition(intake_Claw_Open);
+                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
                     } else{
-                        robot.intakeClawServo.setPosition(intake_Claw_Close);
+                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Close);
                     }
 
                     // intake retract.
                     if ((gamepad_1.getButton(DPAD_LEFT) || gamepad_2.getButton(DPAD_LEFT))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
-                        robot.intakeClawServo.setPosition(intake_Claw_Close);
+                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Close);
                         clawState = CLAWSTATE.CLOSE;
                         //retract
                         intakeTimer.reset();
@@ -162,11 +137,11 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_RETRACT:
                 // Wait for the dump time to pass
-                robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
-                robot.intakeLeftArmServo.setPosition(intake_Arm_Idle);
-                robot.intakeRightArmServo.setPosition(intake_Arm_Idle);
+                robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
+                robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
+                robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 if (intakeTimer.seconds()>0.5){
-                    robot.intakeSlideServo.setPosition(intake_Slide_Retract);
+                    robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
                     intakeTimer.reset();
                     intakeState = INTAKESTATE.INTAKE_TRANS;
                 }
@@ -175,8 +150,9 @@ public class FiniteMachineStateIntake {
             case INTAKE_TRANS:
                 // Check if the lift has reached the low position
                 if(intakeTimer.seconds()>= 0.5) {
-                    robot.intakeLeftArmServo.setPosition(intake_Arm_Trans);
-                    robot.intakeRightArmServo.setPosition(intake_Arm_Trans);
+                    robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
+                    robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
+                    robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Trans);
                     intakeState = INTAKESTATE.INTAKE_START;
                 }
                 break;
@@ -185,11 +161,19 @@ public class FiniteMachineStateIntake {
                 break;
         }
 
+        //lower intake arm for grab
+        if ((gamepad_1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.6 && gamepad_1.getButton(GamepadKeys.Button.DPAD_RIGHT)) ||
+                (gamepad_2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.6 && gamepad_2.getButton(GamepadKeys.Button.DPAD_RIGHT)) &&
+                        debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
+            debounceTimer.reset();
+            intakeState = INTAKESTATE.INTAKE_EXTEND;
+        }
 
         //intake arm up
         if ((gamepad_1.getButton(DPAD_UP) || gamepad_2.getButton(DPAD_UP)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             //use to be 0.01
+            intakeArmPosition = (robot.intakeRightArmServo.getPosition() + robot.intakeLeftArmServo.getPosition()) / 2;
             intakeArmPosition += 0.05;
             robot.intakeLeftArmServo.setPosition(Range.clip(intakeArmPosition, 0, 0.55));
             robot.intakeRightArmServo.setPosition(Range.clip(intakeArmPosition, 0, 0.55));
@@ -199,6 +183,7 @@ public class FiniteMachineStateIntake {
         if ((gamepad_1.getButton(DPAD_DOWN) || gamepad_2.getButton(DPAD_DOWN)) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             //use to be 0.01
+            intakeArmPosition = (robot.intakeRightArmServo.getPosition() + robot.intakeLeftArmServo.getPosition()) / 2;
             intakeArmPosition -= 0.05;
             robot.intakeLeftArmServo.setPosition(Range.clip(intakeArmPosition, 0.0, 0.55));
             robot.intakeRightArmServo.setPosition(Range.clip(intakeArmPosition, 0.0, 0.55));
@@ -207,7 +192,7 @@ public class FiniteMachineStateIntake {
 
     // Helper method to check if the lift is within the desired position threshold
     private boolean isSlideAtPosition(double targetPosition) {
-        return Math.abs(robot.intakeSlideServo.getPosition() - targetPosition) < 0.05;
+        return Math.abs(robot.intakeLeftSlideServo.getPosition() - targetPosition) < 0.05;
     }
 
     // for return intakeState for telemetry
