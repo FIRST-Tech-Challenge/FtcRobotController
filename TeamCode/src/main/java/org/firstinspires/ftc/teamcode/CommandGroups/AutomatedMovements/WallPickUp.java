@@ -32,8 +32,8 @@ public class WallPickUp extends SequentialCommandGroup {
 
 
                 new FollowPath(
-                        2.0,
                         1.0,
+                        0.4,
                         0.0,
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(135.0))),
@@ -43,13 +43,13 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(23)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(25)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
                 // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(105)),
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(106)),
 
                 // powers the wrist and moves it to straight position
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(0)),
@@ -73,13 +73,13 @@ public class WallPickUp extends SequentialCommandGroup {
                 }),
 
                 new FollowPath(
-                        0.5,
+                        0.3,
                         1.0,
                         0.0,
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.43, new Rotation2d(Math.toRadians(90.0)))),
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(90.0)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
                 new Pause(0.35),
