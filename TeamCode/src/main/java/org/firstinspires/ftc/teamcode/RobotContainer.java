@@ -61,6 +61,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 //                        () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
 //                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
         m_controller.assignCommand(m_pivot.set(),true,BUTTON_RIGHT);
+        m_controller.assignCommand(m_pivot.stop(),true,BUTTON_LEFT);
     }
 
     private void resetGyro() {

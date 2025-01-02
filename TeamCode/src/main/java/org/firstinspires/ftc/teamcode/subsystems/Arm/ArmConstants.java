@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.utils.BT.BTTranslation2d;
+import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingDouble;
+import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingTreeMap;
 
 public class ArmConstants {
     public static final double armMass = 0;
     public static final double totalLength = 1; //in revolutions
 
     public static final double g = 9.81;
+    public static double maxArmAngle = 0;
 
     @Config
     public static class TranslationConstants{
@@ -19,7 +23,7 @@ public class ArmConstants {
     @Config
     public static class armPIDConstants {
         public static double kG = 0;
-        public static double kS = 0;
+        public static double kS = 0.032;
         public static double eKP = 0;
         public static double eKI = 0;
         public static double eKD = 0;
@@ -29,10 +33,6 @@ public class ArmConstants {
 
     }
     public static class ffConstants{
-        public static final double minkG = 0.29;
-        public static final double minDegrees = 210;
-        public static final double maxkG = 0.55;
-        public static final double maxDegrees = 197;
 
     }
 
@@ -42,4 +42,20 @@ public class ArmConstants {
         public static final double[] segmentMasses = {0,0,0};//todo:find values
 
     }
+
+//    public static class FFInterpolation{
+//        private static final InterpolatingTreeMap<InterpolatingDouble,InterpolatingDouble> balanceByLength = new InterpolatingTreeMap<>();
+//        static {
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(110));
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
+//        }
+//        private static final InterpolatingTreeMap<InterpolatingDouble,InterpolatingDouble> maxFFangleByLength = new InterpolatingTreeMap<>();
+//        static {
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(110));
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
+//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
+//        }
+
+
 }

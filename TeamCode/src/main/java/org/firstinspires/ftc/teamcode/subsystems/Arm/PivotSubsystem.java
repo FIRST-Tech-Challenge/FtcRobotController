@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -30,6 +31,7 @@ public class PivotSubsystem extends SubsystemBase {
     public
     PIDController m_pivotPID;
     private double pivotFF;
+
 
 
     public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, DoubleSupplier armCOM){
@@ -67,6 +69,9 @@ public class PivotSubsystem extends SubsystemBase {
 
     private void updateTelemetry() {
         dashboardTelemetry.addData("armAngle", currentArmAngle);
+        dashboardTelemetry.addData("COMAngle", aCOMAngle());
+        dashboardTelemetry.addData("cos(COMAngle)", Math.cos(Math.toRadians(aCOMAngle())));
+        dashboardTelemetry.addData("FF", calculateFeedForward());
         dashboardTelemetry.addData("rightEncoder", rightEncoder.getPosition());
         dashboardTelemetry.addData("rightEncoder rev", rightEncoder.getRevolutions());
         dashboardTelemetry.addData("leftEncoder rev", leftEncoder.getRevolutions());
@@ -77,37 +82,51 @@ public class PivotSubsystem extends SubsystemBase {
         return m_pivotPID.calculate(setpoint);
     }
 
-    private double setPivotMotor(double setpoint) {
-        double pidResult = m_pivotPID.calculate(setpoint);
-        return pidResult + pivotFF;
-    }
 
 //    public void calculateFeedForward(double angle){
 //         pivotFF = armMass*g*currentArmCOM*Math.sin(angle);
 //    }
-    public void calculateFeedForward(double angle){
-         pivotFF = akG(armLength)*Math.cos(aMaxAngle(armLength)-currentArmAngle);
+    public double calculateFeedForward(){
+        return -akG(currentArmLength) * Math.cos(Math.toRadians(aCOMAngle()));
     }
 
-    private double akG(DoubleSupplier armLength) {
-        return 0.26*(armLength.getAsDouble()/totalLength)+0.29;
+    private double aCOMAngle(){
+        return currentArmAngle+90 - aBalanceAngle();
     }
 
-    private double aMaxAngle(DoubleSupplier armLength) {
-        return -13*(armLength.getAsDouble()/totalLength)+210;
+    private double aBalanceAngle(){
+        return 3.59*currentArmLength + 119;
     }
+    private double akG(double armLength) {
+        return -0.0486*armLength + 0.228;
+    }
+
+
+
 
     private void calcArmAngle() {
         currentArmAngle = 10.321*leftEncoder.getRevolutions();//linear equation (encoder to angle)
     }
 
-    public void setMotors(){
-        pivotRight.set(kS);
-        pivotLeft.set(kS);
+    public void setMotors(double power){
+        if(power>=0)
+        {
+            pivotRight.set(power+kS);
+            pivotLeft.set(power+kS);
+        }
+        else{
+            pivotRight.set(power-kS);
+            pivotLeft.set(power-kS);
+
+        }
     }
     public InstantCommand set(){
-        return new InstantCommand(()->setMotors(),this);
+        return new InstantCommand(()->setMotors(calculateFeedForward()),this);
     }
+    public InstantCommand stop(){
+        return new InstantCommand(()->setMotors(0));
+    }
+
 
 
 

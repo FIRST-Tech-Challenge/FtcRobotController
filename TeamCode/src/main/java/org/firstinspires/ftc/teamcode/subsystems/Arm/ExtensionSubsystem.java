@@ -4,25 +4,30 @@ import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensi
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.PID.PIDController;
 import org.firstinspires.ftc.teamcode.utils.telescopicArmCOM;
 
-public class ExtensionSubsystem implements Subsystem {
+public class ExtensionSubsystem extends SubsystemBase {
     private static ExtensionSubsystem instance;
     HardwareMap map;
     public MotorEx arm1;
     public MotorEx arm2;
     public Motor.Encoder extensionEncoder1;
     public Motor.Encoder extensionEncoder2;
+//    public DigitalChannel limitSwitch;
     PIDController m_extensionPID;
     public double currentArmLength;
     public double armCOM;
-    private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    private Telemetry dashboardTelemetry = dashboard.getTelemetry();
    
     public ExtensionSubsystem(HardwareMap map){
         this.map = map;
@@ -33,6 +38,7 @@ public class ExtensionSubsystem implements Subsystem {
         currentArmLength = extensionEncoder1.getRevolutions();
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);
+
 
 
 
@@ -58,8 +64,9 @@ public class ExtensionSubsystem implements Subsystem {
     }
 
     private void updateTelemetry() {
-        dashboard.addData("encoder1Value", extensionEncoder1.getPosition());
-        dashboard.addData("encoder2Value", extensionEncoder2.getPosition());
-        dashboard.addData("armLength ",currentArmLength);
+        dashboardTelemetry.addData("encoder1 rev", extensionEncoder1.getRevolutions());
+        dashboardTelemetry.addData("armLength ",currentArmLength);
+//        dashboardTelemetry.addData("isClosed", limitSwitch.getState());
+        dashboardTelemetry.update();
     }
 }
