@@ -67,7 +67,7 @@ public class MoveToPose extends CommandBase {
     public boolean isFinished() {
 
         // we are finished only when follow-path is finished
-        return cmd.isFinished();
+        return ( cmd.isFinished() || ! cmd.isScheduled() );
     }
 
     // This method is called once when command is finished.

@@ -12,11 +12,13 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
+import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.BackDepositPose;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.AutoPickUpOffGround;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.FullClimb;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.HighBucketDeposit;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PickupFromSubmersible;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
@@ -148,13 +150,28 @@ public class RobotContainer {
 
         //driverOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(new DropToGrab());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+        //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new PlaceSpecimenAddOffset());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new SelectCommandOnMode(
+                new PlaceSpecimenAddOffset(),// run this command when manual mode is off (default case)
+                new PickupFromSubmersible()) // run this command when manual mode is active (blinking LEDs)
+        );
 
         //driverOp.getGamepadButton(GamepadKeys.Button.X).whenHeld(new AutoPickUpOffGround());//BackDepositePose().
 
-        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
+        //driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new HighBucketDeposit());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
+        driverOp.getGamepadButton(GamepadKeys.Button.Y).whenHeld(new SelectCommandOnMode(
+                new HighBucketDeposit(),   // run this command when manual mode is off (default case)
+                new BackDepositPose())     // run this command when manual mode is active (blinking LEDs)
+        );
+
+        //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
+
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SelectCommandOnMode(
+                new HuntingPos(),          // run this command when manual mode is off (default case)
+                new AutoPickUpOffGround()) // run this command when manual mode is active (blinking LEDs)
+        );
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
 

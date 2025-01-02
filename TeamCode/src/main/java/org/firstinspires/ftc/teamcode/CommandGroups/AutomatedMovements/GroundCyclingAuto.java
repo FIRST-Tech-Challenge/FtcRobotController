@@ -87,19 +87,6 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 new HighBucketDeposit(),
 
-
-//                new FollowPath(
-//                        1.0,
-//                        1.0,
-//                        0.0,
-//                        0.25,
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        AutoFunctions.redVsBlue(new Pose2d(1.3, 0.5, new Rotation2d(Math.toRadians(-45)))),
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(50)))),
-//
-//                new InstantCommand(()-> RobotContainer.drivesystem.StopDrive()),
-
                 // pick up left
                 new FollowPath(
                         0.5,
@@ -108,7 +95,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.0,
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                       new ArrayList<Translation2d>() {{ }},
-                      AutoFunctions.redVsBlue(new Pose2d(1.59, 1.05, new Rotation2d(Math.toRadians(-63)))),
+                      AutoFunctions.redVsBlue(new Pose2d(1.6, 1.04, new Rotation2d(Math.toRadians(-63)))),
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-63)))),
 
                 new HuntingPos(),

@@ -32,8 +32,8 @@ public class WallPickUp extends SequentialCommandGroup {
 
 
                 new FollowPath(
+                        2.0,
                         1.0,
-                        0.4,
                         0.0,
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(135.0))),
@@ -43,7 +43,7 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(24)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(23)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
@@ -73,7 +73,7 @@ public class WallPickUp extends SequentialCommandGroup {
                 }),
 
                 new FollowPath(
-                        0.3,
+                        0.5,
                         1.0,
                         0.0,
                         0.0,
