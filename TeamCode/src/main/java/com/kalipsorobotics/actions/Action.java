@@ -81,14 +81,10 @@ public abstract class Action {
         isDone = checkDoneCondition();
         return isDone;
     }
-    public abstract boolean checkDoneCondition();
+    protected abstract boolean checkDoneCondition();
 
     //motor power, etc
-    protected void update() {
-        if (isDone) {
-            Log.d("in super", "action done");
-        }
-    }
+    protected abstract void update();
 
     @Override
     public String toString() {

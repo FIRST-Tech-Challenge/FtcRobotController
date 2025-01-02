@@ -141,7 +141,6 @@ public class PurePursuitAction extends Action {
 
     @Override
     public void update() {
-        super.update();
         if (isDone) {
             return;
         }

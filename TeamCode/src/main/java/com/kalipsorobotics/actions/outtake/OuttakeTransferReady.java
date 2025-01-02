@@ -11,7 +11,7 @@ public class OuttakeTransferReady extends KActionSet {
         moveOuttakePivot.setName("moveOuttakePivot");
         this.addAction(moveOuttakePivot);
 
-        MoveOuttakeLSAction moveLSDown = new MoveOuttakeLSAction(outtake, Outtake.LS_DOWN_POS);
+        MoveLSAction moveLSDown = new MoveLSAction(outtake, Outtake.LS_DOWN_POS);
         moveLSDown.setName("moveLSDown");
         moveLSDown.setDependentActions(moveOuttakePivot);
         this.addAction(moveLSDown);

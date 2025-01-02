@@ -12,7 +12,7 @@ public class SpecimenWallReady extends KActionSet {
         wait.setName("wait");
         this.addAction(wait);
 
-        MoveOuttakeLSAction lowerSlidesZero = new MoveOuttakeLSAction(outtake, -5);
+        MoveLSAction lowerSlidesZero = new MoveLSAction(outtake, -5);
         lowerSlidesZero.setName("lowerSlidesZero");
         lowerSlidesZero.setDependentActions(wait);
         this.addAction(lowerSlidesZero);

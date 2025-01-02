@@ -20,7 +20,6 @@ public class KServoAutoAction extends Action {
     public void update() {
         Log.d("servo_action", "running update  " + targetPos + "currentTime  " + kServo.getTime() +
                 "port number  " + kServo.getPortNumber());
-        super.update();
         if (isDone) {
             Log.d("servo_action", "done for  " + targetPos + "currentTime  " + kServo.getTime() +
                     "port number  " + kServo.getPortNumber());

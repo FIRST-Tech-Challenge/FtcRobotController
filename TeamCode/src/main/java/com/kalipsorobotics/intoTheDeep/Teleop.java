@@ -14,6 +14,7 @@ import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
@@ -64,9 +65,9 @@ public class Teleop extends LinearOpMode {
         AngleLockTeleOp angleLockTeleOp = null;
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
-        maintainLS.setName("maintainLS");
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+//        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
+//        maintainLS.setName("maintainLS");
+//        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
         AutoRobotHangAction autoRobotHangAction = null;
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
@@ -80,6 +81,7 @@ public class Teleop extends LinearOpMode {
         SpecimenHang specimenHang = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
+        MoveLSAction moveLS = null;
 
         boolean hasStarted = false;
 
@@ -368,10 +370,24 @@ public class Teleop extends LinearOpMode {
 
             //outtake manual LS
             if (outtakeLSStickValue != 0) {
-                MoveOuttakeLSAction.setNeedMaintenance(true);
-                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -outtakeLSStickValue);
+                if(moveLS != null) {
+                    moveLS.finishWithoutSetPower();
+                }
+                double targetLsMM = CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + (-400.0 * outtakeLSStickValue);
+                moveLS = new MoveLSAction(outtake, targetLsMM);
+                moveLS.setName("moveLS");
+                Log.d("ls_debug", "joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);
+//                MoveOuttakeLSAction.setNeedMaintenance(true)
+//                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -outtakeLSStickValue);
             } else {
-                MoveOuttakeLSAction.incrementGlobal(0);
+                if(moveLS != null) {
+                    moveLS.finish();
+                }
+                moveLS = null;
+            }
+
+            if(moveLS != null) {
+                moveLS.updateCheckDone();
             }
 
 //            if (gamepad2.left_stick_button) {
@@ -518,10 +534,10 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            if(maintainLS != null && MoveOuttakeLSAction.getNeedMaintenance()) {
-                maintainLS.setIsDone(true);
-                maintainLS.update();
-            }
+//            if(maintainLS != null && MoveOuttakeLSAction.getNeedMaintenance()) {
+//                maintainLS.setIsDone(true);
+//                maintainLS.update();
+//            }
 
             if(!hasStarted) {
                 MoveOuttakeLSAction.setNeedMaintenance(true);

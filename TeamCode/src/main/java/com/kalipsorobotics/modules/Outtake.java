@@ -27,8 +27,8 @@ public class Outtake {
     public static final double HOOK1_HANG_READY_POS = 0.3;
     public static final double HOOK2_HANG_READY_POS = 0.6;
 
-    public static final double HOOK1_DOWN_POS = 0.555;
-    public static final double HOOK2_DOWN_POS = 0.4;
+    public static final double HOOK1_DOWN_POS = 0.5;
+    public static final double HOOK2_DOWN_POS = 0.5;
 
     public static final double OUTTAKE_PIVOT_TOUCH_BAR_POS = 0.88;
     public static final double OUTTAKE_PIVOT_BASKET_POS = 0.93;
@@ -50,7 +50,7 @@ public class Outtake {
     public static final double LS_SPECIMEN_CLIP_POS = 230;
     public static final double LS_SAMPLE_BASKET_READY_POS = 675+40;
 
-    public static final double OUTTAKE_CLAW_CLOSE = 0.95;
+    public static final double OUTTAKE_CLAW_CLOSE = 0.98;
     public static final double OUTTAKE_CLAW_OPEN = 0.65;     //increase to make claw close more, decrease to open more
 
 

@@ -10,18 +10,11 @@ import com.kalipsorobotics.PID.PidNav;
 import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.DoneStateAction;
 import com.kalipsorobotics.math.CalculateTickPer;
-import com.kalipsorobotics.math.Position;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import com.kalipsorobotics.modules.Outtake;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//DONT USE THIS ONE ANYMORE!!
-public class MoveOuttakeLSAction extends Action {
-
-    public enum Position {
-        Down, SPECIMEN, BASKET
-    }
+public class MoveLSAction extends Action {
 
     Outtake outtake;
 
@@ -30,9 +23,10 @@ public class MoveOuttakeLSAction extends Action {
     DcMotor linearSlide1, linearSlide2;
     public static double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
-    final double targetTicks;
+    private double targetTicks;
     private double currentTicks;
     private double overridePower = 0;
+    private double targetErrorTicks;
 
     private double lastTicks;
     private double lastMilli = 0;
@@ -43,7 +37,7 @@ public class MoveOuttakeLSAction extends Action {
 
     private double startingError; //gives direction of intended travel direction when doing maintenance for hang
 
-    public MoveOuttakeLSAction(Outtake outtake) {
+    public MoveLSAction(Outtake outtake) {
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
         linearSlide2 = outtake.linearSlide2;
@@ -52,7 +46,7 @@ public class MoveOuttakeLSAction extends Action {
         this.timeoutTimer = new ElapsedTime();
     }
 
-    public MoveOuttakeLSAction(Outtake outtake, double targetMM) {
+    public MoveLSAction(Outtake outtake, double targetMM) {
         ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
         double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
         this.outtake = outtake;
@@ -67,7 +61,7 @@ public class MoveOuttakeLSAction extends Action {
         this.timeoutTimer = new ElapsedTime();
     }
 
-    public MoveOuttakeLSAction(Outtake outtake, double targetMM, double p) {
+    public MoveLSAction(Outtake outtake, double targetMM, double p) {
         ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
         double P_CONSTANT = p;
         this.outtake = outtake;
@@ -82,14 +76,6 @@ public class MoveOuttakeLSAction extends Action {
         this.timeoutTimer = new ElapsedTime();
     }
 
-    public void setPConstant(double P) {
-        pidOuttakeLS.setP(P);
-    }
-
-    public void setPConstantToDefault() {
-        pidOuttakeLS.setP(1 / CalculateTickPer.mmToTicksLS(400.0 * (1.0 / 5.0)));
-    }
-
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
         double lowestPower = 0.12;
@@ -99,7 +85,7 @@ public class MoveOuttakeLSAction extends Action {
         }
 
         if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
-            lowestPower = 0.25;
+            lowestPower = 0.15;
         }
 
         if (globalLinearSlideMaintainTicks > mmToTicksLS(100)) {
@@ -129,115 +115,27 @@ public class MoveOuttakeLSAction extends Action {
         //return 1;
     }
 
-    @Override
-    public boolean checkDoneCondition() {
-        return isDone;
-    }
-
-    @Override
-    public void update() {
-
-        if(!hasStarted) {
-            setGlobalLinearSlideMaintainTicks(targetTicks);
-            Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
-            hasStarted = true;
-            lastTicks = linearSlide1.getCurrentPosition();
-            timeoutTimer.reset();
-            startingError = targetTicks - linearSlide1.getCurrentPosition();
-            needMaintenance = false;
-        }
-
-        double currentTargetTicks;
-        this.currentTicks = linearSlide1.getCurrentPosition();
-
-        Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
-
-        if (isDone) {
-            currentTargetTicks = globalLinearSlideMaintainTicks;
-        } else {
-            currentTargetTicks = this.targetTicks;
-        }
-
-
-        //soft stop for low and high
-        if (currentTargetTicks > MAX_RANGE_LS_TICKS) {
-            currentTargetTicks = MAX_RANGE_LS_TICKS;
-        } else if (currentTargetTicks < MIN_RANGE_LS_TICKS) {
-            currentTargetTicks = MIN_RANGE_LS_TICKS;
-        }
-
-        double targetErrorTicks = currentTargetTicks - currentTicks;
-
-        double power = calculatePower(targetErrorTicks);
-
-        if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS) && !isDone) {
-            Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
-                            "targetTicks=%.3f, " +
-                            "currentTicks=%.3f, ",
-                    this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
-                    currentTicks));
-            finish();
-        }
-
-        Log.d("Outtake_LS", String.format(
-                "Setting power, %s targetErrorTicks=%.3f, errorTolerance=%.3f, currentTargetTicks=%.3f" +
-                        "currentTicks=%.3f, " +
-                        "power=%.3f",
-                name, targetErrorTicks, ERROR_TOLERANCE_TICKS, currentTargetTicks,
-                currentTicks, power));
-
-        Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);
-        if (overrideOn){
-            if (power < 0) { //goes down
-                power = overridePower * (-1);
-            }
-            if (power > 0){ //goes up
-                power = overridePower;
-            }
-            Log.d("Outtake_LS", "override power is:" + overridePower + ", power is:" + power);
-        }
-
-        if (Math.abs(targetErrorTicks) < ERROR_TOLERANCE_TICKS) { //done logic
-            if(overrideOn) {
-                power = 0.48 * startingError * Math.abs(overridePower / startingError);
-                Log.d("Outtake_LS_power", "starting error:" + startingError + ", set maintain power after done to:" + power);
-            } else {
-                if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.8)) {
-                    power = 0.16;
-                } else if (globalLinearSlideMaintainTicks > (MAX_RANGE_LS_TICKS*0.5)){
-                    power = 0.15;
-                } else if (globalLinearSlideMaintainTicks > 0){
-                    power = 0.1;
-                } else if (globalLinearSlideMaintainTicks == 0){
-                    power = 0;
-                } else if (globalLinearSlideMaintainTicks < 0) {
-                    power = -0.1;
-                }
-            }
-        }
-
-        velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
-
-        if(velocity < 0.01 && !isDone) {
-            if(timeoutTimer.milliseconds() > 1000) {
-                finish();
-            }
-        } else {
-            timeoutTimer.reset();
-        }
-
-        lastMilli = timeoutTimer.milliseconds();
-        lastTicks = currentTicks;
-
-        //brake();
-        Log.d("Outtake_LS_power", name + " final power set to " + power);
-        linearSlide1.setPower(power);
-        linearSlide2.setPower(power);
-    }
-
-    private void finish() {
+    public void finish() {
         isDone = true;
         needMaintenance = true;
+        linearSlide1.setPower(0);
+        linearSlide2.setPower(0);
+    }
+
+    public void finishWithoutSetPower() {
+        isDone = true;
+        needMaintenance = true;
+    }
+
+
+    public void setOverridePower(double power) {
+        Log.d("Outtake_LS", "override power is set to " + power);
+        overridePower = power;
+        Log.d("Outtake_LS", "override power is " + overridePower);
+    }
+
+    public void setOverrideOn(boolean isOverrideOn) {
+        overrideOn = isOverrideOn;
     }
 
     static public void setGlobalLinearSlideMaintainTicks(double pos) {
@@ -251,39 +149,81 @@ public class MoveOuttakeLSAction extends Action {
         }
     }
 
-    static public void incrementGlobal(double incrementTicks) {
-        setGlobalLinearSlideMaintainTicks(globalLinearSlideMaintainTicks + incrementTicks);
+    @Override
+    public boolean checkDoneCondition() {
+        if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS) && !isDone) {
+            Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
+                            "targetTicks=%.3f, " +
+                            "currentTicks=%.3f, ",
+                    this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+                    currentTicks));
+            finish();
+        }
+
+        if(velocity < 0.01) {
+            if(timeoutTimer.milliseconds() > 1000) {
+                finish();
+            }
+        } else {
+            timeoutTimer.reset();
+        }
+
+        return isDone;
     }
 
-    static public void setGlobal(double ticks) {
-        setGlobalLinearSlideMaintainTicks(ticks);
-    }
-    public static double getGlobal() {
-        return globalLinearSlideMaintainTicks;
-    }
+    @Override
+    public void update() {
+        if(!hasStarted) {
+            setGlobalLinearSlideMaintainTicks(targetTicks);
+            Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
+            hasStarted = true;
+            lastTicks = linearSlide1.getCurrentPosition();
+            timeoutTimer.reset();
+            startingError = targetTicks - linearSlide1.getCurrentPosition();
+            needMaintenance = false;
+        }
 
-    public static void setNeedMaintenance(boolean maintenanceOn) {needMaintenance = maintenanceOn;}
-    public static boolean getNeedMaintenance() {return needMaintenance;}
+        this.currentTicks = linearSlide1.getCurrentPosition();
 
-    public void setOverrideOn(boolean isOverrideOn) {
-        overrideOn = isOverrideOn;
-    }
+        Log.d("Outtake_LS", "global maintanance pos" + globalLinearSlideMaintainTicks);
 
-    public boolean getOverrideOn() {
-        return overrideOn;
-    }
+        //soft stop for low and high
+        if (targetTicks > MAX_RANGE_LS_TICKS) {
+            targetTicks = MAX_RANGE_LS_TICKS;
+        } else if (targetTicks < MIN_RANGE_LS_TICKS) {
+            targetTicks = MIN_RANGE_LS_TICKS;
+        }
 
-    public double getCurrentTicks() {
-        return currentTicks;
-    }
+        targetErrorTicks = targetTicks - currentTicks;
 
-    public void setI() {
-        pidOuttakeLS.setErrorIntegral(0);
-    }
+        double power = calculatePower(targetErrorTicks);
 
-    public void setOverridePower(double power) {
-        Log.d("Outtake_LS", "override power is set to " + power);
-        overridePower = power;
-        Log.d("Outtake_LS", "override power is " + overridePower);
+        Log.d("Outtake_LS", String.format(
+                "Setting power, %s targetErrorTicks=%.3f, errorTolerance=%.3f, targetTicks=%.3f" +
+                        "currentTicks=%.3f, " +
+                        "power=%.3f",
+                name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+                currentTicks, power));
+
+        Log.d("Outtake_LS", "before overriding power, override power is " + overridePower);
+        if (overrideOn){
+            if (power < 0) { //goes down
+                power = overridePower * (-1);
+            }
+            if (power > 0){ //goes up
+                power = overridePower;
+            }
+            Log.d("Outtake_LS", "override power is:" + overridePower + ", power is:" + power);
+        }
+
+        velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+
+        lastMilli = timeoutTimer.milliseconds();
+        lastTicks = currentTicks;
+
+        //brake();
+        Log.d("Outtake_LS_power", name + " final power set to " + power);
+        linearSlide1.setPower(power);
+        linearSlide2.setPower(power);
     }
 }
