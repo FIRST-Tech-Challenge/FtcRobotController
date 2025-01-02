@@ -1,6 +1,7 @@
 package com.kalipsorobotics.actions.intake;
 
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
@@ -38,6 +39,10 @@ public class IntakeTransferReady extends KActionSet {
         moveSmallPivot.setDependentActions(closeClaw);
         this.addAction(moveSmallPivot);
 
+        WaitAction wait = new WaitAction(200);
+        wait.setName("wait");
+        wait.setDependentActions(moveSmallPivot, moveBigPivot, moveSmallSweep, moveBigSweep, linkageRetract);
+        this.addAction(wait);
 
     }
 }
