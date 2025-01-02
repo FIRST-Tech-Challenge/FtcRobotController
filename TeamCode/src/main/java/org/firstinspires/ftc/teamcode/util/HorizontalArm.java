@@ -9,8 +9,10 @@ public class HorizontalArm {
     private static final double closeHandLeftPosition = 0.3;
     private static final double openHandRightPosition = 1;
     private static final double closeHandRightPosition = 0.7;
-    private static final double minimumExtension = 0.7;
-    private static final double maximumExtension = 0.3;
+    private static final double minimumPosition = 0.7;
+    private static final double maximumPosition = 0.3;
+    private static final double extensionRange = 18;
+    private static final double positionRange = 0.4;
 
     public HorizontalArm(HardwareMap hardwareMap) {
         handLeftServo = hardwareMap.get(Servo.class, "Horiz_Left");
@@ -31,15 +33,11 @@ public class HorizontalArm {
         handRightServo.setPosition(closeHandRightPosition);
     }
 
-    public void armExtensionDistance(double desiredExtension) {
-        double desiredPosition = 0;
-        if (desiredPosition == 0) {desiredPosition = 0;
-        }
-        else {desiredPosition = 0.7 - (0.4/(desiredExtension/14));
-        }
+    public void moveToExtensionDistance(double desiredExtension) {
+        double desiredPosition = maximumPosition + (positionRange * (desiredExtension / extensionRange));
 
-        if (desiredPosition < minimumExtension) { desiredPosition = minimumExtension; }
-        if (desiredPosition > maximumExtension) { desiredPosition = maximumExtension; }
+        if (desiredPosition > minimumPosition) { desiredPosition = minimumPosition; }
+        if (desiredPosition < maximumPosition) { desiredPosition = maximumPosition; }
 
         armExtendServo.setPosition(desiredPosition);
     }
@@ -51,7 +49,4 @@ public class HorizontalArm {
     public void rotateHandDown() {
         handRotateServo.setPosition(0);
     }
-
-
-
 }

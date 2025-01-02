@@ -23,20 +23,16 @@ public class HorizontalArmTest extends LinearOpMode {
         arm.openHand();
         sleep(defaultWait);
 
-        arm.armExtensionDistance(13);
+        arm.moveToExtensionDistance(9);
         sleep(defaultWait);
-        arm.armExtensionDistance(1);
+        arm.moveToExtensionDistance(3);
         sleep(defaultWait);
         arm.rotateHandDown();
         sleep(defaultWait);
         arm.rotateHandUp();
         sleep(defaultWait);
 
-        arm.openHand();
-        sleep(defaultWait);
-        arm.closeHand();
-        sleep(defaultWait);
-        arm.openHand();
+        arm.moveToExtensionDistance(0);
         sleep(defaultWait);
     }
 }
