@@ -190,8 +190,8 @@ public class Intake {
 
     private void feed() {
 
-        // Only if the Y value of the joystick is above 0.2 feed
-        if (Math.abs(controller.getRightY()) >= 0.2) {
+        // Only if the Y value of the joystick is above 0.3 feed
+        if (Math.abs(controller.getRightY()) >= 0.3) {
             feedRate = IntakeConstants.maxFeedRate * -controller.getRightY();
             fedPosition += feedRate * ( recordedTime / 1000.0 );
             fedPosition = Math.min(Math.max(fedPosition, minFedPosition), maxFedPosition);
