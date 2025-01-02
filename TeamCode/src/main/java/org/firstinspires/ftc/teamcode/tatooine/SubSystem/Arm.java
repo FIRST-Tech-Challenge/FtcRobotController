@@ -27,7 +27,7 @@ public class Arm {
     private static final String SUBSYSTEM_NAME = "Arm";
 
     // PID Tolerances
-    public static double ANGLE_TOLERANCE = 1;// degrees
+    public static double ANGLE_TOLERANCE = 2.5;// degrees
     private static final double EXTEND_TOLERANCE = 2;   // centimeters or appropriate unit
 
     // Encoder Counts Per Revolution (CPR)
@@ -68,16 +68,13 @@ public class Arm {
     // PID Controllers
     // ---------------------------------------------------------------------------------------------
     public static PIDFController anglePID = new PIDFController(0.021, 0, 0, 0);
-    private final PIDFController extendPID = new PIDFController(0.1, 0, 0, 0);
+    private final PIDFController extendPID = new PIDFController(0.2, 0, 0, 0);
 
     // ---------------------------------------------------------------------------------------------
     // State Variables
     // ---------------------------------------------------------------------------------------------
-    private double angleTimeout;
-    private double extendTimeout;
+    public static double EXTENDTIMEOUT = 5;
     private final boolean isDebugMode;
-    private double goal = 0;
-
     // ---------------------------------------------------------------------------------------------
     // Telemetry
     // ---------------------------------------------------------------------------------------------
@@ -144,6 +141,7 @@ public class Arm {
         // Configure PID tolerances
         anglePID.setTolerance(ANGLE_TOLERANCE);
         extendPID.setTolerance(EXTEND_TOLERANCE);
+        extendPID.setTimeout(EXTENDTIMEOUT);
 
         // Reset encoders at initialization
         resetEncoders();
@@ -435,7 +433,12 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            double pidPower = anglePID.calculate(getAngle());
+            double angle = getAngle();
+            double pidPower = anglePID.calculate(angle);
+            //limits power for robot to not flip
+            if (pidPower>0.5 && angle >70){
+                pidPower = 0.3;
+            }
             // If we're moving downward (pidPower < 0), set feedforward to zero
             double feedforward = calculateF();
             setPowerAngle(pidPower + feedforward);
@@ -443,6 +446,7 @@ public class Arm {
                     "Move Angle PID Power", pidPower);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle Feedforward", feedforward);
+            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", anglePID.getSetPoint());
             // always return true for the F to update itself always
             return true;
         }
@@ -453,6 +457,7 @@ public class Arm {
 
         public AtSetPointAngle(double goal) {
             this.goal = goal;
+            anglePID.reset();
         }
 
         @Override

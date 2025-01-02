@@ -45,13 +45,12 @@ public class ArmTuningTest extends LinearOpMode {
 
             if (doOne) {
                 runningActions.clear();
-                runningActions.add(arm.setAngle(45));
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setAngle(15));
                 doOne = false;
             }
             if (gamepad1.cross){
-                runningActions.clear();
-                runningActions.add(arm.setExtension(arm.getMaxExtend()));
-                runningActions.add(arm.setAngle(45));
+                wrist.stright();
             }
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 

@@ -229,8 +229,8 @@ public class Intake {
 
             DebugUtils.logDebug(telemetry, debugMode, SUBSYSTEM_NAME, "SetPowerAction Running", actionPower);
 
-            // Always returns true, so the action completes imidditly
-            return true;
+            // Always returns false, so the action completes imidditly
+            return false;
         }
     }
 

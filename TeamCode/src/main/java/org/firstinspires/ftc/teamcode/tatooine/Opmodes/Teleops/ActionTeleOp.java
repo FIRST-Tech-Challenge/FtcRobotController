@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Camera;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Intake;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
+import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.EasyGamepad;
 import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 
@@ -36,6 +37,8 @@ public class ActionTeleOp extends LinearOpMode {
     private boolean doOne = true;
     private boolean doStateOne = false;
 
+    private boolean lockExtend = false;
+
 
     private enum State {
         DEFULT,
@@ -49,13 +52,14 @@ public class ActionTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        currentState = State.DEFULT;
+    telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm = new Arm(this, false);
+        arm = new Arm(this, true);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        wrist = new Wrist(this, false);
+        wrist = new Wrist(this, true);
         intake = new Intake(this, isRed, false);
-        camera = new Camera(this, false, isRed);
+        camera = new Camera(this, true, isRed);
         camera.setSpecimen(false);
 
         EasyGamepad gamepadEx1 = new EasyGamepad(gamepad1);
@@ -76,7 +80,7 @@ public class ActionTeleOp extends LinearOpMode {
             runningActions = newActions;
 
             if (doOne){
-                arm.moveAngle();
+                runningActions.add(arm.moveAngle());
                 doOne = false;
             }
             drive.fieldDrive(new Pose2d(
@@ -84,34 +88,46 @@ public class ActionTeleOp extends LinearOpMode {
                     gamepadEx1.getStick(GamepadKeys.Stick.LEFT_STICK_Y),
                     gamepadEx1.getStick(GamepadKeys.Stick.RIGHT_STICK_X)
             ));
-            arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
-
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)) {
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
                 currentState = State.HOME;
                 doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT)) {
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
                 currentState = currentState == State.INTAKING1 ? State.INTAKING2 : State.INTAKING1;
                 doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)) {
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
                 currentState = State.SCORE_SAMPLE;
                 doStateOne = true;
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_LEFT)) {
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
                 currentState = State.SCORE_SPECIMEN;
                 doStateOne = true;
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
                 runningActions.add(wrist.moveToAngle(camera.getAngle()));
             }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+            else if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 intake.setPowerFun(1);
             }
-            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.LEFT_BUMPER)) {
+            else if (gamepadEx2.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 intake.setPowerFun(-1);
             } else if (currentState != State.INTAKING2 || currentState != State.SCORE_SAMPLE) {
                 intake.setPowerFun(0);
             }
+
         if (doStateOne) {
             switch (currentState) {
+                case DEFULT:
+                    handleDefultState();
+                    break;
                 case HOME:
                     handleHomeState();
                     break;
@@ -134,14 +150,18 @@ public class ActionTeleOp extends LinearOpMode {
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             gamepadEx1.update(gamepad1);
             gamepadEx2.update(gamepad2);
+            DebugUtils.logDebug(telemetry, true, "tele", "state", currentState);
+            telemetry.update();
         }
     }
-
+    private void handleDefultState(){
+        runningActions.add(new SequentialAction(arm.setAngle(0), arm.setExtension(1/10 * Arm.getMaxExtend()), new InstantAction(()-> wrist.home()), wrist.moveToAngle(0)));
+    }
     private void handleHomeState() {
         wrist.home();
         runningActions.add(new SequentialAction(
                 wrist.moveToAngle(0),
-                arm.setExtension(0),
+                arm.setExtension(1/10 * Arm.getMaxExtend()),
                 arm.setAngle(0)
         ));
     }

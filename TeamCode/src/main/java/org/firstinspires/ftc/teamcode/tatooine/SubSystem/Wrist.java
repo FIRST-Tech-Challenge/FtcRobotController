@@ -7,15 +7,12 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
-import org.opencv.core.Mat;
 
 @Config
 public class Wrist {
@@ -25,8 +22,9 @@ public class Wrist {
     private static final String SUBSYSTEM_NAME = "Wrist";
     public static double HOME = 0.725;
 
-    public static double OPEN_MAX = 0;
+    public static double STRIGHT = 0.65;
 
+    public static double SCORESAMPLE = 0.75;
     public static double OPEN_MIN = 0.25;
     public static double BACK  = 0;
 
@@ -122,6 +120,12 @@ public class Wrist {
                 "State Changed", currentPos);
     }
 
+    public void scoreSample(){
+        setPosition(SCORESAMPLE);
+        currentPos = SCORESAMPLE;
+        DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
+                "Wrist ScoreSample", SCORESAMPLE);
+    }
     public void open() {
         setPosition(FRONT);
         currentPos = FRONT;
@@ -143,11 +147,11 @@ public class Wrist {
                 "Wrist HOME", HOME);
     }
 
-    public void openMax(){
-        setPosition(OPEN_MAX);
-        currentPos = OPEN_MAX;
+    public void stright(){
+        setPosition(STRIGHT);
+        currentPos = STRIGHT;
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                "Wrist OPEN_MAX", OPEN_MAX);
+                "Wrist STRIGHT", STRIGHT);
     }
 
     public void openMin(){
