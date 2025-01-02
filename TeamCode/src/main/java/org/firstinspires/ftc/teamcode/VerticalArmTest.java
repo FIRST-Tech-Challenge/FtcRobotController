@@ -12,7 +12,7 @@ public class VerticalArmTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        final long defaultWait = 2000;
+        final long defaultWait = 1000;
 
         VerticalArm arm = new VerticalArm(hardwareMap);
 
