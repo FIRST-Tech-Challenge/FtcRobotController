@@ -126,7 +126,7 @@ public class RobotHardware {
         intakeRightArmServo.setDirection(Servo.Direction.REVERSE);
         intakeRightSlideServo.setDirection(Servo.Direction.REVERSE);
 
-        //set slide motors to RUN_TO_POSITION for vertical slide motor
+        //set slide motors direction
         liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Reset the motor encoder
