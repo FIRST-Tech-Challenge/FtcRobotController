@@ -37,11 +37,11 @@ Expansion hub:
                 port 3: Intake_Claw_Servo
                 port 4: Intake_Rotation_Servo
                 port 5: Intake_Arm_Right_Servo
-                Intake_Servo 1
+
 
 I2C port
 control hub
-                port 0: inm
+                port 0: control hub imu
                 port 1: pinpoint odometry computer
                 port 2: Color_Sensor
 
