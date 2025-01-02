@@ -19,13 +19,15 @@ public class Init {
     private final DcMotorEx leftRearMotor;
     private final DcMotorEx rightRearMotor;
 
-    private final Servo fingers;
-    private final Servo elbow1, elbow2;
-    private final DcMotor extension1;
-    private final DcMotor extension2;
+    private final DcMotor intake, inkateExtend;
+    private final Servo drop1, drop2;
 
-    private final Servo slideServo1, slideServo2, stringServo;
-    private final DcMotor wheelMotor;
+    private final Servo servo1, servo2, servo3, servo4, servo5;
+    private final DcMotor outakeSlide1, outakeSlide2;
+
+    private final Servo servo1, servo2, servo3, servo4;
+
+    private final Servo led;
     IMU imu;
 
     public Telemetry telemetry;
