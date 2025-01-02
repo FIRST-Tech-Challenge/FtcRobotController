@@ -44,11 +44,7 @@ public class Arm {
 
         findState();
 
-        if (rightEncPosition >= DepositConstants.armRightEncSlideDownSafePos || status == Status.TransferPos) {
-            safeSlideDown = true;
-        } else {
-            safeSlideDown = false;
-        }
+        updateSlideSafe();
     }
 
     public void command() {
@@ -99,5 +95,19 @@ public class Arm {
             status = Status.Intermediate;
         }
 
+    }
+
+    public void updateSlideSafe() {
+
+        if (rightEncPosition >= DepositConstants.armRightEncSlideDownSafePos || (status == Status.TransferPos && rightServoTargetPosition == DepositConstants.armRightTransferPos)) {
+            safeSlideDown = true;
+        } else {
+            safeSlideDown = false;
+        }
+
+    }
+
+    public double getRightServoEncPos() {
+        return rightEncPosition;
     }
 }

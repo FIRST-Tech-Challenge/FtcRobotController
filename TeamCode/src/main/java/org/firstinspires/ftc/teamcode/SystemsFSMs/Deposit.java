@@ -13,7 +13,8 @@ import org.firstinspires.ftc.teamcode.SystemsFSMs.Mechaisms.DepositSlides;
 
 public class Deposit {
     private Claw claw;
-    private Arm arm;
+    // TODO: This being public is a jank fix for going to spec deposit position so that I can easily look at its position in the robot FSM
+    public Arm arm;
     private DepositSlides slides;
     private Logger logger;
     private GamepadEx controller;
@@ -77,9 +78,12 @@ public class Deposit {
                 break;
 
             case preSpecIntake:
-
                     slides.setTargetCM(DepositConstants.slidePreTransferPos);
-                    arm.setPosition(DepositConstants.armRightSampleDepositPos);
+                    if (slides.getPosition() >= DepositConstants.slidePreTransferPos - DepositConstants.slidePositionTolerance) {
+                        arm.setPosition(DepositConstants.armRightSampleDepositPos);
+                    } else {
+                        arm.setPosition(DepositConstants.armRightTransferPos);
+                    }
                 break;
             case specDepositReady:
 
@@ -196,6 +200,10 @@ public class Deposit {
 
     public double getSlideTargetCM() {
         return slides.getTargetCM();
+    }
+
+    public void updateSlidesafe() {
+        arm.updateSlideSafe();
     }
 
 }

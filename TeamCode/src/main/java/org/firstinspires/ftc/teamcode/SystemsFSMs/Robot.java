@@ -217,6 +217,8 @@ public class Robot {
         // For now, if there is stow interference and the slides are either below safe height, or trying to go below the safe height, we assume there is interference, but this is obviously not true, could be fixed by interference zones**
         if (stowInterference) {
 
+            deposit.updateSlidesafe();
+
             if ((deposit.getSlideTargetCM() <= DepositConstants.slidePreTransferPos || deposit.getSlideCurrentCM() < DepositConstants.slidePreTransferPos - DepositConstants.slidePositionTolerance) && !(deposit.getSlidesDownSafe())) {
 
                 interference = true;
@@ -224,6 +226,12 @@ public class Robot {
             } else {
                 interference = false;
             }
+
+            if (depositDesiredState  == Deposit.TargetState.specIntake && deposit.getSlideCurrentCM() <= DepositConstants.slidePreTransferPos - DepositConstants.slidePositionTolerance && (deposit.arm.getRightServoEncPos() <= DepositConstants.armRightEncSlideDownSafePos - DepositConstants.armRightPositionTolerance) && deposit.arm.getRightSetPosition() > DepositConstants.armRightSampleDepositPos) {
+                interference  = true;
+            }
+
+
 
         }
     }
