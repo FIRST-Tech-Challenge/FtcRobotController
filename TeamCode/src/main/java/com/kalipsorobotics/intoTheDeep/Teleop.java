@@ -313,7 +313,7 @@ public class Teleop extends LinearOpMode {
                 }
 
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
-                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw);
+                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                     Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
                 }
