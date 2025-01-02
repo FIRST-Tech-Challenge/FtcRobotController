@@ -30,7 +30,7 @@ public class RobotDrive {
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
-    private ControlMode controlMode = ControlMode.ROBOT_CENTRIC;
+    private DriveMode driveMode = DriveMode.ROBOT_CENTRIC;
 
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
 
@@ -117,16 +117,16 @@ public class RobotDrive {
     }
 
     private void toggleControlMode() {
-        if (controlMode == ControlMode.FIELD_CENTRIC) {
-            controlMode = ControlMode.ROBOT_CENTRIC;
+        if (driveMode == DriveMode.FIELD_CENTRIC) {
+            driveMode = DriveMode.ROBOT_CENTRIC;
         } else {
-            controlMode = ControlMode.FIELD_CENTRIC;
+            driveMode = DriveMode.FIELD_CENTRIC;
         }
     }
 
     private void setMecanumDrivePower(double drive, double strafe, double rotate, double currentHeading, double powerFactor) {
         // Determine the drive mode
-        if (controlMode == ControlMode.FIELD_CENTRIC) {
+        if (driveMode == DriveMode.FIELD_CENTRIC) {
             // Adjust for field-centric control using the gyro angle
             double headingRad = Math.toRadians(currentHeading);
             double temp = drive * Math.cos(headingRad) + strafe * Math.sin(headingRad);
@@ -182,11 +182,11 @@ public class RobotDrive {
         return velocities;
     }
 
-    public enum ControlMode {
+    public enum DriveMode {
         FIELD_CENTRIC,
         ROBOT_CENTRIC
     }
-    public ControlMode getControlMode() {
-        return controlMode;
+    public DriveMode getDriveMode() {
+        return driveMode;
     }
 }

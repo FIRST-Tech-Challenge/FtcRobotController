@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.AutoTest;
+package org.firstinspires.ftc.teamcode.AutoTest.EncoderDrive;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.TeleOps.BasicTeleOps;
+import org.firstinspires.ftc.teamcode.AutoTest.RobotHardware;
 
 @Autonomous(name="AutonomousMoveCode_Test", group="org.firstinspires.ftc.teamcode")
 public class AutonomousMoveCode_Test extends LinearOpMode {
