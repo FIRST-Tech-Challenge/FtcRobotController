@@ -216,15 +216,15 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
+              driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
             // Start tilting and extending the arm, and positioning the specimen
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
             // Drive to the scoring position next to the submersible
-            driveToPosition( 22.30, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_THRU );
+            driveToPosition( 18.20, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            driveToPosition( 28.30, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 27.80, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
             sleep(100);
@@ -236,9 +236,9 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO2);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
-            sleep( 1200 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW );
+            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
 
         //Prepare arm for what comes next (samples/parking)
@@ -311,19 +311,19 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             case 1:
                 // Drive forward toward the wall
                 driveToPosition( 20.9, -33.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(100);  // viper should already be in position
+                sleep(900);  // viper should already be in position
                 break;
             case 2:
                 driveToPosition( 20.9, -43.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(600);  // wait for viper to fully retract
+                sleep(1200);  // wait for viper to fully retract
                 break;
             case 3:
                 autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_SAMPLE3);
                 autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SAMPLE3_DEG, 1.0 );
                 robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB3);
                 // drive slow because waiting for arm to lower
-                driveToPosition( 24.4, -43.8, 16.0, DRIVE_SPEED_50, TURN_SPEED_30, DRIVE_TO );
-                sleep(100); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
+                driveToPosition( 24.4, -43.8, 5.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
+                sleep(1000); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
                 driveToPosition( 24.4, -43.8, 32.1, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 break;
             default:
@@ -331,7 +331,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
 
         // Close the claw on this sample
         robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
-        sleep(600); // wait for claw to close on sample
+        sleep(800); // wait for claw to close on sample
     } // collectSample
 
     //************************************
@@ -381,7 +381,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
 
         if( opModeIsActive() ) {
             // Drive towards submersible
-            driveToPosition(48.0, -20.00, -70.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_THRU);
+            driveToPosition(44.0, -20.00, -70.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_THRU);
             // Extend to level1 ascent position
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_PARK_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_PARK);
