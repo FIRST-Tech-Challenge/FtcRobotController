@@ -57,7 +57,7 @@ public class AutoBasket extends LinearOpMode {
         initAuto.setName("initAuto");
 
         final int INTAKE_SAMPLE_X = -660;
-        int outtakeXPos = -200;
+        int outtakeXPos = -190;
         int outtakeYPos = 1045;
 
         //================begin of first specimen====================
