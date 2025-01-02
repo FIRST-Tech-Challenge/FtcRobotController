@@ -34,32 +34,12 @@ public class BasicTeleOps extends OpMode {
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
     public FiniteMachineStateIntake intakeArmDrive; //For Robot Intake
 
+    public ServoTest servoTest;
+
 
     //Bulk Reading
     private List<LynxModule> allHubs;
 
-    //Drive power factor
-
-    //Deposit Config
-    public static int deposit_Slide_down_Pos         = 50;   //slides Position Configure
-    public static int deposit_Slide_Highbar_Pos      = 795;  //slides Position Configure
-    public static int deposit_Slide_Highbasket_Pos   = 2800; //slides Position Configure
-
-    public static double deposit_Wrist_dump_Pos         = 0.3;
-    public static double deposit_Wrist_retract_Pos      = 0.06;
-
-    public static double deposit_Arm_dump_Pos           = 0.8;
-    public static double deposit_Arm_retract_Pos        = 0.0;
-
-    public static double deposit_Arm_hook_Pos           = 0.8;
-    public static double deposit_Claw_Open              = 0.11;
-    public static double deposit_Claw_Close             = 0.0;
-
-    public static double dumpTime                       = 1.8;
-    public static double retractTime                    = 3.2;
-
-    public static int deposit_Slide_UpLiftPower         = 1;  //slides power
-    public static double downLiftPower                  = 0.7;  //slides power
 
     
     @Override
@@ -81,19 +61,20 @@ public class BasicTeleOps extends OpMode {
         robotDrive = new RobotDrive(robot, gamepadCo1, gamepadCo2);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
-
+        /**
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2,
-                deposit_Arm_retract_Pos, deposit_Arm_dump_Pos,
-                dumpTime, retractTime,
-                deposit_Wrist_retract_Pos, deposit_Wrist_dump_Pos, deposit_Claw_Open, deposit_Claw_Close,
-                deposit_Slide_down_Pos,deposit_Slide_Highbasket_Pos,
-                deposit_Slide_UpLiftPower, downLiftPower); // Pass parameters as needed);
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control
         intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2);
         intakeArmDrive.Init();
+         */
+
+        //Servo Testing
+        servoTest = new ServoTest(robot,gamepadCo1,gamepadCo2);
+        servoTest.ServoTestInit();
+
 
         // get bulk reading
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -135,6 +116,7 @@ public class BasicTeleOps extends OpMode {
         robotDrive.DriveLoop(); // Use RobotDrive methods
         RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
 
+        /**
         try {
             depositArmDrive.DepositArmLoop();
         } catch (InterruptedException e) {
@@ -145,13 +127,17 @@ public class BasicTeleOps extends OpMode {
         intakeArmDrive.IntakeArmLoop();
         FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
 
+        */
+
+        servoTest.ServoTestLoop();
+
         // Telemetry
         telemetry.addData("deposit Left Arm Position", robot.depositArmServo.getPosition());
         telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
         telemetry.addData("Control Mode", currentMode.name());
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
-        telemetry.addData("Lift Mode", liftState.name());
-        telemetry.addData("Intake State", intakeState.name());
+        //telemetry.addData("Lift Mode", liftState.name());
+        //telemetry.addData("Intake State", intakeState.name());
         telemetry.update();
     }
 

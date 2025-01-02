@@ -191,14 +191,6 @@ public class ServoTest{
         }
 
         //gamepad2 X for intake claw rotation
-        // gamepad2 DPAD_LEFT for intake wrist servo
-        if (gamepad_2.getButton(DPAD_LEFT) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
-            debounceTimer.reset();
-            servoposition = robot.intakeWristServo.getPosition();
-            //use to be 0.01
-            servoposition += 0.01;
-            robot.intakeWristServo.setPosition(Range.clip(servoposition,0,1));
-        }
 
         // gamepad2 DPAD_RIGHT for intake wrist servo
         if (gamepad_2.getButton(X) && debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
