@@ -31,7 +31,9 @@ public class AutonomousRightBlue extends AutonomousBase {
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
-        sleep( 1000 );
+
+        // Ensure viper arm is fully retracted before we start
+        ensureViperArmFullyRetracted();
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         redAlliance  = false;
@@ -208,7 +210,7 @@ public class AutonomousRightBlue extends AutonomousBase {
         if( opModeIsActive() ) {
             if( specimenNumber == 0 ) {
               // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-              driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+              driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
               pos_x = -6.80; // hang initial specimen 6.8 inches to the left of starting position
             }
             else {
@@ -222,10 +224,10 @@ public class AutonomousRightBlue extends AutonomousBase {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
             // Drive to the scoring position next to the submersible
-            driveToPosition( 22.30, (pos_x+1.0), 0.00, DRIVE_SPEED_80, TURN_SPEED_40, DRIVE_THRU );
+            driveToPosition( 22.30, (pos_x+1.0), 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            driveToPosition( 28.30, pos_x, 0.00, DRIVE_SPEED_80, TURN_SPEED_40, DRIVE_TO );
+            driveToPosition( 28.30, pos_x, 0.00, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
             sleep(100);
@@ -328,16 +330,16 @@ public class AutonomousRightBlue extends AutonomousBase {
             robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
             if( specimenNumber == 0 ) {
                // Approach along x-axis from herding spike marks...
-               driveToPosition( 8.0, 23.5, 180, DRIVE_SPEED_100, TURN_SPEED_60, DRIVE_THRU );
+               driveToPosition( 8.0, 23.5, 180, DRIVE_SPEED_80, TURN_SPEED_60, DRIVE_THRU );
             } else {
                // Approach along y-axis from hooking at submersible...
-               driveToPosition( 8.0, 17.2, 180, DRIVE_SPEED_100, TURN_SPEED_60, DRIVE_THRU );
+               driveToPosition( 8.0, 17.2, 180, DRIVE_SPEED_80, TURN_SPEED_60, DRIVE_THRU );
             }
         } // opModeIsActive
 
         // Drive to the final wall-collect position (slowly)
         if( opModeIsActive() ) {
-            driveToPosition( 5.0, 18.6, 180, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_TO );
+            driveToPosition( 5.0, 18.6, 180, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_TO );
             robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
             sleep(400); // allow claw to close (400msec)
         } // opModeIsActive

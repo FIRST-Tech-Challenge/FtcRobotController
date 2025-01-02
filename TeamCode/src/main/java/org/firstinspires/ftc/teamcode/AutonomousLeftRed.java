@@ -31,7 +31,9 @@ public class AutonomousLeftRed extends AutonomousBase {
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
-        sleep( 1000 );
+
+        // Ensure viper arm is fully retracted before we start
+        ensureViperArmFullyRetracted();
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         redAlliance  = true;
@@ -214,15 +216,15 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_20, DRIVE_THRU );
+            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_THRU );
             // Start tilting and extending the arm, and positioning the specimen
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
             // Drive to the scoring position next to the submersible
-            driveToPosition( 22.30, 7.20, 0.00, DRIVE_SPEED_60, TURN_SPEED_20, DRIVE_THRU );
+            driveToPosition( 22.30, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_THRU );
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR1);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR1);
-            driveToPosition( 28.30, 7.20, 0.00, DRIVE_SPEED_60, TURN_SPEED_20, DRIVE_TO );
+            driveToPosition( 28.30, 7.20, 0.00, DRIVE_SPEED_40, TURN_SPEED_20, DRIVE_TO );
             robot.driveTrainMotorsZero();  // make double sure we're stopped
             // If we drive to the submersible faster than the arm moves, wait for the arm
             sleep(100);

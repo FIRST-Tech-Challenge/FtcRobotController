@@ -126,11 +126,12 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
     public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
     public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
+    public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  6.00; // Arm to collect samples at ground level
     public final static double TILT_ANGLE_SAMPLE3_DEG     =  6.00; // Arm to collect samples at ground level (3rd one against wall)
-    public final static double TILT_ANGLE_START_DEG       = 11.00; // AUTO: starting position LOW
-    public final static double TILT_ANGLE_WALL_DEG        = 13.60; // AUTO: starting position HIGH (motor tilted back & touches wall)
+    public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
+    public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
     public final static double TILT_ANGLE_WALL1_DEG       = 33.00; // AUTO: grab specimen off wall (lift off)
 
@@ -171,6 +172,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
     public final static int    VIPER_EXTEND_AUTO1 = 1980;   // NEW raised to where the specimen hook is above the high bar
     public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
+    public final static int    VIPER_EXTEND_CLIP  = 1580;   // AUTO: clip specimen on bar by just driving forward
     public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
     public final static int    VIPER_EXTEND_FULL1 = 2800;   // extended 36" forward (max for 20"x42" limit at horizontal)
     public final static int    VIPER_EXTEND_FULL2 = 4214;   // hardware fully extended (never exceed this count!)
@@ -210,6 +212,7 @@ public class Hardware2025Bot
     public final static double ELBOW_SERVO_WALL1_ANGLE = 176.0; // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_WALL2 = 0.500;       // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_WALL2_ANGLE = 180.0; // Grab specimen off wall in autonomous
+    public final static double ELBOW_SERVO_CLIP = 0.510;        // AUTO: clip specimen on bar by just driving forward
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -234,6 +237,7 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_WALL0_ANGLE = 180.0;
     public final static double WRIST_SERVO_WALL1 = 0.519;        // AUTO: grab specimen off wall (lift off)
     public final static double WRIST_SERVO_WALL1_ANGLE = 173.0;
+    public final static double WRIST_SERVO_CLIP = 0.350;        // AAUTO: clip specimen on bar by just driving forward
 
     // horizontal = 0.440
     // straight down = 0.710
