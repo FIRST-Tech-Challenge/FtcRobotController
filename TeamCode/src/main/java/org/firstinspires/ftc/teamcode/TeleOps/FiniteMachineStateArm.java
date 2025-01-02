@@ -25,10 +25,11 @@ public class FiniteMachineStateArm {
     private DEPOSITSTATE depositState;
     
     private LIFTSTATE liftState = LIFTSTATE.LIFT_START; // Persisting state
-    private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling dumping time
+    private ElapsedTime liftTimer = new ElapsedTime(); // Timer for controlling vertical slides lifting time
  
-    private ElapsedTime transfer_timer = new ElapsedTime();
+    private ElapsedTime transfer_timer = new ElapsedTime();//Timer for controlling the dumping time
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
+
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
 
     public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad_1,
