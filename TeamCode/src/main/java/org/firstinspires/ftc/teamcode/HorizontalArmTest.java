@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.util.VerticalArm;
+import org.firstinspires.ftc.teamcode.util.HorizontalArm;
 
-@Disabled
-@Autonomous(name = "Vertical Arm Test", group = "Test")
-public class VerticalArmTest extends LinearOpMode {
+@Autonomous(name = "Horizontal Arm Test", group = "Test")
+public class HorizontalArmTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        final long defaultWait = 2000;
+        final long defaultWait = 1000;
 
-        VerticalArm arm = new VerticalArm(hardwareMap);
+        HorizontalArm arm = new HorizontalArm(hardwareMap);
 
         waitForStart();
 
@@ -25,8 +23,14 @@ public class VerticalArmTest extends LinearOpMode {
         arm.openHand();
         sleep(defaultWait);
 
-        arm.moveToHeight(5);
-        arm.moveToHeight(15);
+        arm.armExtensionDistance(13);
+        sleep(defaultWait);
+        arm.armExtensionDistance(1);
+        sleep(defaultWait);
+        arm.rotateHandDown();
+        sleep(defaultWait);
+        arm.rotateHandUp();
+        sleep(defaultWait);
 
         arm.openHand();
         sleep(defaultWait);
@@ -34,7 +38,5 @@ public class VerticalArmTest extends LinearOpMode {
         sleep(defaultWait);
         arm.openHand();
         sleep(defaultWait);
-
-        arm.moveToHeight(0);
     }
 }
