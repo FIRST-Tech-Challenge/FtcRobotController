@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.network.WifiUtil;
 import org.firstinspires.ftc.teamcode.hardware.Pincher;
 import org.firstinspires.ftc.teamcode.hardware.Slide;
-import org.firstinspires.ftc.teamcode.hardware.SpecimanGrabber;
+import org.firstinspires.ftc.teamcode.hardware.SpecimenGrabber;
 
 
 @TeleOp()
@@ -22,7 +22,7 @@ public class teleopDrive2 extends OpMode {
     private MecanumDrive drive = null;
     private Slide intakeSlide = new Slide("slide", "", Slide.ExtendMotorDirection.Forward, 1300, 1.0, 114.28);
     private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 2600, 1.0,68.568);
-    private SpecimanGrabber specimanGrabber = new SpecimanGrabber();
+    private SpecimenGrabber specimanGrabber = new SpecimenGrabber();
     private Pincher pincher = new Pincher();
     private enum PincherPostion {DRIVE, READY, PICKUP}
     private PincherPostion currPincherPos = null;

@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.Slide;
-import org.firstinspires.ftc.teamcode.hardware.SpecimanGrabber;
+
+import org.firstinspires.ftc.teamcode.hardware.SpecimenGrabber;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -25,19 +26,19 @@ public class SpecimenAuto4 extends LinearOpMode {
     private Telemetry.Item debugOutout = null;
 
     private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 2600, 1.0,68.568);
-    private SpecimanGrabber specimanGrabber = new SpecimanGrabber();
+    private SpecimenGrabber specimenGrabber = new SpecimenGrabber();
 
     public class OpenGrabber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            specimanGrabber.Open();
+            specimenGrabber.Open();
             return false;
         }
     }
     public class CloseGrabber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            specimanGrabber.Close();
+            specimenGrabber.Close();
             return false;
         }
     }
@@ -91,7 +92,7 @@ public class SpecimenAuto4 extends LinearOpMode {
         // run once when init is pressed
         drive = new MecanumDrive(this.hardwareMap, new Pose2d(-62.175, 2, 0));
         clawSlide.Init(hardwareMap);
-        specimanGrabber.Init(hardwareMap);
+        specimenGrabber.Init(hardwareMap);
 
         telemetry.clearAll();
         telemetry.setAutoClear(false);
@@ -101,6 +102,7 @@ public class SpecimenAuto4 extends LinearOpMode {
 
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
                 .stopAndAdd(new LiftToTopBar()) // lift to be ready to hang
+                .waitSeconds(.100)
                 .lineToX(-31.625) // move forward
                 .stopAndAdd(new LiftToHookPosition()) // lower the lift to hang
                 .waitSeconds(.250)

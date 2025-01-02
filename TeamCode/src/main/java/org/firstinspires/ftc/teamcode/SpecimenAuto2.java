@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.Slide;
-import org.firstinspires.ftc.teamcode.hardware.SpecimanGrabber;
+import org.firstinspires.ftc.teamcode.hardware.SpecimenGrabber;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -24,7 +24,7 @@ public class SpecimenAuto2 extends LinearOpMode {
     private Telemetry.Item debugOutout = null;
 
     private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 2600, 1.0,68.568);
-    private SpecimanGrabber specimanGrabber = new SpecimanGrabber();
+    private SpecimenGrabber specimanGrabber = new SpecimenGrabber();
 
     public class OpenGrabber implements Action {
         @Override
