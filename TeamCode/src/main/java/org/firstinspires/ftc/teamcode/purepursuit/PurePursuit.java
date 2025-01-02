@@ -66,7 +66,7 @@ public class PurePursuit {
         if (dx !=0) {
             movementAngle = Math.atan(dy / dx);
         } else {
-            movementAngle = Math.PI / 2;
+            movementAngle = Math.signum(dy) * Math.PI / 2;
         }
 
         DX = dx;
