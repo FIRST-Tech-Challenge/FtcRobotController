@@ -191,6 +191,14 @@ public class Robot {
         intake.setAcceptableColors(colors);
     }
 
+    public void switchColor() {
+        if (intake.getLastSeenColor() == SampleDetector.SampleColor.yellow) {
+            intake.setLastSeenColor(SampleDetector.SampleColor.blue);
+        } else {
+            intake.setLastSeenColor(SampleDetector.SampleColor.yellow);
+        }
+    }
+
     private void findState() {
 
         // If either the Intake or Deposit isnt at their transfer ready positions then the state is cycling

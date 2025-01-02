@@ -188,6 +188,10 @@ public class Intake {
         return lastSeenColor;
     }
 
+    public void setLastSeenColor(SampleDetector.SampleColor color) {
+        lastSeenColor = color;
+    }
+
     private void feed() {
 
         // Only if the Y value of the joystick is above 0.3 feed

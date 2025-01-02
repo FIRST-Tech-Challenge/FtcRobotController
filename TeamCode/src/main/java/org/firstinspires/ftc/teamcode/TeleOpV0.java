@@ -29,6 +29,8 @@ public class TeleOpV0 extends OpMode {
     private boolean specStrategy = false;
     private boolean sampleStrategy = false;
 
+    private boolean leftTriggerPressed = false;
+
     @Override
     public void init() {
         hardware.init(hardwareMap);
@@ -82,6 +84,16 @@ public class TeleOpV0 extends OpMode {
         // Manage Spec Intake and Clipped Pos |LB|
         if (controller.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             robot.clipSpec();
+        }
+
+        // Switching the last seen color manually
+        if (controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.2 && !leftTriggerPressed) {
+            leftTriggerPressed = true;
+            robot.switchColor();
+
+            robot.goToDeposit();
+        } else if (controller.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 0.00) {
+            leftTriggerPressed = false;
         }
 
         robot.command();
