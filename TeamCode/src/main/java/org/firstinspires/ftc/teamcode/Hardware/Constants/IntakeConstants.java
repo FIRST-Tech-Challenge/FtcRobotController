@@ -27,13 +27,13 @@ public class IntakeConstants {
 
     // Bucket Servo Positions
     public static final double
-            bucketUpPosition = 0.365,
+            bucketUpPosition = 0.335,
             bucketDownPosition = 0.565;
 
     // Bucket Encoder Positions & Tolerance
     public static final double
-            bucketEncUpPosition = 226.00,
-            bucketEncDownPosition = 160.50,
+            bucketEncUpPosition = 237.00,
+            bucketEncDownPosition = 161.80,
             bucketEncDownPartialPosition = (bucketEncUpPosition + bucketEncDownPosition) / 2.0,
             bucketEncPositionTolerance = 5.00;
 
