@@ -218,7 +218,7 @@ public class MoveOuttakeLSAction extends Action {
         velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
 
         if(velocity < 0.01 && !isDone) {
-            if(timeoutTimer.milliseconds() > 1500) {
+            if(timeoutTimer.milliseconds() > 1000) {
                 finish();
             }
         } else {
