@@ -19,8 +19,6 @@ public class OuttakeTransferReady extends KActionSet {
         KServoAutoAction clawOpen = new KServoAutoAction(outtake.outtakeClawServo, Outtake.OUTTAKE_CLAW_OPEN);
         clawOpen.setName("clawOpen");
         this.addAction(clawOpen);
-
-
     }
 }
 //ls move down

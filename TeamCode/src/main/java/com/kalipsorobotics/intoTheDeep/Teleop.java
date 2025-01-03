@@ -5,6 +5,7 @@ import static com.kalipsorobotics.math.CalculateTickPer.mmToTicksLS;
 import android.util.Log;
 
 import com.kalipsorobotics.actions.AutoRobotHangAction;
+import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
@@ -124,8 +125,10 @@ public class Teleop extends LinearOpMode {
         boolean sampleEndToEndSequencePressed;
         boolean sampleEndToEndSequencePressed2;
 
-        intakeClaw.init();
-        outtake.init();
+        Init init = new Init(intakeClaw, outtake);
+        while(opModeInInit()) {
+            init.updateCheckDone();
+        }
 
         MoveOuttakeLSAction.setNeedMaintenance(true);
 
@@ -164,7 +167,6 @@ public class Teleop extends LinearOpMode {
                 Log.d ("backButton ", " isLeftBumperPressed" + kGamePad2.isLeftBumperPressed());
                 Log.d ("backButton ", " isBackButtonPressed" + kGamePad2.isBackButtonPressed());
                 Log.d ("backButton ", " sampleEndToEndSequence " + sampleEndToEndSequencePressed2);
-
             }
 
             //RESET POSITIONS TO CURRENT
@@ -373,7 +375,7 @@ public class Teleop extends LinearOpMode {
                 if(moveLS != null) {
                     moveLS.finishWithoutSetPower();
                 }
-                double targetLsMM = CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + (-400.0 * outtakeLSStickValue);
+                double targetLsMM = outtake.getCurrentPosMm() + (-400.0 * outtakeLSStickValue);
                 moveLS = new MoveLSAction(outtake, targetLsMM);
                 moveLS.setName("moveLS");
                 Log.d("ls_debug", "joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);

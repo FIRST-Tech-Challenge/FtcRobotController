@@ -47,7 +47,7 @@ public class MoveLSAction extends Action {
     }
 
     public MoveLSAction(Outtake outtake, double targetMM) {
-        ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5);
+        ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(5); // todo move out of constructor
         double P_CONSTANT = 8 * (1 / CalculateTickPer.mmToTicksLS(400.0));
         this.outtake = outtake;
         linearSlide1 = outtake.linearSlide1;
@@ -78,6 +78,7 @@ public class MoveLSAction extends Action {
 
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
+
         double lowestPower = 0.12;
 
         if (globalLinearSlideMaintainTicks < mmToTicksLS(30)) {

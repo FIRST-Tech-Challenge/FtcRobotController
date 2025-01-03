@@ -2,11 +2,13 @@ package com.kalipsorobotics.modules;
 
 import android.util.Log;
 
+import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.utilities.KServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Outtake {
 
@@ -59,7 +61,7 @@ public class Outtake {
         this.opModeUtilities = opModeUtilities;
         Log.d("Outtake_LS", "init Outtake");
 
-        setUpHardware();
+        resetHardwareMap(opModeUtilities.getHardwareMap(), this);
 
         linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -72,7 +74,7 @@ public class Outtake {
         if (single_instance == null) {
             single_instance = new Outtake(opModeUtilities);
         } else {
-            single_instance.opModeUtilities = opModeUtilities;
+            resetHardwareMap(opModeUtilities.getHardwareMap(), single_instance);
         }
         return single_instance;
     }
@@ -81,25 +83,25 @@ public class Outtake {
         single_instance = null;
     }
 
-    private void setUpHardware() {
-        linearSlide1 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide1");
-        linearSlide2 = opModeUtilities.getHardwareMap().dcMotor.get("linearSlide2");
-        outtakePivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePivot"), 60/0.11, 255,
+    private static void resetHardwareMap(HardwareMap hardwareMap, Outtake outtake) {
+        outtake.linearSlide1 = hardwareMap.dcMotor.get("linearSlide1");
+        outtake.linearSlide2 = hardwareMap.dcMotor.get("linearSlide2");
+        outtake.outtakePivotServo = new KServo(hardwareMap.servo.get("outtakePivot"), 60/0.11, 255,
                 0, false);
-        outtakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakeClaw"), 60/0.11, 255, //mini axon
+        outtake.outtakeClawServo = new KServo(hardwareMap.servo.get("outtakeClaw"), 60/0.11, 255, //mini axon
                 0, false);
 //        outtakePigeonServo = new KServo(opModeUtilities.getHardwareMap().servo.get("outtakePigeonServo"), 60/0.25, 300,
 //                0, false);
-        hangHook1 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang1"), 60/0.25, 300,
+        outtake.hangHook1 = new KServo(hardwareMap.servo.get("hang1"), 60/0.25, 300,
                 0, false);
-        hangHook2 = new KServo(opModeUtilities.getHardwareMap().servo.get("hang2"), 60/0.25, 300,
+        outtake.hangHook2 = new KServo(hardwareMap.servo.get("hang2"), 60/0.25, 300,
                 0, false);
 
-        linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.linearSlide1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.linearSlide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
-        linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
+        outtake.linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
+        outtake.linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void init() {
@@ -107,6 +109,11 @@ public class Outtake {
         getOuttakePivotServo().setPosition(OUTTAKE_PIVOT_TRANSFER_READY_POS);
         getHangHook1().setPosition(HOOK1_DOWN_POS);
         getHangHook2().setPosition(HOOK2_DOWN_POS);
+    }
+
+
+    public double getCurrentPosMm() {
+        return CalculateTickPer.ticksToMmLS(getLinearSlide1().getCurrentPosition());
     }
 
     public DcMotor getLinearSlide1() {

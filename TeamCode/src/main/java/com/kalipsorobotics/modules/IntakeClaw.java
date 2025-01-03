@@ -2,6 +2,7 @@ package com.kalipsorobotics.modules;
 
 import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeClaw {
     private static IntakeClaw single_instance = null;
@@ -68,14 +69,15 @@ public class IntakeClaw {
 
     private IntakeClaw(OpModeUtilities opModeUtilities) {
         this.opModeUtilities = opModeUtilities;
-        setUpHardware();
+
+        resetHardwareMap(opModeUtilities.getHardwareMap(), this);
     }
 
     public static synchronized IntakeClaw getInstance(OpModeUtilities opModeUtilities) {
         if (single_instance == null) {
             single_instance = new IntakeClaw(opModeUtilities);
         } else {
-            single_instance.opModeUtilities = opModeUtilities;
+            resetHardwareMap(opModeUtilities.getHardwareMap(), single_instance);
         }
         return single_instance;
     }
@@ -84,29 +86,28 @@ public class IntakeClaw {
         single_instance = null;
     }
 
-    private void setUpHardware() {
-
-        intakeLinkageServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeLinkage"), 45/1,
+    private static void resetHardwareMap(HardwareMap hardwareMap, IntakeClaw intakeClaw) {
+        intakeClaw.intakeLinkageServo = new KServo(hardwareMap.servo.get("intakeLinkage"), 45/1,
                 130,
                 0, false);
 
-        intakeBigSweepServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigSweep"), 60/0.25,
+        intakeClaw.intakeBigSweepServo = new KServo(hardwareMap.servo.get("intakeBigSweep"), 60/0.25,
                 300,
                 0, false);
 
-        intakeBigPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeBigPivot"), 60/0.11,
+        intakeClaw.intakeBigPivotServo = new KServo(hardwareMap.servo.get("intakeBigPivot"), 60/0.11,
                 130,
                 0, false);
 
-        intakeSmallPivotServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeSmallPivot"), 60/0.11,
+        intakeClaw.intakeSmallPivotServo = new KServo(hardwareMap.servo.get("intakeSmallPivot"), 60/0.11,
                 255,
                 0, false);
 
-        intakeSmallSweepServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeSmallSweep"), 60/0.25,
+        intakeClaw.intakeSmallSweepServo = new KServo(hardwareMap.servo.get("intakeSmallSweep"), 60/0.25,
                 300,
                 0, false);
 
-        intakeClawServo = new KServo(opModeUtilities.getHardwareMap().servo.get("intakeClaw"), 60/0.11,     //mini axon
+        intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.11,     //mini axon
                 255,
                 0, false);
     }

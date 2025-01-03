@@ -49,7 +49,7 @@ public class CalculateTickPer {
     }
 
     public static double ticksToMmLS(double ticks) {
-        return (ticks / getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
+        return 0.5 * (ticks / getTicksPerMm(ticksPerRevolutionLS, lsCircumfMm));
     }
 
     public static double inchToTicksLS(double inches) {
