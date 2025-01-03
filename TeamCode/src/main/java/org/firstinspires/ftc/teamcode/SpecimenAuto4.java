@@ -103,13 +103,13 @@ public class SpecimenAuto4 extends LinearOpMode {
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
                 .stopAndAdd(new LiftToTopBar()) // lift to be ready to hang
                 .waitSeconds(.100)
-                .lineToX(-31.625) // move forward
+                .lineToX(-32.625) // move forward
                 .stopAndAdd(new LiftToHookPosition()) // lower the lift to hang
                 .waitSeconds(.250)
                 .stopAndAdd(new OpenGrabber()) //open claw
                 .lineToX(-41.5) // backup
                 //first hang completed
-                .splineTo(new Vector2d(-13.5, -38), Math.toRadians(0)) // move to first push
+                .splineTo(new Vector2d(-13.5, -35.75), Math.toRadians(0)) // move to first push
                 .strafeTo(new Vector2d(-13.5, -49)) // move in front of sample
                 .strafeTo(new Vector2d(-45, -49)) // pushes
                 .strafeTo(new Vector2d(-13.5, -49)) // backup
@@ -122,7 +122,7 @@ public class SpecimenAuto4 extends LinearOpMode {
                 .stopAndAdd(new CloseGrabber()) // close claw
                 .waitSeconds(.200)
                 .stopAndAdd(new LiftToTopBar()) // lift to top
-                .strafeToLinearHeading(new Vector2d(-31.625, -5), Math.toRadians(0)) // strafe to submersible
+                .strafeToLinearHeading(new Vector2d(-32.625, -5), Math.toRadians(0)) // strafe to submersible
                 .stopAndAdd(new LiftToHookPosition()) // lower lift to hook
                 .waitSeconds(.200)
                 .stopAndAdd(new OpenGrabber()) // open claw
@@ -133,7 +133,7 @@ public class SpecimenAuto4 extends LinearOpMode {
                 .stopAndAdd(new CloseGrabber()) // close the claw
                 .waitSeconds(.200)
                 .stopAndAdd(new LiftToTopBar()) // lift to top
-                .strafeToLinearHeading(new Vector2d(-31.625, -7), Math.toRadians(0)) // strafe back to submersible
+                .strafeToLinearHeading(new Vector2d(-32.625, -7), Math.toRadians(0)) // strafe back to submersible
                 .stopAndAdd(new LiftToHookPosition()) // lower lift to hook
                 .waitSeconds(.200)
                 .stopAndAdd(new OpenGrabber()) // open claw
@@ -144,11 +144,12 @@ public class SpecimenAuto4 extends LinearOpMode {
                 .stopAndAdd(new CloseGrabber()) // close the claw
                 .waitSeconds(.200)
                 .stopAndAdd(new LiftToTopBar()) // lift to top
-                .strafeToLinearHeading(new Vector2d(-31.625, -9), Math.toRadians(0)) // strafe back to submersible
+                .strafeToLinearHeading(new Vector2d(-32.625, -9), Math.toRadians(0)) // strafe back to submersible
                 .stopAndAdd(new LiftToHookPosition()) // lower lift to hook
                 .waitSeconds(.200)
                 .stopAndAdd(new OpenGrabber()) // open claw
                 .stopAndAdd(new LiftToBottom()) // lower lift to bottom
+                .waitSeconds(1)
                 .build();
 //
 //                //old code

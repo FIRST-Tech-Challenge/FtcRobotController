@@ -23,8 +23,8 @@ public class TestPickupServos extends OpMode {
     Gamepad prevGamepad2 = new Gamepad();
     Gamepad currGamepad2 = new Gamepad();
 
-    double axis1Step = .005;
-    double axis2Step = .005;
+    double axis1Step = .001;
+    double axis2Step = .001;
 
     private Telemetry.Item telAxis1Pos = null;
     private Telemetry.Item telAxis2Pos = null;
@@ -45,8 +45,8 @@ public class TestPickupServos extends OpMode {
 
     @Override
     public void start() {
-        axis1.setPosition(0.5);
-        axis2.setPosition(0.5);
+        axis1.setPosition(0.9);
+        axis2.setPosition(0.9);
 
     }
 

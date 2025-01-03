@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Slide;
 import org.firstinspires.ftc.teamcode.hardware.MecanumEncoder;
 import org.firstinspires.ftc.teamcode.hardware.SpecimenGrabber;
 
-@TeleOp(name = "Intake Test")
+@TeleOp(name = "TeleTest")
 public class TeleTest extends OpMode {
     private MecanumDrive drive = null;
     private Intake intake = new Intake();  // get the intake class
@@ -26,7 +26,13 @@ public class TeleTest extends OpMode {
     Gamepad currGamepad2 = new Gamepad();
     Intake.IntakePositon desiredPosition = Intake.IntakePositon.HOME;
 
-
+    public void processSpecimanGrabber() {
+        if(currGamepad2.x) {
+            specimanGrabber.Close();
+        } else if (currGamepad2.y){
+            specimanGrabber.Open();
+        }
+    }
     private void processIntake() {
         //hold gp1.right_bumper for sample in
         //hold gp1.left_bumper for sample out
@@ -81,12 +87,36 @@ public class TeleTest extends OpMode {
         }
     }
 
+
+public void processClawStop() {
+    if (currGamepad2.dpad_right && !prevGamepad2.dpad_right) {
+        clawSlide.Stop();
+    }
+}
+public void processClawManualDown() {
+    if(currGamepad2.left_trigger > 0.1) {
+        clawSlide.Retract(currGamepad1.left_trigger);
+    }
+}
+
+public void processLiftDPad() {
+    if (currGamepad2.dpad_up && !prevGamepad2.dpad_up) {
+        clawSlide.MoveTo(20,1);
+    }
+    else if (currGamepad2.dpad_down && !prevGamepad2.dpad_down) {
+        //hang specimen
+        hangSpecimen();
+
+    }
+}
     @Override
     public void init() {
         prevGamepad1.copy(gamepad1);
         currGamepad1.copy(gamepad1);
         prevGamepad2.copy(gamepad2);
+        clawSlide.Init(hardwareMap);
         currGamepad2.copy(gamepad2);
+        specimanGrabber.Init(hardwareMap);
         intake.Init(hardwareMap);
         intakeSlide.Init(hardwareMap);
         specimanGrabber.Init(hardwareMap);
@@ -109,6 +139,10 @@ public class TeleTest extends OpMode {
         ), 1.0);
         processIntake();
         processSlide();
+        processClawStop();
+        processLiftDPad();
+        processClawManualDown();
+        processSpecimanGrabber();
         prevGamepad1.copy(currGamepad1);
         prevGamepad2.copy(currGamepad2);
 
