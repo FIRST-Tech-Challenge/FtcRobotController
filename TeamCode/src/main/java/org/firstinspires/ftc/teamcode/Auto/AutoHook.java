@@ -23,12 +23,12 @@ public class AutoHook extends LinearOpMode {
 
     waitForStart();
     Rotation2d rotation = new Rotation2d();
-    Pose2d target = new Pose2d(4, 0, rotation);
-    drivebase.alignWheels(this::opModeIsActive); // TODO: rear right wheel just spins idk why
-    sleep(2000);
+    Pose2d target = new Pose2d(1, 0, rotation);
+    drivebase.alignWheels(this::opModeIsActive); // TODO: rear wheels just spins idk why
+    sleep(1000);
     driveWithOdo(target, 3);
 
-    //to send it a different direction change target and direction and call driveWithOdo
+    //to send it a different direction change target and direction and call driveWithOdo with a given time
   }
 
   public void driveWithOdo(Pose2d wantedPos, double dt) {
@@ -41,8 +41,8 @@ public class AutoHook extends LinearOpMode {
       drivebase.drive(speeds, currentTime);
 /*
       var currentPos = drivebase.getPose();
-      if (currentPos != wantedPos) {
-        var movement = currentPos.minus(wantedPos); // TODO: figure out if this actually works with translating the robot to(we think it does)
+      if (currentPos != wantedPos) {   // TODO: find a better way to write this by adding a class into Pose2d that allows for comparison of 2 positions in a dead zone
+        var movement = currentPos.minus(wantedPos); // TODO: figure out if this actually works with translating the robot (I think it does)
         ChassisSpeeds newSpeeds = new ChassisSpeeds(movement.getX() / (dt / 2), movement.getY() / (dt / 2), movement.getRotation().getRadians() / (dt / 2));
         driveForTime(newSpeeds, currentTime / 2);
       } else return;
