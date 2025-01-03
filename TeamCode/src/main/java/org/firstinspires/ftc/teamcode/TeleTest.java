@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 import org.firstinspires.ftc.teamcode.hardware.Intake;
@@ -18,8 +19,10 @@ public class TeleTest extends OpMode {
     private MecanumDrive drive = null;
     private Intake intake = new Intake();  // get the intake class
     private Slide intakeSlide = new Slide("slide", "", Slide.ExtendMotorDirection.Forward, 1300, 1.0, 114.28);
-    private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 2600, 1.0,68.568);
+    private Slide clawSlide = new Slide("lift", "resetlift", Slide.ExtendMotorDirection.Reverse, 3192, 1.0,86); //68.568
     private SpecimenGrabber specimanGrabber = new SpecimenGrabber();
+    private Telemetry.Item output = null;
+    private Telemetry.Item output2 = null;
     Gamepad prevGamepad1 = new Gamepad();
     Gamepad currGamepad1 = new Gamepad();
     Gamepad prevGamepad2 = new Gamepad();
@@ -27,10 +30,10 @@ public class TeleTest extends OpMode {
     Intake.IntakePositon desiredPosition = Intake.IntakePositon.HOME;
 
     public void processSpecimanGrabber() {
-        if(currGamepad2.x) {
-            specimanGrabber.Close();
-        } else if (currGamepad2.y){
-            specimanGrabber.Open();
+        if(currGamepad2.x && !prevGamepad2.x) {
+            specimanGrabber.processOpenClose();
+        } else if (currGamepad2.y && !prevGamepad2.y){
+            clawSlide.MoveTo(44, 1);
         }
     }
     private void processIntake() {
@@ -101,7 +104,7 @@ public void processClawManualDown() {
 
 public void processLiftDPad() {
     if (currGamepad2.dpad_up && !prevGamepad2.dpad_up) {
-        clawSlide.MoveTo(20,1);
+        clawSlide.MoveTo(16.5,1);
     }
     else if (currGamepad2.dpad_down && !prevGamepad2.dpad_down) {
         //hang specimen
@@ -115,6 +118,7 @@ public void processLiftDPad() {
         currGamepad1.copy(gamepad1);
         prevGamepad2.copy(gamepad2);
         clawSlide.Init(hardwareMap);
+        output = telemetry.addData("ticks", clawSlide.motor.getCurrentPosition());
         currGamepad2.copy(gamepad2);
         specimanGrabber.Init(hardwareMap);
         intake.Init(hardwareMap);
@@ -130,6 +134,7 @@ public void processLiftDPad() {
     public void loop() {
         currGamepad1.copy(gamepad1);
         currGamepad2.copy(gamepad2);
+        output.addData("ticks", clawSlide.motor.getCurrentPosition());
         drive.setPowersFeildCentric(new PoseVelocity2d(
                 new Vector2d(
                         currGamepad1.left_stick_x,
@@ -152,7 +157,7 @@ public void processLiftDPad() {
     public void hangSpecimen() {
         try {
             clawSlide.MoveTo(0, 0.75);
-            Thread.sleep(200);
+            Thread.sleep(250);
             specimanGrabber.Open();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

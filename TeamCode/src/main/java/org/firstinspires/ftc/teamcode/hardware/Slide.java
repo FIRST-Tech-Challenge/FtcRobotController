@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 public class Slide {
-    private DcMotorEx motor = null;
+    public DcMotorEx motor = null;
     private TouchSensor zeroTouch = null;
     private String motorName = "";
     private String zeroTouchName = "";
