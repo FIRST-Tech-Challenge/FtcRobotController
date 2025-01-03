@@ -53,7 +53,7 @@ spotless {
             exclude "**/build/**", "**/build-*/**"
         }
         greclipse()
-        indentWithSpaces(4)
+        indentWithSpaces(2)
         trimTrailingWhitespace()
         endWithNewline()
     }
