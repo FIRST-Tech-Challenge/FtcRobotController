@@ -24,6 +24,7 @@ public class Claw {
     /* Set the right servo; true = open, false = close */
     public void setServo(boolean open) {
         double position = open ? Settings.Hardware.Servo.Claw.OPEN : Settings.Hardware.Servo.Claw.CLOSED;
+        baseRobot.logger.update("Claw position: ",  position + "");
         clawServo.setPosition(position);
     }
 

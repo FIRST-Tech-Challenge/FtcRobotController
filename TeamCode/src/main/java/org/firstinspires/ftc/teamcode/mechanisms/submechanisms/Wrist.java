@@ -67,13 +67,10 @@ public class Wrist {
 
         switch (currentPosition) {
             case HORIZONTAL:
-                nextPosition = Position.CHAMBER;
+                nextPosition = Position.VERTICAL;
                 break;
             case VERTICAL:
                 nextPosition = Position.HORIZONTAL;
-                break;
-            case CHAMBER:
-                nextPosition = Position.VERTICAL;
                 break;
             default:
                 nextPosition = Position.HORIZONTAL; // Fallback to HORIZONTAL if unknown

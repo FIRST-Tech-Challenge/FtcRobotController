@@ -144,7 +144,7 @@ public class DynamicInput {
             this.justRetractVertical = retractVertical && !prevRetractVertical;
             this.justExtendVertical = extendVertical && !prevExtendVertical;
             this.justWristUp = wristUp && !prevWrist;
-            this.justToggleClaw = toggleClaw &&! prevToggleClaw;
+            this.justToggleClaw = toggleClaw && !prevToggleClaw;
 
             this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
             this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);

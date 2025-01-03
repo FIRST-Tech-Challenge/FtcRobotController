@@ -236,6 +236,10 @@ public class BaseRobot {
                 outtake.claw.toggle();
             }
 
+            if (contextualActions.shoulderUp) {
+                outtake.linkage.cyclePosition();
+            }
+
         }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {

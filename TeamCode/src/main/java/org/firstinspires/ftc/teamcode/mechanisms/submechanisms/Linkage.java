@@ -11,10 +11,7 @@ public class Linkage {
     public static double position = 0;
     public final Servo linkageServo;
     public final double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
-    public final double verticalPos = Settings.Hardware.Servo.Linkage.VERTICAL_POSITION;
-    public final double chamberPos = Settings.Hardware.Servo.Linkage.HIGH_CHAMBER_POSITION;
-    public final double basketPos = Settings.Hardware.Servo.Linkage.HIGH_BASKET_POSITION;
-
+    public final double placePos = Settings.Hardware.Servo.Linkage.PLACE_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
@@ -27,14 +24,8 @@ public class Linkage {
     public void setPosition(Position newPosition) {
         double oldPosition = position;
         switch (newPosition) {
-            case VERTICAL:
-                position = verticalPos;
-                break;
-            case BASKET:
-                position = basketPos;
-                break;
-            case CHAMBER:
-                position = chamberPos;
+            case PLACE:
+                position = placePos;
                 break;
             case TRANSFER:
             default:
@@ -45,12 +36,8 @@ public class Linkage {
     }
 
     public Position position() {
-        if (position == verticalPos) {
-            return Position.VERTICAL;
-        } else if (position == basketPos) {
-            return Position.BASKET;
-        } else if (position == chamberPos) {
-            return Position.CHAMBER;
+        if (position == placePos) {
+            return Position.PLACE;
         } else if (position == transferPos) {
             return Position.TRANSFER;
         } else {
@@ -63,15 +50,12 @@ public class Linkage {
         Position nextPosition;
 
         switch (currentPosition) {
-            case VERTICAL:
-                nextPosition = Position.CHAMBER;
-                break;
-            case CHAMBER:
-                nextPosition = Position.BASKET;
+            case PLACE:
+                nextPosition = Position.TRANSFER;
                 break;
             case TRANSFER:
             default:
-                nextPosition = Position.VERTICAL;
+                nextPosition = Position.PLACE;
                 break;
         }
 
@@ -80,9 +64,7 @@ public class Linkage {
 
     public enum Position {
         TRANSFER,
-        VERTICAL,
-        CHAMBER,
-        BASKET,
+        PLACE,
         UNKNOWN,
     }
 

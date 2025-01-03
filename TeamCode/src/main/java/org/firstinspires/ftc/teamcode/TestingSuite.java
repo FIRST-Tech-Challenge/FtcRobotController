@@ -34,6 +34,7 @@ public class TestingSuite extends LinearOpMode {
             Settings.Hardware.IDs.WRIST_LEFT,
             Settings.Hardware.IDs.WRIST_RIGHT,
             Settings.Hardware.IDs.LINKAGE,
+            Settings.Hardware.IDs.CLAW,
     };
 
     private static final String[] LIST_OPTIONS = Stream.concat(Arrays.stream(MOTOR_OPTIONS),
