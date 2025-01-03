@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
-import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.armPIDConstants.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensionPIDCosntants.*;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensionConstants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;

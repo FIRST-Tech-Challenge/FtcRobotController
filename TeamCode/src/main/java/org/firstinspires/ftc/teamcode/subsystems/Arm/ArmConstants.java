@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.utils.BT.BTTranslation2d;
-import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingDouble;
-import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingTreeMap;
 
 public class ArmConstants {
     public static final double armMass = 0;
@@ -21,18 +18,24 @@ public class ArmConstants {
         public BTTranslation2d setpoint = new BTTranslation2d(x,y);
     }
     @Config
-    public static class armPIDConstants {
-        public static double kG = 0;
+    public static class pivotPIDConstants {
+        public static double setpoint = 0;
         public static double kS = 0.032;
+        public static double pKP = 0.02;
+        public static double pKI = 0;
+        public static double pKD = 0;
+        public static double iZone = 0;
+        public static double tolerance = 1;
+        public static double pMaxOutput=0.5;
+        public static double goalTolerance = 1;
+        public static double goalVelocityTolerance = 0.5;
+        public static double vConstraint = 10;
+        public static double aConstraint = 10;
+    }
+    public static class extensionPIDCosntants{
         public static double eKP = 0;
         public static double eKI = 0;
         public static double eKD = 0;
-        public static double pKP = 0;
-        public static double pKI = 0;
-        public static double pKD = 0;
-
-    }
-    public static class ffConstants{
 
     }
 

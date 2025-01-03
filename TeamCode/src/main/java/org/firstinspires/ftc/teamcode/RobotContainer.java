@@ -1,20 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_LEFT;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUMPER_RIGHT;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_DOWN;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_LEFT;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_RIGHT;
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.BUTTON_UP;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.DPAD_DOWN;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.DPAD_LEFT;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.DPAD_RIGHT;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.DPAD_UP;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.LEFT_TRIGGER;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.LEFT_X;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.LEFT_Y;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.RIGHT_TRIGGER;
-import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.RIGHT_X;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -22,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.Arm.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Arm.PivotSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisCommands.*;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
@@ -60,8 +47,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 //                        () -> squareInput(m_controller.left_x.getAsDouble()),
 //                        () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
 //                true, LEFT_X, LEFT_Y, LEFT_TRIGGER, RIGHT_TRIGGER).whenInactive(m_chassis.stopMotor());
-        m_controller.assignCommand(m_pivot.set(),true,BUTTON_RIGHT);
-        m_controller.assignCommand(m_pivot.stop(),true,BUTTON_LEFT);
+        m_controller.assignCommand(m_pivot.set(),false,BUTTON_RIGHT);
+        m_controller.assignCommand(m_pivot.disablePID(),true,BUTTON_LEFT);
+        m_controller.assignCommand(m_pivot.enablePID(),true,BUTTON_UP);
     }
 
     private void resetGyro() {

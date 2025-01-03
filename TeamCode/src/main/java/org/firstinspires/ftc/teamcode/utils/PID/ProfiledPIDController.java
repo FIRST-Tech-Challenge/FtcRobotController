@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.utils.Math.*;
  */
 public class ProfiledPIDController  {
   private static int instances;
+  private boolean m_disabled = false;
+  private double m_goalTolerance;
+  private double m_goalvelocityTolerance;
 
   public PIDController m_controller;
   private double m_minimumInput;
@@ -48,6 +51,8 @@ public class ProfiledPIDController  {
       double Kp, double Ki, double Kd, TrapezoidProfile.Constraints constraints, double period) {
     m_controller = new PIDController(Kp, Ki, Kd, 0,period);
     m_constraints = constraints;
+    m_goalTolerance = 0;
+    m_goalvelocityTolerance = 0;
     instances++;
 
   }
@@ -160,8 +165,11 @@ public class ProfiledPIDController  {
    *
    * @param goal The desired goal position.
    */
+  public void setGoal(double goal,double resetMeasure) {
+    m_goal = new TrapezoidProfile.State(goal, 0);
+    reset(resetMeasure);
+  }
   public void setGoal(double goal) {
-
     m_goal = new TrapezoidProfile.State(goal, 0);
   }
 
@@ -182,7 +190,9 @@ public class ProfiledPIDController  {
    * @return True if the error is within the tolerance of the error.
    */
   public boolean atGoal() {
-    return atSetpoint() && m_goal.equals(m_setpoint);
+    return Math.abs(m_controller.getPositionError()) < m_goalTolerance
+            && Math.abs(m_controller.getVelocityError()) < m_goalvelocityTolerance
+            && m_goal.equals(m_setpoint);
   }
 
   /**
@@ -264,6 +274,10 @@ public class ProfiledPIDController  {
    */
   public void setTolerance(double positionTolerance, double velocityTolerance) {
     m_controller.setTolerance(positionTolerance, velocityTolerance);
+  }
+  public void setGoalTolerance(double positionTolerance, double velocityTolerance) {
+    m_goalTolerance = positionTolerance;
+    m_goalvelocityTolerance = velocityTolerance;
   }
 
   /**
@@ -368,6 +382,16 @@ public class ProfiledPIDController  {
    */
   public void reset(double measuredPosition, double measuredVelocity) {
     reset(new TrapezoidProfile.State(measuredPosition, measuredVelocity));
+  }
+
+  public void disable(){
+    m_disabled = false;
+    m_controller.disable();
+  }
+  public void enable(double measurement){
+    m_disabled = true;
+    m_controller.enable();
+    reset(measurement);
   }
 
   /**
