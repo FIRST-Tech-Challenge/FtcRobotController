@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -27,7 +28,7 @@ import org.firstinspires.ftc.teamcode.utils.geometry.BTTranslation2d;
 
 import java.util.function.DoubleSupplier;
 
-public class ChassisSubsystem implements Subsystem{
+public class ChassisSubsystem extends SubsystemBase {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
     public ProfiledPIDController m_pidY;

@@ -11,7 +11,7 @@ public class setScoreAngle extends BTCommand{
     }
 
     public void execute(){
-        m_pivot.setAngle();//tbd
+        m_pivot.setAngle(0);//tbd
     }
 
 }

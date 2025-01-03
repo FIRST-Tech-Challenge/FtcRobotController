@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems.Gripper;
 
 import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.*;       ;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.acmerobotics.dashboard.FtcDashboard;
 
-public class GripperSubsystem implements Subsystem {
+public class GripperSubsystem extends SubsystemBase {
 
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
     Servo servo1;
