@@ -32,9 +32,9 @@ public class DriveAction {
 
     public double[] calculatePower(Gamepad gamepad) {
         //negative because gamepad y is flip
-        double forward = -gamepad.left_stick_y;
-        double turn = gamepad.right_stick_x;
-        double strafe = gamepad.left_stick_x;
+        double forward = -gamepad.left_stick_y * -gamepad.left_stick_y * -gamepad.left_stick_y; //cube so slower is slower and faster is faster
+        double turn = gamepad.right_stick_x * gamepad.right_stick_x * gamepad.right_stick_x;
+        double strafe = gamepad.left_stick_x * gamepad.left_stick_x * gamepad.left_stick_x;
 
         Log.d("drive", "forward " + forward);
         Log.d("drive", "turn " + turn);

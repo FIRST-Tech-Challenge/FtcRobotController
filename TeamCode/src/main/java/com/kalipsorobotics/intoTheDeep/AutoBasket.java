@@ -56,9 +56,9 @@ public class AutoBasket extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
-        final int INTAKE_SAMPLE_X = -640;
+        final int INTAKE_SAMPLE_X = -590;
 
-        int outtakeXPos = -220;
+        int outtakeXPos = -190;
         int outtakeYPos = 1020;
 
         //================begin of first specimen====================
@@ -116,7 +116,7 @@ public class AutoBasket extends LinearOpMode {
 
         TransferAction transferAction1 = new TransferAction(intakeClaw, outtake);
         transferAction1.setName("transferAction1");
-        transferAction1.setDependentActions(intakeTransferReady1);
+        transferAction1.setDependentActions(intakeTransferReady1, outtakeTransferReady);
         redAutoBasket.addAction(transferAction1);
 
         //TODO INTAKE ACTION
@@ -198,7 +198,7 @@ public class AutoBasket extends LinearOpMode {
 
         TransferAction transferAction2 = new TransferAction(intakeClaw, outtake);
         transferAction2.setName("transferAction2");
-        transferAction2.setDependentActions(intakeTransferReady2);
+        transferAction2.setDependentActions(intakeTransferReady2, outtakeTransferReady1);
         redAutoBasket.addAction(transferAction2);
 
         //TODO INTAKE ACTION
@@ -260,7 +260,7 @@ public class AutoBasket extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(moveOutBasket2);
         //move basket to sample 2
-        moveToSample3.addPoint(-375, 1064.35, 180-27.6);
+        moveToSample3.addPoint(-300, 1064.35, 180-27.6);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
@@ -287,7 +287,7 @@ public class AutoBasket extends LinearOpMode {
 
         TransferAction transferAction3 = new TransferAction(intakeClaw, outtake);
         transferAction3.setName("transferAction3");
-        transferAction3.setDependentActions(intakeTransferReady3);
+        transferAction3.setDependentActions(intakeTransferReady3, outtakeTransferReady2);
         redAutoBasket.addAction(transferAction3);
 //
 //        IntakeReadyAction intakeReady3 = new IntakeReadyAction(10, intake);
@@ -388,8 +388,9 @@ public class AutoBasket extends LinearOpMode {
 
             wheelOdometry.updatePosition();
 
+            maintainLS.setIsDone(false);
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-            maintainLS.update();
+            maintainLS.updateCheckDone();
 
             redAutoBasket.updateCheckDone();
 

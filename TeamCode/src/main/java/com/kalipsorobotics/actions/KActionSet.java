@@ -15,12 +15,6 @@ public class KActionSet extends Action {
 
     @Override
     public void update() {
-        if (isDone) {
-            Log.d("action set log", "done for " + name);
-
-            return;
-
-        }
         for (Action a : actions) {
             if (a.dependentActionsDone()) {
                 Log.d("action set log", "executing " + a);
@@ -32,35 +26,46 @@ public class KActionSet extends Action {
     @Override
     public boolean checkDoneCondition() {
         for (Action a : actions) {
-            if (!a.checkDoneCondition()) {
+            if (!a.getIsDone()) {
                 return false;
             }
         }
-        isDone = true;
-        return isDone;
+        return true;
     }
 
     @Override
     public boolean updateCheckDone(){
+        if (isDone) {
+            Log.d("action set log", "done for " + name);
+            return true;
+        }
+
         update();
-        checkDoneCondition();
+        return updateIsDone();
+    }
+
+    @Override
+    protected boolean updateIsDone() {
+        if(isDone) {
+            return isDone;
+        }
+        isDone = checkDoneCondition();
         return isDone;
     }
+
     public void printWithDependentActions() {
-        Log.d("action dependancies", "Start Action Set");
+        Log.d("action dependencies", "Start Action Set");
         super.printWithDependentActions();
 
         for (Action a : actions) {
             a.printWithDependentActions();
         }
-        Log.d("action dependancies", "End Action Set");
+        Log.d("action dependencies", "End Action Set");
 
     }
 
     public void clear() {
         actions.clear();
     }
-
-
 
 }

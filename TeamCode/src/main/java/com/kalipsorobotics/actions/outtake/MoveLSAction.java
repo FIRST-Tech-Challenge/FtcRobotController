@@ -93,11 +93,11 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(100)) {
-            lowestPower = 0.18;
+            lowestPower = 0.13;
         }
 
         if (targetTicks > mmToTicksLS(400)) {
-            lowestPower = 0.2;
+            lowestPower = 0.15;
         }
 
         if (targetTicks > mmToTicksLS(650)) {
@@ -105,7 +105,7 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(700)) {
-            lowestPower = 0.28;
+            lowestPower = 0.23;
         }
 
         if (targetTicks > mmToTicksLS(720)) {
@@ -121,8 +121,7 @@ public class MoveLSAction extends Action {
 
     public void finish() {
         isDone = true;
-        linearSlide1.setPower(0);
-        linearSlide2.setPower(0);
+        setLSPower(0);
     }
 
     public void finishWithoutSetPower() {
@@ -160,7 +159,11 @@ public class MoveLSAction extends Action {
     }
 
     @Override
-    public boolean checkDoneCondition() {
+    protected boolean checkDoneCondition() {
+        if(isDone) {
+            return true;
+        }
+
         if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS)) {
             Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                             "targetTicks=%.3f, " +
@@ -168,21 +171,27 @@ public class MoveLSAction extends Action {
                     this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
                     currentTicks));
             finish();
+            return true;
         }
 
         if(velocity < 0.01) {
-            if(timeoutTimer.milliseconds() > 1000) {
+            if(timeoutTimer.milliseconds() > 10000) {
                 finish();
+                return true;
             }
         } else {
             timeoutTimer.reset();
         }
 
-        return isDone;
+        return false;
     }
 
     @Override
-    public void update() {
+    protected void update() {
+        if(isDone) {
+            return;
+        }
+
         if(!hasStarted) {
             setGlobalLinearSlideMaintainTicks(targetTicks);
             Log.d("Outtake_LS", "name " + getName() + " set global to " + globalLinearSlideMaintainTicks);
@@ -231,8 +240,12 @@ public class MoveLSAction extends Action {
         lastTicks = currentTicks;
 
         //brake();
-        Log.d("Outtake_LS_power", name + " final power set to " + power);
+        setLSPower(power);
+    }
+
+    private void setLSPower(double power) {
         linearSlide1.setPower(power);
         linearSlide2.setPower(power);
+        Log.d("Outtake_LS_power", name + " final power set to " + power);
     }
 }

@@ -119,7 +119,10 @@ public class AutoFloorSpecimen extends LinearOpMode {
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();
-            maintainLS.update();
+
+            maintainLS.setIsDone(false);
+            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+            maintainLS.updateCheckDone();
 
             redAutoSpecimen.updateCheckDone();
 

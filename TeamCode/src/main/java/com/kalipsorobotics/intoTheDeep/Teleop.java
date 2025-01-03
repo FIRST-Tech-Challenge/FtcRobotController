@@ -403,7 +403,7 @@ public class Teleop extends LinearOpMode {
                 if(moveLS != null) {
                     moveLS.finishWithoutSetPower();
                 }
-                double targetLsMM = outtake.getCurrentPosMm() + (-100.0 * outtakeLSStickValue);
+                double targetLsMM = outtake.getCurrentPosMm() + (-90.0 * outtakeLSStickValue);
                 moveLS = new MoveLSAction(outtake, targetLsMM);
                 moveLS.setName("moveLS");
                 Log.d("ls_debug", "joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);
@@ -458,7 +458,7 @@ public class Teleop extends LinearOpMode {
             if(specimenHangPressed) {
                 if(specimenHang == null || specimenHang.getIsDone()){
                    specimenHang = new SpecimenHang(outtake);
-                   specimenHang.setName("specimanHang");
+                   specimenHang.setName("specimenHang");
 
                     setLastLsAction(specimenHang);
                 }
@@ -539,8 +539,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if(lastLSAction == null || lastLSAction.getIsDone()) {
+                maintainLS.setIsDone(false);
                 maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-                maintainLS.update();
+                maintainLS.updateCheckDone();
             }
 
             telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());

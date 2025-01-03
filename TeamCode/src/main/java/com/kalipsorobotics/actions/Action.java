@@ -53,8 +53,8 @@ public abstract class Action {
     public boolean updateCheckDone() {
         if (isDone) {
             return true;
-
         } //if done never update
+
         for (Action action : dependentActions) {
             if (!action.getIsDone()) {
                 return false;
@@ -70,17 +70,18 @@ public abstract class Action {
 
     public boolean dependentActionsDone() {
         for (Action a : dependentActions) {
-            if (!a.isDone) {
+            if (!a.getIsDone()) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean updateIsDone() {
+    protected boolean updateIsDone() {
         isDone = checkDoneCondition();
         return isDone;
     }
+
     protected abstract boolean checkDoneCondition();
 
     //motor power, etc
@@ -109,6 +110,6 @@ public abstract class Action {
         for (Action a : dependentActions) {
             stringBuilder.append(a);
         }
-        Log.d("action dependancies",  stringBuilder.toString());
+        Log.d("action dependencies",  stringBuilder.toString());
     }
 }

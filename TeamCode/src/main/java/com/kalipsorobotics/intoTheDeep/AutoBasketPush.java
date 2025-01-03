@@ -109,7 +109,10 @@ public class AutoBasketPush extends LinearOpMode {
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();
-            maintainLS.update();
+
+            maintainLS.setIsDone(false);
+            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+            maintainLS.updateCheckDone();
 
             redAutoBasket.updateCheckDone();
 

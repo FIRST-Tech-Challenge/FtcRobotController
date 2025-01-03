@@ -89,7 +89,9 @@ public class MechanismTestAuto extends LinearOpMode {
         redAutoSpecimen.printWithDependentActions();
         waitForStart();
         while (opModeIsActive()) {
-            maintenanceLS.update();
+            maintenanceLS.setIsDone(false);
+            maintenanceLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+            maintenanceLS.updateCheckDone();
             wheelOdometry.updatePosition();
             redAutoSpecimen.updateCheckDone();
 

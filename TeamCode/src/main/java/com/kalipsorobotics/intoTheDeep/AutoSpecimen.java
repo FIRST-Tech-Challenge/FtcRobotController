@@ -156,8 +156,9 @@ public class AutoSpecimen extends LinearOpMode {
 
             wheelOdometry.updatePosition();
 
+            maintainLS.setIsDone(false);
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-            maintainLS.update();
+            maintainLS.updateCheckDone();
 
             redAutoSpecimen.updateCheckDone();
 

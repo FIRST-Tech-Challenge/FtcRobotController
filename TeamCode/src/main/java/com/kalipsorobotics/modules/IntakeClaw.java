@@ -15,7 +15,7 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
 
-    public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.77; //decrease to move more horizontal, increase to move more vertical
+    public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
     //INTAKE SAMPLE IN FUNNEL
 
@@ -32,17 +32,17 @@ public class IntakeClaw {
 
     //TRANSFER READY
 
-    public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.5;
+    public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.48;
 
     public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.5;       //increase to go down, decrease to go up
 
     public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.13;     //decrease to pivot back of the robot, increase to pivot to front
 
-    public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.45;
+    public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.46;
 
     //INTAKE ACTION
 
-    public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.41; //increase to move more horizontal, decrease to move more vertical
+    public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.77; //increase to move more horizontal, decrease to move more vertical
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.9; //0.85    //increase to go down, decrease to go up
 
@@ -70,7 +70,7 @@ public class IntakeClaw {
     public static final double INTAKE_CLAW_CLOSE = 0.36;
     public static final double INTAKE_CLAW_OPEN = 0.06; //increase to close claw more
 
-    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.77;
+    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43;
     public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS =0.645;
 
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
