@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class GripperTest extends OpMode {
+public class DeliveryGrippersTest extends OpMode {
     public Servo grippers;
     public ElapsedTime buttonTimer = new ElapsedTime();
     public double target = 0;
     @Override
     public void init() {
-        grippers = hardwareMap.get(Servo.class, "grippers");
+        grippers = hardwareMap.get(Servo.class, "deliveryGrippers");
         grippers.setPosition(0);
     }
 

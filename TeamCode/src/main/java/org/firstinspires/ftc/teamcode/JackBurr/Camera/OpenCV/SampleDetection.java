@@ -12,6 +12,11 @@ public class SampleDetection {
     public double angle;
     public double x;
     public double y;
+    public enum SampleRotation {
+        HORIZONTAL,
+        VERTICAL
+    }
+    public SampleRotation sampleRotation;
     public RotatedRect boxFit;
     public boolean exists = true;
     public SampleDetection (ColorRange colorRange, RotatedRect rotatedRect, boolean exists){
@@ -23,5 +28,11 @@ public class SampleDetection {
         this.y = rotatedRect.center.y;
         this.exists = exists;
         this.boxFit = rotatedRect;
+        if (this.width > this.height){
+            this.sampleRotation = SampleRotation.HORIZONTAL;
+        }
+        else {
+            this.sampleRotation = SampleRotation.VERTICAL;
+        }
     }
 }

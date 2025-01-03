@@ -6,27 +6,27 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class GripperTest extends OpMode {
-    public Servo grippers;
+public class DeliveryAxonTest extends OpMode {
+    public Servo axon;
     public ElapsedTime buttonTimer = new ElapsedTime();
     public double target = 0;
     @Override
     public void init() {
-        grippers = hardwareMap.get(Servo.class, "grippers");
-        grippers.setPosition(0);
+        axon = hardwareMap.get(Servo.class, "deliveryServo");
+        axon.setPosition(0);
     }
 
     @Override
     public void loop() {
         if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_right){
-            target = target + 0.05;
+            target = target + 0.01;
             buttonTimer.reset();
         }
         else if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_left){
-            target = target - 0.05;
+            target = target - 0.01;
             buttonTimer.reset();
         }
-        grippers.setPosition(target);
+        axon.setPosition(target);
         telemetry.addLine(String.valueOf(target));
     }
 }

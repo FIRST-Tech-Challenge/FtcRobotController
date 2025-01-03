@@ -64,8 +64,7 @@ public class SampleDetectorToolkit {
     }
 
     public double findNeededRotationDegrees(RotatedRect boxFit){
-        double angle  = boxFit.angle;
-        return 90 - angle;
+        return boxFit.angle;
     }
 
     public Point getCenter(int width, int height) {

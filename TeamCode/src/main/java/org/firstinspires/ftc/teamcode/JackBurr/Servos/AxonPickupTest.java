@@ -34,8 +34,6 @@ public class AxonPickupTest extends OpMode {
         right_servo = hardwareMap.get(Servo.class, "right_diff");
         left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
         right_servo_encoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
-        left_servo.setDirection(Servo.Direction.REVERSE);
-        right_servo.setDirection(Servo.Direction.REVERSE);
         left_servo.setPosition(1);
         right_servo.setPosition(1);
         grippers.setPosition(1);

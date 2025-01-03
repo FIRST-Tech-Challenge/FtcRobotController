@@ -42,10 +42,7 @@ public class SampleDetectorV2 extends OpMode {
         BLUE_AND_YELLOW,
         ALL
     }
-    public int index = 0;
-    public SelectedColors[] modesList = {SelectedColors.RED_ONLY, SelectedColors.YELLOW_ONLY, SelectedColors.RED_AND_BLUE, SelectedColors.RED_AND_YELLOW, SelectedColors.BLUE_AND_YELLOW, SelectedColors.ALL};
-    public boolean selected = false;
-    public SelectedColors selectedColors;
+    public double sampleAngle;
     @Override
     public void init() {
         telemetry.setMsTransmissionInterval(50);
@@ -85,12 +82,21 @@ public class SampleDetectorV2 extends OpMode {
         }
         */
         closestSample = toolkit.findClosestSample(center, masterList);
+        sampleAngle = closestSample.angle;
+        if (closestSample.width < closestSample.height) {
+            sampleAngle = sampleAngle - 90;
+            closestSample.sampleRotation = SampleDetection.SampleRotation.HORIZONTAL;
+        }
+        else {
+            closestSample.sampleRotation = SampleDetection.SampleRotation.VERTICAL;
+        }
         telemetry.addLine("Detected " + toolkit.getColorName(closestSample) + " sample/specimen:");
         telemetry.addLine("\t X Position: " + closestSample.x);
         telemetry.addLine("\t Y Position: " + closestSample.y);
         telemetry.addLine("\t Width: " + closestSample.width);
         telemetry.addLine("\t Height: " + closestSample.height);
-        telemetry.addLine("\t Angle: " + closestSample.angle);
+        telemetry.addLine("\t Angle: " + sampleAngle);
+        telemetry.addLine("\t Orientation: " + closestSample.sampleRotation.name());
         telemetry.addLine("\t Rotation Needed: " + toolkit.findNeededRotationDegrees(closestSample.boxFit));
     }
 

@@ -196,8 +196,8 @@ public class DifferentialV2 {
     }
 
     public void topServosUp(boolean debug){
-        setTopLeftServoPosition(0.95);
-        setTopRightServoPosition(0.95);
+        setTopLeftServoPosition(0.85);
+        setTopRightServoPosition(0.85);
         if(debug){
             telemetry.addData("Left Servo Position: ", topLeft.getPosition());
             telemetry.addData("Right Servo Position: ", topRight.getPosition());

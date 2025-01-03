@@ -1,34 +1,19 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Servos;
 
-import android.provider.SearchRecentSuggestions;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp
-public class DeliveryAxonV1 extends OpMode {
+public class DeliveryAxonV1 {
     public Servo axon;
-    public ElapsedTime buttonTimer = new ElapsedTime();
-    public double target = 0;
-    @Override
-    public void init() {
+    public HardwareMap hardwareMap;
+
+    public void init(HardwareMap hardwareMap){
+        this.hardwareMap = hardwareMap;
         axon = hardwareMap.get(Servo.class, "deliveryServo");
         axon.setPosition(0);
     }
 
-    @Override
-    public void loop() {
-        if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_right){
-            target = target + 0.1;
-            buttonTimer.reset();
-        }
-        else if (buttonTimer.seconds() > 0.3 && gamepad1.dpad_left){
-            target = target - 0.1;
-            buttonTimer.reset();
-        }
-        axon.setPosition(target);
-        telemetry.addLine(String.valueOf(target));
+    public void setPosition(double position){
+        axon.setPosition(position);
     }
 }

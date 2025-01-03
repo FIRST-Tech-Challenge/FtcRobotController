@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class GrippersV1 {
+public class DeliveryGrippersV1 {
     public Servo grippers;
     public HardwareMap hardwareMap;
     public void init(HardwareMap hwMap, Telemetry telemetry){
         this.hardwareMap = hwMap;
-        grippers = hardwareMap.get(Servo.class, "grippers");
+        grippers = hardwareMap.get(Servo.class, "deliveryGrippers");
     }
 
     public void setPosition(double position){
