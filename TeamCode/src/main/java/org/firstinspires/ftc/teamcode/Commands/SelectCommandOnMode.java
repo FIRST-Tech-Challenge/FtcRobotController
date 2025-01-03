@@ -27,14 +27,17 @@ public class SelectCommandOnMode extends CommandBase {
         else
              cmd = cmd2;
 
-        // go ahead and schedule the command. If null, do nothing.
+        // go ahead and initialize the command. If null, do nothing.
         if (cmd!=null)
-            cmd.schedule();
+            cmd.initialize();
     }
 
     // This method is called periodically while command is active
     @Override
-    public void execute() { }
+    public void execute() {
+        if (cmd!=null)
+            cmd.execute();
+    }
 
     // This method to return true only when command is to finish. Otherwise return false
     @Override
@@ -46,9 +49,9 @@ public class SelectCommandOnMode extends CommandBase {
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
-        // we are to end - end the commmand (if there is one)
+        // we are to end - end the command (if there is one)
         if (cmd!=null)
-            cmd.cancel();
+            cmd.end(interrupted);
     }
 
 }

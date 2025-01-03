@@ -53,13 +53,14 @@ public class MoveToPose extends CommandBase {
                 dest.getRotation()
         );
 
-        // execute the follow-path command
-        cmd.schedule();
+        // initialize the follow-path command
+        cmd.initialize();
     }
 
     // This method is called periodically while command is active
     @Override
     public void execute() {
+        cmd.execute();
     }
 
     // This method to return true only when command is to finish. Otherwise return false
@@ -67,14 +68,14 @@ public class MoveToPose extends CommandBase {
     public boolean isFinished() {
 
         // we are finished only when follow-path is finished
-        return ( cmd.isFinished() || ! cmd.isScheduled() );
+        return cmd.isFinished();
     }
 
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
-        // if we are canceled, then cancel follow-path command
-        cmd.cancel();
+        // we are ending, end the follow-path command
+        cmd.end(interrupted);
     }
 
 }
