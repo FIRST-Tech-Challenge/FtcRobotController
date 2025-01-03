@@ -15,8 +15,13 @@ public class IntakeSlidesV1 {
     }
 
     public void runToPosition(int position, double power){
-        intakeSlides.setPower(power);
-        intakeSlides.setTargetPosition(position);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(intakeSlides.getCurrentPosition() != position) {
+            intakeSlides.setPower(power);
+            intakeSlides.setTargetPosition(position);
+            intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else {
+            intakeSlides.setPower(0);
+        }
     }
 }
