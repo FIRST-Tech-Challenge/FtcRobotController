@@ -22,29 +22,31 @@ public class AutoHook extends LinearOpMode {
     drivebase.initGyro();
 
     waitForStart();
-    ChassisSpeeds speeds = new ChassisSpeeds(4, 0, 0);
+    Rotation2d rotation = new Rotation2d();
+    Pose2d target = new Pose2d(4, 0, rotation);
     drivebase.alignWheels(this::opModeIsActive); // TODO: rear right wheel just spins idk why
     sleep(2000);
-    driveWithOdo(speeds, 3);
+    driveWithOdo(target, 3);
+
+    //to send it a different direction change target and direction and call driveWithOdo
   }
 
-  public void driveWithOdo(ChassisSpeeds speeds, double dt) {
+  public void driveWithOdo(Pose2d wantedPos, double dt) {
     double startTime = Utils.getTimeSeconds();
 
-    Rotation2d rotation = new Rotation2d(); // TODO: figure out a way to make this rotation2d not just 0
-    Pose2d wantedPos = new Pose2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, rotation); // TODO: figure out predetermined variables of the positions that we want
+    ChassisSpeeds speeds = new ChassisSpeeds(wantedPos.getX()/dt, wantedPos.getY()/dt, wantedPos.getRotation().getRadians()/dt);
 
     while (opModeIsActive()) {
       double currentTime = Utils.getTimeSeconds() - startTime;
-      driveForTime(speeds, currentTime / 2);
-
+      drivebase.drive(speeds, currentTime);
+/*
       var currentPos = drivebase.getPose();
       if (currentPos != wantedPos) {
         var movement = currentPos.minus(wantedPos); // TODO: figure out if this actually works with translating the robot to(we think it does)
         ChassisSpeeds newSpeeds = new ChassisSpeeds(movement.getX() / (dt / 2), movement.getY() / (dt / 2), movement.getRotation().getRadians() / (dt / 2));
         driveForTime(newSpeeds, currentTime / 2);
       } else return;
-
+*/
       if (Utils.getTimeSeconds() - startTime >= dt) {
         return;
       }
