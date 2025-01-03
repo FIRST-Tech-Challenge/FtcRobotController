@@ -14,9 +14,15 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.8; //decrease to move more horizontal, increase to move more vertical
 
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0;
+
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.5;
+
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0;
+
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0;
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62;     //increase to retract more
-
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.5;
 
