@@ -3,21 +3,29 @@ package com.kalipsorobotics.actions.intake;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
+import com.kalipsorobotics.modules.Outtake;
 
 public class IntakeFunnelReady extends KActionSet {
 
-    public IntakeFunnelReady(IntakeClaw intake) {
+    public IntakeFunnelReady(IntakeClaw intake, Outtake outtake) {
 
-        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_PIVOT_FUNNEL_READY_POS);
+        KServoAutoAction moveOuttakePivot = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
+        moveOuttakePivot.setName("moveOuttakePivot");
+        this.addAction(moveOuttakePivot);
+
+        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_FUNNEL_READY_POS);
         moveBigPivot.setName("moveBigPivot");
+        moveBigPivot.setDependentActions(moveOuttakePivot);
         this.addAction(moveBigPivot);
 
-        KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeBigSweepServo(), IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_READY_POS);
+        KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_READY_POS);
         moveSmallPivot.setName("moveSmallPivot");
+        moveSmallPivot.setDependentActions(moveOuttakePivot);
         this.addAction(moveSmallPivot);
 
         KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
         moveSmallSweep.setName("moveSmallSweep");
+        moveSmallSweep.setDependentActions(moveOuttakePivot);
         this.addAction(moveSmallSweep);
 
         KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);

@@ -6,23 +6,29 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 public class IntakeClaw {
     private static IntakeClaw single_instance = null;
 
+    //INTAKE READY
+
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
     public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.67;       //increase to go down, decrease to go up
 
     public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
 
-    public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.8; //decrease to move more horizontal, increase to move more vertical
+    public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.77; //decrease to move more horizontal, increase to move more vertical
 
-    public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0;
+    //INTAKE SAMPLE IN FUNNEL
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.5;
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0.1;
 
-    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0;
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.08; //decrease to pivot back to the robot more
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0;
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.1;
 
-    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62;     //increase to retract more
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.04;
+
+    public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62; //increase to retract more
+
+    //TRANSFER READY
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.5;
 
@@ -30,7 +36,9 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.13;     //decrease to pivot back of the robot, increase to pivot to front
 
-    public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.77;
+    public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.45;
+
+    //INTAKE ACTION
 
     public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.41; //increase to move more horizontal, decrease to move more vertical
 

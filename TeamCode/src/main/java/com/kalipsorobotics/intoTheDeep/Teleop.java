@@ -10,6 +10,8 @@ import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
+import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
+import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
@@ -79,6 +81,8 @@ public class Teleop extends LinearOpMode {
         SampleEndToEndSequence sampleEndToEndSequence = null;
         SampleEndToEndSequence sampleEndToEndSequence2 = null;
         SpecimenHang specimenHang = null;
+        IntakeFunnelReady intakeFunnelReady = null;
+        IntakeFunnelAction intakeFunnelAction = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
         MoveLSAction moveLS = null;
@@ -100,6 +104,8 @@ public class Teleop extends LinearOpMode {
         boolean angleLockPressed;
         boolean hangPressed = false;
         boolean moveWallTeleopPressed = false;
+        boolean intakeFunnelReadyPressed = false;
+        boolean intakeFunnelActionPressed = false;
 
         // GAMEPAD 2
         double outtakeLSStickValue;
@@ -137,6 +143,8 @@ public class Teleop extends LinearOpMode {
             angleLockPressed = kGamePad1.isToggleButtonY();
             hangPressed = kGamePad1.isToggleButtonB();
             moveWallTeleopPressed = kGamePad1.isToggleButtonA();
+            intakeFunnelReadyPressed = kGamePad1.isToggleDpadLeft();
+            intakeFunnelActionPressed = kGamePad1.isToggleDpadDown();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -232,6 +240,29 @@ public class Teleop extends LinearOpMode {
                     autoRobotHangAction = new AutoRobotHangAction(outtake);
                     autoRobotHangAction.setName("autoRobotHangAction");
                 }
+            }
+
+            //INTAKE SAMPLE IN FUNNEL
+            if(intakeFunnelReadyPressed) {
+                if (intakeFunnelReady == null || intakeFunnelReady.getIsDone()){
+                    intakeFunnelReady = new IntakeFunnelReady(intakeClaw, outtake);
+                    intakeFunnelReady.setName("intakeFunnelReady");
+                }
+
+            }
+            if (intakeFunnelReady != null){
+                intakeFunnelReady.updateCheckDone();
+            }
+
+            if(intakeFunnelActionPressed) {
+                if (intakeFunnelAction == null || intakeFunnelAction.getIsDone()){
+                    intakeFunnelAction = new IntakeFunnelAction(intakeClaw);
+                    intakeFunnelAction.setName("intakeFunnelAction");
+                }
+
+            }
+            if (intakeFunnelAction != null){
+                intakeFunnelAction.updateCheckDone();
             }
 
 
