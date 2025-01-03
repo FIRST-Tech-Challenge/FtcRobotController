@@ -38,8 +38,10 @@ public class PivotSubsystem extends SubsystemBase {
         this.map = map;
         pivotLeft = new MotorEx(map,"pivotLeft");//tbd
         pivotLeft.setInverted(true);
+        pivotLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         pivotRight = new MotorEx(map,"pivotRight");//tbd
         pivotRight.setInverted(false);
+        pivotRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.armLength = armLength;
         this.armCOM = armCOM;
         currentArmCOM = armCOM.getAsDouble();
@@ -70,12 +72,13 @@ public class PivotSubsystem extends SubsystemBase {
     private void updateTelemetry() {
         dashboardTelemetry.addData("armAngle", currentArmAngle);
         dashboardTelemetry.addData("COMAngle", aCOMAngle());
-        dashboardTelemetry.addData("cos(COMAngle)", Math.cos(Math.toRadians(aCOMAngle())));
+        dashboardTelemetry.addData("balanceAngle", aBalanceAngle());
         dashboardTelemetry.addData("FF", calculateFeedForward());
         dashboardTelemetry.addData("rightEncoder", rightEncoder.getPosition());
         dashboardTelemetry.addData("rightEncoder rev", rightEncoder.getRevolutions());
         dashboardTelemetry.addData("leftEncoder rev", leftEncoder.getRevolutions());
         dashboardTelemetry.update();
+
     }
 
     public double setAngle(double setpoint){
@@ -87,7 +90,7 @@ public class PivotSubsystem extends SubsystemBase {
 //         pivotFF = armMass*g*currentArmCOM*Math.sin(angle);
 //    }
     public double calculateFeedForward(){
-        return -akG(currentArmLength) * Math.cos(Math.toRadians(aCOMAngle()));
+        return -kG * Math.cos(Math.toRadians(aCOMAngle()));
     }
 
     private double aCOMAngle(){
