@@ -7,4 +7,8 @@ public class Utils {
   public static double getTimeSeconds() {
     return System.nanoTime() / 1e9;
   }
+
+  public static double getTimeMiliSeconds() {
+    return System.nanoTime() / 1e6;
+  }
 }
