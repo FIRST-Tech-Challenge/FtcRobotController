@@ -30,8 +30,8 @@ public class SampleDetectorVisionPortalToolkit {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 .setRoi(ImageRegion.entireFrame())
                 .setDrawContours(false)
-                .setBlurSize(5)
-                .setDilateSize(5)
+                .setDilateSize(0)
+                .setErodeSize(3)
                 .build();
         locatorProcessor.addFilter(myAreaFilter);
         return locatorProcessor;
@@ -40,8 +40,9 @@ public class SampleDetectorVisionPortalToolkit {
     public VisionPortal createVisionPortal(HardwareMap hardwareMap, List<ColorBlobLocatorProcessor> processorsList, String webcamName){
         VisionPortal.Builder portalBuilder;
         portalBuilder = new VisionPortal.Builder()
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, webcamName));
+                .setCameraResolution(new Size(1280, 960))
+                .setCamera(hardwareMap.get(WebcamName.class, webcamName))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         for(VisionProcessor processor : processorsList) {
             portalBuilder.addProcessor(processor);
         }
@@ -53,7 +54,8 @@ public class SampleDetectorVisionPortalToolkit {
         VisionPortal portal;
         portal = new VisionPortal.Builder()
                     .addProcessor(processor)
-                    .setCameraResolution(new Size(320, 240))
+                    .setCameraResolution(new Size(1280, 960))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setCamera(hardwareMap.get(WebcamName.class, webcamName))
                     .build();
             return portal;

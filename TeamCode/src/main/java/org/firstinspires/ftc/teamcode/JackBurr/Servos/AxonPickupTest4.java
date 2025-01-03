@@ -55,12 +55,14 @@ public class AxonPickupTest4 extends OpMode {
         if (elbowState == ElbowState.UP) {
             if(servoTimer.seconds() > 0.3) {
                 if(elbowTimer.seconds() > 1){
-                    diffv2.topServosUp();
+                    diffv2.runTopLeftServoToEncoderPos(diffConstantsV1.LEFT_SERVO_UP);
+                    diffv2.runTopRightServoToEncoderPos(diffConstantsV1.RIGHT_SERVO_UP);
                 }
             }
         }
         else {
-            diffv2.topServosDown();
+            diffv2.runTopLeftServoToEncoderPos(diffConstantsV1.LEFT_SERVO_DOWN);
+            diffv2.runTopRightServoToEncoderPos(diffConstantsV1.RIGHT_SERVO_DOWN);
         }
         telemetry.addData("Top Left encoder: ", diffv2.getTopLeftServoEncoderPosition());
         telemetry.addData("Top Right encoder: ", diffv2.getTopRightServoEncoderPosition());

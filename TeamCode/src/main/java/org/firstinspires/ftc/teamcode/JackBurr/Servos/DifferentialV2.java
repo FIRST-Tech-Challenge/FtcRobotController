@@ -12,10 +12,6 @@ public class DifferentialV2 {
     public AnalogInput topLeftEncoder;
     public Servo topRight;
     public AnalogInput topRightEncoder;
-    public Servo bottomLeft;
-    public AnalogInput bottomLeftEncoder;
-    public Servo bottomRight;
-    public AnalogInput bottomRightEncoder;
     public int ENCODER_DIFFERENCE = 50;
     public Telemetry telemetry = null;
     public enum ElbowState {
@@ -41,14 +37,10 @@ public class DifferentialV2 {
     public double BOTTOM_RIGHT_SERVO_POSITION;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
-        topLeft = hardwareMap.get(Servo.class, "left_diff");
-        topLeftEncoder = hardwareMap.get(AnalogInput.class, "left_servo_encoder");
-        topRight = hardwareMap.get(Servo.class, "right_diff");
-        topRightEncoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
-        bottomLeft = hardwareMap.get(Servo.class, "bottom_left_diff");
-        bottomLeftEncoder = hardwareMap.get(AnalogInput.class, "bottom_left_servo_encoder");
-        bottomRight = hardwareMap.get(Servo.class, "bottom_right_diff");
-        bottomRightEncoder = hardwareMap.get(AnalogInput.class, "bottom_right_servo_encoder");
+        this.topLeft = hardwareMap.get(Servo.class, "left_diff");
+        this.topLeftEncoder = hardwareMap.get(AnalogInput.class, "left_servo_encoder");
+        this.topRight = hardwareMap.get(Servo.class, "right_diff");
+        this.topRightEncoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
         this.telemetry = telemetry;
     }
 
@@ -68,6 +60,7 @@ public class DifferentialV2 {
         }
     }
 
+    /*
     public void runBottomLeftServoToEncoderPos(double position) {
         double encoder_pos = getBottomLeftServoEncoderPosition();
         ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, ENCODER_DIFFERENCE);
@@ -84,6 +77,8 @@ public class DifferentialV2 {
             BOTTOM_LEFT_SERVO_POSITION = setBottomLeftServoPosition(TOP_LEFT_SERVO_POSITION + 0.01);
         }
     }
+
+     */
 
     public void runTopRightServoToEncoderPos(double position){
         double encoder_pos = getTopRightServoEncoderPosition();
@@ -103,6 +98,7 @@ public class DifferentialV2 {
         }
     }
 
+    /*
     public void runBottomRightServoToEncoderPos(double position){
         double encoder_pos = getBottomRightServoEncoderPosition();
         ElbowRangeState elbowRangeState = getElbowRangeState(encoder_pos, position, ENCODER_DIFFERENCE);
@@ -121,7 +117,9 @@ public class DifferentialV2 {
             BOTTOM_RIGHT_SERVO_POSITION = setBottomRightServoPosition(BOTTOM_RIGHT_SERVO_POSITION  + 0.01);
         }
     }
+     */
 
+    /*
     public double setBottomLeftServoPosition(double position){
         if(position > 1){
             position = 1;
@@ -132,6 +130,7 @@ public class DifferentialV2 {
         bottomLeft.setPosition(position);
         return position;
     }
+     */
 
     public double setTopLeftServoPosition(double position){
         if(position > 1){
@@ -144,6 +143,7 @@ public class DifferentialV2 {
         return position;
     }
 
+    /*
     public double setBottomRightServoPosition(double position){
         if(position > 1){
             position = 1;
@@ -154,7 +154,7 @@ public class DifferentialV2 {
         bottomRight.setPosition(position);
         return position;
     }
-
+     */
     public double setTopRightServoPosition(double position){
         if(position > 1){
             position = 1;
@@ -169,15 +169,19 @@ public class DifferentialV2 {
     public double getTopLeftServoEncoderPosition(){
         return topLeftEncoder.getVoltage() / 3.3 * 360;
     }
+    /*
     public double getBottomLeftServoEncoderPosition(){
         return bottomLeftEncoder.getVoltage() / 3.3 * 360;
     }
+     */
     public double getTopRightServoEncoderPosition(){
         return topRightEncoder.getVoltage() / 3.3 * 360;
     }
+    /*
     public double getBottomRightServoEncoderPosition(){
         return bottomRightEncoder.getVoltage() / 3.3 * 360;
     }
+     */
     public double getTopRightServoPosition(){
         return TOP_RIGHT_SERVO_POSITION;
     }
@@ -191,13 +195,21 @@ public class DifferentialV2 {
         return BOTTOM_LEFT_SERVO_POSITION;
     }
 
-    public void topServosUp(){
-        setTopLeftServoPosition(0);
-        setTopRightServoPosition(0);
-    }
-    public void topServosDown(){
+    public void topServosUp(boolean debug){
         setTopLeftServoPosition(0.95);
         setTopRightServoPosition(0.95);
+        if(debug){
+            telemetry.addData("Left Servo Position: ", topLeft.getPosition());
+            telemetry.addData("Right Servo Position: ", topRight.getPosition());
+        }
+    }
+    public void topServosDown(boolean debug){
+        setTopLeftServoPosition(0);
+        setTopRightServoPosition(0);
+        if(debug){
+            telemetry.addData("Left Servo Position: ", topLeft.getPosition());
+            telemetry.addData("Right Servo Position: ", topRight.getPosition());
+        }
 
     }
 

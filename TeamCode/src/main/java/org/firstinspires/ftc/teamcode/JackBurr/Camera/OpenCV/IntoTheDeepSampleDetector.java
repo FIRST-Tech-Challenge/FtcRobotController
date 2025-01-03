@@ -34,8 +34,8 @@ public class IntoTheDeepSampleDetector extends OpMode {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.entireFrame())  // search all of camera view
                 .setDrawContours(false)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                             // Smooth the transitions between different colors in image
-                .setDilateSize(5)
+                .setErodeSize(3)
+                .setDilateSize(0)
                 .build();
 
         neutralLocator = new ColorBlobLocatorProcessor.Builder()
@@ -43,23 +43,24 @@ public class IntoTheDeepSampleDetector extends OpMode {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.entireFrame())  // search all of camera view
                 .setDrawContours(false)                        // Show contours on the Stream Preview
-                .setBlurSize(5) // Smooth the transitions between different colors in image
-                .setDilateSize(5)
+                .setErodeSize(3)
+                .setDilateSize(0)
                 .build();
         redLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.RED)// use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.entireFrame())  // search all of camera view
                 .setDrawContours(false)                        // Show contours on the Stream Preview
-                .setBlurSize(5) // Smooth the transitions between different colors in image
-                .setDilateSize(5)
+                .setErodeSize(3)
+                .setDilateSize(0)
                 .build();
 
         processor = new VisionPortal.Builder()
                 .addProcessor(neutralLocator)
                 .addProcessor(redLocator)
                 .addProcessor(blueLocator)
-                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(1280, 960))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .build();
     }
