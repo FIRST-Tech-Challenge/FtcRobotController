@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
@@ -14,8 +13,8 @@ import org.firstinspires.ftc.teamcode.SystemsFSMs.Robot;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class TeleOpV0 extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele-Op V1.0.0")
+public class TeleOp extends OpMode {
     private Hardware hardware = new Hardware();
     private Logger logger;
     private GamepadEx controller;
@@ -30,7 +29,6 @@ public class TeleOpV0 extends OpMode {
     private boolean sampleStrategy = false;
 
     private boolean leftTriggerPressed = false;
-
     @Override
     public void init() {
         hardware.init(hardwareMap);
