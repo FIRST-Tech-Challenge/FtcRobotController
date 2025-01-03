@@ -113,12 +113,12 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setMotors(double power){
-        if(power>kS)
+        if(power>0.001)
         {
             pivotRight.set(power+kS);
             pivotLeft.set(power+kS);
         }
-        else if(power<kS)
+        else if(power<-0.001)
         {
             pivotRight.set(power-kS);
             pivotLeft.set(power-kS);
