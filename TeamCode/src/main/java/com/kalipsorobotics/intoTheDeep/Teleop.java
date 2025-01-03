@@ -65,7 +65,7 @@ public class Teleop extends LinearOpMode {
         AngleLockTeleOp angleLockTeleOp = null;
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-        MoveLSAction maintainLS = new MoveLSAction(outtake, MoveLSAction.getGlobalLinearSlideMaintainTicks());
+        MoveLSAction maintainLS = new MoveLSAction(outtake, outtake.getCurrentPosMm());
         maintainLS.setName("maintainLS");
         AutoRobotHangAction autoRobotHangAction = null;
         CameraCapture cameraCapture = new CameraCapture();
