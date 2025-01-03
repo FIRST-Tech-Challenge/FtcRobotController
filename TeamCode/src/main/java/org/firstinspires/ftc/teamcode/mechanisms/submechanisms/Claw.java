@@ -17,7 +17,6 @@ public class Claw {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
         clawServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW);
-        clawServo.setDirection(Servo.Direction.REVERSE);
         close();
     }
 
