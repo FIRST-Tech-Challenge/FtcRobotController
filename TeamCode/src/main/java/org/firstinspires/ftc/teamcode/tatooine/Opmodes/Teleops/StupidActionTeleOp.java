@@ -42,6 +42,10 @@ public class StupidActionTeleOp extends LinearOpMode {
 
     private boolean lockExtend = false;
 
+    private boolean lockWrist = false;
+
+    private boolean lockAngle = false;
+
     @Override
     public void runOpMode(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -77,6 +81,7 @@ public class StupidActionTeleOp extends LinearOpMode {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.setAngle(0));
+                wrist.home();
                 doOne = false;
             }
             drive.fieldDrive(new Pose2d(
@@ -87,11 +92,27 @@ public class StupidActionTeleOp extends LinearOpMode {
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)){
                 lockExtend = !lockExtend;
             }
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)){
+                lockAngle = !lockAngle;
+            }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)){
                 runningActions.add(wrist.moveToAngle(camera.getAngle()));
             }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)){
+                lockWrist = !lockWrist;
+            }
             if (!lockExtend) {
                 arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
+            }
+            if (!lockAngle) {
+                arm.setPowerAngle(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
+            }
+            if (!lockWrist){
+                wrist.setPosition(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+            }
+            else if (lockAngle){
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setAngle(arm.getAngle()));
             }
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)){
                 runningActions.clear();
