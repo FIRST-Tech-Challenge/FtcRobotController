@@ -35,16 +35,13 @@ public class AutoHook extends LinearOpMode {
       double currentTime = Utils.getTimeSeconds() - startTime;
       driveForTime(speeds, currentTime / 2);
       var currentPos = drivebase.getPose();
-      Rotation2d rotation =
-          new Rotation2d(); // TODO: figure out a way to make this rotation2d not just 0
+      Rotation2d rotation = new Rotation2d(); // TODO: figure out a way to make this rotation2d not just 0
       var wantedPos = new Pose2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, rotation); // TODO: figure out predetermined variables of the positions that we want
 
       if (currentPos != wantedPos) {
         var movement = currentPos.minus(wantedPos); // TODO: figure out if this actually works with translating the robot to
         // move where it's supposed to
-        ChassisSpeeds newSpeeds =
-            new ChassisSpeeds(
-                movement.getX(), movement.getY(), movement.getRotation().getRadians());
+        ChassisSpeeds newSpeeds = new ChassisSpeeds(movement.getX(), movement.getY(), movement.getRotation().getRadians());
         driveForTime(newSpeeds, currentTime / 2);
       } else return;
 
