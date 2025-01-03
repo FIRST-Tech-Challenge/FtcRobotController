@@ -14,14 +14,14 @@ public class DepositConstants {
 
     // Arm Positions
     public static final double
-            armRightTransferPos = 0.952,
+            armRightTransferPos = 0.932,
             armRightSpecIntakePos = 0.04,
             armRightSpecDepositPos = 0.91,
             armRightSampleDepositPos = 0.32;
 
     // Arm Enc Positions
     public static final double
-            armRightEncTransferPos = 37.50,
+            armRightEncTransferPos = 42.00,
             armRightEncSpecIntakePos = 330.50,
             armRightEncSpecDepositPos = 47.60,
             armRightEncSampleDepositPos = 240.70,

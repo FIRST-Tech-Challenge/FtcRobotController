@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SystemsFSMs;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.util.Timing;
 
 import org.firstinspires.ftc.teamcode.Hardware.Constants.IntakeConstants;
@@ -94,10 +95,17 @@ public class Intake {
 
                 feed();
                 hasSample = false;
+                detector.clearDistanceBuffer();
                 bucket.setBucketPosition(IntakeConstants.bucketUpPosition);
                 bucket.setGatePosition(IntakeConstants.gateBlockedPosition);
                 slides.setTargetCM(IntakeConstants.readyPosition + fedPosition);
-                bucket.setRollerPower(0.00);
+
+                // Intake Reversing
+                if (controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.1) {
+                    bucket.setRollerPower(-1);
+                } else {
+                    bucket.setRollerPower(0);
+                }
 
                 break;
 
@@ -108,7 +116,13 @@ public class Intake {
                     bucket.setBucketPosition(IntakeConstants.bucketDownPosition);
                 }
                 if (bucket.getStatus() == Bucket.Status.down) {
-                    bucket.setRollerPower(IntakeConstants.intakingPower);
+                    // Intake Reversing
+                    if (controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.1) {
+                        bucket.setRollerPower(-1);
+                    } else {
+                        bucket.setRollerPower(IntakeConstants.intakingPower);
+                    }
+
                 } else {
                     bucket.setRollerPower(0.00);
                 }

@@ -96,6 +96,10 @@ public class SampleDetector {
         return color;
     }
 
+    public void clearDistanceBuffer() {
+        distanceBuffer = new double[5];
+    }
+
     private void clearHueBuffer() {
         hueBuffer = new double[5];
     }
