@@ -42,7 +42,7 @@ public class DepositConstants {
 
     // Deposit Slides Positions in cm
     public static final double
-            slideTransferPos = 5.20,
+            slideTransferPos = 4.00,
             slidePreTransferPos = 20.00,
             slideSpecIntakePos = 0.00,
             slideSpecDepositReadyPos = 44.90,
