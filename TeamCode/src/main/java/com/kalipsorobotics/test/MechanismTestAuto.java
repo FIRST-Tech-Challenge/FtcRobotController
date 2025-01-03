@@ -4,7 +4,7 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -27,7 +27,7 @@ public class MechanismTestAuto extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveOuttakeLSAction maintenanceLS = new MoveOuttakeLSAction(outtake, 0
+        MoveLSAction maintenanceLS = new MoveLSAction(outtake, 0
         );
 
         KServoAutoAction outtakePivotActionIn = new KServoAutoAction(outtake.getOuttakePivotServo(),
@@ -37,14 +37,14 @@ public class MechanismTestAuto extends LinearOpMode {
 
         Intake intake = new Intake(opModeUtilities);
 
-        MoveOuttakeLSAction moveOuttakeLSAction = new MoveOuttakeLSAction(outtake, 480);
+        MoveLSAction moveOuttakeLSAction = new MoveLSAction(outtake, 480);
         moveOuttakeLSAction.setName("moveOuttakeLSAction");
 
         WaitAction waitAction = new WaitAction(3000);
         waitAction.setDependentActions(moveOuttakeLSAction);
         waitAction.setName("waitAction");
 
-        MoveOuttakeLSAction moveOuttakeLSAction2 = new MoveOuttakeLSAction(outtake, 200);
+        MoveLSAction moveOuttakeLSAction2 = new MoveLSAction(outtake, 200);
         moveOuttakeLSAction2.setDependentActions(waitAction);
         moveOuttakeLSAction2.setName("moveOuttakeLSAction2");
 

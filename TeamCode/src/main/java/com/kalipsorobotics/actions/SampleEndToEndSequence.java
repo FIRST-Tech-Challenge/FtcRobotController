@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
@@ -31,7 +31,7 @@ public class SampleEndToEndSequence extends KActionSet{
         moveSmallPivot.setName("moveSmallPivot");
         this.addAction(moveSmallPivot);
 
-        MoveOuttakeLSAction moveLSDown = new MoveOuttakeLSAction(outtake, Outtake.LS_DOWN_POS);
+        MoveLSAction moveLSDown = new MoveLSAction(outtake, Outtake.LS_DOWN_POS);
         moveLSDown.setName("moveLSDown");
         this.addAction(moveLSDown);
 
@@ -58,7 +58,7 @@ public class SampleEndToEndSequence extends KActionSet{
         moveBigPivot2.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(moveBigPivot2);
 
-        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, lsPos);
+        MoveLSAction raiseSlidesBasket = new MoveLSAction(outtake, lsPos);
         raiseSlidesBasket.setName("raiseSlidesBasket");
         raiseSlidesBasket.setDependentActions(closeOuttakeClaw, openIntakeClaw);
         this.addAction(raiseSlidesBasket);

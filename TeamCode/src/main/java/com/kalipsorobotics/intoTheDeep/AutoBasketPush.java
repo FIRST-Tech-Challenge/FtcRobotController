@@ -5,7 +5,7 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -28,9 +28,9 @@ public class AutoBasketPush extends LinearOpMode {
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
         // Target can always be 0 because Hung said so
-        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
+        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
 //                MoveLSAction.globalLinearSlideMaintainTicks);
         maintainLS.setName("maintainLS");
 

@@ -63,11 +63,7 @@ public class Outtake {
 
         resetHardwareMap(opModeUtilities.getHardwareMap(), this);
 
-        linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linearSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linearSlide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        resetEncoders();
     }
 
     public static synchronized Outtake getInstance(OpModeUtilities opModeUtilities) {
@@ -102,6 +98,13 @@ public class Outtake {
 
         outtake.linearSlide1.setDirection(DcMotorSimple.Direction.FORWARD);
         outtake.linearSlide2.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public void resetEncoders() {
+        linearSlide1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void init() {

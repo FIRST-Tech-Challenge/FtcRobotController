@@ -19,7 +19,6 @@ public class MoveLSAction extends Action {
     Outtake outtake;
 
     private static double globalLinearSlideMaintainTicks = 0;
-    private static boolean needMaintenance = true;
     DcMotor linearSlide1, linearSlide2;
     public static double ERROR_TOLERANCE_TICKS;
     private final PidNav pidOuttakeLS;
@@ -79,33 +78,37 @@ public class MoveLSAction extends Action {
     private double calculatePower(double targetError) {
         double power = pidOuttakeLS.getPower(targetError);
 
-        double lowestPower = 0.12;
+        double lowestPower = 0.08;
+        if(Math.abs(targetError) < ERROR_TOLERANCE_TICKS) {
+            lowestPower = 0;
+            return lowestPower;
+        }
 
-        if (globalLinearSlideMaintainTicks < mmToTicksLS(30)) {
+        if (targetTicks < mmToTicksLS(30)) {
             lowestPower = 0.3;
         }
 
-        if (globalLinearSlideMaintainTicks < mmToTicksLS(15)) {
+        if (targetTicks < mmToTicksLS(15)) {
             lowestPower = 0.15;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(100)) {
+        if (targetTicks > mmToTicksLS(100)) {
             lowestPower = 0.18;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(400)) {
+        if (targetTicks > mmToTicksLS(400)) {
             lowestPower = 0.2;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(650)) {
+        if (targetTicks > mmToTicksLS(650)) {
             lowestPower = 0.25;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(700)) {
+        if (targetTicks > mmToTicksLS(700)) {
             lowestPower = 0.28;
         }
 
-        if (globalLinearSlideMaintainTicks > mmToTicksLS(720)) {
+        if (targetTicks > mmToTicksLS(720)) {
             lowestPower = 0.13;
         }
 
@@ -118,14 +121,12 @@ public class MoveLSAction extends Action {
 
     public void finish() {
         isDone = true;
-        needMaintenance = true;
         linearSlide1.setPower(0);
         linearSlide2.setPower(0);
     }
 
     public void finishWithoutSetPower() {
         isDone = true;
-        needMaintenance = true;
     }
 
 
@@ -150,9 +151,17 @@ public class MoveLSAction extends Action {
         }
     }
 
+    public static double getGlobalLinearSlideMaintainTicks() {
+        return globalLinearSlideMaintainTicks;
+    }
+
+    public void setTargetTicks(double targetTicks) {
+        this.targetTicks = targetTicks;
+    }
+
     @Override
     public boolean checkDoneCondition() {
-        if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS) && !isDone) {
+        if ((Math.abs(this.targetTicks - currentTicks) <= ERROR_TOLERANCE_TICKS)) {
             Log.d("Outtake_LS", String.format("action done for=%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                             "targetTicks=%.3f, " +
                             "currentTicks=%.3f, ",
@@ -181,7 +190,6 @@ public class MoveLSAction extends Action {
             lastTicks = linearSlide1.getCurrentPosition();
             timeoutTimer.reset();
             startingError = targetTicks - linearSlide1.getCurrentPosition();
-            needMaintenance = false;
         }
 
         this.currentTicks = linearSlide1.getCurrentPosition();

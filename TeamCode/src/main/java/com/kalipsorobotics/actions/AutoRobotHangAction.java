@@ -1,7 +1,7 @@
 package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.modules.Outtake;
 
 public class AutoRobotHangAction extends KActionSet {
@@ -11,7 +11,7 @@ public class AutoRobotHangAction extends KActionSet {
         moveOuttakeBack.setName("moveOuttakeBack");
         this.addAction(moveOuttakeBack);
 
-        MoveOuttakeLSAction moveLsUp = new MoveOuttakeLSAction(outtake, 750); //730
+        MoveLSAction moveLsUp = new MoveLSAction(outtake, 750); //730
         moveLsUp.setName("moveLsUp");
         this.addAction(moveLsUp);
 
@@ -28,7 +28,7 @@ public class AutoRobotHangAction extends KActionSet {
         waitForLs.setDependentActions(moveLsUp, moveOuttakeBack);
         this.addAction(waitForLs);
 
-        MoveOuttakeLSAction pullRobotUp = new MoveOuttakeLSAction(outtake, 560);//733 ticks //311 //535
+        MoveLSAction pullRobotUp = new MoveLSAction(outtake, 560);//733 ticks //311 //535
         pullRobotUp.setName("pullRobotUp");
         pullRobotUp.setOverridePower(1);
         pullRobotUp.setOverrideOn(true);
@@ -50,7 +50,7 @@ public class AutoRobotHangAction extends KActionSet {
         waitBeforeRelease.setDependentActions(hanghook1,hanghook2);
         this.addAction(waitBeforeRelease);
 
-        MoveOuttakeLSAction releaseLS = new MoveOuttakeLSAction(outtake, 920-155-70); //635+40 //155 hook to ground //920 top bar to ground //70 robot to ground
+        MoveLSAction releaseLS = new MoveLSAction(outtake, 920-155-70); //635+40 //155 hook to ground //920 top bar to ground //70 robot to ground
         releaseLS.setName("releaseLS");
         releaseLS.setDependentActions(waitBeforeRelease);
         releaseLS.setOverridePower(0);

@@ -11,7 +11,7 @@ import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
@@ -49,8 +49,8 @@ public class AutoBasket extends LinearOpMode {
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         // Target can always be 0 because Hung said so
-        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
         maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
@@ -342,7 +342,7 @@ public class AutoBasket extends LinearOpMode {
         pivotOuttakeHalfwayToBar.setDependentActions(openClaw3, waitAction4);
         redAutoBasket.addAction(pivotOuttakeHalfwayToBar);
 
-        MoveOuttakeLSAction lsTouchBar = new MoveOuttakeLSAction(outtake, Outtake.LS_SPECIMAN_PARK_MM);
+        MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMAN_PARK_MM);
         lsTouchBar.setName("lsTouchBar");
         lsTouchBar.setDependentActions(pivotOuttakeHalfwayToBar, moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
@@ -387,6 +387,8 @@ public class AutoBasket extends LinearOpMode {
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();
+
+            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
             maintainLS.update();
 
             redAutoBasket.updateCheckDone();

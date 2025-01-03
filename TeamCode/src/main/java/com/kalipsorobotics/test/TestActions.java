@@ -221,7 +221,7 @@ import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
@@ -257,7 +257,7 @@ public class TestActions extends LinearOpMode {
         Outtake outtake = Outtake.getInstance(opModeUtilities);
         SpecimenHangReady specimenHangReady = null;
         // Target should always be 0
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
         AutoRobotHangAction autoRobotHangAction = new AutoRobotHangAction(outtake);
         CameraCapture cameraCapture = new CameraCapture();
         SampleIntakeReady sampleIntakeReady = null;
@@ -411,7 +411,7 @@ public class TestActions extends LinearOpMode {
             } else if(gamepad1.x && !gamepad1.dpad_down) {
 //                MoveOuttakeLSAction.setOverridePower(-0.1);
 //                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(5));
-                MoveOuttakeLSAction.setGlobal(outtake.getLinearSlide1().getCurrentPosition());
+                MoveLSAction.setGlobalLinearSlideMaintainTicks(outtake.getLinearSlide1().getCurrentPosition());
                 //MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(5) * -1);
             } else if (gamepad1.dpad_down && !gamepad1.x) {
                 if (!prevGamepad2DpadDown) {
@@ -420,10 +420,10 @@ public class TestActions extends LinearOpMode {
 //                    MoveOuttakeLSAction.setOverridePower(-1);
 //                    MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS = CalculateTickPer.mmToTicksLS(1);
                     targetHangPos = outtake.getLinearSlide1().getCurrentPosition() - CalculateTickPer.mmToTicksLS(47);
-                    MoveOuttakeLSAction.setGlobal(targetHangPos);
+                    MoveLSAction.setGlobalLinearSlideMaintainTicks(targetHangPos);
                     prevGamepad2DpadDown = true;
                 } else {
-                    if (Math.abs(outtake.getLinearSlide1().getCurrentPosition() - targetHangPos) <= MoveOuttakeLSAction.ERROR_TOLERANCE_TICKS){
+                    if (Math.abs(outtake.getLinearSlide1().getCurrentPosition() - targetHangPos) <= MoveLSAction.ERROR_TOLERANCE_TICKS){
 //                        MoveOuttakeLSAction.setOverridePower(0);
                     }
                 }
@@ -543,12 +543,12 @@ public class TestActions extends LinearOpMode {
             //OUTTAKE
 
 
-            //outtake manual LS
-            if (outtakeLSStickValue != 0) {
-                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -outtakeLSStickValue);
-            } else {
-                MoveOuttakeLSAction.incrementGlobal(0);
-            }
+//            //outtake manual LS
+//            if (outtakeLSStickValue != 0) {
+//                MoveLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -outtakeLSStickValue);
+//            } else {
+//                MoveLSAction.incrementGlobal(0);
+//            }
 
 //            if (gamepad2.left_stick_button) {
 //                //outtake slide

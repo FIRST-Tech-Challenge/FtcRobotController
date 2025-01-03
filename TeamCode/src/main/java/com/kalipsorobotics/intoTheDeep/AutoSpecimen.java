@@ -6,10 +6,10 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -43,8 +43,8 @@ public class AutoSpecimen extends LinearOpMode {
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
         // Target can always be 0 because Hung said so
-        MoveOuttakeLSAction maintainLS = new MoveOuttakeLSAction(outtake, 0);
-        MoveOuttakeLSAction.setGlobalLinearSlideMaintainTicks(0);
+        MoveLSAction maintainLS = new MoveLSAction(outtake, 0);
+        MoveLSAction.setGlobalLinearSlideMaintainTicks(0);
         maintainLS.setName("maintainLS");
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
@@ -155,11 +155,11 @@ public class AutoSpecimen extends LinearOpMode {
         while (opModeIsActive()) {
 
             wheelOdometry.updatePosition();
+
+            maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
             maintainLS.update();
 
             redAutoSpecimen.updateCheckDone();
-
-            initAuto.update();
 
         }
 

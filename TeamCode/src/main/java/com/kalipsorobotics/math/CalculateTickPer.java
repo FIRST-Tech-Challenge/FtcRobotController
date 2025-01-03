@@ -59,4 +59,12 @@ public class CalculateTickPer {
     public static double ticksToInchesLS(double ticks) {
         return (ticksToMmLS(ticks / mmPerInch));
     }
+
+    public static void setMinRangeLsTicksInMm(double mm) {
+        MIN_RANGE_LS_TICKS = mmToTicksLS(mm);
+    }
+
+    public static void resetMinRangeLsTicksToDefault() {
+        MIN_RANGE_LS_TICKS = mmToTicksLS(-10);
+    }
 }

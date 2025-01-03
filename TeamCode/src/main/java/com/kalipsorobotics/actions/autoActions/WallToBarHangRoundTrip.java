@@ -4,9 +4,9 @@ import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SP
 
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
-import com.kalipsorobotics.actions.outtake.MoveOuttakeLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
@@ -57,7 +57,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
 //        openClaw.setDependentActions(lowerSlidesHalf);
 //        this.addAction(openClaw);
 
-        MoveOuttakeLSAction raiseSpecimen = new MoveOuttakeLSAction(outtake, 50);
+        MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
         raiseSpecimen.setName("raiseSpecimen");
         raiseSpecimen.setDependentActions(waitAtWall, closeOuttakeForSpecimen);
         this.addAction(raiseSpecimen);

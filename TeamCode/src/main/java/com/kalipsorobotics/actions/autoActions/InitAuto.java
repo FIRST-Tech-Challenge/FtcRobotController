@@ -12,6 +12,8 @@ public class InitAuto extends KActionSet {
         outtake.init();
         intakeClaw.init();
 
+
+
 //        MoveIntakeLSAction moveIntakeLSAction = new MoveIntakeLSAction(intake, -5);
 //        moveIntakeLSAction.setName("moveIntakeLSAction");
 //        this.addAction(moveIntakeLSAction);
