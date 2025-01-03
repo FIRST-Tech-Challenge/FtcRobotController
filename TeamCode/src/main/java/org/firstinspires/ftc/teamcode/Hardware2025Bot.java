@@ -113,10 +113,11 @@ public class Hardware2025Bot
     //                  94.5 deg 3896 encoder counts range
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
 
-    public final static double TILT_ANGLE_HW_MAX_DEG      = 90.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
+    public final static double TILT_ANGLE_HW_MAX_DEG      = 94.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG      = 90.00; // Arm at rotation back to the basket for scoring
     public final static double TILT_ANGLE_AUTO_PRE_DEG    = 83.00; // Arm almost at  basket (start to slow; avoid wobble)
-    public final static double TILT_ANGLE_ASCENT1_DEG     = 93.00; // Arm at rotation back to the low bar for ascent level 1 or 2
+    public final static double TILT_ANGLE_SUBMERSIBLE_DEG = 10.00; // Arm at rotation back to the submersible for collecting
+    public final static double TILT_ANGLE_ASCENT1_DEG     = 94.00; // Arm at rotation back to the low bar for ascent level 1 or 2
     public final static double TILT_ANGLE_ASCENT2_DEG     = 75.00; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
@@ -174,11 +175,12 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO2 = 1200;   // NEW retract to clip the specimen to the bar
     public final static int    VIPER_EXTEND_CLIP  = 1580;   // AUTO: clip specimen on bar by just driving forward
     public final static int    VIPER_EXTEND_BASKET= 4200;   // raised to basket-scoring height
+    public final static int    VIPER_EXTEND_42    = 3400;   // max forward extension for 42" limit
     public final static int    VIPER_EXTEND_FULL1 = 2800;   // extended 36" forward (max for 20"x42" limit at horizontal)
     public final static int    VIPER_EXTEND_FULL2 = 4214;   // hardware fully extended (never exceed this count!)
     public final static int    VIPER_EXTEND_WALL0 = 25;     // AUTO: grab specimen off wall (on approach)
     public final static int    VIPER_EXTEND_WALL1 = 230;    // AUTO: grab specimen off wall (lift off)
-
+    public final static double TILT_ANGLE_42      = Math.toDegrees(Math.acos((double)Hardware2025Bot.VIPER_EXTEND_42/(double)Hardware2025Bot.VIPER_EXTEND_BASKET)); // Minimum tilt angle needed to fully extend viper
 //  PIDControllerLift   liftPidController;           // PID parameters for the lift motors
 //  public double       liftMotorPID_p     = -0.100; //  Raise p = proportional
 //  public double       liftMotorPID_i     =  0.000; //  Raise i = integral
@@ -213,6 +215,10 @@ public class Hardware2025Bot
     public final static double ELBOW_SERVO_WALL2 = 0.500;       // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_WALL2_ANGLE = 180.0; // Grab specimen off wall in autonomous
     public final static double ELBOW_SERVO_CLIP = 0.510;        // AUTO: clip specimen on bar by just driving forward
+    public final static double ELBOW_SERVO_GRABR1 = 0.580;       // TELE: grab at right 45deg angle
+    public final static double ELBOW_SERVO_GRABR2 = 0.650;       // TELE: grab at right 45deg angle
+    public final static double ELBOW_SERVO_GRABL1 = 0.440;       // TELE: grab at left  22deg angle
+    public final static double ELBOW_SERVO_GRABL2 = 0.370;       // TELE: grab at left  22deg angle
 
     public AnalogInput wristServoPos = null;
     public Servo  wristServo = null;
@@ -260,7 +266,7 @@ public class Hardware2025Bot
         CLAW_CLOSED
     }
 
-    public HardwareMinibot.clawStateEnum clawState = HardwareMinibot.clawStateEnum.CLAW_INIT;
+    public Hardware2025Bot.clawStateEnum clawState = Hardware2025Bot.clawStateEnum.CLAW_INIT;
 
     //Ultrasonic sensors
 //  private MaxSonarI2CXL sonarRangeF = null;
@@ -408,7 +414,7 @@ public class Hardware2025Bot
     } // resetEncoders
 
     /*--------------------------------------------------------------------------------------------*/
-    public void clawStateSet( HardwareMinibot.clawStateEnum newClawState )
+    public void clawStateSet( Hardware2025Bot.clawStateEnum newClawState )
     {
         switch( newClawState ) {
             case CLAW_INIT :
@@ -416,15 +422,15 @@ public class Hardware2025Bot
                 clawState = newClawState;
                 break;
             case CLAW_OPEN :  // OPEN is used to toggle between OPEN_NARROW and OPEN_WIDE
-                if( clawState == HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW ) {
+                if( clawState == Hardware2025Bot.clawStateEnum.CLAW_OPEN_NARROW ) {
                     clawServo.setPosition( CLAW_SERVO_OPEN_W );
-                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE;
-                } else if( clawState == HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE ) {
+                    clawState = Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE;
+                } else if( clawState == Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE ) {
                     clawServo.setPosition( CLAW_SERVO_OPEN_N );
-                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW;
+                    clawState = Hardware2025Bot.clawStateEnum.CLAW_OPEN_NARROW;
                 } else { // Not currently OPEN in either NARROW or WIDE; start NARROW
                     clawServo.setPosition( CLAW_SERVO_OPEN_N );
-                    clawState = HardwareMinibot.clawStateEnum.CLAW_OPEN_NARROW;
+                    clawState = Hardware2025Bot.clawStateEnum.CLAW_OPEN_NARROW;
                 }
                 break;
             case CLAW_OPEN_NARROW :

@@ -47,10 +47,10 @@ public class AutonomousRightRed extends AutonomousBase {
             // Do we need to preload a specimen?
             if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
                 if( clawOpen ) {
-                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
                     clawOpen = false;
                 } else {
-                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN );
                     clawOpen = true;
                 }
             } //  gamepad1_r_bumper
@@ -241,7 +241,7 @@ public class AutonomousRightRed extends AutonomousBase {
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
             sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
 
         // Retract the arm for driving as we pivot away from the submersible
@@ -330,7 +330,7 @@ public class AutonomousRightRed extends AutonomousBase {
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_WALL0);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_WALL0);
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_WALL0);
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
             if( specimenNumber == 0 ) {
                // Approach along x-axis from herding spike marks...
                driveToPosition( 8.0, 25.0, 180, DRIVE_SPEED_100, TURN_SPEED_60, DRIVE_THRU );
@@ -343,7 +343,7 @@ public class AutonomousRightRed extends AutonomousBase {
         // Drive to the final wall-collect position (slowly)
         if( opModeIsActive() ) {
             driveToPosition( 5.1, 18.6, 180, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
             sleep(350); // allow claw to close (350msec)
         } // opModeIsActive
 

@@ -47,10 +47,10 @@ public class AutonomousLeftBlue extends AutonomousBase {
             // Do we need to preload a specimen?
             if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
                 if( clawOpen ) {
-                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
                     clawOpen = false;
                 } else {
-                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN );
                     clawOpen = true;
                 }
             } //  gamepad1_r_bumper
@@ -238,7 +238,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
             sleep( 1000 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
             // release the specimen
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
 
         //Prepare arm for what comes next (samples/parking)
@@ -275,7 +275,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT_DEG, 1.0 );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         } // opModeIsActive
 
     } // prepareArmForSamples
@@ -291,7 +291,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
 
         // Now that we're clear from the submersible, rotate arm down and store claw
         if( opModeIsActive() ) {
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_WALL_DEG, 0.80);
@@ -330,8 +330,8 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
         }
 
         // Close the claw on this sample
-        robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
-        sleep(800); // wait for claw to close on sample
+        robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
+        sleep(900); // wait for claw to close on sample
     } // collectSample
 
     //************************************
@@ -355,7 +355,7 @@ sleep(30000); // TEMPORARY!!!  (allows us to see how much time is left)
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BASKET);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BASKET2);
         sleep(250); // wait for wrist/elbow to move
-        robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN_WIDE );
+        robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         sleep(250); // wait for claw to drop sample
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);

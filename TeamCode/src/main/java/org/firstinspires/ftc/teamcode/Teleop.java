@@ -3,7 +3,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -77,8 +76,10 @@ public abstract class Teleop extends LinearOpMode {
     boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
-    boolean clipStarted          = false; // Reminder to shut off the collector
     boolean enableOdometry       = true; // Process/report odometry updates?
+    int grabLState               = 2;
+    int grabRState               = 2;
+    int submersibleCollectState  = 2;
 
     double    clawServoPosAdj = 0.500;
 
@@ -165,13 +166,13 @@ public abstract class Teleop extends LinearOpMode {
                 String posStr = String.format(Locale.US, "{X,Y: %.1f, %.1f in  H: %.1f deg}", curX, curY, curAngle);
                 telemetry.addData("Position", posStr);
                 //==== TEMPORARY ODOMETRY CALIBRATION CODE ============================================================
-                if(curX<minX){minX=curX;} if(curX>maxX){maxX=curX;}
-                if(curY<minY){minY=curY;} if(curY>maxY){maxY=curY;}
-                double x_radius_mm = 25.4 * (maxX-minX)/2.0;  // rotate 180deg; max-min is the diameter of the circle
-                double y_radius_mm = 25.4 * (maxY-minY)/2.0;  // of error relative to the true center of the robot
-                telemetry.addData("Odo Circle", "x=%.2f, y=%.2f mm", x_radius_mm, y_radius_mm );
-                Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
+//              if(curX<minX){minX=curX;} if(curX>maxX){maxX=curX;}
+//              if(curY<minY){minY=curY;} if(curY>maxY){maxY=curY;}
+//              double x_radius_mm = 25.4 * (maxX-minX)/2.0;  // rotate 180deg; max-min is the diameter of the circle
+//              double y_radius_mm = 25.4 * (maxY-minY)/2.0;  // of error relative to the true center of the robot
+//              telemetry.addData("Odo Circle", "x=%.2f, y=%.2f mm", x_radius_mm, y_radius_mm );
                 //=====================================================================================================
+                Pose2D vel = robot.odom.getVelocity(); // x,y velocities in inch/sec; heading in deg/sec
                 String velStr = String.format(Locale.US,"{X,Y: %.1f, %.1f in/sec, HVel: %.2f deg/sec}",
                      vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.DEGREES));
                 telemetry.addData("Velocity", velStr);
@@ -251,6 +252,8 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
+            telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);
+            telemetry.addData("Secure Arm State", secureArmState);
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
@@ -552,6 +555,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
         if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last )
         {
+            // used elsewhere!
         }
         // Check for an OFF-to-ON toggle of the gamepad1 RIGHT BUMPER
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
@@ -586,7 +590,7 @@ public abstract class Teleop extends LinearOpMode {
         // The encoder is backwards from our definition of MAX and MIN. Maybe change the
         // convention in hardware class?
         boolean safeToManuallyLower = (robot.armTiltAngle > Hardware2025Bot.TILT_ANGLE_HW_MIN_DEG);
-        boolean safeToManuallyRaise = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_HW_MAX_DEG);
+        boolean safeToManuallyRaise = (robot.armTiltAngle < Hardware2025Bot.TILT_ANGLE_BASKET_DEG);
         double  gamepad2_right_stick = gamepad2.right_stick_y;
         boolean manual_tilt_control = ( Math.abs(gamepad2_right_stick) > 0.08 );
 
@@ -628,9 +632,21 @@ public abstract class Teleop extends LinearOpMode {
     } // processTiltControls
 
     /*---------------------------------------------------------------------------------*/
+    double ComputeMaxExtensionAtAngle(double tiltAngleDegrees) {
+        double maxExtension;
+        if(tiltAngleDegrees > Hardware2025Bot.TILT_ANGLE_42){
+            maxExtension = Hardware2025Bot.VIPER_EXTEND_BASKET;
+        } else {
+            double tiltAngleRadians = Math.toRadians(tiltAngleDegrees);
+            maxExtension = Hardware2025Bot.VIPER_EXTEND_42/Math.cos(tiltAngleRadians);
+        }
+        return maxExtension;
+    }
+
     void ProcessViperLiftControls() {
+        double  maxViperAtAngle       = ComputeMaxExtensionAtAngle(robot.armTiltAngle);
         boolean safeToManuallyRetract = (robot.viperMotorPos > Hardware2025Bot.VIPER_EXTEND_ZERO);
-        boolean safeToManuallyExtend  = (robot.viperMotorPos < Hardware2025Bot.VIPER_EXTEND_FULL2);
+        boolean safeToManuallyExtend  = (robot.viperMotorPos < maxViperAtAngle);
         // Capture user inputs ONCE, in case they change during processing of this code
         // or we want to scale them down
         double  gamepad2_left_trigger  = gamepad2.left_trigger  * 1.00;
@@ -653,44 +669,59 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Retract lift to the SAMPLE collection position
             startHoverArm();
+            grabLState = 2;
+            grabRState = 2;
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
+        // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
             startSecureArm();
         }
-        // Check for gamepad2 TRIANGLE being actively pressed
-        else if( gamepad2_triangle_now )
-        {
-            // If this is the first time, reset any prior movement
-            if( !liftTweaked) {
-                terminateAutoArmMovements();
-                robot.abortViperSlideExtension();
-                //robot.geckoServo.setPower( -0.75 ); // collector on (firm grip)
-            }
-            // Retract viper arm to hook a specimen
-            robot.viperMotor.setPower( -1.0  );
-            liftTweaked = true;
-            clipStarted = true;
+        // Check for ON-to-OFF toggle of the gamepad2 SQUARE
+        else if( gamepad2_square_now && !gamepad2_square_last )
+        {   // position to grab specimen off field wall
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_WALL0_DEG);
+            robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_WALL0);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_WALL0);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_WALL0);
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         }
         // Check for ON-to-OFF toggle of the gamepad2 TRIANGLE
-        else if( !gamepad2_triangle_now && gamepad2_triangle_last )
-        {
-            //robot.geckoServo.setPower( 0.0 ); // collector off (we're clipped)
-            clipStarted = false;
+        else if( gamepad2_triangle_now && !gamepad2_triangle_last )
+        {   // clip specimen on high bar
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SPECIMEN2_DEG);
+            robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_AUTO2);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_BAR2);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_BAR2);
+            sleep( 1500 ); //while( autoTiltMotorMoving() || autoViperMotorMoving());
+            // release the specimen
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
+        }
+        // Check for ON-to-OFF toggle of the gamepad2 CIRCLE
+        else if( gamepad2_circle_now && !gamepad2_circle_last )
+        {   // toggle between arm positions when in submersible
+            if(submersibleCollectState == 2) {
+                robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG);
+                submersibleCollectState = 1;
+            } else {
+                robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);
+                submersibleCollectState = 2;
+            }
+            //robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
         }
         //===================================================================
         else if( manual_lift_control || liftTweaked ) {
-            // Does user want to manually RAISE the lift?
+            // Does user want to manually EXTEND the lift?
             if( safeToManuallyExtend && (gamepad2_right_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
+                double distanceTo42 = maxViperAtAngle - robot.viperMotorPos;
                 terminateAutoArmMovements();
                 robot.abortViperSlideExtension();
-                viperPower = gamepad2_right_trigger;
+                viperPower = (distanceTo42 > 200)? gamepad2_right_trigger : 0.08;
                 robot.viperMotor.setPower( viperPower );  // fixed power? (robot.VIPER_RAISE_POWER)
                 liftTweaked = true;
             }
-            // Does user want to manually LOWER the lift?
+            // Does user want to manually RETRACT the lift?
             else if( safeToManuallyRetract && (gamepad2_left_trigger > 0.25) ) {
                 // Do we need to terminate an auto movement?
                 terminateAutoArmMovements();
@@ -703,8 +734,9 @@ public abstract class Teleop extends LinearOpMode {
             else if( liftTweaked ) {
                 // if the lift is near the bottom, truly go to zero power
                 // but if in a raised position, only drop to minimal holding power
-                boolean closeToZero = (Math.abs(robot.viperMotorPos - Hardware2025Bot.VIPER_EXTEND_ZERO) < 20);
-                viperPower = closeToZero? 0.0 : robot.VIPER_HOLD_POWER;
+                boolean viperCloseToZero = (Math.abs(robot.viperMotorPos - Hardware2025Bot.VIPER_EXTEND_ZERO) < 20);
+                boolean tiltCloseToZero =  (robot.armTiltAngle < 45.0); // Hold power needed above this tilt angle
+                viperPower = (viperCloseToZero || tiltCloseToZero)? 0.0 : robot.VIPER_HOLD_POWER;
                 robot.viperMotor.setPower( viperPower );
                 liftTweaked = false;
             }
@@ -717,33 +749,34 @@ public abstract class Teleop extends LinearOpMode {
 
         // Left Bumper = OPEN claw
         if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last) {
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_OPEN );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN );
         }
 
         // Right Bumper = CLOSE claw
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last) {
-            robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );
-        }
-/*
-        // Manually tweak claw servo position
-        if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last ) {
-            clawServoPosAdj += 0.010;
-            robot.clawServo.setPosition( clawServoPosAdj );
-        }
-        if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last ) {
-            clawServoPosAdj += 0.001;
-            robot.clawServo.setPosition( clawServoPosAdj );
+            robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
         }
 
-        if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last ) {
-            clawServoPosAdj -= 0.001;
-            robot.clawServo.setPosition( clawServoPosAdj );
+        // Check for an OFF-to-ON toggle of the gamepad1 bumpers
+        if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last) {
+            if(grabLState == 2){
+                robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABL1);
+                grabLState = 1;
+            } else {
+                robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABL2);
+                grabLState = 2;
+            }
         }
-        if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last ) {
-            clawServoPosAdj -= 0.010;
-            robot.clawServo.setPosition( clawServoPosAdj );
+
+        if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
+            if(grabRState == 2){
+                robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABR1);
+                grabRState = 1;
+            } else {
+                robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRABR2);
+                grabRState = 2;
+            }
         }
-*/
     } // processClaw
 
     /*---------------------------------------------------------------------------------*/
@@ -767,8 +800,6 @@ public abstract class Teleop extends LinearOpMode {
                 if( gamepad1_l_bumper_now && gamepad1_r_bumper_now )
                 {
                     terminateAutoArmMovements();
-                    robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
-                    robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
                     ascent2telem = true; // start monitoring motor powers
                     ascent2state = ASCENT_STATE_SETUP;
                 }
@@ -778,6 +809,8 @@ public abstract class Teleop extends LinearOpMode {
                 robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT1_DEG);
                 // Send LIFT motor to hang position
                 robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG1 );
+                robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
+                robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
                 ascent2state = ASCENT_STATE_MOVING;
                 break;
             case ASCENT_STATE_MOVING :
@@ -789,7 +822,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_READY :
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
-                    robot.clawStateSet( HardwareMinibot.clawStateEnum.CLAW_CLOSED );  // we accidentally open the claw
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );  // we accidentally open the claw
                     robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, robot.VIPER_RAISE_POWER, robot.VIPER_RAISE_POWER );
                     ascent2state = ASCENT_STATE_LEVEL2;
                 }
@@ -840,7 +873,8 @@ public abstract class Teleop extends LinearOpMode {
     public void startHoverArm(){
         if(hoverArmState == Hover_Arm_Steps.IDLE) {
             terminateAutoArmMovements();
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);
+            robot.clawStateSet(Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE);
             hoverArmState = Hover_Arm_Steps.ROTATING_ARM;
         }
     }
@@ -897,7 +931,7 @@ public abstract class Teleop extends LinearOpMode {
     public void startSecureArm(){
         if(secureArmState == Secure_Arm_Steps.IDLE) {
             terminateAutoArmMovements();
-            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_DRIVE_DEG);
+            robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_SUBMERSIBLE_DEG);
             secureArmState = Secure_Arm_Steps.ROTATING_ARM;
         }
     }

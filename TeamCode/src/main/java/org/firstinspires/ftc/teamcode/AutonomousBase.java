@@ -30,10 +30,11 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
-    static final double  DRIVE_SPEED_10       = 0.10;    // Lower speed for moving from a standstill
+    static final double  DRIVE_SPEED_10       = 0.10;    // 
     static final double  DRIVE_SPEED_20       = 0.20;    // Lower speed for moving from a standstill
     static final double  DRIVE_SPEED_30       = 0.30;    // Lower speed for fine control going sideways
     static final double  DRIVE_SPEED_40       = 0.40;    // Normally go slower to achieve better accuracy
+    static final double  DRIVE_SPEED_45       = 0.45;    // 
     static final double  DRIVE_SPEED_50       = 0.50;    //
     static final double  DRIVE_SPEED_55       = 0.55;    //
     static final double  DRIVE_SPEED_60       = 0.60;    //
@@ -268,8 +269,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         telemetry.addData("Park Location","%s %s", parkLocationStr[parkLocation],
                 ((initMenuSelected==5)? "<-":"  "));
         telemetry.addData("spike specimens", "%d  %s",spikeSamples,((initMenuSelected==6)? "<-":"  ") );
-        telemetry.addData("Odometry","x=%.2f y=%.2f angle=%.2f",
-                robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, robotOrientationRadians );
+        telemetry.addData("Odometry","x=%.2f y=%.2f  %.2f deg",
+                robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, Math.toDegrees(robotOrientationRadians) );
         telemetry.addData("Lift Angle","x=%.1f deg", startTiltAngle );
         telemetry.addLine("Right bumper open/close claw to load specimen.");
         telemetry.addData(">","version 100" );
@@ -956,7 +957,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 && opModeIsActive()) {
             performEveryLoop();
             telemetry.addData("Drive", "x=%.1f, y=%.1f, %.1f deg",
-                    robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
+                    robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, Math.toDegrees(robotOrientationRadians) );
             telemetry.update();
         }
 
@@ -1129,11 +1130,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         return reachedDestination;
     }
     /**
-     * @param yTarget           - The Y field coordinate to go to.
-     * @param xTarget           - The X field coordinate to go to.
-     * @param angleTarget   - The angle the robot should try to face when reaching destination in degrees.
+     * @param yTarget     - The Y field coordinate to go to.
+     * @param xTarget     - The X field coordinate to go to.
+     * @param angleTarget - The angle the robot should try to face when reaching destination in degrees.
      * @param speedMax    - Sets the speed when we are driving through the point.
-     * @param driveType     - Slows the robot down to stop at destination coordinate.
+     * @param driveType   - Slows the robot down to stop at destination coordinate.
      * @return - Boolean true we have reached destination, false we have not
      */
     protected boolean driveToXY(double yTarget, double xTarget, double angleTarget,
