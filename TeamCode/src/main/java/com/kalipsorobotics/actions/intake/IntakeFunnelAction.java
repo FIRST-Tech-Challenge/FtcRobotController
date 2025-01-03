@@ -14,16 +14,16 @@ public class IntakeFunnelAction extends KActionSet {
 
         KServoAutoAction funnelMoveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS);
         funnelMoveSmallPivot.setName("funnelMoveSmallPivot");
-        this.addAction(funnelMoveBigPivot);
+        this.addAction(funnelMoveSmallPivot);
 
         KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
         closeClaw.setName("closeClaw");
-        closeClaw.setDependentActions(funnelMoveSmallPivot, funnelMoveBigPivot);
+        closeClaw.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot);
         this.addAction(closeClaw);
 
         KServoAutoAction moveBigPivot2 = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
         moveBigPivot2.setName("moveBigPivot");
-        moveBigPivot2.setDependentActions(funnelMoveSmallPivot, funnelMoveBigPivot, closeClaw);
+        moveBigPivot2.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot, closeClaw);
         this.addAction(moveBigPivot2);
 
     }
