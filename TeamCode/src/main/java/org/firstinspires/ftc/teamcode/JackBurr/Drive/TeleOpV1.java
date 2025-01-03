@@ -113,9 +113,12 @@ public class TeleOpV1 extends OpMode {
                 break;
             case READY_FOR_DELIVERY:
                 //Move delivery arm to sample
-                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
-                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -0.5);
                 if(!deliveryGrippersClosed) {
+                    deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+                }
+                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                if(deliveryGrippersTimer.seconds() <  0.3) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
                     deliveryGrippersClosed = true;
                 }

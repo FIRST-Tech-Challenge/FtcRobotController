@@ -9,9 +9,9 @@ public class RobotConstantsV1 {
 
     //GRIPPERS=======================================================================================================
     public double GRIPPERS_OPEN = 0.8;
-    public double GRIPPERS_CLOSE = 0.2;
+    public double GRIPPERS_CLOSE = 0.1;
     public double GRIPPERS_GRAB = 0.45;
-    public double DELIVERY_GRIPPERS_CLOSE = 0.65;
+    public double DELIVERY_GRIPPERS_CLOSE = 0.7;
     public double DELIVERY_GRIPPERS_OPEN = 0.4;
     //===============================================================================================================
     //SERVOS=========================================================================================================
@@ -25,6 +25,6 @@ public class RobotConstantsV1 {
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
     public int INTAKE_MOTOR_OUT = 65;
-    public int INTAKE_MOTOR_ALL_THE_WAY_IN = 0;
+    public int INTAKE_MOTOR_ALL_THE_WAY_IN = -2;
 
 }
