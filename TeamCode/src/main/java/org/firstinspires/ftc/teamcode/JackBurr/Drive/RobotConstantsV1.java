@@ -25,6 +25,6 @@ public class RobotConstantsV1 {
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
     public int INTAKE_MOTOR_OUT = 65;
-    public int INTAKE_MOTOR_ALL_THE_WAY_IN = -2;
+    public int INTAKE_MOTOR_ALL_THE_WAY_IN = 0;
 
 }

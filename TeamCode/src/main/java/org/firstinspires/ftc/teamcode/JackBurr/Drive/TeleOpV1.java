@@ -31,12 +31,15 @@ public class TeleOpV1 extends OpMode {
     public ElapsedTime grippersTimer = new ElapsedTime();
     public ElapsedTime deliveryArmTimer = new ElapsedTime();
     public ElapsedTime deliveryGrippersTimer = new ElapsedTime();
+    public ElapsedTime diffTimer = new ElapsedTime();
     public IntakeSlidesV1 intakeSlides = new IntakeSlidesV1();
     public GrippersV1 grippers = new GrippersV1();
     public RobotConstantsV1 constants = new RobotConstantsV1();
     public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();
     public boolean deliveryGrippersClosed = false;
     public DeliveryGrippersV1 deliveryGrippers = new DeliveryGrippersV1();
+    public boolean diffTimerIsReset = false;
+    public boolean deliveryTimerIsReset = false;
     @Override
     public void init() {
         //Motors =====================================================================================================
@@ -62,6 +65,7 @@ public class TeleOpV1 extends OpMode {
         buttonTimer.reset();
         deliveryArmTimer.reset();
         deliveryGrippersTimer.reset();
+        diffTimer.reset();
     }
 
     @Override
@@ -76,9 +80,6 @@ public class TeleOpV1 extends OpMode {
             state = nextState();
             if(state == SystemStatesV1.ARM_UP){
                 grippersTimer.reset();
-            }
-            else if(state == SystemStatesV1.READY_FOR_DELIVERY){
-                deliveryGrippersTimer.reset();
             }
             buttonTimer.reset();
         }
@@ -103,28 +104,40 @@ public class TeleOpV1 extends OpMode {
                 else {
                     grippers.setPosition(constants.GRIPPERS_CLOSE);
                 }
-                if(grippersTimer.seconds() > 0.3){
+                if(grippersTimer.seconds() > 0.5){
                     grippers.setPosition(constants.GRIPPERS_CLOSE);
                     differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                     differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
-                    intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -0.5);
+                    if(!diffTimerIsReset) {
+                        diffTimer.reset();
+                        diffTimerIsReset = true;
+                    }
+                    if(diffTimer.seconds() > 0.6) {
+                        intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -0.7);
+                    }
                 }
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 break;
             case READY_FOR_DELIVERY:
+                diffTimerIsReset = false;
                 //Move delivery arm to sample
-                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -0.5);
+                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -0.7);
                 if(!deliveryGrippersClosed) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 }
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                if(!deliveryTimerIsReset){
+                    deliveryGrippersTimer.reset();
+                }
                 if(deliveryGrippersTimer.seconds() <  0.3) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
                     deliveryGrippersClosed = true;
                 }
                 break;
             case DELIVER_UP:
-                grippers.setPosition(constants.GRIPPERS_OPEN);
+                if(deliveryGrippersTimer.seconds() >  0.3) {
+                    grippers.setPosition(constants.GRIPPERS_OPEN);
+                }
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 break;
