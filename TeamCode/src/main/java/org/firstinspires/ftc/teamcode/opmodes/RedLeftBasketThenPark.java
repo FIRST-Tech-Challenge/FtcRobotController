@@ -43,19 +43,16 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
                 .lineToY(-52)
                 .turn(Math.toRadians(90))
-                .lineToX(-56)
+                .lineToX(-58)
                 .turn(Math.toRadians(45))
-                .waitSeconds(3);
+                .strafeTo(new Vector2d(-62,-55))
+                .waitSeconds(1.5);
 
         Action toSub = toBasket.endTrajectory().fresh()
                 // samples (push)
                 .turn(Math.toRadians(45))
-                //          .splineTo(new Vector2d(-35,-52),180) too wavy
-                .strafeTo(new Vector2d(-35,-52))
-                .strafeTo(new Vector2d(-35,-10))
-                .strafeTo(new Vector2d(-46,-10))
-                .strafeTo(new Vector2d(-46,-60))
-                .strafeTo(new Vector2d(-46,-10))
+                .strafeTo(new Vector2d(-45,-55))
+                .strafeTo(new Vector2d(-45,-15))
                 .turn(Math.toRadians(90))
                 .lineToX(-26)
                 .build();
@@ -80,10 +77,12 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 //                        liftPivot.liftPivotDown(),
                         firstTraj, // go to the basket, push samples, and then submersible
                         liftPivot.liftPivotUp(),
-                        lift.liftUp(), // to lvl1 ascent
+                        lift.liftUp(),
                         claw.openClaw(), // drop the sample
                         lift.liftDown(),
-                        toSub // push samples, go to submersible
+                        toSub, // push samples, go to submersible
+                        liftPivot.liftPivotUp(),
+                        lift.liftUp()
                 )
         );
     }
@@ -94,7 +93,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         public Lift(HardwareMap hardwareMap) {
             lift = hardwareMap.get(DcMotorEx.class, "lift");
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
+            lift.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         public class LiftUp implements Action {
@@ -106,13 +105,14 @@ public class RedLeftBasketThenPark extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    lift.setPower(0.8);
+                    lift.setPower(1);
                     initialized = true;
                 }
                 // checks lift's current position
                 double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 500.0) {
+                packet.put("liftPivotPos", pos);
+                telemetry.addData("Lift pivot pos: ", pos);
+                if (pos < 3050.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -123,6 +123,9 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 // overall, the action powers the lift until it surpasses
                 // 3000 encoder ticks, then powers it off
             }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off
+
         }
         public Action liftUp() {
             return new LiftUp();
@@ -200,26 +203,14 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
-        private DcMotorEx liftPivotRight;
 
         public LiftPivot(HardwareMap hardwareMap) {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
             liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             liftPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-            liftPivotRight = hardwareMap.get(DcMotorEx.class, "liftPivotRight");
-            liftPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            liftPivotRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
             liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftPivot.setTargetPosition(0);
-            liftPivotRight.setTargetPosition(0);
-            liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftPivotRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftPivot.setTargetPosition(900);
-            liftPivotRight.setTargetPosition(900);
-
-
+            liftPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
 
@@ -232,14 +223,13 @@ public class RedLeftBasketThenPark extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    liftPivot.setPower(0.8);
-                    liftPivotRight.setPower(0.8);
+                    liftPivot.setPower(1);
                     initialized = true;
                 }
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos < 500.0) {
+                if (pos < 1700.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -258,29 +248,27 @@ public class RedLeftBasketThenPark extends LinearOpMode {
         public class LiftPivotDown implements Action {
             private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
                 if (!initialized) {
-                    liftPivot.setPower(0.8);
+                    liftPivot.setPower(1);
                     initialized = true;
                 }
-                if (first) {
-                    currLiftPos = FIRST_LIFT_DOWN_POS;
-                    first = false;
-                } else {
-                    currLiftPos = LAST_LIFT_DOWN_POS;
-                }
+                // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
-               // packet.put("liftPos", pos);
-                telemetry.addData("liftPivotPos",pos);
-                telemetry.update();
-
-                if (pos < currLiftPos) {
+                packet.put("liftPivotPos", pos);
+                if (pos > 1400.0) {
+                    // true causes the action to rerun
                     return true;
                 } else {
+                    // false stops action rerun
                     liftPivot.setPower(0);
                     return false;
                 }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off
             }
         }
 

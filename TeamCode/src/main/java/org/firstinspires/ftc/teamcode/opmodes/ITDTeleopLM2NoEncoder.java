@@ -31,8 +31,8 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "backRight");
         leftBack = hardwareMap.get(DcMotor.class, "backLeft");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //RNRRMecanumDrive drive = new RNRRMecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         //drive.setPoseEstimate(startPose);
@@ -79,13 +79,13 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            leftFront.setPower(frontLeftPower);
-            leftBack.setPower(backLeftPower);
-            rightFront.setPower(frontRightPower);
-            rightBack.setPower(backRightPower);
+            leftFront.setPower(0.8*frontLeftPower);
+            leftBack.setPower(0.8*backLeftPower);
+            rightFront.setPower(0.8*frontRightPower);
+            rightBack.setPower(0.8*backRightPower);
 
             lift.setPower(gamepad2.left_stick_y);
-            liftPivot.setPower(gamepad2.right_stick_y);
+            liftPivot.setPower(0.7*gamepad2.right_stick_y);
 
             if (gamepad2.a) {
                 claw.setPower(1);

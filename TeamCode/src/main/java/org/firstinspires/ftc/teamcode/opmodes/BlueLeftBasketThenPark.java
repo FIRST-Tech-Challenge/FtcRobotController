@@ -79,9 +79,10 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 new SequentialAction(
 //                        liftPivot.liftPivotDown(),
                         firstTraj, // go to the basket, push samples, and then submersible
-                        //lift.liftUp() // to lvl1 ascent
-                      //  claw.openClaw(), // drop the sample
-                      //  lift.liftDown()
+                        liftPivot.liftPivotUp(),
+                        lift.liftUp(),
+                        claw.openClaw(), // drop the sample
+                        lift.liftDown(),
                         toSub // push samples, go to submersible
                 )
         );
@@ -105,13 +106,13 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    lift.setPower(0.8);
+                    lift.setPower(1);
                     initialized = true;
                 }
                 // checks lift's current position
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 500.0) {
+                if (pos < 3300.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -219,13 +220,13 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    liftPivot.setPower(0.8);
+                    liftPivot.setPower(1);
                     initialized = true;
                 }
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos < 500.0) {
+                if (pos < 1775.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
