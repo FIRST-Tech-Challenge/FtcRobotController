@@ -3,8 +3,11 @@ package com.kalipsorobotics.actions.intake;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
+
+import org.checkerframework.checker.units.qual.K;
 
 public class IntakeTransferReady extends KActionSet {
 
@@ -14,9 +17,14 @@ public class IntakeTransferReady extends KActionSet {
         closeClaw.setName("closeClaw");
         this.addAction(closeClaw);
 
+        KServoAutoAction linkageToMid = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_MID_POS);
+        linkageToMid.setName("linkageToMid");
+        linkageToMid.setDependentActions(closeClaw);
+        this.addAction(linkageToMid);
+
         KServoAutoAction linkageRetract = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);
         linkageRetract.setName("linkageRetract");
-        linkageRetract.setDependentActions(closeClaw);
+        linkageRetract.setDependentActions(linkageToMid);
         this.addAction(linkageRetract);
 
         KServoAutoAction moveBigSweep = new KServoAutoAction(intake.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_TRANSFER_READY_POS);

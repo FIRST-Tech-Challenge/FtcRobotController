@@ -255,7 +255,7 @@ public class Teleop extends LinearOpMode {
 
             if(intakeFunnelActionPressed) {
                 if (intakeFunnelAction == null || intakeFunnelAction.getIsDone()){
-                    intakeFunnelAction = new IntakeFunnelAction(intakeClaw);
+                    intakeFunnelAction = new IntakeFunnelAction(intakeClaw, outtake);
                     intakeFunnelAction.setName("intakeFunnelAction");
                 }
 
