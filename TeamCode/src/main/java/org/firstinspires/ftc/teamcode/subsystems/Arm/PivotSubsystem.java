@@ -57,12 +57,12 @@ public class PivotSubsystem extends SubsystemBase {
     public void periodic(){
         updateValues();
         updateTelemetry();
+        setMotors(calculateFeedForward());
     }
 
 
     
     private void updateValues() {
-        currentArmLength = armLength.getAsDouble();
         currentArmCOM = armCOM.getAsDouble();
         calcArmAngle();
     }
@@ -74,6 +74,7 @@ public class PivotSubsystem extends SubsystemBase {
         dashboardTelemetry.addData("COMAngle", aCOMAngle());
         dashboardTelemetry.addData("balanceAngle", aBalanceAngle());
         dashboardTelemetry.addData("FF", calculateFeedForward());
+        dashboardTelemetry.addData("kG", akG(armLength));
         dashboardTelemetry.addData("rightEncoder", rightEncoder.getPosition());
         dashboardTelemetry.addData("rightEncoder rev", rightEncoder.getRevolutions());
         dashboardTelemetry.addData("leftEncoder rev", leftEncoder.getRevolutions());
@@ -90,7 +91,7 @@ public class PivotSubsystem extends SubsystemBase {
 //         pivotFF = armMass*g*currentArmCOM*Math.sin(angle);
 //    }
     public double calculateFeedForward(){
-        return -kG * Math.cos(Math.toRadians(aCOMAngle()));
+        return -akG(armLength) * Math.cos(Math.toRadians(aCOMAngle()));
     }
 
     private double aCOMAngle(){
@@ -98,10 +99,10 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     private double aBalanceAngle(){
-        return 3.59*currentArmLength + 119;
+        return 3.59*armLength.getAsDouble() + 119;
     }
-    private double akG(double armLength) {
-        return -0.0486*armLength + 0.228;
+    private double akG(DoubleSupplier x) {
+        return 0.0782 + -0.0121*x.getAsDouble() + 3.17E-03*Math.pow(x.getAsDouble(),2);
     }
 
 
@@ -112,15 +113,20 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setMotors(double power){
-        if(power>=0)
+        if(power>kS)
         {
             pivotRight.set(power+kS);
             pivotLeft.set(power+kS);
         }
-        else{
+        else if(power<kS)
+        {
             pivotRight.set(power-kS);
             pivotLeft.set(power-kS);
 
+        }
+        else{
+            pivotRight.set(0);
+            pivotLeft.set(0);
         }
     }
     public InstantCommand set(){

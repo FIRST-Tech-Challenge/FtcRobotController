@@ -38,6 +38,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         currentArmLength = extensionEncoder1.getRevolutions();
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
         m_extensionPID = new PIDController(eKP,eKI,eKD);
+        extensionEncoder1.reset();
 
 
 
@@ -60,7 +61,9 @@ public class ExtensionSubsystem extends SubsystemBase {
     public double getArmCOM(){return armCOM;}
 
     private void updateValues() {
+        currentArmLength = extensionEncoder1.getRevolutions();
         armCOM = telescopicArmCOM.calculateCenterOfMass(segmentMasses,segmentLengths,currentArmLength);
+
     }
 
     private void updateTelemetry() {
