@@ -23,7 +23,7 @@ public class AutoHook extends LinearOpMode {
 
         waitForStart();
         ChassisSpeeds speeds = new ChassisSpeeds(4, 0, 0);
-        drivebase.alignWheels(this::opModeIsActive);    //TODO: doesn't align front wheels idk why
+        drivebase.alignWheels(this::opModeIsActive);    //TODO: rear right wheel just spins idk why
         sleep(2000);
         driveWithOdo(speeds, 2.5);
     }
