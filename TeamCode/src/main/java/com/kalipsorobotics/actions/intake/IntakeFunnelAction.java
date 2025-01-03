@@ -1,6 +1,7 @@
 package com.kalipsorobotics.actions.intake;
 
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.IntakeClaw;
 
@@ -16,9 +17,13 @@ public class IntakeFunnelAction extends KActionSet {
         funnelMoveSmallPivot.setName("funnelMoveSmallPivot");
         this.addAction(funnelMoveSmallPivot);
 
+        WaitAction wait = new WaitAction(100);
+        wait.setName("wait");
+        this.addAction(wait);
+
         KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
         closeClaw.setName("closeClaw");
-        closeClaw.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot);
+        closeClaw.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot, wait);
         this.addAction(closeClaw);
 
         KServoAutoAction moveBigPivot2 = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);

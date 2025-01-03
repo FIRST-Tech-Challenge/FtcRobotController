@@ -25,7 +25,7 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.1;
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.04;
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.01;
 
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62; //increase to retract more
