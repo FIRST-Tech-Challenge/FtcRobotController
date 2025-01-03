@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
@@ -36,16 +37,10 @@ public class AutoHook extends LinearOpMode {
       var currentPos = drivebase.getPose();
       Rotation2d rotation =
           new Rotation2d(); // TODO: figure out a way to make this rotation2d not just 0
-      var wantedPos =
-          new Pose2d(
-              speeds.vxMetersPerSecond,
-              speeds.vyMetersPerSecond,
-              rotation); // TODO: figure out predetermined variables of the positions that we want
+      var wantedPos = new Pose2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, rotation); // TODO: figure out predetermined variables of the positions that we want
 
       if (currentPos != wantedPos) {
-        var movement =
-            currentPos.minus(
-                wantedPos); // TODO: figure out if this actually works with translating the robot to
+        var movement = currentPos.minus(wantedPos); // TODO: figure out if this actually works with translating the robot to
         // move where it's supposed to
         ChassisSpeeds newSpeeds =
             new ChassisSpeeds(
@@ -74,5 +69,6 @@ public class AutoHook extends LinearOpMode {
     }
   }
 
-  private void hookClip() {}
+  private void hookClip() {
+  }
 }
