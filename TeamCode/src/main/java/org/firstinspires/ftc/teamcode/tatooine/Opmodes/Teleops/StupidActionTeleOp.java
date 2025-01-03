@@ -46,6 +46,8 @@ public class StupidActionTeleOp extends LinearOpMode {
 
     private boolean lockAngle = false;
 
+    private boolean prevLockAngle = false;
+
     @Override
     public void runOpMode(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -66,6 +68,7 @@ public class StupidActionTeleOp extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()){
+            prevLockAngle = lockAngle;
             TelemetryPacket packet = new TelemetryPacket();
 
             List<Action> newActions = new ArrayList<>();
@@ -105,30 +108,34 @@ public class StupidActionTeleOp extends LinearOpMode {
                 arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
             }
             if (!lockAngle) {
+                runningActions.clear();
                 arm.setPowerAngle(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
+            }
+            else if (lockAngle && !prevLockAngle){
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setAngle(arm.getAngle()));
             }
             if (!lockWrist){
                 wrist.setPosition(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
             }
-            else if (lockAngle){
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.setAngle(arm.getAngle()));
-            }
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)){
                 runningActions.clear();
                 lockExtend = true;
+                lockAngle = true;
                 runningActions.add(arm.moveAngle());
                 runningActions.add(new SequentialAction(intake.setPowerAction(0), new InstantAction(()-> wrist.close()),new SleepAction(1),new ParallelAction(arm.setExtension(0),new InstantAction(()-> wrist.home())), arm.setAngle(0)));
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
                 runningActions.clear();
                 lockExtend = true;
+                lockAngle = true;
                 runningActions.add(arm.moveAngle());
                 runningActions.add(new SequentialAction(arm.setAngle(90), arm.setExtension(Arm.getMaxExtend()), new InstantAction(() -> wrist.scoreSample()), new SleepAction(1), intake.outtake(), new SleepAction(1), intake.setPowerAction(0)));
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPadRightTriggered) {
                 runningActions.clear();
                 dPadRightTriggered = true;
                 lockExtend = true;
+                lockAngle = true;
                 runningActions.add(arm.moveAngle());
                 runningActions.add(new SequentialAction(new InstantAction(() -> wrist.stright()), arm.setAngle(15), arm.setExtension(0.5 * Arm.getMaxExtend())));
             }
@@ -136,6 +143,7 @@ public class StupidActionTeleOp extends LinearOpMode {
                 runningActions.clear();
                 dPadRightTriggered = false;
                 lockExtend = true;
+                lockAngle = true;
                 runningActions.add(arm.moveAngle());
                 runningActions.add(new SequentialAction(arm.setAngle(25
                 ),new InstantAction(() -> wrist.openMin()),intake.intake(), new SleepAction(1), arm.setAngle(-5), new SleepAction(1)));
