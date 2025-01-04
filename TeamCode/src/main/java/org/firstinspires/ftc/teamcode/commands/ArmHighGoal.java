@@ -18,8 +18,6 @@ public class ArmHighGoal extends CommandBase {
 
     public ArmHighGoal(ArmSub armSub, DrivetrainSub drivetrain) {
         this.armSub = armSub;
-        //this is to fix a complaint of the compiler bc i'm trying to just update code on another robot. Don't trust it.
-        this.gamepad = null;
         addRequirements(armSub, drivetrain);
     }
 

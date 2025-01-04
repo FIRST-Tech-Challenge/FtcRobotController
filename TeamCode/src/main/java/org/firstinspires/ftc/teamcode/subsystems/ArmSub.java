@@ -44,7 +44,12 @@ public class ArmSub extends SubsystemBase{
     }
 
     public void moveArm(double speed) {
-        setPos((int) (getMotor().getCurrentPosition() + speed*20), (int) (speed/abs(speed)));
+        //setPos((int) (getMotor().getCurrentPosition() + (20*speed)), 1);
+        if (speed>0) {
+            setPos((int) (getMotor().getCurrentPosition() + 30), 1);
+        } else {
+            setPos((int) (getMotor().getCurrentPosition() - 30), -1);
+        }
     }
 
 
@@ -67,9 +72,11 @@ public class ArmSub extends SubsystemBase{
     public void setPos(int pos, int dir) {
         armMotor.setTargetPosition(pos);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (dir == 1) {
+        //if moving down, set velocity to a certain amount.
+
+        if (armMotor.getCurrentPosition()<pos) {
             armMotor.setVelocity(450);
-        } else if (dir == -1) {
+        } else {
             armMotor.setVelocity(300);
         }
     }
