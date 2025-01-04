@@ -64,6 +64,7 @@ public class TeleOpV1 extends OpMode {
         deliveryAxon.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
         deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+        intakeSlides.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesState = SlidesState.IN;
         //===========================================================================================================
     }
@@ -153,6 +154,8 @@ public class TeleOpV1 extends OpMode {
         }
         telemetry.addLine("STATE: " + state.name());
         telemetry.addLine("\t Intake grippers position: " + grippers.getPosition());
+        telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
+        telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());
 
 
     }
