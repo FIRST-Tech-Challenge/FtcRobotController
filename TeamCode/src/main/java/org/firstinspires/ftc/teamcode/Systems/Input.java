@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Config
+
 public class Input {
 
     Motors motors;
@@ -41,36 +39,36 @@ public class Input {
     }
 
     public void move(double power) {
-        if (power != 0) {
+
 
             motors.MoveMotor(Motors.Type.LeftBack, -power);
             motors.MoveMotor(Motors.Type.LeftFront, -power);
             motors.MoveMotor(Motors.Type.RightFront, -power);
             motors.MoveMotor(Motors.Type.RightBack, -power);
-        }
+
 
     }
 
     public void strafe(double power) {
-        if (power != 0) {
+
 
             motors.MoveMotor(Motors.Type.LeftFront, power); // left front
             motors.MoveMotor(Motors.Type.RightFront, -power); // right front
 
             motors.MoveMotor(Motors.Type.LeftBack, -power); // left back
             motors.MoveMotor(Motors.Type.RightBack, power); // right back
-        }
+
     }
 
     public void spin(double power) {
-        if (power != 0) {
+
 
             motors.MoveMotor(Motors.Type.LeftFront, power); // left front
             motors.MoveMotor(Motors.Type.LeftBack, power); // left back
 
             motors.MoveMotor(Motors.Type.RightFront, -power); // right front
             motors.MoveMotor(Motors.Type.RightBack, -power); // right back
-        }
+
     }
 
     public void claw(boolean grabButton, boolean releaseButton) {
@@ -84,16 +82,17 @@ public class Input {
     }
 
     public void upArm(double power) {
-        if (power != 0) {
 
-            double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 
-            double restingUpArm = motors.getUpArmPosition();
+            motors.MoveMotor(Motors.Type.UpArm, power);
 
-            double realPower = Math.max(restingUpArm, Math.min(power, thing));
-            motors.MoveMotor(Motors.Type.Pull, realPower);
+//            double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
+//
+//            double restingUpArm = motors.getUpArmPosition();
+//
+//            double realPower = Math.max(restingUpArm, Math.min(power, thing));
+//            motors.MoveMotor(Motors.Type.Pull, realPower);
 
-        }
     }
 
 
@@ -160,7 +159,7 @@ public class Input {
         BotTelemetry.addData("Derivative", derivative);
         BotTelemetry.addData("PID Output", output);
 
-        BotTelemetry.update();
+
     }
 
 }
