@@ -92,7 +92,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.addPoint(-380, WALL_PICKUP_Y, -180); //-205, 700
         this.addAction(moveBarToWall);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0);
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/1000);
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveBarToWall, specimenWallReady);
         //to depot for specimen

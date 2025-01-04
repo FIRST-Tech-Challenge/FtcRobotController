@@ -197,7 +197,7 @@ public class PurePursuitAction extends Action {
         thetaVelocity = (Math.abs(lastPosition.getTheta() - wheelOdometry.getCurrentPosition().getTheta())) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
 
         if(xVelocity < 0.0075 && yVelocity < 0.0075 && thetaVelocity < 0.0075) {
-            if(timeoutTimer.milliseconds() > 2000) {
+            if(timeoutTimer.milliseconds() > 1000) {
                 finishedMoving();
             }
         } else {

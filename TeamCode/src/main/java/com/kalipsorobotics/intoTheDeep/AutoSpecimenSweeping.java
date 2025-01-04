@@ -116,9 +116,9 @@ public class AutoSpecimenSweeping extends LinearOpMode {
         specimenWallReady.setDependentActions(secondSample);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0);
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry);
         moveToDepot.setName("moveToDepot");
-        moveToDepot.setDependentActions(thirdSample); //CHANGE
+        moveToDepot.setDependentActions(thirdSample);
         //to depot for specimen
         //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
         moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180); //-130, -615
