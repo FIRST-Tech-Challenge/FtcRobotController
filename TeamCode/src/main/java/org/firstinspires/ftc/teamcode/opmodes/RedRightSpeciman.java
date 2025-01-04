@@ -74,8 +74,9 @@ public class RedRightSpeciman extends LinearOpMode {
                         firstTraj, // go to the chamber, push sample, park in observation zone
                         liftPivot.liftPivotUp(),
                         lift.liftUp(), // to lvl1 ascent
+                        liftPivot.liftPivotDown(),
                         lift.liftDown(),
-                        claw.openClaw() // drop the sample
+                        toPark
                 )
         );
     }
@@ -105,7 +106,7 @@ public class RedRightSpeciman extends LinearOpMode {
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
                 telemetry.addData("Lift pivot pos: ", pos);
-                if (pos < 2000.0) {
+                if (pos < 1550.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -130,13 +131,13 @@ public class RedRightSpeciman extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    lift.setPower(-0.8);
+                    lift.setPower(-0.75);
                     initialized = true;
                 }
 
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos > 100.0) {
+                if (pos > 500.0) {
                     return true;
                 } else {
                     lift.setPower(0);
@@ -222,6 +223,8 @@ public class RedRightSpeciman extends LinearOpMode {
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
+                telemetry.addData("lift pivot position ", pos);
+                telemetry.update();
                 if (pos < 1700.0) {
                     // true causes the action to rerun
                     return true;
@@ -246,13 +249,15 @@ public class RedRightSpeciman extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    liftPivot.setPower(1);
+                    liftPivot.setPower(-1);
                     initialized = true;
                 }
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos > 1400.0) {
+                telemetry.addData("lift pivot position ", pos);
+                telemetry.update();
+                if (pos > 1000.0) {
                     // true causes the action to rerun
                     return true;
                 } else {

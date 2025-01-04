@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-
+@Disabled
 @TeleOp(name = "Teleop LM1")
 public class ITDTeleopRoadrunner extends LinearOpMode {
 

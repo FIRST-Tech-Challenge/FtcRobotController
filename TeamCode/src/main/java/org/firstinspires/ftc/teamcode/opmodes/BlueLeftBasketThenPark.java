@@ -47,10 +47,21 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 .turn(Math.toRadians(45))
                 .waitSeconds(3);
 
+                /*
+                .waitSeconds(1)
+                .lineToX(60)
+                .turn(Math.toRadians(45))
+                .waitSeconds(0.3)
+                .turn(Math.toRadians(45))
+                .lineToY(15)
+                .turn(Math.toRadians(90))
+                .lineToX(30);
+
+                 */
+
         Action toSub = toBasket.endTrajectory().fresh()
                 // samples (push)
                 .turn(Math.toRadians(45))
-                //          .splineTo(new Vector2d(-35,-52),180) too wavy
                 .strafeTo(new Vector2d(35,52))
                 .strafeTo(new Vector2d(35,10))
                 .strafeTo(new Vector2d(46,10))
@@ -87,14 +98,16 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 )
         );
     }
-
     public class Lift {
         private DcMotorEx lift;
 
         public Lift(HardwareMap hardwareMap) {
             lift = hardwareMap.get(DcMotorEx.class, "lift");
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
+            lift.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         public class LiftUp implements Action {
@@ -111,8 +124,9 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 }
                 // checks lift's current position
                 double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 3300.0) {
+                packet.put("liftPivotPos", pos);
+                telemetry.addData("Lift pivot pos: ", pos);
+                if (pos < 3000.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -123,9 +137,47 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 // overall, the action powers the lift until it surpasses
                 // 3000 encoder ticks, then powers it off
             }
+            // overall, the action powers the lift until it surpasses
+            // 3000 encoder ticks, then powers it off
+
         }
         public Action liftUp() {
-            return new LiftUp();
+            return new Lift.LiftUp();
+        }
+
+        public class LiftUpLittle implements Action {
+            // checks if the lift motor has been powered on
+            private boolean initialized = false;
+
+            // actions are formatted via telemetry packets as below
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
+                if (!initialized) {
+                    lift.setPower(1);
+                    initialized = true;
+                }
+                // checks lift's current position
+                double pos = lift.getCurrentPosition();
+                packet.put("liftPivotPos", pos);
+                telemetry.addData("Lift pivot pos: ", pos);
+                if (pos < 500.0) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    // false stops action rerun
+                    lift.setPower(0);
+                    return false;
+                }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off
+            }
+            // overall, the action powers the lift until it surpasses
+            // 3000 encoder ticks, then powers it off
+
+        }
+        public Action liftUpLittle() {
+            return new Lift.LiftUpLittle();
         }
 
         public class LiftDown implements Action {
@@ -150,7 +202,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
         }
 
         public Action liftDown() {
-            return new LiftDown();
+            return new Lift.LiftDown();
         }
 
     }
@@ -178,7 +230,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
         }
 
         public Action closeClaw() {
-            return new CloseClaw();
+            return new Claw.CloseClaw();
         }
 
         public class OpenClaw implements Action {
@@ -194,21 +246,21 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
         }
 
         public Action openClaw() {
-            return new OpenClaw();
+            return new Claw.OpenClaw();
         }
     }
 
     public class LiftPivot {
         private DcMotorEx liftPivot;
-        private DcMotorEx liftPivotRight;
 
         public LiftPivot(HardwareMap hardwareMap) {
             liftPivot = hardwareMap.get(DcMotorEx.class, "liftPivot");
             liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             liftPivot.setDirection(DcMotorSimple.Direction.REVERSE);
+
             liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftPivot.setTargetPosition(900);
-            liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
 
         public class LiftPivotUp implements Action {
@@ -226,7 +278,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos < 1775.0) {
+                if (pos < 1700.0) {
                     // true causes the action to rerun
                     return true;
                 } else {
@@ -239,40 +291,38 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
             }
         }
         public Action liftPivotUp() {
-            return new LiftPivotUp();
+            return new LiftPivot.LiftPivotUp();
         }
 
         public class LiftPivotDown implements Action {
             private boolean initialized = false;
 
+            // actions are formatted via telemetry packets as below
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                // powers on motor, if it is not on
                 if (!initialized) {
-                    liftPivot.setPower(0.8);
+                    liftPivot.setPower(1);
                     initialized = true;
                 }
-                if (first) {
-                    currLiftPos = FIRST_LIFT_DOWN_POS;
-                    first = false;
-                } else {
-                    currLiftPos = LAST_LIFT_DOWN_POS;
-                }
+                // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
-               // packet.put("liftPos", pos);
-                telemetry.addData("liftPivotPos",pos);
-                telemetry.update();
-
-                if (pos < currLiftPos) {
+                packet.put("liftPivotPos", pos);
+                if (pos > 1420.0) {
+                    // true causes the action to rerun
                     return true;
                 } else {
+                    // false stops action rerun
                     liftPivot.setPower(0);
                     return false;
                 }
+                // overall, the action powers the lift until it surpasses
+                // 3000 encoder ticks, then powers it off
             }
         }
 
         public Action liftPivotDown() {
-            return new LiftPivotDown();
+            return new LiftPivot.LiftPivotDown();
         }
 
 

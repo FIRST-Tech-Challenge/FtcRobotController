@@ -22,17 +22,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "RedLeftBasketThenPark")
-public class RedLeftBasketThenPark extends LinearOpMode {
+@Autonomous(name = "RedLeftBasketThenParkNEWPATH")
+public class RedLeftBasketThenParkNEWPATH extends LinearOpMode {
     private boolean first = true;
-    private static final double FIRST_LIFT_DOWN_POS = 50.0;
-    private static final double LAST_LIFT_DOWN_POS = 100.0;
     private double currLiftPos = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(89));
+        Pose2d initialPose = new Pose2d(-38, -62, Math.toRadians(179));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         Lift lift = new Lift(hardwareMap);
@@ -41,12 +39,14 @@ public class RedLeftBasketThenPark extends LinearOpMode {
 
         // actionBuilder builds from the drive steps passed to it
         TrajectoryActionBuilder toBasket = drive.actionBuilder(initialPose)
-                .lineToY(-52)
-                .turn(Math.toRadians(90))
-                .lineToX(-58)
+                .waitSeconds(1)
+                .lineToX(-60)
                 .turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(-62,-55))
-                .waitSeconds(1.5);
+                .waitSeconds(0.3)
+                .turn(Math.toRadians(45))
+                .lineToY(-15)
+                .turn(Math.toRadians(90))
+                .lineToX(-30);
 
         Action toSub = toBasket.endTrajectory().fresh()
                 // samples (push)
@@ -229,7 +229,7 @@ public class RedLeftBasketThenPark extends LinearOpMode {
                 // checks lift's current position
                 double pos = liftPivot.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
-                if (pos < 1700.0) {
+                if (pos < 1730.0) {
                     // true causes the action to rerun
                     return true;
                 } else {

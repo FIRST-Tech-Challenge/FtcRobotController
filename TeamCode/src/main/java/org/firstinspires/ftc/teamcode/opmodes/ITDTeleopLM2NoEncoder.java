@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@TeleOp(name = "Teleop LM2 NO ENCODER")
+@TeleOp(name = "Teleop LM3 BUTTONS")
 public class ITDTeleopLM2NoEncoder extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -95,6 +95,11 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             else if (gamepad2.x) {
                 claw.setPower(-1);
                 claw2.setPower(1);
+            }
+            // outtake slowly to slowly let out a specimen so the hook is exposed
+            else if (gamepad2.b) {
+                claw.setPower(-0.5);
+                claw.setPower(0.5);
             }
             else {
                 claw.setPower(0);

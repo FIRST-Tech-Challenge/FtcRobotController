@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@TeleOp(name = "Teleop LM2 NO ENCODER")
-public class ITDTeleopLM2NoEncoder extends LinearOpMode {
+@TeleOp(name = "Teleop LM3 BUMPERS")
+public class ITDTeleopLM2NoEncoderHolland extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftFront   = null;
@@ -87,12 +87,12 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             lift.setPower(gamepad2.left_stick_y);
             liftPivot.setPower(0.7*gamepad2.right_stick_y);
 
-            if (gamepad2.a) {
+            if (gamepad2.left_bumper) {
                 claw.setPower(1);
                 claw2.setPower(-1);
             }
 
-            else if (gamepad2.x) {
+            else if (gamepad2.right_bumper) {
                 claw.setPower(-1);
                 claw2.setPower(1);
             }
