@@ -63,13 +63,13 @@ public class SampleOpMode extends CommandOpMode {
                 driver, GamepadKeys.Button.LEFT_BUMPER
         );
 
-//        GamepadButton elevatorUpButton = new GamepadButton(
-//                operator, GamepadKeys.Button.LEFT_BUMPER
-//        );
-//
-//        GamepadButton elevatorDownButton = new GamepadButton(
-//                operator, GamepadKeys.Button.RIGHT_BUMPER
-//        );
+        GamepadButton elevatorUpButton = new GamepadButton(
+                operator, GamepadKeys.Button.LEFT_BUMPER
+        );
+
+        GamepadButton elevatorDownButton = new GamepadButton(
+                operator, GamepadKeys.Button.RIGHT_BUMPER
+        );
 
         GamepadButton scoreAtBucket = new GamepadButton(
                 driver, GamepadKeys.Button.A
@@ -119,9 +119,9 @@ public class SampleOpMode extends CommandOpMode {
 
 //        ScoreAtBucket.whenPressed(new ScoreAtBucket(drivetrain, arm, elevator));
 //
-//        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 35));
-//
-//        elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
+        elevatorUpButton.whenPressed(new ElevatorGoTo(elevator, 35));
+
+        elevatorDownButton.whenPressed(new ElevatorGoTo(elevator, 0));
 
         CommandScheduler.getInstance().setDefaultCommand(elevator, new ManualElevatorCommand(elevator,
                 () -> (operator.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) - operator.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)), telemetry));

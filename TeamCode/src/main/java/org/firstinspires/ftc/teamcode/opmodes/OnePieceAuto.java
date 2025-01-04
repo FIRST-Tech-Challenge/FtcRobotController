@@ -36,7 +36,7 @@ public class OnePieceAuto extends CommandOpMode {
                 new SequentialCommandGroup(
                         new Strafe(drivetrain, -0.25, 1500),
                         new Move(drivetrain, 0.25, 400),
-                        new ElevatorGoTo(elevator, 38),
+                        new ElevatorGoTo(elevator, 38).withTimeout(3000),
                         new SetArmPosition(arm, Arm.ArmState.SCORE).withTimeout(1500),
                         new ParallelCommandGroup(
                                 new ElevatorGoTo(elevator, 0),

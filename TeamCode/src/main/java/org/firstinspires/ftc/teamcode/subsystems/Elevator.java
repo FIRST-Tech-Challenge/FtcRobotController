@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Elevator extends SubsystemBase {
     private static final double TICKS_PER_MM = 0.335;
-    private static final double KP = 0.0087;
-    private static final double KF = 0.05;
+    private static final double KP = 0.0095;
+    private static final double KF = 0.07;
     private Motor elevatorLeft;
     private Motor elevatorRight;
     private Telemetry telemetry;
@@ -81,7 +81,7 @@ public class Elevator extends SubsystemBase {
         if (pow > 0 && currentPosMM > 36 * 25.4) {
             elevatorPower = 0;
             return;
-        } else if (pow < 0 && currentPos <= 5) {
+        } else if (pow < 0 && currentPos <= 15) {
             elevatorPower = 0;
             return;
         }
