@@ -16,10 +16,13 @@ public class Input {
     Servos servos;
     ElapsedTime elapsedTime;
 
-    public static double SERVO_CLOSED = 270;
-    public static double SERVO_OPEN = 110;
+    private int setPoint;
+    private double integral = 0;
+    private double prevError = 0;  // Previous error, used for derivative
 
-//    FtcDashboard dashboard;
+    private double prevTime;
+
+    //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
 
     public Input(HardwareMap hardwareMap) {
@@ -27,129 +30,137 @@ public class Input {
         servos = new Servos(hardwareMap);
         elapsedTime = new ElapsedTime();
 
-//        dashboard = FtcDashboard.getInstance();
-//        dashboardTelemetry = dashboard.getTelemetry();
-        //setPoint = motors.getArmPosition();
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
+        setPoint = motors.getArmRestingPosition();
+
+        prevTime = elapsedTime.milliseconds();
+
     }
 
     public void move(double power) {
+        if (power != 0) {
 
-        motors.MoveMotor(Motors.Type.LeftBack, -power);
-        motors.MoveMotor(Motors.Type.LeftFront, -power);
-        motors.MoveMotor(Motors.Type.RightFront, -power);
-        motors.MoveMotor(Motors.Type.RightBack, -power);
+            motors.MoveMotor(Motors.Type.LeftBack, -power);
+            motors.MoveMotor(Motors.Type.LeftFront, -power);
+            motors.MoveMotor(Motors.Type.RightFront, -power);
+            motors.MoveMotor(Motors.Type.RightBack, -power);
+        }
 
     }
 
     public void strafe(double power) {
-        motors.MoveMotor(Motors.Type.LeftFront, power); // left front
-        motors.MoveMotor(Motors.Type.RightFront, -power); // right front
+        if (power != 0) {
 
-        motors.MoveMotor(Motors.Type.LeftBack, -power); // left back
-        motors.MoveMotor(Motors.Type.RightBack, power); // right back
+            motors.MoveMotor(Motors.Type.LeftFront, power); // left front
+            motors.MoveMotor(Motors.Type.RightFront, -power); // right front
+
+            motors.MoveMotor(Motors.Type.LeftBack, -power); // left back
+            motors.MoveMotor(Motors.Type.RightBack, power); // right back
+        }
     }
 
     public void spin(double power) {
-        motors.MoveMotor(Motors.Type.LeftFront, power); // left front
-        motors.MoveMotor(Motors.Type.LeftBack, power); // left back
+        if (power != 0) {
 
-        motors.MoveMotor(Motors.Type.RightFront, -power); // right front
-        motors.MoveMotor(Motors.Type.RightBack, -power); // right back
+            motors.MoveMotor(Motors.Type.LeftFront, power); // left front
+            motors.MoveMotor(Motors.Type.LeftBack, power); // left back
+
+            motors.MoveMotor(Motors.Type.RightFront, -power); // right front
+            motors.MoveMotor(Motors.Type.RightBack, -power); // right back
+        }
     }
 
     public void claw(boolean grabButton, boolean releaseButton) {
 
         if (releaseButton) {
-            servos.moveServo(Servos.Type.Claw, SERVO_OPEN);
+            servos.moveServo(Servos.Type.Claw, Constants.SERVO_OPEN);
         }
         else if (grabButton) {
-            servos.moveServo(Servos.Type.Claw, SERVO_CLOSED);
+            servos.moveServo(Servos.Type.Claw, Constants.SERVO_CLOSED);
         }
     }
 
     public void upArm(double power) {
-        double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
+        if (power != 0) {
 
-        double restingUpArm = motors.getUpArmPosition();
+            double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 
-        double realPower = Math.max(restingUpArm, Math.min(power, thing));
-        motors.MoveMotor(Motors.Type.Pull, realPower);
+            double restingUpArm = motors.getUpArmPosition();
+
+            double realPower = Math.max(restingUpArm, Math.min(power, thing));
+            motors.MoveMotor(Motors.Type.Pull, realPower);
+
+        }
     }
 
 
 
+    public void arm(double gamepad) {
+
+        setPoint += (int) (-gamepad * 35);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+
+        // Clamp setPoint between resting and reaching positions
+        setPoint = Math.max(motors.getArmRestingPosition(), Math.min(setPoint, motors.getArmReachingPosition()));
+
+        // Get current time and arm position
+        double time = elapsedTime.milliseconds();
+
+        // Time difference (dt)
+        double dt = (time - prevTime) / 1000.0;  // Convert to seconds
+
+        double processValue = motors.getArmPosition(); // Finding the position of the motors
+
+        // Calculate error
+        double errorValue = setPoint - processValue;
+
+        // Prevent divide-by-zero errors
+        if (dt == 0) {
+            dt = 0.1;  // Default small value if no time has passed
+        }
+
+        // Calculate PID terms
+        double proportional = Constants.KP * errorValue;
+
+        integral += errorValue * dt;  // Integrate the error over time
+        // Anti-windup: Limit the integral term to prevent it from growing too large
+        integral = Math.max(Math.min(integral, 1000), -1000);
+
+        double derivative = (errorValue - prevError) / dt;
+
+        // Compute the final PID output
+        double output = proportional + Constants.KI * integral + Constants.KD * derivative;
+
+        // Apply the motor power
+        output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range and make it so that it will more slowly go to its target position
+
+        if((motors.getArmPosition() == motors.getArmRestingPosition()) && (gamepad== 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
+            motors.MoveMotor(Motors.Type.Arm,0);                                // This can prevent the motor from overheating like it was doing earlier
+        }
+        else {
+            motors.MoveMotor(Motors.Type.Arm, output);
+        }
 
 
-    // PID variables
-//    public static double kp = 2;  // Proportional gain
-//    public static double ki = 0.45;  // Integral gain
-//    public static double kd = 0.13;  // Derivative gain
-//
-//    public int setPoint;
 
-//    double prevError = 0;  // Previous error, used for derivative
-//    double integral = 0;   // Integral term
+        // Store current error and time for next iteration
+        prevError = errorValue;
+        prevTime = time;
 
 
-//    public void ArmPidControl(double deltaTime, double input) {
-//
-//        setPoint += (int) (input * 100);    //multiply the game pad input by 100 so that there are no decimals which doesn't work in the setPoint then turn it into and int
-//
-//        // Time difference (dt)
-//        double dt = deltaTime;
-//
-//        double processValue = motors.getArmPosition(); // Finding the position of the motors
-//
-//        // Calculate error
-//        double errorValue = setPoint - processValue;
-//
-//
-//        // Prevent divide-by-zero errors
-//        if (dt == 0) {
-//            dt = 0.1;  // Default small value if no time has passed
-//        }
-//
-//        // Calculate PID terms
-//        double proportional = kp * errorValue;
-//
-//        integral += errorValue * dt;  // Integrate the error over time
-//        // Anti-windup: Limit the integral term to prevent it from growing too large
-//        integral = Math.max(Math.min(integral, 1000), -1000);
-//
-//        double derivative = (errorValue - prevError) / dt;
-//
-//        // Compute the final PID output
-//        double output = proportional + ki * integral + kd * derivative;
-//
-//        // Apply the motor power
-//        output = Math.max(Math.min(output, 100), -100);  // Clamp output to motor range
-//
-//        motors.MoveMotor(Motors.Type.Arm, output);
-//
-//        // Store current error and time for next iteration
-//
-//        prevError = errorValue;
-//
-//        telemetry.addData("Set Point", setPoint);
-//        telemetry.addData("Process Value", processValue);
-//        telemetry.addData("Proportional Gain", kp);
-//        telemetry.addData("Integral Gain", ki);
-//        telemetry.addData("Derivative Gain", kd);
-//        telemetry.addData("Proportional", proportional);
-//        telemetry.addData("Integral", integral);
-//        telemetry.addData("Derivative", derivative);
-//        telemetry.addData("PID Output", output);
-//        telemetry.update();
-//
-//        dashboardTelemetry.addData("Set Point", setPoint);
-//        dashboardTelemetry.addData("Process Value", processValue);
-//        dashboardTelemetry.addData("Proportional Gain", kp);
-//        dashboardTelemetry.addData("Integral Gain", ki);
-//        dashboardTelemetry.addData("Derivative Gain", kd);
-//        dashboardTelemetry.addData("Proportional", proportional);
-//        dashboardTelemetry.addData("Integral", integral);
-//        dashboardTelemetry.addData("Derivative", derivative);
-//        dashboardTelemetry.addData("PID Output", output);
-//        dashboardTelemetry.update();
-//    }
+        BotTelemetry.addData("Set Point", setPoint);
+        BotTelemetry.addData("Process Value", processValue);
+        BotTelemetry.addData("Proportional Gain", Constants.KP);
+        BotTelemetry.addData("Integral Gain", Constants.KI);
+        BotTelemetry.addData("Derivative Gain", Constants.KD);
+        BotTelemetry.addData("Proportional", proportional);
+        BotTelemetry.addData("Integral", integral);
+        BotTelemetry.addData("Derivative", derivative);
+        BotTelemetry.addData("PID Output", output);
+
+        BotTelemetry.update();
+    }
+
 }
