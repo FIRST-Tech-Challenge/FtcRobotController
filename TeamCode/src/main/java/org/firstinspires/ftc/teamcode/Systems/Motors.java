@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Const;
+
 public class Motors {
 
 
@@ -26,7 +28,10 @@ public class Motors {
         }
     }
 
-    public DcMotor[] motors;
+    private DcMotor[] motors;
+
+    private int restingArmPosition;
+    private int reachingArmPosition;
 
 
     public Motors(HardwareMap hardwareMap) {
@@ -52,6 +57,8 @@ public class Motors {
 
         motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
 
+        restingArmPosition = getArmPosition();
+        reachingArmPosition = getArmPosition() + Constants.ARM_MAX_POSITION_OFFSET;
     }
 
     public void MoveMotor(Type motorNumber, double power) { //choose motor to move with type and move with power is 0-100
@@ -60,14 +67,22 @@ public class Motors {
 
         motors[motorNumber.getValue()].setPower(actualPower);
     }
-    public int getArmPosition()
-    {
+    public int getArmPosition() {
         return motors[Type.Arm.getValue()].getCurrentPosition();
     }
 
-    public int getUpArmPosition()
-    {
+    public int getArmRestingPosition() {
+        return restingArmPosition;
+    }
+
+    public int getArmReachingPosition() {
+        return reachingArmPosition;
+    }
+
+    public int getUpArmPosition() {
         return motors[Type.Pull.getValue()].getCurrentPosition();
     }
+
+
 
 }
