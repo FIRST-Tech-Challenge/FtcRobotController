@@ -16,7 +16,7 @@ public class Wrist {
     public final Servo wristRight;
     public static long rightServoDelay = 45;
     public final double[] verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
-    public final double[] chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
+//    public final double[] chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
     public final double[] horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
 
     private final BaseRobot baseRobot;
@@ -36,9 +36,9 @@ public class Wrist {
             case VERTICAL:
                 position = verticalPos;
                 break;
-            case CHAMBER:
-                position = chamberPos;
-                break;
+//            case CHAMBER:
+//                position = chamberPos;
+//                break;
             default:
                 position = horizPos;
                 break;
@@ -52,9 +52,11 @@ public class Wrist {
     public Position position() {
         if (position == verticalPos) {
             return Position.VERTICAL;
-        } else if (position == chamberPos) {
-            return Position.CHAMBER;
-        } else if (position == horizPos) {
+          }
+//        else if (position == chamberPos) {
+//            return Position.CHAMBER;
+//        }
+        else if (position == horizPos) {
             return Position.HORIZONTAL;
         } else {
             return Position.UNKNOWN;
