@@ -109,9 +109,8 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad2.b,                   // open bucket
                     gamepad2.a,                   // close bucket
                     gamepad2.dpad_up,             // grab specimen
-                    gamepad2.dpad_down,           // release specimen
-                    gamepad2.dpad_right,
-                    gamepad2.dpad_left
+                    gamepad2.dpad_down,            // release specimen
+                    gamepad2.dpad_left            // bucket specimen
             );
 
             hSlide.checkInputs(
