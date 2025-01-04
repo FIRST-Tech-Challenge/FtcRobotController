@@ -26,8 +26,8 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 
 import java.util.Arrays;
 
-@Autonomous(name="BlueLeft", group="Auto")
-public class BlueLeft extends LinearOpMode {
+@Autonomous(name="BlueLeftAscent", group="Auto")
+public class BlueLeftAscent extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -163,15 +163,9 @@ public class BlueLeft extends LinearOpMode {
                 )
         );
 
-        viperSlide.goToPosition(3000);
-        viperSlide.closeBucket();
-        viperSlide.bucketScore();
-
         viperSlide.goToPosition(4250);
-        viperSlide.openBucket();
+        viperSlide.bucketScore();
         sleep(1250);
-
-        viperSlide.goToPosition(3000);
         viperSlide.bucketRest();
         viperSlide.goToRest();
 
@@ -197,15 +191,9 @@ public class BlueLeft extends LinearOpMode {
 
         Actions.runBlocking(driveToScoreFirst);
 
-        viperSlide.goToPosition(3000);
-        viperSlide.closeBucket();
-        viperSlide.bucketScore();
-
         viperSlide.goToPosition(4250);
-        viperSlide.openBucket();
+        viperSlide.bucketScore();
         sleep(1250);
-
-        viperSlide.goToPosition(3000);
         viperSlide.bucketRest();
         viperSlide.goToRest();
 

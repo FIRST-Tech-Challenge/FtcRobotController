@@ -66,9 +66,37 @@ public class BlueRight extends LinearOpMode {
         AccelConstraint slowAccelConstraint = new ProfileAccelConstraint(-10, 20);
 
 
-        //park
+        //driveToScorePre
         TrajectoryActionBuilder traj1 = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(5, -38),
+                .strafeTo(new Vector2d(0, 24),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .waitSeconds(.25);
+
+        //driveToPush
+        TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-30,24), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .strafeToLinearHeading(new Vector2d(-30,50), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .strafeToLinearHeading(new Vector2d(-40,50), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .strafeToLinearHeading(new Vector2d(-40,10), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .waitSeconds(.25);
+
+        TrajectoryActionBuilder traj3 = traj2.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-40,50), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .strafeToLinearHeading(new Vector2d(-50,50), Math.toRadians(90),
+                        baseVelConstraint,
+                        baseAccelConstraint)
+                .strafeToLinearHeading(new Vector2d(-50,10), Math.toRadians(90),
                         baseVelConstraint,
                         baseAccelConstraint)
                 .waitSeconds(.25);
@@ -85,7 +113,8 @@ public class BlueRight extends LinearOpMode {
 
         if (isStopRequested() || gamepad1.b) return;
 
-        Action park1 = traj1.build();
+        Action driveToScorePre = traj1.build();
+        Action driveToPush1 = traj2.build();
 
 
         // Start
@@ -95,7 +124,8 @@ public class BlueRight extends LinearOpMode {
 
 
         // First sample
-        Actions.runBlocking(park1);
+        Actions.runBlocking(driveToScorePre);
+        Actions.runBlocking(driveToPush1);
 
 
 //        if (opModeIsActive()) {
