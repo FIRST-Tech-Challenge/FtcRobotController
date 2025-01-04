@@ -21,8 +21,7 @@ public class FloorToBarHangRoundTrip extends KActionSet {
     public static final double MOVE_TO_FLOOR_SPECIMEN_Y = -216;
     public static final double MOVE_TO_FLOOR_SPECIMEN_HEADING = -89.4;
 
-    public FloorToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw,
-                                   int hangPosY) {
+    public FloorToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int hangPosY) {
         PurePursuitAction moveToFloor1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToFloor1.setName("moveToFloor1");
         moveToFloor1.setMaxTimeOutMS(3500);
