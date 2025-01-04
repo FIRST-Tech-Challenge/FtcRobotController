@@ -24,9 +24,9 @@ public class Outake implements Component{
     public int target = 0;
 
     private final Servo claw;
-    private final Servo wrist;
-//    private final DcMotor extension1;
-//    private final DcMotor extension2;
+    private final Servo wrist, angleLeft, angleRight, position;
+    private final DcMotor extension1;
+    private final DcMotor extension2;
 
 
     Telemetry telemetry;
@@ -39,8 +39,13 @@ public class Outake implements Component{
 
         claw= init.getClaw();
         wrist= init.getWrist();
-//        this.extension1=init.getExtension1();
-//        this.extension2=init.getExtension2();
+
+
+        this.extension1=init.getOuttakeSlideLeft();
+        this.extension2=init.getOuttakeSlideRight();
+        angleLeft = init.getAngleLeft();
+        angleRight = init.getAngleRight();
+        position = init.getPosition();
 //        this.elbow1=init.getElbow1();
 //        this.elbow2=init.getElbow2();
 //        this.fingers=init.getFingers();
@@ -79,34 +84,67 @@ public class Outake implements Component{
         claw.setPosition(ITDCons.close);
     }
 
-    public void setWristFront(){
-        wrist.setPosition(ITDCons.wristFront);
-    }
 
-    public void setWristBack(){
+    public void pickUpFromWall(){
+        target = ITDCons.wallPickupTarget;
         wrist.setPosition(ITDCons.wristBack);
+        angleRight.setPosition(ITDCons.angleBack);
+        angleLeft.setPosition(ITDCons.angleBack);
+        position.setPosition(ITDCons.positionBack);
+
     }
 
-//    public void moveSlide(int target) {
-//
-//        this.target=target;
-//
-//        int rotatePos = extension2.getCurrentPosition();
-//        double pid = controller.calculate(rotatePos, target);
-//        double lift = pid + f;
-//
-//        extension1.setPower(lift);
-//        extension2.setPower(lift);
-//
-//    }
-//
-//    public int getTarget(){
-//        return target;
-//    }
-//
-//    public int getExtensionPos(){
-//        return extension2.getCurrentPosition();
-//    }
+    public void pickUpFromTransfer(){
+        target = ITDCons.transferPickupTarget;
+        wrist.setPosition(ITDCons.wristFront);
+        position.setPosition(ITDCons.positionFront);
+        angleRight.setPosition(ITDCons.angleFront);
+        angleLeft.setPosition(ITDCons.angleFront);
+    }
+
+    public void scoreSample(){
+        target = ITDCons.BucketTarget;
+        wrist.setPosition(ITDCons.wristBack);
+        position.setPosition(ITDCons.positionBack);
+        angleRight.setPosition(ITDCons.angleBack);
+        angleLeft.setPosition(ITDCons.angleBack);
+    }
+
+    public void scoreSpecimen(){
+        target = ITDCons.SpecimenTarget;
+        wrist.setPosition(ITDCons.wristFront);
+        position.setPosition(ITDCons.positionFront);
+        angleRight.setPosition(ITDCons.angleFront);
+        angleLeft.setPosition(ITDCons.angleFront);
+    }
+
+    public void releaseSpecimen(){
+        target= ITDCons.ReleaseTarget;
+    }
+
+    public void moveSlide() {
+
+
+        int rotatePos = extension2.getCurrentPosition();
+        double pid = controller.calculate(rotatePos, target);
+        double lift = pid + f;
+
+        extension1.setPower(lift);
+        extension2.setPower(lift);
+
+    }
+
+    public int getTarget(){
+        return target;
+    }
+
+    public void setTarget(int target){
+        this.target = target;
+    }
+
+    public int getExtensionPos(){
+        return extension2.getCurrentPosition();
+    }
 
     public void init(){
 //        elbow1.setPosition(ITDCons.diffyInit);

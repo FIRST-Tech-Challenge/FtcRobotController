@@ -19,6 +19,15 @@ public class ITDCons {
     public static double wristFront= 0.2;
     public static double wristBack = 0.8;
 
+    public static double positionFront = 0.1;
+    public static double positionBack =0.9;
+
+    public static double angleFront = 0.1;
+    public static double angleBack = 0.9;
+
+    public static int wallPickupTarget = 2000;
+    public static int transferPickupTarget = 0;
+
     public static double slideInit = 0.5;
     public static double slideOut=0.4;
     public static double slideIn =0.5;
