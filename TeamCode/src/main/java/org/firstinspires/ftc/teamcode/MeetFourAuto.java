@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.ViperSlide;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
@@ -244,9 +245,8 @@ public class MeetFourAuto extends LinearOpMode {
     public class HangAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.linearActuator.extend();
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);;
             pause(2000);
-            baseRobot.linearActuator.stop();
             return false;
         }
     }
