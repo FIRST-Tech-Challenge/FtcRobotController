@@ -15,12 +15,7 @@ import org.firstinspires.ftc.teamcode.Systems.Servos;
 
 @TeleOp(name="Teleop-Main")
 
-@Config
 public class TeleMain extends LinearOpMode {
-
-    Motors motors ;
-    Input input;
-    ElapsedTime elapsedTime;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,24 +25,12 @@ public class TeleMain extends LinearOpMode {
 
         waitForStart();
 
-
-
-        motors = new Motors(hardwareMap);
-        input = new Input(hardwareMap);
-
-
-
+        Motors motors = new Motors(hardwareMap);
+        Input input = new Input(hardwareMap);
         Servos servos = new Servos(hardwareMap);
-
-
-
-
-
 
         while (opModeIsActive())
         {
-            double armPos = motors.getArmPosition(); // comment out this line when actual probably
-
 
             double move = gamepad1.left_stick_y * 100;
             double spin = gamepad1.right_stick_x * 100;
@@ -55,6 +38,7 @@ public class TeleMain extends LinearOpMode {
             double intake = gamepad2.left_stick_y * 100;
 
             double armRaise = gamepad2.right_stick_y * 100;
+            double arm = gamepad2.left_stick_y;
 
             input.move(move);
             input.spin(spin);
@@ -62,8 +46,7 @@ public class TeleMain extends LinearOpMode {
             input.claw(gamepad2.a, gamepad2.b);
             input.upArm(armRaise);
 
-            input.arm(gamepad2.left_stick_y);
-
+            input.arm(arm);
 
 
 
@@ -71,7 +54,7 @@ public class TeleMain extends LinearOpMode {
             BotTelemetry.addData("SPIN:",  spin);
             BotTelemetry.addData("STRAFE:",  strafe);
             BotTelemetry.addData("ARM:", intake);
-            BotTelemetry.addData("ARM position:", armPos);
+            BotTelemetry.addData("ARM position:", motors.getArmPosition());
 
             BotTelemetry.addData("Servo position:", servos.getServoPosition(Servos.Type.Claw));
 

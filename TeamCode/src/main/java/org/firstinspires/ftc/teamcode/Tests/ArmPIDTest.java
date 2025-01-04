@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Config
-@TeleOp(name = "Arm PID Test")
+//@Config
+//@TeleOp(name = "Arm PID Test")
 public class ArmPIDTest extends LinearOpMode {
 
 
