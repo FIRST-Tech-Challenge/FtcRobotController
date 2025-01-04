@@ -42,6 +42,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int SpecimenPickupFromStart = -350;
 
+    double minPower = .05;
+    double maxPower = 0.5;
+
+    double minPowerInAuto = 0.1;
+    double maxPowerInAuto = 1;
 
     private boolean isTeleop = true;
 
@@ -211,7 +216,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
                 motor.set(0);
             }
             else {
-                double minPower = .1;
+                power = Math.min(1, power);
+
+                power *= maxPower;
 
                 if(Math.abs(power) < minPower) {
                     //telemetry.addData("minPower", true);
@@ -259,12 +266,11 @@ public class DeliveryPivot extends SonicSubsystemBase {
                 break;
             }
             else {
-                double minPower = .2;
 
-                if (Math.abs(power) < minPower) {
+                if (Math.abs(power) < minPowerInAuto) {
                     //telemetry.addData("minPower", true);
 
-                    power = minPower * Math.abs(power) / power;
+                    power = minPowerInAuto * Math.abs(power) / power;
                 }
 
                 motor.set(power);

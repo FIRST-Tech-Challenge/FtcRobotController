@@ -27,7 +27,7 @@
 | I2C | Name        | Description                     |
 |-----|-------------|---------------------------------|
 | 0   | odo         | Odometry computer               |
-| 1   | -           | -                               |
+| 1   | pivotColor  | Pivot Color Sensor              |
 | 2   | ColorSensor | Color sensor for rolling intake |
 | 3   | -           | -                               |
 
