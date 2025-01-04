@@ -27,7 +27,6 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.01;
 
-
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62; //increase to retract more
 
     //TRANSFER READY
@@ -70,7 +69,8 @@ public class IntakeClaw {
     public static final double INTAKE_CLAW_CLOSE = 0.36;
     public static final double INTAKE_CLAW_OPEN = 0.06; //increase to close claw more
 
-    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43;
+    public static final double INTAKE_SMALL_SWEEP_SPECIMEN_POS = 0.35;
+    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43; // Horizontal from Crossbar (parallel)
     public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS =0.645;
 
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
