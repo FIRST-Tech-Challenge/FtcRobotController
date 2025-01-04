@@ -29,7 +29,7 @@ public class PurePursuitAction extends Action {
 
     private final PidNav pidX;
     private final PidNav pidY;
-    private final PidNav pidAngle;
+    private PidNav pidAngle;
 
     Path path;
     Segment lastLine;
@@ -99,6 +99,10 @@ public class PurePursuitAction extends Action {
     public void addPoint(double x, double y, double headingDeg) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg)));
         Log.d("purepursaction", "added point " + x + ", " + y);
+    }
+
+    public void setPAngle(double p) {
+        this.pidAngle = new PidNav(p, 0,0);
     }
 
     private void targetPosition(Position target) {

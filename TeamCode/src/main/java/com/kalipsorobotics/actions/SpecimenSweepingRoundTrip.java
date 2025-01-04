@@ -21,7 +21,7 @@ public class SpecimenSweepingRoundTrip extends KActionSet {
         PurePursuitAction moveToSample = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample.setName("moveFloorSamples");
         this.addAction(moveToSample);
-        moveToSample.addPoint(-615,sampleY,-120);
+        moveToSample.addPoint(-605,sampleY,-120);
 
         SampleIntakeReady intakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intake, IntakeClaw.INTAKE_SMALL_SWEEP_SPECIMEN_POS);
         intakeReady.setName("intakeReady");
@@ -40,8 +40,10 @@ public class SpecimenSweepingRoundTrip extends KActionSet {
         PurePursuitAction sweepToDepot = new PurePursuitAction(driveTrain, wheelOdometry);
         sweepToDepot.setName("moveFloorSamples");
         sweepToDepot.setDependentActions(intakeReadyClosed);
+        sweepToDepot.setPAngle(2 * (1.0 / Math.toRadians(90)));
+        sweepToDepot.addPoint(-550,sampleY,-30);
         this.addAction(sweepToDepot);
-        sweepToDepot.addPoint(-550,sampleY,-45);
+
 
         KServoAutoAction openClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
         openClaw.setName("openClaw");

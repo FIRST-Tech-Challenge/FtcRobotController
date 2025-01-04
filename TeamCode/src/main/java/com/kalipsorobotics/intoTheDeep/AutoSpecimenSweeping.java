@@ -99,7 +99,7 @@ public class AutoSpecimenSweeping extends LinearOpMode {
         redAutoSpecimen.addAction(secondSample);
 
         // Third Sample Grab
-        SpecimenSweepingRoundTrip thirdSample = new SpecimenSweepingRoundTrip(driveTrain, intakeClaw, wheelOdometry,-790);
+        SpecimenSweepingRoundTrip thirdSample = new SpecimenSweepingRoundTrip(driveTrain, intakeClaw, wheelOdometry,-805);
         thirdSample.setName("secondSample");
         thirdSample.setDependentActions(secondSample);
         redAutoSpecimen.addAction(thirdSample);
@@ -116,30 +116,32 @@ public class AutoSpecimenSweeping extends LinearOpMode {
         specimenWallReady.setDependentActions(secondSample);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry);
+        PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveBarToWall.setName("moveBarToWall");
+        moveBarToWall.setMaxTimeOutMS(3500);
+        moveBarToWall.setDependentActions(thirdSample);
+        moveBarToWall.addPoint(-380, -742, -180); //-205, 700
+        redAutoSpecimen.addAction(moveBarToWall);
+
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/1000);
         moveToDepot.setName("moveToDepot");
-        moveToDepot.setDependentActions(thirdSample);
+        moveToDepot.setDependentActions(moveBarToWall, specimenWallReady);
         //to depot for specimen
-        //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180); //-130, -615
+        moveToDepot.addPoint(-135, -742, -180); //-130, -615
         redAutoSpecimen.addAction(moveToDepot);
 
-
         //=============begin of second specimen=================
-        WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 400); //400 //375
+        WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, 400); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setDependentActions(moveToDepot, specimenWallReady, intakeIn);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
         //===============end of second specimen==============
 
         //============begin of third================
-        WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 500); //500 //450
+        WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, 500); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);
-
 
         //===============end of third specimen===========
 

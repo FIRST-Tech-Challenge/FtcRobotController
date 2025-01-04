@@ -4,7 +4,8 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.modules.Outtake;
 
-public class SpecimenHangReady extends KActionSet {
+public class
+SpecimenHangReady extends KActionSet {
 
     public SpecimenHangReady(Outtake outtake) {
 

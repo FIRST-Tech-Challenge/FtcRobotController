@@ -14,7 +14,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -130;
+    public static final double WALL_PICKUP_X = -145;
     public static final double WALL_PICKUP_Y = -742;
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
