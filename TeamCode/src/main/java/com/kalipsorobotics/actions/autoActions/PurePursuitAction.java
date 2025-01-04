@@ -126,9 +126,7 @@ public class PurePursuitAction extends Action {
         double fRightPower = powerX - powerY - powerAngle;
         double bRightPower = powerX + powerY - powerAngle;
 
-        Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
-
-        Log.d("PurePursuit_Log", "");
+        Log.d("PurePursuit_Log", "running " + name + "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
         driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.4);
 //        driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);

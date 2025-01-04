@@ -102,7 +102,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         intakeFunnelReady1.setDependentActions(specimenHang1);
         redAutoBasket.addAction(intakeFunnelReady1);
 
-        WaitAction waitBeforeFunnel1 = new WaitAction(750);
+        WaitAction waitBeforeFunnel1 = new WaitAction(250);
         waitBeforeFunnel1.setName("waitBeforeFunnel1");
         waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
         redAutoBasket.addAction(waitBeforeFunnel1);
@@ -116,7 +116,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         IntakeFunnelAction intakeFunnelAction1 = new IntakeFunnelAction(intakeClaw, outtake);
         intakeFunnelAction1.setName("intakeFunnelAction1");
-        intakeFunnelAction1.setDependentActions(intakeFunnelReady1, moveToSample1);
+        intakeFunnelAction1.setDependentActions(waitBeforeFunnel1);
         redAutoBasket.addAction(intakeFunnelAction1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -136,7 +136,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(intakeFunnelAction1);
+        moveToBasket1.setDependentActions(intakeFunnelAction1, funnelSample1);
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket1);
@@ -176,7 +176,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample2.setName("moveToSample2");
         moveToSample2.setDependentActions(moveOutBasket1);
         moveToSample2.addPoint(INTAKE_SAMPLE_X+465, 1100, 180);
-        moveToSample2.addPoint(INTAKE_SAMPLE_X+75, 840, 180);
+        moveToSample2.addPoint(INTAKE_SAMPLE_X+75, 1100, 180);
         redAutoBasket.addAction(moveToSample2);
 
         IntakeFunnelReady intakeFunnelReady2 = new IntakeFunnelReady(intakeClaw, outtake);
@@ -184,7 +184,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         intakeFunnelReady2.setDependentActions(moveOutBasket1);
         redAutoBasket.addAction(intakeFunnelReady2);
 
-        WaitAction waitBeforeFunnel2 = new WaitAction(750);
+        WaitAction waitBeforeFunnel2 = new WaitAction(250);
         waitBeforeFunnel2.setName("waitBeforeFunnel2");
         waitBeforeFunnel2.setDependentActions(moveToSample2, intakeFunnelReady2);
         redAutoBasket.addAction(waitBeforeFunnel2);
@@ -198,7 +198,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         IntakeFunnelAction intakeFunnelAction2 = new IntakeFunnelAction(intakeClaw, outtake);
         intakeFunnelAction2.setName("intakeFunnelAction2");
-        intakeFunnelAction2.setDependentActions(intakeFunnelReady2, moveToSample2);
+        intakeFunnelAction2.setDependentActions(waitBeforeFunnel2);
         redAutoBasket.addAction(intakeFunnelAction2);
 
         OuttakeTransferReady outtakeTransferReady1 = new OuttakeTransferReady(outtake);
@@ -230,7 +230,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket2.setName("moveToBasket2");
-        moveToBasket2.setDependentActions(intakeFunnelAction2);
+        moveToBasket2.setDependentActions(intakeFunnelAction2, funnelSample2);
         //move sample 2 to basket
         moveToBasket2.addPoint(outtakeXPos, outtakeYPos, -135);
         redAutoBasket.addAction(moveToBasket2);

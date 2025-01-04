@@ -175,7 +175,7 @@ public class MoveLSAction extends Action {
         }
 
         if(velocity < 0.01) {
-            if(timeoutTimer.milliseconds() > 10000) {
+            if(timeoutTimer.milliseconds() > 1000) {
                 finish();
                 return true;
             }
