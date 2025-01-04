@@ -23,11 +23,11 @@ public class Outtake {
     public KServo hangHook1;
     public KServo hangHook2;
 
-    public static final double HOOK1_HANG_POS = 0.105;
-    public static final double HOOK2_HANG_POS = 0.79;
+    public static final double HOOK1_HANG_POS = 0.8;
+    public static final double HOOK2_HANG_POS = 0.18;
 
-    public static final double HOOK1_HANG_READY_POS = 0.3;
-    public static final double HOOK2_HANG_READY_POS = 0.6;
+    public static final double HOOK1_HANG_READY_POS = 0.7;
+    public static final double HOOK2_HANG_READY_POS = 0.28;
 
     public static final double HOOK1_DOWN_POS = 0.5;
     public static final double HOOK2_DOWN_POS = 0.5;

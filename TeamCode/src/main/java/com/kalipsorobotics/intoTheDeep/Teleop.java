@@ -86,7 +86,7 @@ public class Teleop extends LinearOpMode {
         KGamePad kGamePad1 = new KGamePad(gamepad1);
         MoveLSAction moveLS = null;
 
-        boolean hasStarted = false;
+        boolean needMaintainLs = true;
 
         double intakeLinkagePos = IntakeClaw.INTAKE_LINKAGE_IN_POS;
         double intakeBigSweepPos = 0.5;
@@ -236,6 +236,8 @@ public class Teleop extends LinearOpMode {
 //                    maintainLS = null;
                     autoRobotHangAction = new AutoRobotHangAction(outtake);
                     autoRobotHangAction.setName("autoRobotHangAction");
+
+                    needMaintainLs = false;
 
                     setLastLsAction(autoRobotHangAction);
                 }
@@ -403,6 +405,7 @@ public class Teleop extends LinearOpMode {
                 if(moveLS != null) {
                     moveLS.finishWithoutSetPower();
                 }
+                needMaintainLs = true;
                 double targetLsMM = outtake.getCurrentPosMm() + (-90.0 * outtakeLSStickValue);
                 moveLS = new MoveLSAction(outtake, targetLsMM);
                 moveLS.setName("moveLS");
@@ -538,10 +541,12 @@ public class Teleop extends LinearOpMode {
                 lastLSAction.updateCheckDone();
             }
 
-            if(lastLSAction == null || lastLSAction.getIsDone()) {
-                maintainLS.setIsDone(false);
-                maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
-                maintainLS.updateCheckDone();
+            if(needMaintainLs) {
+                if (lastLSAction == null || lastLSAction.getIsDone()) {
+                    maintainLS.setIsDone(false);
+                    maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
+                    maintainLS.updateCheckDone();
+                }
             }
 
             telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());
