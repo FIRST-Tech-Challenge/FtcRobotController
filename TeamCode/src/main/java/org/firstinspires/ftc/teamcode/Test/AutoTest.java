@@ -13,10 +13,11 @@ import java.util.Arrays;
 
 @Autonomous(name="AutoTest", group="Test")
 public class AutoTest extends LinearOpMode {
-    ViperSlide viperSlide = new ViperSlide(this);
 
     @Override
     public void runOpMode() {
+        ViperSlide viperSlide = new ViperSlide(this);
+
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Initialized", "");
             telemetry.update();

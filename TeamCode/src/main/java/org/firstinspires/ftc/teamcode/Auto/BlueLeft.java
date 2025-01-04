@@ -163,9 +163,15 @@ public class BlueLeft extends LinearOpMode {
                 )
         );
 
-        viperSlide.goToPosition(4250);
+        viperSlide.goToPosition(3000);
+        viperSlide.closeBucket();
         viperSlide.bucketScore();
+
+        viperSlide.goToPosition(4250);
+        viperSlide.openBucket();
         sleep(1250);
+
+        viperSlide.goToPosition(3000);
         viperSlide.bucketRest();
         viperSlide.goToRest();
 
@@ -191,9 +197,15 @@ public class BlueLeft extends LinearOpMode {
 
         Actions.runBlocking(driveToScoreFirst);
 
-        viperSlide.goToPosition(4250);
+        viperSlide.goToPosition(3000);
+        viperSlide.closeBucket();
         viperSlide.bucketScore();
+
+        viperSlide.goToPosition(4250);
+        viperSlide.openBucket();
         sleep(1250);
+
+        viperSlide.goToPosition(3000);
         viperSlide.bucketRest();
         viperSlide.goToRest();
 

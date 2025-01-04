@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,8 +26,8 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 
 import java.util.Arrays;
 
-@Autonomous(name="ParallelActionTest", group="Test")
-public class ParallelActionTest extends LinearOpMode {
+@Autonomous(name="BlueLeftAscent", group="Auto")
+public class BlueLeftAscent extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
