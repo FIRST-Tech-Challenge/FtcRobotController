@@ -112,9 +112,9 @@ public class Hardware   {
         depositSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         depositSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armRight = hardwareMap.get(Servo.class, "CH-Servo-0");
-        armLeft = hardwareMap.get(Servo.class, "CH-Servo-1");
-        claw = hardwareMap.get(Servo.class, "CH-Servo-2");
+        armRight = hardwareMap.get(Servo.class, "EH-Servo-0");
+        armLeft = hardwareMap.get(Servo.class, "EH-Servo-1");
+        claw = hardwareMap.get(Servo.class, "EH-Servo-2");
 
         armRightEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-0");
         armLeftEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-1");
