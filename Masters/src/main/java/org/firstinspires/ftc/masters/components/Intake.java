@@ -13,69 +13,87 @@ public class Intake {
     Init init;
 
     Telemetry telemetry;
-    Servo slideServo1;
-    Servo slideServo2;
-    Servo stringServo;
-    DcMotor wheelMotor;
+    Servo intakeLeft;
+    Servo intakeRight;
+    DcMotor intakeMotor;
+    DcMotor extendo;
 
-    double extensionPosition;
+    public static double RETRACT_POWER = -0.6;
+    public static double EXTEND_POWER = 0.6;
+    public static double INTAKE_POWER = 0.9;
 
     public Intake(Init init, Telemetry telemetry){
 
         this.init = init;
 
-        slideServo1 = init.getSlideServo1();
-        slideServo2 = init.getSlideServo2();
-        stringServo = init.getStringServo();
-        wheelMotor = init.getWheelMotor();
+        intakeLeft = init.getIntakeLeft();
+        intakeRight= init.getIntakeRight();
+        intakeMotor = init.getIntake();
+        extendo = init.getIntakeExtendo();
         initializeHardware();
 
     }
 
     public void initializeHardware() {
 
-        slideServo1.setPosition(ITDCons.slideInit);
-        slideServo2.setPosition(ITDCons.slideInit);
-        stringServo.setPosition(ITDCons.liftInit);
+        intakeRight.setPosition(ITDCons.intakeInit);
+        intakeLeft.setPosition(ITDCons.intakeInit);
 
     }
 
-    public void intakePower(double power){
-
-        wheelMotor.setPower(power);
-
+    public void startIntake (){
+        intakeMotor.setPower(INTAKE_POWER);
     }
 
-    public void slides(double position){
-
-        slideServo1.setPosition(position);
-        slideServo2.setPosition(position);
-
+    public void reverseIntake(){
+        intakeMotor.setPower(-INTAKE_POWER);
     }
+
+    public void stopIntake(){
+        intakeMotor.setPower(0);
+    }
+
+
 
     public void retractSlide() {
-      //  extensionPosition = Math.max(extensionPosition - 0.001, .35);
-
-        extensionPosition= ITDCons.slideIn;
-        slideServo1.setPosition(extensionPosition);
-        slideServo2.setPosition(extensionPosition);
+        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      extendo.setPower(RETRACT_POWER);
     }
 
     public void extendSlide() {
-//        extensionPosition = /*Math.min(extensionPosition + 0.001, .5);
-        extensionPosition= ITDCons.slideOut;
-        slideServo1.setPosition(extensionPosition);
-        slideServo2.setPosition(extensionPosition);
+        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setPower(EXTEND_POWER);
     }
 
-    public void intakeLift(double position){
-
-        stringServo.setPosition(position);
-
+    public void stopExtendo(){
+        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setPower(0);
     }
+
+    public void extendSlide(int position){
+            extendo.setTargetPosition(position);
+            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            extendo.setPower(EXTEND_POWER);
+    }
+
+    public boolean extendoSlideIsBusy(){
+        return extendo.isBusy();
+    }
+
 
     public double getExtensionPosition(){
-        return extensionPosition;
+        return extendo.getCurrentPosition();
+    }
+
+
+    public void dropIntake(){
+        intakeLeft.setPosition(ITDCons.dropIntake);
+        intakeRight.setPosition(ITDCons.dropIntake);
+    }
+
+    public void liftIntake(){
+        intakeLeft.setPosition(ITDCons.liftIntake);
+        intakeRight.setPosition(ITDCons.dropIntake);
     }
 
 }

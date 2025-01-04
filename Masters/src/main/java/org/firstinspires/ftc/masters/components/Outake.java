@@ -23,10 +23,10 @@ public class Outake implements Component{
 
     public int target = 0;
 
-    private final Servo fingers;
-    private final Servo elbow1, elbow2;
-    private final DcMotor extension1;
-    private final DcMotor extension2;
+    private final Servo claw;
+    private final Servo wrist;
+//    private final DcMotor extension1;
+//    private final DcMotor extension2;
 
 
     Telemetry telemetry;
@@ -36,11 +36,14 @@ public class Outake implements Component{
 
         this.init=init;
         this.telemetry=telemetry;
-        this.extension1=init.getExtension1();
-        this.extension2=init.getExtension2();
-        this.elbow1=init.getElbow1();
-        this.elbow2=init.getElbow2();
-        this.fingers=init.getFingers();
+
+        claw= init.getClaw();
+        wrist= init.getWrist();
+//        this.extension1=init.getExtension1();
+//        this.extension2=init.getExtension2();
+//        this.elbow1=init.getElbow1();
+//        this.elbow2=init.getElbow2();
+//        this.fingers=init.getFingers();
         initializeHardware();
 
     }
@@ -54,9 +57,7 @@ public class Outake implements Component{
 
         target = 0;
 
-        fingers.setPosition(ITDCons.close);
-        elbow1.setPosition(ITDCons.diffyInit);
-        elbow2.setPosition(ITDCons.diffyInit);
+        claw.setPosition(ITDCons.close);
 
     }
 
@@ -69,44 +70,47 @@ public class Outake implements Component{
 //        extension2.setPower(power);
 //    }
 
-    public void diffy1(double pos) { elbow1.setPosition(pos); }
-
-    public void diffy2(double pos) {
-        elbow2.setPosition(pos);
-    }
 
     public void openClaw() {
-        fingers.setPosition(ITDCons.open);
+        claw.setPosition(ITDCons.open);
     }
 
     public void closeClaw() {
-        fingers.setPosition(ITDCons.close);
+        claw.setPosition(ITDCons.close);
     }
 
-    public void moveSlide(int target) {
-
-        this.target=target;
-
-        int rotatePos = extension2.getCurrentPosition();
-        double pid = controller.calculate(rotatePos, target);
-        double lift = pid + f;
-
-        extension1.setPower(lift);
-        extension2.setPower(lift);
-
+    public void setWristFront(){
+        wrist.setPosition(ITDCons.wristFront);
     }
 
-    public int getTarget(){
-        return target;
+    public void setWristBack(){
+        wrist.setPosition(ITDCons.wristBack);
     }
 
-    public int getExtensionPos(){
-        return extension2.getCurrentPosition();
-    }
+//    public void moveSlide(int target) {
+//
+//        this.target=target;
+//
+//        int rotatePos = extension2.getCurrentPosition();
+//        double pid = controller.calculate(rotatePos, target);
+//        double lift = pid + f;
+//
+//        extension1.setPower(lift);
+//        extension2.setPower(lift);
+//
+//    }
+//
+//    public int getTarget(){
+//        return target;
+//    }
+//
+//    public int getExtensionPos(){
+//        return extension2.getCurrentPosition();
+//    }
 
     public void init(){
-        elbow1.setPosition(ITDCons.diffyInit);
-        elbow2.setPosition(ITDCons.diffyInit);
+//        elbow1.setPosition(ITDCons.diffyInit);
+//        elbow2.setPosition(ITDCons.diffyInit);
 
     }
 

@@ -8,6 +8,17 @@ public class ITDCons {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public static double zero = 0;
+
+    public static double intakeInit = 0.5;
+    public static double dropIntake =0.1;
+    public static double liftIntake =0.5;
+
+    public static double open = 0.35;
+    public static double close = 0.75;
+
+    public static double wristFront= 0.2;
+    public static double wristBack = 0.8;
+
     public static double slideInit = 0.5;
     public static double slideOut=0.4;
     public static double slideIn =0.5;
@@ -20,8 +31,7 @@ public class ITDCons {
     public static double TransDiffy1 = .43;
     public static double TransDiffy2 = .91;
 
-    public static double open = 0.35;
-    public static double close = 0.75;
+
 
     public static double FloorDiffy1 = .27;
     public static double FloorDiffy2 = .34;

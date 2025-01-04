@@ -101,7 +101,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         init = new Init(hardwareMap);
-        imu= init.getImu();
+//        imu= init.getImu();
 
 
         leftFront = init.getLeftFrontMotor();

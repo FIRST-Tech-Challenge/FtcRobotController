@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.masters.components;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,15 +15,14 @@ public class Init {
     private final DcMotorEx leftRearMotor;
     private final DcMotorEx rightRearMotor;
 
-    private final DcMotor intake, inkateExtend;
-    private final Servo drop1, drop2;
+    private final DcMotor intake, intakeExtendo;
+    private final Servo intakeLeft, intakeRight;
 
-    private final Servo servo1, servo2, servo3, servo4, servo5;
-    private final DcMotor outakeSlide1, outakeSlide2;
+    private final DcMotor outtakeSlideLeft, outtakeSlideRight;
 
-    private final Servo servo1, servo2, servo3, servo4;
-
-    private final Servo led;
+    private final Servo led, claw;
+    private final Servo wrist, angleLeft, angleRight, position;
+    private
     IMU imu;
 
     public Telemetry telemetry;
@@ -38,12 +33,6 @@ public class Init {
         rightFrontMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
         leftRearMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
         rightRearMotor = hardwareMap.get(DcMotorEx.class, "backRight");
-
-        // Reset the encoder values
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRearMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -63,28 +52,31 @@ public class Init {
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                org.firstinspires.ftc.masters.drive.DriveConstants.LOGO_FACING_DIR, org.firstinspires.ftc.masters.drive.DriveConstants.USB_FACING_DIR));
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                org.firstinspires.ftc.masters.drive.DriveConstants.LOGO_FACING_DIR, org.firstinspires.ftc.masters.drive.DriveConstants.USB_FACING_DIR));
+//        imu.initialize(parameters);
 
         // Initialize intake motors and servos
-        wheelMotor = hardwareMap.dcMotor.get("wheelMotor");
-        slideServo1 = hardwareMap.servo.get("slideServo1");
-        slideServo2 = hardwareMap.servo.get("slideServo2");
-        stringServo = hardwareMap.servo.get("stringServo");
+        claw = hardwareMap.servo.get("claw");
+        position= hardwareMap.servo.get("position");
+        wrist = hardwareMap.servo.get("wrist");
+        angleLeft= hardwareMap.servo.get("angleLeft");
+        angleRight = hardwareMap.servo.get("angleRight");
 
-        // Initialize outtake motors and servos
-        extension1 = hardwareMap.dcMotor.get("extension1");
-        extension2 = hardwareMap.dcMotor.get("extension2");
+        intake = hardwareMap.dcMotor.get("intake");
+        intakeExtendo= hardwareMap.dcMotor.get("intakeExtendo");
+        intakeExtendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeExtendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeExtendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        extension2.setDirection(DcMotorSimple.Direction.REVERSE);
-        extension2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extension2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeLeft =hardwareMap.servo.get("intakeLeft");
+        intakeRight = hardwareMap.servo.get("intakeRight");
 
-       elbow1 = hardwareMap.servo.get("elbow1");
-       elbow2 = hardwareMap.servo.get("elbow2");
-       fingers = hardwareMap.servo.get("fingers");
+        outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
+        outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
+
+       led = hardwareMap.servo.get("led");
 
     }
 
@@ -93,18 +85,56 @@ public class Init {
     public DcMotorEx getLeftRearMotor(){return leftRearMotor;}
     public DcMotorEx getRightRearMotor(){return rightRearMotor;}
 
-    public DcMotor getWheelMotor(){return wheelMotor;}
-    public Servo getSlideServo1(){return slideServo1;}
-    public Servo getSlideServo2(){return slideServo2;}
-    public Servo getStringServo(){return stringServo;}
+    public DcMotor getIntake() {
+        return intake;
+    }
 
-    public DcMotor getExtension1(){return extension1;}
-    public DcMotor getExtension2(){return extension2;}
+    public DcMotor getIntakeExtendo() {
+        return intakeExtendo;
+    }
 
-    public Servo getElbow1(){return elbow1;}
-    public Servo getElbow2(){return elbow2;}
-    public Servo getFingers(){return fingers;}
+    public Servo getIntakeLeft() {
+        return intakeLeft;
+    }
 
-    public IMU getImu(){return imu;}
+    public Servo getIntakeRight() {
+        return intakeRight;
+    }
+
+    public DcMotor getOuttakeSlideLeft() {
+        return outtakeSlideLeft;
+    }
+
+    public DcMotor getOuttakeSlideRight() {
+        return outtakeSlideRight;
+    }
+
+    public Servo getLed() {
+        return led;
+    }
+
+    public Servo getClaw() {
+        return claw;
+    }
+
+    public Servo getWrist() {
+        return wrist;
+    }
+
+    public Servo getAngleLeft() {
+        return angleLeft;
+    }
+
+    public Servo getAngleRight() {
+        return angleRight;
+    }
+
+    public Servo getPosition() {
+        return position;
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
+    }
 
 }
