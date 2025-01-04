@@ -61,8 +61,8 @@ public class Settings {
             @Config
             public static class Wrist {
                 public static double[] HORIZONTAL_POSITION = {0.65, 0.93} ;
-                public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0, 0.1};
+                public static double[] CHAMBER_POSITION = {0.22, 0.35};
+                public static double[] VERTICAL_POSITION = {-.1, 0};
             }
             @Config
             public static class Linkage {
