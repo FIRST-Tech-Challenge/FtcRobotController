@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Localizers.TwoWheelO
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
 
+@Config
 public class Drivetrain {
     /**
      * Hardware map
@@ -56,9 +58,15 @@ public class Drivetrain {
     public SimpleMatrix wheelPowerPrev = new SimpleMatrix(4, 1);
     public PoseController poseControl = new PoseController();
     public static double acceptablePowerDifference = 0.000001; // The acceptable difference between current and previous wheel power to make a hardware call
-    public static double distanceThreshold = 0.2;
+    public static double distanceThreshold = 0.5;
     public static double angleThreshold = 0.1;
     public static double maxVoltage = 12.5;
+    SimpleMatrix initialState = new SimpleMatrix(6,1);
+    public void setInitialPose(double x, double y, double theta){
+        initialState.set(0,0,x);
+        initialState.set(1,0,y);
+        initialState.set(2,0,theta);
+    }
     public Battery battery;
 
     public SimpleMatrix prevWheelSpeeds = new SimpleMatrix( new double[][]{
@@ -127,7 +135,7 @@ public class Drivetrain {
         deltaT.reset();
     }
     public void localize() {
-        state = twoWheelOdo.calculate();
+        state = initialState.plus(twoWheelOdo.calculate());
     }
     public void setPower(SimpleMatrix powers) {
         double u0 = powers.get(0, 0);
@@ -176,8 +184,15 @@ public class Drivetrain {
                 deltaT.reset();
                 setWheelSpeedAcceleration(wheelSpeeds, wheelAccelerations);
                 prevWheelSpeeds = wheelSpeeds;
+                packet.put("X", state.get(0,0));
+                packet.put("Y", state.get(1,0));
+                packet.put("Theta", Math.toDegrees(state.get(2,0)));
+                packet.put("X Velocity", state.get(3,0));
+                packet.put("Y Velocity", state.get(4,0));
+                packet.put("Theta Velocity", state.get(5,0));
                 if (Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold){
                     setPower(stopMatrix);
+                    packet.put("Done", "done");
                 }
                 return !(Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold);
             }

@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
 
 @Config
 public class DrivetrainMotorController {
-    public static double kA=0.12;
-    public static double kV=0.13;
+    public static double kA=0.01;
+    public static double kV=0.0225;
     public static double kSlf=0.067;
     public static double kSlb=0.067;
     public static double kSrb=0.067;

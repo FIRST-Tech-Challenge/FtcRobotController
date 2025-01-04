@@ -8,18 +8,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
+
 
 @Config
 public class Claw {
     HardwareMap hardwareMap;
-    Servo clawServo;
+    ServoAdvanced clawServo;
 
     public static double clawOpen = 0.66;
     public static double clawClosed = 0.5;
     public clawState clawPos = clawState.OPEN;
     public Claw(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        this.clawServo = hardwareMap.get(Servo.class, "clawServo");
+        this.clawServo = new ServoAdvanced(hardwareMap.get(Servo.class, "clawServo"));
 
     }
 
@@ -32,10 +34,10 @@ public class Claw {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                    if (clawPos == clawState.OPEN) {
+                    if (clawPos == clawState.CLOSE) {
                         clawServo.setPosition(clawClosed);
                     }
-                    else if (clawPos == clawState.CLOSE) {
+                    else if (clawPos == clawState.OPEN) {
                         clawServo.setPosition(clawOpen);
                     }
                 // servo parameter -1, 0   0, 1

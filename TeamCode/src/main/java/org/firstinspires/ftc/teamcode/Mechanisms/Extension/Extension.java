@@ -9,20 +9,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 
 @Config
 public class Extension {
     HardwareMap hardwareMap;
-    Servo servoExtendLeft;
-    Servo servoExtendRight;
+    ServoAdvanced servoExtendLeft;
+    ServoAdvanced servoExtendRight;
     public static double extendPos = 0;
     public static double retractPos = 0.27;
     public static double leftOffset = 0.025;
     public Extension(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        servoExtendLeft = hardwareMap.get(Servo.class, "leftExtension");
-        servoExtendRight = hardwareMap.get(Servo.class, "rightExtension");
+        servoExtendLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "leftExtension"));
+        servoExtendRight = new ServoAdvanced(hardwareMap.get(Servo.class, "rightExtension"));
     }
 
     public enum extensionState {

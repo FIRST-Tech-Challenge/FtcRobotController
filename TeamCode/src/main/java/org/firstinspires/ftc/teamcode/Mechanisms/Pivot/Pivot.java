@@ -8,6 +8,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
@@ -15,20 +17,20 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 @Config
 public class Pivot {
     HardwareMap hardwareMap;
-    Servo pivotLeft;
-    Servo pivotRight;
+    ServoAdvanced pivotLeft;
+    ServoAdvanced pivotRight;
 
     public static double pivotDown = -0.5;
     public static double pivotUp = 0.4;
     public Pivot(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
-        this.pivotLeft = hardwareMap.get(Servo.class, "pivotLeft");
-        this.pivotRight = hardwareMap.get(Servo.class, "pivotRight");
+        this.pivotLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotLeft"));
+        this.pivotRight = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotRight"));
 
     }
 
     public ElapsedTime timer = new ElapsedTime();
-    public Action flippyFlip(Intake.intakeState intakePos){
+    public Action setPosition(Intake.intakeState intakePos){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {

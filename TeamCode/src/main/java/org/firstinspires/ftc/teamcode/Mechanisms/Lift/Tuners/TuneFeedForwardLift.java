@@ -57,7 +57,7 @@ public class TuneFeedForwardLift  extends LinearOpMode {
                         new SequentialAction(
                         drivetrain.goToPose(makePoseVector(10, 20, 0)),
                         extension.servoExtension(Extension.extensionState.RETRACT),
-                        pivot.flippyFlip(Intake.intakeState.STOP),
+                        pivot.setPosition(Intake.intakeState.STOP),
                         new SleepAction(1),
                         arm.armClose(),
                         new SleepAction(1),

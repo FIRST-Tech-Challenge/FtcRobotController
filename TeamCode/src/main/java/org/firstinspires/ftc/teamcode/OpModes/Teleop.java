@@ -11,6 +11,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 
 import org.ejml.simple.SimpleMatrix;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
@@ -23,7 +24,7 @@ public class Teleop extends LinearOpMode {
     Robot robot;
     @Override
     public void runOpMode(){
-        robot = new Robot(hardwareMap);
+        //robot = new Robot(hardwareMap, new Battery(hardwareMap), n);
         drivetrain = robot.drivetrain;
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();

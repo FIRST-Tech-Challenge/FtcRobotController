@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Hardware.Actuators.ServoAdvanced;
+
 @Config
 public class Arm {
     HardwareMap hardwareMap;
-    Servo servoWrist;
-    public Servo servoArmLeft;
-    Servo servoArmRight;
+    ServoAdvanced servoWrist;
+    public ServoAdvanced servoArmLeft;
+    ServoAdvanced servoArmRight;
     public static double armRetract = 0.89;
     public static double armExtend = 0.35;
     public static double armSpecimenExtend = -1;
@@ -24,9 +26,9 @@ public class Arm {
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        this.servoWrist = hardwareMap.get(Servo.class, "wrist");
-        this.servoArmLeft = hardwareMap.get(Servo.class, "armRight");
-        this.servoArmRight = hardwareMap.get(Servo.class, "armLeft");
+        this.servoWrist = new ServoAdvanced(hardwareMap.get(Servo.class, "wrist"));
+        this.servoArmLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "armRight"));
+        this.servoArmRight = new ServoAdvanced(hardwareMap.get(Servo.class, "armLeft"));
     }
 
     public enum armState {

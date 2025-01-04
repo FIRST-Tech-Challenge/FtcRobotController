@@ -33,6 +33,7 @@ public class TunePoseController extends LinearOpMode {
     public static double desiredY = 0;
     public static double desiredTheta = 0;
     Battery battery;
+
     @Override
     public void runOpMode() {
         // Set dashboard
@@ -53,35 +54,37 @@ public class TunePoseController extends LinearOpMode {
         waitForStart();
         looptime.reset();
 
-        while (opModeIsActive()) {
-            SimpleMatrix desiredPose = new SimpleMatrix(
-                    new double [][]{
-                            new double[]{desiredX},
-                            new double[]{desiredY},
-                            new double[]{Math.toRadians(desiredTheta)}
-                    }
-            );
-            drivetrain.localize();
-            //drivetrain.goToPose(desiredPose);
-            Actions.runBlocking(drivetrain.goToPose(desiredPose));
-            telemetry.addData("x", drivetrain.state.get(0,0));
-            telemetry.addData("y", drivetrain.state.get(1,0));
-            telemetry.addData("theta", drivetrain.state.get(2,0));
-            telemetry.addData("desiredX", desiredX);
-            telemetry.addData("desiredY", desiredY);
-            telemetry.addData("desiredTheta", desiredTheta);
-            telemetry.addData("uLf", drivetrain.motorController.uLf);
-            telemetry.addData("uLb", drivetrain.motorController.uLb);
-            telemetry.addData("uRb", drivetrain.motorController.uRb);
-            telemetry.addData("uRf", drivetrain.motorController.uRf);
-            //dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
-            TelemetryPacket packet = new TelemetryPacket();
-            packet.fieldOverlay();
-            packet.put("x", drivetrain.state.get(0,0));
-            packet.put("y", drivetrain.state.get(1,0));
-            packet.put("heading", drivetrain.state.get(2,0));
-            telemetry.update();
-            looptime.reset();
-        }
+        SimpleMatrix desiredPose = new SimpleMatrix(
+                new double [][]{
+                        new double[]{desiredX},
+                        new double[]{desiredY},
+                        new double[]{Math.toRadians(desiredTheta)}
+                }
+        );
+        Actions.runBlocking(drivetrain.goToPose(desiredPose));
+
+
+
+
+
+//        while (opModeIsActive()) {
+//            SimpleMatrix desiredPose = new SimpleMatrix(
+//                    new double [][]{
+//                            new double[]{desiredX},
+//                            new double[]{desiredY},
+//                            new double[]{Math.toRadians(desiredTheta)}
+//                    }
+//            );
+//            drivetrain.localize();
+            drivetrain.goToPose(desiredPose);
+            dashboard.sendTelemetryPacket(tracking.updatePos(drivetrain.state.get(0,0), drivetrain.state.get(1,0), drivetrain.state.get(2,0)));
+//            TelemetryPacket packet = new TelemetryPacket();
+//            packet.fieldOverlay();
+//            packet.put("x", drivetrain.state.get(0,0));
+//            packet.put("y", drivetrain.state.get(1,0));
+//            packet.put("heading", drivetrain.state.get(2,0));
+//            telemetry.update();
+//            looptime.reset();
+//        }
     }
 }

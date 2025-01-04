@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoAdvanced {
     private double lastPos = 0;
-    Servo servo = null;
+    Servo servo;
     private double servoTolerance = 0.001;
 
     public ServoAdvanced(Servo servo) {
@@ -12,7 +12,7 @@ public class ServoAdvanced {
     }
 
 
-    public void setPos(double newPos){
+    public void setPosition(double newPos){
         if(Math.abs(newPos - lastPos) > servoTolerance){
             servo.setPosition(newPos);
             lastPos = newPos;
@@ -21,7 +21,7 @@ public class ServoAdvanced {
 
 
 
-    public double getPos(){
+    public double getPosition(){
         return lastPos;
     }
     public double getTolerance(){

@@ -33,8 +33,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors.GoBildaPinpointDriver;
 public class TwoWheelOdometery {
 
     GoBildaPinpointDriver odo;
-    public static double xOffset = 59.238;
-    public static double yOffset = 164.644;
+    public static double xOffset = -139.7; //MM
+    public static double yOffset = -50.8; //MM
     HardwareMap hardwareMap;
     public TwoWheelOdometery(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;

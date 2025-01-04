@@ -25,7 +25,7 @@ public class TunePivot extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad2.y){
-                Actions.runBlocking(pivot.flippyFlip(Intake.intakeState.OUTTAKE));
+                Actions.runBlocking(pivot.setPosition(Intake.intakeState.OUTTAKE));
             }
         }
     }
