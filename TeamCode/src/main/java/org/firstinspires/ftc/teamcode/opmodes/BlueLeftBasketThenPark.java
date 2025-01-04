@@ -46,7 +46,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 .lineToX(58)
                 .turn(Math.toRadians(45))
                 .strafeTo(new Vector2d(62,58))
-                .waitSeconds(1);
+                .waitSeconds(1.5);
 
                 /*
                 .waitSeconds(1)
@@ -63,11 +63,8 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
         Action toSub = toBasket.endTrajectory().fresh()
                 // samples (push)
                 .turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(35,52))
-                .strafeTo(new Vector2d(35,10))
-                .strafeTo(new Vector2d(43,10))
-                .strafeTo(new Vector2d(46,60))
-                .strafeTo(new Vector2d(46,10))
+                .strafeTo(new Vector2d(45,55))
+                .strafeTo(new Vector2d(45,15))
                 .turn(Math.toRadians(90))
                 .lineToX(26)
                 .build();
