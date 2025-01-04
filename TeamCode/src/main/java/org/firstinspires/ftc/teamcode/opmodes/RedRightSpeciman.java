@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "RedRightSpeciman")
+@Autonomous(name = "RedRightSpecimen")
 public class RedRightSpeciman extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
@@ -45,12 +45,8 @@ public class RedRightSpeciman extends LinearOpMode {
 
 
         Action toPark = toChamber.endTrajectory().fresh()
-                .turn(Math.toRadians(-90))
-                .lineToX(34)
-                .turn(Math.toRadians(-90))
-                .strafeTo(new Vector2d(34,-4))
-                .strafeTo(new Vector2d(48,-4))
-                .strafeTo(new Vector2d(48,-58))
+                .lineToY(-60)
+                .strafeTo(new Vector2d(60,-60))
                 .waitSeconds(1)
                 .build();
 

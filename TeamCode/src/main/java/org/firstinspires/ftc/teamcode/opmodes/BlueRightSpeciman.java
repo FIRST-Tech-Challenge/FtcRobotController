@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 //@Config
-@Autonomous(name = "BlueRightSpeciman")
+@Autonomous(name = "BlueRightSpecimen")
 public class BlueRightSpeciman extends LinearOpMode {
     private boolean first = true;
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
@@ -32,19 +32,19 @@ public class BlueRightSpeciman extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // instantiating the robot at a specific pose
-        Pose2d initialPose = new Pose2d(-8, 60, Math.toRadians(89));
+        Pose2d initialPose = new Pose2d(-8, 60, Math.toRadians(279));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+
+        Lift lift = new Lift(hardwareMap);
+        Claw claw = new Claw(hardwareMap);
+        LiftPivot liftPivot = new LiftPivot(hardwareMap);
 
         TrajectoryActionBuilder toChamber = drive.actionBuilder(initialPose)
                 .lineToY(35);
 
         Action toPark = toChamber.endTrajectory().fresh()
-                .turn(Math.toRadians(-90))
-                .lineToX(-34)
-                .turn(Math.toRadians(-90))
-                .strafeTo(new Vector2d(-34,4))
-                .strafeTo(new Vector2d(-48,4))
-                .strafeTo(new Vector2d(-48,58))
+                .lineToY(60)
+                .strafeTo(new Vector2d(-60,60))
                 .waitSeconds(1)
                 .build();
 
@@ -64,11 +64,12 @@ public class BlueRightSpeciman extends LinearOpMode {
         // running the action sequence!
         Actions.runBlocking(
                 new SequentialAction(
-//                        liftPivot.liftPivotDown(),
-                        firstTraj // go to the chamber, push sample, park in observation zone
-                        //lift.liftUp() // to lvl1 ascent
-                      //  claw.openClaw(), // drop the sample
-                      //  lift.liftDown()
+                  firstTraj, // go to the chamber, push sample, park in observation zone
+                        liftPivot.liftPivotUp(),
+                        lift.liftUp(), // to lvl1 ascent
+                        liftPivot.liftPivotDown(),
+                        lift.liftDown(),
+                        toPark
                 )
         );
     }
