@@ -10,7 +10,6 @@ public class DeliveryAxonV1 {
     public void init(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         axon = hardwareMap.get(Servo.class, "deliveryServo");
-        axon.setPosition(0);
     }
 
     public void setPosition(double position){

@@ -10,13 +10,17 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DifferentialV2;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.GrippersV1;
+import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristAxonV1;
+import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristServoTest;
 
 @TeleOp
 public class TeleOpV1 extends OpMode {
+    //MOTORS====================================================================================================================
     public DcMotor frontLeftMotor;
     public DcMotor frontRightMotor;
     public DcMotor backLeftMotor;
     public DcMotor backRightMotor;
+    //ENUMS=====================================================================================================================
     public enum SystemStatesV1 {
         START,
         HOVER_OVER_SAMPLE,
@@ -25,27 +29,34 @@ public class TeleOpV1 extends OpMode {
         DELIVER_UP,
         ERROR
     }
+    public enum SlidesState {
+        IN,
+        OUT
+    }
     public SystemStatesV1 state;
+    public SlidesState slidesState;
+    //HARDWARE==================================================================================================================
+    public DeliveryGrippersV1 deliveryGrippers = new DeliveryGrippersV1();
     public DifferentialV2 differentialV2 = new DifferentialV2();
+    public IntakeSlidesV1 intakeSlides = new IntakeSlidesV1();
+    public GrippersV1 grippers = new GrippersV1();
+    public RobotConstantsV1 constants = new RobotConstantsV1();
+    public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();
+    public WristAxonV1 wrist = new WristAxonV1();
+    //TIMERS====================================================================================================================
     public ElapsedTime buttonTimer = new ElapsedTime();
     public ElapsedTime grippersTimer = new ElapsedTime();
     public ElapsedTime deliveryArmTimer = new ElapsedTime();
     public ElapsedTime deliveryGrippersTimer = new ElapsedTime();
     public ElapsedTime diffTimer = new ElapsedTime();
-    public IntakeSlidesV1 intakeSlides = new IntakeSlidesV1();
-    public GrippersV1 grippers = new GrippersV1();
-    public RobotConstantsV1 constants = new RobotConstantsV1();
-    public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();
+    public ElapsedTime thisStateTimer = new ElapsedTime();
+    //BOOLEANS==================================================================================================================
     public boolean deliveryGrippersClosed = false;
-    public DeliveryGrippersV1 deliveryGrippers = new DeliveryGrippersV1();
     public boolean diffTimerIsReset = false;
     public boolean deliveryTimerIsReset = false;
     public boolean grippersClosed = false;
-    public enum SlidesState {
-        IN,
-        OUT
-    }
-    public SlidesState slidesState;
+    //VARIABLES=================================================================================================================
+    public double timeNeeded = 0;
     @Override
     public void init() {
         //Motors =====================================================================================================
@@ -63,7 +74,9 @@ public class TeleOpV1 extends OpMode {
         grippers.init(hardwareMap, telemetry);
         deliveryAxon.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
+        wrist.init(hardwareMap);
         deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+        wrist.setPosition(constants.WRIST_CENTER);
         intakeSlides.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesState = SlidesState.IN;
         //===========================================================================================================
@@ -75,25 +88,36 @@ public class TeleOpV1 extends OpMode {
         deliveryArmTimer.reset();
         deliveryGrippersTimer.reset();
         diffTimer.reset();
+        wrist.setPosition(constants.WRIST_CENTER);
     }
 
     @Override
     public void loop() {
         //MECANUM_DRIVE====================================================================================================
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
+        double x = gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
         double rx = -gamepad1.right_stick_x; //This is reversed for our turning
         drive(y, x, rx);
         //SYSTEM_STATES====================================================================================================
+        if(state == SystemStatesV1.ARM_UP){
+            timeNeeded = 3;
+        }
+        else {
+            timeNeeded = 0;
+        }
         if(gamepad1.x && buttonTimer.seconds() > 0.3) {
-            state = nextState();
-            if(state == SystemStatesV1.ARM_UP){
-                grippersTimer.reset();
+            if(thisStateTimer.seconds() > timeNeeded) {
+                state = nextState();
+                if (state == SystemStatesV1.ARM_UP) {
+                    grippersTimer.reset();
+                }
+                buttonTimer.reset();
+                thisStateTimer.reset();
             }
-            buttonTimer.reset();
         }
         switch (state) {
             case START:
+                deliveryAxon.setPosition(constants.DELIVERY_DOWN);
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
@@ -102,6 +126,15 @@ public class TeleOpV1 extends OpMode {
                 grippersClosed = true;
                 break;
             case HOVER_OVER_SAMPLE:
+                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveLeft(0.2);
+                    buttonTimer.reset();
+
+                }
+                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveRight(0.2);
+                    buttonTimer.reset();
+                }
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
                 intakeSlides.runToPosition(constants.INTAKE_MOTOR_OUT, 0.5);
@@ -120,7 +153,7 @@ public class TeleOpV1 extends OpMode {
                         diffTimerIsReset = true;
                     }
                     if(diffTimer.seconds() > 0.6) {
-                        intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -1);
+                        intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
                     }
                 }
                 else {
@@ -131,7 +164,7 @@ public class TeleOpV1 extends OpMode {
             case READY_FOR_DELIVERY:
                 diffTimerIsReset = false;
                 //Move delivery arm to sample
-                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, -1);
+                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
                 if(!deliveryGrippersClosed) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 }
