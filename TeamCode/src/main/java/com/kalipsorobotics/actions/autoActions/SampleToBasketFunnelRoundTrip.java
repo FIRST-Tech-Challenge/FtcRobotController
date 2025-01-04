@@ -1,61 +1,65 @@
 package com.kalipsorobotics.actions.autoActions;
 
+import com.kalipsorobotics.actions.CheckPassXFunnel;
+import com.kalipsorobotics.actions.CheckPointDone;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.SampleIntakeAction;
-import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
-import com.kalipsorobotics.intoTheDeep.AutoBasket;
 import com.kalipsorobotics.localization.WheelOdometry;
+import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
 public class SampleToBasketFunnelRoundTrip extends KActionSet {
+    public static final int INTAKE_SAMPLE_X_FUNNEL = -590-325;
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY){
-        final int INTAKE_SAMPLE_X = -590-325;
 
         int outtakeXPos = -190;
         int outtakeYPos = 1020;
 
-        PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
+        PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/1200.0);
         moveToSample1.setName("moveToSample1");
         //bar to sample 1
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+415, sampleY, 180);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+75, sampleY, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +415, sampleY, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +75, sampleY, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -150, sampleY, 180);
         this.addAction(moveToSample1);
-
-        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake);
-        intakeFunnelReady1.setName("intakeFunnelReady1");
-        this.addAction(intakeFunnelReady1);
-
-        WaitAction waitBeforeFunnel1 = new WaitAction(250);
-        waitBeforeFunnel1.setName("waitBeforeFunnel1");
-        waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
-        this.addAction(waitBeforeFunnel1);
-
-        PurePursuitAction funnelSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
-        funnelSample1.setName("funnelSample1");
-        funnelSample1.setDependentActions(waitBeforeFunnel1);
-        //bar to sample 1
-        funnelSample1.addPoint(INTAKE_SAMPLE_X, sampleY, 180);
-        this.addAction(funnelSample1);
-
-        IntakeFunnelAction intakeFunnelAction1 = new IntakeFunnelAction(intakeClaw, outtake);
-        intakeFunnelAction1.setName("intakeFunnelAction1");
-        intakeFunnelAction1.setDependentActions(waitBeforeFunnel1);
-        this.addAction(intakeFunnelAction1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(intakeFunnelReady1);
         this.addAction(outtakeTransferReady);
+
+        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
+        intakeFunnelReady1.setName("intakeFunnelReady1");
+        this.addAction(intakeFunnelReady1);
+
+//        WaitAction waitBeforeFunnel1 = new WaitAction(250);
+//        waitBeforeFunnel1.setName("waitBeforeFunnel1");
+//        waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
+//        this.addAction(waitBeforeFunnel1);
+
+//        PurePursuitAction funnelSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
+//        funnelSample1.setName("funnelSample1");
+//        funnelSample1.setDependentActions(waitBeforeFunnel1);
+//        //bar to sample 1
+//        funnelSample1.addPoint(INTAKE_SAMPLE_X, sampleY, 180);
+//        this.addAction(funnelSample1);
+
+        CheckPassXFunnel checkReachedSample = new CheckPassXFunnel(moveToSample1, wheelOdometry);
+        checkReachedSample.setName("checkReachedSample");
+        this.addAction(checkReachedSample);
+
+        IntakeFunnelAction intakeFunnelAction1 = new IntakeFunnelAction(intakeClaw, outtake);
+        intakeFunnelAction1.setName("intakeFunnelAction1");
+        intakeFunnelAction1.setDependentActions(checkReachedSample);
+        this.addAction(intakeFunnelAction1);
 
         IntakeTransferReady intakeTransferReady1 = new IntakeTransferReady(intakeClaw);
         intakeTransferReady1.setName("intakeTransferReady1");
@@ -69,14 +73,14 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(intakeFunnelAction1, funnelSample1);
+        moveToBasket1.setDependentActions(intakeFunnelAction1, moveToSample1);
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         this.addAction(moveToBasket1);
 
         BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
         basketReady1.setName("basketReady1");
-        basketReady1.setDependentActions(moveToBasket1, transferAction1);
+        basketReady1.setDependentActions(transferAction1);
         this.addAction(basketReady1);
 
         WaitAction waitAction1 = new WaitAction(100);

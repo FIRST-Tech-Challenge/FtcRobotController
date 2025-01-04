@@ -14,7 +14,7 @@ SpecimenHangReady extends KActionSet {
         outtakeClawActionClose.setName("outtakeClawActionClose");
         this.addAction(outtakeClawActionClose);
 
-        MoveLSAction raiseSlides = new MoveLSAction(outtake, Outtake.LS_SPECIMAN_HANG_READY_MM); //450
+        MoveLSAction raiseSlides = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_HANG_READY_MM); //450
         raiseSlides.setName("raiseSlides");
         this.addAction(raiseSlides);
 

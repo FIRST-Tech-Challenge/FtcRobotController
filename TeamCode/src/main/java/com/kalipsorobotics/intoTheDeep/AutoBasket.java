@@ -342,7 +342,7 @@ public class AutoBasket extends LinearOpMode {
         pivotOuttakeHalfwayToBar.setDependentActions(openClaw3, waitAction4);
         redAutoBasket.addAction(pivotOuttakeHalfwayToBar);
 
-        MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMAN_PARK_MM);
+        MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_PARK_MM);
         lsTouchBar.setName("lsTouchBar");
         lsTouchBar.setDependentActions(pivotOuttakeHalfwayToBar, moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);

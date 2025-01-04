@@ -5,21 +5,16 @@ import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
-import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
-import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
-import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
-import com.kalipsorobotics.actions.outtake.SpecimenHang;
-import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -69,6 +64,12 @@ public class AutoBasketFunnel extends LinearOpMode {
         WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, -350);
         wallToBarHangAction.setName("wallToBarHangAction");
         redAutoBasket.addAction(wallToBarHangAction);
+
+        PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveOutSpecimen.setName("moveOutSpecimen");
+        moveOutSpecimen.setDependentActions(wallToBarHangAction);
+        moveOutSpecimen.addPoint(-585, -350, 0);
+        redAutoBasket.addAction(moveOutSpecimen);
         //===============end of first specimen===============
 
 
@@ -76,7 +77,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         //================begin of first basket====================
         SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 840);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
-        sampleToBasketFunnelRoundTrip1.setDependentActions(wallToBarHangAction);
+        sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
         //===============end of first basket===============
 
@@ -183,7 +184,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         pivotOuttakeHalfwayToBar.setDependentActions(openClaw3, waitAction4);
         redAutoBasket.addAction(pivotOuttakeHalfwayToBar);
 
-        MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMAN_PARK_MM);
+        MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_PARK_MM);
         lsTouchBar.setName("lsTouchBar");
         lsTouchBar.setDependentActions(pivotOuttakeHalfwayToBar, moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
