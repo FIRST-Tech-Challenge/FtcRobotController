@@ -128,6 +128,8 @@ public class PurePursuitAction extends Action {
 
         Log.d("purepursactionlog", "set power values " + fLeftPower + " " + fRightPower + " " + bLeftPower + " " + bRightPower);
 
+        Log.d("PurePursuit_Log", "");
+
         driveTrain.setPowerWithRangeClippingMinThreshold(fLeftPower, fRightPower, bLeftPower, bRightPower, 0.4);
 //        driveTrain.setPower(fLeftPower, fRightPower, bLeftPower, bRightPower);
         Log.d("purepursactionlog", "target position " + target.getX() + " " + target.getY() + " " + targetAngle);

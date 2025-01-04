@@ -11,10 +11,6 @@ public class Init extends KActionSet{
         KServoAutoAction outtakePivotUp = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
         this.addAction(outtakePivotUp);
 
-        KServoAutoAction linkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);
-        linkage.setDependentActions(outtakePivotUp);
-        this.addAction(linkage);
-
         KServoAutoAction bigSweep = new KServoAutoAction(intakeClaw.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT);
         bigSweep.setDependentActions(outtakePivotUp);
         this.addAction(bigSweep);
@@ -36,23 +32,27 @@ public class Init extends KActionSet{
         this.addAction(clawIntake);
 
         KServoAutoAction clawOuttake = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
-        clawOuttake.setDependentActions(linkage,bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
+        clawOuttake.setDependentActions(bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
         this.addAction(clawOuttake);
 
-        KServoAutoAction outtakePivot = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
-        outtakePivot.setDependentActions(linkage,bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
-        this.addAction(outtakePivot);
-
         KServoAutoAction hangHook1 = new KServoAutoAction(outtake.getHangHook1(), Outtake.HOOK1_DOWN_POS);
-        hangHook1.setDependentActions(linkage,bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
+        hangHook1.setDependentActions(bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
         this.addAction(hangHook1);
 
         KServoAutoAction hangHook2 = new KServoAutoAction(outtake.getHangHook2(), Outtake.HOOK2_DOWN_POS);
-        hangHook2.setDependentActions(linkage,bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
+        hangHook2.setDependentActions(bigSweep,bigPivot,smallPivot,smallSweep,clawIntake);
         this.addAction(hangHook2);
 
+        KServoAutoAction linkage = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS);
+        linkage.setDependentActions(clawOuttake, hangHook1, hangHook2);
+        this.addAction(linkage);
+
         MoveLSAction moveLSAction = new MoveLSAction(outtake, Outtake.LS_DOWN_POS);
-        moveLSAction.setDependentActions(clawOuttake,outtakePivot,hangHook1,hangHook2);
+        moveLSAction.setDependentActions(clawOuttake,hangHook1,hangHook2);
         this.addAction(moveLSAction);
+
+        KServoAutoAction outtakePivot = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+        outtakePivot.setDependentActions(moveLSAction);
+        this.addAction(outtakePivot);
     }
 }

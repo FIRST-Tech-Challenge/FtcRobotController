@@ -76,7 +76,7 @@ public class IntakeClaw {
     public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
     public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.73;
 
-    public static final double INTAKE_LINKAGE_IN_POS = 0.95; //0.95
+    public static final double INTAKE_LINKAGE_IN_POS = 0.97; //0.95
     public static final double INTAKE_LINKAGE_MID_POS = 0.87;
     public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
 
