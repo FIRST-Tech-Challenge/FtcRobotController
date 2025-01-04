@@ -3,6 +3,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,14 +21,14 @@ public class HorizontalSlide {
     private final Telemetry telemetry;
 
     int maxSlidePosition = 675;
-
-
 //    private final Gamepad gamepad1;
 //    private final Gamepad gamepad2;
 
 
     public HorizontalSlide(OpMode opMode, double currentLimit) {
         slideMotor = opMode.hardwareMap.get(DcMotorEx.class, "slideMotor");
+        slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
+
         this.power = 1;
         this.currentLimit = currentLimit;
         this.telemetry = opMode.telemetry;

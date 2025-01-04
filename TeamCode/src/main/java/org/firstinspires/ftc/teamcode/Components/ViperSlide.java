@@ -20,7 +20,7 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.Timer;
 
-public class ViperSlide {
+public class ViperSlide{
     private DcMotorEx leftViper;
     private DcMotorEx rightViper;
 
@@ -294,6 +294,7 @@ public class ViperSlide {
     public Action goToPositionAction(int position) {
         int error = 50;
         return new Action() {
+            @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (getPos() < position) {
                     setPower(1);
@@ -311,6 +312,11 @@ public class ViperSlide {
             }
         };
     }
+
+    public double getCurrentPower() {
+        return rightViper.getCurrent(CurrentUnit.AMPS);
+    }
+
 
 
     // bucket
@@ -361,5 +367,5 @@ public class ViperSlide {
     public void releaseSpecimen() {
         setSpecimenGrabberPos(0);
     }
-
 }
+
