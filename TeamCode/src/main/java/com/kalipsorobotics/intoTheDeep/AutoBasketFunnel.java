@@ -4,10 +4,12 @@ package com.kalipsorobotics.intoTheDeep;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.WallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
 import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
@@ -64,218 +66,42 @@ public class AutoBasketFunnel extends LinearOpMode {
         int outtakeYPos = 1020;
 
         //================begin of first specimen====================
-        WaitAction waitAtStart = new WaitAction(300);
-        waitAtStart.setName("waitAtStart");
-        redAutoBasket.addAction(waitAtStart);
-
-        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSpecimenBar.setName("moveToSpecimenBar");
-        moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, -350, 0);
-        moveToSpecimenBar.setDependentActions(waitAtStart);
-        redAutoBasket.addAction(moveToSpecimenBar);
-
-        SpecimenHangReady specimenHangReady1 = new SpecimenHangReady(outtake);
-        specimenHangReady1.setName("hangSpecimenReady1");
-        redAutoBasket.addAction(specimenHangReady1);
-
-        SpecimenHang specimenHang1 = new SpecimenHang(outtake);
-        specimenHang1.setName("specimenHang1");
-        specimenHang1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
-        redAutoBasket.addAction(specimenHang1);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, -350);
+        wallToBarHangAction.setName("wallToBarHangAction");
+        redAutoBasket.addAction(wallToBarHangAction);
         //===============end of first specimen===============
 
 
 
         //================begin of first basket====================
-        PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample1.setName("moveToSample1");
-        moveToSample1.setDependentActions(specimenHang1);
-        //bar to sample 1
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, 200, 90);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, 840, 180);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+75, 840, 180);
-        redAutoBasket.addAction(moveToSample1);
-
-        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake);
-        intakeFunnelReady1.setName("intakeFunnelReady1");
-        intakeFunnelReady1.setDependentActions(specimenHang1);
-        redAutoBasket.addAction(intakeFunnelReady1);
-
-        WaitAction waitBeforeFunnel1 = new WaitAction(250);
-        waitBeforeFunnel1.setName("waitBeforeFunnel1");
-        waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
-        redAutoBasket.addAction(waitBeforeFunnel1);
-
-        PurePursuitAction funnelSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
-        funnelSample1.setName("funnelSample1");
-        funnelSample1.setDependentActions(waitBeforeFunnel1);
-        //bar to sample 1
-        funnelSample1.addPoint(INTAKE_SAMPLE_X, 840, 180);
-        redAutoBasket.addAction(funnelSample1);
-
-        IntakeFunnelAction intakeFunnelAction1 = new IntakeFunnelAction(intakeClaw, outtake);
-        intakeFunnelAction1.setName("intakeFunnelAction1");
-        intakeFunnelAction1.setDependentActions(waitBeforeFunnel1);
-        redAutoBasket.addAction(intakeFunnelAction1);
-
-        OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
-        outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(intakeFunnelReady1, moveToSample1);
-        redAutoBasket.addAction(outtakeTransferReady);
-
-        IntakeTransferReady intakeTransferReady1 = new IntakeTransferReady(intakeClaw);
-        intakeTransferReady1.setName("intakeTransferReady1");
-        intakeTransferReady1.setDependentActions(intakeFunnelAction1, outtakeTransferReady);
-        redAutoBasket.addAction(intakeTransferReady1);
-
-        TransferAction transferAction1 = new TransferAction(intakeClaw, outtake);
-        transferAction1.setName("transferAction1");
-        transferAction1.setDependentActions(intakeTransferReady1, outtakeTransferReady);
-        redAutoBasket.addAction(transferAction1);
-
-        PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(intakeFunnelAction1, funnelSample1);
-        //move sample 1 to basket
-        moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
-        redAutoBasket.addAction(moveToBasket1);
-
-        BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
-        basketReady1.setName("basketReady1");
-        basketReady1.setDependentActions(moveToBasket1, transferAction1);
-        redAutoBasket.addAction(basketReady1);
-
-        WaitAction waitAction1 = new WaitAction(100);
-        waitAction1.setName("waitAction1");
-        waitAction1.setDependentActions(basketReady1);
-        redAutoBasket.addAction(waitAction1);
-//
-//        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                Outtake.OUTTAKE_PIVOT_BASKET_POS);
-//        outtakePivotActionOut1.setName("outtakePivotActionOut1");
-//        outtakePivotActionOut1.setDependentActions(basketReady1);
-//        redAutoBasket.addAction(outtakePivotActionOut1);
-
-        KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
-        openClaw1.setName("openClaw1");
-        openClaw1.setDependentActions(basketReady1);
-        redAutoBasket.addAction(openClaw1);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 840);
+        sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
+        sampleToBasketFunnelRoundTrip1.setDependentActions(wallToBarHangAction);
+        redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
         //===============end of first basket===============
 
 
 
         //===============start of second basket===============
-        PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
-        moveOutBasket1.setName("moveOutBasket1");
-        moveOutBasket1.setDependentActions(openClaw1, waitAction1);
-        moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
-        redAutoBasket.addAction(moveOutBasket1);
-
-        PurePursuitAction moveToSample2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSample2.setName("moveToSample2");
-        moveToSample2.setDependentActions(moveOutBasket1);
-        moveToSample2.addPoint(INTAKE_SAMPLE_X+465, 1100, 180);
-        moveToSample2.addPoint(INTAKE_SAMPLE_X+75, 1100, 180);
-        redAutoBasket.addAction(moveToSample2);
-
-        IntakeFunnelReady intakeFunnelReady2 = new IntakeFunnelReady(intakeClaw, outtake);
-        intakeFunnelReady2.setName("intakeFunnelReady2");
-        intakeFunnelReady2.setDependentActions(moveOutBasket1);
-        redAutoBasket.addAction(intakeFunnelReady2);
-
-        WaitAction waitBeforeFunnel2 = new WaitAction(250);
-        waitBeforeFunnel2.setName("waitBeforeFunnel2");
-        waitBeforeFunnel2.setDependentActions(moveToSample2, intakeFunnelReady2);
-        redAutoBasket.addAction(waitBeforeFunnel2);
-
-        PurePursuitAction funnelSample2 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
-        funnelSample2.setName("funnelSample2");
-        funnelSample2.setDependentActions(waitBeforeFunnel2);
-        //bar to sample 1
-        funnelSample2.addPoint(INTAKE_SAMPLE_X, 1100, 180);
-        redAutoBasket.addAction(funnelSample2);
-
-        IntakeFunnelAction intakeFunnelAction2 = new IntakeFunnelAction(intakeClaw, outtake);
-        intakeFunnelAction2.setName("intakeFunnelAction2");
-        intakeFunnelAction2.setDependentActions(waitBeforeFunnel2);
-        redAutoBasket.addAction(intakeFunnelAction2);
-
-        OuttakeTransferReady outtakeTransferReady1 = new OuttakeTransferReady(outtake);
-        outtakeTransferReady1.setName("outtakeTransferReady");
-        outtakeTransferReady1.setDependentActions(intakeFunnelReady2, moveToSample2);
-        redAutoBasket.addAction(outtakeTransferReady1);
-
-        IntakeTransferReady intakeTransferReady2 = new IntakeTransferReady(intakeClaw);
-        intakeTransferReady2.setName("intakeTransferReady2");
-        intakeTransferReady2.setDependentActions(intakeFunnelAction2, outtakeTransferReady1);
-        redAutoBasket.addAction(intakeTransferReady2);
-
-        TransferAction transferAction2 = new TransferAction(intakeClaw, outtake);
-        transferAction2.setName("transferAction2");
-        transferAction2.setDependentActions(intakeTransferReady2, outtakeTransferReady1);
-        redAutoBasket.addAction(transferAction2);
-
-        //TODO INTAKE ACTION
-
-//        IntakeReadyAction intakeReady2 = new IntakeReadyAction(10, intake);
-//        intakeReady2.setName("intakeReady2");
-//        intakeReady2.setDependentActions(moveToSample2);
-//        redAutoBasket.addAction(intakeReady2);
-//
-//        IntakeAction intake2 = new IntakeAction(intake);
-//        intake2.setName("intake2");
-//        intake2.setDependentActions(intakeReady2);
-//        redAutoBasket.addAction(intake2);
-
-        PurePursuitAction moveToBasket2 = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket2.setName("moveToBasket2");
-        moveToBasket2.setDependentActions(intakeFunnelAction2, funnelSample2);
-        //move sample 2 to basket
-        moveToBasket2.addPoint(outtakeXPos, outtakeYPos, -135);
-        redAutoBasket.addAction(moveToBasket2);
-
-        BasketReadyAction basketReady2 = new BasketReadyAction(outtake);
-        basketReady2.setName("basketReady2");
-        basketReady2.setDependentActions(moveToBasket2, transferAction2);
-        redAutoBasket.addAction(basketReady2);
-
-        WaitAction waitAction2 = new WaitAction(100);
-        waitAction2.setName("waitAction2");
-        waitAction2.setDependentActions(basketReady2);
-        redAutoBasket.addAction(waitAction2);
-//
-//        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                Outtake.OUTTAKE_PIVOT_BASKET_POS);
-//        outtakePivotActionOut1.setName("outtakePivotActionOut1");
-//        outtakePivotActionOut1.setDependentActions(basketReady1);
-//        redAutoBasket.addAction(outtakePivotActionOut1);
-
-        KServoAutoAction openClaw2 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
-        openClaw2.setName("openClaw2");
-        openClaw2.setDependentActions(basketReady2);
-        redAutoBasket.addAction(openClaw2);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip2 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 1100);
+        sampleToBasketFunnelRoundTrip2.setName("sampleToBasketFunnelRoundTrip2");
+        sampleToBasketFunnelRoundTrip2.setDependentActions(sampleToBasketFunnelRoundTrip1);
+        redAutoBasket.addAction(sampleToBasketFunnelRoundTrip2);
         //===============end of second basket===============
 
 
 
         //===============start of third basket===============
-        PurePursuitAction moveOutBasket2 = new PurePursuitAction(driveTrain,wheelOdometry);
-        moveOutBasket2.setName("moveOutBasket2");
-        moveOutBasket2.setDependentActions(openClaw2, waitAction2);
-        moveOutBasket2.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
-        redAutoBasket.addAction(moveOutBasket2);
-//
         OuttakeTransferReady outtakeTransferReady2 = new OuttakeTransferReady(outtake);
         outtakeTransferReady2.setName("outtakeTransferReady2");
-        outtakeTransferReady2.setDependentActions(moveOutBasket2);
+        outtakeTransferReady2.setDependentActions(sampleToBasketFunnelRoundTrip2);
         redAutoBasket.addAction(outtakeTransferReady2);
 
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample3.setName("moveToSample3");
-        moveToSample3.setDependentActions(moveOutBasket2);
+        moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 2
-        moveToSample3.addPoint(-300, 1064.35, 180-27.6);
+        moveToSample3.addPoint(-350, 1054.35, 180-27.6);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION

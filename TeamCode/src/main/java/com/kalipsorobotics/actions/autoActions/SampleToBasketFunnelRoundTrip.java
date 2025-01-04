@@ -19,87 +19,81 @@ import com.kalipsorobotics.modules.Outtake;
 public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY){
-        final int INTAKE_SAMPLE_X = -590-300;
+        final int INTAKE_SAMPLE_X = -590-325;
 
         int outtakeXPos = -190;
         int outtakeYPos = 1020;
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, sampleY, 180); //840
+        //bar to sample 1
+        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, sampleY, 180);
         moveToSample1.addPoint(INTAKE_SAMPLE_X+75, sampleY, 180);
         this.addAction(moveToSample1);
 
-        IntakeFunnelReady intakeFunnelReady = new IntakeFunnelReady(intakeClaw, outtake);
-        intakeFunnelReady.setName("intakeFunnelReady");
-        this.addAction(intakeFunnelReady);
+        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake);
+        intakeFunnelReady1.setName("intakeFunnelReady1");
+        this.addAction(intakeFunnelReady1);
 
-        WaitAction waitBeforeFunnel = new WaitAction(750);
-        waitBeforeFunnel.setName("waitBeforeFunnel");
-        waitBeforeFunnel.setDependentActions(moveToSample1, intakeFunnelReady);
-        this.addAction(waitBeforeFunnel);
+        WaitAction waitBeforeFunnel1 = new WaitAction(250);
+        waitBeforeFunnel1.setName("waitBeforeFunnel1");
+        waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
+        this.addAction(waitBeforeFunnel1);
 
-        PurePursuitAction moveFunnelSample = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
-        moveFunnelSample.setName("moveFunnelSample");
-        moveFunnelSample.setDependentActions(waitBeforeFunnel);
+        PurePursuitAction funnelSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
+        funnelSample1.setName("funnelSample1");
+        funnelSample1.setDependentActions(waitBeforeFunnel1);
         //bar to sample 1
-        moveFunnelSample.addPoint(INTAKE_SAMPLE_X, 840, 180);
-        this.addAction(moveFunnelSample);
+        funnelSample1.addPoint(INTAKE_SAMPLE_X, sampleY, 180);
+        this.addAction(funnelSample1);
 
-        IntakeFunnelAction intakeFunnelAction = new IntakeFunnelAction(intakeClaw, outtake);
-        intakeFunnelAction.setName("intakeFunnelAction");
-        intakeFunnelAction.setDependentActions(intakeFunnelReady, moveToSample1);
-        this.addAction(intakeFunnelAction);
+        IntakeFunnelAction intakeFunnelAction1 = new IntakeFunnelAction(intakeClaw, outtake);
+        intakeFunnelAction1.setName("intakeFunnelAction1");
+        intakeFunnelAction1.setDependentActions(waitBeforeFunnel1);
+        this.addAction(intakeFunnelAction1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(intakeFunnelReady, moveToSample1);
+        outtakeTransferReady.setDependentActions(intakeFunnelReady1, moveToSample1);
         this.addAction(outtakeTransferReady);
 
-        IntakeTransferReady intakeTransferReady = new IntakeTransferReady(intakeClaw);
-        intakeTransferReady.setName("intakeTransferReady");
-        intakeTransferReady.setDependentActions(intakeFunnelAction, outtakeTransferReady);
-        this.addAction(intakeTransferReady);
+        IntakeTransferReady intakeTransferReady1 = new IntakeTransferReady(intakeClaw);
+        intakeTransferReady1.setName("intakeTransferReady1");
+        intakeTransferReady1.setDependentActions(intakeFunnelAction1, outtakeTransferReady);
+        this.addAction(intakeTransferReady1);
 
-        TransferAction transferAction = new TransferAction(intakeClaw, outtake);
-        transferAction.setName("transferAction");
-        transferAction.setDependentActions(intakeTransferReady, outtakeTransferReady);
-        this.addAction(transferAction);
+        TransferAction transferAction1 = new TransferAction(intakeClaw, outtake);
+        transferAction1.setName("transferAction1");
+        transferAction1.setDependentActions(intakeTransferReady1, outtakeTransferReady);
+        this.addAction(transferAction1);
 
-        PurePursuitAction moveToBasket = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToBasket.setName("moveToBasket");
-        moveToBasket.setDependentActions(intakeFunnelAction, moveFunnelSample);
+        PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
+        moveToBasket1.setName("moveToBasket1");
+        moveToBasket1.setDependentActions(intakeFunnelAction1, funnelSample1);
         //move sample 1 to basket
-        moveToBasket.addPoint(outtakeXPos, outtakeYPos, -135);
-        this.addAction(moveToBasket);
+        moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
+        this.addAction(moveToBasket1);
 
-        BasketReadyAction basketReady = new BasketReadyAction(outtake);
-        basketReady.setName("basketReady");
-        basketReady.setDependentActions(moveToBasket, transferAction);
-        this.addAction(basketReady);
+        BasketReadyAction basketReady1 = new BasketReadyAction(outtake);
+        basketReady1.setName("basketReady1");
+        basketReady1.setDependentActions(moveToBasket1, transferAction1);
+        this.addAction(basketReady1);
 
-        WaitAction waitAction = new WaitAction(100);
-        waitAction.setName("waitAction");
-        waitAction.setDependentActions(basketReady);
-        this.addAction(waitAction);
-//
-//        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                Outtake.OUTTAKE_PIVOT_BASKET_POS);
-//        outtakePivotActionOut1.setName("outtakePivotActionOut1");
-//        outtakePivotActionOut1.setDependentActions(basketReady);
-//        redAutoBasket.addAction(outtakePivotActionOut1);
+        WaitAction waitAction1 = new WaitAction(100);
+        waitAction1.setName("waitAction1");
+        waitAction1.setDependentActions(basketReady1);
+        this.addAction(waitAction1);
 
-        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
-        openClaw.setName("openClaw");
-        openClaw.setDependentActions(basketReady);
-        this.addAction(openClaw);
+        KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
+        openClaw1.setName("openClaw1");
+        openClaw1.setDependentActions(basketReady1);
+        this.addAction(openClaw1);
 
-        PurePursuitAction moveOutOfBasket = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveOutOfBasket.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
-        moveOutOfBasket.setName("moveOutOfBasket");
-        moveOutOfBasket.setDependentActions(openClaw, waitAction);
-        this.addAction(moveOutOfBasket);
-
+        PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
+        moveOutBasket1.setName("moveOutBasket1");
+        moveOutBasket1.setDependentActions(openClaw1, waitAction1);
+        moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
+        this.addAction(moveOutBasket1);
     }
 }
 //move robot to samples
