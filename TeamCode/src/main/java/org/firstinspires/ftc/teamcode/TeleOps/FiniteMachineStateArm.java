@@ -26,6 +26,7 @@ public class FiniteMachineStateArm {
         LIFT_EXTEND,
         LIFT_DUMP,
         LIFT_RETRACT,
+        COLOR_SAMPLE_DROP,
         SPECIMEN_PICK,
         LIFT_HIGHBAR,
         LIFT_HOOK,
@@ -110,19 +111,13 @@ public class FiniteMachineStateArm {
                     liftState = LIFTSTATE.HIGHBASKET_TRANSFER;
                 }
 
-
-
-
                 // "right trigger" and "Y" button to set deposit arm to pick specimen position
                 if (((gamepad_1.getButton(GamepadKeys.Button.Y) && gamepad_1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1)||
                         (gamepad_2.getButton(GamepadKeys.Button.Y)&& gamepad_1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) <0.1)) &&
                         debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
-                    robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
-                    robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Pick_Pos);
-                    robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Pick_Pos);
-
-                    liftState = LIFTSTATE.SPECIMEN_PICK;
+                    liftTimer.reset();
+                    liftState = LIFTSTATE.COLOR_SAMPLE_DROP;
                 }
                 break;
 
@@ -197,6 +192,8 @@ public class FiniteMachineStateArm {
                     liftState = LIFTSTATE.LIFT_START;
                 }
                 break;
+            case COLOR_SAMPLE_DROP:
+
             case SPECIMEN_PICK:
 
 

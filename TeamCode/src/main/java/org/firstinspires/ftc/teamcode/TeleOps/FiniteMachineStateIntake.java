@@ -93,7 +93,6 @@ public class FiniteMachineStateIntake {
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                     //robot.intakeClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
                     clawState = CLAWSTATE.OPEN;
-                    ClawSwitch();
                     intakeState = INTAKESTATE.INTAKE_EXTEND;
                 }
                 break;
@@ -150,7 +149,6 @@ public class FiniteMachineStateIntake {
                         debounceTimer.reset();
                         //robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Close);
                         clawState = CLAWSTATE.CLOSE;
-                        ClawSwitch();
                         //retract
                         intakeTimer.reset();
                         intakeState = INTAKESTATE.INTAKE_RETRACT;
@@ -159,11 +157,13 @@ public class FiniteMachineStateIntake {
                 break;
 
             case INTAKE_RETRACT:
-                // Wait for the dump time to pass
+                // Wait for the pickup time to pass
+                if (intakeTimer.seconds()>0.25){
                 robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
                 robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Idle);
+                }
                 if (intakeTimer.seconds()>0.5){
                     robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
                     intakeTimer.reset();
@@ -173,8 +173,10 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_TRANS:
                 // Check if the lift has reached the low position
-                robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
-                if(intakeTimer.seconds()>= 0.5) {
+                if(intakeTimer.seconds()>0.5) {
+                    robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
+                }
+                if(intakeTimer.seconds()>= 0.75) {
                     robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     intakeState = INTAKESTATE.INTAKE_START;
@@ -201,6 +203,7 @@ public class FiniteMachineStateIntake {
             debounceTimer.reset();
             ToggleClaw();
         }
+        ClawSwitch();
     }
 
     // Helper method to check if the lift is within the desired position threshold
