@@ -232,8 +232,14 @@ public class BaseRobot {
                 }
             }
 
-            if (contextualActions.justToggleClaw) {
-                outtake.claw.toggle();
+            if (contextualActions.clawIn) {
+                outtake.claw.forward();
+            }
+            else if (contextualActions.clawOut) {
+                outtake.claw.backward();
+            }
+            else {
+                outtake.claw.stop();
             }
 
             if (contextualActions.shoulderUp) {

@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.mechanisms.submechanisms;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Claw {
-    public final Servo clawServo;
+    public final CRServo clawServo;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
     public boolean opened = true;
@@ -16,39 +16,21 @@ public class Claw {
     public Claw(BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        clawServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW);
-        close();
+        clawServo = hardwareMap.get(CRServo.class, Settings.Hardware.IDs.CLAW);
+        stop();
     }
 
-    /* Set the right servo; true = open, false = close */
-    public void setServo(boolean open) {
-        double position = open ? Settings.Hardware.Servo.Claw.OPEN : Settings.Hardware.Servo.Claw.CLOSED;
-        baseRobot.logger.update("Claw position: ",  position + "");
-        clawServo.setPosition(position);
-    }
-
-    /* Open both servos */
-    public void open() {
-        if (!opened) {
-            setServo(true);
-            opened = true;
-        }
+    public void forward() {
+        clawServo.setPower(1);
     }
 
     /* Close both servos */
-    public void close() {
-        if (opened) {
-            setServo(false);
-            opened = false;
-        }
+    public void backward() {
+        clawServo.setPower(-1);
     }
 
-    public void toggle() {
-        if (opened) {
-            close();
-        } else {
-            open();
-        }
+    public void stop() {
+        clawServo.setPower(0);
     }
 
 }

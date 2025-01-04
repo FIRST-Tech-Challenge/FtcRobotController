@@ -275,7 +275,8 @@ public class Settings {
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
-        public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
+        public final GamepadButton clawIn = GamepadButton.OPTIONS;
+        public final GamepadButton clawOut = GamepadButton.START;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
