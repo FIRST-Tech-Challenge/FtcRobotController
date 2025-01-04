@@ -26,9 +26,8 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
         PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample1.setName("moveToSample1");
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, 200, 90);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, 840, 180);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X+75, 840, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X+465, sampleY, 180); //840
+        moveToSample1.addPoint(INTAKE_SAMPLE_X+75, sampleY, 180);
         this.addAction(moveToSample1);
 
         IntakeFunnelReady intakeFunnelReady = new IntakeFunnelReady(intakeClaw, outtake);
