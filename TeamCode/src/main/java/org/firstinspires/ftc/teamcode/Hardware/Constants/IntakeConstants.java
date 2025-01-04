@@ -13,7 +13,7 @@ public class IntakeConstants {
             stowedPosition = 0.00,
             readyPosition = 30.00,
             minIntakePosition = 10.00,
-            maxExtensionPosition = 70.00,
+            maxExtensionPosition = 63.50,
             intakeSlidePositionTolerance = 1.0;
 
     // Max Intake Slide Manual Feed Rate in cm/s
