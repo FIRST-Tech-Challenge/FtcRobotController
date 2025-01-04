@@ -28,7 +28,7 @@ public class WristTest extends LinearOpMode {
             TelemetryPacket packet = new TelemetryPacket();
              angle = camera.getAngle();
             if (gamepad1.cross){
-                runningActions.add(wrist.moveToAngle(angle));
+                wrist.setPosition(0.5);
             }
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

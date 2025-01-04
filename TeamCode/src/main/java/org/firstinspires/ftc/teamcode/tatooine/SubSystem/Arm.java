@@ -233,6 +233,14 @@ public class Arm {
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Set Power Angle", power);
     }
+    public void setPowerAngleWithF(double power) {
+        if (getAngle() > 75 && power > 0.3){
+            power = 0.3;
+        }
+        setPowerAngle(power + calculateF());
+
+
+    }
 
     /**
      * Calculates the feedforward term (F) based on the current angle of the arm.

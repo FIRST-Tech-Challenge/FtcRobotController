@@ -119,6 +119,14 @@ public class StupidActionTeleOp extends LinearOpMode {
                 if (!lockWrist) {
                     wrist.setPosition(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
                 }
+                if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)){
+                    wrist.openMin();
+                    intake.setPowerFun(1);
+                }
+                else if (gamepadEx2.getButton(GamepadKeys.Button.LEFT_BUMPER)){
+                    wrist.scoreSample();
+                    intake.setPowerFun(0);
+                }
                 if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)) {
                     runningActions.clear();
                     lockExtend = true;

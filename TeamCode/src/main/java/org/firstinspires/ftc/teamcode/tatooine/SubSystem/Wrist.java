@@ -28,6 +28,7 @@ public class Wrist {
     public static double OPEN_MIN = 0.25;
     public static double BACK  = 0;
 
+
     private final double FRONT = 1;
     private static final double ANGLE_TOLERANCE = 10;
     public static final double FULL_RANGE = 291 - 24; // TODO: Verify real values from CAD
