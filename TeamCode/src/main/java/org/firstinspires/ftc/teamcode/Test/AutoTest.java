@@ -66,7 +66,6 @@ public class AutoTest extends LinearOpMode {
 
         Actions.runBlocking(
                 new ParallelAction(
-//                        hSlideForward,
                         closeBucket,
                         bucketScore
                 )

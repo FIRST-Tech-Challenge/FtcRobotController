@@ -18,20 +18,20 @@ public class hSlideToPositionAction implements Action {
 
     @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-        if (hSlide.getPos() < position) {
-            hSlide.moveForward();
-        }
-        else if(hSlide.getPos() > position) {
-            hSlide.moveBackward();
+        boolean inPositionRange = hSlide.getPos() >= (position - 25) && hSlide.getPos() <= (position + 25);
+
+        if (!inPositionRange) {
+            if (hSlide.getPos() < position) {
+                hSlide.setPower(1);
+            }
+            else if (hSlide.getPos() > position) {
+                hSlide.setPower(-1);
+            }
         }
         else {
             hSlide.stopMotor();
         }
 
-        telemetryPacket.put("Viper Position", hSlide.getPos());
-
-
-
-        return hSlide.getPos() < (position - 25) || hSlide.getPos() > (position + 25);
+        return !inPositionRange;
     }
 }

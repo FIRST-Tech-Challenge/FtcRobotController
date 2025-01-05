@@ -24,7 +24,6 @@ public class ViperToRestAction implements Action {
             viperSlide.stop();
         }
 
-
         return viperSlide.getCurrentPower() <= 5;
 
     }

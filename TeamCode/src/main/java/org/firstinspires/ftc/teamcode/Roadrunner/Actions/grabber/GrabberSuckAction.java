@@ -7,23 +7,40 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Intake;
 
 public class GrabberSuckAction implements Action {
-    private Intake intake;
-    private int time;
+    private final Intake intake;
+    private final ElapsedTime timer;
+    private final long time;
+    private boolean hasStarted;
 
-    public GrabberSuckAction(Intake intake, int time) {
+    public GrabberSuckAction(Intake intake, long time) {
         this.intake = intake;
         this.time = time;
+        this.timer = new ElapsedTime();
+        this.timer.reset(); // Initialize the timer when the action is created
+        this.hasStarted = false;
     }
 
-    @Override
     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-        intake.grabberSuck();
-        sleep(time);
-        intake.grabberOff();
-        return false;
+        if (!hasStarted) {
+            // Reset the timer only when the action is actually triggered
+            timer.reset();
+            hasStarted = true; // Mark that the action has started
+        }
+
+        if (timer.milliseconds() < time) {
+            // Keep the grabber running while the time is less than the target time
+            intake.grabberSuck();
+            return true;
+        } else {
+            // Ensure the grabber is turned off after the specified time
+            intake.grabberOff();
+            hasStarted = false; // Reset the flag when the action is completed
+            return false;
+        }
     }
 }

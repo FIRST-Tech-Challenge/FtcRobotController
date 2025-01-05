@@ -115,9 +115,9 @@ public class ViperSlide{
             setPower(-retractSpeed);
         }
         else if (extendSpeed != 0) {
-            if(getPos() > 3000) {
-                bucketRest();
-            }
+//            if(getPos() > 3000) {
+//                bucketRest();
+//            }
             setPower(extendSpeed);
         }
         else {
