@@ -105,7 +105,7 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(700)) {
-            lowestPower = 0.23;
+            lowestPower = 0.245;
         }
 
         if (targetTicks > mmToTicksLS(720)) {

@@ -101,8 +101,9 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
+
         //move basket to sample 2
-        moveToSample3.addPoint(-357.5, 1054.35, 180-27.6);
+        moveToSample3.addPoint(-375, 1054.35, 180-27.6);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -176,11 +177,11 @@ public class AutoBasketFunnel extends LinearOpMode {
         lsTouchBar.setDependentActions(moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
 
-        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
+        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry,1.0/500);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
         park.addPoint(-1225, 610, 45);
-        park.addPoint(-1325, 260, 90);
+        park.addPoint(-1325, 200, 90);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
