@@ -28,6 +28,7 @@ public class TeleOpV1 extends OpMode {
         ARM_UP,
         READY_FOR_DELIVERY,
         DELIVER_UP,
+        DROP_HIGH,
         ERROR
     }
     public enum SlidesState {
@@ -114,6 +115,9 @@ public class TeleOpV1 extends OpMode {
         else if(state == SystemStatesV1.READY_FOR_DELIVERY){
             timeNeeded = 3;
         }
+        else if(state == SystemStatesV1.DROP_HIGH){
+            timeNeeded = 2;
+        }
         else {
             timeNeeded = 0.3;
         }
@@ -129,24 +133,15 @@ public class TeleOpV1 extends OpMode {
         }
         switch (state) {
             case START:
-                if(!delivered) {
-                    deliveryTimer.reset();
-                    delivered = true;
-                }
-                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
-                if(deliveryTimer.seconds() > 2) {
-                    if(!slidesReset) {
-                        deliverySlides.runLeftSlideToPosition(0, 0.8);
-                        deliverySlides.runRightSlideToPosition(0, 0.8);
-                        slidesReset = true;
-                    }
-                    deliveryAxon.setPosition(constants.DELIVERY_GRAB);
-                    differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
-                    differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
-                    intakeSlides.runToPosition(constants.INTAKE_MOTOR_IN, 0.5);
-                    grippers.setPosition(constants.GRIPPERS_CLOSE);
-                    grippersClosed = true;
-                }
+                deliverySlides.runLeftSlideToPosition(0, 0.8);
+                deliverySlides.runRightSlideToPosition(0, 0.8);
+                slidesReset = true;
+                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
+                differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
+                intakeSlides.runToPosition(constants.INTAKE_MOTOR_IN, 0.5);
+                grippers.setPosition(constants.GRIPPERS_CLOSE);
+                grippersClosed = true;
                 break;
             case HOVER_OVER_SAMPLE:
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
@@ -210,6 +205,9 @@ public class TeleOpV1 extends OpMode {
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
                 delivered = false;
+                break;
+            case DROP_HIGH:
+                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 break;
         }
         telemetry.addLine("STATE: " + state.name());
