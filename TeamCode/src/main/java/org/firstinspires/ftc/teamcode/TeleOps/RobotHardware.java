@@ -18,14 +18,14 @@ Control hub motor:
                 port 2: FR_Motor
                 port 3: BR_Motor
 Expansion hub motor:
-                port 0 VS_Motor_Left
-                port 1: VS_Motor_Right
+                port 0 VS_Left_Motor
+                port 2: VS_Right_Motor
 
 Servo:
 Control hub:
                 port 0: Intake_Wrist_Servo
                 port 1: Intake_Arm_Left_Servo
-                port 2: Intake_Slide_Left_Servo
+                port 2: Deposit_Wrist_Servo
                 port 3: Deposit_Claw_Servo
                 port 4: Deposit_Arm_Servo
                 port 5: Empty
@@ -33,7 +33,7 @@ Control hub:
 Expansion hub:
                 port 0: Empty
                 port 1: Intake_Slide_Right_Servo
-                port 2: Deposit_Wrist_Servo
+                port 2: Intake_Slide_Left_Servo
                 port 3: Intake_Claw_Servo
                 port 4: Intake_Rotation_Servo
                 port 5: Intake_Arm_Right_Servo

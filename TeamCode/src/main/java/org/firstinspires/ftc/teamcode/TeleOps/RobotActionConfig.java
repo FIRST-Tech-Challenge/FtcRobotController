@@ -9,7 +9,7 @@ public class RobotActionConfig {
 
     //Intake Configure
     public static double intake_Slide_Extension         = 0.36;// range(0.1 - 0.65)
-    public static double intake_Slide_Retract           = 0.1;
+    public static double intake_Slide_Retract           = 0.01;
 
     public static double intake_Rotation_Mid            = 0.46; // range(0-1, 0.49 at the middle for installation
 
@@ -34,13 +34,12 @@ public class RobotActionConfig {
     public static double deposit_Wrist_Dump_Pos         = 0.22; //range(0-1), 0: installation position
     public static double deposit_Wrist_Transfer_Pos      = 0.53; // 0.06 is rest position.
     public static double deposit_Wrist_Pick_Pos         = 0.31; // 0.06 is rest position.
-    public static double deposit_Wrist_Hook_Pos         = 0.5; // 0.06 is rest position.
+    public static double deposit_Wrist_Hook_Pos         = 0.2; // 0.06 is rest position.
 
 
     public static double deposit_Arm_Pick_Pos           = 0.97; // 0 is pick position.
     public static double deposit_Arm_Dump_Pos           = 0.7; // range (0-1) 0: installation position 180 deg
     public static double deposit_Arm_Transfer_Pos        = 0.06; // 0 is rest position.
-
     public static double deposit_Arm_Hook_Pos           = 0.5;  // deposit arm hook position
     public static double deposit_Claw_Open              = 0.36;  //
     public static double deposit_Claw_Close             = 0.0;
@@ -53,8 +52,8 @@ public class RobotActionConfig {
     public static double hookTime                       = 0.3; // wait then release deposit claw.
 
 
-    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
-    public static double deposit_Slide_DownLiftPower    = 0.7;  //slides power
+    public static double deposit_Slide_UpLiftPower      = 0.9;  //slides power
+    public static double deposit_Slide_DownLiftPower    = 0.3;  //slides power
     public static double DEBOUNCE_THRESHOLD             =0.25; // debounce_Threshold
 
 }

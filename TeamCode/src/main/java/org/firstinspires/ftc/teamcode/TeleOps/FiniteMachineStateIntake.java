@@ -54,7 +54,7 @@ public class FiniteMachineStateIntake {
     //Intake states
     public INTAKESTATE intakeState = INTAKESTATE.INTAKE_START; // Persisting state
     private ElapsedTime intakeTimer = new ElapsedTime(); // Timer for controlling dumping time
-    private CLAWSTATE clawState = CLAWSTATE.OPEN; //claw default open
+    public CLAWSTATE clawState = CLAWSTATE.OPEN; //claw default open
 
     private double intakeArmPosition;
     private double rotationPosition;
@@ -93,6 +93,7 @@ public class FiniteMachineStateIntake {
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                     //robot.intakeClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
                     clawState = CLAWSTATE.OPEN;
+                    robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
                     intakeState = INTAKESTATE.INTAKE_EXTEND;
                 }
                 break;
@@ -147,8 +148,8 @@ public class FiniteMachineStateIntake {
                      */
                     if ((gamepad_1.getButton(DPAD_RIGHT) || gamepad_2.getButton(DPAD_RIGHT))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                         debounceTimer.reset();
-                        //robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Close);
                         clawState = CLAWSTATE.CLOSE;
+                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Close);
                         //retract
                         intakeTimer.reset();
                         intakeState = INTAKESTATE.INTAKE_RETRACT;
@@ -158,13 +159,13 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_RETRACT:
                 // Wait for the pickup time to pass
-                if (intakeTimer.seconds()>0.25){
+                if (intakeTimer.seconds()>0.2){
                 robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
                 robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Idle);
                 }
-                if (intakeTimer.seconds()>0.5){
+                if (intakeTimer.seconds()>0.4){
                     robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
                     intakeTimer.reset();
                     intakeState = INTAKESTATE.INTAKE_TRANS;
@@ -173,10 +174,10 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_TRANS:
                 // Check if the lift has reached the low position
-                if(intakeTimer.seconds()>0.5) {
+                if(intakeTimer.seconds()>0.2) {
                     robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
                 }
-                if(intakeTimer.seconds()>= 0.75) {
+                if(intakeTimer.seconds()>= 0.4) {
                     robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     intakeState = INTAKESTATE.INTAKE_START;
@@ -193,7 +194,7 @@ public class FiniteMachineStateIntake {
                         debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             clawState = CLAWSTATE.OPEN;
-            ClawSwitch();
+            robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
             intakeState = INTAKESTATE.INTAKE_EXTEND;
         }
 
@@ -202,8 +203,9 @@ public class FiniteMachineStateIntake {
         if((gamepad_1.getButton(GamepadKeys.Button.A) || gamepad_2.getButton(GamepadKeys.Button.A))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
             debounceTimer.reset();
             ToggleClaw();
+            ClawSwitch();
         }
-        ClawSwitch();
+
     }
 
     // Helper method to check if the lift is within the desired position threshold
@@ -225,6 +227,10 @@ public class FiniteMachineStateIntake {
     public enum CLAWSTATE {
         OPEN,
         CLOSE
+    }
+    // set claw state
+    public void setClawState(CLAWSTATE state) {
+        this.clawState = state;
     }
 
     //Toggle Claw()
