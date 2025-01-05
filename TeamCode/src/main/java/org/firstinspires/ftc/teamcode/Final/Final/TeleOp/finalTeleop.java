@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.Final.Final.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -55,7 +55,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             hardware.lift = hardwareMap.get(DcMotor.class, "lift");
             hardware.hopper = hardwareMap.get(DcMotor.class, "hopper");
 
-            hardware.wrist = hardwareMap.get(DcMotor.class, "wrist");
             hardware.door = hardwareMap.get(Servo.class, "door");
             hardware.topGrabber = hardwareMap.get(CRServo.class, "topGrabber");
             hardware.bottomGrabber = hardwareMap.get(CRServo.class, "bottomGrabber");
@@ -98,7 +97,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         hardware.frontRight.setDirection(DcMotor.Direction.FORWARD);
         hardware.backLeft.setDirection(DcMotor.Direction.REVERSE);
         hardware.backRight.setDirection(DcMotor.Direction.FORWARD);
-        hardware.wrist.setDirection(DcMotor.Direction.FORWARD);
     }
 
     @Override
@@ -107,8 +105,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         hardware.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hardware.mantis.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hardware.hopper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        hardware.wrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -129,10 +125,9 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             telemetry.addData("Hopper position", hardware.hopper.getCurrentPosition());
             telemetry.update();
         }
-        if(Math.abs(hardware.bottomGrabber.getPower()) > 0 || Math.abs(hardware.topGrabber.getPower()) > 0  || Math.abs(hardware.wrist.getPower()) > 0  ||Math.abs(hardware.door.getPosition()) > 0 ){
+        if(Math.abs(hardware.bottomGrabber.getPower()) > 0 || Math.abs(hardware.topGrabber.getPower()) > 0  ||Math.abs(hardware.door.getPosition()) > 0 ){
             telemetry.addData("Bottom grabber power", hardware.bottomGrabber.getPower());
             telemetry.addData("Top grabber power", hardware.topGrabber.getPower());
-            telemetry.addData("Wrist power", hardware.wrist.getPower());
             telemetry.addData("Door position", hardware.door.getPosition());
             telemetry.update();
         }
@@ -153,10 +148,10 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double reduction = 0.8;
         double turnReduction = 0.55;
 
-        if (gamepad1.left_bumper) {//SLOW
+        if (gamepad1.x) {//SLOW
             reduction = 0.4;
             turnReduction = 0.35;
-        } else if (gamepad1.right_bumper) {//FAST
+        } else if (gamepad1.y) {//FAST
             reduction = 1;
             turnReduction = 1;
         } else if ((gamepad1.left_stick_button) || (gamepad1.right_stick_button)) {//BRAKE
@@ -194,12 +189,18 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double threshold = 0.3; //Threshold for gamepad input
 
         //MANTIS
-        double mantisReduction = 0.1; //Initializes arm reduction speed, used for mantis
-        double mantisHold = 0.3; //Used to keep mantis arm up
+        double mantisUpReduction = 0.8;
+        double mantisDownReduction = 0.6;
+        double mantisUp = gamepad2.right_stick_y * mantisUpReduction;
+        double mantisDown = gamepad2.right_stick_y * mantisDownReduction;
+        double mantisBrake = 0;
 
         //HOPPER
         double hopperReduction = 0.65; // Initializes arm reduction speed, used for hopper
         double hopperHold = -0.1; //Used to keep hopper arm up
+
+        double hopperUp = gamepad2.left_stick_y;
+        double hopperDown = gamepad2.left_stick_y * hopperReduction;
 
         //LIFT
         double liftUp = 1; //lift up speed
@@ -211,23 +212,24 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         if (Math.abs(gamepad2.right_stick_y) > threshold) {
             state = mainEnum.MANTIS;
             if (gamepad2.right_stick_y > threshold) {
-                armSpeed = gamepad2.right_stick_y;
+                armSpeed = mantisUp;
             } else if (gamepad2.right_stick_y < -threshold) {
-                armSpeed = gamepad2.right_stick_y * mantisReduction;
+                armSpeed = mantisDown;
             }
+            arm(state, armSpeed); // Call the arm control
         }else{
             state = mainEnum.MANTIS;
-            armSpeed = mantisHold;
+            armSpeed = mantisBrake;          arm(state, armSpeed);
         }
-        arm(state, armSpeed); // Call the arm control
+
 
         //HOPPER
         if (Math.abs(gamepad2.left_stick_y) > threshold) {
             state = mainEnum.HOPPER;
             if (gamepad2.left_stick_y > threshold) {
-                armSpeed = gamepad2.left_stick_y;
+                armSpeed = hopperUp;
             } else if (gamepad2.left_stick_y < -threshold) {
-                armSpeed = gamepad2.left_stick_y * hopperReduction;
+                armSpeed = hopperDown;
             }
         }else{
             state = mainEnum.HOPPER;
@@ -256,9 +258,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
                 hardware.topGrabber.setPower(-speed);
                 hardware.bottomGrabber.setPower(speed);
                 break;
-            case WRIST:
-                hardware.wrist.setPower(speed);
-                break;
             case DOOR:
                 hardware.door.setPosition(pos);
                 break;
@@ -282,11 +281,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double open = 0;       // Open door position
         double close = 0.6;// Close door position
 
-        //WRIST
-        double up = -0.4;         //wrist up position
-        double down = 0.4;     //wrist down position
-        double hold = 0.00;        //Holds the wrist position
-
         // Control gripper based on button presses
         //GRABBER
         if(gamepad2.a){
@@ -305,15 +299,6 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
             hardware.door.setPosition(open);
         }else if (gamepad2.dpad_down){
             hardware.door.setPosition(close);
-        }
-
-        //WRIST
-        if (gamepad2.right_trigger > threshold){
-            hardware.wrist.setPower(down);
-        }else if (gamepad2.left_trigger > threshold){
-            hardware.wrist.setPower(up);
-        }else{
-            hardware.wrist.setPower(hold);
         }
     }
 }

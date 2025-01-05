@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.autonomous.newAuto;
+package org.firstinspires.ftc.teamcode.oldCrap.newAuto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware;
 
-@Autonomous(name = "Wheel test", group = "Test")
+//@Autonomous(name = "Wheel test", group = "Test")
 public class wheelTest extends LinearOpMode {
     hardware hardware = new hardware();
 

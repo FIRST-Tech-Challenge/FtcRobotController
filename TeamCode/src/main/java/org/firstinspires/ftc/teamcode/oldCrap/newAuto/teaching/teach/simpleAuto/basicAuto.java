@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.autonomous.newAuto.teaching.teach.simpleAuto;
+package org.firstinspires.ftc.teamcode.oldCrap.newAuto.teaching.teach.simpleAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name = "Basic Auto")
+//@Autonomous(name = "Basic Auto")
 public class basicAuto extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor frontRight;

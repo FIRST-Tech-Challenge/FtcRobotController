@@ -6,17 +6,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.oldCrap.newAuto.main.newAuto_interface;
+
 public class hardware {
     // Arm components
     public DcMotor mantis; //EXP PRT 0
-    public DcMotor lift; //EXP PRT 1
-    public DcMotor hopper; //EXP PRT 2
+    public DcMotor lift; //EXP PRT 2
+    public DcMotor hopper; //EXP PRT 3
 
     // Wrist and door
-    public DcMotor wrist; //EXP PRT 0
-    public CRServo bottomGrabber; //EXP PRT 1
-    public CRServo topGrabber; //EXP PRT 2
-    public Servo door; //EXP PRT 3
+    public CRServo bottomGrabber; //EXP PRT 0
+    public CRServo topGrabber; //EXP PRT 1
+    public Servo door; //EXP PRT 2
 
     // Wheel components
     public DcMotor frontLeft; //CTRL PRT 0
@@ -29,6 +30,8 @@ public class hardware {
     public DistanceSensor distanceSensorLeft;
     public DistanceSensor distanceSensorRight;
     public DistanceSensor distanceSensorBack;
+    public DistanceSensor distanceSensorFront;
+    public newAuto_interface mantis1;
 
     public void checkMotorInit(){
 
