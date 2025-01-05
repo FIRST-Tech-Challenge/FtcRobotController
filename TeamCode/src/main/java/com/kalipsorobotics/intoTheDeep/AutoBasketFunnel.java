@@ -75,12 +75,11 @@ public class AutoBasketFunnel extends LinearOpMode {
 
 
         //================begin of first basket====================
-        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 840);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 810);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
         sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
         //===============end of first basket===============
-
 
 
         //===============start of second basket===============
@@ -89,7 +88,6 @@ public class AutoBasketFunnel extends LinearOpMode {
         sampleToBasketFunnelRoundTrip2.setDependentActions(sampleToBasketFunnelRoundTrip1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip2);
         //===============end of second basket===============
-
 
 
         //===============start of third basket===============
@@ -102,8 +100,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
 
-        //move basket to sample 2
-        moveToSample3.addPoint(-370, 1054.35, 180-27.6);
+        //move basket to sample 3
+        moveToSample3.addPoint(-440, 1030, 180-29.6);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -177,11 +175,11 @@ public class AutoBasketFunnel extends LinearOpMode {
         lsTouchBar.setDependentActions(moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
 
-        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry,1.0/500);
+        PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry,1.0/450.0);
         park.setName("park");
         park.setDependentActions(moveOutBasket3);
         park.addPoint(-1225, 610, 45);
-        park.addPoint(-1325, 200, 90);
+        park.addPoint(-1325, 210, 90);
         redAutoBasket.addAction(park);
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
