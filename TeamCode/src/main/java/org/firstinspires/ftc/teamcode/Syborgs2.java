@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 /*
 KEY IMPROVEMENTS:
 1.Initialization of motors + imu setup are more modular
-2.Less unnecessary code, especially for arm mvmt and motors
+2.Less unnecessary code, especially for arm movement and motors
 3.Added better parameters for motor control, better velocity control and power
 4.Telemetry data improved
 
@@ -23,7 +24,9 @@ Code reduced from 226 to 212 lines
 **If we use this, change class name below to Syborgs**
  */
 
-public class OptimizedSyborgs extends LinearOpMode {
+@TeleOp(name = "Syborgs2")
+@SuppressWarnings("unused")
+public class Syborgs2 extends LinearOpMode {
     private DcMotor
             frontLeftDrive,
             frontRightDrive,
@@ -39,6 +42,8 @@ public class OptimizedSyborgs extends LinearOpMode {
     final double ARM_COLLECT = 0 * ARM_TICKS_PER_DEGREE;
     final double ARM_CLEAR_BARRIER = 15 * ARM_TICKS_PER_DEGREE;
     final double ARM_SCORE_SPECIMEN = 90 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_LOW = 90 * ARM_TICKS_PER_DEGREE;
+    final double ARM_ATTACH_HANGING_HOOK = 110 * ARM_TICKS_PER_DEGREE;
     final double INTAKE_COLLECT = -1.0;
     final double INTAKE_OFF = 0.0;
     final double INTAKE_DEPOSIT = 0.5;
@@ -81,12 +86,12 @@ public class OptimizedSyborgs extends LinearOpMode {
         intake.setPower(INTAKE_OFF);
         wrist.setPosition(WRIST_FOLDED_OUT);
 
-        telemetry.addLine("Robot Ready.");
-        telemetry.update();
-
         // IMU Initialization
         IMU imu = hardwareMap.get(IMU.class, "imu");
         initializeIMU(imu);
+
+        telemetry.addLine("Robot Ready.");
+        telemetry.update();
 
         waitForStart();
 
@@ -203,12 +208,12 @@ public class OptimizedSyborgs extends LinearOpMode {
     }
 
     private void updateTelemetry() {
-        telemetry.addData("Arm Target Position", armMotor.getTargetPosition());
-        telemetry.addData("Arm Encoder", armMotor.getCurrentPosition());
-        telemetry.addData("Lift Position", liftPosition);
-        telemetry.addData("Lift Target Position", liftMotor.getTargetPosition());
-        telemetry.addData("Lift Current Position", liftMotor.getCurrentPosition());
-        telemetry.addData("Lift Motor Current", ((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("ArmSubsystem Target Position", armMotor.getTargetPosition());
+        telemetry.addData("ArmSubsystem Encoder", armMotor.getCurrentPosition());
+        telemetry.addData("LiftSubsystem Position", liftPosition);
+        telemetry.addData("LiftSubsystem Target Position", liftMotor.getTargetPosition());
+        telemetry.addData("LiftSubsystem Current Position", liftMotor.getCurrentPosition());
+        telemetry.addData("LiftSubsystem Motor Current", ((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
         telemetry.update();
     }
 }

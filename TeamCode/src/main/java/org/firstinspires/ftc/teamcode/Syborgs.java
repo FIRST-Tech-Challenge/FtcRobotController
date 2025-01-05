@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+@TeleOp(name = "Syborgs")
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class Syborgs extends LinearOpMode {
     private DcMotor
             frontLeftDrive,
@@ -213,12 +216,12 @@ public class Syborgs extends LinearOpMode {
             cycleTime = loopTime - oldTime;
             oldTime = loopTime;
 
-            telemetry.addData("Arm Target Position", armMotor.getTargetPosition());
-            telemetry.addData("Arm Encoder", armMotor.getCurrentPosition());
-            telemetry.addData("Lift Variable", liftPosition);
-            telemetry.addData("Lift Target Position", liftMotor.getTargetPosition());
-            telemetry.addData("Lift Current Position", liftMotor.getCurrentPosition());
-            telemetry.addData("Lift motor current", ((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("ArmSubsystem Target Position", armMotor.getTargetPosition());
+            telemetry.addData("ArmSubsystem Encoder", armMotor.getCurrentPosition());
+            telemetry.addData("LiftSubsystem Variable", liftPosition);
+            telemetry.addData("LiftSubsystem Target Position", liftMotor.getTargetPosition());
+            telemetry.addData("LiftSubsystem Current Position", liftMotor.getCurrentPosition());
+            telemetry.addData("LiftSubsystem motor current", ((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
             telemetry.update();
         }
     }
