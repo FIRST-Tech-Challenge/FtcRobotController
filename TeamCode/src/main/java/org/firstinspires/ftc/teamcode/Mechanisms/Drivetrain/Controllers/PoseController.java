@@ -11,12 +11,12 @@ public class PoseController {
     public PID xPID;
     public PID yPID;
     public PID tPID;
-    public static double kPX = 3.05;
-    public static double kPY = 3.1;
-    public static double kPTheta= 4.45;
+    public static double kPX = 10;
+    public static double kPY = 10;
+    public static double kPTheta= 5;
     public static double kIX, kIY, kITheta = 0;
-    public static double kDX = 0.325;
-    public static double kDY = 0.325;
+    public static double kDX = 0;
+    public static double kDY = 0;
     public static double kDTheta = 0;
 
     public PoseController(){

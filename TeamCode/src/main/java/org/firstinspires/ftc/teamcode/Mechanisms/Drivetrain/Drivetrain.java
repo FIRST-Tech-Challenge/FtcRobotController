@@ -190,6 +190,9 @@ public class Drivetrain {
                 packet.put("X Velocity", state.get(3,0));
                 packet.put("Y Velocity", state.get(4,0));
                 packet.put("Theta Velocity", state.get(5,0));
+                packet.put("PID X", wheelSpeeds.get(0,0));
+                packet.put("PID Y", wheelSpeeds.get(1,0));
+                packet.put("PID Theta", wheelSpeeds.get(2,0));
                 if (Math.abs(Utils.calculateDistance(state.get(0,0),state.get(1,0),desiredPose.get(0,0),desiredPose.get(1,0)))<distanceThreshold&&Math.abs(Utils.angleWrap(state.get(2,0)-desiredPose.get(2,0)))<angleThreshold){
                     setPower(stopMatrix);
                     packet.put("Done", "done");
@@ -242,20 +245,20 @@ public class Drivetrain {
             }
         };
     }
-    public Action updateTelemetry(Telemetry telemetry) {
+    public Action updateTelemetry() {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 localize();
-                telemetry.addData("x", state.get(0,0));
-                telemetry.addData("y", state.get(1,0));
-                telemetry.addData("theta", state.get(2,0));
-                telemetry.addData("uLf", motorController.uLf);
-                telemetry.addData("uLb", motorController.uLb);
-                telemetry.addData("uRb", motorController.uRb);
-                telemetry.addData("uRf", motorController.uRf);
-                telemetry.update();
-                return true;
+                packet.put("x", state.get(0,0));
+                packet.put("y", state.get(1,0));
+                packet.put("theta", state.get(2,0));
+                packet.put("uLf", motorController.uLf);
+                packet.put("uLb", motorController.uLb);
+                packet.put("uRb", motorController.uRb);
+                packet.put("uRf", motorController.uRf);
+
+                return false;
             }
         };
     }

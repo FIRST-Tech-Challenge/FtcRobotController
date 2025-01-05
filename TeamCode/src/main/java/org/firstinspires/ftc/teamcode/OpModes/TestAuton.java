@@ -49,7 +49,7 @@ public class TestAuton extends LinearOpMode {
                 drivetrain.goToPose(desiredPose),
                 drivetrain.stopMotors()
                 ),
-                drivetrain.updateTelemetry(telemetry)
+                drivetrain.updateTelemetry()
             )
         );
     }

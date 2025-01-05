@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class PID {
+public class LinearPID {
     public double kP;
     public double kI;
     public double kD;
@@ -12,7 +12,7 @@ public class PID {
 
     public ElapsedTime timer = new ElapsedTime();
 
-    public PID(double kP, double kI, double kD) {
+    public LinearPID(double kP, double kI, double kD) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -28,6 +28,6 @@ public class PID {
         eDerivative = (error - ePrev) / dt;
         ePrev = error;
         timer.reset();
-        return (kP * Math.pow(Math.abs(error), 0.5)*Math.signum(error)) + (kI * eIntegralSum) + (kD * eDerivative);
+        return (kP * error) + (kI * eIntegralSum) + (kD * eDerivative);
     }
 }

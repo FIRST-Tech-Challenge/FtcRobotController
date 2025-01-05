@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
+import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.LinearPID;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
@@ -25,7 +26,7 @@ public class Lift {
     HardwareMap hardwareMap;
     FeedForward feedForward;
     FeedForward feedForwardDown;
-    PID pid;
+    LinearPID pid;
     double motorPower;
     public int currentPosition = 0;
     public DcMotorAdvanced liftMotorLeft;
@@ -66,7 +67,7 @@ public class Lift {
 
         this.currentPosition = 0;
         this.feedForward = new FeedForward(kV, kA, 0);
-        this.pid = new PID(kP, kI, kD);
+        this.pid = new LinearPID(kP, kI, kD);
         this.limiter = hardwareMap.get(TouchSensor.class, "liftTouch");
     }
 
@@ -100,11 +101,7 @@ public class Lift {
                 double currentPosition = ticksToInches(encoder.getCurrentPosition());
                 double ffPower = feedForward.calculate(motionProfile.getVelocity(t.seconds()), motionProfile.getAcceleration(t.seconds()));
                 double pidPower = pid.calculate(initialPos + motionProfile.getPos(t.seconds()), currentPosition);
-                if (reverse) {
-                    motorPower = pidPower + kG;
-                } else {
                     motorPower = pidPower + ffPower + kG;
-                }
                 if (Math.abs(targetHeight - currentPosition) < liftThreshold){
                     liftMotorLeft.setPower(kG);
                     liftMotorRight.setPower(kG);
@@ -118,6 +115,11 @@ public class Lift {
                 packet.put("Target Pos", motionProfile.getPos(t.seconds()));
                 packet.put("Velocity: ", liftMotorLeft.getVelocity()/ticksPerInch);
                 packet.put("Target Velocity: ", motionProfile.getVelocity(t.seconds()));
+                packet.put("FF", ffPower);
+                packet.put("PID power", pidPower);
+                packet.put("mp velocity", motionProfile.getVelocity(t.seconds()));
+                packet.put("mp acceleration", motionProfile.getAcceleration(t.seconds()));
+                packet.put("mp position", motionProfile.getPos(t.seconds()));
 
                 return Math.abs(targetHeight - currentPosition) > liftThreshold;
             }
@@ -127,9 +129,15 @@ public class Lift {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                liftMotorLeft.setPower(power + kG);
-                liftMotorRight.setPower(power + kG);
-                packet.put("Motor Power", power + kG);
+                if (limiter.isPressed()){
+                    liftMotorLeft.setPower(0);
+                    liftMotorRight.setPower(0);
+                    packet.put("Motor Power", power);
+                } else {
+                    liftMotorLeft.setPower(power + kG);
+                    liftMotorRight.setPower(power + kG);
+                    packet.put("Motor Power", power + kG);
+                }
                 return false;
             }
         };

@@ -31,8 +31,7 @@ public class RedSample extends LinearOpMode {
         ElapsedTime looptime = new ElapsedTime();
         robot = new Robot(hardwareMap);
         drivetrain = robot.drivetrain;
-        SimpleMatrix desiredPose = Utils.makePoseVector(0,24,0);
-        drivetrain.setInitialPose(-36,-63,0);
+        drivetrain.setInitialPose(-63,-36,0);
         telemetry.addData("X", 0);
         telemetry.addData("Y", 0);
         telemetry.addData("Theta", 0);
@@ -43,9 +42,13 @@ public class RedSample extends LinearOpMode {
         waitForStart();
         looptime.reset();
         Actions.runBlocking(
+
                 new SequentialAction(
-                        drivetrain.goToPose(Utils.makePoseVector(-32, -63,0)),
-                        drivetrain.goToPose(Utils.makePoseVector(-30, -42,-43.5))
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-61.5, -17,-45)),
+                        drivetrain.goToPose(Utils.makePoseVector(-52,-23.5,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-61.5, -17,-45)),
+                        drivetrain.goToPose(Utils.makePoseVector(-52,-13,0))
                 )
         );
     }
