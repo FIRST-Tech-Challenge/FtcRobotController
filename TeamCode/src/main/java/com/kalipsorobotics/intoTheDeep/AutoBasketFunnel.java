@@ -24,8 +24,6 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.dataflow.qual.Pure;
-
 @Autonomous
 public class AutoBasketFunnel extends LinearOpMode {
 
@@ -112,7 +110,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
-        sampleIntakeReady3.setDependentActions(moveToSample3);
+        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         redAutoBasket.addAction(sampleIntakeReady3);
 
         WaitAction waitAction3 = new WaitAction(300); // Make sure linkage fully extends (sample 3)
@@ -168,7 +166,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveOutBasket3.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         redAutoBasket.addAction(moveOutBasket3);
 
-        KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
+        KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_PARKING_READY_POS);
         pivotOuttakeHalfwayToBar.setName("pivotOuttakeHalfwayToBar");
         pivotOuttakeHalfwayToBar.setDependentActions(openClaw3);
         redAutoBasket.addAction(pivotOuttakeHalfwayToBar);

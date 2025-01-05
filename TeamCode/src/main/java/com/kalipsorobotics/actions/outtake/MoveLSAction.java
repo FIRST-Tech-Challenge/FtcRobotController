@@ -31,7 +31,7 @@ public class MoveLSAction extends Action {
     private double lastMilli = 0;
     ElapsedTime timeoutTimer;
 
-    private double velocity;
+    private double velocityMMperMS;
     private boolean overrideOn = false;
 
     private double startingError; //gives direction of intended travel direction when doing maintenance for hang
@@ -174,8 +174,13 @@ public class MoveLSAction extends Action {
             return true;
         }
 
-        if(velocity < 0.01) {
-            if(timeoutTimer.milliseconds() > 1000) {
+        if(velocityMMperMS < 0.01) {
+            if(timeoutTimer.milliseconds() > 500) {
+                Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
+                                "targetTicks=%.3f, " +
+                                "currentTicks=%.3f, ",
+                        this.name, targetErrorTicks, ERROR_TOLERANCE_TICKS, targetTicks,
+                        currentTicks));
                 finish();
                 return true;
             }
@@ -234,7 +239,7 @@ public class MoveLSAction extends Action {
             Log.d("Outtake_LS", "override power is:" + overridePower + ", power is:" + power);
         }
 
-        velocity = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
+        velocityMMperMS = (Math.abs(lastTicks - currentTicks)) / (Math.abs(lastMilli - timeoutTimer.milliseconds()));
 
         lastMilli = timeoutTimer.milliseconds();
         lastTicks = currentTicks;

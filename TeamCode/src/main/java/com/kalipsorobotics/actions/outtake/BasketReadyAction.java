@@ -6,19 +6,6 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class BasketReadyAction extends KActionSet {
     public BasketReadyAction(Outtake outtake) {
-//        KServoAutoAction outtakeClawActionClose = new KServoAutoAction(outtake.getOuttakeClaw(),
-//                OuttakeClawAction.OUTTAKE_CLAW_CLOSE_POS);
-//        outtakeClawActionClose.setName("outtakeClawActionClose");
-//        this.addAction(outtakeClawActionClose);
-//
-//        MoveOuttakeLSAction raiseSlidesBasket = new MoveOuttakeLSAction(outtake, 800);
-//        raiseSlidesBasket.setName("raiseSlidesBasket");
-//        this.addAction(raiseSlidesBasket);
-//
-//        KServoAutoAction outtakePivotActionUp = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                OuttakePivotAction.OUTTAKE_PIVOT_HALF_POS);
-//        outtakePivotActionUp.setName("outtakePivotActionUp");
-//        this.addAction(outtakePivotActionUp);
 
         MoveLSAction raiseSlidesBasket = new MoveLSAction(outtake, 715);
         raiseSlidesBasket.setName("raiseSlidesBasket");
