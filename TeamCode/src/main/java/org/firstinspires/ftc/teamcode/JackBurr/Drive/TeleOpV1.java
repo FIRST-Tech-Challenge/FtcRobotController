@@ -101,7 +101,7 @@ public class TeleOpV1 extends OpMode {
     public void loop() {
         //MECANUM_DRIVE====================================================================================================
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
+        double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
         double rx = -gamepad1.right_stick_x; //This is reversed for our turning
         drive(y, x, rx);
         //SYSTEM_STATES====================================================================================================
