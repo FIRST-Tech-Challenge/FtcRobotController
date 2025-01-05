@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-
+import org.firstinspires.ftc.teamcode.auto.AutoRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,25 +17,75 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 
-@Autonomous
-import org.firstinspires.ftc.teamcode.auto.OdometryMotor;
 
+import org.firstinspires.ftc.teamcode.auto.OdometryMotor;
+@Autonomous
 public class RobotClassTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("Status", "Initialized");
-        telemetry.update;
-        Robot robot = new Robot(hardwareMap);
-
+        telemetry.update();
+        AutoRobot robot = new AutoRobot(hardwareMap, telemetry);
+        waitForStart();
         while (opModeIsActive()) {
 
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            Robot.driveRelative(270, 0, 1);
-            Robot.driveRelative(180, 1, 0);
-            Robot.driveRelative(180, 0, -1);
-            Robot.driveRelative(180, -1, 0);
+            //make sure robot does not get stuck while turning
+            robot.face(10);
+            robot.face(-10);
+            robot.face(20);
+            robot.face(-20);
+            robot.face(40);
+            robot.face(-40);
+            robot.face(90);
+            robot.face(-90);
+            robot.face(180);
+            robot.face(0);
+
+
+            //drive forward in a square
+            robot.driveForward(1);
+            robot.face(-90);
+            robot.driveForward(1);
+            robot.face(180);
+            robot.driveForward(1);
+            robot.face(90);
+            robot.driveForward(1);
+            robot.face(0);
+            //drive right in a square
+            robot.driveRight(1);
+            robot.face(90);
+            robot.driveRight(1);
+            robot.face(180);
+            robot.driveRight(1);
+            robot.face(-90);
+            robot.driveRight(1);
+            robot.face(0);
+
+            //drive backwards in a square
+            robot.face(180);
+            robot.driveBackward(1);
+            robot.face(90);
+            robot.driveBackward(1);
+            robot.face(0);
+            robot.driveBackward(1);
+            robot.face(-90);
+            robot.driveBackward(1);
+
+            //drive in a square without turning
+            robot.face(0);
+            robot.driveForward(1);
+            robot.driveRight(1);
+            robot.driveBackward(1);
+            robot.driveLeft(1);
+
+
+
+
+
+
 
         }
 
