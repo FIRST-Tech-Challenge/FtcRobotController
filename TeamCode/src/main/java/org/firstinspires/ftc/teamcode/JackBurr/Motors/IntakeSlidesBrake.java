@@ -20,7 +20,7 @@ public class IntakeSlidesBrake extends OpMode {
     @Override
     public void loop() {
         intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(20);
+        intakeSlides.setTargetPosition(75);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addData("Motor Power: ", intakeSlides.getPower());
         telemetry.addData("Encoder Position: ", intakeSlides.getCurrentPosition());

@@ -25,7 +25,7 @@ public class RobotConstantsV1 {
     public double WRIST_CENTER = 0.42;
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
-    public int INTAKE_MOTOR_OUT = 65;
+    public int INTAKE_MOTOR_OUT = 345;
     public int INTAKE_MOTOR_ALL_THE_WAY_IN = -8;
 
 }
