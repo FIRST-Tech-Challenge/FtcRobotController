@@ -40,7 +40,6 @@ public class RobotActionConfig {
     public static double deposit_Arm_Pick_Pos           = 0.97; // 0 is pick position.
     public static double deposit_Arm_Dump_Pos           = 0.7; // range (0-1) 0: installation position 180 deg
     public static double deposit_Arm_Transfer_Pos        = 0.06; // 0 is rest position.
-
     public static double deposit_Arm_Hook_Pos           = 0.5;  // deposit arm hook position
     public static double deposit_Claw_Open              = 0.36;  //
     public static double deposit_Claw_Close             = 0.0;
@@ -53,8 +52,8 @@ public class RobotActionConfig {
     public static double hookTime                       = 0.3; // wait then release deposit claw.
 
 
-    public static double deposit_Slide_UpLiftPower      = 1.0;  //slides power
-    public static double deposit_Slide_DownLiftPower    = 0.7;  //slides power
+    public static double deposit_Slide_UpLiftPower      = 0.9;  //slides power
+    public static double deposit_Slide_DownLiftPower    = 0.3;  //slides power
     public static double DEBOUNCE_THRESHOLD             =0.25; // debounce_Threshold
 
 }

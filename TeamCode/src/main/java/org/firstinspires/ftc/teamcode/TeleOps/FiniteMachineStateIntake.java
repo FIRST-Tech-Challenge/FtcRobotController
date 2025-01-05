@@ -158,13 +158,13 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_RETRACT:
                 // Wait for the pickup time to pass
-                if (intakeTimer.seconds()>0.25){
+                if (intakeTimer.seconds()>0.2){
                 robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
                 robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                 robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Idle);
                 }
-                if (intakeTimer.seconds()>0.5){
+                if (intakeTimer.seconds()>0.4){
                     robot.intakeLeftSlideServo.setPosition(RobotActionConfig.intake_Slide_Retract);
                     intakeTimer.reset();
                     intakeState = INTAKESTATE.INTAKE_TRANS;
@@ -173,10 +173,10 @@ public class FiniteMachineStateIntake {
 
             case INTAKE_TRANS:
                 // Check if the lift has reached the low position
-                if(intakeTimer.seconds()>0.5) {
+                if(intakeTimer.seconds()>0.2) {
                     robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
                 }
-                if(intakeTimer.seconds()>= 0.75) {
+                if(intakeTimer.seconds()>= 0.4) {
                     robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     intakeState = INTAKESTATE.INTAKE_START;
