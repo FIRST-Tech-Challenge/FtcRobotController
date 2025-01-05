@@ -255,7 +255,7 @@ public class FiniteMachineStateArm {
         if((gamepad_1.getButton(GamepadKeys.Button.A) || gamepad_2.getButton(GamepadKeys.Button.A))&& debounceTimer.seconds() > DEBOUNCE_THRESHOLD){
             debounceTimer.reset();
             ToggleDeposit();
-            if (depositState == DEPOSITSTATE.OPEN) {
+            if (depositState != DEPOSITSTATE.OPEN) {
                 robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
             } else {
                 robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
