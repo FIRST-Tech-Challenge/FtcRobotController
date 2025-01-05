@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
+import static org.firstinspires.ftc.teamcode.util.Units.scale;
 
 @SuppressWarnings("unused")
 public class CommandFactory {
@@ -88,6 +90,10 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 250, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
+    public MoveSliderCommand extendSliderToIntakeSample3() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 255, false, DeliverySlider.Direction.EXPANDING, 1500);
+    }
+
     public MoveSliderCommand collapseSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
     }
@@ -106,6 +112,10 @@ public class CommandFactory {
 
     public MovePivotCommand pivotToGroundInTakeBegin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
+    }
+
+    public MovePivotCommand pivotToGroundInTakeSample3Begin() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 230);
     }
 
     public MovePivotCommand pivotToStart() {
@@ -151,13 +161,24 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGround(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 600, 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(600, 0.715), 100, waitTime,  .4);
+    }
+
+    public MovePivotCommand AutoToGroundForSample3(int waitTime) {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .4);
     }
 
     public ParallelRaceGroup intakeFromGround2(int waitTime) {
         return new ParallelRaceGroup(
                 intake(),
                 AutoToGround(waitTime)
+        );
+    }
+
+    public ParallelCommandGroup intakeFromGroundForSample3(int waitTime) {
+        return new ParallelCommandGroup(
+                intake(),
+                AutoToGroundForSample3(waitTime)
         );
     }
 

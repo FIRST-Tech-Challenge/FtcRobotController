@@ -36,7 +36,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-                commandFactory.driveToTarget(470, 250, 0, 0.13, .7, 20),
+                commandFactory.driveToTarget(440, 250, 0, 0.13, .7, 20),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -60,7 +60,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion for sample #1
 
                 //region sample #2
-                commandFactory.driveToTarget(450, 500, 0, 0.13, .8, 30)),
+                commandFactory.driveToTarget(430, 520, 0, 0.13, .8, 30)),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -85,14 +85,16 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion sample #2
 
                 //region sample #3
-                commandFactory.driveToTarget(530, 490, 29, 0.13, .8, 30),
+                commandFactory.driveToTarget(250, 540, 17, 0.13, .8, 30),
                 commandFactory.collapseSlider(),
                 new ParallelCommandGroup(
                     commandFactory.pivotToGroundInTakeBegin(),
-                    commandFactory.elbowToIntakePosition()
-                ),
+                    commandFactory.extendSliderToIntakeSample3()
 
-                commandFactory.intakeFromGround2(3000),
+                ),
+                commandFactory.elbowToIntakePosition(),
+                commandFactory.sleep(500),
+                commandFactory.intakeFromGroundForSample3(4000),
 
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
@@ -113,7 +115,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 new ParallelCommandGroup(
                     commandFactory.pivotToStart(),
                     commandFactory.collapseSlider(),
-                    commandFactory.driveToTarget(2600, -280, -110, .13, 1, 100),
+                    commandFactory.driveToTarget(2600, -290, -120, .13, 1, 100),
                     commandFactory.elbowToStartPosition()
                 )
 
