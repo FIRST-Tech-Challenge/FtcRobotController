@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Robot;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.l;
-import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.makePoseVector;
-
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
@@ -59,20 +51,20 @@ public class Robot {
                     extension.servoExtension(Extension.extensionState.RETRACT),
                     pivot.setPosition(Intake.intakeState.STOP),
                     new SleepAction(1),
-                    arm.armClose(),
+                    arm.armRetract(),
                     new SleepAction(1),
                     claw.servoClaw(Claw.clawState.CLOSE),
                     new SleepAction(1),
                     lift.moveToHeight(28),
                     new SleepAction(1),
-                    arm.armOpen(),
+                    arm.armExtend(),
                     new SleepAction(1),
                     claw.servoClaw(Claw.clawState.OPEN),
                     lift.infiniteHold()
             );
         }
         return new SequentialAction(
-                arm.armClose(),
+                arm.armRetract(),
                 claw.servoClaw(Claw.clawState.OPEN),
                 new SleepAction(1),
                 lift.moveToHeight(0)
@@ -85,7 +77,7 @@ public class Robot {
                 new ParallelAction(
                     lift.moveToHeight(28),
                     new SleepAction(1),
-                    arm.armOpen()
+                    arm.armExtend()
                 )
         );
     }
@@ -94,7 +86,7 @@ public class Robot {
                 claw.servoClaw(Claw.clawState.OPEN),
                 new ParallelAction(
                         lift.moveToHeight(0),
-                        arm.armOpen()
+                        arm.armExtend()
                 )
         );
     }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -10,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
@@ -61,45 +59,51 @@ public class RedSample extends LinearOpMode {
                 new SequentialAction(
                         drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
-                        intake.motorIntake(Intake.intakeState.INTAKE),
-                        extension.servoExtension(Extension.extensionState.EXTEND),
-                        pivot.setPosition(Intake.intakeState.INTAKE),
-                        drivetrain.goToPose(Utils.makePoseVector(-52,-23.5,0)),
-                        drivetrain.goToPose(Utils.makePoseVector(-50.5,-23.5,0)),
-                        new SleepAction(0.3),
+
+                            intake.motorIntake(Intake.intakeState.INTAKE),
+                            extension.servoExtension(Extension.extensionState.EXTEND),
+                            pivot.setPosition(Intake.intakeState.INTAKE),
+                            drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),
+                            arm.armNeutral(),
+
+                        drivetrain.goToPose(Utils.makePoseVector(-49.5,-23.5,0)),
                         pivot.setPosition(Intake.intakeState.STOP),
-                        claw.servoClaw(Claw.clawState.OPEN),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
+                        new SleepAction(0.3),
+                        // waits for intake to grab
+                            claw.servoClaw(Claw.clawState.OPEN),
+                            extension.servoExtension(Extension.extensionState.RETRACT),
                         new SleepAction(0.5),
+                        arm.armRetract(),
                         intake.motorIntake(Intake.intakeState.STOP),
                         new SleepAction(0.3),
-                        pivot.setPosition(Intake.intakeState.STOP),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
-                        arm.armClose(),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        arm.armOpen(),
+                        new SleepAction(0.3),
+                        arm.armNeutral(),
+                        arm.armExtend(),
                         new SleepAction(0.3),
                         //lift,
                         claw.servoClaw(Claw.clawState.OPEN),
                         pivot.setPosition(Intake.intakeState.INTAKE),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
-                        drivetrain.goToPose(Utils.makePoseVector(-52,-13,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
                         extension.servoExtension(Extension.extensionState.EXTEND),
                         intake.motorIntake(Intake.intakeState.INTAKE),
-                        drivetrain.goToPose(Utils.makePoseVector(-50,-13,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-49.5,-13.5,0)),
                         new SleepAction(1),
                         pivot.setPosition(Intake.intakeState.STOP),
                         intake.motorIntake(Intake.intakeState.STOP),
                         claw.servoClaw(Claw.clawState.OPEN),
-                        arm.armClose(),
+                        arm.armNeutral(),
                         extension.servoExtension(Extension.extensionState.RETRACT),
+                        new SleepAction(0.5),
+                        arm.armRetract(),
                         new SleepAction(1),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        arm.armOpen(),
                         new SleepAction(0.3),
+                        arm.armExtend(),
                         //lift,
                         claw.servoClaw(Claw.clawState.OPEN),
-                        arm.armOpen()
+                        arm.armExtend()
 
                 )
         );

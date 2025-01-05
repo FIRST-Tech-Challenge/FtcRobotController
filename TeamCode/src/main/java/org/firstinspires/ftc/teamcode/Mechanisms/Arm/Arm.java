@@ -17,12 +17,13 @@ public class Arm {
     ServoAdvanced servoWrist;
     public ServoAdvanced servoArmLeft;
     ServoAdvanced servoArmRight;
-    public static double armRetract = 0.89;
+    public static double armRetract = 0.88;
     public static double armExtend = 0.35;
-    public static double armSpecimenExtend = -1;
+    public static double armSpecimenExtend = 0;
     public static double wristExtend = 1;
-    public static double wristRetract = 0.6;
-    public static double wristSpecimenExtend = 0.65;
+    public static double wristRetract = 0.85;
+    public static double wristSpecimenExtend = 0.93;
+    public static double armNeutral = 0.75;
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -63,7 +64,7 @@ public class Arm {
             }
         };
     }
-    public Action armClose(){
+    public Action armRetract(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
@@ -75,13 +76,23 @@ public class Arm {
             }
         };
     }
-    public Action armOpen(){
+    public Action armExtend(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
                 servoArmLeft.setPosition(armExtend);
                 servoArmRight.setPosition(armExtend);
                 servoWrist.setPosition(wristExtend);
+                return false;
+            }
+        };
+    }
+    public Action armNeutral(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket Packet){
+                servoArmLeft.setPosition(armNeutral);
+                servoArmRight.setPosition(armNeutral);
                 return false;
             }
         };

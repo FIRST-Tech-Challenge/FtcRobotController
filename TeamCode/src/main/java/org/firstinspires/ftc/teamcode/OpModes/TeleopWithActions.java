@@ -54,7 +54,7 @@ public class TeleopWithActions extends OpMode {
             runningActions.put("extension", extension.servoExtension(Extension.extensionState.RETRACT));
             runningActions.put("claw", claw.servoClaw(Claw.clawState.OPEN));
             runningActions.put("intake", robot.intakeMove(Intake.intakeState.STOP));
-            runningActions.put("arm", arm.armClose());
+            runningActions.put("arm", arm.armRetract());
             firstRun = false;
         } else {
             if (gamepad1.right_trigger > 0.5) {
