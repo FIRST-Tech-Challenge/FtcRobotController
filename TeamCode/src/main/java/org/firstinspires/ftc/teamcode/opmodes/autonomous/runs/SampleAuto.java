@@ -36,7 +36,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-                commandFactory.driveToTarget(470, 250, 0, 0.13, .7, 20),
+                commandFactory.driveToTarget(440, 250, 0, 0.13, .7, 20),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -60,7 +60,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion for sample #1
 
                 //region sample #2
-                commandFactory.driveToTarget(450, 500, 0, 0.13, .8, 30)),
+                commandFactory.driveToTarget(430, 520, 0, 0.13, .8, 30)),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),

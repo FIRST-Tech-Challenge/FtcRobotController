@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
+import static org.firstinspires.ftc.teamcode.util.Units.scale;
 
 @SuppressWarnings("unused")
 public class CommandFactory {
@@ -90,7 +91,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSliderToIntakeSample3() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 200, false, DeliverySlider.Direction.EXPANDING, 1500);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 255, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -160,11 +161,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGround(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 600, 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(600, 0.715), 100, waitTime,  .4);
     }
 
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 650, 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .4);
     }
 
     public ParallelRaceGroup intakeFromGround2(int waitTime) {

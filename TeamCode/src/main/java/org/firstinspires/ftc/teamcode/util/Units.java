@@ -35,4 +35,8 @@ public class Units {
 
         return diff;
     }
+
+    public static int scale(int original, double ratio) {
+        return Double.valueOf(ratio * original).intValue();
+    }
 }

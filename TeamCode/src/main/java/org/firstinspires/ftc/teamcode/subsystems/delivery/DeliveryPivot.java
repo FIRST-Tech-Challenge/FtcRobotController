@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.SonicSubsystemBase;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
+import static org.firstinspires.ftc.teamcode.util.Units.*;
+import static org.firstinspires.ftc.teamcode.util.Units.scale;
 
 public class DeliveryPivot extends SonicSubsystemBase {
 
@@ -27,14 +29,16 @@ public class DeliveryPivot extends SonicSubsystemBase {
     GamepadEx gamepad;
 
     private DriverFeedback feedback;
+    // the encoder resolution for old 312 RPM motor is 537.7 PPR
+    // the encoder resolution for new 435 RPM motor is 384.5 PPR
+    // 384.5 / 537.7 = 0.715
+    private int StartPositionFromCalibration = scale(2700, .715);
 
-    private int StartPositionFromCalibration = 2700;
+    public static int DeliveryPositionFromStart = scale(1100, .715); //CHANGED
 
-    public static int DeliveryPositionFromStart = 1100; //CHANGED
+    public static int IntakePositionFromStart = scale(-1825, .715);
 
-    public static int IntakePositionFromStart = -1825;
-
-    private int SampleIntakePositionFromStart = -1490;
+    private int SampleIntakePositionFromStart = scale(-1490, .715);
 
     private int SliderCheckLimit = 625;
 
