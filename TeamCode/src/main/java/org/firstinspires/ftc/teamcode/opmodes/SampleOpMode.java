@@ -13,15 +13,18 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.ElevatorGoTo;
 import org.firstinspires.ftc.teamcode.commands.ExtendIntake;
 import org.firstinspires.ftc.teamcode.commands.ManualElevatorCommand;
+import org.firstinspires.ftc.teamcode.commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.commands.PivotIntake;
 import org.firstinspires.ftc.teamcode.commands.RetractIntake;
 import org.firstinspires.ftc.teamcode.commands.ScoreAtBucket;
 import org.firstinspires.ftc.teamcode.commands.SetRollerState;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -36,6 +39,8 @@ public class SampleOpMode extends CommandOpMode {
     private IntakeRoller intakeRoller;
     private Elevator elevator;
     private Drivetrain drivetrain;
+    private Claw claw;
+
     @Override
     public void initialize() {
         driver   = new GamepadEx(gamepad1);
@@ -44,14 +49,14 @@ public class SampleOpMode extends CommandOpMode {
         arm = new Arm(this.hardwareMap);
         intake = new Intake(this.hardwareMap);
         elevator = new Elevator(this.hardwareMap, telemetry);
-        drivetrain = new Drivetrain(this.hardwareMap, new Pose2d(-58.923881554, -55.0502525317, Math.toRadians(45)), telemetry);
+        drivetrain = new Drivetrain(this.hardwareMap, new Pose2d(-58.923881554, -55.0502525317, Math.toRadians(180)), telemetry);
         intakeRoller = new IntakeRoller(hardwareMap);
-
+        claw = new Claw(hardwareMap);
 
         GamepadButton armButton = new GamepadButton(
                 operator, GamepadKeys.Button.A
         );
-        GamepadButton zeroButton = new GamepadButton(
+        GamepadButton clawButton = new GamepadButton(
                 operator, GamepadKeys.Button.X
         );
 
@@ -116,6 +121,8 @@ public class SampleOpMode extends CommandOpMode {
                     return false;
                 }
             }));
+
+        clawButton.whenPressed(new OpenClaw(claw)).whenReleased(new CloseClaw(claw));
 
 //        ScoreAtBucket.whenPressed(new ScoreAtBucket(drivetrain, arm, elevator));
 //
