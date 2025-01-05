@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Common;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
@@ -20,7 +19,7 @@ public class SyborgsRefactor extends LinearOpMode {
     ArmSubsystem arm;
     LiftSubsystem lift;
     IntakeAndWristSubsystem intakeAndWrist;
-    HangSubsystem hang;
+
     @Override
     public void runOpMode() {
         initSubsystems();
@@ -38,7 +37,6 @@ public class SyborgsRefactor extends LinearOpMode {
             intakeAndWrist.handleMovement(gamepad1, gamepad2);
             intakeAndWrist.updateTelemetry();
 
-            hang.handleMovement(gamepad1, gamepad2);
 
             Common.updateCycleTimes(getRuntime());
             telemetry.update();
@@ -50,7 +48,6 @@ public class SyborgsRefactor extends LinearOpMode {
         arm = new ArmSubsystem(hardwareMap, telemetry);
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intakeAndWrist = new IntakeAndWristSubsystem(hardwareMap, telemetry);
-        hang = new HangSubsystem(hardwareMap, telemetry);
     }
 
 
