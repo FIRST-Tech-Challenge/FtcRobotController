@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.DropToGrab;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.HuntingPos;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToPose;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
@@ -30,17 +31,23 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
         addCommands (
                 // pick up middle
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
+//                new FollowPath(
+//                        2.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90)))),
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
                 //new Pause(0.5),
+
+                new MoveToPose(
+                        2.0,
+                        1.0,
+                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90))))
+                ),
 
                 new HuntingPos(),
 
@@ -60,16 +67,21 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 new HighBucketDeposit(),
 
                 // pick up right
-                new FollowPath(
+//                new FollowPath(
+//                        2.0,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90)))),
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
+
+                new MoveToPose(
                         2.0,
                         1.0,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
-
+                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90))))
+                ),
 
                 new HuntingPos(),
 
