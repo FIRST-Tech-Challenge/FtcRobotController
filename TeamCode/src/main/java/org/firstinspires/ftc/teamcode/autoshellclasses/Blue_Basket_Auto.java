@@ -51,7 +51,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
         double inner_sample_pickup_heading = Math.toRadians(-50);
 
-        Action trajectory, wristPickUp1, wristPickUp2, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, grabWait2, closeWait2, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, wristUpWait1, wristUpWait2, wristUpWait3, armUpWait1, armUpWait2, armUpWait3, viperDownWait1, viperDownWait2, viperDownWait3, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2, driveToSample3;
+        Action trajectory, wristPickUp1, wristPickUp2, downWait, downWait1, grabWait, closeWait, grabWait1, closeWait1, grabWait2, closeWait2, testingWait, clawOpenWait, testingWait1, clawOpenWait1, testingWait2, clawOpenWait2, wristUpWait1, wristUpWait2, wristUpWait3, viperUpWait1, viperUpWait2, viperUpWait3, armUpWait1, armUpWait2, armUpWait3, viperDownWait1, viperDownWait2, viperDownWait3, driveToClearance, driveToDrop, driveToBackAway, driveToSample1, driveToClearance1, driveToDrop1, driveToBackAway1, driveToSample2, driveToClearance2, driveToDrop2, driveToBackAway2, driveToSample3;
 
 
 //        trajectory = ActionBuilder.BlueBasket(drive::actionBuilder);
@@ -128,6 +128,18 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .waitSeconds(0.75)
                 .build();
 
+        viperUpWait1 = drive.actionBuilder(drive.pose)
+                .waitSeconds(0.5)
+                .build();
+
+        viperUpWait2 = drive.actionBuilder(drive.pose)
+                .waitSeconds(0.5)
+                .build();
+
+        viperUpWait3 = drive.actionBuilder(drive.pose)
+                .waitSeconds(0.5)
+                .build();
+
         wristUpWait1 = drive.actionBuilder(drive.pose)
                 .waitSeconds(0.25)
                 .build();
@@ -144,21 +156,21 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .waitSeconds(1)
                 .build();
         testingWait = drive.actionBuilder(drive.pose)
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .build();
 
         clawOpenWait1 = drive.actionBuilder(drive.pose)
                 .waitSeconds(1)
                 .build();
         testingWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .build();
 
         clawOpenWait2 = drive.actionBuilder(drive.pose)
                 .waitSeconds(1)
                 .build();
         testingWait2 = drive.actionBuilder(drive.pose)
-                .waitSeconds(1.5)
+                .waitSeconds(1)
                 .build();
 
         grabWait = drive.actionBuilder(drive.pose)
@@ -205,7 +217,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         _ViperArmActions.MoveArmToHighBasket(),
                         armUpWait1,
                         _ViperArmActions.MoveViperToHighBasket(),
-                        _WristClawActions.WristDown(),
+                        viperUpWait1,
+                        _WristClawActions.WristDump(),
                         testingWait,
                         _WristClawActions.OpenClaw(),
                         clawOpenWait,
@@ -226,7 +239,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         _ViperArmActions.MoveArmToHighBasket(),
                         armUpWait2,
                         _ViperArmActions.MoveViperToHighBasket(),
-                        _WristClawActions.WristDown(),
+                        viperUpWait2,
+                        _WristClawActions.WristDump(),
                         testingWait1,
                         _WristClawActions.OpenClaw(),
                         clawOpenWait1,
@@ -247,7 +261,8 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         _ViperArmActions.MoveArmToHighBasket(),
                         armUpWait3,
                         _ViperArmActions.MoveViperToHighBasket(),
-                        _WristClawActions.WristDown(),
+                        viperUpWait3,
+                        _WristClawActions.WristDump(),
                         testingWait2,
                         _WristClawActions.OpenClaw(),
                         clawOpenWait2,

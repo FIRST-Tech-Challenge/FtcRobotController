@@ -73,7 +73,7 @@ public class WristClawActions {
     public class WristDumpAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            _WristClaw.WristDump();
+            _WristClaw.WristAutoDump();
             return false;
         }
     }

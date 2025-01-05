@@ -18,8 +18,9 @@ public class WristClaw {
     double openPosition = 0.57;
     double closePosition = 0.2;
     double upPosition = 0.7;
-    double downPosition = 0.28;
-    double dumpPosition = 0.24;
+    double downPosition = 0.3;
+    double dumpPosition = 0.26;
+    double autodumpPosition = 0.26;
     double centerPosition = 0.5;
     double wristInit = 0.755;
     //-----------------------------------------
@@ -29,6 +30,7 @@ public class WristClaw {
     public void WristUp() {WristCustom(upPosition);}
     public void WristDown() {WristCustom(downPosition);}
     public void WristDump() {WristCustom(dumpPosition);}
+    public void WristAutoDump() {WristCustom(autodumpPosition);}
     public void WristCenter() {WristCustom(centerPosition);}
     public void WristInit() {WristCustom(wristInit);}
     public void WristCustom(double position)
