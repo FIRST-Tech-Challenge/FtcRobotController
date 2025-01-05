@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
+
+import android.graphics.Color;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -9,8 +14,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
+import android.graphics.Color;
 
 /** config
  * deposit Left Arm Position initial position for installation = 0
@@ -19,11 +26,10 @@ import java.util.List;
  */
 
 @Config
-@TeleOp(name = "TeleOps_MW_FMS_v1.0", group = "Meet_1")
+@TeleOp(name = "TeleOps_MW_FMS_v2.1_GW", group = "org.firstinspires.ftc.teamcode")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
-
     public GamepadEx gamepadCo1;                    //For gamepad
     public GamepadEx gamepadCo2;
 
@@ -36,6 +42,14 @@ public class BasicTeleOps extends OpMode {
 
     public ServoTest servoTest;
 
+    private ControlState controlState = ControlState.RUN;
+
+    private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
+
+    private boolean startPressed = false;
+
+    float hsvValues[] = {0F,0F,0F};
+
 
     //Bulk Reading
     private List<LynxModule> allHubs;
@@ -45,7 +59,7 @@ public class BasicTeleOps extends OpMode {
     @Override
     public void init() {
 
-        telemetry = new MultipleTelemetry(telemetry,FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // Initialize hardware in RobotHardware
         robot = new RobotHardware();
@@ -61,19 +75,17 @@ public class BasicTeleOps extends OpMode {
         robotDrive = new RobotDrive(robot, gamepadCo1, gamepadCo2);   // Pass robot instance to RobotDrive
         robotDrive.Init();                                                              // Initialize RobotDrive
 
-        /**
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1,gamepadCo2); // Pass parameters as needed);
+        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1, gamepadCo2); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control
         intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2);
         intakeArmDrive.Init();
-         */
 
         //Servo Testing
-        servoTest = new ServoTest(robot,gamepadCo1,gamepadCo2);
-        servoTest.ServoTestInit();
+        servoTest = new ServoTest(robot, gamepadCo1, gamepadCo2);
+        //servoTest.ServoTestInit();
 
 
         // get bulk reading
@@ -82,17 +94,17 @@ public class BasicTeleOps extends OpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         //Robot Control State
-        RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
+        RobotDrive.DriveMode currentDriveMode = robotDrive.getDriveMode();
 
         //
         telemetry.addLine("-------------------");
-        telemetry.addData("Status"," initialized Motors and Encoder and IMU and Arm Control");
-        telemetry.addData("Control Mode", currentMode.name());
+        telemetry.addData("Status", " initialized Motors and Encoder and IMU and Arm Control");
+        telemetry.addData("Control Mode", currentDriveMode.name());
         telemetry.addLine("-------------------");
-    }
+        }
 
     @Override
-    public void loop() {
+    public void loop () {
 
         for (LynxModule hub : allHubs) {
             BulkData bulkData = hub.getBulkData();
@@ -113,35 +125,60 @@ public class BasicTeleOps extends OpMode {
             }
         }
 
-        robotDrive.DriveLoop(); // Use RobotDrive methods
-        RobotDrive.ControlMode currentMode = robotDrive.getControlMode();
-
         /**
-        try {
-            depositArmDrive.DepositArmLoop();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+         * Black color HSV - 162
+         * Blue color HSV - 225
+         * Yellow color HSV - 85
+         * Red color HSV - 19
+         */
+        Color.RGBToHSV(robot.colorSensor.red() * 8, robot.colorSensor.green() * 8, robot.colorSensor.blue() * 8, hsvValues);
+        //
+        robotDrive.DriveLoop(); // Use RobotDrive methods
+        RobotDrive.DriveMode currentDriveMode = robotDrive.getDriveMode();
+
+        if ((gamepadCo1.getButton(START) && gamepadCo1.getButton(LEFT_BUMPER)) && !startPressed) {
+            toggleControlState();
+            debounceTimer.reset();
+            startPressed = true;
+        } else if (!(gamepadCo1.getButton(START) && gamepadCo1.getButton(LEFT_BUMPER))) {
+            startPressed = false;
         }
-        FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
-        intakeArmDrive.IntakeArmLoop();
-        FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
+        if (controlState == ControlState.RUN) {
+            depositArmDrive.DepositArmLoop();
+            FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
-        */
-
-        servoTest.ServoTestLoop();
+            intakeArmDrive.IntakeArmLoop();
+            FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
+            telemetry.addLine("---------------------");
+            telemetry.addData("Deposit State", liftState.name());
+            telemetry.addData("Intake State", intakeState.name());
+            telemetry.addLine("---------------------");
+            //telemetry.addData("Color",depositArmDrive.Color());
+            telemetry.addData("Color",depositArmDrive.BlackColor());
+        } else {
+            servoTest.ServoTestLoop();
+        }
 
         // Telemetry
-        telemetry.addData("deposit Left Arm Position", robot.depositArmServo.getPosition());
-        telemetry.addData("deposit Wrist Position", robot.depositWristServo.getPosition());
-        telemetry.addData("Control Mode", currentMode.name());
+        telemetry.addLine("---------------------");
+        telemetry.addData("Deposit Arm Position", robot.depositArmServo.getPosition());
+        telemetry.addData("Deposit Wrist Position", robot.depositWristServo.getPosition());
+        telemetry.addLine("---------------------");
+        telemetry.addData("Intake Arm Left Position", robot.intakeLeftArmServo.getPosition());
+        telemetry.addData("Intake Arm Right Position", robot.intakeRightArmServo.getPosition());
+        telemetry.addData("Intake Wrist Position", robot.intakeWristServo.getPosition());
+        telemetry.addLine("---------------------");
+        telemetry.addData("Run Mode", controlState);
+        telemetry.addData("Drive Mode", currentDriveMode.name());
+        telemetry.addLine("---------------------");
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
-        //telemetry.addData("Lift Mode", liftState.name());
-        //telemetry.addData("Intake State", intakeState.name());
+        telemetry.addData("Color Sensor", hsvValues[0]);
         telemetry.update();
     }
 
-    public void stop() {
+
+    public void stop () {
         robot.frontLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
         robot.backLeftMotor.setPower(0);
@@ -151,4 +188,17 @@ public class BasicTeleOps extends OpMode {
         //robot.IntakeServo.setPosition(1.0);
         telemetry.addData("Status", "Robot stopped");
     }
+    public enum ControlState {
+        RUN,
+        TEST
+    }
+
+    private void toggleControlState () {
+        if (controlState != ControlState.RUN) {
+            controlState = ControlState.RUN;
+        } else {
+            controlState = ControlState.TEST;
+        }
+    }
+
 }
