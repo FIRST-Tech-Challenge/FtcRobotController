@@ -307,6 +307,7 @@ public class RobotContainer {
         //DBTelemetry.addData("Center Y", piece_center_Y);
         //DBTelemetry.addData("Target X", (315 + 330) /2);
         //DBTelemetry.addData("Target Y", (325 + 315) /2);
+        //DBTelemetry.addData("Robot Voltage", RobotContainer.drivesystem.robotVoltage);
         //DBTelemetry.update();
 
 

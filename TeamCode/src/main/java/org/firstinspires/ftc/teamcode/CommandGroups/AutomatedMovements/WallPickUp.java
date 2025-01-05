@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToPose;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
@@ -30,7 +31,8 @@ public class WallPickUp extends SequentialCommandGroup {
         addCommands (
         // What this position should do is give the camera a good vantage point as well as keep the arm out of the way
 
-
+                // Spline created w. start angle of 90 will ensure that the robot pulls away from submersible on wall
+                // cycling from last drop accounting for submersible legs / structure inset
                 new FollowPath(
                         1.0,
                         0.4,
@@ -82,6 +84,15 @@ public class WallPickUp extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(90.0)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
+//                // Zoe: This could likely be a good case for a simple MoveToPose()
+//                // This might allow Lonan to have an easier time to predict the robot's approach on pickup.
+//                new MoveToPose(
+//                        0.3,
+//                        1.0,
+//                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(-90.0))))
+//                ),
+
+//               // Zoe: Lets play with these pauses to see if the grab response improves
                 new Pause(0.35),
 
                 new CloseClaw(),

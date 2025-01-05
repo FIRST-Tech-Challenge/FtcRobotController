@@ -29,6 +29,7 @@ public class MoveToPose extends CommandBase {
         this.maxSpeed= maxSpeed;
         this.maxAccel = maxAccel;
         this.dest = destination;
+        addRequirements(RobotContainer.drivesystem);
     }
 
     // This method is called once when command is started

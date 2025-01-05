@@ -4,7 +4,7 @@ public enum ClawState {
 
     // Constants that store the values of the claw pos when open and closed
     OPEN(0.4),
-    CLOSE(0); // Change these to reflect irl
+    CLOSE(0.0); // Change these to reflect irl
 
     // Stores the pos in var value
     private final double value;

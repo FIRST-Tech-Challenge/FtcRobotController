@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics
 import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
@@ -38,6 +39,9 @@ public class DriveTrain extends SubsystemBase {
     private DcMotorEx leftBackDrive;
     private DcMotorEx rightFrontDrive;
     private DcMotorEx rightBackDrive;
+
+    // adda voltage sensor
+    //public VoltageSensor robotVoltage;
 
     // individual motor PIF controls
     private MotorControl leftFrontControl;
@@ -72,6 +76,8 @@ public class DriveTrain extends SubsystemBase {
         leftBackDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
         rightBackDrive = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightBackDrive");
+
+        //robotVoltage = RobotContainer.ActiveOpMode.hardwareMap.get(VoltageSensor.class, "robotVoltage");
 
         // With the shift to DcMotorEx, Inverted function shifted to setDirection.
         leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
