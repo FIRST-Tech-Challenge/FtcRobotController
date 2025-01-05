@@ -1,5 +1,6 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import com.kalipsorobotics.actions.WallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
@@ -51,26 +52,9 @@ public class AutoSpecimen extends LinearOpMode {
         initAuto.setName("initAuto");
 
         //================begin of first specimen====================
-        WaitAction waitAtStart = new WaitAction(300);
-        waitAtStart.setName("waitAtStart");
-        redAutoSpecimen.addAction(waitAtStart);
-
-        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
-        moveToSpecimenBar.setName("moveToSpecimenBar");
-        moveToSpecimenBar.setMaxTimeOutMS(4000);
-        moveToSpecimenBar.addPoint(0, 0, 0);
-        moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, 300, 0); //y 300
-        moveToSpecimenBar.setDependentActions(waitAtStart);
-        redAutoSpecimen.addAction(moveToSpecimenBar);
-
-        SpecimenHangReady specimenHangReady1 = new SpecimenHangReady(outtake);
-        specimenHangReady1.setName("hangSpecimenReady1");
-        redAutoSpecimen.addAction(specimenHangReady1);
-
-        SpecimenHang specimenHang1 = new SpecimenHang(outtake);
-        specimenHang1.setName("specimenHang1");
-        specimenHang1.setDependentActions(specimenHangReady1, moveToSpecimenBar);
-        redAutoSpecimen.addAction(specimenHang1);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 300);
+        wallToBarHangAction.setName("wallToBarHangAction");
+        redAutoSpecimen.addAction(wallToBarHangAction);
         //===============end of first specimen===============
 
 
@@ -78,12 +62,12 @@ public class AutoSpecimen extends LinearOpMode {
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
         outtakeTransferReady.setName("outtakeTransferReady");
-        outtakeTransferReady.setDependentActions(specimenHang1);
+        outtakeTransferReady.setDependentActions(wallToBarHangAction);
         redAutoSpecimen.addAction(outtakeTransferReady);
 
-        PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry);
+        PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry,1.0/400.0);
         moveFloorSamples.setName("moveFloorSamples");
-        moveFloorSamples.setDependentActions(specimenHang1);
+        moveFloorSamples.setDependentActions(wallToBarHangAction);
         //first sample to depot
         moveFloorSamples.addPoint( -620, -475, -90); //y -500
         moveFloorSamples.addPoint(-1330, -500, -180); //y -475
@@ -104,7 +88,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         WaitAction waitBeforeSpecimenReady = new WaitAction(7000);
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
-        waitBeforeSpecimenReady.setDependentActions(specimenHang1);
+        waitBeforeSpecimenReady.setDependentActions(wallToBarHangAction);
         redAutoSpecimen.addAction(waitBeforeSpecimenReady);
 
         SpecimenWallReady specimenWallReady = new SpecimenWallReady(outtake);

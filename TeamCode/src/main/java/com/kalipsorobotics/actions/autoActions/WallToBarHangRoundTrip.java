@@ -14,8 +14,8 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -145;
-    public static final double WALL_PICKUP_Y = -742;
+    public static final double WALL_PICKUP_X = -152; //155 for blue 150 ish for red
+    public static final double WALL_PICKUP_Y = -775;
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
     public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake,
@@ -38,24 +38,8 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar1.setName("moveToBar2");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(waitAtWallPurePursuit);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 175, hangPosY, 0);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+10, hangPosY, 0);
         this.addAction(moveToBar1);
-
-//        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
-//        specimenHangReady.setName("hangSpecimenReady");
-//        specimenHangReady.setDependentActions(waitAtWall);
-//        this.addAction(specimenHangReady);
-//
-//        MoveOuttakeLSAction lowerSlidesHalf = new MoveOuttakeLSAction(outtake, 225);
-//        lowerSlidesHalf.setName("lowerSlidesHalf");
-//        lowerSlidesHalf.setDependentActions(specimenHangReady, moveWallToBar);
-//        this.addAction(lowerSlidesHalf);
-//
-//        KServoAutoAction openClaw = new KServoAutoAction(outtake.getOuttakeClaw(),
-//                OuttakeClawAction.OUTTAKE_CLAW_OPEN_POS);
-//        openClaw.setName("openClaw");
-//        openClaw.setDependentActions(lowerSlidesHalf);
-//        this.addAction(openClaw);
 
         MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
         raiseSpecimen.setName("raiseSpecimen");
@@ -72,7 +56,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar2.setName("moveToBar2");
         moveToBar2.setMaxTimeOutMS(1000);
         moveToBar2.setDependentActions(specimenHangReady, moveToBar1);
-        moveToBar2.addPoint(SPECIMEN_HANG_POS_X+50, hangPosY, 0);
+        moveToBar2.addPoint(SPECIMEN_HANG_POS_X-55, hangPosY, 0);
         this.addAction(moveToBar2);
 
         SpecimenHang specimenHang = new SpecimenHang(outtake);
