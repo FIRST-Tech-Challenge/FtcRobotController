@@ -19,7 +19,6 @@ public class SyborgsRefactor extends LinearOpMode {
     ArmSubsystem arm;
     LiftSubsystem lift;
     IntakeAndWristSubsystem intakeAndWrist;
-
     @Override
     public void runOpMode() {
         initSubsystems();
@@ -36,7 +35,6 @@ public class SyborgsRefactor extends LinearOpMode {
 
             intakeAndWrist.handleMovement(gamepad1, gamepad2);
             intakeAndWrist.updateTelemetry();
-
 
             Common.updateCycleTimes(getRuntime());
             telemetry.update();
