@@ -61,8 +61,6 @@ public class BlueLeftAscent extends LinearOpMode {
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        // initialize actions
-
         // Set velocity and accel constraints
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
                 new TranslationalVelConstraint(40),
@@ -330,43 +328,6 @@ public class BlueLeftAscent extends LinearOpMode {
 //        );
 
         viperSlide.resetEncoders();
-
-//        viperSlide.goToPosition(4250);
-//        viperSlide.bucketScore();
-//        sleep(1250);
-//        viperSlide.bucketRest();
-//        viperSlide.goToRest();
-//
-//        hSlide.resetEncoder();
-//        viperSlide.resetEncoders();
-//
-//        // First sample
-//        Actions.runBlocking(driveToFirstPickUp1);
-//        hSlide.goToPosition(80);
-//        intake.wristDown();
-//        sleep(500);
-//        hSlide.goToPosition(155);
-//
-//        intake.grabberSuck();
-//        sleep(2500);
-//        intake.grabberOff();
-//
-//        intake.wristUp();
-//        hSlide.goToRest();
-//        intake.grabberSpit();
-//        sleep(1500);
-//        intake.grabberOff();
-//
-//        Actions.runBlocking(driveToScoreFirst);
-//
-//        viperSlide.goToPosition(4250);
-//        viperSlide.bucketScore();
-//        sleep(1250);
-//        viperSlide.bucketRest();
-//        viperSlide.goToRest();
-//
-//        hSlide.resetEncoder();
-//        viperSlide.resetEncoders();
 
 
 //        if (opModeIsActive()) {

@@ -173,13 +173,15 @@ public class ViperSlide{
 
         if(grabSpecimen) {
             specimenGrabberPos = "closed";
-            leftSpecimen.setPosition(0);
-            rightSpecimen.setPosition(1);
+//            leftSpecimen.setPosition(0);
+//            rightSpecimen.setPosition(1);
+            grabSpecimen();
         }
         else if(releaseSpecimen) {
             specimenGrabberPos = "open";
-            leftSpecimen.setPosition(0.6);
-            rightSpecimen.setPosition(0.4);
+//            leftSpecimen.setPosition(0.6);
+//            rightSpecimen.setPosition(0.4);
+            releaseSpecimen();
         }
 
         if(bucketSpecimen) {
@@ -356,16 +358,16 @@ public class ViperSlide{
 
     // specimen grabber
     public void setSpecimenGrabberPos(double position) {
-        leftSpecimen.setPosition(position);
-        rightSpecimen.setPosition(-position);
     }
 
     public void grabSpecimen() {
-        setSpecimenGrabberPos(1);
+        leftSpecimen.setPosition(0);
+        rightSpecimen.setPosition(1);
     }
 
     public void releaseSpecimen() {
-        setSpecimenGrabberPos(0);
+        leftSpecimen.setPosition(.6);
+        rightSpecimen.setPosition(.4);
     }
 }
 

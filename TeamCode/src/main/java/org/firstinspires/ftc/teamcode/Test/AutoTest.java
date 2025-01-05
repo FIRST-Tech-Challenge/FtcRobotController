@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.Roadrunner.Actions.bucket.BucketFlapAction
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.bucket.BucketRestAction;
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.bucket.BucketScoreAction;
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.grabber.GrabberSuckAction;
+import org.firstinspires.ftc.teamcode.Roadrunner.Actions.specimen.SpecimenGrabberGrabAction;
+import org.firstinspires.ftc.teamcode.Roadrunner.Actions.specimen.SpecimenGrabberReleaseAction;
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.viper.ViperDownForTimeAction;
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.viper.ViperStopAction;
 import org.firstinspires.ftc.teamcode.Roadrunner.Actions.viper.ViperToPositionAction;
@@ -46,6 +48,9 @@ public class AutoTest extends LinearOpMode {
         BucketScoreAction bucketScore = new BucketScoreAction(viperSlide);
         BucketRestAction bucketRest = new BucketRestAction(viperSlide);
 
+        SpecimenGrabberGrabAction grabSpecimen = new SpecimenGrabberGrabAction(viperSlide, 0);
+        SpecimenGrabberReleaseAction releaseSpecimen = new SpecimenGrabberReleaseAction(viperSlide, 0);
+
         SleepAction sleep = new SleepAction(1);
 
         while (!isStopRequested() && !opModeIsActive()) {
@@ -59,42 +64,11 @@ public class AutoTest extends LinearOpMode {
 
 
         Actions.runBlocking(
-                new ParallelAction(
-                        viperUp
-                )
-        );
-
-        Actions.runBlocking(
-                new ParallelAction(
-                        closeBucket,
-                        bucketScore
-                )
-        );
-
-        Actions.runBlocking(
                 new SequentialAction(
-                        viperAllTheWayUpAtTheTopToScoreASampleInHighBucket,
-                        viperStop,
-                        openBucket
+                        releaseSpecimen,
+                        grabSpecimen,
+                        releaseSpecimen
                 )
-        );
-
-        Actions.runBlocking(
-                new ParallelAction(
-                        viperDownForTime
-                )
-        );
-
-        Actions.runBlocking(
-                new ParallelAction(
-                        bucketRest
-                )
-        );
-
-
-
-        Actions.runBlocking(
-                viperToRest
         );
 
 //        Actions.runBlocking(
