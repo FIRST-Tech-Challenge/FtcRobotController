@@ -85,14 +85,16 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion sample #2
 
                 //region sample #3
-                commandFactory.driveToTarget(530, 490, 29, 0.13, .8, 30),
+                commandFactory.driveToTarget(250, 540, 17, 0.13, .8, 30),
                 commandFactory.collapseSlider(),
                 new ParallelCommandGroup(
                     commandFactory.pivotToGroundInTakeBegin(),
-                    commandFactory.elbowToIntakePosition()
-                ),
+                    commandFactory.extendSliderToIntakeSample3()
 
-                commandFactory.intakeFromGround2(3000),
+                ),
+                commandFactory.elbowToIntakePosition(),
+                commandFactory.sleep(500),
+                commandFactory.intakeFromGroundForSample3(4000),
 
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
@@ -113,7 +115,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 new ParallelCommandGroup(
                     commandFactory.pivotToStart(),
                     commandFactory.collapseSlider(),
-                    commandFactory.driveToTarget(2600, -280, -110, .13, 1, 100),
+                    commandFactory.driveToTarget(2600, -290, -120, .13, 1, 100),
                     commandFactory.elbowToStartPosition()
                 )
 
