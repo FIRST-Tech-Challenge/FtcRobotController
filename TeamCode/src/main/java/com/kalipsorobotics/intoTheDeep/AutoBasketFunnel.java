@@ -103,7 +103,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
 
         //move basket to sample 2
-        moveToSample3.addPoint(-375, 1054.35, 180-27.6);
+        moveToSample3.addPoint(-370, 1054.35, 180-27.6);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
