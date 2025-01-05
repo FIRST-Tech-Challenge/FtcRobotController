@@ -1,8 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2dDual;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -12,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 
-public class Moving {
+public class moving {
 
 
     DcMotor frontLeftMotor;
@@ -24,10 +20,10 @@ public class Moving {
     public void setHW(HardwareMap hwm, Telemetry tm, Gamepad gp) {
         // Declare our motors
         // Make sure your ID's match your configuration
-        frontLeftMotor = hwm.dcMotor.get("frontLeft");
-        backLeftMotor = hwm.dcMotor.get("backLeft");
-        frontRightMotor = hwm.dcMotor.get("frontRight");
-        backRightMotor = hwm.dcMotor.get("backRight");
+        frontLeftMotor = hwm.dcMotor.get(HMapConfig.FRONT_LEFT_MOTOR);
+        backLeftMotor = hwm.dcMotor.get(HMapConfig.BACK_LEFT_MOTOR);
+        frontRightMotor = hwm.dcMotor.get(HMapConfig.FRONT_RIGHT_MOTOR);
+        backRightMotor = hwm.dcMotor.get(HMapConfig.BACK_RIGHT_MOTOR);
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
