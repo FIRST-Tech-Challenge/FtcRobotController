@@ -33,15 +33,22 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 // Spline created w. start angle of 90 will ensure that the robot pulls away from submersible on wall
                 // cycling from last drop accounting for submersible legs / structure inset
-                new FollowPath(
+//                new FollowPath(
+//                        1.0,
+//                        0.4,
+//                        0.0,
+//                        0.0,
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(135.0))),
+//                        new ArrayList<Translation2d>() {{ }},//1.0y
+//                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(90.0)))),
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
+
+
+                new MoveToPose(
                         1.0,
-                        0.4,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(135.0))),
-                        new ArrayList<Translation2d>() {{ }},//1.0y
-                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(90.0)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
+                        0.5,
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(-90.0))))
+                ),
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees

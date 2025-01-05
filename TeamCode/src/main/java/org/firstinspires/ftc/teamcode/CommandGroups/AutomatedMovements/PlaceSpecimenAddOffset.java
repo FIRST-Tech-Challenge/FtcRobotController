@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePo
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToPose;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
@@ -35,6 +36,28 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 //sets the slides to low
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW, true)),
 
+                new MoveToPose(
+                        1.5,
+                        1.0,
+                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.820, new Rotation2d(Math.toRadians(-90))))
+                ),
+
+                //new Pause(1),
+
+                //reseting Y based on front distance sensor
+                new InstantCommand(()-> {
+                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+                    Pose2d correctedPosition;
+                    if (RobotContainer.frontDistance.getDistance()<=7.0){
+                        if(RobotContainer.isRedAlliance)
+                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.01-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+                        else
+                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.01+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+
+                        RobotContainer.odometry.setCurrentPos(correctedPosition);
+                    }
+                }),
+
                 //new Pause(0.5),
                 //max speed = 1
                 new GoToNextDropOff(
@@ -59,22 +82,6 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 //
 //                    RobotContainer.odometry.setCurrentPos(correctedPosition);
 //                }),
-
-                new Pause(1),
-
-                //reseting Y based on front distance sensor
-                new InstantCommand(()-> {
-                    Pose2d position = RobotContainer.odometry.getCurrentPos();
-                    Pose2d correctedPosition;
-                    if (RobotContainer.frontDistance.getDistance()<=7.0){
-                        if(RobotContainer.isRedAlliance)
-                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.01-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
-                        else
-                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.01+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
-
-                        RobotContainer.odometry.setCurrentPos(correctedPosition);
-                    }
-                }),
 
                // new Pause(0.5),
 
