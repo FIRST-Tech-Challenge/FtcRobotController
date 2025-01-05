@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -28,9 +29,31 @@ public class Outake implements Component{
     private final DcMotor extension1;
     private final DcMotor extension2;
 
+    private Status status;
+
+    private ElapsedTime elapsedTime = null;
+
 
     Telemetry telemetry;
     Init init;
+
+    enum Status {
+        WallToFront1 (200),
+        WallToFront2 (200),
+        WallToFront3 (200),
+        Wall (0),
+        Front(0);
+
+        private final long time;
+
+        private Status (long time){
+            this.time= time;
+        }
+
+        public long getTime() {
+            return time;
+        }
+    }
 
     public Outake(Init init, Telemetry telemetry){
 
@@ -50,6 +73,9 @@ public class Outake implements Component{
 //        this.elbow2=init.getElbow2();
 //        this.fingers=init.getFingers();
         initializeHardware();
+        status = Status.Front;
+
+
 
     }
 
@@ -111,11 +137,14 @@ public class Outake implements Component{
     }
 
     public void scoreSpecimen(){
+        status= Status.WallToFront1;
+
         target = ITDCons.SpecimenTarget;
-        wrist.setPosition(ITDCons.wristFront);
-        position.setPosition(ITDCons.positionFront);
-        angleRight.setPosition(ITDCons.angleFront);
-        angleLeft.setPosition(ITDCons.angleFront);
+//        wrist.setPosition(ITDCons.wristFront);
+//        position.setPosition(ITDCons.positionFront);
+        angleRight.setPosition(ITDCons.angleMiddle);
+        angleLeft.setPosition(ITDCons.angleMiddle);
+        elapsedTime = new ElapsedTime();
     }
 
     public void releaseSpecimen(){
@@ -150,6 +179,34 @@ public class Outake implements Component{
 //        elbow1.setPosition(ITDCons.diffyInit);
 //        elbow2.setPosition(ITDCons.diffyInit);
 
+    }
+
+    public void updateOuttake(){
+
+        switch (status){
+            case WallToFront1:
+                if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                    position.setPosition(ITDCons.positionFront);
+                    elapsedTime = new ElapsedTime();
+                    status = Status.WallToFront2;
+                }
+                break;
+            case WallToFront2:
+                if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
+                    wrist.setPosition(ITDCons.wristFront);
+                    angleRight.setPosition(ITDCons.angleFront);
+                    angleLeft.setPosition(ITDCons.angleFront);
+                    elapsedTime = new ElapsedTime();
+                    status = Status.WallToFront3;
+                }
+                break;
+            case WallToFront3:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    elapsedTime = null;
+                    status = Status.Front;
+                }
+                break;
+        }
     }
 
 

@@ -24,6 +24,7 @@ public class ITDCons {
 
     public static double angleFront = 0.1;
     public static double angleBack = 0.9;
+    public static double angleMiddle = 0.5;
 
     public static int wallPickupTarget = 2000;
     public static int transferPickupTarget = 0;

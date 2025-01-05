@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config // Enables FTC Dashboard
-@TeleOp(name = "LED Test")
+@TeleOp(group ="Test", name = "LED Test")
 public class ledTest extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();

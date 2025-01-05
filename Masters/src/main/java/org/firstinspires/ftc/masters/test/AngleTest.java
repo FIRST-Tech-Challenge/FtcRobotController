@@ -8,32 +8,35 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.masters.components.ITDCons;
-import org.firstinspires.ftc.masters.old.CSCons;
 
-@TeleOp(name = "Wrist Test")
+@TeleOp(group="Test", name = "Angle Test")
 @Config
-public class wristTest extends LinearOpMode {
-
-    private Servo wristServo;
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+public class AngleTest extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        wristServo = hardwareMap.servo.get("wrist");
-        wristServo.setPosition(ITDCons.wristFront);
+        Servo angleServoLeft = hardwareMap.servo.get("angleLeft");
+        angleServoLeft = hardwareMap.servo.get("angleLeft");
+        Servo angleServoRight = hardwareMap.servo.get("angleRight");
 
         waitForStart();
 
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                wristServo.setPosition(ITDCons.wristFront);
+                angleServoLeft.setPosition(ITDCons.angleFront);
+                angleServoRight.setPosition(ITDCons.angleFront);
             }
 
             if (gamepad1.b) {
-                wristServo.setPosition(ITDCons.wristBack);
+                angleServoLeft.setPosition(ITDCons.angleBack);
+                angleServoRight.setPosition(ITDCons.angleBack);
+            }
+            if (gamepad1.x){
+                angleServoLeft.setPosition(ITDCons.angleMiddle);
+                angleServoRight.setPosition(ITDCons.angleMiddle);
             }
 
         }
