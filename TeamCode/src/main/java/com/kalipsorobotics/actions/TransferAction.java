@@ -21,7 +21,7 @@ public class TransferAction extends KActionSet{
         openIntakeClaw.setDependentActions(wait);
         this.addAction(openIntakeClaw);
 
-        WaitAction wait2 = new WaitAction(200);
+        WaitAction wait2 = new WaitAction(150);
         wait2.setName("wait2");
         wait2.setDependentActions(openIntakeClaw);
         this.addAction(wait2);

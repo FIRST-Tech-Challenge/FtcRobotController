@@ -31,8 +31,8 @@ public class PurePursuitAction extends Action {
     private final PidNav pidY;
     private PidNav pidAngle;
 
-    double maxCheckDoneCounter = 1;
-    double checkDoneCounter = 0;
+    int maxCheckDoneCounter = 1;
+    int checkDoneCounter = 0;
 
     Path path;
     Segment lastLine;
@@ -217,9 +217,10 @@ public class PurePursuitAction extends Action {
     }
 
 
-    public void setMaxCheckDoneCounter (double maxCheckDoneCounter) {
+    public void setMaxCheckDoneCounter (int maxCheckDoneCounter) {
         this.maxCheckDoneCounter = maxCheckDoneCounter;
     }
+
     public void finishedMoving() {
         driveTrain.setPower(0);
         Log.d("purepursaction_debug_follow", "timeout");

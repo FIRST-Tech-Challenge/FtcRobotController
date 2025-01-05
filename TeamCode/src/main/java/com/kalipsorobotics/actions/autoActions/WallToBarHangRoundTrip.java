@@ -38,7 +38,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveToBar1.setName("moveToBar2");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(waitAtWallPurePursuit);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 150, hangPosY, 0);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 175, hangPosY, 0);
         this.addAction(moveToBar1);
 
 //        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
@@ -89,7 +89,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(specimenHang);
-        moveBarToWall.addPoint(-380, WALL_PICKUP_Y, -180); //-205, 700
+        moveBarToWall.addPoint(-367.5, WALL_PICKUP_Y, -180); //-205, 700
         this.addAction(moveBarToWall);
 
         PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/1000);

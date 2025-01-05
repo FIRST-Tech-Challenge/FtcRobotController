@@ -40,18 +40,6 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         intakeFunnelReady1.setName("intakeFunnelReady1");
         this.addAction(intakeFunnelReady1);
 
-//        WaitAction waitBeforeFunnel1 = new WaitAction(250);
-//        waitBeforeFunnel1.setName("waitBeforeFunnel1");
-//        waitBeforeFunnel1.setDependentActions(moveToSample1, intakeFunnelReady1);
-//        this.addAction(waitBeforeFunnel1);
-
-//        PurePursuitAction funnelSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/3200.0);
-//        funnelSample1.setName("funnelSample1");
-//        funnelSample1.setDependentActions(waitBeforeFunnel1);
-//        //bar to sample 1
-//        funnelSample1.addPoint(INTAKE_SAMPLE_X, sampleY, 180);
-//        this.addAction(funnelSample1);
-
         CheckPassXFunnel checkReachedSample = new CheckPassXFunnel(moveToSample1, wheelOdometry);
         checkReachedSample.setName("checkReachedSample");
         this.addAction(checkReachedSample);
@@ -83,11 +71,6 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         basketReady1.setDependentActions(transferAction1);
         this.addAction(basketReady1);
 
-        WaitAction waitAction1 = new WaitAction(100);
-        waitAction1.setName("waitAction1");
-        waitAction1.setDependentActions(basketReady1);
-        this.addAction(waitAction1);
-
         KServoAutoAction openClaw1 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw1.setName("openClaw1");
         openClaw1.setDependentActions(basketReady1);
@@ -95,7 +78,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
         PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/300.0);
         moveOutBasket1.setName("moveOutBasket1");
-        moveOutBasket1.setDependentActions(openClaw1, waitAction1);
+        moveOutBasket1.setDependentActions(openClaw1);
         moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         this.addAction(moveOutBasket1);
     }

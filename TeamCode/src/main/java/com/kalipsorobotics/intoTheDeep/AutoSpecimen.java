@@ -112,7 +112,7 @@ public class AutoSpecimen extends LinearOpMode {
         specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0);
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0); //2200
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
         //to depot for specimen

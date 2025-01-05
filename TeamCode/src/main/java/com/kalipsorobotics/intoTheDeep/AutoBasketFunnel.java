@@ -24,6 +24,8 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.checkerframework.dataflow.qual.Pure;
+
 @Autonomous
 public class AutoBasketFunnel extends LinearOpMode {
 
@@ -102,7 +104,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 2
-        moveToSample3.addPoint(-400, 1054.35, 180-27.6);
+        moveToSample3.addPoint(-357.5, 1054.35, 180-27.6);
+        moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
@@ -112,7 +115,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         sampleIntakeReady3.setDependentActions(moveToSample3);
         redAutoBasket.addAction(sampleIntakeReady3);
 
-        WaitAction waitAction3 = new WaitAction(500);
+        WaitAction waitAction3 = new WaitAction(300); // Make sure linkage fully extends (sample 3)
         waitAction3.setName("waitAction");
         waitAction3.setDependentActions(sampleIntakeReady3);
         redAutoBasket.addAction(waitAction3);
@@ -154,17 +157,6 @@ public class AutoBasketFunnel extends LinearOpMode {
         basketReady3.setDependentActions(moveToBasket3, transferAction3);
         redAutoBasket.addAction(basketReady3);
 
-        WaitAction waitAction4 = new WaitAction(100);
-        waitAction4.setName("waitAction4");
-        waitAction4.setDependentActions(basketReady3);
-        redAutoBasket.addAction(waitAction4);
-//
-//        KServoAutoAction outtakePivotActionOut1 = new KServoAutoAction(outtake.getOuttakePivotServo(),
-//                Outtake.OUTTAKE_PIVOT_BASKET_POS);
-//        outtakePivotActionOut1.setName("outtakePivotActionOut1");
-//        outtakePivotActionOut1.setDependentActions(basketReady1);
-//        redAutoBasket.addAction(outtakePivotActionOut1);
-
         KServoAutoAction openClaw3 = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_OPEN);
         openClaw3.setName("openClaw3");
         openClaw3.setDependentActions(basketReady3);
@@ -172,16 +164,13 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         PurePursuitAction moveOutBasket3 = new PurePursuitAction(driveTrain,wheelOdometry);
         moveOutBasket3.setName("moveOutBasket3");
-        moveOutBasket3.setDependentActions(openClaw3, waitAction4);
+        moveOutBasket3.setDependentActions(openClaw3);
         moveOutBasket3.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);
         redAutoBasket.addAction(moveOutBasket3);
 
-//        moveToSpecimenBar.addPoint(0, 0, 0);
-//        moveToSpecimenBar.addPoint(-740, -300, 0);
-
         KServoAutoAction pivotOuttakeHalfwayToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
         pivotOuttakeHalfwayToBar.setName("pivotOuttakeHalfwayToBar");
-        pivotOuttakeHalfwayToBar.setDependentActions(openClaw3, waitAction4);
+        pivotOuttakeHalfwayToBar.setDependentActions(openClaw3);
         redAutoBasket.addAction(pivotOuttakeHalfwayToBar);
 
         MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_PARK_MM);
@@ -195,8 +184,6 @@ public class AutoBasketFunnel extends LinearOpMode {
         park.addPoint(-1225, 610, 45);
         park.addPoint(-1325, 260, 90);
         redAutoBasket.addAction(park);
-
-
 
         KServoAutoAction pivotOuttakeToBar = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TOUCH_BAR_POS);
         pivotOuttakeToBar.setName("pivotOuttakeToBar");
