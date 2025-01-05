@@ -31,6 +31,9 @@ public class PurePursuitAction extends Action {
     private final PidNav pidY;
     private PidNav pidAngle;
 
+    double maxCheckDoneCounter = 1;
+    double checkDoneCounter = 0;
+
     Path path;
     Segment lastLine;
     static final private double LOOK_AHEAD_RADIUS_MM = 75;
@@ -213,11 +216,23 @@ public class PurePursuitAction extends Action {
 
     }
 
+
+    public void setMaxCheckDoneCounter (double maxCheckDoneCounter) {
+        this.maxCheckDoneCounter = maxCheckDoneCounter;
+    }
     public void finishedMoving() {
         driveTrain.setPower(0);
         Log.d("purepursaction_debug_follow", "timeout");
         Log.d("purepursaction_debug_follow", "current pos:    " + wheelOdometry.getCurrentPosition().toString());
-        isDone = true;
+        checkDoneCounter++;
+
+        Log.d("purepursaction_debug_checkDone", "checkDoneCounter: " + checkDoneCounter + "name:" +  name);
+
+        if (checkDoneCounter >= maxCheckDoneCounter) {
+            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name);
+            isDone = true;
+        }
+
         if (sleepTimeMS != 0) {
             try {
                 Thread.sleep(sleepTimeMS);
