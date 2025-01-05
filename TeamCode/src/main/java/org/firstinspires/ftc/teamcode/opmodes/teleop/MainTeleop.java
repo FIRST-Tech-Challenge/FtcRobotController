@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.TeleFourWheelMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenClaw;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
@@ -41,22 +42,13 @@ public class MainTeleop extends OpModeTemplate {
         DeliveryPivot deliveryPivot = new DeliveryPivot(hardwareMap, operatorGamepad, telemetry, feedback, rollingIntake);
         DeliverySlider deliverySlider = new DeliverySlider(hardwareMap, operatorGamepad, telemetry, feedback);
         deliverySlider.setPivotLowEnoughSupplier(deliveryPivot::lowEnoughToLimitSlider);
+        SpecimenSlider specimenSlider = new SpecimenSlider(hardwareMap, telemetry, feedback);
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
         HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
-        SpecimenClaw specimenClaw = new SpecimenClaw(hardwareMap, telemetry, feedback);
 
         driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
         switchToMode(PowerMode.REGULAR);
-
-        // OPERATOR Actions
-        //stopper
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new InstantCommand(deliveryPivot::ToggleStopper, deliveryPivot));
-
-        //operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-        //        .whenPressed(new InstantCommand(stopper::setPositionOpened, stopper))
-        //        .whenReleased(new InstantCommand(stopper::setPositionMid, stopper));
 
         // Delivery Pivot
         new Trigger(() -> gamepad2.right_stick_y > 0.5)
@@ -98,6 +90,7 @@ public class MainTeleop extends OpModeTemplate {
                 .whenActive(new InstantCommand(deliverySlider::expand, deliverySlider))
                 .whenInactive(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
+
         // Intake and Outtake
 
         new Trigger(() -> gamepad2.right_trigger > 0.5)
@@ -107,6 +100,14 @@ public class MainTeleop extends OpModeTemplate {
         new Trigger(() -> gamepad2.left_trigger > 0.5)
                 .whenActive(new InstantCommand(rollingIntake::Outtake, rollingIntake))
                 .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
+
+        // Specimen Slider Actions
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(new InstantCommand(specimenSlider::Expand, specimenSlider));
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider));
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
@@ -170,23 +171,18 @@ public class MainTeleop extends OpModeTemplate {
                 .whenActive(new InstantCommand(this::switchToSlowMode, driveTrain))
                 .whenInactive(new InstantCommand(this::switchToRegularMode, driveTrain));
 
+
         // Robot direction
         driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
 
-        // Robot direction
-        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenHeld(new InstantCommand(specimenClaw::ToggleArm, specimenClaw));
-
-        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenHeld(new InstantCommand(specimenClaw::ToggleClaw, specimenClaw));
 
         // servo test, for the speciman part claw thingy
         driverGamepad.getGamepadButton(GamepadKeys.Button.B)
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
 
         // Register all subsystems
-        register(driveTrain, deliveryPivot, deliverySlider, feedback, rollingIntake, specimenClaw);//, limeLight);
+        register(driveTrain, deliveryPivot, deliverySlider, feedback, rollingIntake, specimenSlider);//, limeLight);
 
         // update telemetry every loop
         schedule(SounderBotBaseRunCommand.createTelemetryEnabledOnlyInstance(telemetry));

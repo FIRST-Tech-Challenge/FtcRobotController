@@ -20,8 +20,6 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     private Motor motor;
 
-    private Servo stopper;
-
     private Telemetry telemetry;
 
     GamepadEx gamepad;
@@ -68,9 +66,6 @@ public class DeliveryPivot extends SonicSubsystemBase {
         motor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.motor.encoder.reset();
 
-        this.stopper  = hardwareMap.get(Servo.class,"Stopper");
-        this.stopper.setPosition(1);
-
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
@@ -88,26 +83,6 @@ public class DeliveryPivot extends SonicSubsystemBase {
         }
 
         return 1000000;
-    }
-
-    boolean isStopperClosed = false;
-
-    public void ToggleStopper() {
-        if(isStopperClosed) {
-            CloseStopper();
-        } else {
-            OpenStopper();
-        }
-
-        isStopperClosed = !isStopperClosed;
-    }
-
-    private void CloseStopper() {
-        this.stopper.setPosition(0.25);
-    }
-
-    private void OpenStopper() {
-        this.stopper.setPosition(0.875);
     }
 
     public void SetTelop() {
@@ -193,15 +168,6 @@ public class DeliveryPivot extends SonicSubsystemBase {
             telemetry.addData("pivot target", currentTarget);
             telemetry.addData("pivot current", position);
             telemetry.addData("pivot color  depth", GetDepth());
-        }
-
-        if(position < DeliveryPositionFromStart - 300) {
-            OpenStopper();
-            rollingIntake.SetInDeliveryPositionn(false);
-        }
-        else {
-            CloseStopper();
-            rollingIntake.SetInDeliveryPositionn(true);
         }
 
         this.previousPosition = position;
