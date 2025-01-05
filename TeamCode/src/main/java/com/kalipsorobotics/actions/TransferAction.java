@@ -11,16 +11,20 @@ public class TransferAction extends KActionSet{
         closeOuttakeClaw.setName("closeOuttakeClaw");
         this.addAction(closeOuttakeClaw);
 
-        WaitAction wait200 = new WaitAction(200);
-        wait200.setName("wait200");
-        wait200.setDependentActions(closeOuttakeClaw);
-        this.addAction(wait200);
+        WaitAction wait = new WaitAction(50);
+        wait.setName("wait");
+        wait.setDependentActions(closeOuttakeClaw);
+        this.addAction(wait);
 
         KServoAutoAction openIntakeClaw = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
         openIntakeClaw.setName("openIntakeClaw");
-        openIntakeClaw.setDependentActions(wait200);
+        openIntakeClaw.setDependentActions(wait);
         this.addAction(openIntakeClaw);
 
+        WaitAction wait2 = new WaitAction(200);
+        wait2.setName("wait2");
+        wait2.setDependentActions(openIntakeClaw);
+        this.addAction(wait2);
 //        KServoAutoAction moveBigPivot = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
 //        moveBigPivot.setName("moveBigPivot");
 //        moveBigPivot.setDependentActions(closeOuttakeClaw,openIntakeClaw);

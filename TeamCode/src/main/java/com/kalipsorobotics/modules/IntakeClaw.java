@@ -123,7 +123,7 @@ public class IntakeClaw {
                 300,
                 0, false);
 
-        intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.11,     //mini axon
+        intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.25,     //mini axon
                 255,
                 0, false);
     }

@@ -24,12 +24,12 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         int outtakeXPos = -190;
         int outtakeYPos = 1020;
 
-        PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/1200.0);
+        PurePursuitAction moveToSample1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/300.0);
         moveToSample1.setName("moveToSample1");
         //bar to sample 1
         moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +415, sampleY, 180);
         moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +75, sampleY, 180);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -150, sampleY, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -200, sampleY, 180);
         this.addAction(moveToSample1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -73,7 +73,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
 
         PurePursuitAction moveToBasket1 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToBasket1.setName("moveToBasket1");
-        moveToBasket1.setDependentActions(intakeFunnelAction1, moveToSample1);
+        moveToBasket1.setDependentActions(moveToSample1, transferAction1); // Depends on transfer so intake slides dont move while moving
         //move sample 1 to basket
         moveToBasket1.addPoint(outtakeXPos, outtakeYPos, -135);
         this.addAction(moveToBasket1);
@@ -93,7 +93,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         openClaw1.setDependentActions(basketReady1);
         this.addAction(openClaw1);
 
-        PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry);
+        PurePursuitAction moveOutBasket1 = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/300.0);
         moveOutBasket1.setName("moveOutBasket1");
         moveOutBasket1.setDependentActions(openClaw1, waitAction1);
         moveOutBasket1.addPoint(outtakeXPos - 100, outtakeYPos - 100, -135);

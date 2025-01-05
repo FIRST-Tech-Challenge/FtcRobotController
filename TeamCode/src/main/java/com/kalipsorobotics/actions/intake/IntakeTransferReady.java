@@ -37,17 +37,18 @@ public class IntakeTransferReady extends KActionSet {
         moveSmallSweep.setDependentActions(closeClaw);
         this.addAction(moveSmallSweep);
 
-        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
-        moveBigPivot.setName("moveBigPivot");
-        moveBigPivot.setDependentActions(closeClaw);
-        this.addAction(moveBigPivot);
-
         KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_TRANSFER_READY_POS);
         moveSmallPivot.setName("moveSmallPivot");
         moveSmallPivot.setDependentActions(closeClaw);
         this.addAction(moveSmallPivot);
 
-        WaitAction wait = new WaitAction(200);
+        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
+        moveBigPivot.setName("moveBigPivot");
+        moveBigPivot.setDependentActions(moveSmallPivot);
+        this.addAction(moveBigPivot);
+
+
+        WaitAction wait = new WaitAction(100);
         wait.setName("wait");
         wait.setDependentActions(moveSmallPivot, moveBigPivot, moveSmallSweep, moveBigSweep, linkageRetract);
         this.addAction(wait);

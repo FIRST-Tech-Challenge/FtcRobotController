@@ -186,12 +186,12 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         MoveLSAction lsTouchBar = new MoveLSAction(outtake, Outtake.LS_SPECIMEN_PARK_MM);
         lsTouchBar.setName("lsTouchBar");
-        lsTouchBar.setDependentActions(pivotOuttakeHalfwayToBar, moveOutBasket3);
+        lsTouchBar.setDependentActions(moveOutBasket3);
         redAutoBasket.addAction(lsTouchBar);
 
         PurePursuitAction park = new PurePursuitAction(driveTrain, wheelOdometry);
         park.setName("park");
-        park.setDependentActions(lsTouchBar, moveOutBasket3);
+        park.setDependentActions(moveOutBasket3);
         park.addPoint(-1225, 610, 45);
         park.addPoint(-1325, 260, 90);
         redAutoBasket.addAction(park);
