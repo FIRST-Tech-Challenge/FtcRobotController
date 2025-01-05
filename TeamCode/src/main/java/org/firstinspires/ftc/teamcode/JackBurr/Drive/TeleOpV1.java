@@ -103,7 +103,7 @@ public class TeleOpV1 extends OpMode {
             timeNeeded = 3;
         }
         else {
-            timeNeeded = 0;
+            timeNeeded = 0.3;
         }
         if(gamepad1.x && buttonTimer.seconds() > 0.3) {
             if(thisStateTimer.seconds() > timeNeeded) {
@@ -117,7 +117,7 @@ public class TeleOpV1 extends OpMode {
         }
         switch (state) {
             case START:
-                deliveryAxon.setPosition(constants.DELIVERY_DOWN);
+                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
