@@ -4,6 +4,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -40,7 +41,7 @@ public class LimeLightTesting extends LinearOpMode {
     Limelight3A limelight;
 
     //settings
-    final Pose3D targetPose = new Pose3D(new Position(DistanceUnit.INCH, 48, 48, 0,0), new YawPitchRollAngles(AngleUnit.DEGREES, 45, 0, 0, 0));
+    final Pose3D targetPose = new Pose3D(new Position(DistanceUnit.METER, -1, -1, 0,0), new YawPitchRollAngles(AngleUnit.DEGREES, 90, 0, 0, 0));
     final double turnSpeed = 0.5;
     final double strafeSpeed = 0.5;
     final double driveSpeed = 0.5;
@@ -64,6 +65,9 @@ public class LimeLightTesting extends LinearOpMode {
         _rightFront = hardwareMap.tryGet(DcMotorEx.class, "rightFront");
         _rightBack = hardwareMap.tryGet(DcMotorEx.class, "rightBack");
 
+        _rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        _rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
         waitForStart();
 
     //run steps
@@ -71,10 +75,16 @@ public class LimeLightTesting extends LinearOpMode {
             //Manage LimeLight
             LLResult lLResult = limelight.getLatestResult();
             if (lLResult != null) {
-                tagFound = true;
-                botPose = lLResult.getBotpose();
-                botYaw = botPose.getOrientation().getYaw();
-                telemetry.addData("BotPose", botPose);
+                if (lLResult.getTa() > 0) {
+                    tagFound = true;
+                    botPose = lLResult.getBotpose_MT2();
+                    botYaw = botPose.getOrientation().getYaw();
+                    telemetry.addData("BotPose", botPose);
+                }
+                else {
+                    tagFound = false;
+                }
+                telemetry.addData("Ta", lLResult.getTa());
             }
             else {
                 tagFound = false;
