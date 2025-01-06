@@ -18,8 +18,9 @@ public class ArmTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        DcMotor leftDrive  = hardwareMap.get(DcMotor.class, "armLeft"); // port 0
-        DcMotor rightDrive = hardwareMap.get(DcMotor.class, "armRight"); // port 3
+        DcMotor leftDrive  = hardwareMap.get(DcMotor.class, "armLeft");
+        DcMotor rightDrive = hardwareMap.get(DcMotor.class, "armRight");
+        DcMotor frontDrive = hardwareMap.get(DcMotor.class, "frontArm");
         rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         // make the motors brake when [power == 0]
         // should stop the elevator from retracting because of gravity...
@@ -40,13 +41,6 @@ public class ArmTest extends LinearOpMode {
 
             // Pre-run
             while (opModeIsActive()) {
-                //////////////////////////////////////////////////////////////////////////////////////
-                /// TEST FOR ELEVATOR OPERATION - NOT TESTED DUE TO THE ROBOT BEING A LITTLE BITCH ///
-                //////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
                 // Extend / Retract
                 if (gamepad1.right_bumper) {
                     rightDrive.setPower(PARAMS.power);
@@ -60,10 +54,17 @@ public class ArmTest extends LinearOpMode {
                     leftDrive.setTargetPosition(leftStartingPos);
                 }
 
+                /// ARM MECHANISM TEST ///
+                if(gamepad1.y) {
+                    frontDrive.setPower(0.1);
+                } else if (gamepad1.a) {
+                    frontDrive.setPower(-0.1 );
+                }
 
                 /// Telemetry
                 telemetry.addData("Right: ", rightDrive.getCurrentPosition());
                 telemetry.addData("Left: ",  leftDrive.getCurrentPosition());
+                telemetry.addData("Front: ", frontDrive.getCurrentPosition());
 
                 telemetry.update();
             }
