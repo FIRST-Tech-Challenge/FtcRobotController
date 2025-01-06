@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class ManualOpMode extends OpMode {
 
     Moving moving;
+    Claw claw;
+
 
     @Override
     public void init(){
 
         moving = new Moving();
+        claw = new Claw();
         moving.setHW(hardwareMap, telemetry, gamepad1);
     }
     public void loop (){

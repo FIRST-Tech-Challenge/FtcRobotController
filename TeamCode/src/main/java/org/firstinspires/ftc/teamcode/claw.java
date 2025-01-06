@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class claw {
+public class Claw {
     //input hardware//
     DcMotor input_slides;
     Servo input_arm_pitch_left;
@@ -21,7 +21,10 @@ public class claw {
     Servo output_elbow_pitch_left;
     Servo output_wrist_roll;
     Servo output_claw;
-    public void clawHW(HardwareMap hwm, Telemetry tm, Gamepad gp){
+    Gamepad gamepad;
+
+    public void setHW(HardwareMap hwm, Telemetry tm, Gamepad gp) {
+
         input_slides = hwm.dcMotor.get(HMapConfig.INPUT_SLIDES);
         input_arm_pitch_left = hwm.servo.get(HMapConfig.INPUT_ARM_PITCH_LEFT);
         input_arm_pitch_right = hwm.servo.get(HMapConfig.INPUT_ARM_PITCH_RIGHT);
@@ -34,5 +37,34 @@ public class claw {
         output_elbow_pitch_left = hwm.servo.get(HMapConfig.OUTPUT_ELBOW_PITCH_LEFT);
         output_wrist_roll = hwm.servo.get(HMapConfig.OUTPUT_WRIST_ROLL);
         output_claw = hwm.servo.get(HMapConfig.OUTPUT_CLAW);
+
+        gamepad = gp;
+    }
+
+    public void move() {
+        if (gamepad.left_bumper) {
+            output_slides_right.setPower(1);
+            output_slides_left.setPower(1);
+        } else if (gamepad.right_bumper) {
+            output_slides_right.setPower(-1);
+            output_slides_left.setPower(-1);
+        } else {
+            output_slides_right.setPower(0);
+            output_slides_left.setPower(0);
+        }
+        input_slides.setPower(gamepad.left_trigger);
+        input_slides.setPower(-gamepad.right_trigger);
+
+        if (gamepad.dpad_up) {
+            input_arm_pitch_left.setPosition(1);
+            input_arm_pitch_right.setPosition(1);
+        }
+        if (gamepad.dpad_down) {
+            input_arm_pitch_left.setPosition(0);
+            input_arm_pitch_right.setPosition(0);
+        }
+
     }
 }
+
+
