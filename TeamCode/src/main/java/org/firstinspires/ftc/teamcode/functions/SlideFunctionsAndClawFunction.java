@@ -48,11 +48,30 @@ public class SlideFunctionsAndClawFunction {
         int rightSlidePosition = rightSlideMotor.getCurrentPosition();
         int leftSlidePosition = leftSlideMotor.getCurrentPosition();
 
-        //slide safety
-        // Gleb here, this works compeltely off of encoder values because the touch sensor is not setup properly yet.
+        //Legacy code. Switch to this if the slide safety button breaks
+        /*
         if ((rightSlidePosition <= -6000) && slidePower > 0 || (rightSlidePosition >= -100) && slidePower < 0) {
             slidePower = 0;
             telemetry.addData("Slide Safety is working", slideSafety);
+        }
+        */
+
+        /* If the right slide is too high and is receiving power,
+         * or if the slide safety is pressed and power is negative,
+         * set the power to zero.
+         *
+         * We don't reset the encoder value when the slide touches the safety because that requires
+         * us to put the motor into a completely different run mode; "STOP_AND_RESET" (or something
+         * along the lines of that). We firstly cannot do this in a loop, and secondly the workaround
+         * would be to make the reset a button press on the controller, in which case we don't need the
+         * button in the first place.
+         * All this button does essentially is provide a more foolproof
+         * stop on one end of the slide. It does not provide any sort of protections against an
+         * overextension on the other side of the slide.
+         */
+        if ((rightSlidePosition <= -6000) && slidePower > 0 || slideSafety.isPressed() && slidePower < 0) {
+            slidePower = 0;
+            telemetry.addData("Slide safety is working", slideSafety);
         }
 
         rightSlideMotor.setPower(slidePower * slidePowerConst);
@@ -69,7 +88,7 @@ public class SlideFunctionsAndClawFunction {
 
         boolean clawButtonPressed;
         // I set this to 0.9 in the small chance that our controller breaks and no one notices
-        // In an ideal world, it should be set to 1
+        // in an ideal world, it should be set to 1
         if (gamepad2.right_trigger >= 0.9) {
             clawButtonPressed = true;
         }
@@ -88,15 +107,26 @@ public class SlideFunctionsAndClawFunction {
 
     }
 
+    private boolean isServoMoving(Servo servoGiven) {
+        double oldServoPosition = servoGiven.getPosition();
+        //sleep(1);
+        double newServoPosition = servoGiven.getPosition();
+        if (newServoPosition - oldServoPosition != 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public void WristControl(Gamepad gamepad2, Telemetry telemetry) {
         telemetry.addData("Here's the line for the wrist", Wrist.getPosition());
         if (gamepad2.y) {
             double Current = Wrist.getPosition();
-            if (Current >= 1) {
+            if (Current >= 1 && !isServoMoving(Wrist)) {
                 Wrist.setPosition(0.25);
-            } else if (Current <= 0.25) {
-                Wrist.setPosition(0.6);
-            } else if ((Current >= 0.25) && (Current <= 1)) {
+            }
+            else {
                 Wrist.setPosition(1);
             }
         }
