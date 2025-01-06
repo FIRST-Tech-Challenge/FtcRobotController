@@ -19,7 +19,6 @@ public class AnimosityAndMortification extends Movable {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -91,15 +90,19 @@ public class AnimosityAndMortification extends Movable {
 
             // scissor lift
             // enter real values once you get to test
-//            if(gamepad1.right_stick_y > 0.5){
-//                ScissorLiftL.setPower(0.5);
-//                ScissorLiftR.setPower(-0.5);
-//            }else if(gamepad1.right_stick_y < -0.5) {
-//                ScissorLiftL.setPower(-0.5);
-//                ScissorLiftR.setPower(0.5);
-//            }else {
-//                disableArmMotors();
-//            }
+            if(gamepad1.right_stick_y > 0.5){
+                FRScissorLift.setPower(1);
+                FLScissorLift.setPower(1);
+                BRScissorLift.setPower(-1);
+                BLScissorLift.setPower(-1);
+            }else if(gamepad1.right_stick_y < -0.5) {
+                FRScissorLift.setPower(-1);
+                FLScissorLift.setPower(-1);
+                BRScissorLift.setPower(1);
+                BLScissorLift.setPower(1);
+            }else {
+                disableScissorPower();
+            }
 //
 //            if (gamepad1.a) {
 //                if (servoOpen) {
@@ -129,8 +132,10 @@ public class AnimosityAndMortification extends Movable {
         telemetry.addData("BLW Power:", BLW.getPower());
         telemetry.addData("FRW Power:", FRW.getPower());
         telemetry.addData("BRW Power:", BRW.getPower());
-//        telemetry.addData("ScissorLiftL Power:", ScissorLiftL.getPower());
-//        telemetry.addData("ScissorLiftR Power:", ScissorLiftR.getPower());
+        telemetry.addData("FRScissorLift Power:", FRScissorLift.getPower());
+        telemetry.addData("BRScissorLift Power:", BRScissorLift.getPower());
+        telemetry.addData("FLScissorLift Power:", FLScissorLift.getPower());
+        telemetry.addData("BLScissorLift Power:", BLScissorLift.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
 

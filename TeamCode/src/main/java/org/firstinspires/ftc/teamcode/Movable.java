@@ -10,6 +10,10 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BLW;
     static protected DcMotor FRW;
     static protected DcMotor BRW;
+    static protected DcMotor FRScissorLift;
+    static protected DcMotor BRScissorLift;
+    static protected DcMotor FLScissorLift;
+    static protected DcMotor BLScissorLift;
 
     //    static protected Servo ServoR;
 //    static protected Servo ServoL;
@@ -20,8 +24,11 @@ abstract class Movable extends LinearOpMode {
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         BRW = hardwareMap.get(DcMotor.class, "BRW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
-        ScissorLiftR = hardwareMap.get(DcMotor.class, "ScissorLiftR"); // change config if needed
-        ScissorLiftL = hardwareMap.get(DcMotor.class, "ScissorLiftL");
+        FRScissorLift = hardwareMap.get(DcMotor.class, "FRScissorLift"); // change config if needed
+        FLScissorLift = hardwareMap.get(DcMotor.class, "FLScissorLift");
+        BRScissorLift = hardwareMap.get(DcMotor.class, "BRScissorLift");
+        BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
+
 //        ServoR = hardwareMap.get(Servo.class, "ServoR");
 //        ServoL = hardwareMap.get(Servo.class, "ServoL");
 
@@ -89,8 +96,10 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void disableScissorPower() {
-        ScissorLiftL.setPower(0);
-        ScissorLiftR.setPower(0);
+        FRScissorLift.setPower(0);
+        BRScissorLift.setPower(0);
+        FLScissorLift.setPower(0);
+        BLScissorLift.setPower(0);
     }
     public void disablePower() {
         FLW.setPower(0);
@@ -101,21 +110,25 @@ abstract class Movable extends LinearOpMode {
 
     public void powerScissorLift(int miliseconds, String direction) {
         switch (direction) {
-            case "up":
-                ScissorLiftL.setPower(1);
-                ScissorLiftR.setPower(1);
+            case "up": // might not be accuarte
+                FRScissorLift.setPower(1);
+                FLScissorLift.setPower(1);
+                BRScissorLift.setPower(-1);
+                BLScissorLift.setPower(-1);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
             case "down":
-                ScissorLiftL.setPower(-1);
-                ScissorLiftR.setPower(-1);
+                FRScissorLift.setPower(-1);
+                FLScissorLift.setPower(-1);
+                BRScissorLift.setPower(1);
+                BLScissorLift.setPower(1);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
         }
     }
-//
+
 //    public void claw(String toggle) {
 //        switch (toggle) {
 //            case "open":
