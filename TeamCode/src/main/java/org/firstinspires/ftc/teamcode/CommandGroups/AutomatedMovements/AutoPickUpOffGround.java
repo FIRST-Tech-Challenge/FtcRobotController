@@ -27,14 +27,16 @@ public class AutoPickUpOffGround extends SequentialCommandGroup {
 
                 new HuntingPos(),
 
-                new OpenClaw(),
-
                 // Original location of ... moved down.
                 // new ConvertAngleForWristRotate(),
 
-                new Pause(0.25),
+                // new Pause(0.25),
 
                 new MoveToPickup(),
+
+                // Moved OpenClaw to after MoveToPickup to allow time for a driver to return a piece
+                // back to HuntingPos without dropping it.
+                new OpenClaw(),
 
                 // Moved here to move first to best vantage point.
                 new ConvertAngleForWristRotate(),
