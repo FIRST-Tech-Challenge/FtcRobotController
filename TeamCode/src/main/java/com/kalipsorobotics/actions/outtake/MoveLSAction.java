@@ -85,31 +85,31 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks < mmToTicksLS(30)) {
-            lowestPower = 0.3;
+            lowestPower = 0.35;
         }
 
         if (targetTicks < mmToTicksLS(15)) {
-            lowestPower = 0.15;
+            lowestPower = 0.20;
         }
 
         if (targetTicks > mmToTicksLS(100)) {
-            lowestPower = 0.13;
+            lowestPower = 0.18;
         }
 
         if (targetTicks > mmToTicksLS(400)) {
-            lowestPower = 0.15;
+            lowestPower = 0.20;
         }
 
         if (targetTicks > mmToTicksLS(650)) {
-            lowestPower = 0.28;
+            lowestPower = 0.33;
         }
 
-        if (targetTicks > mmToTicksLS(700)) {
-            lowestPower = 0.3;
+        if (targetTicks > mmToTicksLS(690)) {
+            lowestPower = 0.35;
         }
 
         if (targetTicks > mmToTicksLS(720)) {
-            lowestPower = 0.13;
+            lowestPower = 0.18;
         }
 
         if (Math.abs(power) < lowestPower) {
