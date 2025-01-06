@@ -18,7 +18,7 @@ public class AutoCommandOpMode extends CommandOpMode
     private double turnSpeed = 0.4;
     private double driveSpeed = 0.5;
 
-    private DrivetrainSub drive;
+    protected DrivetrainSub drive;
     private ImuSub imu;
     //private WebcamSub webcam;
     //protected IntakeSub intake;

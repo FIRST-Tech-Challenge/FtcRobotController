@@ -15,6 +15,8 @@ public class ArmSub extends SubsystemBase{
 
     public DcMotorEx armMotor;
 
+    public double degree;
+
     public ArmSub(HardwareMap hardwareMap, Telemetry telemetry) {
         this.armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         this.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -29,6 +31,7 @@ public class ArmSub extends SubsystemBase{
     @Override
     public void periodic() {
         telemetry.addData("Arm Pos", armMotor.getCurrentPosition());
+        telemetry.addData("Arm Deg", getDeg());
     }
 
     public DcMotor getMotor(){
@@ -79,5 +82,16 @@ public class ArmSub extends SubsystemBase{
         } else {
             armMotor.setVelocity(300);
         }
+    }
+
+    public double getDeg(){
+        return convertDeg(armMotor.getCurrentPosition());
+    }
+
+    public double convertDeg(int ticks){
+        return (ticks-135.0)*107.0/708.0;
+    }
+    public int convertTicks(double deg){
+        return (int)((deg*708/107)+135);
     }
 }

@@ -138,7 +138,7 @@ public class TeleOp25 extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(intakeOut);
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenReleased(intakeOff);
 
-        //toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(resetLinearSlide);
+        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(resetLinearSlide);
 
         // Wrist
         wrist = new WristSub(hardwareMap, telemetry);

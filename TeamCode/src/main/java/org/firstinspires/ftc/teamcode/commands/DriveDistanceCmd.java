@@ -35,7 +35,7 @@ public class DriveDistanceCmd extends CommandBase {
 
     @Override
     public void initialize() {
-        System.out.println("Drive Distance Initialized");
+        telemetry.addLine("Drive Distance Initialized");
         drivetrainSub.resetEncoders();
         if (driveDistance > 0){
             drivetrainSub.move(driveSpeed, 0);

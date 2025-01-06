@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.KeyReader;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.DriveDistanceCmd;
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ImuSub;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @TeleOp(name = "Macro Recorder! :)")
+@Disabled                     //:(
 public class MacroRecorder extends CommandOpMode {
 
     private GamepadEx driverOp;
