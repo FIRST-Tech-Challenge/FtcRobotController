@@ -16,7 +16,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class FloorToBarHangRoundTrip extends KActionSet {
 
-    public static final double SPECIMEN_HANG_POS_X = -685;
+    public static final double SPECIMEN_HANG_POS_X = -680;
     public static final double MOVE_TO_FLOOR_SPECIMEN_X = -77;
     public static final double MOVE_TO_FLOOR_SPECIMEN_Y = -216;
     public static final double MOVE_TO_FLOOR_SPECIMEN_HEADING = -89.4;

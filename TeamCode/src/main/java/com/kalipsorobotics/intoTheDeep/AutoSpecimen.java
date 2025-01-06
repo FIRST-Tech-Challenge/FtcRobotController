@@ -65,7 +65,7 @@ public class AutoSpecimen extends LinearOpMode {
         outtakeTransferReady.setDependentActions(wallToBarHangAction);
         redAutoSpecimen.addAction(outtakeTransferReady);
 
-        PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry,1.0/400.0);
+        PurePursuitAction moveFloorSamples = new PurePursuitAction(driveTrain, wheelOdometry,1.0/300.0);
         moveFloorSamples.setName("moveFloorSamples");
         moveFloorSamples.setDependentActions(wallToBarHangAction);
         //first sample to depot
@@ -77,7 +77,8 @@ public class AutoSpecimen extends LinearOpMode {
         //second sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180); //y -800
         moveFloorSamples.addPoint(-1330, -1065, -180);// before push
-        moveFloorSamples.addPoint(-375, -1065, -180);
+        moveFloorSamples.addPoint(-367.5,-1065,-180);
+        //moveFloorSamples.addPoint(-175, -1065, -180);
 
         //third sample to depot
 //        moveFloorSamples.addPoint(-1300, -1050, -180);
@@ -86,7 +87,7 @@ public class AutoSpecimen extends LinearOpMode {
 //        moveFloorSamples.addPoint(-430, -1175, -180);//move back out to avoid sample carry
         redAutoSpecimen.addAction(moveFloorSamples);
 
-        WaitAction waitBeforeSpecimenReady = new WaitAction(7000);
+        WaitAction waitBeforeSpecimenReady = new WaitAction(7000); // I swears its ok waiting for transfer ready
         waitBeforeSpecimenReady.setName("waitBeforeSpecimenReady");
         waitBeforeSpecimenReady.setDependentActions(wallToBarHangAction);
         redAutoSpecimen.addAction(waitBeforeSpecimenReady);
@@ -96,12 +97,13 @@ public class AutoSpecimen extends LinearOpMode {
         specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2200.0); //2200
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, WallToBarHangRoundTrip.WALL_PICKUP_PID_VALUE); //2200
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
         //to depot for specimen
         //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180); //-130, -615
+        moveToDepot.setMaxTimeOutMS(3000);
+        moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180);//-130, -615
         redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================
 
@@ -110,7 +112,7 @@ public class AutoSpecimen extends LinearOpMode {
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
                 outtake, 400); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
-        wallToBarHangRoundTrip2.setDependentActions(moveToDepot);
+        wallToBarHangRoundTrip2.setDependentActions(moveFloorSamples, specimenWallReady, moveToDepot);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
         //===============end of second specimen==============
 
