@@ -88,12 +88,10 @@ public class Lift {
         double currentPosition = ticksToInches(encoder.getCurrentPosition());
         boolean reverse = !(targetHeight - currentPosition >= 0);
         MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
+        ElapsedTime t = new ElapsedTime();
+        double initialPos = currentPosition;
 
-
-        return new Action() {
-
-            ElapsedTime t = new ElapsedTime();
-            double initialPos = currentPosition;
+        return new Action() {            
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 checkLimit();
