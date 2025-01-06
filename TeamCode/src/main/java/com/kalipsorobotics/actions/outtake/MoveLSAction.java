@@ -101,11 +101,11 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(650)) {
-            lowestPower = 0.25;
+            lowestPower = 0.28;
         }
 
         if (targetTicks > mmToTicksLS(700)) {
-            lowestPower = 0.26;
+            lowestPower = 0.3;
         }
 
         if (targetTicks > mmToTicksLS(720)) {
@@ -174,7 +174,7 @@ public class MoveLSAction extends Action {
             return true;
         }
 
-        if(velocityMMperMS < 0.01) {
+        if(velocityMMperMS < (1/20)) {
             if(timeoutTimer.milliseconds() > 500) {
                 Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                                 "targetTicks=%.3f, " +

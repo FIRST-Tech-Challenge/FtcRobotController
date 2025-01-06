@@ -136,10 +136,12 @@ public class Teleop extends LinearOpMode {
         int hangPos = 100;
         int hangIncrement = 60;
 
-        Init init = new Init(intakeClaw, outtake);
-        while(opModeInInit()) {
-            init.updateCheckDone();
-        }
+//        Init init = new Init(intakeClaw, outtake);
+//        while(opModeInInit()) {
+//            init.updateCheckDone();
+//        }
+        outtake.init();
+        intakeClaw.init();
 
         waitForStart();
 

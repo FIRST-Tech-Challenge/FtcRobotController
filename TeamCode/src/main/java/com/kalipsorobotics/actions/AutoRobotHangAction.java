@@ -11,7 +11,7 @@ public class AutoRobotHangAction extends KActionSet {
         moveOuttakeBack.setName("moveOuttakeBack");
         this.addAction(moveOuttakeBack);
 
-        MoveLSAction moveLsUp = new MoveLSAction(outtake, 750); //730
+        MoveLSAction moveLsUp = new MoveLSAction(outtake, 775); //730
         moveLsUp.setName("moveLsUp");
         this.addAction(moveLsUp);
 

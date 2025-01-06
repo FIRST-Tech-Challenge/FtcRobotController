@@ -101,7 +101,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X, 810, 90);
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-75, 780, 90);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
@@ -112,9 +112,9 @@ public class AutoBasketFunnel extends LinearOpMode {
 //        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
 //        redAutoBasket.addAction(sampleIntakeReady3);
 
-        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_INTAKE_READY_POS);
+        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
-        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
+        sampleIntakeReady3.setDependentActions(moveToSample3);
         redAutoBasket.addAction(sampleIntakeReady3);
 
         WaitAction waitAction3 = new WaitAction(300); // Make sure linkage fully extends (sample 3)
