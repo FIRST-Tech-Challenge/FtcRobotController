@@ -43,6 +43,8 @@ public class Teleop extends LinearOpMode {
 
     Action lastLSAction = null;
 
+    Action lastIntakeAction = null;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -226,10 +228,10 @@ public class Teleop extends LinearOpMode {
             if(specimenRoundTripPressed) {
                 if (wallToBarHangRoundTripTeleOp == null || wallToBarHangRoundTripTeleOp.getIsDone()){
                     hangPosY += hangIncrement;
-                    if (hangPosY > (hangIncrement*6+100)) {
+                    if (hangPosY > (hangIncrement * 6 + 100)) {
                         wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, hangPosY);
                         wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
-                    } else if (hangPosY > (hangIncrement*2+100)) {
+                    } else if (hangPosY > (hangIncrement * 2 + 100)) {
                         wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, hangPosY);
                         wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
                     } else {
@@ -281,12 +283,11 @@ public class Teleop extends LinearOpMode {
                 if (intakeFunnelEndToEndAction == null || intakeFunnelEndToEndAction.getIsDone()){
                     intakeFunnelEndToEndAction = new FunnelEndToEndAction(intakeClaw, outtake);
                     intakeFunnelEndToEndAction.setName("intakeFunnelReady");
+                    setLastIntakeAction(intakeFunnelEndToEndAction);
                 }
 
             }
-            if (intakeFunnelEndToEndAction != null){
-                intakeFunnelEndToEndAction.updateCheckDone();
-            }
+
 
 
 //            if(intakeFunnelActionPressed) {
@@ -312,6 +313,10 @@ public class Teleop extends LinearOpMode {
 
             if(!intakeClawOpenClose) {
                 if(intakeClawOpenCloseWasPressed) {
+
+                    setLastIntakeAction(null);
+
+
                     if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
                         intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
                         intakeClaw.getIntakeClawServo().setPosition(intakeClawPos);
@@ -324,7 +329,11 @@ public class Teleop extends LinearOpMode {
                 intakeClawOpenCloseWasPressed = false;
             }
 
+
+
             if (-intakeStickValue != 0) {
+                setLastIntakeAction(null);
+
                 intakeLinkagePos += 0.01 * intakeStickValue;
                 if (intakeLinkagePos < 0.57) {
                     intakeLinkagePos = 0.57;
@@ -335,10 +344,14 @@ public class Teleop extends LinearOpMode {
                 intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             }
 
+
+
             if (-sweepStickValue > 0.5 && intakeOverrideOn) {
+                setLastIntakeAction(null);
                 intakeBigSweepPos -= 0.005;
                 intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
             } else if (-sweepStickValue < -0.5 && intakeOverrideOn) {
+                setLastIntakeAction(null);
                 intakeBigSweepPos += 0.005;
                 intakeClaw.getIntakeBigSweepServo().setPosition(intakeBigSweepPos);
             }
@@ -362,11 +375,13 @@ public class Teleop extends LinearOpMode {
 //            }
 
             if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
+                setLastIntakeAction(null);
                 intakeSmallSweepPos += 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
+                setLastIntakeAction(null);
                 intakeSmallSweepPos -= 0.025;
                 intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
@@ -384,24 +399,22 @@ public class Teleop extends LinearOpMode {
                     sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                     Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
+
+                    setLastIntakeAction(sampleIntakeReady);
                 }
 
             }
-            if (sampleIntakeReady != null){
-                Log.d("teleop", "running sample intake  ready");
-                sampleIntakeReady.updateCheckDone();
-            }
+
 
             if(intakePressed) {
                 if (sampleIntakeAction == null || sampleIntakeAction.getIsDone()){
                     sampleIntakeAction = new SampleIntakeAction(intakeClaw);
                     sampleIntakeAction.setName("sampleIntakeAction");
+                    setLastIntakeAction(sampleIntakeAction);
                 }
 
             }
-            if (sampleIntakeAction != null){
-                sampleIntakeAction.updateCheckDone();
-            }
+
 
             if (intakeTransferReadyPressed){
                 if(intakeTransferReady != null) {
@@ -414,22 +427,19 @@ public class Teleop extends LinearOpMode {
                     intakeTransferReady = new IntakeTransferReady(intakeClaw);
                     Log.d("teleop", "made new intake transfer ready");
                     intakeTransferReady.setName("intakeTransferReady");
+                    setLastIntakeAction(intakeTransferReady);
                 }
 
             }
-            if (intakeTransferReady != null){
-                intakeTransferReady.updateCheckDone();
-            }
+
 
             if(transferPressed) {
                 if (transferAction == null || transferAction.getIsDone()){
                     transferAction = new TransferAction(intakeClaw, outtake);
                     transferAction.setName("transferAction");
+                    setLastIntakeAction(transferAction);
                 }
 
-            }
-            if (transferAction != null){
-                transferAction.updateCheckDone();
             }
 
             //OUTTAKE
@@ -575,6 +585,10 @@ public class Teleop extends LinearOpMode {
                 lastLSAction.updateCheckDone();
             }
 
+            if(lastIntakeAction != null) {
+                lastIntakeAction.updateCheckDone();
+            }
+
             if(needMaintainLs) {
                 if (lastLSAction == null || lastLSAction.getIsDone()) {
                     maintainLS.setIsDone(false);
@@ -599,6 +613,13 @@ public class Teleop extends LinearOpMode {
             lastLSAction.setIsDone(true);
         }
         lastLSAction = action;
+    }
+
+    private void setLastIntakeAction(Action action) {
+        if(lastIntakeAction != null) {
+            lastIntakeAction.setIsDone(true);
+        }
+        lastIntakeAction = action;
     }
 
     private boolean isLinearSlidesRunning(SpecimenHangReady specimenHangReady, SpecimenWallReady specimenWallReady) {
