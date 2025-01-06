@@ -230,7 +230,7 @@ public class PurePursuitAction extends Action {
         Log.d("purepursaction_debug_checkDone", "checkDoneCounter: " + checkDoneCounter + "name:" +  name);
 
         if (checkDoneCounter >= maxCheckDoneCounter) {
-            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name);
+            Log.d("purepursaction_debug_checkDone", "Done" + checkDoneCounter + "name:" +  name + "Pos: " + wheelOdometry.getCurrentPosition());
             isDone = true;
         }
 

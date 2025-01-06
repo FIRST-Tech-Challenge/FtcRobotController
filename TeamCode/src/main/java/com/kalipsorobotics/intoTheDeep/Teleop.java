@@ -8,7 +8,6 @@ import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
-import com.kalipsorobotics.actions.WallToBarHangRoundTripTeleOp;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
@@ -88,7 +87,7 @@ public class Teleop extends LinearOpMode {
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
         MoveLSAction moveLS = null;
-        WallToBarHangRoundTripTeleOp wallToBarHangRoundTripTeleOp = null;
+        WallToBarHangRoundTrip wallToBarHangRoundTripTeleOp = null;
 
         boolean needMaintainLs = true;
 
@@ -134,7 +133,7 @@ public class Teleop extends LinearOpMode {
         boolean sampleEndToEndSequencePressed;
         boolean specimenEndToEndSequencePressed;
 
-        int hangPos = 100;
+        int hangPosY = 100;
         int hangIncrement = 60;
 
 //        Init init = new Init(intakeClaw, outtake);
@@ -226,15 +225,15 @@ public class Teleop extends LinearOpMode {
 
             if(specimenRoundTripPressed) {
                 if (wallToBarHangRoundTripTeleOp == null || wallToBarHangRoundTripTeleOp.getIsDone()){
-                    hangPos += hangIncrement;
-                    if (hangPos > (hangIncrement*6+100)) {
-                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, -30);
+                    hangPosY += hangIncrement;
+                    if (hangPosY > (hangIncrement*6+100)) {
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, hangPosY);
                         wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
-                    } else if (hangPos > (hangIncrement*2+100)) {
-                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, -15);
+                    } else if (hangPosY > (hangIncrement*2+100)) {
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, hangPosY);
                         wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
                     } else {
-                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, 0);
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTrip(driveTrain, wheelOdometry, outtake, hangPosY);
                         wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
                     }
                 }
