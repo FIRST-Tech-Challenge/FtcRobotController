@@ -93,12 +93,12 @@ public class linearOpMode extends LinearOpMode {
       double slideAbdPower = gamepad2.right_stick_y;
 
       double wristPower = 0;
-      if (gamepad2.left_bumper) {
+      if (gamepad2.right_trigger) {
         wristPower = 1;
       } else if (gamepad2.left_trigger > 0) {
         wristPower = -1;
       } else {
-        wristPower = slideExtendPower * .80;
+        wristPower = slideExtendPower;
       }
 
       //theory
