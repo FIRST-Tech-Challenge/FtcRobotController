@@ -105,11 +105,11 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(690)) {
-            lowestPower = 0.35;
+            lowestPower = 0.4;
         }
 
         if (targetTicks > mmToTicksLS(720)) {
-            lowestPower = 0.18;
+            lowestPower = 0.3;
         }
 
         if (Math.abs(power) < lowestPower) {
