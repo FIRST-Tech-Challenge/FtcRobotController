@@ -54,6 +54,7 @@ public class TeleOpV1 extends OpMode {
     public ElapsedTime diffTimer = new ElapsedTime();
     public ElapsedTime deliveryTimer = new ElapsedTime();
     public ElapsedTime thisStateTimer = new ElapsedTime();
+    public ElapsedTime diffTimer2 = new ElapsedTime();
     //BOOLEANS==================================================================================================================
     public boolean deliveryGrippersClosed = false;
     public boolean diffTimerIsReset = false;
@@ -61,6 +62,7 @@ public class TeleOpV1 extends OpMode {
     public boolean grippersClosed = false;
     public boolean slidesReset = false;
     public boolean delivered = false;
+    public boolean pickedUpSample = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
     @Override
@@ -133,10 +135,15 @@ public class TeleOpV1 extends OpMode {
         }
         switch (state) {
             case START:
-                deliverySlides.runLeftSlideToPosition(0, 0.8);
-                deliverySlides.runRightSlideToPosition(0, 0.8);
-                slidesReset = true;
+                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                if(deliverySlides.getLeftSlidePosition() != 0) {
+                    deliverySlides.runLeftSlideToPosition(0, 1);
+                }
+                if(deliverySlides.getRightSlidePosition()!= 0) {
+                    deliverySlides.runRightSlideToPosition(0, 1);
+                }
+                slidesReset = true;
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
                 intakeSlides.runToPosition(constants.INTAKE_MOTOR_IN, 0.5);
@@ -144,6 +151,10 @@ public class TeleOpV1 extends OpMode {
                 grippersClosed = true;
                 break;
             case HOVER_OVER_SAMPLE:
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.START;
+                    buttonTimer.reset();
+                }
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
                     wrist.moveLeft(0.2);
                     buttonTimer.reset();
@@ -156,30 +167,55 @@ public class TeleOpV1 extends OpMode {
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
                 intakeSlides.runToPosition(constants.INTAKE_MOTOR_OUT, 0.5);
-                differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
-                differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
+                differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_HOVER);
+                differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_HOVER);
+                diffTimer.reset();
+                diffTimer2.reset();
+                grippersTimer.reset();
+                pickedUpSample = false;
                 break;
             case ARM_UP:
-                if(grippersTimer.seconds() > 0.5) {
-                    differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
-                    differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.HOVER_OVER_SAMPLE;
+                    buttonTimer.reset();
                 }
-                if(grippersTimer.seconds() > 1){
-                    grippers.setPosition(constants.GRIPPERS_CLOSE);
-                    if(!diffTimerIsReset) {
-                        diffTimer.reset();
-                        diffTimerIsReset = true;
+                //TODO: Sam said to make button to release grippers, but this current program can't do that
+                if(!pickedUpSample){
+                    differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
+                    differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
+                    if(diffTimer2.seconds() > 0.4){
+                        grippers.setPosition(constants.GRIPPERS_GRAB);
                     }
-                    if(diffTimer.seconds() > 0.6) {
-                        intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
-                    }
+                   if (diffTimer2.seconds() > 1){
+                       pickedUpSample = true;
+                   }
                 }
                 else {
-                    grippers.setPosition(constants.GRIPPERS_GRAB);
+                    wrist.setPosition(constants.WRIST_CENTER);
+                    if (grippersTimer.seconds() > 0.5) {
+                        differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
+                        differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
+                    }
+                    if (grippersTimer.seconds() > 1) {
+                        grippers.setPosition(constants.GRIPPERS_CLOSE);
+                        if (!diffTimerIsReset) {
+                            diffTimer.reset();
+                            diffTimerIsReset = true;
+                        }
+                        if (diffTimer.seconds() > 0.6) {
+                            intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
+                        }
+                    } else {
+                        grippers.setPosition(constants.GRIPPERS_GRAB);
+                    }
                 }
-                deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                    deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 break;
             case READY_FOR_DELIVERY:
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.ARM_UP;
+                    buttonTimer.reset();
+                }
                 diffTimerIsReset = false;
                 //Move delivery arm to sample
                 intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
@@ -208,6 +244,7 @@ public class TeleOpV1 extends OpMode {
                 break;
             case DROP_HIGH:
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+                deliveryAxon.setPosition(constants.DELIVERY_DROP);
                 break;
         }
         telemetry.addLine("STATE: " + state.name());
@@ -242,11 +279,14 @@ public class TeleOpV1 extends OpMode {
             case READY_FOR_DELIVERY:
                 return SystemStatesV1.DELIVER_UP;
             case DELIVER_UP:
+                return SystemStatesV1.DROP_HIGH;
+            case DROP_HIGH:
                 return SystemStatesV1.START;
             default:
                 return SystemStatesV1.ERROR;
         }
     }
+
     public void setDiffPosition(double position){
         differentialV2.setTopRightServoPosition(position);
         differentialV2.setTopLeftServoPosition(position);
