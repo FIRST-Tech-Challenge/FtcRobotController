@@ -4,31 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 
 @TeleOp
-public class AnimosityAndMortification extends LinearOpMode {
+public class AnimosityAndMortification extends Movable {
     //variables
     static double tgtPower = 0;
     static double tgtPower2 = 0;
     static boolean stop = false;
-    static private DcMotor FLW;
-    static private DcMotor BLW;
-    static private DcMotor FRW;
-    static private DcMotor BRW;
-    static private DcMotor ScissorLiftR;
-    static private DcMotor ScissorLiftL;
-    static private Servo ServoR;
-    static private Servo ServoL;
     static private boolean servoOpen = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FLW = hardwareMap.get(DcMotor.class, "FLW");
-        BLW = hardwareMap.get(DcMotor.class, "BLW");
-        BRW = hardwareMap.get(DcMotor.class, "BRW");
-        FRW = hardwareMap.get(DcMotor.class, "FRW");
-        ScissorLiftR = hardwareMap.get(DcMotor.class, "ScissorLiftR"); // change config if needed
-        ScissorLiftL = hardwareMap.get(DcMotor.class, "ScissorLiftL");
-        ServoR = hardwareMap.get(Servo.class, "ServoR");
-        ServoL = hardwareMap.get(Servo.class, "ServoL");
+        super.runOpMode();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
@@ -106,27 +91,27 @@ public class AnimosityAndMortification extends LinearOpMode {
 
             // scissor lift
             // enter real values once you get to test
-            if(gamepad1.right_stick_y > 0.5){
-                ScissorLiftL.setPower(0.5);
-                ScissorLiftR.setPower(-0.5);
-            }else if(gamepad1.right_stick_y < -0.5) {
-                ScissorLiftL.setPower(-0.5);
-                ScissorLiftR.setPower(0.5);
-            }else {
-                disableArmMotors();
-            }
-
-            if (gamepad1.a) {
-                if (servoOpen) {
-                    ServoR.setPosition(1);
-                    ServoL.setPosition(1);
-                    servoOpen = false;
-                } else {
-                    ServoR.setPosition(0);
-                    ServoL.setPosition(0);
-                    servoOpen = true;
-                }
-            }
+//            if(gamepad1.right_stick_y > 0.5){
+//                ScissorLiftL.setPower(0.5);
+//                ScissorLiftR.setPower(-0.5);
+//            }else if(gamepad1.right_stick_y < -0.5) {
+//                ScissorLiftL.setPower(-0.5);
+//                ScissorLiftR.setPower(0.5);
+//            }else {
+//                disableArmMotors();
+//            }
+//
+//            if (gamepad1.a) {
+//                if (servoOpen) {
+//                    ServoR.setPosition(1);
+//                    ServoL.setPosition(1);
+//                    servoOpen = false;
+//                } else {
+//                    ServoR.setPosition(0);
+//                    ServoL.setPosition(0);
+//                    servoOpen = true;
+//                }
+//            }
             updatePhoneConsole();
         }
     }
@@ -137,11 +122,6 @@ public class AnimosityAndMortification extends LinearOpMode {
         FRW.setPower(0);
         BRW.setPower(0);}
 
-    public static void disableArmMotors() {
-        ScissorLiftL.setPower(0);
-        ScissorLiftR.setPower(0);
-    }
-
     public void updatePhoneConsole() {
         telemetry.addData("Status","Running");
         telemetry.addData("Target Power:", tgtPower);
@@ -149,8 +129,8 @@ public class AnimosityAndMortification extends LinearOpMode {
         telemetry.addData("BLW Power:", BLW.getPower());
         telemetry.addData("FRW Power:", FRW.getPower());
         telemetry.addData("BRW Power:", BRW.getPower());
-        telemetry.addData("ScissorLiftL Power:", ScissorLiftL.getPower());
-        telemetry.addData("ScissorLiftR Power:", ScissorLiftR.getPower());
+//        telemetry.addData("ScissorLiftL Power:", ScissorLiftL.getPower());
+//        telemetry.addData("ScissorLiftR Power:", ScissorLiftR.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
 

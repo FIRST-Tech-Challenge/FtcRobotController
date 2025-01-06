@@ -4,28 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 
 @TeleOp
-public class bleh extends LinearOpMode {
+public class bleh extends Movable {
     //variables
     static double tgtPower = 0;
     static double tgtPower2 = 0;
     static boolean stop = false;
-    static private DcMotor FLW;
-    static private DcMotor BLW;
-    static private DcMotor FRW;
-    static private DcMotor BRW;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FLW = hardwareMap.get(DcMotor.class, "FLW");
-        BLW = hardwareMap.get(DcMotor.class, "BLW");
-        BRW = hardwareMap.get(DcMotor.class, "BRW");
-        FRW = hardwareMap.get(DcMotor.class, "FRW");
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        super.runOpMode();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -64,7 +53,7 @@ public class bleh extends LinearOpMode {
                         FRW.setPower(0.5);
                         BRW.setPower(-0.5);
                         Thread.sleep(210);
-                        disablePowerWheels();
+                        disablePower();
 
                         stop = true;
                         Thread.sleep(1000);
@@ -83,7 +72,7 @@ public class bleh extends LinearOpMode {
                         FRW.setPower(-0.5);
                         BRW.setPower(0.5);
                         Thread.sleep(210);
-                        disablePowerWheels();
+                        disablePower();
 
                         stop = true;
                         Thread.sleep(1000);
@@ -92,21 +81,13 @@ public class bleh extends LinearOpMode {
                     }
                 }).start();
             } else {
-                disablePowerWheels();
+                disablePower();
             }
 
 
             updatePhoneConsole();
         }
     }
-
-    public static void disablePowerWheels() {
-        FLW.setPower(0);
-        BLW.setPower(0);
-        FRW.setPower(0);
-        BRW.setPower(0);
-    }
-
 
 
     public void updatePhoneConsole() {

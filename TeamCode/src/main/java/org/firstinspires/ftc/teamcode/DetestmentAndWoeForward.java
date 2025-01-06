@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class DetestmentAndWoeForward extends LinearOpMode {
+public class DetestmentAndWoeForward extends Movable {
     static private DcMotor FLW;
     static private DcMotor BLW;
     static private DcMotor FRW;
@@ -14,11 +14,7 @@ public class DetestmentAndWoeForward extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FLW = hardwareMap.get(DcMotor.class, "FLW");
-        BLW = hardwareMap.get(DcMotor.class, "BLW");
-        BRW = hardwareMap.get(DcMotor.class, "BRW");
-        FRW = hardwareMap.get(DcMotor.class, "FRW");
-
+        super.runOpMode();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
@@ -32,57 +28,6 @@ public class DetestmentAndWoeForward extends LinearOpMode {
         disablePower();
         telemetry.addData("Status", "Completed");
         telemetry.update();
-    }
-
-
-
-    public void powerWheels(int miliseconds, String direction) {
-        try {
-            switch (direction) {
-                case "forward":
-                    FLW.setPower(0.5);
-                    BLW.setPower(0.5);
-                    FRW.setPower(0.5);
-                    BRW.setPower(-0.5);
-                    sleep(miliseconds);
-                    disablePower();
-                    break;
-                case "backward":
-                    FLW.setPower(-0.5);
-                    BLW.setPower(-0.5);
-                    FRW.setPower(-0.5);
-                    BRW.setPower(0.5);
-                    sleep(miliseconds);
-                    disablePower();
-                    break;
-                case "right":
-                    FLW.setPower(0.5);
-                    BLW.setPower(-0.5);
-                    FRW.setPower(-0.5);
-                    BRW.setPower(-0.5);
-                    sleep(miliseconds);
-                    disablePower();
-                    break;
-                case "left":
-                    FLW.setPower(-0.5);
-                    BLW.setPower(0.5);
-                    FRW.setPower(0.5);
-                    BRW.setPower(0.5);
-                    sleep(miliseconds);
-                    disablePower();
-                    break;
-            }
-        } catch (Exception e) {
-            telemetry.addData("Error", "Error in powerWheels: " + e.getMessage());
-            telemetry.update();
-        }
-    }
-
-    public static void disablePower() {
-        FLW.setPower(0);
-        BLW.setPower(0);
-        FRW.setPower(0);
-        BRW.setPower(0);
     }
 
     public void updatePhoneConsole() {

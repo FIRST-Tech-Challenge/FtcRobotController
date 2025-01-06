@@ -7,29 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class DetestmentAndWoeARHAN extends LinearOpMode {
-    static private DcMotor FLW;
-    static private DcMotor BLW;
-    static private DcMotor FRW;
-    static private DcMotor BRW;
-    static private DcMotor ScissorLiftR;
-    static private DcMotor ScissorLiftL;
-    static private Servo ServoR;
-    static private Servo ServoL;
-
+public class DetestmentAndWoeARHAN extends Movable {
     @Override
     public void runOpMode() throws InterruptedException {
-        FLW = hardwareMap.get(DcMotor.class, "FLW");
-        BLW = hardwareMap.get(DcMotor.class, "BLW");
-        BRW = hardwareMap.get(DcMotor.class, "BRW");
-        FRW = hardwareMap.get(DcMotor.class, "FRW");
-        ScissorLiftR = hardwareMap.get(DcMotor.class, "ScissorLiftR"); // change config if needed
-        ScissorLiftL = hardwareMap.get(DcMotor.class, "ScissorLiftL");
-        ServoR = hardwareMap.get(Servo.class, "ServoR");
-        ServoL = hardwareMap.get(Servo.class, "ServoL");
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        super.runOpMode();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -63,105 +44,6 @@ public class DetestmentAndWoeARHAN extends LinearOpMode {
         disablePower();
         telemetry.addData("Status", "Completed");
         telemetry.update();
-    }
-    // front right wheel is the only one WRONG
-    public void powerWheels(int miliseconds, String direction) {
-        switch (direction) {
-            case "forward":
-                FLW.setPower(0.3);
-                BLW.setPower(0.3);
-                FRW.setPower(-0.3);
-                BRW.setPower(-0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-            case "backward":
-                FLW.setPower(-0.3);
-                BLW.setPower(-0.3);
-                FRW.setPower(0.3);
-                BRW.setPower(0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-            case "right":
-                FLW.setPower(0.3);
-                BLW.setPower(-0.3);
-                FRW.setPower(0.3);
-                BRW.setPower(-0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-            case "left":
-                FLW.setPower(-0.3);
-                BLW.setPower(0.3);
-                FRW.setPower(-0.3);
-                BRW.setPower(0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-        }
-    }
-
-    public void turnRobot(int miliseconds, String direction) {
-        switch (direction) {
-            case "left":
-                FLW.setPower(-0.3);
-                BLW.setPower(-0.3);
-                FRW.setPower(-0.3);
-                BRW.setPower(-0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-            case "right":
-                FLW.setPower(0.3);
-                BLW.setPower(0.3);
-                FRW.setPower(0.3);
-                BRW.setPower(0.3);
-                sleep(miliseconds);
-                disablePower();
-                break;
-        }
-    }
-
-    public void powerScissorLift(int miliseconds, String direction) {
-        switch (direction) {
-            case "up":
-                ScissorLiftL.setPower(1);
-                ScissorLiftR.setPower(1);
-                sleep(miliseconds);
-                disableScissorPower();
-                break;
-            case "down":
-                ScissorLiftL.setPower(-1);
-                ScissorLiftR.setPower(-1);
-                sleep(miliseconds);
-                disableScissorPower();
-                break;
-        }
-    }
-
-    public void claw(String toggle) {
-        switch (toggle) {
-            case "open":
-                ServoR.setPosition(1);
-                ServoL.setPosition(1);
-                break;
-            case "close":
-                ServoR.setPosition(0);
-                ServoL.setPosition(0);
-                break;
-        }
-    }
-
-    public void disableScissorPower() {
-        ScissorLiftL.setPower(0);
-        ScissorLiftR.setPower(0);
-    }
-    public void disablePower() {
-        FLW.setPower(0);
-        BLW.setPower(0);
-        FRW.setPower(0);
-        BRW.setPower(0);
     }
 
     public void updatePhoneConsole() {
