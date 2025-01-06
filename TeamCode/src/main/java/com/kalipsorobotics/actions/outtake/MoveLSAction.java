@@ -85,11 +85,11 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks < mmToTicksLS(30)) {
-            lowestPower = 0.35;
+            lowestPower = 0.30;
         }
 
         if (targetTicks < mmToTicksLS(15)) {
-            lowestPower = 0.20;
+            lowestPower = 0.15;
         }
 
         if (targetTicks > mmToTicksLS(100)) {
@@ -108,9 +108,15 @@ public class MoveLSAction extends Action {
             lowestPower = 0.4;
         }
 
-        if (targetTicks > mmToTicksLS(720)) {
-            lowestPower = 0.3;
+        if (targetTicks > mmToTicksLS(705)) {
+            lowestPower = 0.5;
         }
+
+        if (targetTicks > mmToTicksLS(720)) {
+            lowestPower = 0.6;
+        }
+
+        //action timeout =raiseSlidesBasket, targetErrorTicks=105.623, errorTolerance=25.659, targetTicks=3643.623, currentTicks=3538.000,
 
         if (Math.abs(power) < lowestPower) {
             power = power * (lowestPower / Math.abs(power));
