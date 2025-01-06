@@ -8,7 +8,7 @@ public class MovementCurvesTest {
         assert (MovementCurves.exponentialEaseOut(-.01) == -1);
         assert (MovementCurves.parametricCurve(-.01) == -1);
         assert (MovementCurves.quadraticCurve(-.01) == -1);
-        assert (MovementCurves.Normal(-.01) == -1);
+        assert (MovementCurves.normalCurve(-.01) == -1);
         assert (MovementCurves.roundedSquareCurve(-.01) == -1);
         assert (MovementCurves.sinCurve(-.01) == -1);
         assert (MovementCurves.linear(-.01) == -1);
@@ -18,7 +18,7 @@ public class MovementCurvesTest {
         assert (MovementCurves.exponentialEaseOut(1.01) == -1);
         assert (MovementCurves.parametricCurve(1.01) == -1);
         assert (MovementCurves.quadraticCurve(1.01) == -1);
-        assert (MovementCurves.Normal(1.01) == -1);
+        assert (MovementCurves.normalCurve(1.01) == -1);
         assert (MovementCurves.roundedSquareCurve(-.01) == -1);
         assert (MovementCurves.sinCurve(1.01) == -1);
         assert (MovementCurves.linear(1.01) == -1);
@@ -31,7 +31,7 @@ public class MovementCurvesTest {
             assert (MovementCurves.exponentialEaseOut(i) >= 0 && MovementCurves.exponentialEaseOut(i) <= 1);
             assert (MovementCurves.parametricCurve(i) >= 0 && MovementCurves.parametricCurve(i) <= 1);
             assert (MovementCurves.quadraticCurve(i) >= 0 && MovementCurves.quadraticCurve(i) <= 1);
-            assert (MovementCurves.Normal(i) >= 0 && MovementCurves.Normal(i) <= 1);
+            assert (MovementCurves.normalCurve(i) >= 0 && MovementCurves.normalCurve(i) <= 1);
             assert (MovementCurves.roundedSquareCurve(i) >= 0 && MovementCurves.roundedSquareCurve(i) <= 1);
             assert (MovementCurves.sinCurve(i) >= 0 && MovementCurves.sinCurve(i) <= 1);
             assert (MovementCurves.linear(i) >= 0 && MovementCurves.linear(i) <= 1);
@@ -43,7 +43,7 @@ public class MovementCurvesTest {
         assert (MovementCurves.circleCurve(.5) == 1);
         assert (MovementCurves.parametricCurve(.5) == 1);
         assert (MovementCurves.quadraticCurve(.5) == 1);
-        assert (MovementCurves.Normal(.5) == 1);
+        assert (MovementCurves.normalCurve(.5) == 1);
         assert (MovementCurves.roundedSquareCurve(.5) == 1);
         assert (MovementCurves.sinCurve(.5) == 1);
         assert (MovementCurves.linear(.5) == 1);
