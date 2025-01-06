@@ -9,7 +9,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 
 public class TrajectoryCommand extends CommandBase {
-    private final Action trajectoryAction;
+    protected Action trajectoryAction;
     private boolean isFinished = false;
 
 

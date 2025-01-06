@@ -17,17 +17,33 @@ public class MeepMeepTesting {
                 .setStartPose(new Pose2d(0, -61, Math.toRadians(180)))
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -61, Math.toRadians(180)))
-                .strafeTo(new Vector2d(0, -34))
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -61, Math.toRadians(180)))
+//                .strafeTo(new Vector2d(0, -30.5))
+//                .build());
+
+        // Prepare to push specimen
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -30.5, Math.toRadians(180)))
+                .strafeTo(new Vector2d(0, -40))
+                .strafeToLinearHeading(new Vector2d(31, -40), Math.toRadians(0))
+                .strafeTo(new Vector2d(38, -20))
                 .build());
+        // push samples
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(40, -24, Math.toRadians(0)))
+//                        .strafeTo(new Vector2d(40, -61))
+//                .strafeTo(new Vector2d(45, -24))
+//                .strafeTo(new Vector2d(45, -61)).build());
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -34, Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(40, -55), Math.toRadians(0))
-                .waitSeconds(1)
-                .strafeTo(new Vector2d(40, -60)).build());
+//        // push to prime pickup
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(45, -61, Math.toRadians(0)))
+//                .strafeTo(new Vector2d(43, -55)).build());
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(40, -60, 0))
-                .strafeToLinearHeading(new Vector2d(0, -34), Math.toRadians(180)).build());
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -34, Math.toRadians(180)))
+//                .strafeToLinearHeading(new Vector2d(40, -55), Math.toRadians(0))
+//                .waitSeconds(1)
+//                .strafeTo(new Vector2d(40, -60)).build());
+//
+//        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(40, -60, 0))
+//                .strafeToLinearHeading(new Vector2d(0, -34), Math.toRadians(180)).build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)
                 .setDarkMode(true)

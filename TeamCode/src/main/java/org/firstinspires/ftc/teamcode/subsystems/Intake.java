@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,6 +9,8 @@ public class Intake extends SubsystemBase {
     private Servo intakePivot;
     private Servo intakeExt;
     private IntakeState state;
+
+    private Servo kicker;
 
     public enum IntakeState {
         HOME,
@@ -22,6 +23,8 @@ public class Intake extends SubsystemBase {
         this.intakePivot = hMap.get(Servo.class, "IntakePivot");
         this.intakeExt = hMap.get(Servo.class, "IntakeExt");
         this.state = IntakeState.HOME;
+
+        this.kicker = hMap.get(Servo.class, "Kicker");
 
     }
 
@@ -61,5 +64,19 @@ public class Intake extends SubsystemBase {
         }
 
     }
+
+    public void extendKicker() {
+
+        kicker.setPosition(0.35);
+
+    }
+
+    public void retractKicker() {
+
+        kicker.setPosition(0);
+
+    }
+
+
 
 }

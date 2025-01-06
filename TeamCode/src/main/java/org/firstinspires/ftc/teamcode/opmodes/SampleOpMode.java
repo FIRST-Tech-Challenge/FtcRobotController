@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.commands.PivotIntake;
 import org.firstinspires.ftc.teamcode.commands.RetractIntake;
 import org.firstinspires.ftc.teamcode.commands.ScoreAtBucket;
+import org.firstinspires.ftc.teamcode.commands.SetKickerPosition;
 import org.firstinspires.ftc.teamcode.commands.SetRollerState;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -76,9 +77,12 @@ public class SampleOpMode extends CommandOpMode {
                 operator, GamepadKeys.Button.RIGHT_BUMPER
         );
 
-        GamepadButton scoreAtBucket = new GamepadButton(
+        GamepadButton kickerButton = new GamepadButton(
                 driver, GamepadKeys.Button.A
         );
+
+        kickerButton.whenPressed(new SetKickerPosition(false, intake))
+                .whenReleased(new SetKickerPosition(true, intake));
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));

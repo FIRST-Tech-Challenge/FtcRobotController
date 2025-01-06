@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.CloseClaw;
@@ -33,10 +34,10 @@ public class TwoSpecimenAuto extends CommandOpMode {
         elevator = new Elevator(hardwareMap, telemetry);
         intake = new Intake(hardwareMap);
         Action driveToFirstScore = drivetrain.getTrajectoryBuilder(new Pose2d(0, -61, Math.toRadians(180)))
-                .strafeTo(new Vector2d(0, -30.5))
+                .strafeTo(new Vector2d(0, -32.5))
                         .build();
 
-        Action driveToPrimePickup = drivetrain.getTrajectoryBuilder(new Pose2d(0, -30.5, Math.toRadians(180)))
+        Action driveToPrimePickup = drivetrain.getTrajectoryBuilder(new Pose2d(0, -32.5, Math.toRadians(180)))
                 .strafeToLinearHeading(new Vector2d(43, -55), Math.toRadians(0))
                 .build();
 
@@ -45,7 +46,7 @@ public class TwoSpecimenAuto extends CommandOpMode {
         register(drivetrain, claw, elevator, intake);
 
         Action driveToScore2 = drivetrain.getTrajectoryBuilder(new Pose2d(43, -63, Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(-6, -30.5), Math.toRadians(180)).build();
+                .strafeToLinearHeading(new Vector2d(-6, -32.5), Math.toRadians(180)).build();
         schedule(new RunCommand(() -> telemetry.update()));
         waitForStart();
 
@@ -68,6 +69,7 @@ public class TwoSpecimenAuto extends CommandOpMode {
                 // pick up specimen and close claw, then raise elevator
                 new TrajectoryCommand(driveToPickup, drivetrain),
                 new CloseClaw(claw),
+                new WaitCommand(500),
                 new ElevatorGoTo(elevator, 6).withTimeout(3000),
                 // drive to chamber and raise elevator to scoring height
                 new ParallelCommandGroup(
