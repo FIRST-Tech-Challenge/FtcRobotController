@@ -135,15 +135,12 @@ public class AnimosityAndMortification extends LinearOpMode {
         FLW.setPower(0);
         BLW.setPower(0);
         FRW.setPower(0);
-        BRW.setPower(0);
-    }
+        BRW.setPower(0);}
 
-    public static void disableArmMotors()   {
+    public static void disableArmMotors() {
         ScissorLiftL.setPower(0);
         ScissorLiftR.setPower(0);
     }
-
-
 
     public void updatePhoneConsole() {
         telemetry.addData("Status","Running");
