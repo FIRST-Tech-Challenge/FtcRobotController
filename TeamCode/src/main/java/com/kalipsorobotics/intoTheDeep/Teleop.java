@@ -12,6 +12,7 @@ import com.kalipsorobotics.actions.WallToBarHangRoundTripTeleOp;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
+import com.kalipsorobotics.actions.intake.FunnelEndToEndAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
@@ -82,7 +83,7 @@ public class Teleop extends LinearOpMode {
         SampleEndToEndSequence sampleEndToEndSequence = null;
         SampleEndToEndSequence specimenEndToEndSequence = null;
         SpecimenHang specimenHang = null;
-        IntakeFunnelReady intakeFunnelReady = null;
+        FunnelEndToEndAction intakeFunnelEndToEndAction = null;
         IntakeFunnelAction intakeFunnelAction = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
@@ -106,8 +107,8 @@ public class Teleop extends LinearOpMode {
         boolean angleLockPressed;
         boolean hangPressed = false;
         boolean moveWallTeleopPressed = false;
-        boolean intakeFunnelReadyPressed = false;
-        boolean intakeFunnelActionPressed = false;
+        boolean intakeFunnelEndToEndPressed = false;
+//        boolean intakeFunnelActionPressed = false;
         boolean specimenRoundTripPressed = false;
 
         // GAMEPAD 2
@@ -151,8 +152,7 @@ public class Teleop extends LinearOpMode {
             angleLockPressed = kGamePad1.isToggleButtonY();
             hangPressed = kGamePad1.isToggleButtonB();
             moveWallTeleopPressed = kGamePad1.isToggleButtonA();
-            intakeFunnelReadyPressed = kGamePad1.isToggleDpadLeft();
-            intakeFunnelActionPressed = kGamePad1.isToggleDpadDown();
+            intakeFunnelEndToEndPressed = kGamePad1.isToggleDpadLeft();
             specimenRoundTripPressed = kGamePad1.isToggleButtonX();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
@@ -276,28 +276,31 @@ public class Teleop extends LinearOpMode {
             }
 
             //INTAKE SAMPLE IN FUNNEL
-            if(intakeFunnelReadyPressed) {
-                if (intakeFunnelReady == null || intakeFunnelReady.getIsDone()){
-                    intakeFunnelReady = new IntakeFunnelReady(intakeClaw, outtake);
-                    intakeFunnelReady.setName("intakeFunnelReady");
+
+
+            if(intakeFunnelEndToEndPressed) {
+                if (intakeFunnelEndToEndAction == null || intakeFunnelEndToEndAction.getIsDone()){
+                    intakeFunnelEndToEndAction = new FunnelEndToEndAction(intakeClaw, outtake);
+                    intakeFunnelEndToEndAction.setName("intakeFunnelReady");
                 }
 
             }
-            if (intakeFunnelReady != null){
-                intakeFunnelReady.updateCheckDone();
+            if (intakeFunnelEndToEndAction != null){
+                intakeFunnelEndToEndAction.updateCheckDone();
             }
 
-            if(intakeFunnelActionPressed) {
-                if (intakeFunnelAction == null || intakeFunnelAction.getIsDone()){
-                    intakeFunnelAction = new IntakeFunnelAction(intakeClaw, outtake);
-                    intakeFunnelAction.setName("intakeFunnelAction");
-                }
 
-            }
-            if (intakeFunnelAction != null){
-                intakeFunnelAction.updateCheckDone();
-            }
-
+//            if(intakeFunnelActionPressed) {
+//                if (intakeFunnelAction == null || intakeFunnelAction.getIsDone()){
+//                    intakeFunnelAction = new IntakeFunnelAction(intakeClaw, outtake);
+//                    intakeFunnelAction.setName("intakeFunnelAction");
+//                }
+//
+//            }
+//            if (intakeFunnelAction != null){
+//                intakeFunnelAction.updateCheckDone();
+//            }
+//
 
 
             //===============DRIVER 2===============
