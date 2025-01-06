@@ -174,7 +174,7 @@ public class MoveLSAction extends Action {
             return true;
         }
 
-        if(velocityMMperMS < (1/20)) {
+        if(velocityMMperMS < (0.05)) {
             if(timeoutTimer.milliseconds() > 500) {
                 Log.d("Outtake_LS", String.format("action timeout =%s, targetErrorTicks=%.3f, errorTolerance=%.3f, " +
                                 "targetTicks=%.3f, " +

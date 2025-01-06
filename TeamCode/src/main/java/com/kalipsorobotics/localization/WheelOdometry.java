@@ -39,6 +39,7 @@ public class WheelOdometry {
 //    private final double MM_TO_INCH = 1/25.4;
 
     private WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
+        this.opModeUtilities = opModeUtilities;
         resetHardware(opModeUtilities, driveTrain, imuModule, this);
 
         this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
@@ -61,7 +62,6 @@ public class WheelOdometry {
     }
 
     private static void resetHardware(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, WheelOdometry wheelOdometry) {
-        wheelOdometry.opModeUtilities = opModeUtilities;
         wheelOdometry.imuModule = imuModule;
         wheelOdometry.rightEncoder = driveTrain.getRightEncoder();
         wheelOdometry.leftEncoder = driveTrain.getLeftEncoder();

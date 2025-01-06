@@ -40,8 +40,8 @@ public class WallToBarHangRoundTripTeleOp extends KActionSet {
         moveToBar1.setName("moveToBar2");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(waitAtWallPurePursuit);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+100, hangPosY, 0);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+10, hangPosY, 0);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 100, hangPosY, 0);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X + 10, hangPosY, 0);
         this.addAction(moveToBar1);
 
         MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
@@ -59,7 +59,8 @@ public class WallToBarHangRoundTripTeleOp extends KActionSet {
         moveToBar2.setName("moveToBar2");
         moveToBar2.setMaxTimeOutMS(1000);
         moveToBar2.setDependentActions(specimenHangReady, moveToBar1);
-        moveToBar2.addPoint(SPECIMEN_HANG_POS_X-30+additionalX, hangPosY, 0);
+        moveToBar2.addPoint(SPECIMEN_HANG_POS_X + additionalX, hangPosY, 0);
+        moveToBar2.setMaxCheckDoneCounter(10);
         this.addAction(moveToBar2);
 
         SpecimenHang specimenHang = new SpecimenHang(outtake);
