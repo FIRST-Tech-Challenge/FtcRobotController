@@ -46,8 +46,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int SpecimenPickupFromStart = -350;
 
-    double minPower = .05;
-    double maxPower = 0.5;
+    double minPower = 0.1;
+    double maxPower = 1;
 
     double minPowerInAuto = 0.1;
     double maxPowerInAuto = 1;
@@ -136,12 +136,12 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public void RotateTowardsIntakeSlowly() {
         SetTelop();
-        motor.set(-.5);
+        motor.set(-0.5);
     }
 
     public void RotateTowardsDeliverySlowly() {
         SetTelop();
-        motor.set(.5);
+        motor.set(0.5);
     }
 
     public void HoldArm() {
