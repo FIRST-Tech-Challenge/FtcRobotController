@@ -9,12 +9,14 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.SpecimenPlacePos;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.PlaceSpecimenAddOffset;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep1;
+import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep2;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
+import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
 import java.util.ArrayList;
 
@@ -37,10 +39,6 @@ public class RightSideAuto extends SequentialCommandGroup {
 
                 new Pause(0.25),
 
-                new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_LOW)),
-
-                new SpecimenPlacePos(),
-
                 //Place specimen
                 new PlaceSpecimenAddOffset(),
 
@@ -50,10 +48,10 @@ public class RightSideAuto extends SequentialCommandGroup {
                         1.0,
                         0.0,
                         0.0,
-                        new Rotation2d(Math.toRadians(90.0)),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
                         new ArrayList<Translation2d>() {{ }},
-                        new Pose2d(-0.25, 1.15, new Rotation2d(Math.toRadians(90.0))),
-                        new Rotation2d(Math.toRadians(-90))),
+                        AutoFunctions.redVsBlue(new Pose2d(-0.25, 1.15, new Rotation2d(Math.toRadians(90.0)))),
+                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
 
                 new ArmStowHigh(),
@@ -62,7 +60,7 @@ public class RightSideAuto extends SequentialCommandGroup {
 
                 new Sweep1(),
 
-                //new Sweep2(),
+                new Sweep2(),
 
                 new WallPickUp(),
 

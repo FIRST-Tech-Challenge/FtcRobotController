@@ -70,21 +70,6 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.770, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
-
-//                // special case 'glue logic' to reset y to known value to correct for accumulated odommetry error
-//                new InstantCommand(()-> {
-//                    Pose2d position = RobotContainer.odometry.getCurrentPos();
-//                    Pose2d correctedPosition;
-//                    if(RobotContainer.isRedAlliance)
-//                        correctedPosition = new Pose2d(position.getX(), -0.755, position.getRotation());
-//                    else
-//                        correctedPosition = new Pose2d(position.getX(), 0.755, position.getRotation());
-//
-//                    RobotContainer.odometry.setCurrentPos(correctedPosition);
-//                }),
-
-               // new Pause(0.5),
-
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN, true)),
 
                 new Pause(0.5),
@@ -95,7 +80,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMPLE_ZERO, true)),
 
-                new Pause(1),
+                new Pause(1.25),
 
                 new ArmStowHigh()
         );

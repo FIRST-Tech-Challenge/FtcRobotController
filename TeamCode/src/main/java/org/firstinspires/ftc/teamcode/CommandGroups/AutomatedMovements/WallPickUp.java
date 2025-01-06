@@ -73,24 +73,31 @@ public class WallPickUp extends SequentialCommandGroup {
                 new InstantCommand(()-> {
                     Pose2d position = RobotContainer.odometry.getCurrentPos();
                     Pose2d correctedPosition;
-                    if(RobotContainer.isRedAlliance)
-                        correctedPosition = new Pose2d(1.78435-0.19+0.0-0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
-                    else
-                        correctedPosition = new Pose2d(-1.78435+0.19-0.0+0.01*RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                    if (RobotContainer.rightDistance.getDistance() > 20.0 && RobotContainer.rightDistance.getDistance() < 58.0) {
+                        if (RobotContainer.isRedAlliance)
+                            correctedPosition = new Pose2d(1.78435 - 0.19 + 0.0 - 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                        else
+                            correctedPosition = new Pose2d(-1.78435 + 0.19 - 0.0 + 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
 
-                    RobotContainer.odometry.setCurrentPos(correctedPosition);
-                }),
+                        RobotContainer.odometry.setCurrentPos(correctedPosition);
+                    }
+                    }),
 
-                new FollowPath(
+//                new FollowPath(
+//                        0.3,
+//                        1.0,
+//                        0.0,
+//                        0.0,
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
+//                        new ArrayList<Translation2d>() {{ }},
+//                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(90.0)))),
+//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
+
+                new MoveToPose(
                         0.3,
                         1.0,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(90.0)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
-
+                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(-90.0))))
+                ),
 //                // Zoe: This could likely be a good case for a simple MoveToPose()
 //                // This might allow Lonan to have an easier time to predict the robot's approach on pickup.
 //                new MoveToPose(
