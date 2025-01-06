@@ -103,7 +103,7 @@ public class AnimosityAndMortification extends Movable {
             }else {
                 disableScissorPower();
             }
-//
+
 //            if (gamepad1.a) {
 //                if (servoOpen) {
 //                    ServoR.setPosition(1);

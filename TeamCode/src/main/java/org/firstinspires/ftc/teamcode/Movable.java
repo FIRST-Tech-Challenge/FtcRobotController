@@ -14,9 +14,8 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BRScissorLift;
     static protected DcMotor FLScissorLift;
     static protected DcMotor BLScissorLift;
-
-    //    static protected Servo ServoR;
-//    static protected Servo ServoL;
+    static protected Servo ServoR;
+    static protected Servo ServoL;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,7 +27,6 @@ abstract class Movable extends LinearOpMode {
         FLScissorLift = hardwareMap.get(DcMotor.class, "FLScissorLift");
         BRScissorLift = hardwareMap.get(DcMotor.class, "BRScissorLift");
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
-
 //        ServoR = hardwareMap.get(Servo.class, "ServoR");
 //        ServoL = hardwareMap.get(Servo.class, "ServoL");
 
@@ -129,13 +127,13 @@ abstract class Movable extends LinearOpMode {
         }
     }
 
-//    public void claw(String toggle) {
+//    public void moveClaws(String toggle) {
 //        switch (toggle) {
-//            case "open":
+//            case "thrust":
 //                ServoR.setPosition(1);
 //                ServoL.setPosition(1);
 //                break;
-//            case "close":
+//            case "retract":
 //                ServoR.setPosition(0);
 //                ServoL.setPosition(0);
 //                break;
