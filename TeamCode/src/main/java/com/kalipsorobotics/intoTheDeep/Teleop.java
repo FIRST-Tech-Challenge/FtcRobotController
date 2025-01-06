@@ -7,6 +7,8 @@ import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
+import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
+import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTripTeleOp;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
@@ -85,6 +87,7 @@ public class Teleop extends LinearOpMode {
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
         MoveLSAction moveLS = null;
+        WallToBarHangRoundTripTeleOp wallToBarHangRoundTripTeleOp = null;
 
         boolean needMaintainLs = true;
 
@@ -105,6 +108,7 @@ public class Teleop extends LinearOpMode {
         boolean moveWallTeleopPressed = false;
         boolean intakeFunnelReadyPressed = false;
         boolean intakeFunnelActionPressed = false;
+        boolean specimenRoundTripPressed = false;
 
         // GAMEPAD 2
         double outtakeLSStickValue;
@@ -129,6 +133,9 @@ public class Teleop extends LinearOpMode {
         boolean sampleEndToEndSequencePressed;
         boolean specimenEndToEndSequencePressed;
 
+        int hangPos = 100;
+        int hangIncrement = 60;
+
         Init init = new Init(intakeClaw, outtake);
         while(opModeInInit()) {
             init.updateCheckDone();
@@ -144,6 +151,7 @@ public class Teleop extends LinearOpMode {
             moveWallTeleopPressed = kGamePad1.isToggleButtonA();
             intakeFunnelReadyPressed = kGamePad1.isToggleDpadLeft();
             intakeFunnelActionPressed = kGamePad1.isToggleDpadDown();
+            specimenRoundTripPressed = kGamePad1.isToggleButtonX();
 
             // GAMEPAD 2 ASSIGNMENTS ==============================================
             outtakeLSStickValue = gamepad2.right_stick_y;
@@ -182,7 +190,9 @@ public class Teleop extends LinearOpMode {
             outtakePivotPos = outtake.getOuttakePivotServo().getServo().getPosition();
 
             //=========DRIVER 1==========
-            driveAction.move(gamepad1);
+            if(wallToBarHangRoundTripTeleOp == null || wallToBarHangRoundTripTeleOp.getIsDone()) {
+                driveAction.move(gamepad1);
+            }
 
             //RESET POS
             if (resetWheelOdomPressed) {
@@ -210,6 +220,26 @@ public class Teleop extends LinearOpMode {
             }
             if (moveWallTeleOp != null){
                 moveWallTeleOp.updateCheckDone();
+            }
+
+            if(specimenRoundTripPressed) {
+                if (wallToBarHangRoundTripTeleOp == null || wallToBarHangRoundTripTeleOp.getIsDone()){
+                    hangPos += hangIncrement;
+                    if (hangPos > (hangIncrement*6+100)) {
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, -30);
+                        wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
+                    } else if (hangPos > (hangIncrement*2+100)) {
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, -15);
+                        wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
+                    } else {
+                        wallToBarHangRoundTripTeleOp = new WallToBarHangRoundTripTeleOp(driveTrain, wheelOdometry, outtake, hangPos, 0);
+                        wallToBarHangRoundTripTeleOp.setName("wallToBarHangRoundTrip");
+                    }
+                }
+            }
+
+            if (wallToBarHangRoundTripTeleOp != null){
+                wallToBarHangRoundTripTeleOp.updateCheckDone();
             }
 
             if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override

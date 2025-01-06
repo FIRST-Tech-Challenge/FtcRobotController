@@ -25,9 +25,9 @@ public class WheelOdometry {
     //200-182 offset compare to line between parallel odo pods
     //negative if robot center behind parallel wheels
     //final private static double ROBOT_CENTER_OFFSET_MM = -18;
-    private final DcMotor rightEncoder;
-    private final DcMotor leftEncoder;
-    private final DcMotor backEncoder;
+    private DcMotor rightEncoder;
+    private DcMotor leftEncoder;
+    private DcMotor backEncoder;
     volatile private Position currentPosition;
     volatile private Velocity currentVelocity;
     private volatile double prevRightDistanceMM;
@@ -39,13 +39,10 @@ public class WheelOdometry {
 //    private final double MM_TO_INCH = 1/25.4;
 
     private WheelOdometry(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, double xCoordinate, double yCoordinate, double thetaDeg) {
-        this.opModeUtilities = opModeUtilities;
-        this.imuModule = imuModule;
+        resetHardware(opModeUtilities, driveTrain, imuModule, this);
+
         this.currentPosition = new Position(xCoordinate, yCoordinate, Math.toRadians(thetaDeg));
         Log.d("purepursaction_debug_odo_wheel", "init jimmeh" + currentPosition.toString());
-        this.rightEncoder = driveTrain.getRightEncoder();
-        this.leftEncoder = driveTrain.getLeftEncoder();
-        this.backEncoder = driveTrain.getBackEncoder();
         prevTime = SystemClock.elapsedRealtime();
         prevImuHeading = getIMUHeading();
         currentImuHeading = prevImuHeading;
@@ -58,9 +55,17 @@ public class WheelOdometry {
         if (single_instance == null) {
             single_instance = new WheelOdometry(opModeUtilities, driveTrain, imuModule, xCoordinate, yCoordinate, thetaDeg);
         } else {
-            single_instance.opModeUtilities = opModeUtilities;
+            resetHardware(opModeUtilities, driveTrain, imuModule, single_instance);
         }
         return single_instance;
+    }
+
+    private static void resetHardware(OpModeUtilities opModeUtilities, DriveTrain driveTrain, IMUModule imuModule, WheelOdometry wheelOdometry) {
+        wheelOdometry.opModeUtilities = opModeUtilities;
+        wheelOdometry.imuModule = imuModule;
+        wheelOdometry.rightEncoder = driveTrain.getRightEncoder();
+        wheelOdometry.leftEncoder = driveTrain.getLeftEncoder();
+        wheelOdometry.backEncoder = driveTrain.getBackEncoder();
     }
 
     public static void setInstanceNull() {
