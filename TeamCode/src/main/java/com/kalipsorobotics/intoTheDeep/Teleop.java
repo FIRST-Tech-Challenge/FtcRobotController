@@ -8,7 +8,7 @@ import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
-import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTripTeleOp;
+import com.kalipsorobotics.actions.WallToBarHangRoundTripTeleOp;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;

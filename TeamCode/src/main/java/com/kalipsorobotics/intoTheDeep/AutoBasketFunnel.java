@@ -99,15 +99,20 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveToSample3 = new PurePursuitAction(driveTrain, wheelOdometry);
         moveToSample3.setName("moveToSample3");
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
-
         //move basket to sample 3
-        moveToSample3.addPoint(-440, 1030, 180-29.6);
+//        moveToSample3.addPoint(-440, 1030, 180-29.6);
+        moveToSample3.addPoint(INTAKE_SAMPLE_X, 810, 90);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 
         //TODO INTAKE ACTION
 
-        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS);
+//        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS);
+//        sampleIntakeReady3.setName("sampleIntakeReady3");
+//        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
+//        redAutoBasket.addAction(sampleIntakeReady3);
+
+        SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_INTAKE_READY_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
         sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         redAutoBasket.addAction(sampleIntakeReady3);
