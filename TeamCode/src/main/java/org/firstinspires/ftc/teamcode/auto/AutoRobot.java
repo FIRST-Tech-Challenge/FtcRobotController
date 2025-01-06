@@ -63,13 +63,13 @@ public class AutoRobot {
         double currentYaw;
         double angleDifference = 180;
 
-        if (Math.abs(x) > Math.abs(y) && x != 0) {
-            x = Math.signum(x);
-            y = y / Math.abs(x);
+        if (abs(x) > abs(y) && x != 0) {
+            x = signum(x);
+            y = y / abs(x);
         }
-        if (Math.abs(y) > Math.abs(x) && y != 0) {
-            x = x / Math.abs(y);
-            y = Math.signum(y);
+        if (abs(y) > abs(x) && y != 0) {
+            x = x / abs(y);
+            y = signum(y);
         }
 
         Vector2D toGo = new Vector2D(x, y);
@@ -99,12 +99,12 @@ public class AutoRobot {
                 }
 
                 if (angleDifference > 0) {
-                    rX = .3 * MovementCurves.circleArc(angleDifference / 360);
+                    rX = .3 * MovementCurves.circleCurve(angleDifference / 360);
                 }
                 ;
                 if (angleDifference < 0) {
                     angleDifference *= -1;
-                    rX = -.3 * MovementCurves.circleArc(angleDifference / 360);
+                    rX = -.3 * MovementCurves.circleCurve(angleDifference / 360);
                 }
                 ;
 
@@ -125,7 +125,7 @@ public class AutoRobot {
                 timeAlotted = (totalTime - currentTime) / ((double) (time));
                 toGo.setVector(x, y);
                 toGo.adjustAngle(currentYaw);
-                moveSpeed = .3 * Math.sin(Math.PI * (timeAlotted));
+                moveSpeed = .3 * sin(PI * (timeAlotted));
                 toGo.scaleVector(moveSpeed);
             } else {
                 toGo.scaleVector(0);
@@ -158,26 +158,93 @@ public class AutoRobot {
     }
 
     //drives forward for a certain amount of seconds
+
+
+    //drives forward for a certain amount of seconds
+
     public void driveForward(double seconds) {
+        driveForward(seconds, 1, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveForward(double seconds, double powerMultiplier) {
+        driveForward(seconds, powerMultiplier, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveForward(double seconds, double powerMultiplier, int movementCurve) {
+        //catch misuse
+        if (powerMultiplier > 1) {
+            powerMultiplier = 1;
+        }
+        if (powerMultiplier <= 0) {
+            return;
+        }
+
+        //initialize variables, and define time frame
         long time = (long) (1000000000 * seconds);
-        long currentTime = System.nanoTime();
-        long totalTime = currentTime + time;
+        long startTime = System.nanoTime();
+        long totalTime = startTime + time;
+        long currentTime = startTime;
         double timeAlotted;
         double power;
 
+        //executing loop
+        do  {
+            currentTime = System.nanoTime();
+            timeAlotted = ((double)(currentTime-startTime) ) / (double)time;
 
-        while (currentTime < totalTime) {
-            timeAlotted = (totalTime - currentTime) / ((double) (time));
-            power = Math.sin(Math.PI * (timeAlotted));
+            switch (movementCurve) {
 
-            frontRightDrive.setPower(power); //double check these values
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(timeAlotted);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(timeAlotted);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(timeAlotted);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(timeAlotted);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(timeAlotted);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(timeAlotted);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(timeAlotted);
+                    break;
+                default:
+                    power = MovementCurves.linear(timeAlotted);
+
+            }
+
+            power *= powerMultiplier;
+
+
+            //assign power to wheels
+            frontRightDrive.setPower(power);
             frontLeftDrive.setPower(power);
             backLeftDrive.setPower(power);
             backRightDrive.setPower(power);
             telemetry.addData("power", power);
+            telemetry.addData("timeAlotted", timeAlotted);
             telemetry.update();
-            currentTime = System.nanoTime();
-        }
+
+        } while (currentTime < totalTime);
         frontRightDrive.setPower(0); //double check these values
         frontLeftDrive.setPower(0);
         backLeftDrive.setPower(0);
@@ -188,23 +255,88 @@ public class AutoRobot {
     //drives backwards for a certain amount of seconds
 
     public void driveBackward(double seconds) {
+        driveBackward(seconds, 1, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveBackward(double seconds, double powerMultiplier) {
+        driveBackward(seconds, powerMultiplier, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveBackward(double seconds, double powerMultiplier, int movementCurve) {
+        //catch misuse
+        if (powerMultiplier > 1) {
+            powerMultiplier = 1;
+        }
+        if (powerMultiplier <= 0) {
+            return;
+        }
+
+        //initialize variables, and define time frame
         long time = (long) (1000000000 * seconds);
-        long currentTime = System.nanoTime();
-        long totalTime = currentTime + time;
+        long startTime = System.nanoTime();
+        long totalTime = startTime + time;
+        long currentTime = startTime;
         double timeAlotted;
         double power;
-        while (currentTime < totalTime) {
-            timeAlotted = (totalTime - currentTime) / ((double) (time));
 
-            power = Math.sin(Math.PI * (timeAlotted));
-            frontRightDrive.setPower(-power); //double check these values
+        //executing loop
+        do  {
+            currentTime = System.nanoTime();
+            timeAlotted = ((double)(currentTime-startTime) ) / (double)time;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(timeAlotted);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(timeAlotted);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(timeAlotted);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(timeAlotted);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(timeAlotted);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(timeAlotted);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(timeAlotted);
+                    break;
+                default:
+                    power = MovementCurves.linear(timeAlotted);
+
+            }
+
+            power *= powerMultiplier;
+
+
+            //assign power to wheels
+            frontRightDrive.setPower(-power);
             frontLeftDrive.setPower(-power);
             backLeftDrive.setPower(-power);
             backRightDrive.setPower(-power);
             telemetry.addData("power", power);
+            telemetry.addData("timeAlotted", timeAlotted);
             telemetry.update();
-            currentTime = System.nanoTime();
-        }
+
+        } while (currentTime < totalTime);
         frontRightDrive.setPower(0); //double check these values
         frontLeftDrive.setPower(0);
         backLeftDrive.setPower(0);
@@ -212,23 +344,88 @@ public class AutoRobot {
     }
 
     public void driveRight(double seconds) {
+        driveRight(seconds, 1, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveRight(double seconds, double powerMultiplier) {
+        driveRight(seconds, powerMultiplier, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveRight(double seconds, double powerMultiplier, int movementCurve) {
+        //catch misuse
+        if (powerMultiplier > 1) {
+            powerMultiplier = 1;
+        }
+        if (powerMultiplier <= 0) {
+            return;
+        }
+
+        //initialize variables, and define time frame
         long time = (long) (1000000000 * seconds);
-        long currentTime = System.nanoTime();
-        long totalTime = currentTime + time;
+        long startTime = System.nanoTime();
+        long totalTime = startTime + time;
+        long currentTime = startTime;
         double timeAlotted;
         double power;
-        while (currentTime < totalTime) {
-            timeAlotted = (totalTime - currentTime) / ((double) (time));
 
-            power = Math.sin(Math.PI * (timeAlotted));
-            frontRightDrive.setPower(-power); //double check these values
+        //executing loop
+        do  {
+            currentTime = System.nanoTime();
+            timeAlotted = ((double)(currentTime-startTime) ) / (double)time;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(timeAlotted);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(timeAlotted);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(timeAlotted);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(timeAlotted);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(timeAlotted);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(timeAlotted);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(timeAlotted);
+                    break;
+                default:
+                    power = MovementCurves.linear(timeAlotted);
+
+            }
+
+            power *= powerMultiplier;
+
+
+            //assign power to wheels
+            frontRightDrive.setPower(-power);
             frontLeftDrive.setPower(power);
             backLeftDrive.setPower(-power);
             backRightDrive.setPower(power);
             telemetry.addData("power", power);
+            telemetry.addData("timeAlotted", timeAlotted);
             telemetry.update();
-            currentTime = System.nanoTime();
-        }
+
+        } while (currentTime < totalTime);
         frontRightDrive.setPower(0); //double check these values
         frontLeftDrive.setPower(0);
         backLeftDrive.setPower(0);
@@ -236,24 +433,90 @@ public class AutoRobot {
     }
 
 
+
     public void driveLeft(double seconds) {
+        driveLeft(seconds, 1, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveLeft(double seconds, double powerMultiplier) {
+        driveLeft(seconds, powerMultiplier, MovementCurves.QUADRATIC);
+        //adjust values to change default behaviour
+    }
+
+    public void driveLeft(double seconds, double powerMultiplier, int movementCurve) {
+        //catch misuse
+        if (powerMultiplier > 1) {
+            powerMultiplier = 1;
+        }
+        if (powerMultiplier <= 0) {
+            return;
+        }
+
+        //initialize variables, and define time frame
         long time = (long) (1000000000 * seconds);
-        long currentTime = System.nanoTime();
-        long totalTime = currentTime + time;
+        long startTime = System.nanoTime();
+        long totalTime = startTime + time;
+        long currentTime = startTime;
         double timeAlotted;
         double power;
-        while (currentTime < totalTime) {
-            timeAlotted = (totalTime - currentTime) / ((double) (time));
 
-            power = Math.sin(Math.PI * (timeAlotted));
-            frontRightDrive.setPower(power); //double check these values
+        //executing loop
+        do  {
+            currentTime = System.nanoTime();
+            timeAlotted = ((double)(currentTime-startTime) ) / (double)time;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(timeAlotted);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(timeAlotted);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(timeAlotted);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(timeAlotted);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(timeAlotted);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(timeAlotted);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(timeAlotted);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(timeAlotted);
+                    break;
+                default:
+                    power = MovementCurves.linear(timeAlotted);
+
+            }
+
+            power *= powerMultiplier;
+
+
+            //assign power to wheels
+            frontRightDrive.setPower(power);
             frontLeftDrive.setPower(-power);
             backLeftDrive.setPower(power);
             backRightDrive.setPower(-power);
             telemetry.addData("power", power);
+            telemetry.addData("timeAlotted", timeAlotted);
             telemetry.update();
-            currentTime = System.nanoTime();
-        }
+
+        } while (currentTime < totalTime);
         frontRightDrive.setPower(0); //double check these values
         frontLeftDrive.setPower(0);
         backLeftDrive.setPower(0);
@@ -294,20 +557,20 @@ public class AutoRobot {
             }
 
             if (angleDifference > 0) {
-                rX = Math.sqrt(180 * 180 - Math.pow((180 - angleDifference), 2)) / 180;
+                rX = MovementCurves.circleCurve(angleDifference/360);
             }
 
             if (angleDifference < 0) {
-                rX = -Math.sqrt(180 * 180 - Math.pow((-180 - angleDifference), 2)) / 180;
+                rX = -MovementCurves.circleCurve(-angleDifference/360);
             }
 
 
 
-            if (rX > 0 && rX < .05) {
-                rX = .05;
+            if (rX > 0 && rX < .1) {
+                rX = .1;
             }
-            if (rX < 0 && rX > -.05) {
-                rX = -.05;
+            if (rX < 0 && rX > -.1) {
+                rX = -.1;
             }
 
 
@@ -331,6 +594,22 @@ public class AutoRobot {
         backRightDrive.setPower(0);
 
 
+    }
+
+     public void waitSeconds(double seconds) {
+        long time = (long) (1000000000 * seconds);
+        long currentTime = System.nanoTime();
+        long totalTime = currentTime + time;
+
+        while(currentTime < totalTime) {
+            currentTime = System.nanoTime();
+        }
+
+
+    }
+
+    public IMU getImu() {
+        return imu;
     }
 
 
@@ -372,6 +651,7 @@ public class AutoRobot {
         this.telemetry = telemetry;
 
     }
+
 
 
 }
