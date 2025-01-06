@@ -37,22 +37,25 @@ public class MoveToPickup extends CommandBase {
     // This method is called periodically while command is active
     @Override
     public void execute() {
-        double Target_X = (double) (315 + 330) /2;
-        double Target_Y = (double) (325 + 315) /2;
+        double Target_X = 280.0; // was (double) (315 + 330) / 2 before flip // 269.0
+        double Target_Y = 240.0; // was (double) (325 + 315) / 2 before flip // 355.0
         xError = Target_X - RobotContainer.piece_center_X;
         yError = Target_Y - RobotContainer.piece_center_Y;
 
-        double xSpeed = -xControl.calculate(xError);
-        double ySpeed = -yControl.calculate(yError);
+        double xSpeed = xControl.calculate(xError);
+        double ySpeed = yControl.calculate(yError);
 
         RobotContainer.drivesystem.RobotDrive(ySpeed, xSpeed, 0);
 
         if (xError>20 || yError>20) {
             timer.reset();
         }
-        //RobotContainer.DBTelemetry.addData("xSpeed", xSpeed);
-        //RobotContainer.DBTelemetry.addData("ySpeed", ySpeed);
-        //RobotContainer.DBTelemetry.update();
+
+//        RobotContainer.DBTelemetry.addData("Target X", Target_X);
+//        RobotContainer.DBTelemetry.addData("Target Y", Target_Y);
+//        RobotContainer.DBTelemetry.addData("xSpeed", xSpeed);
+//        RobotContainer.DBTelemetry.addData("ySpeed", ySpeed);
+//        RobotContainer.DBTelemetry.update();
     }
 
     // This method to return true only when command is to finish. Otherwise return false

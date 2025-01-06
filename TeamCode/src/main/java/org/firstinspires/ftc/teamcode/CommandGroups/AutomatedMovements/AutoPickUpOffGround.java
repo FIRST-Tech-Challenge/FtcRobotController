@@ -25,13 +25,19 @@ public class AutoPickUpOffGround extends SequentialCommandGroup {
 
         addCommands (
 
+                new HuntingPos(),
+
                 new OpenClaw(),
 
-                new ConvertAngleForWristRotate(),
+                // Original location of ... moved down.
+                // new ConvertAngleForWristRotate(),
 
                 new Pause(0.25),
 
                 new MoveToPickup(),
+
+                // Moved here to move first to best vantage point.
+                new ConvertAngleForWristRotate(),
 
                 new Pause(0.25),
 

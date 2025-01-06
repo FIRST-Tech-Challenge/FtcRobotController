@@ -25,12 +25,12 @@ public class HuntingPos extends SequentialCommandGroup {
                         RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
                 } ),
 
-                // sets the elbow to a straight position at 130 degrees
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(120)),
+                // sets the elbow to a straight position at 120 degrees
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(100)),
 
                 // sets elbow to a straight position at 145 degrees,
                 // 145 is becouse gravity and leverage bend the elbow down so the extera 10 degrees stops the drooping
-                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(145)),
+                new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(150)),
 
                 // sets wrist to a straight position  45 is parallel to floor
                 new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(0)),

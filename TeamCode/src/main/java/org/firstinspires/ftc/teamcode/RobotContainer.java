@@ -166,12 +166,13 @@ public class RobotContainer {
                 new BackDepositPose())     // run this command when manual mode is active (blinking LEDs)
         );
 
-        //driverOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(new HuntingPos());
+        // Changed this to a single button with integration of HuntingPos as start of AutoPickupOffGround
+        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new AutoPickUpOffGround());
 
-        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SelectCommandOnMode(
-                new HuntingPos(),          // run this command when manual mode is off (default case)
-                new AutoPickUpOffGround()) // run this command when manual mode is active (blinking LEDs)
-        );
+//        driverOp.getGamepadButton(GamepadKeys.Button.B).whenHeld(new SelectCommandOnMode(
+//                new HuntingPos(),          // run this command when manual mode is off (default case)
+//                new AutoPickUpOffGround()) // run this command when manual mode is active (blinking LEDs)
+//        );
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new ArmStowHigh());
 
@@ -301,15 +302,10 @@ public class RobotContainer {
         } catch (Exception e) {
         }
 
-
-        //DBTelemetry.addData("Angle", piece_angle);
-        //DBTelemetry.addData("Center X", piece_center_X);
-        //DBTelemetry.addData("Center Y", piece_center_Y);
-        //DBTelemetry.addData("Target X", (315 + 330) /2);
-        //DBTelemetry.addData("Target Y", (325 + 315) /2);
-        //DBTelemetry.addData("Robot Voltage", RobotContainer.drivesystem.robotVoltage);
-        //DBTelemetry.update();
-
+//        DBTelemetry.addData("Angle", piece_angle);
+//        DBTelemetry.addData("Center X", piece_center_X);
+//        DBTelemetry.addData("Center Y", piece_center_Y);
+//        DBTelemetry.update();
 
         // actual interval time
         double intervaltime = timer.milliseconds();
