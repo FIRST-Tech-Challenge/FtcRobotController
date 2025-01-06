@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.runs;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.LogCatCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.CommandFactory;
 
 @Autonomous
 public class SampleAuto extends CommandAutoOpMode {
@@ -36,7 +41,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-                commandFactory.driveToTarget(440, 250, 0, 0.13, .7, 20),
+                commandFactory.driveToTarget(440, 260, 0, 0.13, .7, 20),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -45,6 +50,11 @@ public class SampleAuto extends CommandAutoOpMode {
                 ),
 
                 commandFactory.intakeFromGround2(1000),
+                commandFactory.inCaseSampleIntakeFailed("Sample 1", new SequentialCommandGroup(
+                    commandFactory.pivotToIntakeRetry(),
+                        commandFactory.pivotToGroundInTakeBegin(),
+                        commandFactory.intakeFromGround2(2000)
+                )),
 
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
@@ -70,6 +80,12 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 commandFactory.intakeFromGround2(1000),
 
+                commandFactory.inCaseSampleIntakeFailed("Sample 2", new SequentialCommandGroup(
+                        commandFactory.pivotToIntakeRetry(),
+                        commandFactory.pivotToGroundInTakeBegin(),
+                        commandFactory.intakeFromGround2(2000)
+                )),
+
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
                     commandFactory.pivotToDelivery()
@@ -90,11 +106,16 @@ public class SampleAuto extends CommandAutoOpMode {
                 new ParallelCommandGroup(
                     commandFactory.pivotToGroundInTakeBegin(),
                     commandFactory.extendSliderToIntakeSample3()
-
                 ),
                 commandFactory.elbowToIntakePosition(),
-                commandFactory.sleep(500),
+                commandFactory.sleep(300),
                 commandFactory.intakeFromGroundForSample3(4000),
+
+                commandFactory.inCaseSampleIntakeFailed("Sample 3", new SequentialCommandGroup(
+                        commandFactory.pivotToIntakeRetry(),
+                        commandFactory.pivotToGroundInTakeBegin(),
+                        commandFactory.intakeFromGroundForSample3(6000)
+                )),
 
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),

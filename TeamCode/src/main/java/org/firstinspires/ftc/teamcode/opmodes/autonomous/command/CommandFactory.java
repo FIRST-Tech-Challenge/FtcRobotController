@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.LogCatCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
+import com.arcrobotics.ftclib.command.PrintCommand;
+import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
@@ -17,9 +22,16 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import static org.firstinspires.ftc.teamcode.util.Units.scale;
 
+import android.util.Log;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 @SuppressWarnings("unused")
 public class CommandFactory {
 
+    public static final String LOG_TAG = CommandFactory.class.getSimpleName();
     private static final PIDController xPIDController = new PIDController(0.015, 0, 0.05);
     private static final PIDController yPIDController = new PIDController(0.015, 0, 0.05);
     private static final ProfiledPIDController rotPIDController = new ProfiledPIDController(0.015, 0, .05, new TrapezoidProfile.Constraints(
@@ -71,7 +83,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSlider() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 100, DeliverySlider.Direction.EXPANDING);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 50, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
@@ -91,7 +103,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSliderToIntakeSample3() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 255, false, DeliverySlider.Direction.EXPANDING, 1500);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 300, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -116,6 +128,10 @@ public class CommandFactory {
 
     public MovePivotCommand pivotToGroundInTakeSample3Begin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 230);
+    }
+
+    public MovePivotCommand pivotToIntakeRetry() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - 200);
     }
 
     public MovePivotCommand pivotToStart() {
@@ -161,11 +177,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGround(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(600, 0.715), 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .4);
     }
 
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(665, 0.715), 100, waitTime,  .4);
     }
 
     public ParallelRaceGroup intakeFromGround2(int waitTime) {
@@ -175,8 +191,8 @@ public class CommandFactory {
         );
     }
 
-    public ParallelCommandGroup intakeFromGroundForSample3(int waitTime) {
-        return new ParallelCommandGroup(
+    public Command intakeFromGroundForSample3(int waitTime) {
+        return new ParallelRaceGroup(
                 intake(),
                 AutoToGroundForSample3(waitTime)
         );
@@ -188,5 +204,15 @@ public class CommandFactory {
 
     public SleeperCommand sleep(long timeToSleepMs) {
         return new SleeperCommand(timeToSleepMs);
+    }
+
+    public Command inCaseSampleIntakeFailed(String sampleName, Command command) {
+        Map<Object, Command> commandMap = new HashMap<>();
+        commandMap.put(true, doNothing().alongWith(new LogCatCommand(LOG_TAG, ">>>>> " + sampleName + " in place, do nothing", Log.INFO)));
+        commandMap.put(false, command.alongWith(new LogCatCommand(LOG_TAG, ">>>>> " + sampleName + " in take failed, retrying...", Log.INFO)));
+        return new SelectCommand(commandMap, intake::IsSampleIntaken);
+    }
+    public Command doNothing() {
+        return new InstantCommand();
     }
 }
