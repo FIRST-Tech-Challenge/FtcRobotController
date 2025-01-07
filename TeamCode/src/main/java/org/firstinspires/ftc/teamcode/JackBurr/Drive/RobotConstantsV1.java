@@ -19,10 +19,10 @@ public class RobotConstantsV1 {
     public double FRONT_RIGHT_TRANSFER = 0.9;
     public double FRONT_LEFT_PICKUP = 0.03;
     public double FRONT_RIGHT_PICKUP = 0.03;
-    public double FRONT_LEFT_HOVER = 0.15;
-    public double FRONT_RIGHT_HOVER = 0.15;
+    public double FRONT_LEFT_HOVER = 0.1;
+    public double FRONT_RIGHT_HOVER = 0.1;
     public double DELIVERY_DOWN = 1;
-    public double DELIVERY_GRAB = 0.75;
+    public double DELIVERY_GRAB = 0.78;
     public double DELIVERY_UP = 0.25;
     public double DELIVERY_DROP = 0.2;
     public double WRIST_CENTER = 0.42;

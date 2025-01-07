@@ -25,6 +25,7 @@ public class TeleOpV1 extends OpMode {
     public enum SystemStatesV1 {
         START,
         HOVER_OVER_SAMPLE,
+        DOWN_ON_SAMPLE,
         ARM_UP,
         READY_FOR_DELIVERY,
         DELIVER_UP,
@@ -150,6 +151,7 @@ public class TeleOpV1 extends OpMode {
                 grippers.setPosition(constants.GRIPPERS_CLOSE);
                 grippersClosed = true;
                 break;
+
             case HOVER_OVER_SAMPLE:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
@@ -174,15 +176,30 @@ public class TeleOpV1 extends OpMode {
                 grippersTimer.reset();
                 pickedUpSample = false;
                 break;
+            case DOWN_ON_SAMPLE:
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.START;
+                    buttonTimer.reset();
+                }
+                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveLeft(0.2);
+                    buttonTimer.reset();
+
+                }
+                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveRight(0.2);
+                    buttonTimer.reset();
+                }
+                differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
+                differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
+                break;
             case ARM_UP:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
-                    state = SystemStatesV1.HOVER_OVER_SAMPLE;
+                    state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
                 //TODO: Sam said to make button to release grippers, but this current program can't do that
                 if(!pickedUpSample){
-                    differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
-                    differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
                     if(diffTimer2.seconds() > 0.4){
                         grippers.setPosition(constants.GRIPPERS_GRAB);
                     }
@@ -213,7 +230,7 @@ public class TeleOpV1 extends OpMode {
                 break;
             case READY_FOR_DELIVERY:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
-                    state = SystemStatesV1.ARM_UP;
+                    state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
                 diffTimerIsReset = false;
@@ -232,11 +249,15 @@ public class TeleOpV1 extends OpMode {
                 }
                 break;
             case DELIVER_UP:
-                deliverySlides.runLeftSlideToPosition(-2933, 0.8);
-                deliverySlides.runRightSlideToPosition(2965, 0.8);
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.START;
+                    buttonTimer.reset();
+                }
                 if(deliveryGrippersTimer.seconds() >  0.3) {
                     grippers.setPosition(constants.GRIPPERS_OPEN);
                 }
+                deliverySlides.runLeftSlideToPosition(-2933, 0.8);
+                deliverySlides.runRightSlideToPosition(2965, 0.8);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -273,6 +294,8 @@ public class TeleOpV1 extends OpMode {
             case START:
                 return SystemStatesV1.HOVER_OVER_SAMPLE;
             case HOVER_OVER_SAMPLE:
+                return SystemStatesV1.DOWN_ON_SAMPLE;
+            case DOWN_ON_SAMPLE:
                 return SystemStatesV1.ARM_UP;
             case ARM_UP:
                 return SystemStatesV1.READY_FOR_DELIVERY;
