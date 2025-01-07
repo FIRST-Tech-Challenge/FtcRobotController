@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
-
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Common;
+import org.firstinspires.ftc.teamcode.utils.Common;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
@@ -24,16 +23,16 @@ public class SyborgsRefactor extends LinearOpMode {
         initSubsystems();
         waitForStart();
         while (opModeIsActive()) {
-            drive.handleMovement(gamepad1, gamepad2, imu);
+            drive.handleMovementTeleOp(gamepad1, gamepad2, imu);
 
-            lift.handleMovement(gamepad1, gamepad2);
+            lift.handleMovementTeleOp(gamepad1, gamepad2);
             lift.updateTelemetry();
 
-            arm.handleMovement(gamepad1, gamepad2);
+            arm.handleMovementTeleOp(gamepad1, gamepad2);
             arm.updateTelemetry();
             arm.updateArmLiftCompensation(lift.getLiftPosition());
 
-            intakeAndWrist.handleMovement(gamepad1, gamepad2);
+            intakeAndWrist.handleMovementTeleOp(gamepad1, gamepad2);
             intakeAndWrist.updateTelemetry();
 
             Common.updateCycleTimes(getRuntime());
@@ -47,6 +46,4 @@ public class SyborgsRefactor extends LinearOpMode {
         lift = new LiftSubsystem(hardwareMap, telemetry);
         intakeAndWrist = new IntakeAndWristSubsystem(hardwareMap, telemetry);
     }
-
-
 }

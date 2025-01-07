@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utils.Vector;
 
 import java.util.function.Consumer;
 
@@ -31,10 +32,12 @@ public class DriveSubsystem {
 
         runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
+    }
+    public void cartesianMove(double cmX, double cmY) {
+        Vector target = new Vector(cmX, cmY);
 
     }
-
-    public void handleMovement(Gamepad gamepad1, Gamepad gamepad2, IMU imu) {
+    public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2, IMU imu) {
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double rotation = gamepad1.right_stick_x;

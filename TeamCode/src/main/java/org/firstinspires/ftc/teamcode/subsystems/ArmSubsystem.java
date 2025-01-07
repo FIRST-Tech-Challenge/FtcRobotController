@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.utils.Common;
 
 public class ArmSubsystem {
     Telemetry telemetry;
@@ -24,7 +25,7 @@ public class ArmSubsystem {
     private final DcMotor armMotor;
     private final DcMotorEx armMotorEx;
 
-    public void handleMovement(Gamepad gamepad1, Gamepad gamepad2) {
+    public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
         readControls(gamepad1);
 
         armPositionFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger));

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,7 +13,7 @@ public class Common {
         final double ARM_TICKS_PER_DEGREE = 28.0 * 250047.0 / 4913.0 * 100.0 / 20.0 / 360.0;
         return degrees * ARM_TICKS_PER_DEGREE;
     }
-    public static double mmToTicks(double mm) {
+    public static double liftmmToTicks(double mm) {
         final double LIFT_TICKS_PER_MM = (111132.0 / 289.0) / 120.0;
         return mm * LIFT_TICKS_PER_MM;
     }
@@ -43,3 +43,4 @@ public class Common {
         return Math.max(min, Math.min(max, value));
     }
 }
+

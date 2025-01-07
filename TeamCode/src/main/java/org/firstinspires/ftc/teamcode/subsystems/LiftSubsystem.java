@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.utils.Common;
 
 public class LiftSubsystem {
     private final DcMotor liftMotor;
@@ -45,7 +46,7 @@ public class LiftSubsystem {
         liftPosition = Common.clamp(liftPosition, LIFT_COLLAPSED, LIFT_SCORING_IN_HIGH_BASKET);
     }
     @SuppressWarnings("unused")
-    public void handleMovement(Gamepad gamepad1, Gamepad gamepad2) {
+    public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
         readControls(gamepad2);
         setPosition();
 
@@ -59,7 +60,7 @@ public class LiftSubsystem {
     }
 
     private void setPosition() {
-        liftMotor.setTargetPosition((int) Common.mmToTicks(liftPosition));
+        liftMotor.setTargetPosition((int) Common.liftmmToTicks(liftPosition));
         if (liftMotorEx != null) {
             liftMotorEx.setVelocity(2100);
             Common.warnIfOvercurrent(liftMotorEx, telemetry, "LiftSubsystem");

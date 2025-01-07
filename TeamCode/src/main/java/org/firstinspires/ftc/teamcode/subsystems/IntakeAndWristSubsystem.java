@@ -30,7 +30,7 @@ public class IntakeAndWristSubsystem {
     }
 
     @SuppressWarnings("unused")
-    public void handleMovement(Gamepad gamepad1, Gamepad gamepad2) {
+    public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
         readControls(gamepad1);
 
         intake.setPower(intakePower);

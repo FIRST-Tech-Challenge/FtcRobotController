@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.utils;
 
 public class MathUtils {
     public static final double TWO_PI = Math.PI * 2;
