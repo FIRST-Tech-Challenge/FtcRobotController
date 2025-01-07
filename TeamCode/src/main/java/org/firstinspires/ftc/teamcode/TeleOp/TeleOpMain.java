@@ -95,8 +95,8 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad1.right_stick_x,       // rx
                     gamepad1.y,                   // forward
                     gamepad1.b,                   // reverse
-                    gamepad1.right_trigger,       // 1/2 speed
-                    gamepad1.left_trigger         // 1/4 speed
+                    gamepad1.left_bumper,       // 1/2 speed
+                    gamepad1.right_bumper         // 1/4 speed
             );
 
             viperSlide.checkInputs(
@@ -108,9 +108,11 @@ public class TeleOpMain extends LinearOpMode {
                     gamepad2.y,                   // bucket score
                     gamepad2.b,                   // open bucket
                     gamepad2.a,                   // close bucket
-                    gamepad2.dpad_up,             // grab specimen
-                    gamepad2.dpad_down,           // release specimen
-                    gamepad2.dpad_left            // bucket specimen
+//                    gamepad2.b,                   // open/close bucket
+                    gamepad2.dpad_down,           // grab specimen
+                    gamepad2.dpad_up,             // release specimen
+                    gamepad2.dpad_left,           // bucket specimen
+                    gamepad2.dpad_right
             );
 
             hSlide.checkInputs(

@@ -30,7 +30,7 @@ public class BucketFlapAction implements Action {
             viperSlide.closeBucket();
         } else if ("open".equals(position)) {
             viperSlide.openBucket();
-            sleep(sleepTime);
+            sleep(sleepTime); //TODO may need to remove sleep if it causes issues (switch to elapsed time)
         }
 
         return false;

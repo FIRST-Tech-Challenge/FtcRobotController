@@ -42,6 +42,8 @@ public class ViperSlide{
     private Queue<Double> pastPositions;
     private static final int positionHistorySize = 5;
     String specimenGrabberPos = "closed";
+    String bucketOpenClose = "open";
+
 
 
 
@@ -104,9 +106,11 @@ public class ViperSlide{
             Boolean bucketScore,
             Boolean openBucket,
             Boolean closeBucket,
+//            Boolean opencloseBucket,
             Boolean grabSpecimen,
             Boolean releaseSpecimen,
-            Boolean bucketSpecimen
+            Boolean bucketSpecimen,
+            Boolean bucketSpecimenReset
 //            Boolean goToPositionUp,
 //            Boolean goToPositionDown
     ) {
@@ -151,7 +155,7 @@ public class ViperSlide{
         if(bucketRest) {
             if(getPos() > 300 && Objects.equals(specimenGrabberPos, "closed")) {
                 bucketRest();
-
+                openBucket();
             }
 
 //            if(bucketCooldownTimer != null && bucketCooldownTimer.seconds() < 1)
@@ -162,14 +166,27 @@ public class ViperSlide{
 
         if(openBucket) {
             openBucket();
+            bucketOpenClose = "open";
             telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
             telemetry.addData("Bucket Flap Position", "open");
         }
         else if(closeBucket) {
             closeBucket();
+            bucketOpenClose = "closed";
             telemetry.addData("Bucket Flap Position", bucketFlap.getPosition());
             telemetry.addData("Bucket Flap Position", "closed");
         }
+
+//        if(opencloseBucket) {
+//            if(Objects.equals(bucketOpenClose, "open")) {
+//                closeBucket();
+//                bucketOpenClose = "closed";
+//            }
+//            else {
+//                openBucket();
+//                bucketOpenClose = "open";
+//            }
+//        }
 
         if(grabSpecimen) {
             specimenGrabberPos = "closed";
@@ -186,6 +203,10 @@ public class ViperSlide{
 
         if(bucketSpecimen) {
             bucketSpecimen();
+        }
+
+        if(bucketSpecimenReset) {
+            bucketRest();
         }
 
 //        if(goToPositionUp) {
