@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -28,9 +29,11 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
     private double currLiftPos = 0.0;
+    ElapsedTime liftTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
+        liftTimer.reset();
         // instantiating the robot at a specific pose
         Pose2d initialPose = new Pose2d(38, 62, Math.toRadians(279));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
@@ -124,7 +127,7 @@ public class BlueLeftBasketThenPark extends LinearOpMode {
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPivotPos", pos);
                 telemetry.addData("Lift pivot pos: ", pos);
-                if (pos < 3000.0) {
+                if (pos < 3000.0 && liftTimer.seconds()<25) {
                     // true causes the action to rerun
                     return true;
                 } else {

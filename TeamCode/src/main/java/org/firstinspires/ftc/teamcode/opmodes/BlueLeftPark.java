@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
@@ -28,6 +29,7 @@ public class BlueLeftPark extends LinearOpMode {
     private static final double FIRST_LIFT_DOWN_POS = 50.0;
     private static final double LAST_LIFT_DOWN_POS = 100.0;
     private double currLiftPos = 0.0;
+    ElapsedTime liftTimer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {

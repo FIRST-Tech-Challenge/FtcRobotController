@@ -98,7 +98,7 @@ public class RedRightSpeciman extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 // powers on motor, if it is not on
                 if (!initialized) {
-                    lift.setPower(1);
+                    lift.setPower(-1);
                     initialized = true;
                 }
                 // checks lift's current position
@@ -130,7 +130,7 @@ public class RedRightSpeciman extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    lift.setPower(-0.75);
+                    lift.setPower(0.75);
                     initialized = true;
                 }
 

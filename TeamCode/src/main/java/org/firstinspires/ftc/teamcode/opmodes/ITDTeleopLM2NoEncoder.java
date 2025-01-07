@@ -41,11 +41,11 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
         liftPivot = hardwareMap.get(DcMotor.class, "liftPivot");
         claw = hardwareMap.get(CRServo.class, "claw");
         claw2 = hardwareMap.get(CRServo.class, "claw2");
-        //rotateClaw = hardwareMap.servo.get("rotateClaw");
 
         liftPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -84,27 +84,50 @@ public class ITDTeleopLM2NoEncoder extends LinearOpMode {
             rightFront.setPower(0.8*frontRightPower);
             rightBack.setPower(0.8*backRightPower);
 
-            lift.setPower(gamepad2.left_stick_y);
+            lift.setPower(-gamepad2.left_stick_y);
             liftPivot.setPower(0.7*gamepad2.right_stick_y);
 
+            telemetry.addData("Lift encoder ticks: ", lift.getCurrentPosition());
+            telemetry.update();
             if (gamepad2.a) {
                 claw.setPower(1);
                 claw2.setPower(-1);
             }
-
             else if (gamepad2.x) {
                 claw.setPower(-1);
                 claw2.setPower(1);
             }
             // outtake slowly to slowly let out a specimen so the hook is exposed
             else if (gamepad2.b) {
-                claw.setPower(-0.5);
-                claw.setPower(0.5);
+                claw.setPower(-0.35);
+                claw2.setPower(0.35);
             }
             else {
                 claw.setPower(0);
                 claw2.setPower(0);
             }
+
+            if (gamepad2.right_stick_button) {
+                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+            if (gamepad2.dpad_up) {
+                lift.setTargetPosition(2600); // FIXME change encoder value
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftPivot.setTargetPosition(1710);
+                liftPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            }
+            else if (gamepad2.dpad_down) {
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
+            if (gamepad2.left_stick_x > 0 || gamepad2.left_stick_y > 0 || gamepad2.right_stick_x > 0 || gamepad2.right_stick_y > 0) {
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
