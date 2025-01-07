@@ -104,11 +104,6 @@ public class PrimaryOpMode extends LinearOpMode {
 
             double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            // ChatGPT says:
-            // -------------
-            // Update the robot's heading using the unwrapped angle.
-            // This ensures the heading remains continuous even when crossing ±π boundaries.
-            // The IMU's raw heading wraps around at ±π, so we use unwrapAngle to prevent sudden jumps.
             botHeading = unwrapAngle(botHeading, currentHeading); // Use unwrapping here
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -236,14 +231,7 @@ public class PrimaryOpMode extends LinearOpMode {
         leftServo.setPower(power);
     }
     public void setClawPower(float power, CRServo clawServo){ clawServo.setPower(power); }
-    // ChatGPT says:
-    // -------------
-    /**
-     * Unwraps the angle to ensure continuity.
-     * This method adjusts for the wraparound at ±π (or ±180°) by calculating
-     * the shortest angular distance between the current and previous angles.
-     * Without unwrapping, the angle may jump abruptly, causing erratic behavior.
-     */
+
     private double unwrapAngle(double previousAngle, double currentAngle) {
         double delta = currentAngle - previousAngle;
         if (delta > Math.PI) {

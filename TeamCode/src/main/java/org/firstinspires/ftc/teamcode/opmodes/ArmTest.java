@@ -34,12 +34,19 @@ public class ArmTest extends LinearOpMode {
         // - I believe it is because poor sensor connections by the build team
         // Poor illustration below cause i got bored waiting...
         /*
-        //
-        //   _ -> rightPos = 0  which is not correct
-        //   |          _ -> leftPos = 0
-        //   |  .____.  |
-        // [[============]] <- robot
+
+              =\/= --> pos = 3850 which is likely correct
+               []
+               []
+               []             =\/= --> pos = -4000 which is NOT correct and changes wildly
+               []              []                  from this to 790 and other weird numbers
+            _______________________                which are different than the other elevator
+          //___>_______[]_______<___\\
+         [)[========================](] <-- Robot
+
         */
+
+        // WORKING NOW BC OF FIX
 
         int rightStartingPos = rightDrive.getCurrentPosition();
         int leftStartingPos = leftDrive.getCurrentPosition();
