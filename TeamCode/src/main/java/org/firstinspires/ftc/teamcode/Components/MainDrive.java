@@ -45,8 +45,8 @@ public class MainDrive {
                             float rx,
                             boolean forwardButton,
                             boolean reverseButton,
-                            boolean halfSpeedButton,
-                            boolean fourthSpeedButton
+                            float halfSpeedButton,
+                            float fourthSpeedButton
     ) {
         this.y = y;
         this.x = x;
@@ -61,10 +61,11 @@ public class MainDrive {
         }
 
         // Slow speeds
-        if (halfSpeedButton) {
+        if (halfSpeedButton != 0) {
             divideAmount = 2;
-        } else if (fourthSpeedButton) {
-            divideAmount = 4;
+        } else if (fourthSpeedButton != 0) {
+            divideAmount = 3;
+            //TODO used to be 4
         } else {
             divideAmount = 1;
         }
