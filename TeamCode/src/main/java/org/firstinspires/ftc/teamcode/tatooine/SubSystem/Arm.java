@@ -265,6 +265,9 @@ public class Arm {
         return MathUtil.convertTicksToDistance(EXTEND_CPR, SPOOL_DIM, extendRight.getCurrentPosition());
     }
 
+    public double getMinExtend(){
+        return MIN_EXTEND;
+    }
     public static double getMaxExtend() {
         return MAX_EXTEND;
     }

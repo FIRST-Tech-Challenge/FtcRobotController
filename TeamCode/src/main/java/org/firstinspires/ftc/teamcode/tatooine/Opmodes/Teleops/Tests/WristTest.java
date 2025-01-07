@@ -26,9 +26,12 @@ public class WristTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
-             angle = camera.getAngle();
+             wrist.setPosAng(0.5);
             if (gamepad1.cross){
-                wrist.setPosition(0.5);
+                wrist.home();
+            }
+            else if (gamepad1.circle){
+                wrist.scoreSample();
             }
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

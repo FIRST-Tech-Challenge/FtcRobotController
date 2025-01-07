@@ -63,7 +63,6 @@ public class STBA extends LinearOpMode {
             drive.fieldDrive(new Pose2d(-gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
             arm.setPowerAngleWithF(-gamepad2.left_stick_y);
             arm.setPowerExtend(-gamepad2.right_stick_y);
-
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)) {
                 lockWrist = !lockWrist;
             }

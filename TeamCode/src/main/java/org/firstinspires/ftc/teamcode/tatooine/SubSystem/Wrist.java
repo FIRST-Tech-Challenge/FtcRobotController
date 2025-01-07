@@ -20,12 +20,12 @@ public class Wrist {
     // Constants
     // ---------------------------------------------------------------------------------------------
     private static final String SUBSYSTEM_NAME = "Wrist";
-    public static double HOME = 0.725;
+    public static double HOME = 0.51;
 
-    public static double STRIGHT = 0.65;
+    public static double STRIGHT = 0.4;
 
-    public static double SCORESAMPLE = 0.75;
-    public static double OPEN_MIN = 0.25;
+    public static double SCORESAMPLE = 0.65 ;
+    public static double OPEN_MIN = 0.13;
     public static double BACK  = 0;
 
 
@@ -66,7 +66,8 @@ public class Wrist {
     private double angle = 0;
     private double prevAbsAngle = 0;
 
-    private final double OFFSET = 20;
+    public static double OFFSET = 0;
+    public static double WRIST_OFFSET = 0.1;
     // ---------------------------------------------------------------------------------------------
     // Constructors
     // ---------------------------------------------------------------------------------------------
@@ -168,7 +169,7 @@ public class Wrist {
     // Angle Servo Control
     // ---------------------------------------------------------------------------------------------
     public void setPosAng(double pos) {
-        angleServo.setPosition(pos);
+        angleServo.setPosition(pos- WRIST_OFFSET);
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Servo pos Set", pos);
     }
@@ -248,7 +249,7 @@ public class Wrist {
         public MoveAngle(double goal) {
 //            if (goal <= 90){this.goal = (goal/180)-0.5;}
 //            else {this.goal = (goal/180)+0.5;}
-            this.goal = goal/180;
+            this.goal = goal/180 -OFFSET;
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "MoveAngle Initialized", this.goal);
         }
