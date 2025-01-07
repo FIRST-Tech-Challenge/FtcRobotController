@@ -104,10 +104,10 @@ public class MainTeleop extends OpModeTemplate {
         // Specimen Slider Actions
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(specimenSlider::Expand, specimenSlider));
+                .whenPressed(new InstantCommand(specimenSlider::ToggleExpand, specimenSlider));
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider));
+                .whenPressed(new InstantCommand(specimenSlider::ToggleCollapse, specimenSlider));
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)

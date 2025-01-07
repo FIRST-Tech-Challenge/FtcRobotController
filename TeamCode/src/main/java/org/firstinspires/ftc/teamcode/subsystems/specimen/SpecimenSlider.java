@@ -24,14 +24,38 @@ public class SpecimenSlider extends SonicSubsystemBase {
         this.telemetry = telemetry;
     }
 
+    boolean isExpanding = false;
+
+    public void ToggleExpand() {
+        if(isExpanding) {
+            Hold();
+        } else {
+            Expand();
+        }
+
+        isExpanding = !isExpanding;
+    }
+
+    boolean isCollapsing = false;
+
+    public void ToggleCollapse() {
+        if(isCollapsing) {
+            Hold();
+        } else {
+            Collapse();
+        }
+
+        isCollapsing = !isCollapsing;
+    }
+
     public void Expand() {
-        this.servo1.setPower(1);
-        this.servo2.setPower(-1);
+        this.servo1.setPower(-1);
+        this.servo2.setPower(1);
     }
 
     public void Collapse() {
-        this.servo1.setPower(-1);
-        this.servo2.setPower(1);
+        this.servo1.setPower(1);
+        this.servo2.setPower(-1);
     }
 
     public void Hold() {
