@@ -28,21 +28,123 @@ public class RobotClassTest extends LinearOpMode {
         AutoRobot robot = new AutoRobot(hardwareMap, telemetry);
         waitForStart();
         while (opModeIsActive()) {
-
+            robot.getImu().resetYaw(); //if you move the robot at all between init and running
+            //yaw will be incorrect, this handles that
             telemetry.addData("Status", "Running");
             telemetry.update();
 
+            //make sure forwardArcs are precise
+            robot.driveArcLeftForwards(180);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 180);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcLeftForwards(90);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 90);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcLeftForwards(60);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 30);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcLeftForwards(30);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 0);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcRightForwards(180);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 180);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcRightForwards(90);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -90);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcRightForwards(60);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -30);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+            robot.driveArcRightForwards(30);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 0);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+
+
             //make sure robot does not get stuck while turning
             robot.face(10);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 10);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(-10);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -10);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(20);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 20);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(-20);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -20);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
             robot.face(40);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 40);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(-40);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -40);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(90);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 90);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(-90);
+            robot.waitSeconds(1);
+            telemetry.addData("target", -90);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(180);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 180);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
             robot.face(0);
+            robot.waitSeconds(1);
+            telemetry.addData("target", 0);
+            telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+            robot.waitSeconds(1);
+
 
 
             //drive forward in a square
@@ -77,7 +179,7 @@ public class RobotClassTest extends LinearOpMode {
             //drive in a square without turning
             robot.face(0);
             robot.driveForward(1);
-            robot.driveRight(1);
+            robot.driveRight(1.0);
             robot.driveBackward(1);
             robot.driveLeft(1);
 
