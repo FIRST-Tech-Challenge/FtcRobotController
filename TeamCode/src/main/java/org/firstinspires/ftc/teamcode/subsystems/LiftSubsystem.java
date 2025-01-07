@@ -29,7 +29,6 @@ public class LiftSubsystem {
         liftMotorEx = Common.convertToDcMotorExOrWarn(liftMotor, telemetry, "LiftSubsystem Motor").orElse(null);
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
         this.telemetry = telemetry;
