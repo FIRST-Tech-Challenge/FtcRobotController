@@ -114,7 +114,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
         SampleIntakeReady sampleIntakeReady3 = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
         sampleIntakeReady3.setName("sampleIntakeReady3");
-        sampleIntakeReady3.setDependentActions(moveToSample3);
+        sampleIntakeReady3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         redAutoBasket.addAction(sampleIntakeReady3);
 
         WaitAction waitAction3 = new WaitAction(300); // Make sure linkage fully extends (sample 3)

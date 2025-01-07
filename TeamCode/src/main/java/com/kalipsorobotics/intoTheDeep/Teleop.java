@@ -46,6 +46,8 @@ public class Teleop extends LinearOpMode {
 
     Action lastIntakeAction = null;
 
+    Action lastMoveAction = null;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -194,8 +196,13 @@ public class Teleop extends LinearOpMode {
             outtakePivotPos = outtake.getOuttakePivotServo().getServo().getPosition();
 
             //=========DRIVER 1==========
-            if((wallToBarAction == null || wallToBarAction.getIsDone()) && (moveWallTeleOp == null || moveWallTeleOp.getIsDone())) {
+            if(gamepad1.left_stick_y != 0 || gamepad1.right_stick_x != 0 || gamepad1.left_stick_x != 0) {
+                setLastMoveAction(null);
                 driveAction.move(gamepad1);
+            } else {
+                if (lastMoveAction == null || lastMoveAction.getIsDone()) {
+                    driveTrain.setPower(0);
+                }
             }
 
             //RESET POS
@@ -212,6 +219,8 @@ public class Teleop extends LinearOpMode {
                 if (angleLockTeleOp == null || angleLockTeleOp.getIsDone()) {
                     angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
                     angleLockTeleOp.setName("angleLockTeleOp");
+
+                    setLastMoveAction(angleLockTeleOp);
                 }
             }
 
@@ -219,11 +228,10 @@ public class Teleop extends LinearOpMode {
                 if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
                     moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
                     moveWallTeleOp.setName("moveWallTeleop");
+
+                    setLastMoveAction(moveWallTeleOp);
                 }
 
-            }
-            if (moveWallTeleOp != null){
-                moveWallTeleOp.updateCheckDone();
             }
 
             if(wallToBarPressed) {
@@ -231,31 +239,23 @@ public class Teleop extends LinearOpMode {
                     hangPosY += hangIncrement;
                     wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosY);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
+
+                    setLastMoveAction(wallToBarAction);
                 }
             }
 
-            if (wallToBarAction != null){
-                wallToBarAction.updateCheckDone();
-            }
 
-            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
-                if (angleLockTeleOp != null) {
-                    angleLockTeleOp.setIsDone(true);
-                }
-                if (moveWallTeleOp != null) {
-                    moveWallTeleOp.setIsDone(true);
-                }
-            }
+//            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
+//                if (angleLockTeleOp != null) {
+//                    angleLockTeleOp.setIsDone(true);
+//                }
+//                if (moveWallTeleOp != null) {
+//                    moveWallTeleOp.setIsDone(true);
+//                }
+//            }
 
             //HANG
 
-            if (autoRobotHangAction != null){
-                Log.d("teleop", "running auto robot hang action");
-                autoRobotHangAction.updateCheckDone();
-//                if (autoRobotHangAction.getIsDone()) {
-//                    maintainLS = new MoveOuttakeLSAction(outtake);
-//                }
-            }
 
             if(hangPressed) {
                 if (autoRobotHangAction == null || autoRobotHangAction.getIsDone()){
@@ -308,7 +308,6 @@ public class Teleop extends LinearOpMode {
                 if(intakeClawOpenCloseWasPressed) {
 
                     setLastIntakeAction(null);
-
 
                     if(intakeClawPos == IntakeClaw.INTAKE_CLAW_CLOSE) {
                         intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
@@ -582,6 +581,10 @@ public class Teleop extends LinearOpMode {
                 lastIntakeAction.updateCheckDone();
             }
 
+            if(lastMoveAction != null) {
+                lastMoveAction.updateCheckDone();
+            }
+
             if(needMaintainLs) {
                 if (lastLSAction == null || lastLSAction.getIsDone()) {
                     maintainLS.setIsDone(false);
@@ -613,6 +616,13 @@ public class Teleop extends LinearOpMode {
             lastIntakeAction.setIsDone(true);
         }
         lastIntakeAction = action;
+    }
+
+    private void setLastMoveAction(Action action) {
+        if(lastMoveAction != null) {
+            lastMoveAction.setIsDone(true);
+        }
+        lastMoveAction = action;
     }
 
     private boolean isLinearSlidesRunning(SpecimenHangReady specimenHangReady, SpecimenWallReady specimenWallReady) {
