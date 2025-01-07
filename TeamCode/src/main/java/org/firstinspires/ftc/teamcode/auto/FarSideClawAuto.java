@@ -78,11 +78,11 @@ public class FarSideClawAuto extends LinearOpMode {
 
         robot.drive(0,0,0);
         liftPower = -0.8;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         sleep(2500);
         //lower lift
         liftPower = 0;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
 
         //go forward
 //        strafe = 0;
@@ -128,10 +128,10 @@ public class FarSideClawAuto extends LinearOpMode {
         sleep(300);
 
         liftPower = 0.8;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         sleep(2000);
         liftPower = 0;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         // rotate back to straight position
         strafe = 0;
         rotate = -0.2;

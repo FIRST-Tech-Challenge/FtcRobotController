@@ -91,10 +91,10 @@ public class nearSideNetAuto extends LinearOpMode {
         robot.drive(0,0,0);
 
         liftPower = -0.5;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         sleep(1500);
         liftPower = 0;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
 
         armPosition = 0.5;
         arm.setPosition(armPosition);

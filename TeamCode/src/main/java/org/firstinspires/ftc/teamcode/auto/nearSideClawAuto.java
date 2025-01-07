@@ -67,10 +67,10 @@ public class nearSideClawAuto extends LinearOpMode {
 
         robot.drive(0,0,0);
         liftPower = -0.8;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         sleep(3000);
         liftPower = 0;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
 
         strafe = 0;
         rotate = 0;
@@ -113,10 +113,10 @@ public class nearSideClawAuto extends LinearOpMode {
         sleep(300);
 
         liftPower = 0.8;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
         sleep(2000);
         liftPower = 0;
-        lift.moveLift(liftPower);
+        lift.setPower(liftPower);
 
         strafe = 0;
         rotate = -0.2;

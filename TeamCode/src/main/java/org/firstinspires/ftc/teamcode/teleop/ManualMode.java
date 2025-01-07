@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 import java.util.Locale;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="AAurabot TeleOp")
-public class TeleOp extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="A Manual Mode")
+public class ManualMode extends LinearOpMode {
     private GamepadEvents controller1, controller2;
     private MechDrive robot;
     private Limelight limelight;
@@ -52,7 +52,7 @@ public class TeleOp extends LinearOpMode {
         screen = new DriverHubHelp();
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
-//        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight" );
+        lift = new Lift(hardwareMap, "liftLeft", "liftRight" );
         extendo = new horizontalExtendo(hardwareMap,"hExtendo");
 //       climb = new Climb(hardwareMap,"climb");
         fieldCentric = false;
@@ -74,8 +74,8 @@ public class TeleOp extends LinearOpMode {
 
             //lift
             //manual mode for lift
-//            double liftTriggerValue = controller2.left_trigger.getTriggerValue() - controller2.right_trigger.getTriggerValue();
-//            manuaLift.setPower(liftTriggerValue);
+            double liftTriggerValue = controller2.left_trigger.getTriggerValue() - controller2.right_trigger.getTriggerValue();
+            lift.setPower(liftTriggerValue);
             telemetry.addData("Expected Target Pos", expectedManualLiftPos);
 
             //claw
@@ -102,4 +102,5 @@ public class TeleOp extends LinearOpMode {
     }
 
 }
+
 

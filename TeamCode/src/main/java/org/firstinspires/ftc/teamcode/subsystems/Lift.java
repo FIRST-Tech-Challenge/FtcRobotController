@@ -52,7 +52,7 @@ public class Lift{
         rightLift = hw.get(DcMotor.class, rightLiftName);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-    public void moveLift(double power){
+    public void setPower(double power){
         leftLift.setPower(power);
         rightLift.setPower(power);
     }
