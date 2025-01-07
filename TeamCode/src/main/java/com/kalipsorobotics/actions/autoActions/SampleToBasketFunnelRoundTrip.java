@@ -20,6 +20,10 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
     public static final int INTAKE_SAMPLE_X_FUNNEL = -590-325;
 
     public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY){
+        this(driveTrain, wheelOdometry, outtake, intakeClaw, sampleY, 0);
+    }
+
+    public SampleToBasketFunnelRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, IntakeClaw intakeClaw, int sampleY, int overshootX){
 
         int outtakeXPos = -190;
         int outtakeYPos = 1020;
@@ -29,7 +33,7 @@ public class SampleToBasketFunnelRoundTrip extends KActionSet {
         //bar to sample 1
         moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +415, sampleY, 180);
         moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL +75, sampleY, 180);
-        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -250, sampleY, 180);
+        moveToSample1.addPoint(INTAKE_SAMPLE_X_FUNNEL -250 +overshootX, sampleY, 180);
         this.addAction(moveToSample1);
 
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);

@@ -4,6 +4,8 @@ import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.modules.Outtake;
 
+import org.checkerframework.checker.units.qual.K;
+
 public class AutoRobotHangAction extends KActionSet {
     public AutoRobotHangAction(Outtake outtake) {
 
@@ -44,6 +46,11 @@ public class AutoRobotHangAction extends KActionSet {
         hanghook2.setName("hanghook2");
         hanghook2.setDependentActions(pullRobotUp);
         this.addAction(hanghook2);
+
+        KServoAutoAction outtakePivotBack = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
+        outtakePivotBack.setName("outtakePivotBack");
+        outtakePivotBack.setDependentActions(pullRobotUp);
+        this.addAction(outtakePivotBack);
 
         WaitAction waitBeforeRelease = new WaitAction(3000);
         waitBeforeRelease.setName("waitBeforeRelease");

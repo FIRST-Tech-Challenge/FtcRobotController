@@ -10,7 +10,6 @@ public class SampleIntakeAction extends KActionSet {
 
     public SampleIntakeAction(IntakeClaw intake){
 
-
         KServoAutoAction intakeClawOpen = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
         intakeClawOpen.setName("intakeClawOpen");
         this.addAction(intakeClawOpen);
@@ -34,6 +33,16 @@ public class SampleIntakeAction extends KActionSet {
         clawClose.setName("clawClose");
         clawClose.setDependentActions(wait);
         this.addAction(clawClose);
+
+        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
+        moveBigPivot.setName("moveBigPivot");
+        moveBigPivot.setDependentActions(clawClose);
+        this.addAction(moveBigPivot);
+
+        KServoAutoAction moveSmallPivot = new KServoAutoAction(intake.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_INTAKE_READY_POS);
+        moveSmallPivot.setName("moveSmallPivot");
+        moveSmallPivot.setDependentActions(clawClose);
+        this.addAction(moveSmallPivot);
 
     }
 }
