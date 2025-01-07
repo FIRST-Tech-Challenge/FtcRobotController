@@ -115,7 +115,7 @@ public class AutoCodeToNetZone extends LinearOpMode {
                     telemetry.update();
 
                     //Set Arm in a position to hang specimen
-                    double armPosition = 0.43; //TODO: Correct during testing
+                    double armPosition = 0.40; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();

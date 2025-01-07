@@ -280,7 +280,7 @@ public class AutoCodeTest extends LinearOpMode {
                 armManager.MoveArmToPosition(0.5);
                 vsManager.ResetAndSetToEncoder();
                 vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-                vsManager.SetPower(0.1);
+                vsManager.SetPower(0.5);
                 sleep(500);
                 armManager.MoveArmToPosition(0.4);
                 sleep(500);
@@ -314,14 +314,19 @@ public class AutoCodeTest extends LinearOpMode {
                 telemetry.addData("Move forward for 1 sec", "");
                 telemetry.update();
                 vsManager.ResetAndSetToEncoder();
-                vsManager.BrakeOrReleaseViperSlide(true);
+                //armManager.MoveArmToPosition(0.4);
                 vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-                vsManager.SetTargetPosition(20);
-                vsManager.SetPower(0.3);
-                sleep(2000);
+                //vsManager.SetTargetPosition(20);
+                vsManager.SetPower(0.5);
+                sleep(1500);
+                vsManager.BrakeOrReleaseViperSlide(true);
+                vsManager.SetPower(0.0);
+                sleep(3000);
+                /*
                 telemetry.addData("reached position after 1 sec", "");
                 telemetry.update();
                 vsManager.SetPower(0.0);
+                sleep(1000);
                 telemetry.addData("in brake mode", "");
                 telemetry.update();
                 armManager.MoveArmToPosition(0.5);
@@ -335,6 +340,8 @@ public class AutoCodeTest extends LinearOpMode {
                 //vsManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
                 //vsManager.SetPower(0.1);
                 //sleep(500);
+
+                 */
                 break;
             }
 
