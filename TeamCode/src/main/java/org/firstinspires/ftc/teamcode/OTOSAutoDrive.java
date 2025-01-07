@@ -47,8 +47,8 @@ public class OTOSAutoDrive extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.18;           // Claw is closed
-    final double CLAW_MAX = 0.93;           // Claw is open
+    final double CLAW_MIN = 0.2;           // Claw is closed
+    final double CLAW_MAX = 0.8;           // Claw is open
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
@@ -62,7 +62,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "12/19/2024, 2:51 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/06/2025, 4:03 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -84,8 +84,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
-        driveToLoc(25, 0, -25, 1);
-        driveToLoc(25, 4, -25, 0.5);  // Move forward to get block
+        driveToLoc(23, -3, -25, 1);
+        driveToLoc(24, 4, -25, 0.5);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(200);
@@ -119,7 +119,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         sleep(1000);
         setVertical(VERTICAL_MIN);
         sleep(1000);
-        driveToLoc(25, 19, -20, 0.5);  // Move forward to get block
+        driveToLoc(24, 19, -20, 0.5);  // Move forward to get block
         sleep(100);
         setClaw(CLAW_MIN);                                          // Grab fourth block
         sleep(100);
@@ -137,7 +137,7 @@ public class OTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MIN);
         driveToLoc(50, 5, 0);
         setAscentStick(ASCENT_MAX);
-        driveToLoc(50, -11, 180);
+        driveToLoc(50, -9, 180);
         sleep(300);
         RobotLog.vv("Rockin'", "End program");
         claw.close();                                               // Release tension on the claw
