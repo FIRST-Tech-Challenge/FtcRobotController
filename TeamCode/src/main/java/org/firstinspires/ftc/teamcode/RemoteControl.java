@@ -52,9 +52,9 @@ public class RemoteControl extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.18;        // Claw is closed
-    final double CLAW_MAX = 0.93;        // Claw is open
-    double claw_position = CLAW_MIN;
+    final double CLAW_MIN = 0.2;        // Claw is closed
+    final double CLAW_MAX = 0.8;        // Claw is open
+    double claw_position = CLAW_MAX;
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.2;          // Stick is down
@@ -70,10 +70,11 @@ public class RemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "12/11/2024, 7:17 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "1/6/2024, 4:30 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
-        setAscentStick(ASCENT_MIN);
         waitForStart();
+        setAscentStick(ASCENT_MIN);
+        //claw.setPosition(CLAW_MAX);
         runtime.reset();
 
         // Run until the end of the match (driver presses STOP)
@@ -223,11 +224,11 @@ public class RemoteControl extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
-        claw.setPosition(CLAW_MIN);
+        claw.setPosition(CLAW_MAX);
 
         ascentStick = hardwareMap.get(Servo.class, "ascentStick");
         ascentStick.setDirection(Servo.Direction.REVERSE);
-        ascentStick.setPosition(ASCENT_MIN);
+        ascentStick.setPosition(ASCENT_MAX);
     }
 
     private void setWheelPower(){
