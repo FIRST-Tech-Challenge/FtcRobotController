@@ -158,6 +158,7 @@ public class StupidActionTeleOp extends LinearOpMode {
                     runningActions.add(arm.moveAngle());
                     runningActions.add(new SequentialAction(arm.setAngle(25 * ((arm.getMinExtend())/(arm.getExtend()+ arm.getMinExtend()))
                     )
+
                             , new InstantAction(() -> wrist.openMin()), intake.intake(), new SleepAction(1), arm.setAngle(-5), new SleepAction(1)));
                 }
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
