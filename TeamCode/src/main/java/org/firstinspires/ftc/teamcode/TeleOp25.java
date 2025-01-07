@@ -64,7 +64,7 @@ public class TeleOp25 extends CommandOpMode {
     private MoveWristBadlyUp wristUp;
     private MoveWristBadlyDown wristDown;
     private MoveLinearSlide moveLinearSlide;
-    private ResetLinearSlide resetLinearSlide;
+    //private ResetLinearSlide resetLinearSlide;
     private TurnCmd turnCW;
     private TurnCmd turnCCW;
 
@@ -138,7 +138,7 @@ public class TeleOp25 extends CommandOpMode {
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenPressed(intakeOut);
         toolOp.getGamepadButton(GamepadKeys.Button.X).whenReleased(intakeOff);
 
-        toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(resetLinearSlide);
+        //toolOp.getGamepadButton(GamepadKeys.Button.B).whenPressed(resetLinearSlide);
 
         // Wrist
         wrist = new WristSub(hardwareMap, telemetry);
