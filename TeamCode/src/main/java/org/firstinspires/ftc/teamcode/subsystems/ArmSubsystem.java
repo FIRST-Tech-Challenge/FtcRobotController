@@ -68,7 +68,7 @@ public class ArmSubsystem {
 
     public ArmSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         // init motor
-        armMotor = hardwareMap.dcMotor.get("armMotor");
+        armMotor = hardwareMap.dcMotor.get("AM");
         this.telemetry = telemetry;
         armMotorEx = Common.convertToDcMotorExOrWarn(armMotor, telemetry, "ArmSubsystem").orElse(null);
 

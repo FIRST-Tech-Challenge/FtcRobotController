@@ -23,7 +23,7 @@ public class LiftSubsystem {
     double liftPosition = LIFT_COLLAPSED;
 
     public LiftSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        liftMotor = hardwareMap.dcMotor.get("liftMotor");
+        liftMotor = hardwareMap.dcMotor.get("LM");
         liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         liftMotorEx = Common.convertToDcMotorExOrWarn(liftMotor, telemetry, "LiftSubsystem Motor").orElse(null);

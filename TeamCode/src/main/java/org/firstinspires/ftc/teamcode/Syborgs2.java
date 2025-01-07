@@ -79,8 +79,8 @@ public class Syborgs2 extends LinearOpMode {
         // Initialize arm and lift motor encoders
         initializeMotors();
 
-        intake = hardwareMap.crservo.get("intake");
-        wrist = hardwareMap.servo.get("wrist");
+        intake = hardwareMap.crservo.get("IN");
+        wrist = hardwareMap.servo.get("WR");
 
         // Set intake and wrist positions
         intake.setPower(INTAKE_OFF);

@@ -22,8 +22,8 @@ public class IntakeAndWristSubsystem {
     private double wristPosition = WRIST_FOLDED_OUT;
     public IntakeAndWristSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        intake = hardwareMap.crservo.get("intake");
-        wrist = hardwareMap.servo.get("wrist");
+        intake = hardwareMap.crservo.get("IN");
+        wrist = hardwareMap.servo.get("WR");
 
         intake.setPower(INTAKE_OFF);
         wrist.setPosition(WRIST_FOLDED_OUT);

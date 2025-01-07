@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.utils.ThreadUtils;
 import org.firstinspires.ftc.teamcode.utils.Vector;
 
 import java.util.function.Consumer;
@@ -19,13 +18,14 @@ public class DriveSubsystem {
             frontRightDrive,
             backLeftDrive,
             backRightDrive;
+    private final DcMotor[] motorList;
     public DriveSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        frontLeftDrive = hardwareMap.dcMotor.get("frontLeftDrive");
-        frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive");
-        backLeftDrive = hardwareMap.dcMotor.get("backLeftDrive");
-        backRightDrive = hardwareMap.dcMotor.get("backRightDrive");
-
+        frontLeftDrive = hardwareMap.dcMotor.get("FL");
+        frontRightDrive = hardwareMap.dcMotor.get("FR");
+        backLeftDrive = hardwareMap.dcMotor.get("BL");
+        backRightDrive = hardwareMap.dcMotor.get("BR");
+        motorList = new DcMotor[] { frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive };
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
@@ -56,10 +56,11 @@ public class DriveSubsystem {
         backRightDrive.setTargetPosition(xTicks + yTicks);
         runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.RUN_TO_POSITION));
 
-        while (ThreadUtils.isRunThread() && isMoving()) {
+        while (isMoving()) {
             runForAllMotors(motor -> motor.setPower(0.5));
         }
     }
+
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2, IMU imu) {
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;

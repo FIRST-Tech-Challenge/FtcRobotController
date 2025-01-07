@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
+
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.utils.Common;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.utils.Common;
 
-@TeleOp(name = "SyborgsRefactor")
+@TeleOp(name = "SyborgsTeleOp")
 @SuppressWarnings("unused")
-public class SyborgsRefactor extends LinearOpMode {
+public class SyborgsTeleOp extends LinearOpMode {
     DriveSubsystem drive;
     IMU imu;
     ArmSubsystem arm;
@@ -20,6 +21,7 @@ public class SyborgsRefactor extends LinearOpMode {
     IntakeAndWristSubsystem intakeAndWrist;
     @Override
     public void runOpMode() {
+
         initSubsystems();
         waitForStart();
         while (opModeIsActive()) {
