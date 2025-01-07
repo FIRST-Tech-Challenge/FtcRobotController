@@ -28,6 +28,7 @@ import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
+import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
@@ -388,7 +389,17 @@ public class Teleop extends LinearOpMode {
                 }
 
                 if (sampleIntakeReady == null || sampleIntakeReady.getIsDone()){
-                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw, IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
+
+                    //intakeClawPos default to open
+                    intakeClawPos = IntakeClaw.INTAKE_CLAW_OPEN;
+
+
+                    if (lastIntakeAction instanceof SampleIntakeAction) {
+                        intakeClawPos = IntakeClaw.INTAKE_CLAW_CLOSE;
+                    }
+
+                    sampleIntakeReady = new SampleIntakeReady(IntakeClaw.INTAKE_LINKAGE_EXTEND_POS, intakeClaw,
+                            IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS, intakeClawPos);
                     Log.d("teleop", "made new sample intake  ready");
                     sampleIntakeReady.setName("sampleIntakeReady");
 
@@ -544,6 +555,7 @@ public class Teleop extends LinearOpMode {
                     sampleEndToEndSequence = new SampleEndToEndSequence(intakeClaw, outtake);
                     sampleEndToEndSequence.setName("sampleEndToEndSequence");
 
+                    setLastIntakeAction(sampleEndToEndSequence);
                     setLastLsAction(sampleEndToEndSequence);
                 }
             }

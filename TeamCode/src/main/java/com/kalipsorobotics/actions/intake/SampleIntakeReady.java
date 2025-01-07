@@ -11,7 +11,17 @@ public class SampleIntakeReady extends KActionSet{
            this(intakeLinkageServoPos, intake, IntakeClaw.INTAKE_SMALL_SWEEP_INTAKE_READY_POS);
         }
 
-        public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, double intakeSmallSweepServoPos){
+        public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, double intakeSmallSweepServoPos) {
+            this(intakeLinkageServoPos, intake, intakeSmallSweepServoPos, IntakeClaw.INTAKE_CLAW_OPEN);
+        }
+
+        public SampleIntakeReady(double intakeLinkageServoPos, IntakeClaw intake, double intakeSmallSweepServoPos,
+                                 double intakeClawPos){
+
+            KServoAutoAction moveOpenClaw = new KServoAutoAction(intake.getIntakeClawServo(), intakeClawPos);
+            moveOpenClaw.setName("moveOpenClaw");
+            this.addAction(moveOpenClaw);
+
             KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
             moveBigPivot.setName("moveBigPivot");
             this.addAction(moveBigPivot);
@@ -31,8 +41,9 @@ public class SampleIntakeReady extends KActionSet{
 
             KServoAutoAction moveIntakeLSOut = new KServoAutoAction(intake.getIntakeLinkageServo(), intakeLinkageServoPos);
             moveIntakeLSOut.setName("moveIntakeLSOut");
-            moveIntakeLSOut.setDependentActions(moveBigPivot, moveSmallPivot, moveSmallSweep, intakeArmBigSweep);
+            moveIntakeLSOut.setDependentActions(moveBigPivot, moveSmallPivot, moveSmallSweep, intakeArmBigSweep, moveOpenClaw);
             this.addAction(moveIntakeLSOut);
+
         }
     }
 //intake ls extends
