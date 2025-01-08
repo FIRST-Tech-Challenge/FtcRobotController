@@ -39,12 +39,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+/* Roadrunner includes */
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+
+/* Configuration includes */
+import org.firstinspires.ftc.teamcode.configurations.HMapConfig;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -54,13 +58,6 @@ import java.util.List;
 @Config
 public class MecanumDrive {
     public static class Params {
-        // IMU orientation
-        // TODO: fill in these values based on
-        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
@@ -215,12 +212,18 @@ public class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        String frontLeftWheel  = HMapConfig.s_Current.FRONT_LEFT_WHEEL();
+        String frontRightWheel = HMapConfig.s_Current.FRONT_RIGHT_WHEEL();
+        String backLeftWheel   = HMapConfig.s_Current.BACK_LEFT_WHEEL();
+        String backRightWheel  = HMapConfig.s_Current.BACK_RIGHT_WHEEL();
+        String imu             = HMapConfig.s_Current.BUILT_IN_IMU();
+
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, frontLeftWheel);
+        leftBack = hardwareMap.get(DcMotorEx.class, backLeftWheel);
+        rightBack = hardwareMap.get(DcMotorEx.class, backRightWheel);
+        rightFront = hardwareMap.get(DcMotorEx.class, frontRightWheel);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -228,14 +231,15 @@ public class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( HMapConfig.s_Current.FRONT_LEFT_WHEEL_REVERSE()) leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( HMapConfig.s_Current.FRONT_RIGHT_WHEEL_REVERSE()) rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( HMapConfig.s_Current.BACK_LEFT_WHEEL_REVERSE()) leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( HMapConfig.s_Current.BACK_RIGHT_WHEEL_REVERSE()) rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+        lazyImu = new LazyImu(hardwareMap, imu, new RevHubOrientationOnRobot(
+                HMapConfig.s_Current.BUILT_IN_IMU_LOGO(), HMapConfig.s_Current.BUILT_IN_IMU_USB()));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
