@@ -86,7 +86,7 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                         0.0,
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                       new ArrayList<Translation2d>() {{ }},
-                      AutoFunctions.redVsBlue(new Pose2d(1.55, 0.99, new Rotation2d(Math.toRadians(-64)))),
+                      AutoFunctions.redVsBlue(new Pose2d(1.56, 0.99, new Rotation2d(Math.toRadians(-64)))),
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-64)))),
 
                 new HuntingPos(),
