@@ -99,36 +99,26 @@ public class SlideFunctionsAndClawFunction {
         // This function makes so that the claw is closed by default, opens when the driver pressed the right trigger,
         // and closes when the driver releases the right trigger. These magic numbers were found out through testing.
         if (clawButtonPressed) {
-            Claw.setPosition(0.25);
+            //6.75 difference
+            Claw.setPosition(0.5);
         }
         else {
-            Claw.setPosition(0.7);
+            Claw.setPosition(0.8);
         }
 
-    }
-
-    private boolean isServoMoving(Servo servoGiven) {
-        double oldServoPosition = servoGiven.getPosition();
-        //sleep(1);
-        double newServoPosition = servoGiven.getPosition();
-        if (newServoPosition - oldServoPosition != 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     public void WristControl(Gamepad gamepad2, Telemetry telemetry) {
         telemetry.addData("Here's the line for the wrist", Wrist.getPosition());
         if (gamepad2.y) {
-            double Current = Wrist.getPosition();
-            if (Current >= 1 && !isServoMoving(Wrist)) {
-                Wrist.setPosition(0.25);
-            }
-            else {
-                Wrist.setPosition(1);
-            }
+            Wrist.setPosition(1);
+        }
+        if (gamepad2.x) {
+            Wrist.setPosition(0.6);
+        }
+        if (gamepad2.a) {
+            Wrist.setPosition(0.4);
+
         }
     }
 
