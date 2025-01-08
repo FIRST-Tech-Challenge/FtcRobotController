@@ -46,7 +46,7 @@ public class DepositConstants {
             slidePreTransferPos = 20.00,
             slideSpecIntakePos = 0.00,
             slideSpecDepositReadyPos = 41.90,
-            slideSpecClippedPos = 62.50,
+            slideSpecClippedPos = 63.00,
             slideSampleDepositPos = 72,
             slideMaxExtension = 72,
             slidePositionTolerance = 1.00;

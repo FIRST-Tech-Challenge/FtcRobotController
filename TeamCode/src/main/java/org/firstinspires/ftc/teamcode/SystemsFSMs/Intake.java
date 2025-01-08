@@ -102,7 +102,7 @@ public class Intake {
 
                 // Intake Reversing
                 if (controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.1) {
-                    bucket.setRollerPower(-1);
+                    bucket.setRollerPower(-0.6);
                 } else {
                     bucket.setRollerPower(0);
                 }
@@ -118,7 +118,7 @@ public class Intake {
                 if (bucket.getStatus() == Bucket.Status.down) {
                     // Intake Reversing
                     if (controller.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.1) {
-                        bucket.setRollerPower(-1);
+                        bucket.setRollerPower(-0.6);
                     } else {
                         bucket.setRollerPower(IntakeConstants.intakingPower);
                     }
