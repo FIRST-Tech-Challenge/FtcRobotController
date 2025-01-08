@@ -233,6 +233,7 @@ public class Swerve {
     Module(OpMode opMode, int id) {
 
       steerPID = new PIDController(kp, ki, kd);
+      // TODO: Fine tune these values to stop servo hunting
       switch (id) {
         case 0 -> {
           pos = "FL";
@@ -244,6 +245,7 @@ public class Swerve {
         }
         case 2 -> {
           pos = "BL";
+          ki = 0.25;
           countsPerRevolution = 538.0;
         }
         case 3 -> {

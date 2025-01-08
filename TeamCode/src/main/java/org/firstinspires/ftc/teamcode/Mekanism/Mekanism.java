@@ -31,8 +31,9 @@ public class Mekanism {
   private final Servo ramp1;
   private final Servo ramp2;
 
-  private final double limitSlide;
-  private final double limitPivot;
+  private final double limitSlide = 4200;
+  private final double limitPivot = 2750;
+  private final double countsPerDegree = 30; // TODO: This needs to be found
 
   private final Telemetry telemetry;
 
@@ -66,9 +67,6 @@ public class Mekanism {
     slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     slide2.setPower(0);
 
-    limitSlide = 4200;
-    limitPivot = 2750;
-
     limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limit switch");
 
     // servos for intake
@@ -95,7 +93,7 @@ public class Mekanism {
     telemetry = opMode.telemetry;
   }
 
-  // to extend arm, input from game pad 2 straight in
+  // To extend arm, input from game pad 2 straight in
   public void setSlide(double x) {
     if (slide.getCurrentPosition() >= limitSlide && x > 0) {
       x = 0;
@@ -103,9 +101,8 @@ public class Mekanism {
       x = 0;
     }
 
-    telemetry.addData("slide current pos", slide.getCurrentPosition()); // needs adjusting
-    // TODO: Tuning is very vibes based because this value is very wrong
-    double encoderCountsPerDegree = 30;
+    telemetry.addData("slide current pos", slide.getCurrentPosition());
+
     // TODO: Tune it because we now have 2 motors instead of 1
     if (x == 0)
       x =
@@ -119,7 +116,7 @@ public class Mekanism {
               // kG needs to be scaled with the sin of angle
               * Math.sin(
                   Units.degreesToRadians(
-                      90 - (pivot.getCurrentPosition() / encoderCountsPerDegree)));
+                      90 - (pivot.getCurrentPosition() / countsPerDegree)));
 
     // TODO: Tuning is very vibes based because this value is very wrong, fix it
     double encoderCountsPerInch = 85;
@@ -130,7 +127,7 @@ public class Mekanism {
             (29.5 * encoderCountsPerInch)
                 / Math.max(
                     Math.cos(
-                        Math.toRadians(90 - (pivot.getCurrentPosition() / encoderCountsPerDegree))),
+                        Math.toRadians(90 - (pivot.getCurrentPosition() / countsPerDegree))),
                     1e-6), // Prevent divide by 0
             46 * encoderCountsPerInch); // Limit extension
 
