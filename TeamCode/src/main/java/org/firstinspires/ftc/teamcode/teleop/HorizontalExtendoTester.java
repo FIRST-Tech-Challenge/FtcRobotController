@@ -13,15 +13,14 @@ public class HorizontalExtendoTester extends LinearOpMode {
     private GamepadEvents controller;
     @Override
     public void runOpMode() throws InterruptedException {
-        extendo = new DoubleHorizontalExtendo(hardwareMap, "leftExtendo", "rightExtendo");
+        extendo = new DoubleHorizontalExtendo(hardwareMap, "leftExtendo", "leftExtendo");
         controller = new GamepadEvents(gamepad1);
         waitForStart();
         while(opModeIsActive())
         {
             double extendoPower = controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue();
             extendo.setPower(extendoPower);
-            telemetry.addData("Left Extendo power: ", extendo.getLeftPower());
-            telemetry.addData("Right Extendo power: ", extendo.getRightPower());
+            telemetry.addData("Left Extendo pos: ", extendo.getPosition());
             telemetry.update();
             controller.update();
         }

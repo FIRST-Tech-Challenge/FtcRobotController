@@ -52,7 +52,7 @@ public class ManualMode extends LinearOpMode {
         screen = new DriverHubHelp();
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight" );
+        lift = new Lift(hardwareMap, "liftLeft");
         extendo = new horizontalExtendo(hardwareMap,"hExtendo");
 //       climb = new Climb(hardwareMap,"climb");
         fieldCentric = false;

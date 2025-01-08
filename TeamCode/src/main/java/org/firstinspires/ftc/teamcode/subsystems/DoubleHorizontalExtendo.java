@@ -1,31 +1,33 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class DoubleHorizontalExtendo {
-    private DcMotor leftMotor;
-    private DcMotor rightMotor;
+import java.util.Base64;
 
-    public DoubleHorizontalExtendo(HardwareMap hw, String leftName, String rightName)
+public class DoubleHorizontalExtendo {
+    private DcMotor extendo;
+    private Encoder encoder;
+
+    public DoubleHorizontalExtendo(HardwareMap hw, String extendoName, String encoderName)
     {
-        leftMotor = hw.get(DcMotor.class, leftName);
-        rightMotor = hw.get(DcMotor.class, leftName);
+        this.extendo = hw.get(DcMotor.class, extendoName);
+        this.encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, encoderName)));
     }
 
     public void setPower(double power)
     {
-        leftMotor.setPower(power);
-        rightMotor.setPower(power);
+        extendo.setPower(power);
     }
 
-    public double getLeftPower()
+    public double getPosition()
     {
-        return leftMotor.getPower();
+        return encoder.getPositionAndVelocity().position;
     }
 
-    public double getRightPower()
-    {
-        return rightMotor.getPower();
-    }
+
 }
