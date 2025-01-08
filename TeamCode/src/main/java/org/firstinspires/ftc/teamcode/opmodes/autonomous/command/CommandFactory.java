@@ -103,7 +103,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSliderToIntakeSample3() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 300, false, DeliverySlider.Direction.EXPANDING, 1500);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 180, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
     public MoveSliderCommand collapseSlider() {
@@ -152,6 +152,10 @@ public class CommandFactory {
         return new SingleRunCommand(intake::SetElbowInIntakePosition);
     }
 
+    public SingleRunCommand elbowToIntakePositionForSample3() {
+        return new SingleRunCommand(intake::SetElbowInIntakePositionForSample3);
+    }
+
     public SingleRunCommand elbowToDeliveryPosition() {
         return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
     }
@@ -177,11 +181,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGround(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .1);
     }
 
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(665, 0.715), 100, waitTime,  .4);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .1);
     }
 
     public ParallelRaceGroup intakeFromGround2(int waitTime) {
