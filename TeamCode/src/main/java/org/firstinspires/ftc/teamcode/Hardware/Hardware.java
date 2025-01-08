@@ -8,8 +8,12 @@ import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Hardware.Util.Logger;
 
 import java.util.List;
 
@@ -34,8 +38,8 @@ public class Hardware   {
     public DcMotorEx depositSlideRight;
     public DcMotorEx depositSlideLeft;
 
-    public CRServo armRight;
-    public CRServo armLeft;
+    public Servo armRight;
+    public Servo armLeft;
     public Servo claw;
 
     public AnalogInput armRightEnc;
@@ -46,12 +50,14 @@ public class Hardware   {
     public DcMotorEx intakeSlideMotor;
     public DcMotorEx intakeRoller;
 
-    public CRServo intakePivot;
+    public Servo intakePivot;
     public Servo intakeDoor;
 
     public AnalogInput intakePivotEnc;
 
-    public RevColorSensorV3 intakeCS;
+    public GobildaBlindToucherV69 intakeCS;
+
+    public DigitalChannel intakeLS;
 
 
 
@@ -97,12 +103,17 @@ public class Hardware   {
         depositSlideRight = hardwareMap.get(DcMotorEx.class, "CH-Motor-0");
         depositSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        depositSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         depositSlideLeft = hardwareMap.get(DcMotorEx.class, "CH-Motor-1");
-        depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        depositSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        depositSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        depositSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armRight = hardwareMap.get(CRServo.class, "CH-Servo-0");
-        armLeft = hardwareMap.get(CRServo.class, "CH-Servo-1");
+        armRight = hardwareMap.get(Servo.class, "CH-Servo-0");
+        armLeft = hardwareMap.get(Servo.class, "EH-Servo-0");
         claw = hardwareMap.get(Servo.class, "CH-Servo-2");
 
         armRightEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-0");
@@ -119,18 +130,36 @@ public class Hardware   {
         intakeRoller = hardwareMap.get(DcMotorEx.class, "CH-Motor-3");
         intakeRoller.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        intakePivot = hardwareMap.get(CRServo.class, "CH-Servo-3");
+        intakePivot = hardwareMap.get(Servo.class, "CH-Servo-3");
         intakeDoor = hardwareMap.get(Servo.class, "CH-Servo-4");
 
         intakePivotEnc = hardwareMap.get(AnalogInput.class, "CH-Analog-3");
 
-        intakeCS = hardwareMap.get(RevColorSensorV3.class, "CH-I2C-1-0");
+        intakeCS = hardwareMap.get(GobildaBlindToucherV69.class, "CH-I2C-1-0");
+        intakeLS = hardwareMap.get(DigitalChannel.class, "CH-Digital-0");
     }
 
     public void clearCache() {
         for (LynxModule hub : hubs) {
             hub.clearBulkCache();
         }
+    }
+
+    public void Zero() {
+        depositSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        depositSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        depositSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        intakeSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        pinPoint.resetPosAndIMU();
+    }
+
+    public void zeroPinpoint() {
+        pinPoint.resetPosAndIMU();
     }
 
 }

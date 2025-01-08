@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="EH-Motor-0" port="0" />
+            <goBILDA5202SeriesMotor name="EH-Motor-1" port="1" />
+            <goBILDA5202SeriesMotor name="EH-Motor-2" port="2" />
+            <goBILDA5202SeriesMotor name="EH-Motor-3" port="3" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <Matrix12vMotor name="CH-Motor-0" port="0" />
+            <Matrix12vMotor name="CH-Motor-1" port="1" />
+            <goBILDA5202SeriesMotor name="CH-Motor-2" port="2" />
+            <Matrix12vMotor name="CH-Motor-3" port="3" />
+            <Servo name="CH-Servo-0" port="0" />
+            <Servo name="CH-Servo-1" port="1" />
+            <Servo name="CH-Servo-2" port="2" />
+            <Servo name="CH-Servo-3" port="3" />
+            <Servo name="CH-Servo-4" port="4" />
+            <AnalogInput name="CH-Analog-0" port="0" />
+            <AnalogInput name="CH-Analog-1" port="1" />
+            <AnalogInput name="CH-Analog-2" port="2" />
+            <AnalogInput name="CH-Analog-3" port="3" />
+            <DigitalDevice name="CH-Digital-0" port="0" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+            <goBILDAPinpoint name="CH-I2C-0-1" port="1" bus="0" />
+            <GobildaBlindToucherV69 name="CH-I2C-1-0" port="0" bus="1" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
