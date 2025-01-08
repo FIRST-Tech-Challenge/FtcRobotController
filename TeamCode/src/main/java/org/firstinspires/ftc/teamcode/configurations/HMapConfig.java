@@ -16,7 +16,7 @@ import java.util.Map;
 
 abstract public class HMapConfig {
 
-    public static HMapConfig s_Current = new Test();
+    public static HMapConfig s_Current = new V1();
 
     protected String  FRONT_LEFT_WHEEL = "";
     protected String  BACK_LEFT_WHEEL = "";

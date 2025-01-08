@@ -44,15 +44,28 @@ public class Moving {
         String frontRightWheel = config.FRONT_RIGHT_WHEEL();
         String backLeftWheel   = config.BACK_LEFT_WHEEL();
         String backRightWheel  = config.BACK_RIGHT_WHEEL();
-        String   imu             = config.BUILT_IN_IMU();
+        String imu             = config.BUILT_IN_IMU();
 
-        if(frontLeftWheel.length() == 0) { logger.addLine("Missing front left wheel motor configuration");       isReady = false; }
-        if(frontRightWheel.length() == 0) { logger.addLine("Missing front right wheel motor configuration");     isReady = false; }
-        if(backLeftWheel.length() == 0) { logger.addLine("Missing back left wheel motor configuration");         isReady = false; }
-        if(backRightWheel.length() == 0) { logger.addLine("Missing back right wheel motor configuration");       isReady = false; }
-        if(isFieldCentric && imu.length() == 0) { logger.addLine("Missing imu for field centric configuration"); isReady = false; }
+        logger.addLine("===== MOVING =====");
+        if (isFieldCentric) { logger.addLine("--> FIELD CENTRIC"); }
+        else                { logger.addLine("--> ROBOT CENTRIC"); }
+
+        String status = "--> CONF : ";
+        if(frontLeftWheel.length() == 0)  { status += " FL: KO";       isReady = false; }
+        else                              { status += " FL: OK"; }
+        if(frontRightWheel.length() == 0) { status += " FR: KO";       isReady = false; }
+        else                              { status += " FR: OK"; }
+        if(backLeftWheel.length() == 0)   { status += " BL: KO";       isReady = false; }
+        else                              { status += " BL: OK"; }
+        if(backRightWheel.length() == 0)  { status += " BR: KO";       isReady = false; }
+        else                              { status += " BR: OK"; }
+        if(isFieldCentric && imu.length() == 0) { status += " IMU: KO"; isReady = false; }
+        else                                    { status += " IMU: OK"; }
+        logger.addLine(status);
 
         if (isReady) {
+
+            status = "--> HW : ";
 
             frontLeftMotor = hwm.tryGet(DcMotor.class, frontLeftWheel);
             backLeftMotor = hwm.tryGet(DcMotor.class, backLeftWheel);
@@ -60,26 +73,18 @@ public class Moving {
             backRightMotor = hwm.tryGet(DcMotor.class, backRightWheel);
             gyroscope = hwm.tryGet(IMU.class, imu);
 
-            if (frontLeftMotor == null) {
-                logger.addLine("Front left motor " + frontLeftWheel + " not in HWMap");
-                isReady = false;
-            }
-            if (frontRightMotor == null) {
-                logger.addLine("Front right motor " + frontRightWheel + " not in HWMap");
-                isReady = false;
-            }
-            if (backLeftMotor == null) {
-                logger.addLine("Back left motor " + backLeftWheel + " not in HWMap");
-                isReady = false;
-            }
-            if (backRightMotor == null) {
-                logger.addLine("Back right motor " + backRightWheel + " not in HWMap");
-                isReady = false;
-            }
-            if(isFieldCentric && gyroscope == null) {
-                logger.addLine("IMU named " + imu + " not found in configuration");
-                isReady = false;
-            }
+            if (frontLeftMotor == null)  { status += " FL: KO"; isReady = false; }
+            else                         { status += " FL: OK"; }
+            if (frontRightMotor == null) { status += " FR: KO"; isReady = false; }
+            else                         { status += " FR: OK"; }
+            if (backLeftMotor == null)   { status += " BL: KO"; isReady = false; }
+            else                         { status += " BL: OK"; }
+            if (backRightMotor == null)  { status += " BR: KO"; isReady = false; }
+            else                         { status += " BR: OK"; }
+            if(isFieldCentric && gyroscope == null) { status += " IMU: KO"; isReady = false; }
+            else                                    { status += " IMU: OK"; }
+            
+            logger.addLine(status);
         }
 
         if(isReady) {
@@ -116,8 +121,8 @@ public class Moving {
 
         gamepad = gp;
 
-        if(isReady) { logger.addLine("Moving is ready"); }
-        else { logger.addLine("Moving is not ready"); }
+        if(isReady) { logger.addLine("--> READY"); }
+        else { logger.addLine("--> NOT READY"); }
     }
 
     public void move() {
