@@ -67,13 +67,6 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(deliveryPivot::RotateTowardsDeliverySlowly, deliveryPivot))
                 .whenReleased(new InstantCommand(deliveryPivot::HoldArm, deliveryPivot));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                .whenPressed(new InstantCommand(deliverySlider::CollapseSlowly, deliverySlider))
-                .whenReleased(new InstantCommand(deliverySlider::Hold, deliverySlider));
-
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-                .whenPressed(new InstantCommand(deliverySlider::ExpandSlowly, deliverySlider))
-                .whenReleased(new InstantCommand(deliverySlider::Hold, deliverySlider));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(() -> {
             double sliderPosition = deliverySlider.getPosition();
@@ -103,11 +96,13 @@ public class MainTeleop extends OpModeTemplate {
 
         // Specimen Slider Actions
 
-        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new InstantCommand(specimenSlider::ToggleExpand, specimenSlider));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new InstantCommand(specimenSlider::Expand, specimenSlider))
+                .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
 
-        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new InstantCommand(specimenSlider::ToggleCollapse, specimenSlider));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider))
+                .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
 
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
@@ -129,12 +124,9 @@ public class MainTeleop extends OpModeTemplate {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.Y)
                 .whenHeld(new InstantCommand(deliveryPivot::AutoToIntake, deliveryPivot));
 
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new ParallelCommandGroup(
-                                new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot),
-                                new InstantCommand(deliverySlider::MoveToDeliverySpecimanPosition, deliverySlider),
-                                new InstantCommand(rollingIntake::SetElbowInSpecimenDeliveryPosition, rollingIntake)
-                ));
+        // Pivot back to start position - previously on operator gamepad
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(deliveryPivot::AutoToStart, deliveryPivot));
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new InstantCommand(rollingIntake::ToggleElbowPosition, rollingIntake));
