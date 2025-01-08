@@ -113,11 +113,15 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(710)) {
-            lowestPower = 0.55;
+            lowestPower = 0.6;
         }
 
-        if (targetTicks > mmToTicksLS(720)) {
+        if (targetTicks > mmToTicksLS(730)) {
             lowestPower = 0.6;
+        }
+
+        if (targetTicks > mmToTicksLS(770)) {
+            lowestPower = 0.7;
         }
 
         //action timeout =raiseSlidesBasket, targetErrorTicks=105.623, errorTolerance=25.659, targetTicks=3643.623, currentTicks=3538.000,
