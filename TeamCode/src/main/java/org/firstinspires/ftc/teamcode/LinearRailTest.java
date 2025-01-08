@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class LinearRailTest extends LinearOpMode {
   private Servo testServo = hardwareMap.get(Servo.class, "N/A");
   public int servoRotation = 0;
   public float minRot = 0;
   public float maxRot = 4;
+  private Gamepad gamepad1;
   
   public void runOpMode() throws InterruptedException {
     testServo = hardwareMap.get(Servo.class, "N/A");
