@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.Sweep2;
 import org.firstinspires.ftc.teamcode.CommandGroups.AutomatedMovements.WallPickUp;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.FollowPath;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToPose;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
@@ -39,40 +40,21 @@ public class RightSideAuto extends SequentialCommandGroup {
 
                 new Pause(0.25),
 
-                //Place specimen
                 new PlaceSpecimenAddOffset(),
-
-                // back up
-                new FollowPath(
-                        2.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(90.0))),
-                        new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-0.25, 1.15, new Rotation2d(Math.toRadians(90.0)))),
-                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
-
 
                 new ArmStowHigh(),
 
-                new Pause(0.5),
-
                 new Sweep1(),
-
-                new Sweep2(),
 
                 new WallPickUp(),
 
                 new PlaceSpecimenAddOffset(),
 
-                new WallPickUp(),
-
-                new PlaceSpecimenAddOffset()
-
-
-
-
+                new MoveToPose(
+                    2.0,
+                    1.5,
+                    AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.2, new Rotation2d(Math.toRadians(-90.0))))
+                )
 
         );
 

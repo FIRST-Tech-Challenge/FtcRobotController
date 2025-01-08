@@ -66,7 +66,7 @@ public class LinearSlide extends SubsystemBase {
      * */
     public void moveLinearSlide(int ticks, boolean override) {
         Pose2d currentPOS = RobotContainer.odometry.getCurrentPos();
-        if (!(Math.abs(currentPOS.getX())<1 && Math.abs(currentPOS.getY())<1.2) || override){
+        if (!(Math.abs(currentPOS.getX())<0.9 && Math.abs(currentPOS.getY())<1.15) || override){
         // Sets both motors to the ticks target position
         leftMotor.setTargetPosition(ticks);
         rightMotor.setTargetPosition(ticks);

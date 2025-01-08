@@ -25,7 +25,7 @@ public class ToggleClaw extends CommandBase {
     // This method is called once when command is started
     @Override
     public void initialize() {
-        claw=true;
+        claw=false;
         debounce.reset();
         CurrentButtonState = false;
     }
