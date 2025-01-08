@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenClaw;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
 
 /**
  * This is old mainTeleop
@@ -45,6 +46,7 @@ public class MainTeleop extends OpModeTemplate {
         SpecimenSlider specimenSlider = new SpecimenSlider(hardwareMap, telemetry, feedback);
         //LimeLight limeLight = new LimeLight(hardwareMap, telemetry);
         HangingArm hangingArm = new HangingArm(hardwareMap, telemetry, driverGamepad, feedback);
+        SpecimenSliderClaw specimenSliderClaw = new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
 
         driveTrain = new TeleFourWheelMecanumDriveTrain(hardwareMap, driverGamepad, telemetry, feedback, null);
 
@@ -104,6 +106,8 @@ public class MainTeleop extends OpModeTemplate {
                 .whenPressed(new InstantCommand(specimenSlider::Collapse, specimenSlider))
                 .whenReleased(new InstantCommand(specimenSlider::Hold, specimenSlider));
 
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(specimenSliderClaw::ToggleClaw, specimenSliderClaw));
         // Toggle wrist angle
         operatorGamepad.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new SequentialCommandGroup(
