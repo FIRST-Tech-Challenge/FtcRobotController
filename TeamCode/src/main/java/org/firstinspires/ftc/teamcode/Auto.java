@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.
 import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class Auto extends LinearOpMode{
@@ -12,6 +13,7 @@ public class Auto extends LinearOpMode{
     private DcMotor frontRightWheel;
     private DcMotor backLeftWheel;
     private DcMotor backRightWheel;
+
     //MODIFY LATER ONCE PHONES ARE CONFIGED
     private String flWheelName = "";
     private String frWheelName = "";
@@ -34,5 +36,11 @@ public class Auto extends LinearOpMode{
         backRightWheel.setDirection(DcMotor.Direction.FORWARD);
 
     }
+    private void testRun() {
+        frontLeftWheel.setPower(100);
+        frontRightWheel.setPower(100);
+        backLeftWheel.setPower(100);
+        backRightWheel.setPower(100);
 
+    }
 }

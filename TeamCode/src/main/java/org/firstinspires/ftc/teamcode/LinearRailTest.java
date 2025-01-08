@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class LinearRailTest extends LinearOpMode {
@@ -9,8 +10,7 @@ public class LinearRailTest extends LinearOpMode {
   
   public void runOpMode() throws InterruptedException {
     testServo = hardwareMap.get(Servo.class, "N/A");
-    testServo.setPower(100);
-    testServo.setDirection()
+    testServo.setDirection(Servo.Direction.FORWARD);
 
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -30,11 +30,11 @@ public class LinearRailTest extends LinearOpMode {
 
       // Confine Boundaries
       if (servoRotation <= 0) {
-        servoRotation = minRot;
+        servoRotation = (int) minRot;
       }
 
       if (servoRotation >= 4) {
-        servoRotation = maxRot;
+        servoRotation = (int) maxRot;
       }
 
       testServo.setPosition(servoRotation);
@@ -43,4 +43,5 @@ public class LinearRailTest extends LinearOpMode {
       telemetry.addData("Status", "Running");
       telemetry.update();
     }
+  }
 }
