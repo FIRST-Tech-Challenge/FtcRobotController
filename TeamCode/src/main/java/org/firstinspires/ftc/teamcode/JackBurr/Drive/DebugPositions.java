@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Drive;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
-
+@Disabled
 @TeleOp
 public class DebugPositions extends OpMode {
     public RobotV1Config config = new RobotV1Config();
