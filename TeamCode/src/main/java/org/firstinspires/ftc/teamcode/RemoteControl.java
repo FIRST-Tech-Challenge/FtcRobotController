@@ -251,7 +251,7 @@ public class RemoteControl extends LinearOpMode {
     public void setAscentStick(double target) {
         RobotLog.vv("Rockin' Robots", "Set Ascent Stick to: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
         ascentStick.setPosition(target);
-        sleep(1000);
+        //sleep(1000);
         RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
     }
 
