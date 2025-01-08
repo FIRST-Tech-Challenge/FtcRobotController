@@ -27,10 +27,10 @@ public class DropToGrab extends SequentialCommandGroup {
                 new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(125)),
 
                 // Was pause of 0.3.  Raised it with the higher drop to grab.
-                new Pause(0.25),
+                new Pause(0.3),
 
                 // drops the elbow to 175 degrees for pick up
-                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(140)),
+                new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(142)),
 
                 // intermediate position to ease impact on ground (and on the piece)
                 new InstantCommand(() -> RobotContainer.elbowJoint.RotateTo(145))

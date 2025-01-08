@@ -31,22 +31,10 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
         addCommands (
                 // pick up middle
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90)))),
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
-
-                //new Pause(0.5),
-
                 new MoveToPose(
                         2.0,
-                        1.0,
-                        AutoFunctions.redVsBlue(new Pose2d(1.5, 1.05, new Rotation2d(Math.toRadians(-90))))
+                        0.7,
+                        AutoFunctions.redVsBlue(new Pose2d(1.49, 1.02, new Rotation2d(Math.toRadians(-90))))
                 ),
 
                 new HuntingPos(),
@@ -67,20 +55,10 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
                 new HighBucketDeposit(),
 
                 // pick up right
-//                new FollowPath(
-//                        2.0,
-//                        1.0,
-//                        0.0,
-//                        0.0,
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-135))),
-//                        new ArrayList<Translation2d>() {{ }},
-//                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90)))),
-//                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
-
                 new MoveToPose(
                         2.0,
-                        1.0,
-                        AutoFunctions.redVsBlue(new Pose2d(1.28, 1.05, new Rotation2d(Math.toRadians(-90))))
+                        0.7,
+                        AutoFunctions.redVsBlue(new Pose2d(1.25, 1.02, new Rotation2d(Math.toRadians(-90))))
                 ),
 
                 new HuntingPos(),
@@ -102,14 +80,14 @@ public class GroundCyclingAuto extends SequentialCommandGroup {
 
                 // pick up left
                 new FollowPath(
-                        0.5,
-                        0.75,
-                        0.25,
+                        2.0,
+                        0.7,
+                        0.0,
                         0.0,
                       AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90))),
                       new ArrayList<Translation2d>() {{ }},
-                      AutoFunctions.redVsBlue(new Pose2d(1.6, 1.04, new Rotation2d(Math.toRadians(-63)))),
-                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-63)))),
+                      AutoFunctions.redVsBlue(new Pose2d(1.55, 0.99, new Rotation2d(Math.toRadians(-64)))),
+                      AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-64)))),
 
                 new HuntingPos(),
 

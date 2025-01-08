@@ -39,7 +39,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                 new MoveToPose(
                         1.5,
                         1.0,
-                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.820, new Rotation2d(Math.toRadians(-90))))
+                        AutoFunctions.redVsBlue(new Pose2d(0.0, 0.820, new Rotation2d(Math.toRadians(-90))))
                 ),
 
                 //new Pause(1),
@@ -50,9 +50,9 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                     Pose2d correctedPosition;
                     if (RobotContainer.frontDistance.getDistance()<=7.0){
                         if(RobotContainer.isRedAlliance)
-                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.01-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.05-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
                         else
-                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.01+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.05+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
 
                         RobotContainer.odometry.setCurrentPos(correctedPosition);
                     }
@@ -67,7 +67,7 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
                         0.0,
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-35))),
                         new ArrayList<Translation2d>() {{ }},
-                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.770, new Rotation2d(Math.toRadians(-90)))),
+                        AutoFunctions.redVsBlue(new Pose2d(-0.12, 0.740, new Rotation2d(Math.toRadians(-90)))),
                         AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90)))),
 
                 new InstantCommand(()-> RobotContainer.linearSlide.moveTo(SlideTargetHeight.SAMLE_SPECIMEN, true)),
