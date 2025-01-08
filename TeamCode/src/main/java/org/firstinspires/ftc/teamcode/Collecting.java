@@ -19,6 +19,8 @@ public class Collecting {
 
     boolean     isIntakeReady;
     boolean     isOuttakeReady;
+    boolean     areOuttakeSlidesReady;
+    boolean     areIntakeSlidesReady;
 
     DcMotor     intakeSlidesMotor;
     DcMotor     outtakeSlidesLeftMotor;
@@ -41,6 +43,8 @@ public class Collecting {
 
         isIntakeReady = true;
         isOuttakeReady = true;
+        areOuttakeSlidesReady = true;
+        areIntakeSlidesReady = true;
 
         logger = tm;
 
@@ -58,18 +62,37 @@ public class Collecting {
         String outtakeWristRoll = config.OUTTAKE_WRIST_ROLL();
         String outtakeClaw = config.OUTTAKE_CLAW();
 
-        if(intakeSlides.length()           == 0) { logger.addLine("Missing intake slides motor configuration") ;             isIntakeReady = false;  }
-        if(intakeArmLeftPitch.length()     == 0) { logger.addLine("Missing intake arm left pitch servo configuration") ;     isIntakeReady = false;  }
-        if(intakeArmRightPitch.length()    == 0) { logger.addLine("Missing intake arm right pitch servo configuration") ;    isIntakeReady = false;  }
-        if(intakeElbowPitch.length()       == 0) { logger.addLine("Missing intake elbow pitch servo configuration") ;        isIntakeReady = false;  }
-        if(intakeWristRoll.length()        == 0) { logger.addLine("Missing intake wrist roll servo configuration") ;         isIntakeReady = false;  }
-        if(intakeClaw.length()             == 0) { logger.addLine("Missing intake claw servo configuration") ;               isIntakeReady = false;  }
-        if(outtakeLeftSlides.length()      == 0) { logger.addLine("Missing outtake slides left motor configuration") ;       isOuttakeReady = false; }
-        if(outtakeRightSlides.length()     == 0) { logger.addLine("Missing outtake slides right motor configuration") ;      isOuttakeReady = false; }
-        if(outtakeElbowLeftPitch.length()  == 0) { logger.addLine("Missing outtake elbow left pitch servo configuration") ;  isOuttakeReady = false;  }
-        if(outtakeElbowRightPitch.length() == 0) { logger.addLine("Missing outtake elbow right pitch servo configuration") ; isOuttakeReady = false;  }
-        if(outtakeWristRoll.length()       == 0) { logger.addLine("Missing outtake wrist roll servo configuration") ;        isOuttakeReady = false;  }
-        if(outtakeClaw.length()            == 0) { logger.addLine("Missing outtake claw servo configuration") ;              isOuttakeReady = false;  }
+        logger.addLine("=== COLLECTING ===");
+
+        String status = "--> CONF IN : ";
+        if(intakeSlides.length()           == 0) { status += " SL: KO" ;            isIntakeReady = false;  }
+        else                                     { status += " SL: OK"; }
+        if(intakeArmLeftPitch.length()     == 0) { status += " APL: KO" ;           isIntakeReady = false;  }
+        else                                     { status += " APL: OK"; }
+        if(intakeArmRightPitch.length()    == 0) { status += " APR: KO" ;           isIntakeReady = false;  }
+        else                                     { status += " APR: OK"; }
+        if(intakeElbowPitch.length()       == 0) { status += " EP: KO" ;            isIntakeReady = false;  }
+        else                                     { status += " EP: OK"; }
+        if(intakeWristRoll.length()        == 0) { status += " WR: KO" ;            isIntakeReady = false;  }
+        else                                     { status += " WR: OK"; }
+        if(intakeClaw.length()             == 0) { status += " CW: KO" ;            isIntakeReady = false;  }
+        else                                     { status += " CW: OK"; }
+        logger.addLine(status);
+
+        status = "--> CONF OUT : ";
+        if(outtakeLeftSlides.length()      == 0) { status += " SLL: KO" ;           isOuttakeReady = false;  }
+        else                                     { status += " SLL: OK"; }
+        if(outtakeRightSlides.length()     == 0) { status += " SLR: KO" ;           isOuttakeReady = false;  }
+        else                                     { status += " SLR: OK"; }
+        if(outtakeElbowLeftPitch.length()  == 0) { status += " EPL: KO" ;           isOuttakeReady = false;  }
+        else                                     { status += " EPL: OK"; }
+        if(outtakeElbowRightPitch.length() == 0) { status += " EPR: KO" ;           isOuttakeReady = false;  }
+        else                                     { status += " EPR: OK"; }
+        if(outtakeWristRoll.length()       == 0) { status += " WR: KO" ;            isOuttakeReady = false;  }
+        else                                     { status += " WR: OK"; }
+        if(outtakeClaw.length()            == 0) { status += " CW: KO" ;            isIntakeReady = false;  }
+        else                                     { status += " CW: OK"; }
+        logger.addLine(status);
 
         if (isIntakeReady) {
             intakeSlidesMotor = hwm.tryGet(DcMotor.class, intakeSlides);
@@ -78,6 +101,22 @@ public class Collecting {
             intakeElbowPitchServo = hwm.tryGet(Servo.class, intakeElbowPitch);
             intakeWristRollServo = hwm.tryGet(Servo.class, intakeWristRoll);
             intakeClawServo = hwm.tryGet(Servo.class, intakeClaw);
+
+            status = "--> HW IN : ";
+            if(intakeSlidesMotor          == null)  { status += " SL: KO" ;   }
+            else                                    { status += " SL: OK"; }
+            if(intakeArmLeftPitchServo    == null)  { status += " APL: KO" ;   }
+            else                                    { status += " APL: OK"; }
+            if(intakeArmRightPitchServo   == null)  { status += " APR: KO" ; }
+            else                                    { status += " APR: OK"; }
+            if(intakeElbowPitchServo      == null)  { status += " EP: KO" ; }
+            else                                    { status += " EP: OK"; }
+            if(intakeWristRollServo       == null)  { status += " WR: KO" ;  }
+            else                                    { status += " WR: OK"; }
+            if(intakeClawServo            == null)  { status += " CW: KO" ;  }
+            else                                    { status += " CW: OK"; }
+            logger.addLine(status);
+
         }
 
         if(isOuttakeReady) {
@@ -88,9 +127,26 @@ public class Collecting {
             outtakeWristRollServo = hwm.tryGet(Servo.class,outtakeWristRoll);
             outtakeClawServo = hwm.tryGet(Servo.class,outtakeClaw);
 
+            status = "--> HW OUT : ";
+            if(outtakeSlidesLeftMotor == null)       { status += " SLL: KO" ;}
+            else                                     { status += " SLL: OK"; }
+            if(outtakeRightSlides.length()     == 0) { status += " SLR: KO" ;}
+            else                                     { status += " SLR: OK"; }
+            if(outtakeElbowLeftPitch.length()  == 0) { status += " EPL: KO"; }
+            else                                     { status += " EPL: OK"; }
+            if(outtakeElbowRightPitch.length() == 0) { status += " EPR: KO"; }
+            else                                     { status += " EPR: OK"; }
+            if(outtakeWristRoll.length()       == 0) { status += " WR: KO" ; }
+            else                                     { status += " WR: OK";  }
+            if(outtakeClaw.length()            == 0) { status += " CW: KO" ; }
+            else                                     { status += " CW: OK";  }
+            logger.addLine(status);
+
         }
 
         if (isIntakeReady) {
+            if(intakeSlidesMotor == null) { areIntakeSlidesReady = false; }
+
             if (config.INTAKE_SLIDES_REVERSE() && intakeSlidesMotor != null) {
                 intakeSlidesMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
@@ -99,6 +155,9 @@ public class Collecting {
 
         }
         if(isOuttakeReady) {
+            if(outtakeSlidesLeftMotor == null) { areOuttakeSlidesReady = false; }
+            if(outtakeSlidesRightMotor == null) { areOuttakeSlidesReady = false; }
+
             if (config.OUTTAKE_SLIDES_LEFT_REVERSE() && outtakeSlidesLeftMotor != null) {
                 outtakeSlidesLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
@@ -113,33 +172,44 @@ public class Collecting {
 
         gamepad = gp;
 
-        if(isIntakeReady) { logger.addLine("Intake is ready"); }
-        else { logger.addLine("Intake is not ready"); }
+        status = "--> READY INTAKE :";
+        if(isIntakeReady) {
+            if(areIntakeSlidesReady) { status += " SL: OK"; }
+            else { status += " SL: KO"; }
+        }
+        else { status += " KO"; }
+        logger.addLine(status);
 
-        if(isOuttakeReady) { logger.addLine("Outtake is ready"); }
-        else { logger.addLine("Outtake is not ready"); }
+
+        status = "--> READY OUTTAKE :";
+        if(isOuttakeReady) {
+            if(areOuttakeSlidesReady) { status += " SL : OK"; }
+            else { status += " SL : KO"; }
+        }
+        else { status += " KO"; }
+        logger.addLine(status);
     }
 
     public void move() {
 
         // Outtake slides control
-        if (gamepad.left_bumper && outtakeSlidesRightMotor != null && outtakeSlidesLeftMotor != null) {
+        if (gamepad.left_bumper && areOuttakeSlidesReady) {
             outtakeSlidesRightMotor.setPower(1);
             outtakeSlidesLeftMotor.setPower(1);
         }
-        else if (gamepad.right_bumper && outtakeSlidesRightMotor != null && outtakeSlidesLeftMotor != null) {
+        else if (gamepad.right_bumper && areOuttakeSlidesReady) {
             outtakeSlidesRightMotor.setPower(-1);
             outtakeSlidesLeftMotor.setPower(-1);
         }
-        else if(outtakeSlidesRightMotor != null && outtakeSlidesLeftMotor != null) {
+        else if(areOuttakeSlidesReady) {
             outtakeSlidesRightMotor.setPower(0);
             outtakeSlidesLeftMotor.setPower(0);
         }
 
         // Intake slides control
-        if(gamepad.left_trigger > 0 && intakeSlidesMotor != null) { intakeSlidesMotor.setPower(gamepad.left_trigger);}
-        else if (gamepad.right_trigger > 0 && intakeSlidesMotor != null) { intakeSlidesMotor.setPower(-gamepad.right_trigger);}
-        else if (intakeSlidesMotor != null) { intakeSlidesMotor.setPower(0); }
+        if(gamepad.left_trigger > 0 && areIntakeSlidesReady) { intakeSlidesMotor.setPower(gamepad.left_trigger);}
+        else if (gamepad.right_trigger > 0 && areIntakeSlidesReady) { intakeSlidesMotor.setPower(-gamepad.right_trigger);}
+        else if (areIntakeSlidesReady) { intakeSlidesMotor.setPower(0); }
 
     }
 }
