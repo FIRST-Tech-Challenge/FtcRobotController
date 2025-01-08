@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
-import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 
 
 @Autonomous(name = "Auto Hook Specimen")

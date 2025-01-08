@@ -228,7 +228,7 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-    double kp = 5.5, ki = 0.1, kd = 0.1;
+    double kp = 5.6, ki = 0.1, kd = 0.1;
 
     Module(OpMode opMode, int id) {
 
@@ -245,7 +245,7 @@ public class Swerve {
         }
         case 2 -> {
           pos = "BL";
-          ki = 0.25;
+          ki = 0.2;
           countsPerRevolution = 538.0;
         }
         case 3 -> {
