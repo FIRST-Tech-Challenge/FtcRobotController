@@ -5,24 +5,28 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /* Robot include */
-import org.firstinspires.ftc.teamcode.configurations.Configuration;
+import org.firstinspires.ftc.teamcode.configurations.HMapConfig;
 
 @TeleOp
 public class ManualOpMode extends OpMode {
 
     Moving          moving;
-    Claw            claw;
+    Collecting      collecting;
 
     @Override
     public void init(){
 
         moving = new Moving();
-        claw = new Claw();
-        moving.setHW(Configuration.s_Current, hardwareMap, telemetry, gamepad1);
-        claw.setHW(Configuration.s_Current, hardwareMap, telemetry, gamepad2);
+        collecting = new Collecting();
+        
+        moving.setHW(HMapConfig.s_Current, hardwareMap, telemetry, gamepad1);
+        collecting.setHW(HMapConfig.s_Current, hardwareMap, telemetry, gamepad2);
+        
     }
     public void loop (){
+        
         moving.move();
-        claw.move();
+        collecting.move();
+        
     }
 }

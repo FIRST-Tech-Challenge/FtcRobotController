@@ -13,9 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /* Local includes */
-import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.Motor;
-import org.firstinspires.ftc.teamcode.configurations.Imu;
+import org.firstinspires.ftc.teamcode.configurations.HMapConfig;
 
 public class Moving {
 
@@ -34,7 +32,7 @@ public class Moving {
 
     boolean     isFieldCentric;
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm, Gamepad gp) {
+    public void setHW(HMapConfig config, HardwareMap hwm, Telemetry tm, Gamepad gp) {
 
         isReady = true;
 
@@ -42,62 +40,60 @@ public class Moving {
         logger = tm;
 
         /// Get wheels and IMU parameters from configuration
-        Motor frontLeftWheel  = config.getMotor("front-left-wheel");
-        Motor frontRightWheel = config.getMotor("front-right-wheel");
-        Motor backLeftWheel   = config.getMotor("back-left-wheel");
-        Motor backRightWheel  = config.getMotor("back-right-wheel");
+        String frontLeftWheel  = config.FRONT_LEFT_WHEEL();
+        String frontRightWheel = config.FRONT_RIGHT_WHEEL();
+        String backLeftWheel   = config.BACK_LEFT_WHEEL();
+        String backRightWheel  = config.BACK_RIGHT_WHEEL();
+        String   imu             = config.BUILT_IN_IMU();
 
-        Imu   imu             = config.getImu("built-in");
-
-        if(frontLeftWheel         == null) { logger.addLine("Missing front left wheel motor configuration");  isReady = false; }
-        if(frontRightWheel        == null) { logger.addLine("Missing front right wheel motor configuration"); isReady = false; }
-        if(backLeftWheel          == null) { logger.addLine("Missing back left wheel motor configuration");   isReady = false; }
-        if(backRightWheel         == null) { logger.addLine("Missing back right wheel motor configuration");  isReady = false; }
-        if(isFieldCentric && imu  == null) { logger.addLine("Missing imu for field centric configuration");   isReady = false; }
+        if(frontLeftWheel.length() == 0) { logger.addLine("Missing front left wheel motor configuration");       isReady = false; }
+        if(frontRightWheel.length() == 0) { logger.addLine("Missing front right wheel motor configuration");     isReady = false; }
+        if(backLeftWheel.length() == 0) { logger.addLine("Missing back left wheel motor configuration");         isReady = false; }
+        if(backRightWheel.length() == 0) { logger.addLine("Missing back right wheel motor configuration");       isReady = false; }
+        if(isFieldCentric && imu.length() == 0) { logger.addLine("Missing imu for field centric configuration"); isReady = false; }
 
         if (isReady) {
 
-            frontLeftMotor = hwm.tryGet(DcMotor.class, frontLeftWheel.getName());
-            backLeftMotor = hwm.tryGet(DcMotor.class, backLeftWheel.getName());
-            frontRightMotor = hwm.tryGet(DcMotor.class, frontRightWheel.getName());
-            backRightMotor = hwm.tryGet(DcMotor.class, backRightWheel.getName());
-
-            gyroscope = hwm.tryGet(IMU.class, imu.getName());
+            frontLeftMotor = hwm.tryGet(DcMotor.class, frontLeftWheel);
+            backLeftMotor = hwm.tryGet(DcMotor.class, backLeftWheel);
+            frontRightMotor = hwm.tryGet(DcMotor.class, frontRightWheel);
+            backRightMotor = hwm.tryGet(DcMotor.class, backRightWheel);
+            gyroscope = hwm.tryGet(IMU.class, imu);
 
             if (frontLeftMotor == null) {
-                logger.addLine("Front left motor " + frontLeftWheel.getName() + " not in HWMap");
+                logger.addLine("Front left motor " + frontLeftWheel + " not in HWMap");
                 isReady = false;
             }
             if (frontRightMotor == null) {
-                logger.addLine("Front right motor " + frontRightWheel.getName() + " not in HWMap");
+                logger.addLine("Front right motor " + frontRightWheel + " not in HWMap");
                 isReady = false;
             }
             if (backLeftMotor == null) {
-                logger.addLine("Back left motor " + backLeftWheel.getName() + " not in HWMap");
+                logger.addLine("Back left motor " + backLeftWheel + " not in HWMap");
                 isReady = false;
             }
             if (backRightMotor == null) {
-                logger.addLine("Back right motor " + backRightWheel.getName() + " not in HWMap");
+                logger.addLine("Back right motor " + backRightWheel + " not in HWMap");
                 isReady = false;
             }
             if(isFieldCentric && gyroscope == null) {
-                logger.addLine("IMU named " + imu.getName() + " not found in configuration");
+                logger.addLine("IMU named " + imu + " not found in configuration");
                 isReady = false;
             }
         }
 
         if(isReady) {
 
-            if (frontLeftWheel.getReverse()) {
+            if (config.FRONT_LEFT_WHEEL_REVERSE()) {
                 frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (backLeftWheel.getReverse()) {
+            if (config.BACK_LEFT_WHEEL_REVERSE()) {
                 backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (frontRightWheel.getReverse()) {
+            if (config.FRONT_RIGHT_WHEEL_REVERSE()) {
                 frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (backRightWheel.getReverse()) {
+            if (config.BACK_RIGHT_WHEEL_REVERSE()) {
                 backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
 
@@ -112,7 +108,7 @@ public class Moving {
             backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                    imu.getLogo(), imu.getUsb());
+                    config.BUILT_IN_IMU_LOGO(), config.BUILT_IN_IMU_USB());
             gyroscope.initialize(new IMU.Parameters(RevOrientation));
             gyroscope.resetYaw();
 
