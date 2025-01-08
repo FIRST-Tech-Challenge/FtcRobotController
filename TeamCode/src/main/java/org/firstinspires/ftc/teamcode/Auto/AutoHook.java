@@ -28,10 +28,12 @@ public class AutoHook extends LinearOpMode {
     Pose2d target = new Pose2d(0, 1, new Rotation2d(0));
 
     drivebase.alignWheels(this::opModeIsActive); // TODO: rear right wheel just spins idk why
-    sleep(2000);
+    sleep(1000);
 
     driveWithTeleOp(target, 1);
-
+    sleep(2000);
+    target = new Pose2d(0,2,new Rotation2d(0));
+    driveWithOdo(target,1);
   }
 
 
