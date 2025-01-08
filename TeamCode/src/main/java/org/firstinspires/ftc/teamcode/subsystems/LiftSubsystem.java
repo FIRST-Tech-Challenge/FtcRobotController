@@ -59,7 +59,7 @@ public class LiftSubsystem {
     }
 
     private void setPosition() {
-        liftMotor.setTargetPosition((int) Common.liftmmToTicks(liftPosition));
+        liftMotor.setTargetPosition((int) Common.liftServoMMToTicks(liftPosition));
         if (liftMotorEx != null) {
             liftMotorEx.setVelocity(2100);
             Common.warnIfOvercurrent(liftMotorEx, telemetry, "LiftSubsystem");

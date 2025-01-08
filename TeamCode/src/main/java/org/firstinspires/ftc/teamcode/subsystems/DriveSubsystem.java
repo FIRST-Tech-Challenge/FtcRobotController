@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utils.Vector;
 
 import java.util.function.Consumer;
@@ -49,11 +48,12 @@ public class DriveSubsystem {
 
 
         runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER));
-        //TODO: Fix mecanum
+
         frontLeftDrive.setTargetPosition(xTicks + yTicks);
         frontRightDrive.setTargetPosition(-xTicks + yTicks);
         backLeftDrive.setTargetPosition(-xTicks + yTicks);
         backRightDrive.setTargetPosition(xTicks + yTicks);
+
         runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.RUN_TO_POSITION));
 
         while (isMoving()) {
@@ -66,25 +66,30 @@ public class DriveSubsystem {
         double y = -gamepad1.left_stick_y;
         double rotation = gamepad1.right_stick_x;
 
-        if (gamepad1.options) {
-            imu.resetYaw();
-        }
+        // Convert to polar coordinates
+        double theta = Math.atan2(y, x);
+        // also known as r
+        double power = Math.hypot(x, y);
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-        rotX *= 1.1;
-
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotation), 1);
-        setDrivePower(rotY, rotX, rotation, denominator);
+        setDrivePower(theta, power, rotation);
     }
 
-    private void setDrivePower(double rotY, double rotX, double rotation, double denominator) {
-        double frontLeftPower = (rotY + rotX + rotation) / denominator;
-        double frontRightPower = (rotY - rotX - rotation) / denominator;
-        double backLeftPower = (rotY - rotX + rotation) / denominator;
-        double backRightPower = (rotY + rotX - rotation) / denominator;
+    private void setDrivePower(double theta, double power, double rotation) {
+        double sin = Math.sin(theta - Math.PI / 4);
+        double cos = Math.cos(theta - Math.PI / 4);
+        double max = Math.max(Math.abs(sin), Math.abs(cos));
 
+        double frontLeftPower  = power * cos/max + rotation;
+        double frontRightPower = power * sin/max - rotation;
+        double backLeftPower   = power * sin/max + rotation;
+        double backRightPower  = power * cos/max - rotation;
+
+        if ((power + Math.abs(rotation)) > 1) {
+            frontLeftPower  /= power + Math.abs(rotation);
+            frontRightPower /= power + Math.abs(rotation);
+            backLeftPower   /= power + Math.abs(rotation);
+            backRightPower  /= power + Math.abs(rotation);
+        }
         frontLeftDrive.setPower(frontLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backLeftDrive.setPower(backLeftPower);

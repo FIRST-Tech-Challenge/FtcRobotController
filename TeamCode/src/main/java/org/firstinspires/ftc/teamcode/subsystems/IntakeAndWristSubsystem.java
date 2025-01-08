@@ -26,6 +26,7 @@ public class IntakeAndWristSubsystem {
         wrist = hardwareMap.servo.get("WR");
 
         intake.setPower(INTAKE_OFF);
+
         wrist.setPosition(WRIST_FOLDED_OUT);
     }
 
