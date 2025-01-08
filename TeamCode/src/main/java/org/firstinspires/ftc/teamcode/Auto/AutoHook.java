@@ -5,15 +5,13 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
-import org.firstinspires.ftc.teamcode.Utils;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.math.controller.PIDController;
 
 
 @Autonomous(name = "Auto Hook Specimen")
@@ -28,20 +26,15 @@ public class AutoHook extends LinearOpMode {
     drivebase.initGyro();
 
     waitForStart();
-    Rotation2d rotation = new Rotation2d();
-    Pose2d target = new Pose2d(10, 0, rotation);
+    Pose2d target = new Pose2d(0, 1, new Rotation2d(0));
 
     drivebase.alignWheels(this::opModeIsActive); // TODO: rear right wheel just spins idk why
     sleep(2000);
-    // drivebase.drive(new ChassisSpeeds(1, 0, 0), 1);
 
-    //sleep(2000);
+    driveWithTeleOp(target, 1);
 
-
-    driveWithOdo(target, 3);
-
-    //to send it a different direction change target and direction and call driveWithOdo
   }
+
 
   /**
    * @param targetPos Pose2d target position relative to the field. 0,0 is where the robot first started
@@ -51,9 +44,8 @@ public class AutoHook extends LinearOpMode {
 
     ElapsedTime timer = new ElapsedTime();
     timer.reset();
-    var lastTime = 0.0;
 
-    Pose2d currentPos = new Pose2d();
+    Pose2d currentPos;
 
     double
         integralX = 0,
@@ -61,7 +53,8 @@ public class AutoHook extends LinearOpMode {
         integralHeading = 0,
         previousErrorX = 0,
         previousErrorY = 0,
-        previousErrorHeading = 0;
+        previousErrorHeading = 0,
+        lastTime = 0;
 
     while (timer.seconds() < timeLimit && opModeIsActive()) {
 
@@ -96,8 +89,10 @@ public class AutoHook extends LinearOpMode {
       // 7. Update speeds for the robot
       drivebase.drive(speeds, deltaTime);
 
+
+
       /*
-      // 8. Telemetry
+      // 8. Telemetry - Telemetry causes a null exception for some reason
       telemetry.addData("Current X",0);
       telemetry.addData("Current Y", 0);
       telemetry.addData("Current Heading", 0);
@@ -119,11 +114,16 @@ public class AutoHook extends LinearOpMode {
     drivebase.drive(new ChassisSpeeds(0, 0, 0), 0);
   }
 
-  private void hookClip() {
-  }
 
   private double calculatePID(double error, double deltaTime, double kP, double kI, double kD, double integral, double previousError) {
     double derivative = (error - previousError) / deltaTime;
     return kP * error + kI * integral + kD * derivative;
   }
+
+
+  public void driveWithTeleOp(Pose2d targetPos, double deltaTime) {
+
+    drivebase.teleopDrive(targetPos.getX(), targetPos.getY(), targetPos.getRotation().getRadians(), deltaTime);
+  }
+
 }
