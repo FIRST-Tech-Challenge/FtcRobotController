@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import org.firstinspires.ftc.teamcode.configurations.Configuration;
+import org.firstinspires.ftc.teamcode.configurations.Imu;
 /*
  * This OpMode illustrates how to use the SparkFun Qwiic Optical Tracking Odometry Sensor (OTOS)
  *
@@ -29,7 +31,8 @@ public class SensorSparkFunOTOS extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Get a reference to the sensor
-        myOtos = hardwareMap.get(SparkFunOTOSCorrected.class, "sensor_otos");
+        Imu otos = Configuration.s_Current.getImu("otos");
+        myOtos = hardwareMap.get(SparkFunOTOSCorrected.class, otos.getName());
 
         // All the configuration for the OTOS is done in this helper method, check it out!
         configureOtos();

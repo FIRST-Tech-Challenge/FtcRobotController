@@ -39,12 +39,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+/* Roadrunner includes */
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.configurations.Motor;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+
+/* Configuration includes */
+import org.firstinspires.ftc.teamcode.configurations.Configuration;
+import org.firstinspires.ftc.teamcode.configurations.Motor;
+import org.firstinspires.ftc.teamcode.configurations.Imu;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -215,12 +222,18 @@ public class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        Motor frontLeftWheel  = Configuration.s_Current.getMotor("front-left-wheel");
+        Motor frontRightWheel = Configuration.s_Current.getMotor("front-right-wheel");
+        Motor backLeftWheel   = Configuration.s_Current.getMotor("back-left-wheel");
+        Motor backRightWheel  = Configuration.s_Current.getMotor("back-right-wheel");
+        Imu   imu             = Configuration.s_Current.getImu("built-in");
+
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftBack = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, frontLeftWheel.getName());
+        leftBack = hardwareMap.get(DcMotorEx.class, backLeftWheel.getName());
+        rightBack = hardwareMap.get(DcMotorEx.class, backRightWheel.getName());
+        rightFront = hardwareMap.get(DcMotorEx.class, frontRightWheel.getName());
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -228,13 +241,14 @@ public class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( frontLeftWheel.getReverse()) leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( frontRightWheel.getReverse()) rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( backLeftWheel.getReverse()) leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( backRightWheel.getReverse()) rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+        lazyImu = new LazyImu(hardwareMap, imu.getName(), new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
