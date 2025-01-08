@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
 
-  double slideSpeed = 10;
+  double slideSpeed = 50;
 
   @Override
   public void runOpMode() throws InterruptedException {

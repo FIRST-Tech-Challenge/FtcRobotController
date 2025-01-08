@@ -4,6 +4,7 @@
 package org.firstinspires.ftc.teamcode.Mekanism;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 
@@ -16,6 +17,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Mekanism {
+
+  LinearOpMode myOp;
+
   private final DcMotorEx pivot;
   private final DcMotorEx slide;
   private final DcMotorEx slide2;
@@ -95,6 +99,8 @@ public class Mekanism {
     ramp2.scaleRange(0, 1);
 
     telemetry = opMode.telemetry;
+
+    myOp = opMode;
   }
 
   // To extend arm, input from game pad 2 straight in
@@ -112,7 +118,7 @@ public class Mekanism {
     } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
       x = 0;
     }
-    telemetry.addData("pivot current pos", pivot.getCurrentPosition());
+    telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
 
     x *= .5;
     pivot.setPower(x);
@@ -120,28 +126,40 @@ public class Mekanism {
 
   public void homeArm() {
     pivotTimer.reset();
-    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500) {
+
+    pivot.setMode(RUN_USING_ENCODER);
+    slide.setMode(RUN_USING_ENCODER);
+    slide2.setMode(RUN_USING_ENCODER);
+
+    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500 && myOp.opModeIsActive()) {
       pivot.setPower(-.75);
       slide.setPower(-0.5);
+      slide2.setPower(-0.25);
+
+      telemetry.addData("Pivot Pos: ", pivot.getCurrentPosition());
+      telemetry.update();
     }
 
-    pivot.setPower(.00);
-    slide.setPower(.00);
+    pivot.setPower(0.0);
+    slide.setPower(0.0);
+    slide2.setPower(0.0);
     try {
       Thread.sleep(250);
     } catch (final InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
-    pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    pivot.setMode(STOP_AND_RESET_ENCODER);
+    slide.setMode(STOP_AND_RESET_ENCODER);
+    slide2.setMode(STOP_AND_RESET_ENCODER);
 
-    slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    pivot.setMode(RUN_USING_ENCODER);
+    slide.setMode(RUN_TO_POSITION);
+    slide2.setMode(RUN_TO_POSITION);
 
-    pivot.setPower(.00);
+    pivot.setPower(0.0);
+    slide.setPower(1.0);
+    slide2.setPower(1.0);
   }
 
   public void runIntake(boolean intake, boolean outtake) {
