@@ -4,6 +4,7 @@
 *.ap_
 *.aab
 
+
 !libs/*.aar
 
 # Files for the ART/Dalvik VM
@@ -79,3 +80,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+#sdks
+
+/SDKS
