@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.Final.Final.Auto;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
+import org.firstinspires.ftc.teamcode.hardware;
 
 public class calculations {
+    private hardware hardware;
+
     //TIME
     public ElapsedTime timer = new ElapsedTime();
 
     public double timeToRotate360 = 10;
+    double makeSpaceForArm = 5;
+    double timeToLiftArm = 3;
 
     //DRIVING
     double driveSpeed = 0.8;
@@ -37,12 +44,17 @@ public class calculations {
     double grabberHold = 0;
 
     //DOOR
-    double open = 0;       // Open door position
+    double open = 0;     // Open door position
     double close = 0.6;// Close door position
 
-    //WRIST
-    double up = -0.4;         //wrist up position
-    double down = 0.4;     //wrist down position
-    double wristHold = 0;        //Holds the wrist position
+    //COLOR
+//    double red = hardware.colorSensor.red();
+//    double blue = hardware.colorSensor.blue();
+//    double green = hardware.colorSensor.green();
+//    boolean yellow = (red > (blue + 100)) && (green > (blue + 100));
 
+    //DISTANCE
+    double cageDistance = 13;
+    double clearCage = 8;
+    double smidge = 5;
 }
