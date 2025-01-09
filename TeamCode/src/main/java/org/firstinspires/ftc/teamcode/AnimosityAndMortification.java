@@ -73,11 +73,12 @@ public class AnimosityAndMortification extends Movable {
                 disableScissorPower();
             }
 
-//            if (gamepad1.a) {
+            if (gamepad1.a) {
+                moveSlides("thrust");
+            } else if (gamepad1.b) {
+                moveSlides("retract");
+            }
 
-//            } else if (gamepad1.b) {
-
-//            }
             updatePhoneConsole();
         }
     }

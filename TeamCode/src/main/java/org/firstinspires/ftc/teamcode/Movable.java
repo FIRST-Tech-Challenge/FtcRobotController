@@ -15,6 +15,7 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BLScissorLift;
     static protected Servo SlideR;
     static protected Servo SlideL;
+    static protected boolean thrust;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -128,14 +129,14 @@ abstract class Movable extends LinearOpMode {
         }
     }
 
-    public void moveClaws(String toggle) {
+    public void moveSlides(String toggle) {
         SlideL.setDirection(Servo.Direction.REVERSE);
         switch (toggle) {
-            case "grab":
-                SlideR.setPosition(.5);
-                SlideL.setPosition(.5);
+            case "thrust":
+                SlideR.setPosition(1);
+                SlideL.setPosition(1);
                 break;
-            case "release":
+            case "retract":
                 SlideR.setPosition(0);
                 SlideL.setPosition(0);
                 break;
