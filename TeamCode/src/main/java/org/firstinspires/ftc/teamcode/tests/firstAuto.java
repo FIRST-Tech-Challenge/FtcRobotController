@@ -23,7 +23,7 @@ import java.util.List;
 
 @Autonomous
 @Config
-public class testFtcLibTrajFollowing extends OpMode {
+public class firstAuto extends OpMode {
     PIDController txPID;
     PIDController tyPID;
     PIDController rotPID;
@@ -75,7 +75,7 @@ public class testFtcLibTrajFollowing extends OpMode {
                 this, gamepad1, hardwareMap,
                 encoderNames, driveNames, angleNames, P, I, D);
         List<List<Pose2d>> pointlist = new ArrayList<>();
-
+        
         pointlist.add(new ArrayList<>());
         pointlist.get(0).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
         pointlist.get(0).add(new Pose2d(new Translation2d(.5, 0), new Rotation2d(0)));
