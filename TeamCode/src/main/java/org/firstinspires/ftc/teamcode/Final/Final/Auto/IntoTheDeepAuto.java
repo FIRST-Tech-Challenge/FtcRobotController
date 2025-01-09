@@ -41,7 +41,7 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
 
         waitForStart();
         while (opModeIsActive()) {
-            toSample();
+            test();
         }
     }
 
@@ -318,24 +318,37 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
     public void toSample() {
         // Define the task sequence
         String[][] taskSequence = {
-                {"MOVE_TO_DISTANCE", Double.toString(calculations.cageDistance), Double.toString(calculations.driveSpeed)},
-                //{"STRAFE_TO_DISTANCE", Double.toString(calculations.cageDistance), Double.toString(calculations.driveSpeed)},
-                //{"STRAFE_UNTIL_CLEAR", Double.toString(calculations.clearCage), Double.toString(calculations.driveSpeed)},
-                //{"ROTATE", Double.toString(calculations.timeToRotate360), Double.toString(calculations.turnSpeed)},
-                //{"STRAFE_TO_DISTANCE", Double.toString(calculations.cageDistance), Double.toString(calculations.driveSpeed)},
-                //{"STRAFE_UNTIL_CLEAR", Double.toString(calculations.smidge), Double.toString(calculations.driveSpeed)},
-                //{"MOVE_BACKWARD", Double.toString(calculations.makeSpaceForArm), Double.toString(calculations.driveSpeed)},
-                //{"LIFT_ARM", Double.toString(calculations.timeToLiftArm), Double.toString(calculations.driveSpeed)},
-                //{"MOVE_TO_DISTANCE", Double.toString(calculations.cageDistance), Double.toString(calculations.driveSpeed)},
-                //{"LIFT_ARM", Double.toString(calculations.timeToLiftArm), Double.toString(-calculations.driveSpeed)},
-                //{"MOVE_BACKWARD", Double.toString(calculations.smidge), Double.toString(calculations.driveSpeed)},
-                {"MOVE_TO_DISTANCE", Double.toString(calculations.cageDistance), Double.toString(0)}
+                //Move the robot to be 5 inches from the back wall and then center middle of robot to be in the middle horizontally
+                //Rotate 90 degrees left
+                //Strafe until block is detected
+                //Move forward until block is 19 inches away
+                //Lower arm down
+                //Engage claw
+                //Move arm up
+                //Engage claw
+                //Move forward until wall is 4 inches away
+                //Rotate right until wall is detected again
+                //Move forward 3 inches
+                //Lift the hopper all the away
+                //Open door
+
         };
 
         // Execute each task
         for (String[] task : taskSequence) {
             executeTask(task[0], Double.parseDouble(task[1]), Double.parseDouble(task[2]));
         }
+    }
+
+    private void test(){
+        //ROTATION
+        while(calculations.timer.seconds() <= calculations.timeToRotate360){
+            setWheelSpeed(mainEnum.TURN_RIGHT, calculations.turnSpeed);
+        }
+        setWheelSpeed(mainEnum.FORWARD, 0);
+        //ARM
+
+        //CLAW
     }
 }
 

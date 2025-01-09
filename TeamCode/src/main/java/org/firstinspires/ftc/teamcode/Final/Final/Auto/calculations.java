@@ -11,7 +11,7 @@ public class calculations {
     //TIME
     public ElapsedTime timer = new ElapsedTime();
 
-    public double timeToRotate360 = 10;
+    public double timeToRotate360 = 2.5;
     double makeSpaceForArm = 5;
     double timeToLiftArm = 3;
 
