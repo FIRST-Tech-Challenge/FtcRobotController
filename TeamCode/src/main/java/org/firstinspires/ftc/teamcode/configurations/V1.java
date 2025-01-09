@@ -64,9 +64,18 @@ public class V1 extends Configuration {
         m_servos.get("intake-elbow-pitch").setPosition("look", 0.70);
         m_servos.get("intake-elbow-pitch").setPosition("overSub", 0.73);
 
+        m_servos.get("intake-wrist-roll").setPosition("center", 0.405);
+        m_servos.get("intake-wrist-roll").setPosition("max", 0.82);
+        m_servos.get("intake-wrist-roll").setPosition("min", 0.27);
+
+        m_servos.get("intake-claw").setPosition("closed", 1);
+        m_servos.get("intake-claw").setPosition("microrelease", 0.98);
+        m_servos.get("intake-claw").setPosition("open", 0.62);
+
         m_servos.get("outtake-wrist-roll").setPosition("center", 0.13);
 
         m_servos.get("outtake-claw").setPosition("closed", 0.3);
+        m_servos.get("outtake-claw").setPosition("microrelease", 0.28);
         m_servos.get("outtake-claw").setPosition("open", 0.1);
 
         m_servos.get("outtake-elbow-right-pitch").setPosition("vertical", 0.015);
