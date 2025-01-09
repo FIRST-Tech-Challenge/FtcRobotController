@@ -8,5 +8,5 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 
 public class Camera {
     // i don't know what im doing
-   // ExposureControl x = ne;
+   // Gary is soo coool!!!!
 }
