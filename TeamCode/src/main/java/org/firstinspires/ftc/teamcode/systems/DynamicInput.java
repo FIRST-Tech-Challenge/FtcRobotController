@@ -98,7 +98,9 @@ public class DynamicInput {
         public final boolean ascendExtensorExtend, ascendExtensorRetract, ascendExtensorGround, ascendExtensorCeiling;
         public final double boostAmount, brakeAmount;
         public final boolean linearActuatorExtend, linearActuatorRetract;
-        public final boolean clawIn, clawOut;
+        public final boolean toggleClaw;
+        public final boolean shoulderUp, shoulderDown;
+
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
@@ -126,14 +128,15 @@ public class DynamicInput {
                     getAxisValue(mainCtrl, mainSettings.buttonMapping.brake));
             this.linearActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorExtend);
             this.linearActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorRetract);
-            this.clawIn = getButtonState(subCtrl, subSettings.buttonMapping.clawIn);
-            this.clawOut = getButtonState(subCtrl, subSettings.buttonMapping.clawOut);
+            this.toggleClaw = getButtonState(subCtrl, subSettings.buttonMapping.clawToggle);
+            this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);
+            this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
+
         }
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp, justClawIn, justClawOut;
-        public final boolean shoulderUp, shoulderDown;
+        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp, justToggleClaw, justShoulderUp, justShoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
@@ -145,11 +148,9 @@ public class DynamicInput {
             this.justRetractVertical = retractVertical && !prevRetractVertical;
             this.justExtendVertical = extendVertical && !prevExtendVertical;
             this.justWristUp = wristUp && !prevWrist;
-            this.justClawIn = clawIn && !prevInClaw;
-            this.justClawOut = clawOut && !prevOutClaw;
-
-            this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp) && !prevShoulderUp;
-            this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown) && !prevShoulderDown;
+            this.justToggleClaw = toggleClaw && !prevToggleClaw;
+            this.justShoulderUp = shoulderUp && !prevShoulderUp;
+            this.justShoulderDown = shoulderDown && !prevShoulderDown;
         }
     }
 

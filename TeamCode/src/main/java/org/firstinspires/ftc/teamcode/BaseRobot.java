@@ -42,6 +42,7 @@ public class BaseRobot {
     public LinearActuator linearActuator;
     public Odometry odometry;
     public BNO055IMU imu;
+    public int clawState = 0;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -232,17 +233,24 @@ public class BaseRobot {
                 }
             }
 
-            if (contextualActions.clawIn) {
-                outtake.claw.forward();
-            }
-            else if (contextualActions.clawOut) {
-                outtake.claw.backward();
-            }
-            else {
-                outtake.claw.stop();
+            if (contextualActions.justToggleClaw) {
+                switch (clawState) {
+                    case 1:
+                        clawState = -1;
+                        this.outtake.claw.forward();
+                        break;
+                    case -1:
+                        this.outtake.claw.backward();
+                        clawState = 0;
+                        break;
+                    default:
+                        clawState = 1;
+                        this.outtake.claw.stop();
+                        break;
+                }
             }
 
-            if (contextualActions.shoulderUp) {
+            if (contextualActions.justShoulderUp) {
                 outtake.linkage.cyclePosition();
             }
 
