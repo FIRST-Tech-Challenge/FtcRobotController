@@ -200,9 +200,9 @@ public class GoToNextDropOff extends CommandBase {
 
         // decrement destination for next time
         if(RobotContainer.isRedAlliance)
-            x_dest_decrement -=0.04;
+            x_dest_decrement -=0.06;
         else
-            x_dest_decrement +=0.04;
+            x_dest_decrement +=0.06;
 
     }
 

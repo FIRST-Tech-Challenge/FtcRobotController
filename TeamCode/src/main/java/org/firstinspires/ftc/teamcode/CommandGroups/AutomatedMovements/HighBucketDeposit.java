@@ -32,7 +32,7 @@ public class HighBucketDeposit extends SequentialCommandGroup {
                 new MoveToPose(
                         2.0,
                         0.7,
-                        AutoFunctions.redVsBlue(new Pose2d(1.41, 1.41, new Rotation2d(Math.toRadians(-135))))
+                        AutoFunctions.redVsBlue(new Pose2d(1.42, 1.42, new Rotation2d(Math.toRadians(-135))))
                 ),
 
                 new BackDepositPose(),
