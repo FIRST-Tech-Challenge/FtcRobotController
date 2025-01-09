@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class IntakeAndDriveOnly extends OpMode {
     public RobotV2Config config = new RobotV2Config();

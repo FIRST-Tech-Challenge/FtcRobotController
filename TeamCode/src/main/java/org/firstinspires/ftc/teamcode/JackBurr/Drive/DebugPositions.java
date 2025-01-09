@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.ArmMotorV1;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class DebugPositions extends OpMode {
     public RobotV1Config config = new RobotV1Config();

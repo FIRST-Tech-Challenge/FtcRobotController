@@ -22,6 +22,8 @@ public class DifferentialArmTest extends OpMode {
         right_servo = hardwareMap.get(Servo.class, "right_diff");
         left_servo_encoder = hardwareMap.get(AnalogInput.class,"left_servo_encoder");
         right_servo_encoder = hardwareMap.get(AnalogInput.class,"right_servo_encoder");
+        left_servo.setDirection(Servo.Direction.REVERSE);
+        right_servo.setDirection(Servo.Direction.REVERSE);
     }
 
     @Override
@@ -41,7 +43,7 @@ public class DifferentialArmTest extends OpMode {
         //      - LEFT GOES RIGHT
         //      - RIGHT GOES LEFT
         //------------------------------------------------------------------------------------------------------------------------
-        if(gamepad1.x && timer.seconds() > 0.3){
+        if(gamepad1.right_trigger > 0 && timer.seconds() > 0.3){
             if(grippers.getPosition() == 0){
                 grippers.setPosition(0.6);
             }

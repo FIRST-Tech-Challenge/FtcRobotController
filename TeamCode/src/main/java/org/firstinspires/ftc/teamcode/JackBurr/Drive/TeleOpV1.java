@@ -25,11 +25,13 @@ public class TeleOpV1 extends OpMode {
     public enum SystemStatesV1 {
         START,
         HOVER_OVER_SAMPLE,
+        HOVER_LOW,
         DOWN_ON_SAMPLE,
         ARM_UP,
         READY_FOR_DELIVERY,
         DELIVER_LOW_BASKET,
         GRAB_OFF_WALL,
+        LIFT_FROM_WALL,
         DELIVER_HIGH_BAR,
         DELIVER_UP,
         DROP,
@@ -92,7 +94,6 @@ public class TeleOpV1 extends OpMode {
         deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
         wrist.setPosition(constants.WRIST_CENTER);
         deliverySlides.init(hardwareMap);
-        intakeSlides.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesState = SlidesState.IN;
         //===========================================================================================================
     }
@@ -118,6 +119,9 @@ public class TeleOpV1 extends OpMode {
             timeNeeded = 2;
         }
         else if(state == SystemStatesV1.DELIVER_UP){
+            timeNeeded = 1;
+        }
+        else if(state == SystemStatesV1.READY_FOR_DELIVERY){
             timeNeeded = 1;
         }
         else {
@@ -147,12 +151,13 @@ public class TeleOpV1 extends OpMode {
                 slidesReset = true;
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
-                intakeSlides.runToPosition(constants.INTAKE_MOTOR_IN, 0.5);
+                intakeSlides.intakeIn();
                 grippers.setPosition(constants.GRIPPERS_CLOSE);
                 grippersClosed = true;
                 if(gamepad1.b && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.GRAB_OFF_WALL;
                     buttonTimer.reset();
+                    break;
                 }
                 break;
             case GRAB_OFF_WALL:
@@ -161,7 +166,16 @@ public class TeleOpV1 extends OpMode {
                     buttonTimer.reset();
                 }
                 deliveryAxon.setPosition(constants.DELIVERY_WALL_PICKUP);
-            case HOVER_OVER_SAMPLE:
+                break;
+            case LIFT_FROM_WALL:
+                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
+                break;
+            case DELIVER_HIGH_BAR:
+                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR, 0.8);
+                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR, 0.8);
+                deliveryAxon.setPosition(constants.DELIVERY_DROP);
+                break;
+            case HOVER_LOW:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -177,7 +191,31 @@ public class TeleOpV1 extends OpMode {
                 }
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 grippersClosed = false;
-                intakeSlides.runToPosition(constants.INTAKE_MOTOR_OUT, 0.5);
+                intakeSlides.intakeOut();
+                differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_LOW_HOVER);
+                differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_LOW_HOVER);
+                diffTimer.reset();
+                diffTimer2.reset();
+                grippersTimer.reset();
+                pickedUpSample = false;
+                break;
+            case HOVER_OVER_SAMPLE:
+                if(gamepad1.y && buttonTimer.seconds() > 0.3){
+                    state = SystemStatesV1.HOVER_LOW;
+                    buttonTimer.reset();
+                }
+                if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveLeft(0.2);
+                    buttonTimer.reset();
+
+                }
+                else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
+                    wrist.moveRight(0.2);
+                    buttonTimer.reset();
+                }
+                grippers.setPosition(constants.GRIPPERS_OPEN);
+                grippersClosed = false;
+                intakeSlides.intakeOut();
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_HOVER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_HOVER);
                 diffTimer.reset();
@@ -230,13 +268,15 @@ public class TeleOpV1 extends OpMode {
                             diffTimerIsReset = true;
                         }
                         if (diffTimer.seconds() > 0.6) {
-                            intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
+                            intakeSlides.intakeAllTheWayIn();
                         }
                     } else {
                         grippers.setPosition(constants.GRIPPERS_GRAB);
                     }
                 }
                     deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                deliveryGrippersTimer2.reset();
+                deliveryTimerIsReset = false;
                 break;
             case READY_FOR_DELIVERY:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
@@ -244,7 +284,7 @@ public class TeleOpV1 extends OpMode {
                     buttonTimer.reset();
                 }
                 else if(gamepad1.a && buttonTimer.seconds() > 0.3){
-                    if(!grippersOpened){
+                    if(grippersOpened){
                         state = SystemStatesV1.DELIVER_LOW_BASKET;
                         buttonTimer.reset();
                         grippersOpened = true;
@@ -252,35 +292,35 @@ public class TeleOpV1 extends OpMode {
                 }
                 diffTimerIsReset = false;
                 //Move delivery arm to sample
-                intakeSlides.runToPosition(constants.INTAKE_MOTOR_ALL_THE_WAY_IN, 1);
+                intakeSlides.intakeAllTheWayIn();
                 if(!deliveryGrippersClosed) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 }
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 if(!deliveryTimerIsReset){
                     deliveryGrippersTimer.reset();
+                    deliveryTimerIsReset = true;
                 }
                 if(deliveryGrippersTimer.seconds() <  0.3) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
                     deliveryGrippersClosed = true;
+                    deliveryGrippersTimer2.reset();
                 }
+                else {
+                    grippers.setPosition(constants.GRIPPERS_OPEN);
+                    grippersOpened = true;
+                }
+
+                deliveryGrippersTimer2.reset();
                 break;
             case DELIVER_UP:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                if(deliveryGrippersTimer.seconds() >  0.3) {
-                    if(!grippersOpened) {
-                        grippers.setPosition(constants.GRIPPERS_OPEN);
-                        deliveryGrippersTimer2.reset();
-                        grippersOpened = true;
-                    }
-                }
-                if(deliveryGrippersTimer2.seconds() > 0.6) {
-                    deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BASKET, 0.8);
-                    deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BASKET, 0.8);
-                }
+
+                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BASKET, 0.8);
+                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BASKET, 0.8);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -291,14 +331,9 @@ public class TeleOpV1 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                if(deliveryGrippersTimer.seconds() >  0.3) {
-                    grippers.setPosition(constants.GRIPPERS_OPEN);
-                    deliveryGrippersTimer2.reset();
-                }
-                if(deliveryGrippersTimer2.seconds() > 0.3) {
-                    deliverySlides.runLeftSlideToPosition(-1416, 0.8);
-                    deliverySlides.runRightSlideToPosition(1423, 0.8);
-                }
+
+                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LOW_BASKET, 0.8);
+                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LOW_BASKET, 0.8);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -313,6 +348,7 @@ public class TeleOpV1 extends OpMode {
         telemetry.addLine("\t Intake grippers position: " + grippers.getPosition());
         telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
         telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());
+        telemetry.addLine("\t Delivery Grippers Timer 02: " + deliveryGrippersTimer2.seconds());
 
 
     }
@@ -335,10 +371,14 @@ public class TeleOpV1 extends OpMode {
             case START:
                 return SystemStatesV1.HOVER_OVER_SAMPLE;
             case GRAB_OFF_WALL:
+                return SystemStatesV1.LIFT_FROM_WALL;
+            case LIFT_FROM_WALL:
                 return SystemStatesV1.DELIVER_HIGH_BAR;
             case DELIVER_HIGH_BAR:
                 return SystemStatesV1.DROP;
             case HOVER_OVER_SAMPLE:
+                return SystemStatesV1.HOVER_LOW;
+            case HOVER_LOW:
                 return SystemStatesV1.DOWN_ON_SAMPLE;
             case DOWN_ON_SAMPLE:
                 return SystemStatesV1.ARM_UP;

@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Motors;
+package org.firstinspires.ftc.teamcode.TheRealKingIsHERE.drive.Motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-public class IntakeSlidesV1 {
+
+public class IntakeSlidesNate {
     public HardwareMap hardwareMap;
     public DcMotor intakeSlides;
     public double power = 0;
@@ -19,22 +20,9 @@ public class IntakeSlidesV1 {
 
     public void intakeOut(){
         intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(850);
+        intakeSlides.setTargetPosition(345);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-    public void intakeIn(){
-        intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(120);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void intakeAllTheWayIn(){
-        intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(0);
-        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
 
     public void runToPosition(int position, double power){
         if(intakeSlides.getCurrentPosition() != position) {
