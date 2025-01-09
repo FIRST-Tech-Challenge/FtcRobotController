@@ -24,6 +24,11 @@ public class DoubleHorizontalExtendo {
         extendo.setPower(power);
     }
 
+    public double getPower()
+    {
+        return extendo.getPower();
+    }
+
     public double getPosition()
     {
         return encoder.getPositionAndVelocity().position;

@@ -13,19 +13,25 @@ public class BucketTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         bucket = new Bucket(hardwareMap, "bucket");
+        controller = new GamepadEvents(gamepad1);
+        double pos = 0;
 
+        telemetry.addLine("Initalized");
+        waitForStart();
         while(opModeIsActive())
         {
-           double pos = 0;
             if(controller.left_bumper.onPress())
             {
-                pos += 0.2;
-                if(pos > 1)
-                {
-                    pos = 0;
-                }
-                bucket.setPosition(pos);
+                bucket.setUp();
+                telemetry.addData("Bucket Pos", bucket.getPosition());
+            }else if(controller.right_bumper.onPress())
+            {
+                bucket.setBottom();
+                telemetry.addData("Bucket Pos", bucket.getPosition());
             }
+            telemetry.update();
+            controller.update();
         }
+
     }
 }

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class SampleParkAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
-    private Limelight limelight;
+    private LimelightLocalization limelight;
     private Imu imu;
     //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
@@ -38,11 +38,11 @@ public class SampleParkAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
-        limelight = new Limelight(hardwareMap);
+        limelight = new LimelightLocalization(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
 //        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight");
+        lift = new Lift(hardwareMap, "lift", "lift");
         arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 1;

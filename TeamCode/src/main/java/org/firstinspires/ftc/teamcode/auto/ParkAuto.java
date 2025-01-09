@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
@@ -9,7 +8,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
 //import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class ParkAuto extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
-    private Limelight limelight;
+    private LimelightLocalization limelight;
     private Imu imu;
 //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
@@ -31,13 +30,13 @@ public class ParkAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
-        limelight = new Limelight(hardwareMap);
+        limelight = new LimelightLocalization(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
 //        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight","liftLeft", "liftRight");
-        arm = new Arm(hardwareMap, "armRight", "armLeft");
+        lift = new Lift(hardwareMap, "lift", "lift");
+//        arm = new Arm(hardwareMap, "armRight", "armLeft");
 
         waitForStart();
 

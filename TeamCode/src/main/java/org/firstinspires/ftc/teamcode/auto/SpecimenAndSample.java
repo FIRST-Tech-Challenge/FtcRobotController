@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class SpecimenAndSample extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
-    private Limelight limelight;
+    private LimelightLocalization limelight;
     private Imu imu;
     private TwoDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
@@ -37,12 +36,12 @@ public class SpecimenAndSample extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
-        limelight = new Limelight(hardwareMap);
+        limelight = new LimelightLocalization(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
 //        deadwheels = new TwoDeadWheelLocalizer(hardwareMap);
-        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight");
-        arm = new Arm(hardwareMap, "armRight", "armLeft");
+        lift = new Lift(hardwareMap, "lift", "lift");
+//        arm = new Arm(hardwareMap, "armRight", "armLeft");
         claw = new Claw(hardwareMap);
         clawPos = 0.6;
         MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(-12,-60,1.5708));

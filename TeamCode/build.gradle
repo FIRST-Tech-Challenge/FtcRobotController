@@ -26,6 +26,8 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
+//    maven { url 'https://jitpack.io' }  // Add JitPack as a Maven repository
+//    mavenCentral()  // Add Maven Central as a Maven repository
 }
 
 dependencies {
@@ -34,4 +36,5 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:core:1.0.0"
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
+//    implementation 'com.github.deltacv:EOCV-Sim:3.3.2'
 }

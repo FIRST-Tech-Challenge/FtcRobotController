@@ -3,30 +3,26 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 //import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Climb;
-import org.firstinspires.ftc.teamcode.roadrunner.tuning.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.horizontalExtendo;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 //import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import java.util.Locale;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name ="A Manual Mode")
 public class ManualMode extends LinearOpMode {
     private GamepadEvents controller1, controller2;
     private MechDrive robot;
-    private Limelight limelight;
+    private LimelightLocalization limelight;
     private DriverHubHelp screen;
     private int liftPos;
     private Claw claw;
@@ -47,7 +43,7 @@ public class ManualMode extends LinearOpMode {
         controller1 = new GamepadEvents(gamepad1);
         controller2 = new GamepadEvents(gamepad2);
         robot = new MechDrive(hardwareMap);
-        limelight = new Limelight(hardwareMap);
+        limelight = new LimelightLocalization(hardwareMap);
         IMU imu = hardwareMap.get(IMU.class, "imu");
         screen = new DriverHubHelp();
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));

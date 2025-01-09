@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.drivetrain.MechDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.tuning.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Imu;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
 //import org.firstinspires.ftc.teamcode.roadrunner.tuning.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 public class AutoDrive extends LinearOpMode {
     private GamepadEvents controller;
     private MechDrive robot;
-    private Limelight limelight;
+    private LimelightLocalization limelight;
     private Imu imu;
 //    private ThreeDeadWheelLocalizer deadwheels;
     private DriverHubHelp screen;
@@ -31,7 +30,7 @@ public class AutoDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MechDrive(hardwareMap);
-        limelight = new Limelight(hardwareMap);
+        limelight = new LimelightLocalization(hardwareMap);
         imu = new Imu(hardwareMap);
         screen = new DriverHubHelp();
 //        deadwheels = new ThreeDeadWheelLocalizer(hardwareMap);
