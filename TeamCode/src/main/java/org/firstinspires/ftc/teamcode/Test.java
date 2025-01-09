@@ -35,43 +35,16 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Values can be customized
-            double drive = -gamepad1.left_stick_y * 0.5; // Y stick is reversed
-            double strafe = gamepad1.left_stick_x * 0.7;
-            double spin = gamepad1.right_stick_x * 0.4;
+            frontLeftDrive.setPower(gamepad1.left_stick_y);
+            frontRightDrive.setPower(gamepad1.right_stick_y);
+            backLeftDrive.setPower(gamepad1.left_stick_x);
+            backRightDrive.setPower(gamepad1.right_stick_x);
 
-
-            frontLeftDrive.setPower(drive + strafe + spin);
-            frontRightDrive.setPower(drive - strafe + spin);
-            backLeftDrive.setPower(drive - strafe - spin);
-            backRightDrive.setPower(drive + strafe - spin);
-
-//            if (gamepad1.dpad_up) {
-//                armMotor.setPower(0.5);
-//            } else if (gamepad1.dpad_down) {
-//                armMotor.setPower(-0.5);
-//            } else {
-//                armMotor.setPower(0);
-//            }
-            if (gamepad1.a) {
-                armEncoderMovement(0.5, TOP, true);
-            } else if (gamepad1.b) {
-                armEncoderMovement(0.5, BOTTOM, true);
-            }
+            telemetry.addData("Front Left Power", frontLeftDrive.getPower());
+            telemetry.addData("Front Right Power", frontRightDrive.getPower());
+            telemetry.addData("Back Left Power", backLeftDrive.getPower());
+            telemetry.addData("Back Right Power", backRightDrive.getPower());
+            telemetry.update();
         }
-    }
-    public void armEncoderMovement(double power, int targetPosition, boolean logs) {
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setPower(power);
-        armMotor.setTargetPosition(targetPosition);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (armMotor.isBusy()) {
-            if (logs) {
-                telemetry.addData("Target Pos", armMotor.getTargetPosition());
-                telemetry.addData("Current Pos", armMotor.getCurrentPosition());
-                telemetry.update();
-            }
-        }
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

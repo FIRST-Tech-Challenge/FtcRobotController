@@ -26,7 +26,7 @@ public class DriveSubsystem {
         backRightDrive = hardwareMap.dcMotor.get("BR");
         motorList = new DcMotor[] { frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive };
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         runForAllMotors(motor -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE));
 
@@ -64,32 +64,23 @@ public class DriveSubsystem {
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2, IMU imu) {
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
-        double rotation = gamepad1.right_stick_x;
-
-        // Convert to polar coordinates
-        double theta = Math.atan2(y, x);
-        // also known as r
-        double power = Math.hypot(x, y);
-
-        setDrivePower(theta, power, rotation);
+        double turn = gamepad1.right_stick_x;
+        setDrivePower(x, y, turn);
     }
 
-    private void setDrivePower(double theta, double power, double rotation) {
-        double sin = Math.sin(theta - Math.PI / 4);
-        double cos = Math.cos(theta - Math.PI / 4);
-        double max = Math.max(Math.abs(sin), Math.abs(cos));
+    private void setDrivePower(double speed, double strafe, double turn) {
 
-        double frontLeftPower  = power * cos/max + rotation;
-        double frontRightPower = power * sin/max - rotation;
-        double backLeftPower   = power * sin/max + rotation;
-        double backRightPower  = power * cos/max - rotation;
 
-        if ((power + Math.abs(rotation)) > 1) {
-            frontLeftPower  /= power + Math.abs(rotation);
-            frontRightPower /= power + Math.abs(rotation);
-            backLeftPower   /= power + Math.abs(rotation);
-            backRightPower  /= power + Math.abs(rotation);
-        }
+        double frontLeftPower  = speed + strafe + turn;
+        double frontRightPower = speed - strafe + turn;
+        double backLeftPower   = speed - strafe - turn;
+        double backRightPower  = speed + strafe - turn;
+
+        telemetry.addData("frontLeftPower", frontLeftPower);
+        telemetry.addData("frontRightPower", frontRightPower);
+        telemetry.addData("backLeftPower", backLeftPower);
+        telemetry.addData("backRightPower", backRightPower);
+
         frontLeftDrive.setPower(frontLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backLeftDrive.setPower(backLeftPower);

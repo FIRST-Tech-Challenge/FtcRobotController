@@ -8,14 +8,14 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SlideSubsystem;
 
 @Autonomous(name="SyborgsParkAuto")
 public class SyborgsParkAuto extends LinearOpMode {
     DriveSubsystem drive;
     IMU imu;
     ArmSubsystem arm;
-    LiftSubsystem lift;
+    SlideSubsystem lift;
     IntakeAndWristSubsystem intakeAndWrist;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,7 +26,7 @@ public class SyborgsParkAuto extends LinearOpMode {
         drive = new DriveSubsystem(hardwareMap, telemetry);
         imu = IMUFactory.initIMU(hardwareMap);
         arm = new ArmSubsystem(hardwareMap, telemetry);
-        lift = new LiftSubsystem(hardwareMap, telemetry);
+        lift = new SlideSubsystem(hardwareMap, telemetry);
         intakeAndWrist = new IntakeAndWristSubsystem(hardwareMap, telemetry);
     }
 }

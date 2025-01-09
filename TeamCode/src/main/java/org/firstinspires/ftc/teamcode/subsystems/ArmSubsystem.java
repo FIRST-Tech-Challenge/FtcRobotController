@@ -18,7 +18,7 @@ public class ArmSubsystem {
     final double FUDGE_FACTOR = 15.0;
     final double ARM_SCORE_SAMPLE_IN_LOW = 90;
     final double ARM_ATTACH_HANGING_HOOK = 110;
-    final double ARM_LIFT_COMPENSATION_FACTOR = 0.01291803147;
+    final double ARM_SLIDE_COMPENSATION_FACTOR = 0.01291803147;
     double armPosition = ARM_COLLECT;
     double armPositionFudgeFactor;
 
@@ -42,14 +42,14 @@ public class ArmSubsystem {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
-    public void updateArmLiftCompensation(double liftPosition) {
-        double armLiftComp;
+    public void updateArmSlideCompensation(double liftPosition) {
+        double armSlideComp;
         if (armPosition < Common.degreesToTicks(45)) {
-            armLiftComp = ARM_LIFT_COMPENSATION_FACTOR * liftPosition;
+            armSlideComp = ARM_SLIDE_COMPENSATION_FACTOR * liftPosition;
         } else {
-            armLiftComp = 0;
+            armSlideComp = 0;
         }
-        armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armLiftComp));
+        armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armSlideComp));
     }
     public void updateTelemetry() {
         telemetry.addData("ArmSubsystem Target Position", armMotor.getTargetPosition());
@@ -73,7 +73,7 @@ public class ArmSubsystem {
         armMotorEx = Common.convertToDcMotorExOrWarn(armMotor, telemetry, "ArmSubsystem").orElse(null);
 
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 }
