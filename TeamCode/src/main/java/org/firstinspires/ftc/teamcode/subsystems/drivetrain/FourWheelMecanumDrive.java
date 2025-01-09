@@ -4,9 +4,11 @@ import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
@@ -16,6 +18,8 @@ import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 public class FourWheelMecanumDrive extends BasicDriveTrain {
 
     protected Motor fL, fR, bL, bR;
+
+    private DistanceSensor forwardDistanceSensor;
 
 
     public FourWheelMecanumDrive(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, boolean revertMotors) {
@@ -28,6 +32,8 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         this.bL = new Motor(hardwareMap, "BL");
         this.fR = new Motor(hardwareMap, "FR");
         this.bR = new Motor(hardwareMap, "BR");
+
+        forwardDistanceSensor = hardwareMap.get(DistanceSensor.class, "ForwardDistanceSensor");
 
         fL.encoder.reset();
         fR.encoder.reset();
@@ -52,9 +58,11 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
         if (revertMotor) {
             this.fR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.bR.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-
         }
+    }
 
+    public double GetForwardDistanceFromObstacleInMM() {
+        return this.forwardDistanceSensor.getDistance(DistanceUnit.MM);
     }
 
     @Override
