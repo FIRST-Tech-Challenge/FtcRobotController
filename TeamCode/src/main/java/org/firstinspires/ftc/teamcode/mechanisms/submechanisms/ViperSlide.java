@@ -24,7 +24,8 @@ public interface ViperSlide {
 
     enum VerticalPosition {
         TRANSFER(Settings.Hardware.VerticalSlide.TRANSFER),
-        LOW_RUNG(Settings.Hardware.VerticalSlide.LOW_RUNG),
+//        Not needed anymore as low rung can be reached at lowest position
+//        LOW_RUNG(Settings.Hardware.VerticalSlide.LOW_RUNG),
         LOW_BASKET(Settings.Hardware.VerticalSlide.LOW_BASKET),
         HIGH_RUNG(Settings.Hardware.VerticalSlide.HIGH_RUNG),
         HIGH_BASKET(Settings.Hardware.VerticalSlide.HIGH_BASKET);
