@@ -277,10 +277,11 @@ public class Settings {
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
         public final GamepadButton clawIn = GamepadButton.OPTIONS;
         public final GamepadButton clawOut = GamepadButton.START;
+        public final GamepadButton clawToggle = GamepadButton.LEFT_BUMPER;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
-        public GamepadButton wristDown = GamepadButton.LEFT_BUMPER;
+        public GamepadButton wristDown = GamepadButton.START;
 
         // Ascend extensor controls
         public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;
