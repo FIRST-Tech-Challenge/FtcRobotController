@@ -4,7 +4,8 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+import org.firstinspires.ftc.teamcode.libraries.Vector2D.Vector2D;
+import org.firstinspires.ftc.teamcode.libraries.MovementCurves.MovementCurves;
 import static java.lang.Math.*;
 
 
@@ -873,6 +874,20 @@ public class AutoRobot {
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 
 
+        //other robot values
+        //     frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
+        //        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        //
+        //        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
+        //        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        //
+        //        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
+        //        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        //
+        //        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
+        //        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+
+
         // outtakeAngle = hardwareMap.get(Servo.class, "outtakeAngle");
         //outtakeClaw = hardwareMap.get(Servo.class, "outtakeClaw");
 
@@ -889,6 +904,14 @@ public class AutoRobot {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
+
+        //other robot IMU
+
+        //  IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        //                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+        //                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+
+
         imu.initialize(parameters);
         imu.resetYaw();
 
