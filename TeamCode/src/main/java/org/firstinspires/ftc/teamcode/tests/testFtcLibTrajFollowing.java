@@ -27,6 +27,7 @@ import kotlin.collections.ArrayDeque;
 @Config
 public class testFtcLibTrajFollowing extends OpMode {
     Trajectory traj1;
+    Trajectory traj2;
     PIDController txPID;
     PIDController tyPID;
     PIDController rotPID;
@@ -46,7 +47,7 @@ public class testFtcLibTrajFollowing extends OpMode {
     public static double tP = 1.2;
     public static double tI = 0.2;
     public static double tD = 0;
-    public static double rP = 0;
+    public static double rP = 0.25;
     public static double rI = 0;
     public static double rD = 0;
     public static double P = 0.06;
@@ -77,13 +78,16 @@ public class testFtcLibTrajFollowing extends OpMode {
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
                 encoderNames, driveNames, angleNames, P, I, D);
-        List<Translation2d> tlist = new ArrayList<>();
+        List<Pose2d> pointlist = new ArrayList<Pose2d>();
+        pointlist.add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
+        pointlist.add(new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.PI)));
+        pointlist.add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
+        pointlist.add(new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.PI)));
+
 //                Arrays.asList((new Translation2d(1,1)));
         TrajectoryConfig traj1Config = new TrajectoryConfig(0.6, 0.5);
         traj1 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(new Translation2d(0, 0), new Rotation2d(0)),
-                tlist,
-                new Pose2d(new Translation2d(.75,0), new Rotation2d(0)),
+                pointlist,
                 traj1Config
                 );
         dash = FtcDashboard.getInstance();
@@ -106,8 +110,9 @@ public class testFtcLibTrajFollowing extends OpMode {
         // TODO: for highlight: don't try to make this 0 because it goes negative like crazy
 //        xDiff = trajPose.getX() - now.getX(); // don
 //        yDiff = trajPose.getY() - now.getY();
-        rotDist = (Math.toDegrees(now.getHeading()) - angleCalculator.calculateOptimalAngle(Math.toDegrees(now.getHeading()), Math.toDegrees(trajPose.getHeading())));
-        rotPower = rotPID.calculate(rotDist, 0);
+//        double rotTarg = angleCalculator.calculateOptimalAngle(Math.toDegrees(now.getHeading()), Math.toDegrees(trajPose.getHeading()));
+//        if (rotTarg > )
+        rotPower = rotPID.calculate(now.getHeading(), trajPose.getHeading());
         xPower = txPID.calculate(now.getX(), trajPose.getX());
         yPower = tyPID.calculate(now.getY(), trajPose.getY());
 

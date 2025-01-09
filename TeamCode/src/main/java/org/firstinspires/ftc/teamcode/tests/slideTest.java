@@ -14,11 +14,11 @@ public class slideTest extends OpMode {
     nematocyst slide;
     FtcDashboard dash;
     Telemetry t2;
-    public static double angP;
-    public static double angI;
-    public static double angD;
-    public static double angCos;
-    public static double angExt;
+    public static double angP = 0.00425;
+    public static double angI = 0;
+    public static double angD = 8e-6;
+    public static double angCos = 0.3375;
+    public static double angExt = 1e-7;
     public static double sP;
     public static double sI;
     public static double sD;
@@ -38,6 +38,7 @@ public class slideTest extends OpMode {
     public void loop() {
         slide.loop();
         slide.updatePID(angP, angI, angD, angCos, angExt);
+        slide.updateSlidePID(sP, sI, sD);
         slide.getTelemetry();
         slide.getTelemetry(t2);
     }

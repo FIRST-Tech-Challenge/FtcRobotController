@@ -134,7 +134,7 @@ public class SwerveDrive {
                 theta,
                 x,
                 y,
-                rx,
+                -rx,
                 gamepadToVectors.Wheel.values()[m]
         );
 
