@@ -13,7 +13,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /* Local includes */
-import org.firstinspires.ftc.teamcode.configurations.HMapConfig;
+import org.firstinspires.ftc.teamcode.configurations.Configuration;
+import org.firstinspires.ftc.teamcode.configurations.MotorConf;
+import org.firstinspires.ftc.teamcode.configurations.ImuConf;
 
 public class Moving {
 
@@ -30,75 +32,68 @@ public class Moving {
 
     Gamepad     gamepad;
 
-    boolean     isFieldCentric;
+    boolean     isFieldCentric = true;
 
-    public void setHW(HMapConfig config, HardwareMap hwm, Telemetry tm, Gamepad gp) {
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm, Gamepad gp) {
+
+        logger = tm;
+        logger.addLine("===== MOVING =====");
 
         isReady = true;
 
-        isFieldCentric = true;
-        logger = tm;
-
         /// Get wheels and IMU parameters from configuration
-        String frontLeftWheel  = config.FRONT_LEFT_WHEEL();
-        String frontRightWheel = config.FRONT_RIGHT_WHEEL();
-        String backLeftWheel   = config.BACK_LEFT_WHEEL();
-        String backRightWheel  = config.BACK_RIGHT_WHEEL();
-        String imu             = config.BUILT_IN_IMU();
+        MotorConf frontLeftWheel  = config.getMotor("front-left-wheel");
+        MotorConf frontRightWheel = config.getMotor("front-right-wheel");
+        MotorConf backLeftWheel   = config.getMotor("back-left-wheel");
+        MotorConf backRightWheel  = config.getMotor("back-right-wheel");
+        ImuConf imu               = config.getImu("built-in");
 
-        logger.addLine("===== MOVING =====");
-        if (isFieldCentric) { logger.addLine("--> FIELD CENTRIC"); }
-        else                { logger.addLine("--> ROBOT CENTRIC"); }
+        if (isFieldCentric) { logger.addLine("==>  FIELD CENTRIC"); }
+        else                { logger.addLine("==>  ROBOT CENTRIC"); }
 
-        String status = "--> CONF : ";
-        if(frontLeftWheel.length() == 0)  { status += " FL: KO";       isReady = false; }
-        else                              { status += " FL: OK"; }
-        if(frontRightWheel.length() == 0) { status += " FR: KO";       isReady = false; }
-        else                              { status += " FR: OK"; }
-        if(backLeftWheel.length() == 0)   { status += " BL: KO";       isReady = false; }
-        else                              { status += " BL: OK"; }
-        if(backRightWheel.length() == 0)  { status += " BR: KO";       isReady = false; }
-        else                              { status += " BR: OK"; }
-        if(isFieldCentric && imu.length() == 0) { status += " IMU: KO"; isReady = false; }
-        else                                    { status += " IMU: OK"; }
-        logger.addLine(status);
+        String status = "";
+        if(frontLeftWheel == null)        { status += " FL";  isReady = false; }
+        if(frontRightWheel == null)       { status += " FR";  isReady = false; }
+        if(backLeftWheel == null)         { status += " BL";  isReady = false; }
+        if(backRightWheel == null)        { status += " BR";  isReady = false; }
+        if(isFieldCentric && imu == null) { status += " IMU"; isReady = false; }
+
+        if(isReady) { logger.addLine("==>  CONF : OK"); }
+        else        { logger.addLine("==>  CONF : KO : " + status); }
 
         if (isReady) {
 
-            status = "--> HW : ";
+            status = "";
 
-            frontLeftMotor = hwm.tryGet(DcMotor.class, frontLeftWheel);
-            backLeftMotor = hwm.tryGet(DcMotor.class, backLeftWheel);
-            frontRightMotor = hwm.tryGet(DcMotor.class, frontRightWheel);
-            backRightMotor = hwm.tryGet(DcMotor.class, backRightWheel);
-            gyroscope = hwm.tryGet(IMU.class, imu);
+            frontLeftMotor = hwm.tryGet(DcMotor.class, frontLeftWheel.getName());
+            backLeftMotor = hwm.tryGet(DcMotor.class, backLeftWheel.getName());
+            frontRightMotor = hwm.tryGet(DcMotor.class, frontRightWheel.getName());
+            backRightMotor = hwm.tryGet(DcMotor.class, backRightWheel.getName());
+            gyroscope = hwm.tryGet(IMU.class, imu.getName());
 
-            if (frontLeftMotor == null)  { status += " FL: KO"; isReady = false; }
-            else                         { status += " FL: OK"; }
-            if (frontRightMotor == null) { status += " FR: KO"; isReady = false; }
-            else                         { status += " FR: OK"; }
-            if (backLeftMotor == null)   { status += " BL: KO"; isReady = false; }
-            else                         { status += " BL: OK"; }
-            if (backRightMotor == null)  { status += " BR: KO"; isReady = false; }
-            else                         { status += " BR: OK"; }
-            if(isFieldCentric && gyroscope == null) { status += " IMU: KO"; isReady = false; }
-            else                                    { status += " IMU: OK"; }
-            
-            logger.addLine(status);
+            if (frontLeftMotor == null)             { status += " FL";  isReady = false; }
+            if (frontRightMotor == null)            { status += " FR";  isReady = false; }
+            if (backLeftMotor == null)              { status += " BL";  isReady = false; }
+            if (backRightMotor == null)             { status += " BR";  isReady = false; }
+            if(isFieldCentric && gyroscope == null) { status += " IMU"; isReady = false; }
+
+            if(isReady) { logger.addLine("==>  HW : OK"); }
+            else        { logger.addLine("==>  HW : KO : " + status); }
+
         }
 
         if(isReady) {
 
-            if (config.FRONT_LEFT_WHEEL_REVERSE()) {
+            if (frontLeftWheel.getReverse()) {
                 frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (config.BACK_LEFT_WHEEL_REVERSE()) {
+            if (backLeftWheel.getReverse()) {
                 backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (config.FRONT_RIGHT_WHEEL_REVERSE()) {
+            if (frontRightWheel.getReverse()) {
                 frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
-            if (config.BACK_RIGHT_WHEEL_REVERSE()) {
+            if (backRightWheel.getReverse()) {
                 backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             }
 
@@ -112,17 +107,19 @@ public class Moving {
             frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                    config.BUILT_IN_IMU_LOGO(), config.BUILT_IN_IMU_USB());
-            gyroscope.initialize(new IMU.Parameters(RevOrientation));
-            gyroscope.resetYaw();
+            if(isFieldCentric) {
+                RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
+                        imu.getLogo(), imu.getUsb());
+                gyroscope.initialize(new IMU.Parameters(RevOrientation));
+                gyroscope.resetYaw();
+            }
 
         }
 
         gamepad = gp;
 
-        if(isReady) { logger.addLine("--> READY"); }
-        else { logger.addLine("--> NOT READY"); }
+        if(isReady) { logger.addLine("==>  READY"); }
+        else        { logger.addLine("==>  NOT READY"); }
     }
 
     public void move() {
@@ -140,7 +137,7 @@ public class Moving {
             double y = -applyDeadzone(gamepad.left_stick_y, 0.1);
             double x = applyDeadzone(gamepad.left_stick_x, 0.1) * 1;
             double rotation = applyDeadzone(gamepad.right_stick_x, 0.1);
-            logger.addLine(String.format("\n===> X : %6.1f Y : %6.1f R:%6.1f", x,y,rotation));
+            logger.addLine(String.format("\n==>  X : %6.1f Y : %6.1f R:%6.1f", x,y,rotation));
 
             if (isFieldCentric) {
                 double heading = gyroscope.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -149,7 +146,7 @@ public class Moving {
                 double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
                 x = rotX;
                 y = rotY;
-                logger.addLine(String.format("\n===> HD %6.1f X : %6.1f Y : %6.1f", heading,x,y));
+                logger.addLine(String.format("==>  HD %6.1f X : %6.1f Y : %6.1f", heading,x,y));
             }
             x *= 1.1; // Counteract imperfect strafing
 
