@@ -383,7 +383,7 @@ public class ViperSlide{
 
     public void grabSpecimen() {
         leftSpecimen.setPosition(0);
-        rightSpecimen.setPosition(1);
+        rightSpecimen.setPosition(.7);
     }
 
     public void releaseSpecimen() {
