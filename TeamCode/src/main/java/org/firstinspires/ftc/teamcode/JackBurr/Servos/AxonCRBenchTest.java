@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-@Disabled
+
 @TeleOp
 public class AxonCRBenchTest extends OpMode {
     public CRServo bottomLeft;

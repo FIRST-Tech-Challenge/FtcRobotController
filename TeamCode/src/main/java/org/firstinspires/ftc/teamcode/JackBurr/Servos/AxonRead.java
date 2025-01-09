@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-@Disabled
+
 @TeleOp
 public class AxonRead extends OpMode {
     public AnalogInput servo_encoder;

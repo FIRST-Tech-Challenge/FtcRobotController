@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode.JackBurr.Servos;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-@Disabled
+
 @TeleOp(name = "Continuous Servo Spin")
 public class ContinuousServoSpin extends OpMode {
 
