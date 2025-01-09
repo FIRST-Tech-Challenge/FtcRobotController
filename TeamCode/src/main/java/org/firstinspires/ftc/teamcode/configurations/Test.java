@@ -2,7 +2,7 @@
    Copyright (c) [2024] FASNY
    All rights reserved
    -------------------------------------------------------
-   Configuration for NLE chassis
+   Configuration for the robot second version (18th of january)
    ------------------------------------------------------- */
 
 package org.firstinspires.ftc.teamcode.configurations;
@@ -10,47 +10,32 @@ package org.firstinspires.ftc.teamcode.configurations;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class Test extends HMapConfig {
+public class Test extends Configuration {
 
     protected void initialize(){
 
         /* Moving configuration */
-        FRONT_LEFT_WHEEL  = "frontLeft";                      // CH Motor 0
-        BACK_LEFT_WHEEL   = "backLeft";                       // CH Motor 1
-        BACK_RIGHT_WHEEL  = "backRight";                      // CH Motor 2
-        FRONT_RIGHT_WHEEL = "frontRight";                     // CH Motor 3
+        m_motors.put("front-left-wheel",new MotorConf("frontLeft",false)); // CH Motor 0
+        m_motors.put("back-left-wheel",new MotorConf("backLeft",true)); // CH Motor 1
+        m_motors.put("back-right-wheel",new MotorConf("backRight",true)); // CH Motor 2
+        m_motors.put("front-right-wheel",new MotorConf("frontRight",false)); // CH Motor 3
 
-        /* IMU configuration */
-        BUILT_IN_IMU = "imu";                                 // CH I2C 0
-        OTOS         = "sensor_otos";                         // EH I2C 3
+        m_imus.put("built-in", new ImuConf("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        m_imus.put("otos", new ImuConf("sensor_otos"));
 
-        /* Collecting motors configuration */
-        OUTTAKE_SLIDES_LEFT    = "outtakeSlidesLeft";         // EH Motor 0
-        OUTTAKE_SLIDES_RIGHT   = "outtakeSlidesRight";        // EH Motor 1
-        INTAKE_SLIDES          = "intakeSlides";              // EH Motor 2
+        /* Intake configuration */
+        m_servos.put("intake-arm-left-pitch", new ServoConf("left", true));
+        m_servos.put("intake-arm-right-pitch", new ServoConf("right", false));
 
-        /* Collecting servos configuration */
-        OUTTAKE_WRIST_ROLL        = "outputWristRoll";        // CH Servo 0
-        OUTTAKE_CLAW              = "outputClaw";             // CH Servo 1
-        OUTTAKE_ELBOW_PITCH_LEFT  = "outputElbowPitchLeft";   // CH Servo 2
-        OUTTAKE_ELBOW_PITCH_RIGHT = "outputElbowPitchRight";  // CH Servo 3
-        INTAKE_ARM_PITCH_LEFT     = "inputArmPitchLeft";      // CH Servo 4
-        INTAKE_ARM_PITCH_RIGHT    = "inputArmPitchRight";     // CH Servo 5
-        INTAKE_ELBOW_PITCH        = "inputElbowPitch";        // EH Servo 0
-        INTAKE_WRIST_ROLL         = "inputWristRoll";         // EH Servo 1
-        INTAKE_CLAW               = "inputClaw";              // EH Servo 2
+        m_servos.get("intake-arm-left-pitch").setPosition("vertical", 0.65);
+        m_servos.get("intake-arm-left-pitch").setPosition("overSub", 0.23);
+        m_servos.get("intake-arm-left-pitch").setPosition("look", 0.13);
+        m_servos.get("intake-arm-left-pitch").setPosition("grab", 0.07);
+        m_servos.get("intake-arm-right-pitch").setPosition("vertical", 0.65);
+        m_servos.get("intake-arm-right-pitch").setPosition("overSub", 0.23);
+        m_servos.get("intake-arm-right-pitch").setPosition("look", 0.13);
+        m_servos.get("intake-arm-right-pitch").setPosition("grab", 0.07);
 
-        FRONT_LEFT_WHEEL_REVERSE     = false;
-        BACK_LEFT_WHEEL_REVERSE      = true;
-        FRONT_RIGHT_WHEEL_REVERSE    = false;
-        BACK_RIGHT_WHEEL_REVERSE     = true;
-
-        INTAKE_SLIDES_REVERSE        = false;
-        OUTTAKE_SLIDES_RIGHT_REVERSE = false;
-        OUTTAKE_SLIDES_LEFT_REVERSE  = false;
-
-        BUILT_IN_IMU_LOGO = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        BUILT_IN_IMU_USB  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
     }
 }

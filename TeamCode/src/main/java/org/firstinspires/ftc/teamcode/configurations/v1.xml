@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="outtakeSlidesLeft" port="0" />
+            <goBILDA5202SeriesMotor name="outtakeSlidesRight" port="1" />
+            <goBILDA5202SeriesMotor name="intakeSlides" port="2" />
+            <Servo name="intakeElbowPitch" port="0" />
+            <Servo name="intakeArmPitchRight" port="1" />
+            <Servo name="intakeClaw" port="2" />
+            <SparkFunOTOS2 name="sensor_otos" port="0" bus="3" />
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5202SeriesMotor name="frontLeft" port="0" />
+            <goBILDA5202SeriesMotor name="backLeft" port="1" />
+            <goBILDA5202SeriesMotor name="frontRight" port="2" />
+            <goBILDA5202SeriesMotor name="backRight" port="3" />
+            <Servo name="outtakeWristRoll" port="0" />
+            <Servo name="outtakeClaw" port="1" />
+            <Servo name="outtakeElbowPitchLeft" port="2" />
+            <Servo name="outtakeElbowPitchRight" port="3" />
+            <Servo name="intakeWristRoll" port="4" />
+            <Servo name="intakeArmPitchLeft" port="5" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

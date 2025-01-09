@@ -9,27 +9,17 @@ package org.firstinspires.ftc.teamcode.configurations;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
-public class V0 extends HMapConfig {
+public class V0 extends Configuration {
 
     protected void initialize() {
 
         /* Moving configuration */
-        FRONT_LEFT_WHEEL  = "frontLeft";                      // CH Motor 0
-        BACK_LEFT_WHEEL   = "backLeft";                       // CH Motor 1
-        FRONT_RIGHT_WHEEL = "frontRight";                     // CH Motor 2
-        BACK_RIGHT_WHEEL  = "backRight";                      // CH Motor 3
+        m_motors.put("front-left-wheel",new MotorConf("frontLeft",true));  // CH Motor 0
+        m_motors.put("back-left-wheel",new MotorConf("backLeft",true)); // CH Motor 1
+        m_motors.put("front-right-wheel",new MotorConf("frontRight",false)); // CH Motor 2
+        m_motors.put("back-right-wheel",new MotorConf("backRight",true)); // CH Motor 3
 
-        /* IMU configuration */
-        BUILT_IN_IMU = "imu";                                 // CH I2C 0
-        OTOS         = "sensor_otos";                         // CH I2C 3
-
-        FRONT_LEFT_WHEEL_REVERSE     = true;
-        BACK_LEFT_WHEEL_REVERSE      = true;
-        FRONT_RIGHT_WHEEL_REVERSE    = false;
-        BACK_RIGHT_WHEEL_REVERSE     = true;
-
-        BUILT_IN_IMU_LOGO = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        BUILT_IN_IMU_USB  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-
+        m_imus.put("built-in", new ImuConf("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        m_imus.put("otos", new ImuConf("sensor_otos"));
     }
 }

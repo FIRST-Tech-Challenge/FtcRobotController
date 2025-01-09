@@ -10,49 +10,58 @@ package org.firstinspires.ftc.teamcode.configurations;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class V1 extends HMapConfig {
+public class V1 extends Configuration {
 
     protected void initialize(){
 
-        /* Moving configuration */
-        FRONT_LEFT_WHEEL  = "frontLeft";                      // CH Motor 0
-        BACK_LEFT_WHEEL   = "backLeft";                       // CH Motor 1
-        FRONT_RIGHT_WHEEL = "frontRight";                     // CH Motor 2
-        BACK_RIGHT_WHEEL  = "backRight";                      // CH Motor 3
+        /* Moving configuration :
+           -> Positive power makes wheel go forward */
+        m_motors.put("front-left-wheel",new MotorConf("frontLeft",false));      // CH Motor 0
+        m_motors.put("back-left-wheel",new MotorConf("backLeft",false));        // CH Motor 1
+        m_motors.put("front-right-wheel",new MotorConf("frontRight",true));     // CH Motor 2
+        m_motors.put("back-right-wheel",new MotorConf("backRight",true));       // CH Motor 3
 
-        /* IMU configuration */
-        BUILT_IN_IMU = "imu";                                 // CH I2C 0
-        OTOS         = "sensor_otos";                         // EH I2C 3
+        m_imus.put("built-in", new ImuConf("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+        m_imus.put("otos", new ImuConf("sensor_otos"));                                     // EH I2C 3
 
-        /* Collecting motors configuration */
-        OUTTAKE_SLIDES_LEFT    = "outtakeSlidesLeft";         // EH Motor 0
-        OUTTAKE_SLIDES_RIGHT   = "outtakeSlidesRight";        // EH Motor 1
-        INTAKE_SLIDES          = "intakeSlides";              // EH Motor 2
+        /* Intake configuration :
+           -> Positive power makes slides extend
+           -> Increasing position makes arm go up
+           -> Increasing position makes elbow go up
+           -> Increasing position makes wrist go TBD
+           -> Increasing position makes claw close */
+        m_motors.put("intake-slides",new MotorConf("intakeSlides",true));                     // EH Motor 2
+        m_servos.put("intake-arm-left-pitch", new ServoConf("intakeArmPitchLeft", false));    // CH Servo 5
+        m_servos.put("intake-arm-right-pitch", new ServoConf("intakeArmPitchRight", false));  // EH Servo 1
+        m_servos.put("intake-elbow-pitch", new ServoConf("intakeElbowPitch", false));         // EH Servo 0
+        m_servos.put("intake-wrist-roll", new ServoConf("intakeWristRoll", false));           // CH Servo 4
+        m_servos.put("intake-claw", new ServoConf("intakeClaw", false));                      // EH Servo 2
 
-        /* Collecting servos configuration */
-        OUTTAKE_WRIST_ROLL        = "outputWristRoll";        // CH Servo 0
-        OUTTAKE_CLAW              = "outputClaw";             // CH Servo 1
-        OUTTAKE_ELBOW_PITCH_LEFT  = "outputElbowPitchLeft";   // CH Servo 2
-        OUTTAKE_ELBOW_PITCH_RIGHT = "outputElbowPitchRight";  // CH Servo 3
-        INTAKE_ARM_PITCH_LEFT     = "inputArmPitchLeft";      // CH Servo 4
-        INTAKE_ARM_PITCH_RIGHT    = "inputArmPitchRight";     // CH Servo 5
-        INTAKE_ELBOW_PITCH        = "inputElbowPitch";        // EH Servo 0
-        INTAKE_WRIST_ROLL         = "inputWristRoll";         // EH Servo 1
-        INTAKE_CLAW               = "inputClaw";              // EH Servo 2
+        /* Outtake configuration :
+           -> Positive power makes slides extend
+           -> Increasing position makes elbow go outside
+           -> Increasing position makes wrist go TBD
+           -> Increasing position makes claw close */
+        m_motors.put("outtake-right-slides",new MotorConf("outtakeSlidesRight",true));              // EH Motor 1
+        m_motors.put("outtake-left-slides",new MotorConf("outtakeSlidesLeft",false));               // EH Motor 0
+        m_servos.put("outtake-wrist-roll", new ServoConf("outtakeWristRoll", false));               // CH Servo 0
+        m_servos.put("outtake-claw", new ServoConf("outtakeClaw", false));                          // CH Servo 1
+        m_servos.put("outtake-elbow-left-pitch", new ServoConf("outtakeElbowPitchLeft", false));    // CH Servo 2
+        m_servos.put("outtake-elbow-right-pitch", new ServoConf("outtakeElbowPitchRight", false));  // CH Servo 3
 
+        /* Intake servos reference positions */
+        m_servos.get("intake-arm-left-pitch").setPosition("vertical", 0.65);
+        m_servos.get("intake-arm-left-pitch").setPosition("overSub", 0.23);
+        m_servos.get("intake-arm-left-pitch").setPosition("look", 0.13);
+        m_servos.get("intake-arm-left-pitch").setPosition("grab", 0.07);
 
+        m_servos.get("outtake-wrist-roll").setPosition("center", 0.13);
 
-        FRONT_LEFT_WHEEL_REVERSE     = false;
-        BACK_LEFT_WHEEL_REVERSE      = false;
-        FRONT_RIGHT_WHEEL_REVERSE    = true;
-        BACK_RIGHT_WHEEL_REVERSE     = true;
+        m_servos.get("outtake-claw").setPosition("closed", 0.3);
+        m_servos.get("outtake-claw").setPosition("open", 0.1);
 
-        INTAKE_SLIDES_REVERSE        = true;
-        OUTTAKE_SLIDES_RIGHT_REVERSE = true;
-        OUTTAKE_SLIDES_LEFT_REVERSE  = false;
-
-        BUILT_IN_IMU_LOGO = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        BUILT_IN_IMU_USB  = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        m_servos.get("outtake-elbow-right-pitch").setPosition("vertical", 0.015);
+        m_servos.get("outtake-elbow-right-pitch").setPosition("outside", 0.06);
 
     }
 }
