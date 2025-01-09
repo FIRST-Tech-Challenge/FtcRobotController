@@ -97,12 +97,12 @@ public class AutoSpecimen extends LinearOpMode {
         specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, WallToBarHangRoundTrip.WALL_PICKUP_PID_VALUE); //2200
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2500.0); //2200
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
         //to depot for specimen
         //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-        moveToDepot.setMaxTimeOutMS(3000);
+        moveToDepot.setMaxTimeOutMS(1000);
         moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180);//-130, -615
         redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================

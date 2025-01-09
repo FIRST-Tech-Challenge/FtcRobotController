@@ -568,6 +568,7 @@ public class Teleop extends LinearOpMode {
                     Log.d("backButton", "Creating sequence " + specimenEndToEndSequence);
 
                     setLastLsAction(specimenEndToEndSequence);
+                    setLastIntakeAction(specimenEndToEndSequence);
                 }
             }
 
