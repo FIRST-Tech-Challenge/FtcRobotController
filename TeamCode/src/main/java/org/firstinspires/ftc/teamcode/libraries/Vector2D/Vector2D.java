@@ -62,6 +62,9 @@ public class Vector2D {
             this.j = 0;
         }
 
+        this.i = this.i*this.magnitude;
+        this.j = this.j*this.magnitude;
+
     }
 
 
