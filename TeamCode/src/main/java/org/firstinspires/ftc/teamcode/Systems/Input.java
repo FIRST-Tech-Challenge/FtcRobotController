@@ -84,22 +84,21 @@ public class Input {
     public void upArm(double power) {
 
 
-            motors.MoveMotor(Motors.Type.UpArm, power);
-
-            double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
+            //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 
             double realPower;
-            if ((motors.getArmReachingPosition() <= motors.getReachingUpArmPosition()) && ( power >= 0)) {
+            if ((motors.getUpArmPosition() <= motors.getReachingUpArmPosition()) && ( power <= 0)) {
                 realPower = 0;
             }
             else
             {
-                realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(power, thing));
-                realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(realPower, motors.getReachingUpArmPosition()));
+                realPower = power;
+                //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(power, thing));
+                //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(realPower, motors.getReachingUpArmPosition()));
             }
         motors.MoveMotor(Motors.Type.UpArm, realPower);
 
-            BotTelemetry.addData("UpArm pos" , motors.getUpArmPosition());
+            BotTelemetry.addData("real Power" , realPower);
     }
 
 

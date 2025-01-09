@@ -55,6 +55,8 @@ public class TeleMain extends LinearOpMode {
             BotTelemetry.addData("STRAFE:",  strafe);
             BotTelemetry.addData("ARM:", intake);
             BotTelemetry.addData("ARM position:", motors.getArmPosition());
+            BotTelemetry.addData("UPARM:", motors.getUpArmPosition());
+            BotTelemetry.addData("UPARM_POWER:", armRaise);
 
             BotTelemetry.addData("Servo position:", servos.getServoPosition(Servos.Type.Claw));
 
