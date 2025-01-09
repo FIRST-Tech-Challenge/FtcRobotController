@@ -16,7 +16,8 @@ import org.opencv.core.Mat;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @Autonomous
 public class ExampleAprilTagDetection extends OpMode {
     private AprilTagProcessor aprilTagProcessor;

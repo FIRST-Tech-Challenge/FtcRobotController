@@ -14,6 +14,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class RotateGrippersToSample extends OpMode {
     public SampleDetectorToolkit toolkit;

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class SampleDetectorV2 extends OpMode {
     public SampleDetectorToolkit toolkit;

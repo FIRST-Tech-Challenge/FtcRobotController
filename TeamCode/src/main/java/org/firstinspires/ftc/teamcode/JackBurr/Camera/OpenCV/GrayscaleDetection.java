@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.JackBurr.Camera.OpenCV.SampleDetectorPipelineGreyscale;
 import org.firstinspires.ftc.vision.VisionPortal;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class GrayscaleDetection extends OpMode {
 

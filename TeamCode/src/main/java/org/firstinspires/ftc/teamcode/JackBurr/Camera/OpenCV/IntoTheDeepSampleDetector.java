@@ -16,7 +16,8 @@ import org.opencv.core.RotatedRect;
 
 import java.util.Iterator;
 import java.util.List;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 public class IntoTheDeepSampleDetector extends OpMode {
     ColorBlobLocatorProcessor blueLocator;

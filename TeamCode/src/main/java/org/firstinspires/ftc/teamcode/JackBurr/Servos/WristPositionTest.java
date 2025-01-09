@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.JackBurr.Servos;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.sun.source.doctree.SerialDataTree;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 public class WristPositionTest extends OpMode{
     public Servo wrist_servo;
     @Override
