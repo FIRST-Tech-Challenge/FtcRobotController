@@ -6,5 +6,7 @@ public enum VisionProcessorMode {
     RED_BLOB_ONLY,
     BLUE_BLOB_ONLY,
     YELLOW_BLOB_ONLY,
+    YELLOW_AND_RED_BLOB,
+    YELLOW_AND_BLUE_BLOB,
     NONE
 }

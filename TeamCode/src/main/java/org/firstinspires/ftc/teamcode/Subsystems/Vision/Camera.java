@@ -17,9 +17,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 
 /** Subsystem */
@@ -189,6 +193,24 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
                 break;
+            case YELLOW_AND_RED_BLOB:
+                currentMode = VisionProcessorMode.YELLOW_AND_RED_BLOB;
+                //setCameraExposure(60, 350);
+                // SetAutoCameraExposure();
+                visionPortal.setProcessorEnabled(aprilTagProcessor, false);
+                visionPortal.setProcessorEnabled(redBlobProcessor, true);
+                visionPortal.setProcessorEnabled(blueBlobProcessor, false);
+                visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
+                break;
+            case YELLOW_AND_BLUE_BLOB:
+                currentMode = VisionProcessorMode.YELLOW_AND_BLUE_BLOB;
+                //setCameraExposure(60, 350);
+                // SetAutoCameraExposure();
+                visionPortal.setProcessorEnabled(aprilTagProcessor, false);
+                visionPortal.setProcessorEnabled(redBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueBlobProcessor, true);
+                visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
+                break;
             case NONE:
                 currentMode = VisionProcessorMode.NONE;
                 //SetAutoCameraExposure();
@@ -257,6 +279,12 @@ public class Camera extends SubsystemBase {
             case YELLOW_BLOB_ONLY:
                 blobs = yellowBlobProcessor.getBlobs();
                 break;
+            case YELLOW_AND_RED_BLOB:
+                blobs = yellowBlobProcessor.getBlobs();
+                blobs.addAll(redBlobProcessor.getBlobs());
+            case YELLOW_AND_BLUE_BLOB:
+                blobs = yellowBlobProcessor.getBlobs();
+                blobs.addAll(blueBlobProcessor.getBlobs());
             default:
                 blobs = new ArrayList<>();
         }
@@ -272,6 +300,13 @@ public class Camera extends SubsystemBase {
         //ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
 
         return blobs;
+    }
+
+    private Point calculateCenter(Rect boundingBox) {
+
+        double centerX = boundingBox.x + boundingBox.width / 2.0;
+        double centerY = boundingBox.y + boundingBox.height / 2.0;
+        return new Point(centerX, centerY);
     }
 
 

@@ -19,17 +19,18 @@ public class HuntingPos extends SequentialCommandGroup {
 
                 // switch on claw camera to look for red or blue samples - depending which team we are on
                 new InstantCommand(()-> {
-                    if (RobotContainer.isRedAlliance)
-                        RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
-                    else
-                        RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
-                } ),
+                    if (!RobotContainer.operatingMode.getSelectedMode())
+                        if (RobotContainer.isRedAlliance)
+                            RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.RED_BLOB_ONLY);
+                        else
+                            RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.BLUE_BLOB_ONLY);
+                    else RobotContainer.clawCamera.setVisionProcessingMode(VisionProcessorMode.YELLOW_BLOB_ONLY);}),
 
                 // sets the elbow to a straight position at 120 degrees
                 new InstantCommand(() -> RobotContainer.shoulderJoint.RotateTo(100)),
 
                 // sets elbow to a straight position at 145 degrees,
-                // 145 is becouse gravity and leverage bend the elbow down so the extera 10 degrees stops the drooping
+                // 145 is because of gravity and leverage bend the elbow down so the extra 10 degrees stops the drooping
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(150)),
 
                 // sets wrist to a straight position  45 is parallel to floor
