@@ -64,15 +64,15 @@ public final class MecanumDrive {
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
-        // ! all below tuned 11/21
-        public double inPerTick = 0.0225509652;
-        public double lateralInPerTick = 0.0233213306;
-        public double trackWidthTicks = 1337.159661277221;
+        // ! all below tuned 01/08
+        public double inPerTick = (12 /* inches */ *  12 /* feet */) / 5541.5;
+        public double lateralInPerTick = (12 * 12) / 5278.0;
+        public double trackWidthTicks = 1341.4599390065753;
 
         // feedforward parameters (in tick units)
-        public static double kS = 0.8389693259771525;
-        public static double kV = 0.004238392941167217;
-        public static double kA = 0.0005;
+        public double kS = 1.6079710382324528;
+        public double kV = 0.004032143780447666;
+        public double kA = 0.0005;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 70;
@@ -138,7 +138,7 @@ public final class MecanumDrive {
 
             imu = lazyImu.get();
 
-            // tuned 11/16
+            // tuned 01/08
             rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
             rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         }
@@ -225,7 +225,7 @@ public final class MecanumDrive {
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
