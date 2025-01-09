@@ -35,6 +35,7 @@ public class TeleOpV1 extends OpMode {
         DELIVER_HIGH_BAR,
         DELIVER_UP,
         DROP,
+        DROP_HIGH_BAR,
         ERROR
     }
     public enum SlidesState {
@@ -54,6 +55,7 @@ public class TeleOpV1 extends OpMode {
     public DeliverySlidesV1 deliverySlides = new DeliverySlidesV1();
     //TIMERS====================================================================================================================
     public ElapsedTime buttonTimer = new ElapsedTime();
+    public ElapsedTime highBarTimer = new ElapsedTime();
     public ElapsedTime grippersTimer = new ElapsedTime();
     public ElapsedTime deliveryArmTimer = new ElapsedTime();
     public ElapsedTime deliveryGrippersTimer = new ElapsedTime();
@@ -133,6 +135,9 @@ public class TeleOpV1 extends OpMode {
                 if (state == SystemStatesV1.ARM_UP) {
                     grippersTimer.reset();
                 }
+                else if(state == SystemStatesV1.DROP_HIGH_BAR){
+                    highBarTimer.reset();
+                }
                 buttonTimer.reset();
                 thisStateTimer.reset();
             }
@@ -173,7 +178,7 @@ public class TeleOpV1 extends OpMode {
             case DELIVER_HIGH_BAR:
                 deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR, 0.8);
                 deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR, 0.8);
-                deliveryAxon.setPosition(constants.DELIVERY_DROP);
+                deliveryAxon.setPosition(constants.DELIVERY_UP);
                 break;
             case HOVER_LOW:
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
@@ -343,6 +348,13 @@ public class TeleOpV1 extends OpMode {
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 deliveryAxon.setPosition(constants.DELIVERY_DROP);
                 break;
+            case DROP_HIGH_BAR:
+                deliveryAxon.setPosition(constants.DELIVERY_DROP);
+                deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
+                //if(highBarTimer.seconds() > 0.4){
+                    //deliverySlides.runRightSlideToPosition();
+                //}
+
         }
         telemetry.addLine("STATE: " + state.name());
         telemetry.addLine("\t Intake grippers position: " + grippers.getPosition());
@@ -375,7 +387,9 @@ public class TeleOpV1 extends OpMode {
             case LIFT_FROM_WALL:
                 return SystemStatesV1.DELIVER_HIGH_BAR;
             case DELIVER_HIGH_BAR:
-                return SystemStatesV1.DROP;
+                return SystemStatesV1.DROP_HIGH_BAR;
+            case DROP_HIGH_BAR:
+                return SystemStatesV1.START;
             case HOVER_OVER_SAMPLE:
                 return SystemStatesV1.HOVER_LOW;
             case HOVER_LOW:
