@@ -26,13 +26,13 @@ public class V1 extends Configuration {
 
         /* Intake configuration :
            -> Positive power makes slides extend
-           -> Increasing position makes arm go up
+           ---> Increasing position makes arm go up
            -> Increasing position makes elbow go up
            -> Increasing position makes wrist go TBD
            -> Increasing position makes claw close */
         m_motors.put("intake-slides",new MotorConf("intakeSlides",true));                     // EH Motor 2
         m_servos.put("intake-arm-left-pitch", new ServoConf("intakeArmPitchLeft", false));    // CH Servo 5
-        m_servos.put("intake-arm-right-pitch", new ServoConf("intakeArmPitchRight", false));  // EH Servo 1
+        m_servos.put("intake-arm-right-pitch", new ServoConf("intakeArmPitchRight", true));   // EH Servo 1
         m_servos.put("intake-elbow-pitch", new ServoConf("intakeElbowPitch", false));         // EH Servo 0
         m_servos.put("intake-wrist-roll", new ServoConf("intakeWristRoll", false));           // CH Servo 4
         m_servos.put("intake-claw", new ServoConf("intakeClaw", false));                      // EH Servo 2
@@ -50,10 +50,19 @@ public class V1 extends Configuration {
         m_servos.put("outtake-elbow-right-pitch", new ServoConf("outtakeElbowPitchRight", false));  // CH Servo 3
 
         /* Intake servos reference positions */
-        m_servos.get("intake-arm-left-pitch").setPosition("vertical", 0.65);
-        m_servos.get("intake-arm-left-pitch").setPosition("overSub", 0.23);
-        m_servos.get("intake-arm-left-pitch").setPosition("look", 0.13);
-        m_servos.get("intake-arm-left-pitch").setPosition("grab", 0.07);
+        m_servos.get("intake-arm-left-pitch").setPosition("transfer", 0.97);
+        m_servos.get("intake-arm-left-pitch").setPosition("overSub", 0.55);
+        m_servos.get("intake-arm-left-pitch").setPosition("look", 0.44);
+        m_servos.get("intake-arm-left-pitch").setPosition("grab", 0.39);
+        m_servos.get("intake-arm-right-pitch").setPosition("transfer", 0.97);
+        m_servos.get("intake-arm-right-pitch").setPosition("overSub", 0.55);
+        m_servos.get("intake-arm-right-pitch").setPosition("look", 0.44);
+        m_servos.get("intake-arm-right-pitch").setPosition("grab", 0.39);
+
+        m_servos.get("intake-elbow-pitch").setPosition("transfer", 0.15);
+        m_servos.get("intake-elbow-pitch").setPosition("grab", 0.68);
+        m_servos.get("intake-elbow-pitch").setPosition("look", 0.70);
+        m_servos.get("intake-elbow-pitch").setPosition("overSub", 0.73);
 
         m_servos.get("outtake-wrist-roll").setPosition("center", 0.13);
 

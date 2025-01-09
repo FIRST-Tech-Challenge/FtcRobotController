@@ -127,8 +127,8 @@ public class Collecting {
         }
 
         if(gamepad.dpad_up)     {
-            logger.addLine(String.format("==> MUP IN ARM : " + intakeArm.getPosition()));
-            if(!wasDPadUpPressed){ intakeArm.moveUp(); }
+            logger.addLine(String.format("==> MDW IN ARM : " + intakeArm.getPosition()));
+            if(!wasDPadUpPressed){ intakeElbow.moveDown(); intakeArm.moveDown(); }
             wasDPadUpPressed = true;
         }
         else {
@@ -136,8 +136,8 @@ public class Collecting {
         }
 
         if(gamepad.dpad_down) {
-            logger.addLine(String.format("==> MDW IN ARM : " + intakeArm.getPosition()));
-            if(!wasDPadDownPressed){ intakeArm.moveDown(); }
+            logger.addLine(String.format("==> MUP IN ARM : " + intakeArm.getPosition()));
+            if(!wasDPadDownPressed){ intakeArm.moveUp(); intakeArm.moveUp(); intakeElbow.moveUp();}
             wasDPadDownPressed = true;
         }
         else {

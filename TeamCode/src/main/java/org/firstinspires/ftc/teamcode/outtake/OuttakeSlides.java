@@ -95,7 +95,7 @@ public class OuttakeSlides {
     public void rollback(double Power) {
         if(areReady) {
             rightMotor.setPower(-Power);
-            leftMotor.setPower(Power);
+            leftMotor.setPower(-Power);
         }
     }
 

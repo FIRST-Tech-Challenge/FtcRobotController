@@ -21,15 +21,15 @@ public class OuttakeElbow {
         VERTICAL,
         OUTSIDE,
         INSIDE
-    };
+    }
 
-    Telemetry                        logger;
+    Telemetry logger;
 
-    boolean                          isReady;
-    Position                         position;
-    Servo                            leftServo;
-    Servo                            rightServo;
-    Map<String, Map<String, Double>> positions   = new HashMap<>();
+    boolean     isReady;
+    Position    position;
+    Servo       leftServo;
+    Servo       rightServo;
+    Map<String, Map<String, Double>> positions = new HashMap<>();
 
     public Position getPosition() { return position; }
 
@@ -40,23 +40,37 @@ public class OuttakeElbow {
         String status = "";
         isReady = true;
 
-        ServoConf leftPitch  = config.getServo("outtake-elbow-left-pitch");
+        ServoConf leftPitch = config.getServo("outtake-elbow-left-pitch");
         ServoConf rightPitch = config.getServo("outtake-elbow-right-pitch");
 
-        if(leftPitch == null)  { status += "L" ; isReady = false; }
-        if(rightPitch == null) { status += "R" ; isReady = false; }
+        if (leftPitch == null) {
+            status += "L";
+            isReady = false;
+        }
+        if (rightPitch == null) {
+            status += "R";
+            isReady = false;
+        }
 
-        if(!isReady) { status = " CONF " + status; }
-        else {
+        if (!isReady) {
+            status = " CONF " + status;
+        } else {
 
-            leftServo  = hwm.tryGet(Servo.class, leftPitch.getName());
-            rightServo  = hwm.tryGet(Servo.class, rightPitch.getName());
+            leftServo = hwm.tryGet(Servo.class, leftPitch.getName());
+            rightServo = hwm.tryGet(Servo.class, rightPitch.getName());
 
-            if(leftServo == null) { status += "L" ; isReady = false;  }
-            if(rightServo == null) { status += "R" ; isReady = false;  }
+            if (leftServo == null) {
+                status += "L";
+                isReady = false;
+            }
+            if (rightServo == null) {
+                status += "R";
+                isReady = false;
+            }
 
-            if(!isReady) { status = " HW " + status; }
-            else {
+            if (!isReady) {
+                status = " HW " + status;
+            } else {
                 if (leftPitch.getReverse()) {
                     leftServo.setDirection(Servo.Direction.REVERSE);
                 }
@@ -67,19 +81,22 @@ public class OuttakeElbow {
                 Map<String, Double> lpositions = leftPitch.getPositions();
                 Map<String, Double> rpositions = rightPitch.getPositions();
                 lpositions.forEach((key, value) -> {
-                    if(rpositions.containsKey(key)) {
-                        HashMap<String,Double> temp = new HashMap<String,Double>();
+                    if (rpositions.containsKey(key)) {
+                        HashMap<String, Double> temp = new HashMap<String, Double>();
                         temp.put("left", value);
                         temp.put("right", rpositions.get(key));
-                        positions.put(key,temp);
+                        positions.put(key, temp);
                     }
                 });
 
 
             }
         }
-        if(isReady) { logger.addLine("==>  IN AR : OK"); }
-        else        { logger.addLine("==>  IN AR : KO : " + status); }
+        if (isReady) {
+            logger.addLine("==>  IN AR : OK");
+        } else {
+            logger.addLine("==>  IN AR : KO : " + status);
+        }
 
         this.setVertical();
 
@@ -87,7 +104,7 @@ public class OuttakeElbow {
 
     public void setVertical() {
 
-        if( positions.containsKey("vertical") && isReady) {
+        if (positions.containsKey("vertical") && isReady) {
 
             leftServo.setPosition(positions.get("vertical").get("left"));
             rightServo.setPosition(positions.get("vertical").get("right"));
@@ -100,7 +117,7 @@ public class OuttakeElbow {
 
     public void setOutside() {
 
-        if( positions.containsKey("outside") && isReady) {
+        if (positions.containsKey("outside") && isReady) {
 
             leftServo.setPosition(positions.get("outside").get("left"));
             rightServo.setPosition(positions.get("outside").get("right"));
@@ -110,9 +127,10 @@ public class OuttakeElbow {
         }
 
     }
+
     public void setInside() {
 
-        if( positions.containsKey("inside") && isReady) {
+        if (positions.containsKey("inside") && isReady) {
 
             leftServo.setPosition(positions.get("inside").get("left"));
             rightServo.setPosition(positions.get("inside").get("right"));
@@ -124,5 +142,3 @@ public class OuttakeElbow {
     }
 
 }
-
-

@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.Collections;
+import java.util.Comparator;
 
 @Config
 @TeleOp(name = "ServoTest")
@@ -23,7 +25,7 @@ public class ServoTest extends LinearOpMode {
     public static double   targetPos      = 0.0;
     public static long     sleepMs        = 200;
     public static boolean  isReverse      = false;
-    public static boolean  useConfReverse = false;
+    public static boolean  useConfReverse = true;
 
     private static boolean holdPosition   = false;
 
@@ -54,6 +56,14 @@ public class ServoTest extends LinearOpMode {
         if (!servos.isEmpty()) {
 
             entryList = new ArrayList<>(servos.entrySet());
+
+            Collections.sort(entryList, new Comparator<Map.Entry<String,Servo>>() {
+                @Override
+                public int compare(Map.Entry<String,Servo> entry1, Map.Entry<String,Servo> entry2) {
+                    return entry1.getKey().compareTo(entry2.getKey());
+                }
+            });
+
             iterator = entryList.listIterator();
             if (iterator.hasNext()) {
                 current = iterator.next();
@@ -113,6 +123,7 @@ public class ServoTest extends LinearOpMode {
             telemetry.addData("Servo", current.getKey());
             telemetry.addData("Position", targetPos);
             telemetry.addData("Holding position", holdPosition);
+            telemetry.addData("Reverse", current.getValue().getDirection());
             telemetry.update();
 
             sleep(sleepMs);

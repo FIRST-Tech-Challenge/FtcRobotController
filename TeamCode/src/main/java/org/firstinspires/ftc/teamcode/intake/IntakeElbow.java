@@ -18,9 +18,10 @@ import java.util.Map;
 public class IntakeElbow {
 
     enum Position {
-        VERTICAL,
-        OUTSIDE,
-        INSIDE
+        TRANSFER,
+        OVER_SUBMERSIBLE,
+        LOOKING,
+        GRABBING
     };
 
     Telemetry           logger;
@@ -34,10 +35,10 @@ public class IntakeElbow {
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
 
-        logger = tm;
+        logger          = tm;
 
-        String status = "";
-        isReady = true;
+        String status   = "";
+        isReady         = true;
 
         ServoConf pitch  = config.getServo("intake-elbow-pitch");
 
@@ -63,40 +64,61 @@ public class IntakeElbow {
         if(isReady) { logger.addLine("==>  IN EL : OK"); }
         else        { logger.addLine("==>  IN EL : KO : " + status); }
 
-        this.setVertical();
+        this.setTransfer();
     }
-    public void setVertical() {
+    public void setTransfer() {
 
-        if( positions.containsKey("vertical") && isReady) {
+        if( positions.containsKey("transfer") && isReady) {
 
-            servo.setPosition(positions.get("vertical"));
-            position = Position.VERTICAL;
+            servo.setPosition(positions.get("transfer"));
+            position = Position.TRANSFER;
 
         }
 
     }
 
-    public void setOutside() {
+    public void setOverSubmersible() {
 
-        if( positions.containsKey("outside") && isReady) {
+        if( positions.containsKey("overSub") && isReady) {
 
-            servo.setPosition(positions.get("outside"));
-
-            position = Position.OUTSIDE;
+            servo.setPosition(positions.get("overSub"));
+            position = Position.OVER_SUBMERSIBLE;
 
         }
 
     }
-    public void setInside() {
 
-        if( positions.containsKey("inside") && isReady) {
+    public void setLooking() {
 
-            servo.setPosition(positions.get("inside"));
+        if( positions.containsKey("look") && isReady) {
 
-            position = Position.INSIDE;
+            servo.setPosition(positions.get("look"));
+            position = Position.LOOKING;
 
         }
 
+    }
+
+    public void setGrabbing() {
+
+        if( positions.containsKey("grab") && isReady) {
+
+            servo.setPosition(positions.get("grab"));
+            position = Position.GRABBING;
+
+        }
+    }
+
+    public void moveUp() {
+        if(position == Position.GRABBING)              { this.setLooking();         }
+        else if(position == Position.LOOKING)          { this.setOverSubmersible(); }
+        else if(position == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
+    }
+
+    public void moveDown() {
+        if(position == Position.LOOKING)               { this.setGrabbing();        }
+        else if(position == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
+        else if(position == Position.TRANSFER)         { this.setOverSubmersible(); }
     }
 
 }

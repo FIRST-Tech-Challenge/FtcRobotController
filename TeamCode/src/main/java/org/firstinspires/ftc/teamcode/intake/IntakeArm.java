@@ -17,7 +17,7 @@ import java.util.Map;
 public class IntakeArm {
 
     enum Position {
-        VERTICAL,
+        TRANSFER,
         OVER_SUBMERSIBLE,
         LOOKING,
         GRABBING
@@ -80,21 +80,21 @@ public class IntakeArm {
         if(isReady) { logger.addLine("==>  IN AR : OK"); }
         else        { logger.addLine("==>  IN AR : KO : " + status); }
 
-        this.setVertical();
+        this.setTransfer();
 
     }
 
-    public void setVertical() {
+    public void setTransfer() {
 
-        if( positions.containsKey("vertical") && isReady) {
+        if( positions.containsKey("transfer") && isReady) {
 
-            leftServo.setPosition(positions.get("vertical").get("left"));
-            rightServo.setPosition(positions.get("vertical").get("right"));
+            leftServo.setPosition(positions.get("transfer").get("left"));
+            rightServo.setPosition(positions.get("transfer").get("right"));
 
             leftServo.getController().pwmEnable();
             rightServo.getController().pwmEnable();
 
-            position = Position.VERTICAL;
+            position = Position.TRANSFER;
 
         }
 
@@ -151,13 +151,13 @@ public class IntakeArm {
     public void moveUp() {
         if(position == Position.GRABBING)              { this.setLooking();         }
         else if(position == Position.LOOKING)          { this.setOverSubmersible(); }
-        else if(position == Position.OVER_SUBMERSIBLE) { this.setVertical();        }
+        else if(position == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
     }
 
     public void moveDown() {
         if(position == Position.LOOKING)               { this.setGrabbing();        }
         else if(position == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
-        else if(position == Position.VERTICAL)         { this.setOverSubmersible(); }
+        else if(position == Position.TRANSFER)         { this.setOverSubmersible(); }
     }
 
 }

@@ -90,6 +90,9 @@ public class ServoPairTest extends LinearOpMode {
                     master.getController().pwmDisable();
                 }
                 else if(mode == Mode.SLAVE_ONLY) {
+                    mode = Mode.BOTH;
+                }
+                else if(mode == Mode.BOTH)       {
                     mode = Mode.MASTER_ONLY;
                     slave.getController().pwmDisable();
                 }

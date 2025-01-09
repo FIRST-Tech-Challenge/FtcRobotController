@@ -17,7 +17,7 @@ abstract public class Configuration {
     public final Map<String, ImuConf>   m_imus   = new HashMap<>();
     public final Map<String, ServoConf> m_servos = new HashMap<>();
 
-    public static Configuration s_Current = new Test();
+    public static Configuration s_Current = new V1();
 
     // Method to retrieve a motor by its reference name
     public MotorConf getMotor(String name) {
