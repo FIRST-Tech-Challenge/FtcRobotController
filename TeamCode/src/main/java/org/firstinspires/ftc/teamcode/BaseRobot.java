@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -41,7 +40,6 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public BNO055IMU imu;
     public int clawState = 0;
 
     /**
@@ -60,7 +58,7 @@ public class BaseRobot {
         this.input = input;
         this.telemetry = telemetry;
         this.logger = new Logger(this);
-        this.imu = hardwareMap.get(BNO055IMU.class, Settings.Hardware.IDs.IMU);
+
         // Initialize and configure the motors
         frontLeftMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_LEFT_MOTOR);
         frontRightMotor = hardwareMap.get(DcMotor.class, Settings.Hardware.IDs.FRONT_RIGHT_MOTOR);
@@ -154,16 +152,6 @@ public class BaseRobot {
         double rotation = directions.rotation * powerMultiplier;
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
-
-        if (input.mainSettings.use_absolute_positioning) {
-            // change strafe and drive power so that they are absolutely positioned and rotation does not affect the direction of the robot
-            double currentRotation = imu.getPosition().z;
-            double strafeTransformed = strafePower * Math.cos(Math.toRadians(currentRotation)) - drivePower * Math.sin(Math.toRadians(currentRotation));
-            double driveTransformed = strafePower * Math.sin(Math.toRadians(currentRotation)) + drivePower * Math.cos(Math.toRadians(currentRotation));
-
-            strafePower = strafeTransformed;
-            drivePower = driveTransformed;
-        }
 
         logger.update("X", String.valueOf(directions.x));
         logger.update("Y", String.valueOf(directions.y));
