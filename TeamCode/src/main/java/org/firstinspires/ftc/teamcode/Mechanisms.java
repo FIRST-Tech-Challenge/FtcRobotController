@@ -184,6 +184,7 @@ public class Mechanisms {
         master = opMode;
     }
 
+
     ////////////////////////////////////////////////////////////////////////////////
     public void setBaseOuttakeLift()
     {
