@@ -50,88 +50,39 @@ public class AnimosityAndMortification extends Movable {
                 FRW.setPower(-0.5);
                 BRW.setPower(0.5);
             } else if (gamepad1.left_trigger > .75 && !stop) {
-                new Thread(() -> {
-                    try {
-                        FLW.setPower(-0.5);
-                        BLW.setPower(-0.5);
-                        FRW.setPower(0.5);
-                        BRW.setPower(-0.5);
-                        Thread.sleep(210);
-                        disablePowerWheels();
-
-                        stop = true;
-                        Thread.sleep(1000);
-                        stop = false;
-
-                    } catch(Exception e) {
-                    }
-                }).start();
-
+                powerWheels(210, "left");
+                stop = true;
+                wait(1000);
+                stop = false;
             } else if (gamepad1.right_trigger > .75 && !stop) {
-                new Thread(() -> {
-                    try {
-
-                        FLW.setPower(0.5);
-                        BLW.setPower(0.5);
-                        FRW.setPower(-0.5);
-                        BRW.setPower(0.5);
-                        Thread.sleep(210);
-                        disablePowerWheels();
-
-                        stop = true;
-                        Thread.sleep(1000);
-                        stop = false;
-                    } catch(Exception e) {
-                    }
-                }).start();
+                powerWheels(210, "right");
+                stop = true;
+                wait(1000);
+                stop = false;
             } else {
-                disablePowerWheels();
+                disablePower();
             }
 
             // scissor lift
             // enter real values once you get to test
             if(gamepad1.right_stick_y > 0.5){
-                FRScissorLift.setPower(1);
-                FLScissorLift.setPower(1);
-                BRScissorLift.setPower(-1);
-                BLScissorLift.setPower(-1);
+                powerScissorLift(0, "up");
             }else if(gamepad1.right_stick_y < -0.5) {
-                FRScissorLift.setPower(-1);
-                FLScissorLift.setPower(-1);
-                BRScissorLift.setPower(1);
-                BLScissorLift.setPower(1);
+                powerScissorLift(0, "down");
             }else {
                 disableScissorPower();
             }
 
 //            if (gamepad1.a) {
-//                if (servoOpen) {
-//                    ServoR.setPosition(1);
-//                    ServoL.setPosition(1);
-//                    servoOpen = false;
-//                } else {
-//                    ServoR.setPosition(0);
-//                    ServoL.setPosition(0);
-//                    servoOpen = true;
-//                }
-//            }
 
-            if (gamepad1.a) {
-                powerScissorLift(0, "up");
-            } else if (gamepad1.b) {
-                powerScissorLift(0, "down");
-            }  else {
-                disableScissorPower();
-            }
+//            } else if (gamepad1.b) {
+
+//            }
             updatePhoneConsole();
         }
     }
 
-    public static void disablePowerWheels() {
-        FLW.setPower(0);
-        BLW.setPower(0);
-        FRW.setPower(0);
-        BRW.setPower(0);}
+
 
     public void updatePhoneConsole() {
         telemetry.addData("Status","Running");
@@ -146,7 +97,6 @@ public class AnimosityAndMortification extends Movable {
         telemetry.addData("BLScissorLift Power:", BLScissorLift.getPower());
         telemetry.addData("Left Stick X:", tgtPower2);
         telemetry.addData("Left Stick Y:", tgtPower);
-
         telemetry.update();
     }
 }

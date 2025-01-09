@@ -8,7 +8,11 @@ public class Test extends Movable {
         super.runOpMode();
         waitForStart();
         while(opModeIsActive()) {
-
+            if (gamepad1.a) {
+                moveClaws("grab");
+            } else if (gamepad1.b) {
+                moveClaws("release");
+            }
         }
     }
 

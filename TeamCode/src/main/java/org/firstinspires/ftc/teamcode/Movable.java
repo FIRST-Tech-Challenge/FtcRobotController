@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,8 +13,8 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BRScissorLift;
     static protected DcMotor FLScissorLift;
     static protected DcMotor BLScissorLift;
-    static protected Servo ServoR;
-    static protected Servo ServoL;
+    static protected Servo SlideR;
+    static protected Servo SlideL;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,8 +26,8 @@ abstract class Movable extends LinearOpMode {
         FLScissorLift = hardwareMap.get(DcMotor.class, "FLScissorLift");
         BRScissorLift = hardwareMap.get(DcMotor.class, "BRScissorLift");
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
-//        ServoR = hardwareMap.get(Servo.class, "ServoR");
-//        ServoL = hardwareMap.get(Servo.class, "ServoL");
+        SlideR = hardwareMap.get(Servo.class, "SlideR");
+        SlideL = hardwareMap.get(Servo.class, "SlideL");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -105,7 +104,8 @@ abstract class Movable extends LinearOpMode {
         FRW.setPower(0);
         BRW.setPower(0);
     }
-
+    // 0 right
+    // 5 left
     public void powerScissorLift(int miliseconds, String direction) {
         switch (direction) {
             case "up":
@@ -129,14 +129,15 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void moveClaws(String toggle) {
+        SlideL.setDirection(Servo.Direction.REVERSE);
         switch (toggle) {
             case "grab":
-                ServoR.setPosition(1);
-                ServoL.setPosition(1);
+                SlideR.setPosition(.5);
+                SlideL.setPosition(.5);
                 break;
             case "release":
-                ServoR.setPosition(0);
-                ServoL.setPosition(0);
+                SlideR.setPosition(0);
+                SlideL.setPosition(0);
                 break;
         }
     }
