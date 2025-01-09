@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+//import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.eventloop.
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+//import java.util.Optional;
+
 //import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -31,32 +34,24 @@ public class Auto extends LinearOpMode {
         testRun();
 
     }
-    private void modAllWheels(String action, Float... power) {
-        /*
-        if (action.equals("direction_forward")) {
-            for (wheel : motorList) {
-                wheel.setDirection(DcMotor.Direction.FORWARD)
-            }
-        }
-        if (action.equals("direction_reverse")) {
-            for (wheel : motorList) {
-                wheel.setDirection(DcMotor.Direction.REVERSE)
-            }
-        }*/
+    private void modAllWheels(String action, Double power) {
+
+        power = power != null ? power : 0;
         switch (action) {
             case "direction_forward":
-                for (wheel : motorList) {
+                for (DcMotor wheel : motorList) {
                     wheel.setDirection(DcMotor.Direction.FORWARD);
                 }
                 break;
             case "direction_reverse":
-                for (wheel : motorList) {
-                    wheel.setDirection(DcMotor.Direction.FORWARD);
+                for (DcMotor wheel : motorList) {
+                    wheel.setDirection(DcMotor.Direction.REVERSE);
                 }
                 break;
             case "power":
-                for (wheel : motorList) {
-                    wheel.setPower(power[0]);
+                for (DcMotor wheel : motorList) {
+                    //double wheelPower = power.isPresent() ? power.get() : 0;
+                    wheel.setPower(power);
                 }
                 break;
             default:
@@ -66,10 +61,10 @@ public class Auto extends LinearOpMode {
                 
     }
     private void configWheels() {
-        modAllWheels("direction_forward");
+        modAllWheels("direction_forward", null);
     }
     private void testRun() {
-        modAllWheels("power", 1);
+        modAllWheels("power", 1.0);
 
     }
 }
