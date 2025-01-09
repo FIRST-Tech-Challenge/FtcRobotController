@@ -25,10 +25,12 @@ public class Motors {
         }
     }
 
-    private DcMotor[] motors;
+    private final DcMotor[] motors;
 
-    private int restingArmPosition;
-    private int reachingArmPosition;
+    private final int restingArmPosition;
+    private final int reachingArmPosition;
+    private int restingUpArmPosition;
+    private int reachingUpArmPosition;
 
 
     public Motors(HardwareMap hardwareMap) {
@@ -53,9 +55,14 @@ public class Motors {
 
 
         motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
+        //  motors[Type.UpArm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         restingArmPosition = getArmPosition();
         reachingArmPosition = getArmPosition() + Constants.ARM_MAX_POSITION_OFFSET;
+
+        restingUpArmPosition = getUpArmPosition();
+        reachingUpArmPosition = getUpArmPosition() + Constants.UP_ARM_MAX_POSITION_OFFSET;
     }
 
     public void MoveMotor(Type motorNumber, double power) { //choose motor to move with type and move with power is 0-100
@@ -67,6 +74,10 @@ public class Motors {
     public int getArmPosition() {
         return motors[Type.Arm.getValue()].getCurrentPosition();
     }
+
+    public int getRestingUpArmPosition(){return restingUpArmPosition;}
+
+    public int getReachingUpArmPosition(){return reachingUpArmPosition;}
 
     public int getArmRestingPosition() {
         return restingArmPosition;
