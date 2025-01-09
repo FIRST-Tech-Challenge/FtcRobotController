@@ -17,7 +17,6 @@ public class TurnTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
         waitForStart();
 
         if (isStopRequested()) return;
