@@ -29,7 +29,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
     SonicPIDFController xPid = new SonicPIDFController(0.0018, 0, 0, 0.005);
 
-    SonicPIDFController yPid = new SonicPIDFController(-0.0033, 0, 00, 0.02);
+    SonicPIDFController yPid = new SonicPIDFController(-0.0033, 0, 0, 0.02);
 
     SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
@@ -115,7 +115,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
                     );
 
         if (max > maxPower) {
-            // Normalize to 0..1 motor power range
+            // Normalize to 0 to 1 motor power range
             frontLeftPower = maxPower * frontLeftPower / max ;
             frontRightPower = maxPower * frontRightPower / max;
             backLeftPower = maxPower * backLeftPower / max;

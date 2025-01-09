@@ -98,8 +98,8 @@ public class RollingIntake extends SonicSubsystemBase {
 
             } else {
                 if(state == IntakeState.Intake | state == IntakeState.IntakeAuto) {
-                    this.leftServo.setPower(-0.5);
-                    this.rightServo.setPower(0.5);
+                    this.leftServo.setPower(-0.4);
+                    this.rightServo.setPower(0.4);
                     Sleep(40);
 
                 } else {
@@ -182,6 +182,10 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInIntakePosition() {
+        this.elbowServo.setPosition(.65);
+    }
+
+    public void SetElbowInIntakePositionForSample3() {
         this.elbowServo.setPosition(.55);
     }
 

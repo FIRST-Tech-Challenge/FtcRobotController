@@ -41,7 +41,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-                commandFactory.driveToTarget(440, 260, 0, 0.13, .7, 20),
+                commandFactory.driveToTarget(500, 270, 0, 0.13, .7, 5),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -49,7 +49,7 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.elbowToIntakePosition()
                 ),
 
-                commandFactory.intakeFromGround2(1000),
+                commandFactory.intakeFromGround2(1500),
                 commandFactory.inCaseSampleIntakeFailed("Sample 1", new SequentialCommandGroup(
                     commandFactory.pivotToIntakeRetry(),
                         commandFactory.pivotToGroundInTakeBegin(),
@@ -63,14 +63,14 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 commandFactory.extendSlider(),
 
-                commandFactory.driveToTarget(20, 440, -45, 0.13, .5, 100),
+                commandFactory.driveToTarget(20, 440, -45, 0.13, .5, 10),
 
                 // Sample #1
                 commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
                 //endregion for sample #1
 
                 //region sample #2
-                commandFactory.driveToTarget(430, 520, 0, 0.13, .8, 30)),
+                commandFactory.driveToTarget(500, 520, 0, 0.13, .5, 5)),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -78,7 +78,7 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.elbowToIntakePosition()
                 ),
 
-                commandFactory.intakeFromGround2(1000),
+                commandFactory.intakeFromGround2(1500),
 
                 commandFactory.inCaseSampleIntakeFailed("Sample 2", new SequentialCommandGroup(
                         commandFactory.pivotToIntakeRetry(),
@@ -91,9 +91,9 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.pivotToDelivery()
                 ),
 
-                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 100),
+                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 10),
                 commandFactory.extendSlider(),
-                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 50),
+                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 10),
 
 
                 // Sample #2
@@ -101,21 +101,22 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion sample #2
 
                 //region sample #3
-                commandFactory.driveToTarget(250, 540, 17, 0.13, .8, 30),
+                commandFactory.driveToTarget(230, 550, 15, 0.13, .5, 5),
                 commandFactory.collapseSlider(),
                 new ParallelCommandGroup(
-                    commandFactory.pivotToGroundInTakeBegin(),
-                    commandFactory.extendSliderToIntakeSample3()
+                    commandFactory.pivotToGroundInTakeBegin()
+
                 ),
-                commandFactory.elbowToIntakePosition(),
+                commandFactory.elbowToIntakePositionForSample3(),
+                commandFactory.extendSliderToIntakeSample3(),
                 commandFactory.sleep(300),
                 commandFactory.intakeFromGroundForSample3(4000),
 
-                commandFactory.inCaseSampleIntakeFailed("Sample 3", new SequentialCommandGroup(
-                        commandFactory.pivotToIntakeRetry(),
-                        commandFactory.pivotToGroundInTakeBegin(),
-                        commandFactory.intakeFromGroundForSample3(6000)
-                )),
+//                commandFactory.inCaseSampleIntakeFailed("Sample 3", new SequentialCommandGroup(
+//                        commandFactory.pivotToIntakeRetry(),
+//                        commandFactory.pivotToGroundInTakeBegin(),
+//                        commandFactory.intakeFromGroundForSample3(6000)
+//                )),
 
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
@@ -123,20 +124,20 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 ),
 
-                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 100),
+                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 10),
                 commandFactory.extendSlider(),
-                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 50),
+                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 10),
 
 
                 // Sample #3
                 commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
-                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 100),
+                commandFactory.driveToTarget(300, 420, 0, 0.13, .8, 10),
                 //endregion sample #3
 
                 new ParallelCommandGroup(
                     commandFactory.pivotToStart(),
                     commandFactory.collapseSlider(),
-                    commandFactory.driveToTarget(2600, -290, -120, .13, 1, 100),
+                    commandFactory.driveToTarget(2600, -290, -120, .13, 1, 10),
                     commandFactory.elbowToStartPosition()
                 )
 
