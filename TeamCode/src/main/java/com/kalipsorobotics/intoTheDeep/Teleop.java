@@ -179,7 +179,7 @@ public class Teleop extends LinearOpMode {
             specimenHangPressed = kGamePad2.isToggleButtonA();
             specimenReadyPressed = kGamePad2.isToggleButtonB();
             sampleEndToEndSequencePressed = kGamePad2.isBackButtonPressed();
-            specimenEndToEndSequencePressed = kGamePad2.isToggleDpadLeft() && kGamePad2.isLeftTriggerPressed();
+            specimenEndToEndSequencePressed = kGamePad2.isStartButtonPressed();
 
             if(kGamePad2.isLeftBumperPressed()){
                 Log.d ("backButton", " Gamepad" + gamepad2.left_bumper);

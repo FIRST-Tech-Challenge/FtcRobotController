@@ -52,7 +52,7 @@ public class AutoSpecimen extends LinearOpMode {
         initAuto.setName("initAuto");
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 300);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 190);
         wallToBarHangAction.setName("wallToBarHangAction");
         redAutoSpecimen.addAction(wallToBarHangAction);
         //===============end of first specimen===============

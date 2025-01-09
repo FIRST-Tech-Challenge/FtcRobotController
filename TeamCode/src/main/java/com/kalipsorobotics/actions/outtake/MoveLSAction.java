@@ -120,8 +120,8 @@ public class MoveLSAction extends Action {
             lowestPower = 0.6;
         }
 
-        if (targetTicks > mmToTicksLS(770)) {
-            lowestPower = 0.7;
+        if (targetTicks > mmToTicksLS(780)) {
+            lowestPower = 0.8;
         }
 
         //action timeout =raiseSlidesBasket, targetErrorTicks=105.623, errorTolerance=25.659, targetTicks=3643.623, currentTicks=3538.000,
