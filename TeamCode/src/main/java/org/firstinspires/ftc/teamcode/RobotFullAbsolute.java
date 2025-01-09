@@ -18,6 +18,12 @@ public class RobotFullAbsolute extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
+
+        //  IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        //                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+        //                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+
+
         imu.initialize(parameters);
         imu.resetYaw();
         //change SLOWSPEED to change how dpad works
@@ -53,6 +59,19 @@ public class RobotFullAbsolute extends LinearOpMode {
 
         backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+
+        //     frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
+        //        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        //
+        //        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
+        //        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        //
+        //        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
+        //        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        //
+        //        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
+        //        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
 
 
