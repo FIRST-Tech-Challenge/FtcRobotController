@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.BBcode;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,12 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 
 @TeleOp(name = "LimeLightTesting")
 //@Disabled
@@ -38,11 +39,11 @@ public class LimeLightTesting extends LinearOpMode {
     DcMotorEx _leftBack;
     DcMotorEx _rightFront;
     DcMotorEx _rightBack;
-    Limelight3A limelight;
+    Limelight3A _limelight;
 
     //settings
-    final Pose3D targetPose = new Pose3D(new Position(DistanceUnit.METER, -1, -1, 0,0), new YawPitchRollAngles(AngleUnit.DEGREES, 90, 0, 0, 0));
-    final double turnSpeed = 0.5;
+    final Pose3D targetPose = new Pose3D(new Position(DistanceUnit.METER, -1.203, -1.203, 0,0), new YawPitchRollAngles(AngleUnit.DEGREES, 180, 0, 0, 0));
+    final double turnSpeed = 0.1;
     final double strafeSpeed = 0.5;
     final double driveSpeed = 0.5;
     final double maxTurnSpeed = 1;
@@ -55,9 +56,10 @@ public class LimeLightTesting extends LinearOpMode {
         //create instance of external classes
         _MecanumDrivetrain = new MecanumDrivetrain(this);
 
-        //Int limelight
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start();
+        //Init limelight
+        _limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        _limelight.pipelineSwitch(1);
+        _limelight.start();
 
         //Init drive Motors
         _leftFront = hardwareMap.tryGet(DcMotorEx.class, "leftFront");
@@ -73,18 +75,19 @@ public class LimeLightTesting extends LinearOpMode {
     //run steps
         while (opModeIsActive()) {
             //Manage LimeLight
-            LLResult lLResult = limelight.getLatestResult();
+            LLResult lLResult = _limelight.getLatestResult();
             if (lLResult != null) {
                 if (lLResult.getTa() > 0) {
                     tagFound = true;
-                    botPose = lLResult.getBotpose_MT2();
-                    botYaw = botPose.getOrientation().getYaw();
-                    telemetry.addData("BotPose", botPose);
+                    botPose = lLResult.getBotpose();
+                    botYaw = lLResult.getBotpose().getOrientation().getYaw();
+                    telemetry.addData("BotPose", botPose.getPosition());
+                    telemetry.addData("Yaw", botYaw);
                 }
                 else {
                     tagFound = false;
+                    telemetry.addData("Limelight", "Tag not found");
                 }
-                telemetry.addData("Ta", lLResult.getTa());
             }
             else {
                 tagFound = false;
@@ -96,23 +99,27 @@ public class LimeLightTesting extends LinearOpMode {
                 DriveToAprilTag();
             }
 
+            //calc pose error
+            //aError
+            aError = targetPose.getOrientation().getYaw() - botYaw;
+            if (Math.abs(aError) > 180) {aError = -1 * (Math.signum(aError) * (180 - (Math.abs(aError) % 180)));}
+            //xError
+            xError = targetPose.getPosition().x - botPose.getPosition().x;
+            //yError
+            yError = targetPose.getPosition().y - botPose.getPosition().y;
+
             //Manual drive
             _MecanumDrivetrain.Drive();
 
+            telemetry.addData("aError",aError);
+            telemetry.addData("xError",xError);
+            telemetry.addData("yError",yError);
             telemetry.update();
         }
-        limelight.stop();
+        _limelight.stop();
     }
 
     private void DriveToAprilTag() {
-        //calc pose error
-        //aError
-        aError = targetPose.getOrientation().getYaw() - botYaw;
-        if (Math.abs(aError) > 180) {aError = -1 * (Math.signum(aError) * (180 - (Math.abs(aError) % 180)));}
-        //xError
-        xError = targetPose.getPosition().x - botPose.getPosition().x;
-        //yError
-        yError = targetPose.getPosition().y - botPose.getPosition().y;
 
         //calc movement magnitudes
         //turn
