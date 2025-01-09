@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.servo;
-
-import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.auto.servo.Servob;
+package org.firstinspires.ftc.teamcode.libraries.servo;
 
 // a fixed set position servo class
 public class FixedPositionServo extends Servob {

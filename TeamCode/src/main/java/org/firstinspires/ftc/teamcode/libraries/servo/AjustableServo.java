@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto.servo;
-
-import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.auto.servo.Servob;
+package org.firstinspires.ftc.teamcode.libraries.servo;
 
 
 // a adjustable servo class ith a amount to increase by

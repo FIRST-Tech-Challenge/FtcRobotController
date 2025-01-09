@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.libraries;
 
 //where all functions for tolerance and if passed target
 //basically a utils class

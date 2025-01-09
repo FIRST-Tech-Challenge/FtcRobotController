@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.libraries;
 
 // a class for handling odometry motor and it calculations
 // it extends the MotorEx class because a odometry motor is not powered and so it use the motor functions in that calss

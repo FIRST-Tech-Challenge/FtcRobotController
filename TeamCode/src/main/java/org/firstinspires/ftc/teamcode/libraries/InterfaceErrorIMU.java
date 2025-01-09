@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.libraries;
 
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import static org.firstinspires.ftc.teamcode.auto.CheckDriveStraight.isWithinTolerance;
-import static org.firstinspires.ftc.teamcode.auto.CheckDriveStraight.turnToCorrectSide;
+import static org.firstinspires.ftc.teamcode.libraries.CheckDriveStraight.isWithinTolerance;
+import static org.firstinspires.ftc.teamcode.libraries.CheckDriveStraight.turnToCorrectSide;
 
 // class for handling the IMU and its calculations
 public class InterfaceErrorIMU {
