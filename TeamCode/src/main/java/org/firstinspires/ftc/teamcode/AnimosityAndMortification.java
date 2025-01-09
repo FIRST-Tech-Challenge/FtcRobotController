@@ -115,6 +115,14 @@ public class AnimosityAndMortification extends Movable {
 //                    servoOpen = true;
 //                }
 //            }
+
+            if (gamepad1.a) {
+                powerScissorLift(0, "up");
+            } else if (gamepad1.b) {
+                powerScissorLift(0, "down");
+            }  else {
+                disableScissorPower();
+            }
             updatePhoneConsole();
         }
     }

@@ -23,7 +23,7 @@ abstract class Movable extends LinearOpMode {
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         BRW = hardwareMap.get(DcMotor.class, "BRW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
-        FRScissorLift = hardwareMap.get(DcMotor.class, "FRScissorLift"); // change config if needed
+        FRScissorLift = hardwareMap.get(DcMotor.class, "FRScissorLift");
         FLScissorLift = hardwareMap.get(DcMotor.class, "FLScissorLift");
         BRScissorLift = hardwareMap.get(DcMotor.class, "BRScissorLift");
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
@@ -108,37 +108,39 @@ abstract class Movable extends LinearOpMode {
 
     public void powerScissorLift(int miliseconds, String direction) {
         switch (direction) {
-            case "up": // might not be accuarte
-                FRScissorLift.setPower(1);
-                FLScissorLift.setPower(1);
-                BRScissorLift.setPower(-1);
-                BLScissorLift.setPower(-1);
+            case "up":
+                FRScissorLift.setPower(-1);
+                FLScissorLift.setPower(-.975);
+                BRScissorLift.setPower(1);
+                BLScissorLift.setPower(.975);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
             case "down":
-                FRScissorLift.setPower(-1);
-                FLScissorLift.setPower(-1);
-                BRScissorLift.setPower(1);
-                BLScissorLift.setPower(1);
+                FRScissorLift.setPower(1);
+                FLScissorLift.setPower(.975);
+                BRScissorLift.setPower(-1);
+                BLScissorLift.setPower(-.975);
+
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
         }
     }
 
-//    public void moveClaws(String toggle) {
-//        switch (toggle) {
-//            case "thrust":
-//                ServoR.setPosition(1);
-//                ServoL.setPosition(1);
-//                break;
-//            case "retract":
-//                ServoR.setPosition(0);
-//                ServoL.setPosition(0);
-//                break;
-//        }
-//    }
+    public void moveClaws(String toggle) {
+        switch (toggle) {
+            case "grab":
+                ServoR.setPosition(1);
+                ServoL.setPosition(1);
+                break;
+            case "release":
+                ServoR.setPosition(0);
+                ServoL.setPosition(0);
+                break;
+        }
+    }
+
 
     abstract void updatePhoneConsole();
 }

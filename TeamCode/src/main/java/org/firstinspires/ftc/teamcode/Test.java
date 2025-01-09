@@ -8,17 +8,7 @@ public class Test extends Movable {
         super.runOpMode();
         waitForStart();
         while(opModeIsActive()) {
-            if (gamepad1.a) {
-                FRScissorLift.setPower(1);
-            } else if (gamepad1.b) {
-                FLScissorLift.setPower(1);
-            } else if (gamepad1.x) {
-                BRScissorLift.setPower(-1);
-            } else if (gamepad1.y) {
-                BLScissorLift.setPower(-1);
-            } else {
-                disableScissorPower();
-            }
+
         }
     }
 
