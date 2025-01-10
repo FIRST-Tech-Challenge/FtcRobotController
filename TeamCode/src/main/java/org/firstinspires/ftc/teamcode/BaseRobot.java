@@ -186,8 +186,8 @@ public class BaseRobot {
             } else if (contextualActions.wristDown) {
                 intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
             }
-            logger.update("freaky?", String.valueOf(input.subSettings.freaky));
-            if (input.subSettings.freaky) {
+            logger.update("freaky?", String.valueOf(input.subSettings.freaky_horizontal));
+            if (input.subSettings.freaky_horizontal) {
                 if (contextualActions.extendHorizontal) {
                     intake.horizontalSlide.increment();
                 }
@@ -205,7 +205,7 @@ public class BaseRobot {
         }
 
         if (Settings.Deploy.OUTTAKE) {
-            if (input.subSettings.freaky) {
+            if (input.mainSettings.freaky_vertical) {
                 if (contextualActions.extendVertical) {
                     outtake.verticalSlide.increment();
                 }

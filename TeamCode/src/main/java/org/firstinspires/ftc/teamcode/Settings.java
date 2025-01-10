@@ -236,7 +236,8 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
-        public boolean freaky = false;
+        public boolean freaky_horizontal = false;
+        public boolean freaky_vertical = true;
 
         public final ButtonMapping buttonMapping;
 
@@ -421,7 +422,6 @@ public class Settings {
                 {
                     dpad_movement_speed = 0.6;
                     bumper_rotation_speed = 0.9;
-                    freaky = true;
                 }
 
                 @Override
@@ -434,7 +434,6 @@ public class Settings {
                     buttonMapping.wristUp = GamepadButton.DPAD_RIGHT;
                     buttonMapping.wristDown = GamepadButton.DPAD_LEFT;
                     trigger_threshold = 0.15;
-                    freaky = true;
                 }
             });
 
