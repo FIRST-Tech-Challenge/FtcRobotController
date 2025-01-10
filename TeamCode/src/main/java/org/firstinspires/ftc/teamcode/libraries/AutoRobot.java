@@ -156,19 +156,19 @@ public class AutoRobot {
 
     //drives forward for a certain amount of seconds
 
-    public void driveForward(double seconds) {
+    public void driveForwardsSeconds(double seconds) {
 
-        driveForward(seconds, 1);
+        driveForwardsSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveForward(double seconds, double powerMultiplier) {
+    public void driveForwardsSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveForward(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveForwardsSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveForward(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveForwardsSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -250,18 +250,18 @@ public class AutoRobot {
 
     //drives backwards for a certain amount of seconds
 
-    public void driveBackward(double seconds) {
-        driveBackward(seconds, 1);
+    public void driveBackwardsSeconds(double seconds) {
+        driveBackwardsSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveBackward(double seconds, double powerMultiplier) {
+    public void driveBackwardsSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveBackward(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveBackwardsSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveBackward(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveBackwardsSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -340,18 +340,18 @@ public class AutoRobot {
         backRightDrive.setPower(0);
     }
 
-    public void driveRight(double seconds) {
-        driveRight(seconds, 1);
+    public void driveRightSeconds(double seconds) {
+        driveRightSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveRight(double seconds, double powerMultiplier) {
+    public void driveRightSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveRight(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveRightSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveRight(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveRightSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -432,19 +432,19 @@ public class AutoRobot {
 
 
 
-    public void driveLeft(double seconds) {
+    public void driveLeftSeconds(double seconds) {
 
-        driveLeft(seconds, 1);
+        driveLeftSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveLeft(double seconds, double powerMultiplier) {
+    public void driveLeftSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveLeft(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveLeftSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveLeft(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveLeftSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
