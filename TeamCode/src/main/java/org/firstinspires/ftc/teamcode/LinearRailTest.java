@@ -13,9 +13,7 @@ public class LinearRailTest extends LinearOpMode {
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
   public void runOpMode() throws InterruptedException {
-    linearRail = hardwareMap.get(Servo.class, servoIdentity[0]);
-    claw = hardwareMap.get(Servo.class, servoIdentity[1]);
-    linearRail.setDirection(Servo.Direction.FORWARD);
+    servoIdentity[0].setDirection(Servo.Direction.FORWARD);
 
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -27,7 +25,7 @@ public class LinearRailTest extends LinearOpMode {
       SetServoPosition(0, servoRotations[0]);
       ConfineServoBoundaries();
       
-      telemetry.addData("Servo Position", linearRail.getPosition());
+      telemetry.addData("Servo Position", servoIdentity[0].getPosition());
       telemetry.addData("Status", "Running");
       telemetry.update();
     }
