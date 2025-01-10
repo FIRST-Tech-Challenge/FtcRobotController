@@ -39,13 +39,15 @@ public class V1 extends Configuration {
         mServos.put("intake-wrist-roll", new ConfServo("intakeWristRoll", false));           // CH Servo 4
         mServos.put("intake-claw", new ConfServo("intakeClaw", false));                      // EH Servo 2
 
-        mMotors.put("outtake-right-slides",new ConfMotor("outtakeSlidesRight",true));        // EH Motor 1
-        mMotors.put("outtake-left-slides",new ConfMotor("outtakeSlidesLeft",false));         // EH Motor 0
+        mMotors.put("outtake-slides",new ConfMotor(
+                "outtakeSlidesLeft",false,                                                     // EH Motor 0
+                "outtakeSlidesRight",true                                                                         // EH Motor 1
+        ));
         mServos.put("outtake-wrist-roll", new ConfServo("outtakeWristRoll", false));         // CH Servo 0
         mServos.put("outtake-claw", new ConfServo("outtakeClaw", false));                    // CH Servo 1
         mServos.put("outtake-elbow-pitch", new ConfServo(
-                "outtakeElbowPitchLeft", false,                                                 // CH Servo 2
-                "outtakeElbowPitchRight", false)                                                       // CH Servo 3
+                "outtakeElbowPitchLeft", false,                                                // CH Servo 2
+                "outtakeElbowPitchRight", false)                                                      // CH Servo 3
         );
 
         /* Intake servos reference positions */
