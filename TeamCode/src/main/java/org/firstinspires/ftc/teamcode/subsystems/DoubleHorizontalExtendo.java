@@ -17,11 +17,29 @@ public class DoubleHorizontalExtendo {
     {
         this.extendo = hw.get(DcMotor.class, extendoName);
         this.encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, encoderName)));
+
+        extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendo.setTargetPosition(0);
+        extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendo.setPower(1);
+    }
+
+    public DoubleHorizontalExtendo(HardwareMap hw, String extendoName)
+    {
+        this.extendo = hw.get(DcMotor.class, extendoName);
     }
 
     public void setPower(double power)
     {
         extendo.setPower(power);
+    }
+
+    public void setPosition(double targetPosition){
+
+        extendo.setTargetPosition((int)targetPosition);
+        extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extendo.setPower(0.7);
+
     }
 
     public double getPower()

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 //import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,8 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Climb;
 import org.firstinspires.ftc.teamcode.subsystems.DoubleHorizontalExtendo;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
-import org.firstinspires.ftc.teamcode.vision.LimelightLocalization;
-import org.firstinspires.ftc.teamcode.subsystems.horizontalExtendo;
+import org.firstinspires.ftc.teamcode.visionex.LimelightLocalization;
 import org.firstinspires.ftc.teamcode.utils.DriverHubHelp;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 //import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;

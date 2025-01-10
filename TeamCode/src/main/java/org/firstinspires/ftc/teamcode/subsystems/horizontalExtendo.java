@@ -13,6 +13,7 @@ public class horizontalExtendo {
         extendo = hw.get(Servo.class, extendoName);
     }
 
+
     public void setPosition(double pos)
     {
         extendo.setPosition(getPosition() + pos);
