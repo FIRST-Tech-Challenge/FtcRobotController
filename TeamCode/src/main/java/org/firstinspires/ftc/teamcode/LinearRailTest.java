@@ -5,13 +5,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class LinearRailTest extends LinearOpMode {
   // SERVO ORDER: Linear Rail, Claw
-  public String[] servoIdentity = ["N/A", "N/A"] 
+  public String[] servoIdentity = [hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A");] 
   public float[] servoRotations = [0, 0]
   public float[] minRot = [0, 0]
   public float[] maxRot = [0, 0]
-  
-  private Servo linearRail = hardwareMap.get(Servo.class, servoIdentity[0]);
-  private Servo claw = hardwareMap.get(Servo.class, servoIdentity[1]);
   
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
@@ -45,7 +42,7 @@ public class LinearRailTest extends LinearOpMode {
 
       ConfineServoBoundaries();
       
-      linearRail.setPosition(linearRailRotation);
+      SetServoPosition(0, servoRotations[0]);
       
       telemetry.addData("Servo Position", linearRail.getPosition());
       telemetry.addData("Status", "Running");
@@ -66,5 +63,9 @@ public class LinearRailTest extends LinearOpMode {
 
       idx++;
     }
+  }
+
+  public static void SetServoRotation(int servoIdx, float position) {
+    servoIdentity[servoIdx].setPosition(position);
   }
 }
