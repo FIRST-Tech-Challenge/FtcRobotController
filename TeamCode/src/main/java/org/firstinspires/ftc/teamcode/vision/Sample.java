@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.visionex;
+package org.firstinspires.ftc.teamcode.vision;
 
     public enum Sample {
         RED,

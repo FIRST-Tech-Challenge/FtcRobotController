@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -18,7 +20,6 @@ public class Pivot {
     {
         pivot = hw.get(DcMotorEx.class, name);
         encoder = new OverflowEncoder(new RawEncoder(hw.get(DcMotorEx.class, encoderName)));
-
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         pivot.setTargetPosition(0);
@@ -48,7 +49,8 @@ public class Pivot {
 
     public void setZero()
     {
-        setPosition(80);
+        setPosition(100);
+
 
     }
 

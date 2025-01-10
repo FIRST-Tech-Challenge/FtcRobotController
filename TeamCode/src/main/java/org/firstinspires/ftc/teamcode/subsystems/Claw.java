@@ -24,6 +24,17 @@ public class Claw {
         servo.setPosition(0);
         isOpen = true;
     }
+
+    public void disableClaw()
+    {
+        servo.setPosition(1);
+    }
+
+    public void enableClaw()
+    {
+        servo.setPosition(1);
+        isOpen = true;
+    }
     public double getPosition()
     {
         return servo.getPosition();

@@ -102,14 +102,14 @@ public class TeleOp extends LinearOpMode {
 
             if(controller1.left_bumper.onPress())
             {
-                lift.toggle();
+                lift.basicToggle();
             }else if(controller1.right_bumper.onPress())
             {
                 lift.lower();
             }
             // horizontal extendo
-            double extendoPos = (controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue()) * 0.001;
-            extendo.setPower(extendoPos);
+            double extendoPower = -(controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue()) * 100;
+            extendo.setPositionWithLimit(extendoPower + extendo.getPosition());
             telemetry.addData("Extendo pos: ", extendo.getPosition());
 
             telemetry.update();

@@ -18,8 +18,8 @@ public class HorizontalExtendoTester extends LinearOpMode {
         waitForStart();
         while(opModeIsActive())
         {
-            double extendoPower = controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue() * 100;
-            extendo.setPosition(extendoPower + extendo.getPosition());
+            double extendoPower = -(controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue()) * 100;
+            extendo.setPositionWithLimit(extendoPower + extendo.getPosition());
             telemetry.addData("Extendo power:", extendo.getPower());
             telemetry.addData("Extendo pos: ", extendo.getPosition());
             telemetry.update();

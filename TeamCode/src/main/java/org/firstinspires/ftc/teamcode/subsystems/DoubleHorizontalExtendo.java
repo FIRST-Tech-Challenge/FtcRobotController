@@ -42,6 +42,22 @@ public class DoubleHorizontalExtendo {
 
     }
 
+    public void setPositionWithLimit(double targetPosition){
+
+        if(targetPosition < -1700)
+        {
+            extendo.setTargetPosition((int)getPosition());
+            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            extendo.setPower(0);
+        }else {
+            extendo.setTargetPosition((int)targetPosition);
+            extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            extendo.setPower(0.7);
+        }
+
+
+    }
+
     public double getPower()
     {
         return extendo.getPower();

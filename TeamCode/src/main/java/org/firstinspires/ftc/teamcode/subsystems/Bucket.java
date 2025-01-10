@@ -34,7 +34,7 @@ public class Bucket {
 
     public void setBottom()
     {
-        servo.setPosition(0.2);
+        servo.setPosition(0.25);
         isUp = false;
     }
 
