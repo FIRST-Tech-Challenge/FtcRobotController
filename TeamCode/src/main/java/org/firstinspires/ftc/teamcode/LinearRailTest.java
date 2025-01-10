@@ -4,15 +4,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class LinearRailTest extends LinearOpMode {
-  private Servo testServo = hardwareMap.get(Servo.class, "N/A");
-  public int servoRotation = 0;
-  public float minRot = 0;
-  public float maxRot = 4;
-  private Gamepad gamepad1;
+  // SERVO ORDER: Linear Rail, Claw
+  public String[] servoIdentity = ["N/A", "N/A"] 
+  public float[] servoRotations = [0, 0]
+  public float[] minRot = [0, 0]
+  public float[] maxRot = [0, 0]
+  
+  private Servo linearRail = hardwareMap.get(Servo.class, servoIdentity[0]);
+  private Servo claw = hardwareMap.get(Servo.class, servoIdentity[1]);
+  
+  private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
   public void runOpMode() throws InterruptedException {
-    testServo = hardwareMap.get(Servo.class, "N/A");
-    testServo.setDirection(Servo.Direction.FORWARD);
+    linearRail = hardwareMap.get(Servo.class, servoIdentity[0]);
+    claw = hardwareMap.get(Servo.class, servoIdentity[1]);
+    linearRail.setDirection(Servo.Direction.FORWARD);
 
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -21,29 +27,44 @@ public class LinearRailTest extends LinearOpMode {
     waitForStart();
 
     while (opModeIsActive()) {
-      // check to see if we need to move the servo.
       if(gamepad1.y) {
-          servoRotation += 0.1;
+          servoRotations[0] += 0.1;
       } 
       
       if (gamepad1.x) {
-          servoRotation -= 0.1;
+          servoRotations[0] -= 0.1;
       }
 
-      // Confine Boundaries
-      if (servoRotation <= 0) {
-        servoRotation = (int) minRot;
-      }
-
-      if (servoRotation >= 4) {
-        servoRotation = (int) maxRot;
-      }
-
-      testServo.setPosition(servoRotation);
+      if(gamepad1.a) {
+          servoRotations[1] += 0.1;
+      } 
       
-      telemetry.addData("Servo Position", testServo.getPosition());
+      if (gamepad1.b) {
+          servoRotations[1] -= 0.1;
+      }
+
+      ConfineServoBoundaries();
+      
+      linearRail.setPosition(linearRailRotation);
+      
+      telemetry.addData("Servo Position", linearRail.getPosition());
       telemetry.addData("Status", "Running");
       telemetry.update();
+    }
+  }
+
+  public static void ConfineServoBoundaries() {
+    idx = 0;
+    for servo in servoIdentity {
+      if (servoRotations[idx] <= minRot[idx]) {
+        servoRotations[idx] = minRot[idx];
+      }
+
+      if (servoRotations[idx] >= maxRot[idx]) {
+        servoRotations[idx] = maxRot[idx];
+      }
+
+      idx++;
     }
   }
 }
