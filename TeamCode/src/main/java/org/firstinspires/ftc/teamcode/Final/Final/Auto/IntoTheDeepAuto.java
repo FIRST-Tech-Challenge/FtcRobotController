@@ -214,7 +214,12 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
                 hardware.backLeft.setPower(speed);
                 hardware.backRight.setPower(-speed);
                 break;
-
+            case STOP:
+                hardware.frontLeft.setPower(0);
+                hardware.frontRight.setPower(0);
+                hardware.backLeft.setPower(0);
+                hardware.backRight.setPower(0);
+                break;
             default:
                 // Handle invalid direction case
                 hardware.frontLeft.setPower(0);
@@ -274,10 +279,59 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
         telemetry.addLine("Code is running");
     }
 
-    //@Override
+    public void startingPosition(double distanceToBackWall) {
+        //Keep looping until we are near 5 inches from the back wall
+        //If we're too close, go forward
+        //If we're too far, go backwards
+        //Once position is reached, stop
+        final double tolerance = 0.1;
+        final double robotWidthInches = 24;
+        while(true){
+            double currentDistance = hardware.distanceSensorBack.getDistance(DistanceUnit.INCH);
+            //Math.abs allows for any range from 4.9-5.1 to be accepted
+            //Math.abs(4.9-5.0)=Math.abs(-0.1)=0.1
+            //Math.abs(5.1-5.0)=Math.abs(0.1)=0.1
+            if(Math.abs(currentDistance-distanceToBackWall) <= tolerance){
+                break;
+            }
+
+            //Move forward or backward based on distance from back wall
+            if(currentDistance > distanceToBackWall){
+                setWheelSpeed(mainEnum.BACKWARD, calculations.driveSpeed);
+            }else if(currentDistance < distanceToBackWall){
+                setWheelSpeed(mainEnum.FORWARD, calculations.driveSpeed);
+            }
+        }
+
+        while(true){
+            double leftDistance = hardware.distanceSensorLeft.getDistance(DistanceUnit.INCH);
+            double rightDistance = hardware.distanceSensorRight.getDistance(DistanceUnit.INCH);
+            //Check if the distance from the left and right minus half the robot width is equal, more than, or less than
+            //If equal, stop
+            //If left is more then right, strafe left
+            //If right is more then left, strafe right
+            if (Math.abs(leftDistance - robotWidthInches/2) <= tolerance && Math.abs(rightDistance - robotWidthInches/2) <= tolerance){
+                setWheelSpeed(mainEnum.STOP, 0);
+                break;
+            }
+
+            if(leftDistance > rightDistance){
+                setWheelSpeed(mainEnum.STRAFE_LEFT, calculations.driveSpeed);
+            }else if(leftDistance < rightDistance){
+                setWheelSpeed(mainEnum.STRAFE_RIGHT, calculations.driveSpeed);
+            }
+        }
+        setWheelSpeed(mainEnum.STOP, 0);
+    }
+
+    //@Ov
+    //
+    // erride
     public void executeTask(String action, double target, double speed) {
-        calculations.timer.reset(); // Reset the timer for timed actions
+        calculations.timer.reset();
         switch (action) {
+            case "STARTING_POS":
+                startingPosition(target);
             case "MOVE_TO_DISTANCE":
                 while (hardware.distanceSensorFront.getDistance(DistanceUnit.INCH) > target) {
                     setWheelSpeed(mainEnum.FORWARD, speed);
@@ -285,12 +339,7 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
                 setWheelSpeed(mainEnum.FORWARD, 0);
                 break;
             case "STRAFE_TO_DISTANCE":
-                while (hardware.distanceSensorFront.getDistance(DistanceUnit.INCH) < target) {
-                    setWheelSpeed(mainEnum.STRAFE_LEFT, speed);
-                }
-                break;
-            case "STRAFE_UNTIL_CLEAR":
-                while (calculations.timer.seconds() < target) {
+                while (hardware.distanceSensorFront.getDistance(DistanceUnit.INCH) > target) {
                     setWheelSpeed(mainEnum.STRAFE_LEFT, speed);
                 }
                 break;
@@ -298,9 +347,10 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
                 while (calculations.timer.seconds() < target) {
                     setWheelSpeed(mainEnum.TURN_RIGHT, speed);
                 }
+                calculations.timer.reset();
                 break;
             case "MOVE_BACKWARD":
-                while (calculations.timer.seconds() < target) {
+                while (hardware.distanceSensorFront.getDistance(DistanceUnit.INCH) < target) {
                     setWheelSpeed(mainEnum.BACKWARD, speed);
                 }
                 break;
@@ -316,17 +366,22 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
     }
 
     public void toSample() {
-        // Define the task sequence
+        int startingDistanceFromBackWall = 5;
+        // Add the action, target, and speed for each step
         String[][] taskSequence = {
                 //Move the robot to be 5 inches from the back wall and then center middle of robot to be in the middle horizontally
+                {"START_POS", Double.toString(startingDistanceFromBackWall), Double.toString(calculations.driveSpeed)}
                 //Rotate 90 degrees left
                 //Strafe until block is detected
+
                 //Move forward until block is 19 inches away
+                {"FORWARD", Double.toString(19), Double.toString(calculations.driveSpeed)}
                 //Lower arm down
                 //Engage claw
                 //Move arm up
                 //Engage claw
                 //Move forward until wall is 4 inches away
+                {"FORWARD", Double.toString(4), Double.toString(calculations.driveSpeed)}
                 //Rotate right until wall is detected again
                 //Move forward 3 inches
                 //Lift the hopper all the away
