@@ -10,28 +10,36 @@ public class Vector2D {
     public Vector2D(double i, double j) {
         this.i = i;
         this.j = j;
-        this.angle = Math.toDegrees(Math.atan2(i,j));
         this.magnitude = Math.sqrt(i*i+j*j);
+        if(magnitude != 0) {
+            this.angle = Math.toDegrees(Math.atan2(-i, j));
+        } else {
+            this.angle = 0;
+        }
     }
     public Vector2D(double angle) {
         this.angle = angle;
         this.magnitude = 1;
-        this.i = Math.cos(Math.toRadians(angle));
+        this.i = -Math.cos(Math.toRadians(angle));
         this.j = Math.sin(Math.toRadians(angle));
     }
 
     public void setVector(double i, double j) {
         this.i = i;
         this.j = j;
-        this.angle = Math.toDegrees(Math.atan2(i,j));
         this.magnitude = Math.sqrt(i*i+j*j);
+        if(magnitude != 0) {
+            this.angle = Math.toDegrees(Math.atan2(-i, j));
+        } else {
+            this.angle = 0;
+        }
     }
 
     public void setAngle(double angle) {
         this.angle = angle;
         this.magnitude = 1;
-        this.i = Math.sin(angle*Math.PI/180);
-        this.j = Math.cos(angle*Math.PI/180);
+        this.i = -Math.cos(angle*Math.PI/180);
+        this.j = Math.sin(angle*Math.PI/180);
     }
 
     public void adjustAngle(double angle) {
@@ -44,7 +52,7 @@ public class Vector2D {
             this.angle += 360;
         }
 
-        this.i = Math.sin(this.angle * Math.PI / 180.0);
+        this.i = -Math.sin(this.angle * Math.PI / 180.0);
         this.j = Math.cos(this.angle * Math.PI / 180.0);
 
         if(this.i < .001 && this.i > -.001) {
@@ -56,6 +64,15 @@ public class Vector2D {
 
     }
 
+
+    public void normalizeVector() {
+        if (magnitude == 0) {
+            return;
+        }
+        this.i = this.i/this.magnitude;
+        this.j = this.j/this.magnitude;
+        this.magnitude = 1;
+    }
 
     public void scaleVector(double scalar) {
         this.i = this.i * scalar;
