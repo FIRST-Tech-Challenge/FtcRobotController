@@ -65,55 +65,40 @@ public class IntakeArm {
         else        { logger.addLine("==>  IN ARM : KO : " + status); }
 
         // Initialize position
-        this.setTransfer();
+        this.setPosition(Position.TRANSFER);
 
     }
 
-    public void setTransfer() {
+    public void setPosition(Position position) {
 
-        if( mPositions.containsKey("transfer") && mReady) {
+        if( mPositions.containsKey("transfer") && mReady && position == Position.TRANSFER) {
             mServo.setPosition(mPositions.get("transfer"));
             mPosition = Position.TRANSFER;
         }
-    }
-
-    public void setOverSubmersible() {
-
-        if( mPositions.containsKey("overSub") && mReady) {
+        else if( mPositions.containsKey("overSub") && mReady && position == Position.OVER_SUBMERSIBLE) {
             mServo.setPosition(mPositions.get("overSub"));
             mPosition = Position.OVER_SUBMERSIBLE;
         }
-
-    }
-
-    public void setLooking() {
-
-        if( mPositions.containsKey("look") && mReady) {
+        else if( mPositions.containsKey("look") && mReady && position == Position.LOOKING) {
             mServo.setPosition(mPositions.get("look"));
             mPosition = Position.LOOKING;
         }
-
-    }
-
-    public void setGrabbing() {
-
-        if( mPositions.containsKey("grab") && mReady) {
+        else if( mPositions.containsKey("grab") && mReady && position == Position.GRABBING) {
             mServo.setPosition(mPositions.get("grab"));
             mPosition = Position.GRABBING;
         }
-
     }
 
     public void moveUp() {
-        if(mPosition == Position.GRABBING)              { this.setLooking();         }
-        else if(mPosition == Position.LOOKING)          { this.setOverSubmersible(); }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
+        if(mPosition == Position.GRABBING)              { this.setPosition(Position.LOOKING);          }
+        else if(mPosition == Position.LOOKING)          { this.setPosition(Position.OVER_SUBMERSIBLE); }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.TRANSFER);         }
     }
 
     public void moveDown() {
-        if(mPosition == Position.LOOKING)               { this.setGrabbing();        }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
-        else if(mPosition == Position.TRANSFER)         { this.setOverSubmersible(); }
+        if(mPosition == Position.LOOKING)               { this.setPosition(Position.GRABBING);         }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.LOOKING);          }
+        else if(mPosition == Position.TRANSFER)         { this.setPosition(Position.OVER_SUBMERSIBLE); }
     }
 
 }

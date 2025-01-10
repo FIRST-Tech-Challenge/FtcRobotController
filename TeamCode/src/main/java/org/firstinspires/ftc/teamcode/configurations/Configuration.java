@@ -20,7 +20,7 @@ abstract public class Configuration {
     // FOR TUNING ONLY !!!
     protected final Map<String, ConfServo> mSingleServos = new LinkedHashMap<>();
 
-    public static Configuration s_Current = new Test();
+    public static Configuration s_Current = new V1();
 
     // Method to retrieve a motor by its reference name
     public ConfMotor getMotor(String name) {

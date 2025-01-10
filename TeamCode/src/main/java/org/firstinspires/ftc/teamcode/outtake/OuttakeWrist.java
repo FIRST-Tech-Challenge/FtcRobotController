@@ -49,14 +49,14 @@ public class OuttakeWrist {
         String status = "";
 
         // Get configuration
-        ConfServo roll  = config.getServo("intake-wrist-roll");
+        ConfServo roll  = config.getServo("outtake-wrist-roll");
         if(roll == null)  { mReady = false; status += " CONF";}
         else {
 
             // Configure servo
-            if (roll.shallMock()) { mServo = new ServoMock("intake-wrist-roll"); }
-            else if (roll.getHw().size() == 1) { mServo = new ServoSingle(roll, hwm, "intake-wrist-roll", logger); }
-            else if (roll.getHw().size() == 2) { mServo = new ServoCoupled(roll, hwm, "intake-wrist-roll", logger); }
+            if (roll.shallMock()) { mServo = new ServoMock("outtake-wrist-roll"); }
+            else if (roll.getHw().size() == 1) { mServo = new ServoSingle(roll, hwm, "outtake-wrist-roll", logger); }
+            else if (roll.getHw().size() == 2) { mServo = new ServoCoupled(roll, hwm, "outtake-wrist-roll", logger); }
 
             mPositions = roll.getPositions();
             if (!mServo.isReady()) { mReady = false; status += " HW";}

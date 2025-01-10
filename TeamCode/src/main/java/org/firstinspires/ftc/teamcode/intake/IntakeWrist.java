@@ -93,6 +93,9 @@ public class IntakeWrist {
             newPosition = max(newPosition, mPositions.get("min"));
             newPosition = min(newPosition, mPositions.get("max"));
 
+            mLogger.addLine("" + newPosition);
+            mLogger.addLine("" + mDeltaPosition);
+
             mServo.setPosition(newPosition);
 
             mPosition = Position.UNDEFINED;
