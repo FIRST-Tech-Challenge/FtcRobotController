@@ -21,8 +21,8 @@ public class Mekanism {
   LinearOpMode myOp;
 
   private final DcMotorEx pivot;
-  private final DcMotorEx slide;
-  private final DcMotorEx slide2;
+  public final DcMotorEx slide;
+  public final DcMotorEx slide2;
 
   private final DigitalChannel limitSwitch;
 

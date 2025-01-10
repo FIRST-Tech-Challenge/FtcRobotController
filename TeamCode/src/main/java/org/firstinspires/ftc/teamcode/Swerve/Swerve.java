@@ -228,7 +228,7 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-    double kp = 5.6, ki = 0.1, kd = 0.1;
+    double kp = 5.7, ki = 0.1, kd = 0.1;
 
     Module(OpMode opMode, int id) {
 
