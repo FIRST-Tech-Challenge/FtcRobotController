@@ -26,7 +26,7 @@ public class Mekanism {
 
   private final DigitalChannel limitSwitch;
 
-  private final Servo intakeServo;
+  private final Servo intakeServo, intakeServo2;
   private final Servo wrist;
 
   private final Servo ramp1;
@@ -78,9 +78,11 @@ public class Mekanism {
 
     // Servos for intake
     intakeServo = opMode.hardwareMap.get(Servo.class, "intake");
+    intakeServo2 = opMode.hardwareMap.get(Servo.class,"intake2");
     wrist = opMode.hardwareMap.get(Servo.class, "wrist");
 
     intakeServo.setDirection(Servo.Direction.REVERSE);
+    intakeServo2.setDirection(Servo.Direction.REVERSE);
     wrist.setDirection(Servo.Direction.REVERSE);
 
     wrist.setPosition(0.65);
@@ -165,18 +167,15 @@ public class Mekanism {
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
+      intakeServo2.setPosition(0.5);
     } else if (intake) {
       intakeServo.setPosition(0);
+      intakeServo2.setPosition(0);
     } else {
       intakeServo.setPosition(.5);
+      intakeServo2.setPosition(.5);
     }
   }
-
-  public void intake() {
-    intakeServo.setPosition(1);
-  }
-
-  public void outtake() {}
 
   public void clamp() {
     ramp1.setPosition(0);
