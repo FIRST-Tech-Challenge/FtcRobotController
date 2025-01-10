@@ -5,6 +5,8 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import org.firstinspires.ftc.teamcode.RobotContainer;
 
 
@@ -16,6 +18,7 @@ public class LinearSlide extends SubsystemBase {
     // Initialize both motors
     private final DcMotorEx leftMotor;
     private final DcMotorEx rightMotor;
+    private final TouchSensor liftTouch;
 
 
     /**
@@ -26,6 +29,7 @@ public class LinearSlide extends SubsystemBase {
         // Creates the motors using the hardware map
         leftMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "leftLinearSlide");
         rightMotor = RobotContainer.ActiveOpMode.hardwareMap.get(DcMotorEx.class, "rightLinearSlide");
+        liftTouch =  RobotContainer.ActiveOpMode.hardwareMap.get(TouchSensor.class, "liftTouch");
 
 
         // Resets the encoders for both motors
@@ -93,6 +97,30 @@ public class LinearSlide extends SubsystemBase {
      * */
     public void moveTo(SlideTargetHeight target, boolean override) {
         moveLinearSlide(target.getValue(), override);
+    }
+
+    public void reset_lift_pos(){
+        if(!liftTouch.isPressed()) {
+            leftMotor.setTargetPosition(leftMotor.getCurrentPosition() - 10);
+            rightMotor.setTargetPosition(rightMotor.getCurrentPosition() - 10);
+            leftMotor.setPower(0.65);
+            rightMotor.setPower(0.65);
+        }else{
+            // Resets the encoders for both motors
+            leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+    }
+
+    public void runToPosition(){
+        // Setting target to zero upon initialization
+        leftMotor.setTargetPosition(0);
+        rightMotor.setTargetPosition(0);
+
+        // Puts the motors into position control mode
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 }

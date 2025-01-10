@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Drive.ManualDrive;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Commands.SelectCommandOnMode;
+import org.firstinspires.ftc.teamcode.Commands.resetLift;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
 import org.firstinspires.ftc.teamcode.Subsystems.OperatingMode;
 import org.firstinspires.ftc.teamcode.Subsystems.FrontDistance;
@@ -123,8 +124,10 @@ public class RobotContainer {
         // instead of creating a full command, just to run one line of java code.
         //driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> gyro.resetYawAngle(), gyro));
 
-        driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(new InstantCommand(()-> odometry.setCurrentPos(AutoFunctions.redVsBlue(
-        new Pose2d(0.14, 0.77, new Rotation2d(Math.toRadians(BlueStartAngle)))))));
+        driverOp.getGamepadButton(GamepadKeys.Button.BACK).whenHeld(new SelectCommandOnMode(new InstantCommand(()-> odometry.setCurrentPos(AutoFunctions.redVsBlue(
+        new Pose2d(0.14, 0.77, new Rotation2d(Math.toRadians(BlueStartAngle)))))),
+                new resetLift()
+                ));
 
         //driverOp.getGamepadButton(GamepadKeys.Button.START).whenHeld(new ExampleCommandGroup());
 

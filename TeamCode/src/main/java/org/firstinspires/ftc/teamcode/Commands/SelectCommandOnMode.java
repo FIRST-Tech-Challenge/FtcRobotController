@@ -16,6 +16,7 @@ public class SelectCommandOnMode extends CommandBase {
         this.cmd1 = cmd1;
         this.cmd2 = cmd2;
         addRequirements(RobotContainer.drivesystem);
+        addRequirements(RobotContainer.linearSlide);
     }
 
     // This method is called once when command is started
