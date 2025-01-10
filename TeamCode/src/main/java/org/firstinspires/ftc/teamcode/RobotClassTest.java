@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-import org.firstinspires.ftc.teamcode.auto.AutoRobot;
+import org.firstinspires.ftc.teamcode.libraries.AutoRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,9 +16,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-
-
-import org.firstinspires.ftc.teamcode.auto.OdometryMotor;
 @Autonomous
 public class RobotClassTest extends LinearOpMode {
     @Override
