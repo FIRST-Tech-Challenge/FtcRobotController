@@ -19,6 +19,11 @@ public class RobotClassTest extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
+            robot.driveForwardsInches(12);
+            robot.waitSeconds(2);
+            robot.driveForwardsInches(24);
+            robot.waitSeconds(15);
+
             //make sure forwardArcs are precise
             robot.driveArcLeftForwards(180);
             robot.waitSeconds(1);
