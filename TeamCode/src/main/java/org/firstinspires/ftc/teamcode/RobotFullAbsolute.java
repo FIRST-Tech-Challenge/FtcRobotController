@@ -62,7 +62,7 @@ public class RobotFullAbsolute extends LinearOpMode {
             currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             toGo.setVector(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            toGo.normalizeVector();
+           // toGo.normalizeVector();
              toGo.adjustAngle(currentFacing);
 
             speed = toGo.getJ() * TOTALSPEED;
