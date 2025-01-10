@@ -33,7 +33,7 @@ public class Drivetrain {
     private double RBPower = 0.00;
     private double LBPower = 0.00;
 
-
+    // TODO: Motor mappings are wrong, so those need to be fixed, and this code needs to be updated
     public Drivetrain(Hardware hardware, GamepadEx gamepad, Logger logger, boolean readPos) {
         this.logger = logger;
 
