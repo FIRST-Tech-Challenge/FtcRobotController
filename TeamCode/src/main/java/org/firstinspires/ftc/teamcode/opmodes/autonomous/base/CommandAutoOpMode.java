@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 import java.util.Arrays;
@@ -35,8 +37,10 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         RollingIntake rollingIntake = barebone ? null : new RollingIntake(hardwareMap, operatorGamePad, telemetry, feedback);
         DeliveryPivot pivot = barebone ? null : new DeliveryPivot(hardwareMap, operatorGamePad, telemetry, feedback, rollingIntake);
         DeliverySlider slider = barebone ? null : new DeliverySlider(hardwareMap, operatorGamePad, telemetry, feedback);
+        SpecimenSlider specimenSlider = barebone ? null : new SpecimenSlider(hardwareMap, telemetry, feedback);
+        SpecimenSliderClaw  specimenSliderClaw = barebone ? null : new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
 
-        commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, null, pivot,slider);
+        commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, null, pivot,slider, specimenSlider, specimenSliderClaw);
         schedule(createCommand());
     }
 

@@ -88,4 +88,12 @@ public class FourWheelMecanumDrive extends BasicDriveTrain {
     public Motor getbR() {
         return bR;
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        //telemetry.addData("Forward distance", GetForwardDistanceFromObstacleInMM());
+        //telemetry.update();
+    }
 }

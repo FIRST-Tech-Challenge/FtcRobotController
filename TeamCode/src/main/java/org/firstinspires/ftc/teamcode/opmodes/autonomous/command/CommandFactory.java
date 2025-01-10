@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.LogCatCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
-import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.SelectCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrajectoryConfig;
@@ -19,6 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
+import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
 import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import static org.firstinspires.ftc.teamcode.util.Units.scale;
 
@@ -26,13 +25,12 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class CommandFactory {
 
     public static final String LOG_TAG = CommandFactory.class.getSimpleName();
-    private static final PIDController xPIDController = new PIDController(0.015, 0, 0.05);
+    private static final PIDController xPIDController = new PIDController(0.005, 0, 0.05);
     private static final PIDController yPIDController = new PIDController(0.015, 0, 0.05);
     private static final ProfiledPIDController rotPIDController = new ProfiledPIDController(0.015, 0, .05, new TrapezoidProfile.Constraints(
             Math.PI * 2,
@@ -52,15 +50,20 @@ public class CommandFactory {
     private final DeliveryPivot pivot;
     private final DeliverySlider slider;
 
-    public CommandFactory(Telemetry telemetry, AutoMecanumDriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider) {
+    private  final SpecimenSlider specimenSlider;
+
+    private  final SpecimenSliderClaw specimenSliderClaw;
+
+    public CommandFactory(Telemetry telemetry, AutoMecanumDriveTrain driveTrain, RollingIntake intake, LimeLight vision, DeliveryPivot pivot, DeliverySlider slider, SpecimenSlider specimenSlider, SpecimenSliderClaw specimenSliderClaw) {
         this.driveTrain = driveTrain;
         this.intake = intake;
         this.vision = vision;
         this.telemetry = telemetry;
         this.pivot = pivot;
         this.slider = slider;
+        this.specimenSlider = specimenSlider;
+        this.specimenSliderClaw = specimenSliderClaw;
     }
-
 
     public TelemetryCommand WriteTelemetry() {
         return  new TelemetryCommand(driveTrain, telemetry);
@@ -80,6 +83,34 @@ public class CommandFactory {
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut);
+    }
+
+    public ForwardDistanceCommand checkForwardDistance(double expectedDistance, long timeOut) {
+        return new ForwardDistanceCommand(driveTrain, 90, timeOut, telemetry);
+    }
+
+    public AlignDriveTrainToSpecimenDelivery alignToSpecimenDelivery(double expectedDistannce, long timeOut) {
+        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistannce, timeOut, telemetry);
+    }
+
+    public AlignDriveTrainToSpecimenDelivery alignToSpecimenIntake(double expectedDistanncne, long timeOut) {
+        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistanncne, timeOut, telemetry);
+    }
+
+    public ExtendSpecimenSlider extendSpecimenSlider(long timeOut) {
+        return new ExtendSpecimenSlider(specimenSlider, timeOut, telemetry);
+    }
+
+    public CollapseSpecimenSlider collapseSpecimenSlider(long timeOut) {
+        return new CollapseSpecimenSlider(specimenSlider, timeOut, telemetry);
+    }
+
+    public InstantCommand openSpecimenClaw() {
+        return new InstantCommand(specimenSliderClaw::openClaw, specimenSliderClaw);
+    }
+
+    public InstantCommand closeSpecimenClaw() {
+        return new InstantCommand(specimenSliderClaw::closeClaw, specimenSliderClaw);
     }
 
     public MoveSliderCommand extendSlider() {
