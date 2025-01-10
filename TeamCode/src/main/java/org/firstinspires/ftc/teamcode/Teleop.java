@@ -247,13 +247,13 @@ public abstract class Teleop extends LinearOpMode {
 //                  rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
-            telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
+//          telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
             telemetry.addData("Tilt", "%d counts %.1f deg %.1f raw deg", robot.wormTiltMotorPos, robot.armTiltAngle, robot.computeRawAngle(robot.armTiltEncoder.getVoltage()));
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
-            telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);
-            telemetry.addData("Secure Arm State", secureArmState);
+//          telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);
+//          telemetry.addData("Secure Arm State", secureArmState);
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();

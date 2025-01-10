@@ -130,6 +130,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  6.00; // Arm to collect samples at ground level
+    public final static double TILT_ANGLE_COLLECT1_DEG    =  5.00; // Arm to collect samples at ground level for only the first sample
     public final static double TILT_ANGLE_SAMPLE3_DEG     =  6.00; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
@@ -167,7 +168,7 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_SAMPLE3  = 1500;  // extend for collecting during auto (3rd sample along wall)
     public final static int    VIPER_EXTEND_HANG1 = 1250;   // extend to this to prepare for level 2 ascent
     public final static int    VIPER_EXTEND_PARK = 3410;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_HANG2 =  602;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG2 =  640;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
@@ -256,7 +257,7 @@ public class Hardware2025Bot
     public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
     public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
-    public final static double CLAW_SERVO_OPEN_W  = 0.850;  // claw opened wide (fully open and above samples on floor)
+    public final static double CLAW_SERVO_OPEN_W  = 0.860;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {
         CLAW_INIT,

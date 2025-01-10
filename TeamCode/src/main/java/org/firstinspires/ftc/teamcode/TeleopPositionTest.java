@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * TeleOp Servo Test Program
  */
 @TeleOp(name="Teleop-PositionTest", group="Test")
-//@Disabled
+@Disabled
 public class TeleopPositionTest extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  //
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  //
