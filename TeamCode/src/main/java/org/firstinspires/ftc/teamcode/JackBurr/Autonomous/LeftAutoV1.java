@@ -6,14 +6,19 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
+import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
 public class LeftAutoV1 extends LinearOpMode {
+    public DeliveryAxonV1 deliveryAxonV1 = new DeliveryAxonV1();
+    public RobotConstantsV1 robotConstantsV1 = new RobotConstantsV1();
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        deliveryAxonV1.init(hardwareMap);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -41,5 +46,8 @@ public class LeftAutoV1 extends LinearOpMode {
         drive.followTrajectory(traj1);
         drive.followTrajectory(traj2);
         drive.followTrajectory(traj3);
+        while (opModeIsActive()) {
+            deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
+        }
     }
 }

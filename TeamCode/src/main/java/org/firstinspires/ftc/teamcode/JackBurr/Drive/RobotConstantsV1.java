@@ -25,6 +25,7 @@ public class RobotConstantsV1 {
     public double FRONT_RIGHT_HOVER = 0.16;
     public double DELIVERY_DOWN = 1;
     public double DELIVERY_GRAB = 0.26;
+    public double DELIVERY_LEVEL_ONE_ASCENT = 0.55;
     public double DELIVERY_UP = 0.65;
     public double DELIVERY_DROP = 0.68;
     public double DELIVERY_HIGH_BAR = 0.73;

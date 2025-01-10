@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.GrippersV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.WristServoTest;
 
+import java.util.Optional;
+
 @TeleOp
 public class TeleOpV1 extends OpMode {
     //MOTORS====================================================================================================================
@@ -73,6 +75,7 @@ public class TeleOpV1 extends OpMode {
     public boolean delivered = false;
     public boolean pickedUpSample = false;
     public boolean grippersOpened = false;
+    public boolean slowmode = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
     @Override
@@ -115,7 +118,12 @@ public class TeleOpV1 extends OpMode {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = -gamepad1.left_stick_x; // Counteract imperfect strafing, if the back motors are facing downwards this should be negative
         double rx = -gamepad1.right_stick_x; //This is reversed for our turning
-        drive(y, x, rx);
+        if(!slowmode) {
+            drive(y, x, rx);
+        }
+        else {
+            driveSlowMode(y,x,rx);
+        }
         //SYSTEM_STATES====================================================================================================
         if(state == SystemStatesV1.ARM_UP){
             timeNeeded = 2;
@@ -128,6 +136,17 @@ public class TeleOpV1 extends OpMode {
         }
         else {
             timeNeeded = 0.3;
+        }
+        if(gamepad1.options && buttonTimer.seconds() > 0.3){
+            if(slowmode){
+                slowmode = false;
+                telemetry.addLine("Slow mode: OFF");
+            }
+            else {
+                slowmode = true;
+                telemetry.addLine("Slow mode: ON");
+            }
+            buttonTimer.reset();
         }
         if(gamepad1.x && buttonTimer.seconds() > 0.3) {
             if(thisStateTimer.seconds() > timeNeeded) {
@@ -144,6 +163,7 @@ public class TeleOpV1 extends OpMode {
         }
         switch (state) {
             case START:
+                slowmode = false;
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 wrist.setPosition(constants.WRIST_CENTER);
@@ -166,6 +186,7 @@ public class TeleOpV1 extends OpMode {
                 }
                 break;
             case GRAB_OFF_WALL:
+                slowmode = false;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -181,6 +202,7 @@ public class TeleOpV1 extends OpMode {
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 break;
             case HOVER_LOW:
+                slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -205,6 +227,7 @@ public class TeleOpV1 extends OpMode {
                 pickedUpSample = false;
                 break;
             case HOVER_OVER_SAMPLE:
+                slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.HOVER_LOW;
                     buttonTimer.reset();
@@ -229,6 +252,7 @@ public class TeleOpV1 extends OpMode {
                 pickedUpSample = false;
                 break;
             case DOWN_ON_SAMPLE:
+                slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -247,6 +271,7 @@ public class TeleOpV1 extends OpMode {
                 grippersOpened = false;
                 break;
             case ARM_UP:
+                slowmode = false;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -284,6 +309,7 @@ public class TeleOpV1 extends OpMode {
                 deliveryTimerIsReset = false;
                 break;
             case READY_FOR_DELIVERY:
+                slowmode = false;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -319,6 +345,7 @@ public class TeleOpV1 extends OpMode {
                 deliveryGrippersTimer2.reset();
                 break;
             case DELIVER_UP:
+                slowmode = false;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
@@ -345,10 +372,12 @@ public class TeleOpV1 extends OpMode {
                 delivered = false;
                 break;
             case DROP:
+                slowmode = false;
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 deliveryAxon.setPosition(constants.DELIVERY_DROP);
                 break;
             case DROP_HIGH_BAR:
+                slowmode = false;
                 deliveryAxon.setPosition(constants.DELIVERY_DROP);
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 //if(highBarTimer.seconds() > 0.4){
@@ -376,6 +405,19 @@ public class TeleOpV1 extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
+    }
+
+    public void driveSlowMode(double y, double x, double rx) {
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (-y + x + rx) / denominator;
+        double backLeftPower = (-y - x + rx) / denominator;
+        double frontRightPower = (y + x + rx) / denominator;
+        double backRightPower = (y - x + rx) / denominator;
+
+        frontLeftMotor.setPower(frontLeftPower / 2);
+        backLeftMotor.setPower(backLeftPower / 2);
+        frontRightMotor.setPower(frontRightPower / 2);
+        backRightMotor.setPower(backRightPower / 2);
     }
 
     public SystemStatesV1 nextStateHighBasket(){
