@@ -80,7 +80,7 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2);
+        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2, depositArmDrive);
         intakeArmDrive.Init();
 
         //Servo Testing

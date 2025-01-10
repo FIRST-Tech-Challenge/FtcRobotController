@@ -113,14 +113,14 @@ public class LeftSideAuto extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        robot.depositWristServo.setPosition(deposit_Wrist_Transfer_Pos);
-        robot.depositArmServo.setPosition(deposit_Arm_Transfer_Pos);
-        robot.intakeWristServo.setPosition(intake_Wrist_Transfer);
-        robot.intakeLeftArmServo.setPosition(intake_Arm_Transfer);
-        robot.intakeRightArmServo.setPosition(intake_Arm_Transfer);
-        robot.intakeRotationServo.setPosition(intake_Rotation_Mid);
-        robot.intakeClawServo.setPosition(intake_Claw_Close);
-        robot.depositClawServo.setPosition(deposit_Claw_Close);
+        robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Transfer);
+        robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Transfer);
+        robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
+        robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
+        robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
+        robot.intakeRotationServo.setPosition(RobotActionConfig.intake_Rotation_Mid);
+        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
+        robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
 
         Pose2d startPose = new Pose2d(-40, -64.5, Math.toRadians(0));
 
@@ -131,13 +131,13 @@ public class LeftSideAuto extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{drive.setDrivePower(new Pose2d(0,0,0));})
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{Slides_Move(3226,0.9);})
                 .waitSeconds(1.8)                                                                                             // need to review if this wait time is necessary?
-                .addTemporalMarker(()->{robot.depositArmServo.setPosition(deposit_Arm_Dump_Pos);})                          // start after wait seconds
-                .addTemporalMarker(()->{robot.depositWristServo.setPosition(deposit_Wrist_Dump_Pos);})
+                .addTemporalMarker(()->{robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Dump);})                          // start after wait seconds
+                .addTemporalMarker(()->{robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Dump);})
                 .waitSeconds(0.4)
-                .addTemporalMarker(()->{robot.depositClawServo.setPosition(deposit_Claw_Open);})
+                .addTemporalMarker(()->{robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);})
                 .waitSeconds(0.5)                                                                                          // this is wait time for dropping sample - wait for open claw to drop
-                .addTemporalMarker(()->{robot.depositArmServo.setPosition(deposit_Arm_Transfer_Pos);})                      // at global time 1.5 second mark to back to transfer position
-                .addTemporalMarker(()->{robot.depositWristServo.setPosition(deposit_Wrist_Transfer_Pos);})
+                .addTemporalMarker(()->{robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Transfer);})                      // at global time 1.5 second mark to back to transfer position
+                .addTemporalMarker(()->{robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Transfer);})
                 .UNSTABLE_addTemporalMarkerOffset(0.5,()->{Slides_Move(50,0.9);})                             // at global time 1.5 second mark to back to lower slides.
                 .waitSeconds(3.0)                                                                                              // wait time is count from previous addTemporalmarker it needs to account for slides moving down time. the next sequence.
                 /** move to 1st sample*/
