@@ -20,15 +20,15 @@ public class WallToBarAction extends KActionSet {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/100.0); // Chunking pure pursuit
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+150, hangPosY, 0);
+        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+50, hangPosY, 0);
         this.addAction(moveToBar1);
         //waits for everything to finish to prevent specimen from getting caught in bar
-        PurePursuitAction moveToBar2 = new PurePursuitAction(driveTrain, wheelOdometry,1.0/1500.0); // Final pure pursuit
-        moveToBar2.setName("moveToBar2");
-        moveToBar2.setMaxTimeOutMS(1000);
-        moveToBar2.setDependentActions(moveToBar1);
-        moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
-        this.addAction(moveToBar2);
+//        PurePursuitAction moveToBar2 = new PurePursuitAction(driveTrain, wheelOdometry,1.0/1500.0); // Final pure pursuit
+//        moveToBar2.setName("moveToBar2");
+//        moveToBar2.setMaxTimeOutMS(1000);
+//        moveToBar2.setDependentActions(moveToBar1);
+//        moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
+//        this.addAction(moveToBar2);
     }
 
 }

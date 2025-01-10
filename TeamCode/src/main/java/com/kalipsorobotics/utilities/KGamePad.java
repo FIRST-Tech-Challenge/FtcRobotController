@@ -18,6 +18,8 @@ public class KGamePad {
     private boolean previousRightBumper = false;
     private boolean previousLeftBumper = false;
     private boolean previousBackButton = false;
+    private boolean previousStartButton = false;
+
 
     public KGamePad(Gamepad gamepad){
         this.gamepad = gamepad;
@@ -165,6 +167,17 @@ public class KGamePad {
             Log.d("KGamePad", "This back button toggle");
         }
         this.previousBackButton = current;
+        return toggle;
+    }
+
+    public boolean isStartButtonPressed(){
+        boolean current = gamepad.start;
+        boolean toggle = false;
+        if(this.previousStartButton == false && current == true){
+            toggle = true;
+            Log.d("KGamePad", "This start button toggle");
+        }
+        this.previousStartButton = current;
         return toggle;
     }
 

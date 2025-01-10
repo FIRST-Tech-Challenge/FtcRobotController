@@ -3,7 +3,7 @@ package com.kalipsorobotics.math;
 public class CalculateTickPer {
 
     static double ticksPerRevolutionOdometry = 2000;
-    static double ticksPerRevolutionLS = 145.1 * 2;
+    static double ticksPerRevolutionLS = 103.8 * 2;
     static double lsCircumfMm = 36 * Math.PI;
     static double odoCircumfMm = 48 * Math.PI;
 

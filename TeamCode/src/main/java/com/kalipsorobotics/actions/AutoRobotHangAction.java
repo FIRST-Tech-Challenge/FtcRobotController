@@ -9,9 +9,9 @@ import org.checkerframework.checker.units.qual.K;
 public class AutoRobotHangAction extends KActionSet {
     public AutoRobotHangAction(Outtake outtake) {
 
-        KServoAutoAction moveOuttakeBack = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_DOWN_POS);
-        moveOuttakeBack.setName("moveOuttakeBack");
-        this.addAction(moveOuttakeBack);
+        KServoAutoAction moveOuttakePivotHalf = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
+        moveOuttakePivotHalf.setName("moveOuttakePivotHalf");
+        this.addAction(moveOuttakePivotHalf);
 
         MoveLSAction moveLsUp = new MoveLSAction(outtake, 775); //730
         moveLsUp.setName("moveLsUp");
@@ -25,9 +25,9 @@ public class AutoRobotHangAction extends KActionSet {
         hook2Up.setName("hook2Up");
         this.addAction(hook2Up);
 
-        WaitAction waitForLs = new WaitAction(500);
+        WaitAction waitForLs = new WaitAction(200);
         waitForLs.setName("waitForLs");
-        waitForLs.setDependentActions(moveLsUp, moveOuttakeBack);
+        waitForLs.setDependentActions(moveLsUp, moveOuttakePivotHalf);
         this.addAction(waitForLs);
 
         MoveLSAction pullRobotUp = new MoveLSAction(outtake, 520);//733 ticks //311 //535
@@ -47,11 +47,6 @@ public class AutoRobotHangAction extends KActionSet {
         hanghook2.setDependentActions(pullRobotUp);
         this.addAction(hanghook2);
 
-        KServoAutoAction outtakePivotBack = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
-        outtakePivotBack.setName("outtakePivotBack");
-        outtakePivotBack.setDependentActions(pullRobotUp);
-        this.addAction(outtakePivotBack);
-
         WaitAction waitBeforeRelease = new WaitAction(3000);
         waitBeforeRelease.setName("waitBeforeRelease");
         waitBeforeRelease.setDependentActions(hanghook1,hanghook2);
@@ -63,6 +58,11 @@ public class AutoRobotHangAction extends KActionSet {
         releaseLS.setOverridePower(0);
         releaseLS.setOverrideOn(true);
         this.addAction(releaseLS);
+
+        KServoAutoAction outtakePivotBack = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
+        outtakePivotBack.setName("outtakePivotHalf");
+        outtakePivotBack.setDependentActions(moveLsUp, outtakePivotBack, releaseLS);
+        this.addAction(outtakePivotBack);
 
     }
 }
