@@ -24,25 +24,8 @@ public class LinearRailTest extends LinearOpMode {
     waitForStart();
 
     while (opModeIsActive()) {
-      if(gamepad1.y) {
-          servoRotations[0] += 0.1;
-      } 
-      
-      if (gamepad1.x) {
-          servoRotations[0] -= 0.1;
-      }
-
-      if(gamepad1.a) {
-          servoRotations[1] += 0.1;
-      } 
-      
-      if (gamepad1.b) {
-          servoRotations[1] -= 0.1;
-      }
-
-      ConfineServoBoundaries();
-      
       SetServoPosition(0, servoRotations[0]);
+      ConfineServoBoundaries();
       
       telemetry.addData("Servo Position", linearRail.getPosition());
       telemetry.addData("Status", "Running");
