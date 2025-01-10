@@ -87,6 +87,14 @@ public class Input {
             //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 
             double realPower;
+            if ((motors.getUpArmPosition() <= 0) && ( power <= 0) && (motors.getArmPosition() > 520)) {
+                realPower = 0;
+            }
+            else{
+            if ((motors.getUpArmPosition() <= 0.2*motors.getReachingUpArmPosition()) && ( power <= 0) && (motors.getArmPosition() < 350)) {
+                realPower = 0;
+            }
+            else{
             if ((motors.getUpArmPosition() <= motors.getReachingUpArmPosition()) && ( power <= 0)) {
                 realPower = 0;
             }
@@ -95,7 +103,7 @@ public class Input {
                 realPower = power;
                 //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(power, thing));
                 //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(realPower, motors.getReachingUpArmPosition()));
-            }
+            }}}
         motors.MoveMotor(Motors.Type.UpArm, realPower);
 
             BotTelemetry.addData("real Power" , realPower);

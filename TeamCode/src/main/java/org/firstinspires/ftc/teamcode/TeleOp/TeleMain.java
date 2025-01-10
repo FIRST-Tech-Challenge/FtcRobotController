@@ -29,6 +29,7 @@ public class TeleMain extends LinearOpMode {
         Input input = new Input(hardwareMap);
         Servos servos = new Servos(hardwareMap);
 
+
         while (opModeIsActive())
         {
 
@@ -37,13 +38,13 @@ public class TeleMain extends LinearOpMode {
             double strafe = gamepad1.left_stick_x * 100;
             double intake = gamepad2.left_stick_y * 100;
 
-            double armRaise = gamepad2.right_stick_y * 100;
-            double arm = gamepad2.left_stick_y;
+            double armRaise = gamepad2.left_stick_y * 100;
+            double arm = gamepad2.right_stick_y;
 
             input.move(move);
             input.spin(spin);
             input.strafe(strafe);
-            input.claw(gamepad2.a, gamepad2.b);
+            input.claw(gamepad2.b, gamepad2.a);
             input.upArm(armRaise);
 
             input.arm(arm);
