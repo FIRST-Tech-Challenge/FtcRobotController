@@ -15,27 +15,28 @@ public class Test extends Configuration {
     protected void initialize(){
 
         /* Moving configuration */
-        m_motors.put("front-left-wheel",new MotorConf("frontLeft",false)); // CH Motor 0
-        m_motors.put("back-left-wheel",new MotorConf("backLeft",true)); // CH Motor 1
-        m_motors.put("back-right-wheel",new MotorConf("backRight",true)); // CH Motor 2
-        m_motors.put("front-right-wheel",new MotorConf("frontRight",false)); // CH Motor 3
+        mMotors.put("front-left-wheel",new ConfMotor("frontLeft",false)); // CH Motor 0
+        mMotors.put("back-left-wheel",new ConfMotor("backLeft",true)); // CH Motor 1
+        mMotors.put("back-right-wheel",new ConfMotor("backRight",true)); // CH Motor 2
+        mMotors.put("front-right-wheel",new ConfMotor("frontRight",false)); // CH Motor 3
 
-        m_imus.put("built-in", new ImuConf("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
-        m_imus.put("otos", new ImuConf("sensor_otos"));
+        mImus.put("built-in", new ConfImu("imu", RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        mImus.put("otos", new ConfImu("sensor_otos"));
 
         /* Intake configuration */
-        m_servos.put("intake-arm-left-pitch", new ServoConf("left", true));
-        m_servos.put("intake-arm-right-pitch", new ServoConf("right", false));
+        mServos.put("intake-arm-pitch", new ConfServo("left", true, "right", false));
 
-        m_servos.get("intake-arm-left-pitch").setPosition("vertical", 0.65);
-        m_servos.get("intake-arm-left-pitch").setPosition("overSub", 0.23);
-        m_servos.get("intake-arm-left-pitch").setPosition("look", 0.13);
-        m_servos.get("intake-arm-left-pitch").setPosition("grab", 0.07);
-        m_servos.get("intake-arm-right-pitch").setPosition("vertical", 0.65);
-        m_servos.get("intake-arm-right-pitch").setPosition("overSub", 0.23);
-        m_servos.get("intake-arm-right-pitch").setPosition("look", 0.13);
-        m_servos.get("intake-arm-right-pitch").setPosition("grab", 0.07);
+        mServos.get("intake-arm-pitch").addPosition("transfer", 0.65);
+        mServos.get("intake-arm-pitch").addPosition("overSub", 0.23);
+        mServos.get("intake-arm-pitch").addPosition("look", 0.13);
+        mServos.get("intake-arm-pitch").addPosition("grab", 0.07);
 
+    }
+
+    protected void initializeTuning() {
+
+        mSingleServos.put("intake-arm-left-pitch", new ConfServo("left", true));
+        mSingleServos.put("intake-arm-right-pitch", new ConfServo("right", false));
 
     }
 }

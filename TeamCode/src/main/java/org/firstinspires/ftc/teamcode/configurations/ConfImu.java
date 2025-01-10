@@ -11,19 +11,19 @@ package org.firstinspires.ftc.teamcode.configurations;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 
-public class ImuConf {
+public class ConfImu {
 
     private String                                          m_name = "";
     private RevHubOrientationOnRobot.LogoFacingDirection    m_logo = RevHubOrientationOnRobot.LogoFacingDirection.UP;
     private RevHubOrientationOnRobot.UsbFacingDirection     m_usb  = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
-    public ImuConf(String Name, RevHubOrientationOnRobot.LogoFacingDirection Logo, RevHubOrientationOnRobot.UsbFacingDirection Usb) {
+    public ConfImu(String Name, RevHubOrientationOnRobot.LogoFacingDirection Logo, RevHubOrientationOnRobot.UsbFacingDirection Usb) {
         m_name = Name;
         m_logo = Logo;
         m_usb  = Usb;
     }
 
-    public ImuConf(String Name) {
+    public ConfImu(String Name) {
         m_name = Name;
     }
 

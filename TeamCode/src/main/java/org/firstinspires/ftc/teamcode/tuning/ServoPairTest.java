@@ -8,13 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.ListIterator;
+
 
 @Config
 @TeleOp(name = "ServoPairTest")
@@ -45,39 +43,49 @@ public class ServoPairTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        ServoConf masterConf = Configuration.s_Current.getServo(masterName);
-        ServoConf slaveConf  = Configuration.s_Current.getServo(slaveName);
+        ConfServo masterConf = Configuration.s_Current.getServoForTuning(masterName);
+        ConfServo slaveConf = Configuration.s_Current.getServoForTuning(slaveName);
 
-        master = hardwareMap.servo.get(masterConf.getName());
-        slave  = hardwareMap.servo.get(slaveConf.getName());
+        master = hardwareMap.servo.get(masterConf.getHw().entrySet().iterator().next().getKey());
+        slave = hardwareMap.servo.get(slaveConf.getHw().entrySet().iterator().next().getKey());
 
-        if(useConfReverse){
-            if(masterConf.getReverse()) { master.setDirection(Servo.Direction.REVERSE); }
-            else                        { master.setDirection(Servo.Direction.FORWARD); }
-            if(slaveConf.getReverse())  { slave.setDirection(Servo.Direction.REVERSE);  }
-            else                        { slave.setDirection(Servo.Direction.FORWARD);  }
+        if (useConfReverse) {
+            if (masterConf.getHw().entrySet().iterator().next().getValue()) {
+                master.setDirection(Servo.Direction.REVERSE);
+            } else {
+                master.setDirection(Servo.Direction.FORWARD);
+            }
+            if (slaveConf.getHw().entrySet().iterator().next().getValue()) {
+                slave.setDirection(Servo.Direction.REVERSE);
+            } else {
+                slave.setDirection(Servo.Direction.FORWARD);
+            }
+        } else {
+            if (masterReverse) {
+                master.setDirection(Servo.Direction.REVERSE);
+            } else {
+                master.setDirection(Servo.Direction.FORWARD);
+            }
+            if (slaveReverse) {
+                slave.setDirection(Servo.Direction.REVERSE);
+            } else {
+                slave.setDirection(Servo.Direction.FORWARD);
+            }
         }
-        else {
-            if(masterReverse) { master.setDirection(Servo.Direction.REVERSE); }
-            else              { master.setDirection(Servo.Direction.FORWARD); }
-            if(slaveReverse)  { slave.setDirection(Servo.Direction.REVERSE);  }
-            else              { slave.setDirection(Servo.Direction.FORWARD);  }
-        }
 
-        slavePos  = slave.getPosition();
+        slavePos = slave.getPosition();
         masterPos = master.getPosition();
 
-        if(mode == Mode.MASTER_ONLY)     {
+        if (mode == Mode.MASTER_ONLY) {
             mode = Mode.SLAVE_ONLY;
             master.getController().pwmDisable();
-        }
-        else if(mode == Mode.SLAVE_ONLY) {
+        } else if (mode == Mode.SLAVE_ONLY) {
             mode = Mode.BOTH;
-        }
-        else if(mode == Mode.BOTH)       {
+        } else if (mode == Mode.BOTH) {
             mode = Mode.MASTER_ONLY;
             slave.getController().pwmDisable();
         }
+        telemetry.update();
 
         waitForStart();
 

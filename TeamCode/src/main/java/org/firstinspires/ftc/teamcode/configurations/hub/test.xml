@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Control Hub" port="173">
+            <RevRoboticsUltraplanetaryHDHexMotor name="frontLeft" port="0" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="backLeft" port="1" />
+            <RevRoboticsCoreHexMotor name="backRight" port="2" />
+            <RevRoboticsUltraplanetaryHDHexMotor name="frontRight" port="3" />
+            <Servo name="left" port="0" />
+            <Servo name="right" port="1" />
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
+            <SparkFunOTOS2 name="sensor_otos" port="0" bus="3" />
+        </LynxModule>
+    </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="A4D8FAEF" />
+</Robot>

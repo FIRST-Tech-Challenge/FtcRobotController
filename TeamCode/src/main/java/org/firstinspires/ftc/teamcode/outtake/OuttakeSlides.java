@@ -2,100 +2,72 @@ package org.firstinspires.ftc.teamcode.outtake;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configurations includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.MotorConf;
+import org.firstinspires.ftc.teamcode.configurations.ConfMotor;
 
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.MotorComponent;
+import org.firstinspires.ftc.teamcode.components.MotorMock;
+import org.firstinspires.ftc.teamcode.components.MotorCoupled;
+import org.firstinspires.ftc.teamcode.components.MotorSingle;
 
 public class OuttakeSlides {
 
-    Telemetry    logger;
+    Telemetry            mLogger;
 
-    boolean      areReady;
-    DcMotor      leftMotor;
-    DcMotor      rightMotor;
+    boolean              mReady;
 
-    static final double  MAX_POWER = 1.0;
+    MotorComponent       mMotor;
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
-        logger = tm;
-
+        mLogger = logger;
+        mReady = true;
         String status = "";
-        areReady = true;
 
-        MotorConf leftSlides = config.getMotor("outtake-left-slides");
-        MotorConf rightSlides = config.getMotor("outtake-right-slides");
-        if (leftSlides == null) {
-            status += "L";
-            areReady = false;
-        }
-        if (rightSlides == null) {
-            status += "R";
-            areReady = false;
-        }
-        if (!areReady) {
-            status = " CONF " + status;
-        } else {
-            leftMotor = hwm.tryGet(DcMotor.class, leftSlides.getName());
-            rightMotor = hwm.tryGet(DcMotor.class, rightSlides.getName());
-            if (leftMotor == null) {
-                status += "L";
-                areReady = false;
-            }
-            if (rightMotor == null) {
-                status += "R";
-                areReady = false;
-            }
-            if (!areReady) {
-                status = " HW " + status;
-            } else {
-                if (leftSlides.getReverse()) {
-                    leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                }
-                if (rightSlides.getReverse()) {
-                    rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                }
-                leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ConfMotor slides = config.getMotor("outtake-slides");
+        if(slides == null)  { mReady = false; status += " CONF";}
+        else {
+
+            // Configure servo
+            if (slides.shallMock()) { mMotor = new MotorMock("outtake-slides"); }
+            else if (slides.getHw().size() == 1) { mMotor = new MotorSingle(slides, hwm, "outtake-slides", logger); }
+            else if (slides.getHw().size() == 2) { mMotor = new MotorCoupled(slides, hwm, "outtake-slides", logger); }
+
+            if (!mMotor.isReady()) { mReady = false; status += " HW";}
+            else {
+                mMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
-        if (areReady) {
-            logger.addLine("==>  OUT SL : OK");
-        } else {
-            logger.addLine("==>  OUT SL : KO : " + status);
-        }
+
+        // Log status
+        if (mReady) { logger.addLine("==>  OUT SLD : OK"); }
+        else        { logger.addLine("==>  OUT SLD : KO : " + status); }
 
     }
 
     public void extend(double Power)   {
-        if(areReady) {
-            rightMotor.setPower(Power);
-            leftMotor.setPower(Power);
+        if(mReady) {
+            mMotor.setPower(Power);
         }
     }
 
-    public void stop()                 {
-        if(areReady) {
-            rightMotor.setPower(0);
-            leftMotor.setPower(0);
+    public void stop() {
+        if (mReady) {
+            mMotor.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(areReady) {
-            rightMotor.setPower(-Power);
-            leftMotor.setPower(-Power);
+        if(mReady) {
+            mMotor.setPower(-Power);
         }
     }
 

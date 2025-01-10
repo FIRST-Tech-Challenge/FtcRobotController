@@ -2,66 +2,72 @@ package org.firstinspires.ftc.teamcode.intake;
 
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configurations includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.MotorConf;
+import org.firstinspires.ftc.teamcode.configurations.ConfMotor;
+
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.MotorComponent;
+import org.firstinspires.ftc.teamcode.components.MotorMock;
+import org.firstinspires.ftc.teamcode.components.MotorCoupled;
+import org.firstinspires.ftc.teamcode.components.MotorSingle;
 
 public class IntakeSlides {
 
-    Telemetry            logger;
+    Telemetry            mLogger;
 
-    boolean              areReady;
-    DcMotor              motor;
+    boolean              mReady;
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    MotorComponent       mMotor;
 
-        logger = tm;
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
+        mLogger = logger;
+        mReady = true;
         String status = "";
-        areReady = true;
 
-        MotorConf slides = config.getMotor("intake-slides");
-        if (slides == null) {
-            status += " CONF";
-            areReady = false;
-        } else {
-            motor = hwm.tryGet(DcMotor.class, slides.getName());
-            if (motor == null) {
-                status += " HW";
-                areReady = false;
-            } else {
-                if (slides.getReverse()) {
-                    motor.setDirection(DcMotorSimple.Direction.REVERSE);
-                }
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ConfMotor slides = config.getMotor("intake-slides");
+        if(slides == null)  { mReady = false; status += " CONF";}
+        else {
+
+            // Configure servo
+            if (slides.shallMock()) { mMotor = new MotorMock("intake-slides"); }
+            else if (slides.getHw().size() == 1) { mMotor = new MotorSingle(slides, hwm, "intake-slides", logger); }
+            else if (slides.getHw().size() == 2) { mMotor = new MotorCoupled(slides, hwm, "intake-slides", logger); }
+
+            if (!mMotor.isReady()) { mReady = false; status += " HW";}
+            else {
+                mMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
         }
-        if (areReady) { logger.addLine("==>  IN SL : OK"); }
-        else {          logger.addLine("==>  IN SL : KO : " + status); }
+
+        // Log status
+        if (mReady) { logger.addLine("==>  IN SLD : OK"); }
+        else        { logger.addLine("==>  IN SLD : KO : " + status); }
+
     }
 
     public void extend(double Power)   {
-        if(areReady) {
-            motor.setPower(Power);
+        if(mReady) {
+            mMotor.setPower(Power);
         }
     }
 
     public void stop() {
-        if (areReady) {
-            motor.setPower(0);
+        if (mReady) {
+            mMotor.setPower(0);
         }
     }
 
     public void rollback(double Power) {
-        if(areReady) {
-            motor.setPower(-Power);
+        if(mReady) {
+            mMotor.setPower(-Power);
         }
     }
 

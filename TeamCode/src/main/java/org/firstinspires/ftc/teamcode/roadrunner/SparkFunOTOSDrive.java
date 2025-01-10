@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.roadrunner;
 
 
 
@@ -16,6 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
+
+/* Configuration includes */
+import org.firstinspires.ftc.teamcode.configurations.Configuration;
+import org.firstinspires.ftc.teamcode.configurations.ConfImu;
 
 /**
  * Experimental extension of MecanumDrive that uses the SparkFun OTOS sensor for localization.
@@ -70,7 +74,10 @@ public class SparkFunOTOSDrive extends MecanumDrive {
     public SparkFunOTOSDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
         FlightRecorder.write("OTOS_PARAMS",PARAMS);
-        otos = hardwareMap.get(SparkFunOTOSCorrected.class,"sensor_otos");
+
+        ConfImu conf = Configuration.s_Current.getImu("otos");
+        otos = hardwareMap.get(SparkFunOTOSCorrected.class,conf.getName());
+
         // RR localizer note:
         // don't change the units, it will stop Dashboard field view from working properly
         // and might cause various other issues

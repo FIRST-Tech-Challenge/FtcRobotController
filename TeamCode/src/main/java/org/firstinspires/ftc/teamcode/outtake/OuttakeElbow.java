@@ -1,144 +1,121 @@
 package org.firstinspires.ftc.teamcode.outtake;
 
+/* System includes */
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
-import org.firstinspires.ftc.teamcode.intake.IntakeArm;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
-import java.util.Map;
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.ServoComponent;
+import org.firstinspires.ftc.teamcode.components.ServoMock;
+import org.firstinspires.ftc.teamcode.components.ServoCoupled;
+import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class OuttakeElbow {
 
     enum Position {
-        VERTICAL,
-        OUTSIDE,
-        INSIDE
-    }
+        TRANSFER,
+        OVER_SUBMERSIBLE,
+        LOOKING,
+        GRABBING
+    };
 
-    Telemetry logger;
+    Telemetry               mLogger;
 
-    boolean     isReady;
-    Position    position;
-    Servo       leftServo;
-    Servo       rightServo;
-    Map<String, Map<String, Double>> positions = new HashMap<>();
+    boolean                 mReady;
 
-    public Position getPosition() { return position; }
+    Position                mPosition;
+    ServoComponent          mServo;
+    Map<String, Double>     mPositions   = new LinkedHashMap<>();
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public Position getPosition() { return mPosition; }
 
-        logger = tm;
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
+
+        mLogger = logger;
+        mReady = true;
 
         String status = "";
-        isReady = true;
 
-        ServoConf leftPitch = config.getServo("outtake-elbow-left-pitch");
-        ServoConf rightPitch = config.getServo("outtake-elbow-right-pitch");
+        // Get configuration
+        ConfServo pitch  = config.getServo("outtake-elbow-pitch");
+        if(pitch == null)  { mReady = false; status += " CONF";}
+        else {
 
-        if (leftPitch == null) {
-            status += "L";
-            isReady = false;
-        }
-        if (rightPitch == null) {
-            status += "R";
-            isReady = false;
-        }
+            // Configure servo
+            if (pitch.shallMock()) { mServo = new ServoMock("outtake-elbow-pitch"); }
+            else if (pitch.getHw().size() == 1) { mServo = new ServoSingle(pitch, hwm, "outtake-elbow-pitch", logger); }
+            else if (pitch.getHw().size() == 2) { mServo = new ServoCoupled(pitch, hwm, "outtake-elbow-pitch", logger); }
 
-        if (!isReady) {
-            status = " CONF " + status;
-        } else {
-
-            leftServo = hwm.tryGet(Servo.class, leftPitch.getName());
-            rightServo = hwm.tryGet(Servo.class, rightPitch.getName());
-
-            if (leftServo == null) {
-                status += "L";
-                isReady = false;
-            }
-            if (rightServo == null) {
-                status += "R";
-                isReady = false;
-            }
-
-            if (!isReady) {
-                status = " HW " + status;
-            } else {
-                if (leftPitch.getReverse()) {
-                    leftServo.setDirection(Servo.Direction.REVERSE);
-                }
-                if (rightPitch.getReverse()) {
-                    rightServo.setDirection(Servo.Direction.REVERSE);
-                }
-
-                Map<String, Double> lpositions = leftPitch.getPositions();
-                Map<String, Double> rpositions = rightPitch.getPositions();
-                lpositions.forEach((key, value) -> {
-                    if (rpositions.containsKey(key)) {
-                        HashMap<String, Double> temp = new HashMap<String, Double>();
-                        temp.put("left", value);
-                        temp.put("right", rpositions.get(key));
-                        positions.put(key, temp);
-                    }
-                });
-
-
-            }
-        }
-        if (isReady) {
-            logger.addLine("==>  IN AR : OK");
-        } else {
-            logger.addLine("==>  IN AR : KO : " + status);
+            mPositions = pitch.getPositions();
+            if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
-        this.setVertical();
+        // Log status
+        if (mReady) { logger.addLine("==>  OUT ELB : OK"); }
+        else        { logger.addLine("==>  OUT ELB : KO : " + status); }
+
+        // Initialize position
+        this.setTransfer();
 
     }
 
-    public void setVertical() {
+    public void setTransfer() {
 
-        if (positions.containsKey("vertical") && isReady) {
+        if( mPositions.containsKey("transfer") && mReady) {
+            mServo.setPosition(mPositions.get("transfer"));
+            mPosition = Position.TRANSFER;
+        }
+    }
 
-            leftServo.setPosition(positions.get("vertical").get("left"));
-            rightServo.setPosition(positions.get("vertical").get("right"));
+    public void setOverSubmersible() {
 
-            position = Position.VERTICAL;
-
+        if( mPositions.containsKey("overSub") && mReady) {
+            mServo.setPosition(mPositions.get("overSub"));
+            mPosition = Position.OVER_SUBMERSIBLE;
         }
 
     }
 
-    public void setOutside() {
+    public void setLooking() {
 
-        if (positions.containsKey("outside") && isReady) {
-
-            leftServo.setPosition(positions.get("outside").get("left"));
-            rightServo.setPosition(positions.get("outside").get("right"));
-
-            position = Position.OUTSIDE;
-
+        if( mPositions.containsKey("look") && mReady) {
+            mServo.setPosition(mPositions.get("look"));
+            mPosition = Position.LOOKING;
         }
 
     }
 
-    public void setInside() {
+    public void setGrabbing() {
 
-        if (positions.containsKey("inside") && isReady) {
-
-            leftServo.setPosition(positions.get("inside").get("left"));
-            rightServo.setPosition(positions.get("inside").get("right"));
-
-            position = Position.INSIDE;
-
+        if( mPositions.containsKey("grab") && mReady) {
+            mServo.setPosition(mPositions.get("grab"));
+            mPosition = Position.GRABBING;
         }
 
+    }
+
+    public void moveUp() {
+        if(mPosition == Position.GRABBING)              { this.setLooking();         }
+        else if(mPosition == Position.LOOKING)          { this.setOverSubmersible(); }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
+    }
+
+    public void moveDown() {
+        if(mPosition == Position.LOOKING)               { this.setGrabbing();        }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
+        else if(mPosition == Position.TRANSFER)         { this.setOverSubmersible(); }
     }
 
 }
+
+

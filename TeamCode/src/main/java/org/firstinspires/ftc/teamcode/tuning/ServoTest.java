@@ -24,7 +24,7 @@ public class ServoTest extends LinearOpMode {
     public static double   incrementStep  = 0.01;
     public static double   targetPos      = 0.0;
     public static long     sleepMs        = 200;
-    public static boolean  isReverse      = false;
+    public static boolean  forceReverse   = false;
     public static boolean  useConfReverse = true;
 
     private static boolean holdPosition   = false;
@@ -39,15 +39,19 @@ public class ServoTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        Configuration.s_Current.m_servos.forEach((key, value) -> {
-            Servo temp = hardwareMap.tryGet(Servo.class,value.getName());
+        Configuration.s_Current.getForTuning().forEach((key, value) -> {
+            Servo temp = hardwareMap.tryGet(Servo.class,value.getHw().entrySet().iterator().next().getKey());
             if(useConfReverse) {
-                if (temp != null && value.getReverse()) { temp.setDirection(Servo.Direction.REVERSE); }
-                else if (temp != null) {                  temp.setDirection(Servo.Direction.FORWARD); }
+                if (temp != null && value.getHw().entrySet().iterator().next().getValue()) {
+                    temp.setDirection(Servo.Direction.REVERSE);
+                }
+                else if (temp != null) {
+                    temp.setDirection(Servo.Direction.FORWARD);
+                }
             }
             else {
-                if (temp != null && isReverse) { temp.setDirection(Servo.Direction.REVERSE); }
-                else if (temp != null) {         temp.setDirection(Servo.Direction.FORWARD); }
+                if (temp != null && forceReverse) { temp.setDirection(Servo.Direction.REVERSE); }
+                else if (temp != null)            { temp.setDirection(Servo.Direction.FORWARD); }
             }
 
             if(temp != null) { servos.put(key,temp); }
@@ -56,13 +60,6 @@ public class ServoTest extends LinearOpMode {
         if (!servos.isEmpty()) {
 
             entryList = new ArrayList<>(servos.entrySet());
-
-            Collections.sort(entryList, new Comparator<Map.Entry<String,Servo>>() {
-                @Override
-                public int compare(Map.Entry<String,Servo> entry1, Map.Entry<String,Servo> entry2) {
-                    return entry1.getKey().compareTo(entry2.getKey());
-                }
-            });
 
             iterator = entryList.listIterator();
             if (iterator.hasNext()) {

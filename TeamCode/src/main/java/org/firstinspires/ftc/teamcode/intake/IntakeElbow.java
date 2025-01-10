@@ -1,19 +1,24 @@
 package org.firstinspires.ftc.teamcode.intake;
 
+/* System includes */
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
-import org.firstinspires.ftc.teamcode.outtake.OuttakeElbow;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
-import java.util.Map;
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.ServoComponent;
+import org.firstinspires.ftc.teamcode.components.ServoMock;
+import org.firstinspires.ftc.teamcode.components.ServoCoupled;
+import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class IntakeElbow {
 
@@ -24,101 +29,91 @@ public class IntakeElbow {
         GRABBING
     };
 
-    Telemetry           logger;
+    Telemetry               mLogger;
 
-    boolean             isReady;
-    Position            position;
-    Servo               servo;
-    Map<String, Double> positions = new HashMap<>();
+    boolean                 mReady;
 
-    public Position getPosition() { return position; }
+    Position                mPosition;
+    ServoComponent          mServo;
+    Map<String, Double>     mPositions   = new LinkedHashMap<>();
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public Position getPosition() { return mPosition; }
 
-        logger          = tm;
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
-        String status   = "";
-        isReady         = true;
+        mLogger = logger;
+        mReady = true;
 
-        ServoConf pitch  = config.getServo("intake-elbow-pitch");
+        String status = "";
 
-        if(pitch == null)  { isReady = false; }
-
-        if(!isReady) { status = " CONF" + status; }
+        // Get configuration
+        ConfServo pitch  = config.getServo("intake-elbow-pitch");
+        if(pitch == null)  { mReady = false; status += " CONF";}
         else {
 
-            servo  = hwm.tryGet(Servo.class, pitch.getName());
+            // Configure servo
+            if (pitch.shallMock()) { mServo = new ServoMock("intake-elbow-pitch"); }
+            else if (pitch.getHw().size() == 1) { mServo = new ServoSingle(pitch, hwm, "intake-elbow-pitch", logger); }
+            else if (pitch.getHw().size() == 2) { mServo = new ServoCoupled(pitch, hwm, "intake-elbow-pitch", logger); }
 
-            if(servo == null) { isReady = false;  }
-
-            if(!isReady) { status = " HW" + status; }
-            else {
-                if (pitch.getReverse()) {
-                    servo.setDirection(Servo.Direction.REVERSE);
-                }
-
-                positions = pitch.getPositions();
-            }
-
+            mPositions = pitch.getPositions();
+            if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
-        if(isReady) { logger.addLine("==>  IN EL : OK"); }
-        else        { logger.addLine("==>  IN EL : KO : " + status); }
 
+        // Log status
+        if (mReady) { logger.addLine("==>  IN ELB : OK"); }
+        else        { logger.addLine("==>  IN ELB : KO : " + status); }
+
+        // Initialize position
         this.setTransfer();
+
     }
+
     public void setTransfer() {
 
-        if( positions.containsKey("transfer") && isReady) {
-
-            servo.setPosition(positions.get("transfer"));
-            position = Position.TRANSFER;
-
+        if( mPositions.containsKey("transfer") && mReady) {
+            mServo.setPosition(mPositions.get("transfer"));
+            mPosition = Position.TRANSFER;
         }
-
     }
 
     public void setOverSubmersible() {
 
-        if( positions.containsKey("overSub") && isReady) {
-
-            servo.setPosition(positions.get("overSub"));
-            position = Position.OVER_SUBMERSIBLE;
-
+        if( mPositions.containsKey("overSub") && mReady) {
+            mServo.setPosition(mPositions.get("overSub"));
+            mPosition = Position.OVER_SUBMERSIBLE;
         }
 
     }
 
     public void setLooking() {
 
-        if( positions.containsKey("look") && isReady) {
-
-            servo.setPosition(positions.get("look"));
-            position = Position.LOOKING;
-
+        if( mPositions.containsKey("look") && mReady) {
+            mServo.setPosition(mPositions.get("look"));
+            mPosition = Position.LOOKING;
         }
 
     }
 
     public void setGrabbing() {
 
-        if( positions.containsKey("grab") && isReady) {
-
-            servo.setPosition(positions.get("grab"));
-            position = Position.GRABBING;
-
+        if( mPositions.containsKey("grab") && mReady) {
+            mServo.setPosition(mPositions.get("grab"));
+            mPosition = Position.GRABBING;
         }
+
     }
 
     public void moveUp() {
-        if(position == Position.GRABBING)              { this.setLooking();         }
-        else if(position == Position.LOOKING)          { this.setOverSubmersible(); }
-        else if(position == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
+        if(mPosition == Position.GRABBING)              { this.setLooking();         }
+        else if(mPosition == Position.LOOKING)          { this.setOverSubmersible(); }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
     }
 
     public void moveDown() {
-        if(position == Position.LOOKING)               { this.setGrabbing();        }
-        else if(position == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
-        else if(position == Position.TRANSFER)         { this.setOverSubmersible(); }
+        if(mPosition == Position.LOOKING)               { this.setGrabbing();        }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
+        else if(mPosition == Position.TRANSFER)         { this.setOverSubmersible(); }
     }
 
 }

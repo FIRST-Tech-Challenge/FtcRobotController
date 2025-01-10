@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
 
@@ -49,8 +49,8 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
 /* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.MotorConf;
-import org.firstinspires.ftc.teamcode.configurations.ImuConf;
+import org.firstinspires.ftc.teamcode.configurations.ConfMotor;
+import org.firstinspires.ftc.teamcode.configurations.ConfImu;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -215,18 +215,18 @@ public class MecanumDrive {
         }
 
 
-        MotorConf frontLeftWheel  = Configuration.s_Current.getMotor("front-left-wheel");
-        MotorConf frontRightWheel = Configuration.s_Current.getMotor("front-right-wheel");
-        MotorConf backLeftWheel   = Configuration.s_Current.getMotor("back-left-wheel");
-        MotorConf backRightWheel  = Configuration.s_Current.getMotor("back-right-wheel");
-        ImuConf   imu             = Configuration.s_Current.getImu("built-in");
+        ConfMotor frontLeftWheel  = Configuration.s_Current.getMotor("front-left-wheel");
+        ConfMotor frontRightWheel = Configuration.s_Current.getMotor("front-right-wheel");
+        ConfMotor backLeftWheel   = Configuration.s_Current.getMotor("back-left-wheel");
+        ConfMotor backRightWheel  = Configuration.s_Current.getMotor("back-right-wheel");
+        ConfImu   imu             = Configuration.s_Current.getImu("built-in");
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, frontLeftWheel.getName());
-        leftBack = hardwareMap.get(DcMotorEx.class, backLeftWheel.getName());
-        rightBack = hardwareMap.get(DcMotorEx.class, backRightWheel.getName());
-        rightFront = hardwareMap.get(DcMotorEx.class, frontRightWheel.getName());
+        leftFront = hardwareMap.get(DcMotorEx.class, frontLeftWheel.getHw().entrySet().iterator().next().getKey());
+        leftBack = hardwareMap.get(DcMotorEx.class, backLeftWheel.getHw().entrySet().iterator().next().getKey());
+        rightBack = hardwareMap.get(DcMotorEx.class, backRightWheel.getHw().entrySet().iterator().next().getKey());
+        rightFront = hardwareMap.get(DcMotorEx.class, frontRightWheel.getHw().entrySet().iterator().next().getKey());
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -234,10 +234,10 @@ public class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-        if ( frontLeftWheel.getReverse()) leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        if ( frontRightWheel.getReverse()) rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        if ( backLeftWheel.getReverse()) leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        if ( backRightWheel.getReverse()) rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( frontLeftWheel.getHw().entrySet().iterator().next().getValue()) leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( frontRightWheel.getHw().entrySet().iterator().next().getValue()) rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( backLeftWheel.getHw().entrySet().iterator().next().getValue()) leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        if ( backRightWheel.getHw().entrySet().iterator().next().getValue()) rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html

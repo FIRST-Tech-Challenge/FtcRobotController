@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.outtake;
 
+/* System includes */
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /* Qualcomm includes */
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,72 +14,89 @@ import com.qualcomm.robotcore.hardware.Servo;
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
-import org.firstinspires.ftc.teamcode.configurations.ServoConf;
-import org.firstinspires.ftc.teamcode.intake.IntakeArm;
+import org.firstinspires.ftc.teamcode.configurations.ConfServo;
 
-import java.util.HashMap;
-import java.util.Map;
+/* Component includes */
+import org.firstinspires.ftc.teamcode.components.ServoComponent;
+import org.firstinspires.ftc.teamcode.components.ServoMock;
+import org.firstinspires.ftc.teamcode.components.ServoCoupled;
+import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class OuttakeWrist {
 
     enum Position {
-        CENTER
+        CENTER,
+        UNDEFINED
     };
 
-    Telemetry           logger;
+    Telemetry           mLogger;
 
-    boolean             isReady;
-    Position            position;
-    Servo               servo;
-    Map<String, Double> positions = new HashMap<>();
+    boolean             mReady;
+    Position            mPosition;
+    double              mDeltaPosition = 0;
+    ServoComponent      mServo;
+    Map<String, Double> mPositions = new LinkedHashMap<>();
 
-    public Position getPosition() { return position; }
+    public Position getPosition() { return mPosition; }
 
-    public void setHW(Configuration config, HardwareMap hwm, Telemetry tm) {
+    public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
-        logger = tm;
+        mLogger = logger;
+        mReady = true;
 
         String status = "";
-        isReady = true;
 
-        ServoConf roll  = config.getServo("outtake-wrist-roll");
-
-        if(roll == null)  { isReady = false; }
-
-        if(!isReady) { status = " CONF" + status; }
+        // Get configuration
+        ConfServo roll  = config.getServo("intake-wrist-roll");
+        if(roll == null)  { mReady = false; status += " CONF";}
         else {
 
-            servo  = hwm.tryGet(Servo.class, roll.getName());
+            // Configure servo
+            if (roll.shallMock()) { mServo = new ServoMock("intake-wrist-roll"); }
+            else if (roll.getHw().size() == 1) { mServo = new ServoSingle(roll, hwm, "intake-wrist-roll", logger); }
+            else if (roll.getHw().size() == 2) { mServo = new ServoCoupled(roll, hwm, "intake-wrist-roll", logger); }
 
-            if(servo == null) { isReady = false;  }
-
-            if(!isReady) { status = " HW" + status; }
-            else {
-                if (roll.getReverse()) {
-                    servo.setDirection(Servo.Direction.REVERSE);
-                }
-
-                positions = roll.getPositions();
-            }
+            mPositions = roll.getPositions();
+            if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
-        if(isReady) { logger.addLine("==>  IN WR : OK"); }
-        else        { logger.addLine("==>  IN WR : KO : " + status); }
 
+        // Log status
+        if (mReady) { logger.addLine("==>  OUT WRS : OK"); }
+        else        { logger.addLine("==>  OUT WRS : KO : " + status); }
+
+        // Initialize position
         this.setCenter();
-
     }
 
     public void setCenter() {
 
-        if( positions.containsKey("center") && isReady) {
-
-            servo.setPosition(positions.get("center"));
-            position = Position.CENTER;
-
+        if( mPositions.containsKey("center") && mReady) {
+            mServo.setPosition(mPositions.get("center"));
+            mPosition = Position.CENTER;
+            mDeltaPosition = 0;
         }
 
+    }
+
+    public void turn(double increment)
+    {
+        if( mPositions.containsKey("center") &&
+                mPositions.containsKey("min") &&
+                mPositions.containsKey("max") &&
+                mReady) {
+
+            mDeltaPosition += increment;
+            double newPosition = mPositions.get("center") + mDeltaPosition;
+
+            newPosition = max(newPosition, mPositions.get("min"));
+            newPosition = min(newPosition, mPositions.get("max"));
+
+            mServo.setPosition(newPosition);
+
+            mPosition = Position.UNDEFINED;
+        }
     }
 
 }
