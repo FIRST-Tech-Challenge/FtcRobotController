@@ -325,6 +325,6 @@ public class FiniteMachineStateArm {
         }
     }
     public void SetDepositClawState(DEPOSITCLAWSTATE state) {
-        this.DEPOSITCLAWSTATE = state;
+        this.depositClawState = state;
     }
 }
