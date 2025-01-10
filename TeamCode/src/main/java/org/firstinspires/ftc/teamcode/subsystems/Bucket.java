@@ -21,20 +21,20 @@ public class Bucket {
         if (isUp) {
            setBottom();
         } else {
-            setBottom();
+            setUp();
 
         }
     }
 
     public void setUp()
     {
-        servo.setPosition(0.2);
+        servo.setPosition(0);
         isUp = true;
     }
 
     public void setBottom()
     {
-        servo.setPosition(0);
+        servo.setPosition(0.2);
         isUp = false;
     }
 
