@@ -5,15 +5,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class LinearRailTest extends LinearOpMode {
   // SERVO ORDER: Linear Rail, Claw
-  public String[] servoIdentity = [hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A");] 
-  public float[] servoRotations = [0, 0]
-  public float[] minRot = [0, 0]
-  public float[] maxRot = [0, 0]
+  public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A")); 
+  public List<Int> servoRotations = List.of(0, 0)
+  public List<float> minRot = List.of(0, 0)
+  public List<float> maxRot = List.of(4, 4)
   
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
   public void runOpMode() throws InterruptedException {
-    servoIdentity[0].setDirection(Servo.Direction.FORWARD);
+    servoIdentity.get(0).setDirection(Servo.Direction.FORWARD);
 
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -22,31 +22,28 @@ public class LinearRailTest extends LinearOpMode {
     waitForStart();
 
     while (opModeIsActive()) {
-      SetServoPosition(0, servoRotations[0]);
+      SetServoPosition(0, servoRotations.get(0));
       ConfineServoBoundaries();
       
-      telemetry.addData("Servo Position", servoIdentity[0].getPosition());
+      telemetry.addData("Servo Position", servoIdentity.get(0).getPosition());
       telemetry.addData("Status", "Running");
       telemetry.update();
     }
   }
 
   public static void ConfineServoBoundaries() {
-    idx = 0;
-    for servo in servoIdentity {
-      if (servoRotations[idx] <= minRot[idx]) {
-        servoRotations[idx] = minRot[idx];
+    for (int i=0; i<servoRotations.Length; i++) {
+      if (servoRotations.get(i) <= minRot.get(i)) {
+        servoRotations.get(i) = minRot.get(i);
       }
 
-      if (servoRotations[idx] >= maxRot[idx]) {
-        servoRotations[idx] = maxRot[idx];
+      if (servoRotations.get(i) >= maxRot.get(i)) {
+        servoRotations.get(i) = maxRot.get(i);
       }
-
-      idx++;
     }
   }
 
   public static void SetServoRotation(int servoIdx, float position) {
-    servoIdentity[servoIdx].setPosition(position);
+    servoIdentity.get(servoIdx).setPosition(position);
   }
 }
