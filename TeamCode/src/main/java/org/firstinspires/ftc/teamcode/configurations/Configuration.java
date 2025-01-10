@@ -48,7 +48,6 @@ abstract public class Configuration {
         else                                 { return null;            }
     }
 
-
     // Abstract method for initializing specific configurations
     protected abstract void initialize();
     protected abstract void initializeTuning();

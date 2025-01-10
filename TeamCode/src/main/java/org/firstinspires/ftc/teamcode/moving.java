@@ -73,16 +73,13 @@ public class Moving {
 
             status = "";
 
-            Map<String, Boolean> frontLeftHw = frontLeftWheel.getHw();
-
-
-
             mFrontLeftMotor = new MotorSingle(frontLeftWheel, hwm, "front-left-wheel",mLogger);
             mBackLeftMotor = new MotorSingle(backLeftWheel, hwm, "back-left-wheel",mLogger);
             mFrontRightMotor = new MotorSingle(frontRightWheel, hwm, "front-right-wheel",mLogger);
             mBackRightMotor = new MotorSingle(backRightWheel, hwm, "back-right-wheel",mLogger);
 
-            mImu = hwm.tryGet(IMU.class, imu.getName());
+            mImu = null;
+            if(imu != null) { mImu = hwm.tryGet(IMU.class, imu.getName()); }
 
             if (!mFrontLeftMotor.isReady())     { status += " FL";  mReady = false; }
             if (!mFrontRightMotor.isReady())    { status += " FR";  mReady = false; }
@@ -127,12 +124,8 @@ public class Moving {
         if (mReady) {
 
             double multiplier = 0.45;
-            if (mGamepad.left_bumper) {
-                multiplier = 0.9;
-            }
-            if (mGamepad.right_bumper) {
-                multiplier = 0.25;
-            }
+            if (mGamepad.left_bumper)  { multiplier = 0.9; }
+            if (mGamepad.right_bumper) { multiplier = 0.25; }
 
             double y = -applyDeadzone(mGamepad.left_stick_y, 0.1);
             double x = applyDeadzone(mGamepad.left_stick_x, 0.1) * 1;
@@ -167,14 +160,13 @@ public class Moving {
         }
     }
 
-    private double applyDeadzone(double value, double Deadzone) {
-        if (Math.abs(value) < Deadzone) {
+    private double applyDeadzone(double value, double deadzone) {
+        if (Math.abs(value) < deadzone) {
             return 0.0; // Inside deadzone
         }
         // Scale the value to account for the deadzone
-        double scaledValue = (value - Math.signum(value) * Deadzone) / (1.0 - Deadzone);
+        double scaledValue = (value - Math.signum(value) * deadzone) / (1.0 - deadzone);
         return scaledValue;
     }
-
 
 }

@@ -24,16 +24,16 @@ public class ServoPairTest extends LinearOpMode {
         BOTH  // Very Dangerous : If slave and master have been moved through pairing rather than by using setPosition, once Both mode is activated, they will force to reach back to their latest programmed position, thus blocking each other and destroying the mecanism
     };
 
-    public  static double   incrementStep  = 0.05;
-    public  static boolean  useConfReverse = false;
-    public  static boolean  masterReverse  = false;
-    public  static boolean  slaveReverse   = false;
-    public  static double   masterPos      = 0.0;
-    public  static double   slavePos       = 0.0;
-    public  static long     sleepMs        = 200;
-    public  static String   masterName     = "";
-    public  static String   slaveName      = "";
-    public  static Mode     mode           = Mode.MASTER_ONLY;
+    public  static double   incrementStep       = 0.05;
+    public  static boolean  reverseFromConf     = true;
+    public  static boolean  reverseForceMaster  = false;
+    public  static boolean  reverseForceSlave   = false;
+    public  static double   posMaster           = 0.0;
+    public  static double   posSlave            = 0.0;
+    public  static long     sleepMs             = 200;
+    public  static String   nameMaster          = "";
+    public  static String   nameSlave           = "";
+    public  static Mode     mode                = Mode.MASTER_ONLY;
 
     Servo   master;
     Servo   slave;
@@ -43,54 +43,71 @@ public class ServoPairTest extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        ConfServo masterConf = Configuration.s_Current.getServoForTuning(masterName);
-        ConfServo slaveConf = Configuration.s_Current.getServoForTuning(slaveName);
+        ConfServo masterConf = Configuration.s_Current.getServoForTuning(nameMaster);
+        ConfServo slaveConf = Configuration.s_Current.getServoForTuning(nameSlave);
 
-        master = hardwareMap.servo.get(masterConf.getHw().entrySet().iterator().next().getKey());
-        slave = hardwareMap.servo.get(slaveConf.getHw().entrySet().iterator().next().getKey());
+        Map.Entry<String, Boolean> hwMaster = masterConf.getHw(0);
+        Map.Entry<String, Boolean> hwSlave = slaveConf.getHw(0);
 
-        if (useConfReverse) {
-            if (masterConf.getHw().entrySet().iterator().next().getValue()) {
+        telemetry.addLine(hwMaster.getKey());
+        telemetry.addLine(hwSlave.getKey());
+
+        master = null;
+        slave = null;
+
+        if(hwMaster != null) { master = hardwareMap.servo.get(hwMaster.getKey()); }
+        if(hwSlave != null) { slave = hardwareMap.servo.get(hwSlave.getKey()); }
+
+        if (reverseFromConf) {
+            if (master != null && hwMaster.getValue()) {
                 master.setDirection(Servo.Direction.REVERSE);
-            } else {
+            }
+            else if (master != null) {
                 master.setDirection(Servo.Direction.FORWARD);
             }
-            if (slaveConf.getHw().entrySet().iterator().next().getValue()) {
+            if (slave != null && hwSlave.getValue()) {
                 slave.setDirection(Servo.Direction.REVERSE);
-            } else {
+            }
+            else if (slave != null) {
                 slave.setDirection(Servo.Direction.FORWARD);
             }
-        } else {
-            if (masterReverse) {
-                master.setDirection(Servo.Direction.REVERSE);
-            } else {
+        }
+        else {
+            if (master != null) {
                 master.setDirection(Servo.Direction.FORWARD);
             }
-            if (slaveReverse) {
-                slave.setDirection(Servo.Direction.REVERSE);
-            } else {
+            if (slave != null) {
                 slave.setDirection(Servo.Direction.FORWARD);
             }
         }
 
-        slavePos = slave.getPosition();
-        masterPos = master.getPosition();
+        if (master != null && reverseForceMaster) {
+            master.setDirection(Servo.Direction.REVERSE);
+        }
+        if (slave != null && reverseForceSlave) {
+            slave.setDirection(Servo.Direction.REVERSE);
+        }
 
-        if (mode == Mode.MASTER_ONLY) {
-            mode = Mode.SLAVE_ONLY;
-            master.getController().pwmDisable();
-        } else if (mode == Mode.SLAVE_ONLY) {
-            mode = Mode.BOTH;
-        } else if (mode == Mode.BOTH) {
-            mode = Mode.MASTER_ONLY;
-            slave.getController().pwmDisable();
+        if(master != null && slave != null) {
+            posSlave = slave.getPosition();
+            posMaster = master.getPosition();
+
+            if (mode == Mode.MASTER_ONLY) {
+                mode = Mode.SLAVE_ONLY;
+                master.getController().pwmDisable();
+            } else if (mode == Mode.SLAVE_ONLY) {
+                mode = Mode.BOTH;
+            } else if (mode == Mode.BOTH) {
+                mode = Mode.MASTER_ONLY;
+                slave.getController().pwmDisable();
+            }
         }
         telemetry.update();
 
         waitForStart();
 
         // Scan servo till stop pressed.
-        while(opModeIsActive()) {
+        while(opModeIsActive() && master != null && slave != null) {
 
             if(gamepad1.a) {
                 if(mode == Mode.MASTER_ONLY)     {
@@ -109,35 +126,35 @@ public class ServoPairTest extends LinearOpMode {
 
             // Adjust servo position with Left/Right bumpers
             if (gamepad1.left_bumper) {
-                if(mode == Mode.MASTER_ONLY)      { masterPos = Math.max(0.00, masterPos - incrementStep); }
-                else if(mode == Mode.SLAVE_ONLY)  { slavePos = Math.max(0.00, slavePos - incrementStep);   }
+                if(mode == Mode.MASTER_ONLY)      { posMaster = Math.max(0.00, posMaster - incrementStep); }
+                else if(mode == Mode.SLAVE_ONLY)  { posSlave = Math.max(0.00, posSlave - incrementStep);   }
                 else if(mode == Mode.BOTH)        {
-                    slavePos  = Math.max(0.00, slavePos - incrementStep);
-                    masterPos = Math.max(0.00, masterPos - incrementStep);
+                    posSlave  = Math.max(0.00, posSlave - incrementStep);
+                    posMaster = Math.max(0.00, posMaster - incrementStep);
                 }
             } else if (gamepad1.right_bumper) {
-                if(mode == Mode.MASTER_ONLY)      { masterPos = Math.min(1.00, masterPos + incrementStep); }
-                else if(mode == Mode.SLAVE_ONLY)  { slavePos = Math.min(1.00, slavePos + incrementStep);   }
+                if(mode == Mode.MASTER_ONLY)      { posMaster = Math.min(1.00, posMaster + incrementStep); }
+                else if(mode == Mode.SLAVE_ONLY)  { posSlave = Math.min(1.00, posSlave + incrementStep);   }
                 else if(mode == Mode.BOTH)        {
-                    slavePos  = Math.min(1.00, slavePos + incrementStep);
-                    masterPos = Math.min(1.00, masterPos + incrementStep);
+                    posSlave  = Math.min(1.00, posSlave + incrementStep);
+                    posMaster = Math.min(1.00, posMaster + incrementStep);
                 }
             }
 
             // Set the current servo to the target position
-            if(mode == Mode.MASTER_ONLY)      { master.setPosition(masterPos); }
-            else if(mode == Mode.SLAVE_ONLY)  { slave.setPosition(slavePos);   }
+            if(mode == Mode.MASTER_ONLY)      { master.setPosition(posMaster); }
+            else if(mode == Mode.SLAVE_ONLY)  { slave.setPosition(posSlave);   }
             else if(mode == Mode.BOTH)        {
-                master.setPosition(masterPos);
-                slave.setPosition(slavePos);
+                master.setPosition(posMaster);
+                slave.setPosition(posSlave);
             }
 
             // Display telemetry
             telemetry.addData("1-Mode", mode);
-            telemetry.addData("2-Master", masterName);
-            telemetry.addData("2-Master Position", masterPos);
-            telemetry.addData("3-Slave", slaveName);
-            telemetry.addData("3-Slave Position", slavePos);
+            telemetry.addData("2-Master", nameMaster);
+            telemetry.addData("2-Master Position", posMaster);
+            telemetry.addData("3-Slave", nameSlave);
+            telemetry.addData("3-Slave Position", posSlave);
             telemetry.update();
 
             sleep(sleepMs);

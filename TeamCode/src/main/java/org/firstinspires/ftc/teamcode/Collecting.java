@@ -94,11 +94,11 @@ public class Collecting {
     public void move() {
 
         if (gamepad.left_bumper)       {
-            logger.addLine(String.format("==> EXT OUT SLD"));
+            logger.addLine("==> EXT OUT SLD");
             outtakeSlides.extend(1.0);
         }
         else if (gamepad.right_bumper) {
-            logger.addLine(String.format("==> RLB OUT SLD"));
+            logger.addLine("==> RLB OUT SLD");
             outtakeSlides.rollback(1.0);
         }
         else                            {
@@ -106,11 +106,11 @@ public class Collecting {
         }
 
         if(gamepad.left_trigger > 0 )                {
-            logger.addLine(String.format("==> EXT IN SLD"));
+            logger.addLine("==> EXT IN SLD");
             intakeSlides.extend(gamepad.left_trigger);
         }
         else if (gamepad.right_trigger > 0)          {
-            logger.addLine(String.format("==> RLB IN SLD"));
+            logger.addLine("==> RLB IN SLD");
             intakeSlides.rollback(gamepad.right_trigger);
         }
         else                                         {
@@ -131,67 +131,52 @@ public class Collecting {
             if(!wasYPressed){ outtakeElbow.moveDown(); }
             wasYPressed = true;
         }
-        else {
-            wasYPressed = false;
-        }
+        else { wasYPressed = false; }
 
         if(gamepad.a) {
             logger.addLine(String.format("==> MUP OUT ARM : " + outtakeElbow.getPosition()));
             if(!wasAPressed){ outtakeElbow.moveUp();}
             wasAPressed = true;
         }
-        else {
-            wasAPressed = false;
-        }
+        else { wasAPressed = false; }
 
         if(gamepad.b) {
             logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
             if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.CENTER);}
             wasBPressed = true;
         }
-        else {
-            wasBPressed = false;
-        }
+        else { wasBPressed = false; }
 
         if(gamepad.dpad_left) {
             logger.addLine(String.format("==> SWT IN CLW : " + intakeClaw.getPosition()));
             if(!wasDPadLeftPressed){  intakeClaw.switchPosition(); }
             wasDPadLeftPressed = true;
         }
-        else {
-            wasDPadLeftPressed = false;
-        }
+        else { wasDPadLeftPressed = false; }
 
         if(gamepad.dpad_up)     {
             logger.addLine(String.format("==> MDW IN ARM : " + intakeArm.getPosition()));
             if(!wasDPadUpPressed){ intakeElbow.moveDown(); intakeArm.moveDown(); }
             wasDPadUpPressed = true;
         }
-        else {
-            wasDPadUpPressed = false;
-        }
+        else { wasDPadUpPressed = false; }
 
         if(gamepad.dpad_down) {
             logger.addLine(String.format("==> MUP IN ARM : " + intakeArm.getPosition()));
             if(!wasDPadDownPressed){ intakeArm.moveUp(); intakeElbow.moveUp();}
             wasDPadDownPressed = true;
         }
-        else {
-            wasDPadDownPressed = false;
-        }
+        else { wasDPadDownPressed = false; }
 
         if(gamepad.dpad_right) {
             logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
             if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.CENTER);}
             wasDPadRightPressed = true;
         }
-        else {
-            wasDPadRightPressed = false;
-        }
+        else { wasDPadRightPressed = false; }
 
         intakeWrist.turn(gamepad.left_stick_x);
         outtakeWrist.turn(gamepad.right_stick_x);
-
 
     }
 }

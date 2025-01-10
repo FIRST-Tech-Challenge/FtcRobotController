@@ -10,7 +10,6 @@ package org.firstinspires.ftc.teamcode.configurations;
 /* Qualcomm includes */
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
-
 public class ConfImu {
 
     private String                                          m_name = "";

@@ -35,6 +35,15 @@ public class ConfMotor {
     public void addHw(String Name, boolean ShallReverse) { mHw.put(Name,ShallReverse);  }
 
     public Map<String, Boolean> getHw()                  { return mHw;}
+    public Map.Entry<String, Boolean> getHw(int index)         {
+        Map.Entry<String, Boolean> result = null;
+        int iHw = 0;
+        for (Map.Entry<String, Boolean> pos : mHw.entrySet()) {
+            if(iHw == index) { result = pos; }
+            iHw ++;
+        }
+        return result;
+    }
     public boolean              shallMock()              { return mShallMock; }
 
 }
