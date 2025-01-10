@@ -34,6 +34,9 @@ public class AutoRobot {
     private static final double WHEEL_DIAMETER = 48; // In milimeters
     private static final double TICKS_PER_REVOLUTION = 1120;
 
+    private static final int TICKS_PER_INCH = 45;
+
+
     Telemetry telemetry;
     //private double current robotX; unable to reliably solve
     //private double current robotY;
@@ -151,7 +154,114 @@ public class AutoRobot {
 
     }
 
-    //drives forward for a certain amount of seconds
+    //drives forward for a certain amount of inches
+
+    public void driveForwardsInches(double inches) {
+        driveForwardsInches(inches, 1);
+    }
+
+    public void driveForwardsInches(double inches, double powerMultiplier) {
+        final int DEFAULTMOVEMENTCURVE = MovementCurves.EXPEASEOUT;
+        driveForwardsInches(inches, powerMultiplier, DEFAULTMOVEMENTCURVE);
+    }
+
+    public void driveForwardsInches(double inches, double powerMultiplier, int movementCurve) {
+        //if the wheels get unaligned this will fix it
+        final double ADJUSTVALUE = .01;
+        final double LOWTHRESHOLD = .25;
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int traveledDistance = 0;
+        final double TOTALDISTANCE = inches*TICKS_PER_INCH;
+        double percentTraveled;
+
+        double power;
+        double leftAdjust;
+        double rightAdjust;
+
+        while (traveledDistance < TOTALDISTANCE) {
+
+            percentTraveled = ((double)traveledDistance)/TOTALDISTANCE;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(percentTraveled);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(percentTraveled);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(percentTraveled);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(percentTraveled);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(percentTraveled);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(percentTraveled);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(percentTraveled);
+                    break;
+                default:
+                    power = MovementCurves.linear(percentTraveled);
+
+            }
+
+            power *= powerMultiplier;
+
+            if (frontRightDrive.getCurrentPosition() < frontLeftDrive.getCurrentPosition()) {
+                leftAdjust = ADJUSTVALUE;
+                rightAdjust = 0;
+            } else if (frontLeftDrive.getCurrentPosition() < frontRightDrive.getCurrentPosition()) {
+                rightAdjust = ADJUSTVALUE;
+                leftAdjust = 0;
+            } else {
+                leftAdjust = 0;
+                rightAdjust = 0;
+            }
+
+
+
+            if (TOTALDISTANCE-traveledDistance < TICKS_PER_INCH) {
+                power = .1;
+            } else if (TOTALDISTANCE-traveledDistance < 3*TICKS_PER_INCH){
+                power = .1;
+            } else if (power < LOWTHRESHOLD) {
+                power = LOWTHRESHOLD;
+            }
+
+            //assign power to wheels
+            frontRightDrive.setPower(power - rightAdjust);
+            frontLeftDrive.setPower(power - leftAdjust);
+            backLeftDrive.setPower(power - leftAdjust);
+            backRightDrive.setPower(power - rightAdjust);
+
+            traveledDistance = (frontLeftDrive.getCurrentPosition()+frontRightDrive.getCurrentPosition())/2;
+        }
+
+        frontRightDrive.setPower(0);
+        frontLeftDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+
+    }
 
 
     //drives forward for a certain amount of seconds
