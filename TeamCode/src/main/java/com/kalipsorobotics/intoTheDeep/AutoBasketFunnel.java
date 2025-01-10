@@ -75,7 +75,7 @@ public class AutoBasketFunnel extends LinearOpMode {
 
 
         //================begin of first basket====================
-        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 785);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 795);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
         sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
