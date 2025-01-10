@@ -46,4 +46,6 @@ dependencies {
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation "com.github.jdhs-ftc:road-runner-ftc-otos:8e83c17ff7"
     implementation project(':RoadRunnerTrajectories')
+    testImplementation('junit:junit:4.13.2')
+//
 }
