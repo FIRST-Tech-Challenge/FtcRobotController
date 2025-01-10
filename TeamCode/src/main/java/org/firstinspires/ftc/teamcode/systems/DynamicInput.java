@@ -99,6 +99,8 @@ public class DynamicInput {
         public final double boostAmount, brakeAmount;
         public final boolean linearActuatorExtend, linearActuatorRetract;
         public final boolean toggleClaw;
+        public final boolean shoulderUp, shoulderDown;
+
 
         public Actions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
@@ -127,12 +129,14 @@ public class DynamicInput {
             this.linearActuatorExtend = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorExtend);
             this.linearActuatorRetract = getButtonState(subCtrl, subSettings.buttonMapping.linearActuatorRetract);
             this.toggleClaw = getButtonState(subCtrl, subSettings.buttonMapping.clawToggle);
+            this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown);
+            this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp);
+
         }
     }
 
     public static class ContextualActions extends Actions {
-        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp, justToggleClaw;
-        public final boolean shoulderUp, shoulderDown;
+        public final boolean justExtendHorizontal, justRetractHorizontal, justRetractVertical, justExtendVertical, justWristUp, justToggleClaw, justShoulderUp, justShoulderDown;
 
         public ContextualActions(Gamepad mainCtrl, Settings.DefaultGamepadSettings mainSettings,
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings,
@@ -145,9 +149,8 @@ public class DynamicInput {
             this.justExtendVertical = extendVertical && !prevExtendVertical;
             this.justWristUp = wristUp && !prevWrist;
             this.justToggleClaw = toggleClaw && !prevToggleClaw;
-
-            this.shoulderUp = getButtonState(subCtrl, subSettings.buttonMapping.shoulderUp) && !prevShoulderUp;
-            this.shoulderDown = getButtonState(subCtrl, subSettings.buttonMapping.shoulderDown) && !prevShoulderDown;
+            this.justShoulderUp = shoulderUp && !prevShoulderUp;
+            this.justShoulderDown = shoulderDown && !prevShoulderDown;
         }
     }
 

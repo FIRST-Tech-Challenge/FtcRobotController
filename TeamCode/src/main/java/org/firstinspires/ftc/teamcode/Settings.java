@@ -54,15 +54,15 @@ public class Settings {
             @Config
             public static class Claw {
                 /** Values for open and closed positions on the outtake claw */
-                public static double OPEN = 0.3;
+                public static double OPEN = 0.2;
                 public static double CLOSED = 0;
             }
 
             @Config
             public static class Wrist {
-                public static double[] HORIZONTAL_POSITION = {0.7, 1} ;
-//                public static double[] CHAMBER_POSITION = {0.22, 0.35};
-                public static double[] VERTICAL_POSITION = {-.1, 0};
+                public static double[] HORIZONTAL_POSITION = {0.65, 0.93} ;
+                public static double[] CHAMBER_POSITION = {0.3, 0.43};
+                public static double[] VERTICAL_POSITION = {0, 0.1};
             }
             @Config
             public static class Linkage {
@@ -118,7 +118,7 @@ public class Settings {
             public static int HIGH_BASKET = 1700;
 
             // Motor power settings
-            public static double MOVEMENT_POWER = 0.7;
+            public static double MOVEMENT_POWER = 0.5;
         }
 
         @Config
@@ -275,11 +275,11 @@ public class Settings {
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
-        public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
+        public final GamepadButton clawToggle = GamepadButton.LEFT_BUMPER;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;
-        public GamepadButton wristDown = GamepadButton.LEFT_BUMPER;
+        public GamepadButton wristDown = GamepadButton.START;
 
         // Ascend extensor controls
         public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;
