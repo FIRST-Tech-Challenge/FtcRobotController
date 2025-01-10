@@ -83,7 +83,7 @@ public class MovementCurves {
         if(!inRange(x)) {
             return -1;
         }
-        return Math.pow(Math.E, -3*x);
+        return Math.pow(2, -4*x);
     }
 
 
