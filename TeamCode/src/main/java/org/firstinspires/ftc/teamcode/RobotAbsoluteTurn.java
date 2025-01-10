@@ -4,10 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.libraries.Vector2D.Vector2D;
+import org.firstinspires.ftc.teamcode.libraries.vector.Vector2D;
 import org.firstinspires.ftc.teamcode.libraries.MovementCurves.MovementCurves;
-import static java.lang.Math.*;
-
 
 
 @TeleOp

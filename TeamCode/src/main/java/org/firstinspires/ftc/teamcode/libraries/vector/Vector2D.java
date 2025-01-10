@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.libraries.Vector2D;
+package org.firstinspires.ftc.teamcode.libraries.vector;
 
 public class Vector2D {
     private double i;  // X component
