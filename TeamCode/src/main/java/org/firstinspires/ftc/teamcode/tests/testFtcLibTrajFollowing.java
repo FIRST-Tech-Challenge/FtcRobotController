@@ -77,13 +77,14 @@ public class testFtcLibTrajFollowing extends OpMode {
         List<List<Pose2d>> pointlist = new ArrayList<>();
 
         pointlist.add(new ArrayList<>());
-        pointlist.get(0).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.get(0).add(new Pose2d(new Translation2d(.5, 0), new Rotation2d(0)));
+        pointlist.get(0).add(new Pose2d(new Translation2d(-1.65, -0.3), new Rotation2d(0)));//I'm not sure if axes are right
+        pointlist.get(0).add(new Pose2d(new Translation2d(-1.52, -0.3), new Rotation2d(0)));//I'm not sure if axes are right
 
         // uncomment this once tuning rot PID is done
         // also probably tune tPID as well - often overshoots and then slowly goes back
         pointlist.add(new ArrayList<>());
-        pointlist.get(1).add(new Pose2d(new Translation2d(0.5,0), new Rotation2d(Math.PI)));
+        pointlist.get(1).add(new Pose2d(new Translation2d(-1.52,-0.3), new Rotation2d(0)));
+        //THIS NEXT POSITION NEEDS TO BE CHANGED
         pointlist.get(1).add(new Pose2d(new Translation2d(0.5, 0.5), new Rotation2d(Math.PI)));
 
 
