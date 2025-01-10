@@ -5,15 +5,18 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.AutoMecanumDriveTrai
 
 public class ForwardDistanceCommand extends SounderBotCommandBase {
 
-    public ForwardDistanceCommand(AutoMecanumDriveTrain driveTrain, double expectedDistance, long timeout, Telemetry telemetry) {
+    public ForwardDistanceCommand(AutoMecanumDriveTrain driveTrain, double expectedDistance, double minDistance, long timeout, Telemetry telemetry) {
         super(timeout);
 
         this.driveTrain = driveTrain;
         this.telemetry = telemetry;
         this.expectedDistance = expectedDistance;
+        this.minDistance = minDistance;
     }
 
     double expectedDistance;
+
+    double minDistance;
 
     AutoMecanumDriveTrain driveTrain;
     Telemetry telemetry;
@@ -29,7 +32,7 @@ public class ForwardDistanceCommand extends SounderBotCommandBase {
         telemetry.addData("Forward distance", distance);
         telemetry.update();
 
-        return Math.abs(distance - expectedDistance) < 10;
+        return Math.abs(distance - expectedDistance) < 10 || distance < this.minDistance;
     }
 
     boolean finished = false;

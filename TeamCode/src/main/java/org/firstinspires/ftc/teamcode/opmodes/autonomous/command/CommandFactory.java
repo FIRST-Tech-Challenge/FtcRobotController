@@ -85,16 +85,16 @@ public class CommandFactory {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut);
     }
 
-    public ForwardDistanceCommand checkForwardDistance(double expectedDistance, long timeOut) {
-        return new ForwardDistanceCommand(driveTrain, 90, timeOut, telemetry);
+    public ForwardDistanceCommand checkForwardDistance(double expectedDistance, double minDistance, long timeOut) {
+        return new ForwardDistanceCommand(driveTrain, expectedDistance, minDistance, timeOut, telemetry);
     }
 
-    public AlignDriveTrainToSpecimenDelivery alignToSpecimenDelivery(double expectedDistannce, long timeOut) {
-        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistannce, timeOut, telemetry);
+    public AlignDriveTrainToSpecimenDelivery alignToSpecimenDelivery(double expectedDistannce, double absoluteMin, long timeOut) {
+        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistannce, absoluteMin, timeOut, telemetry);
     }
 
-    public AlignDriveTrainToSpecimenDelivery alignToSpecimenIntake(double expectedDistanncne, long timeOut) {
-        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistanncne, timeOut, telemetry);
+    public AlignDriveTrainToSpecimenDelivery alignToSpecimenIntake(double expectedDistanncne, double absoluteMin, long timeOut) {
+        return new AlignDriveTrainToSpecimenDelivery(driveTrain, expectedDistanncne, absoluteMin, timeOut, telemetry);
     }
 
     public ExtendSpecimenSlider extendSpecimenSlider(long timeOut) {

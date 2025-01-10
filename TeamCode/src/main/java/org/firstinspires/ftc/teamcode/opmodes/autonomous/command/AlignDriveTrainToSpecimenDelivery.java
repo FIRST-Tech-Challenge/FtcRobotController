@@ -6,18 +6,21 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
 public class AlignDriveTrainToSpecimenDelivery extends SounderBotCommandBase {
 
-    public AlignDriveTrainToSpecimenDelivery(AutoMecanumDriveTrain driveTrain, double expectedDistance, long timeout, Telemetry telemetry) {
+    public AlignDriveTrainToSpecimenDelivery(AutoMecanumDriveTrain driveTrain, double expectedDistance, double absoluteMin, long timeout, Telemetry telemetry) {
         super(timeout);
 
         this.driveTrain = driveTrain;
         this.telemetry = telemetry;
         this.expectedDistance = expectedDistance;
+        this.absoluteMin = absoluteMin;
     }
 
     AutoMecanumDriveTrain driveTrain;
     Telemetry telemetry;
 
     double expectedDistance;
+
+    double absoluteMin;
 
     @Override
     public void initialize() {
@@ -36,12 +39,25 @@ public class AlignDriveTrainToSpecimenDelivery extends SounderBotCommandBase {
         telemetry.addData("Forward distance", distance);
         telemetry.update();
 
-        if(Math.abs(distance - expectedDistance) < 15) {
-            driveTrain.stop();
-            finished = true;
-        } else {
-            double power = Math.signum(distance - expectedDistance) * .15;
-            driveTrain.setWheelsPower(power, power, power, power);
+        double absError = Math.abs(distance - expectedDistance);
+
+        if(!finished) {
+
+            if (absError < 15) {
+                driveTrain.stop();
+                finished = true;
+            } else if (absError < 50) {
+                double power = Math.signum(distance - expectedDistance) * .13;
+                driveTrain.setWheelsPower(power, power, power, power);
+            } else {
+                double power = Math.signum(distance - expectedDistance) * .23;
+                driveTrain.setWheelsPower(power, power, power, power);
+            }
+
+            if (distance <= absoluteMin) {
+                driveTrain.stop();
+                finished = true;
+            }
         }
     }
 }
