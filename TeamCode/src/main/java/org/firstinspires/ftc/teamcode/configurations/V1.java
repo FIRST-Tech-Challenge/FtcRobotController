@@ -68,7 +68,7 @@ public class V1 extends Configuration {
         m_servos.get("intake-wrist-roll").setPosition("max", 0.82);
         m_servos.get("intake-wrist-roll").setPosition("min", 0.27);
 
-        m_servos.get("intake-claw").setPosition("closed", 1);
+        m_servos.get("intake-claw").setPosition("closed", 1.0);
         m_servos.get("intake-claw").setPosition("microrelease", 0.98);
         m_servos.get("intake-claw").setPosition("open", 0.62);
 
