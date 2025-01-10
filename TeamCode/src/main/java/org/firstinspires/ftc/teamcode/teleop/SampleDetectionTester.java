@@ -27,9 +27,22 @@ public class SampleDetectionTester extends LinearOpMode {
         waitForStart();
         while(opModeIsActive())
         {
+            String intakeStatus = sd.getIntakeString();
 
+            telemetry.addData("Intake Status", intakeStatus);
+
+            if(!intakeStatus.equals("NOTHING"))
+            {
+                telemetry.addLine(intakeStatus);
+                telemetry.addLine(intakeStatus);
+                telemetry.addLine(intakeStatus);
+                telemetry.addLine(intakeStatus);
+                telemetry.addLine(intakeStatus);
+            }
+            telemetry.update();
+            sleep(50);
         }
-
+        visionPortal.close();
 
     }
 }
