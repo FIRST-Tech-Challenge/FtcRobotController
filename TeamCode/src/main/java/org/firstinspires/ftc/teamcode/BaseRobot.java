@@ -173,7 +173,7 @@ public class BaseRobot {
 
             if (contextualActions.intakeIn) {
                 intake.geckoWheels.intake();
-            } else if (contextualActions.intakeOut && intake.wrist.position() != Wrist.Position.VERTICAL) {
+            } else if (contextualActions.intakeOut) {
                 intake.geckoWheels.outtake();
             } else {
                 intake.geckoWheels.stop();
