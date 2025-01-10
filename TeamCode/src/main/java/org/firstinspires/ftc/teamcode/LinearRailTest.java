@@ -7,6 +7,9 @@ public class LinearRailTest extends LinearOpMode {
   // SERVO ORDER: Linear Rail, Claw
   public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A")); 
   public List<Int> servoRotations = List.of(0, 0)
+
+  // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
+
   public List<float> minRot = List.of(0, 0)
   public List<float> maxRot = List.of(4, 4)
   
@@ -33,12 +36,17 @@ public class LinearRailTest extends LinearOpMode {
 
   public static void ConfineServoBoundaries() {
     for (int i=0; i<servoRotations.Length; i++) {
-      if (servoRotations.get(i) <= minRot.get(i)) {
-        servoRotations.get(i) = minRot.get(i);
+      if (servoRotations.get(i) != 9999) {
+        if (servoRotations.get(i) <= minRot.get(i)) {
+          servoRotations.get(i) = minRot.get(i);
+        }
       }
-
-      if (servoRotations.get(i) >= maxRot.get(i)) {
-        servoRotations.get(i) = maxRot.get(i);
+      
+     
+      if (servoRotations.get(i) != -9999) {
+        if (servoRotations.get(i) >= maxRot.get(i)) {
+          servoRotations.get(i) = maxRot.get(i);
+        } 
       }
     }
   }
