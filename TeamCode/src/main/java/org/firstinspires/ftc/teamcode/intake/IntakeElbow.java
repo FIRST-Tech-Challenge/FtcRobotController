@@ -22,12 +22,19 @@ import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class IntakeElbow {
 
-    enum Position {
+    public enum Position {
         TRANSFER,
         OVER_SUBMERSIBLE,
         LOOKING,
         GRABBING
     };
+
+    private static final Map<String, Position> sConfToPosition = Map.of(
+        "transfer", Position.TRANSFER,
+        "overSub",  Position.OVER_SUBMERSIBLE ,
+        "look",     Position.LOOKING,
+        "grab",     Position.GRABBING
+    );
 
     Telemetry               mLogger;
 
@@ -35,7 +42,7 @@ public class IntakeElbow {
 
     Position                mPosition;
     ServoComponent          mServo;
-    Map<String, Double>     mPositions   = new LinkedHashMap<>();
+    Map<Position, Double>   mPositions   = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
 
@@ -56,7 +63,14 @@ public class IntakeElbow {
             else if (pitch.getHw().size() == 1) { mServo = new ServoSingle(pitch, hwm, "intake-elbow-pitch", logger); }
             else if (pitch.getHw().size() == 2) { mServo = new ServoCoupled(pitch, hwm, "intake-elbow-pitch", logger); }
 
-            mPositions = pitch.getPositions();
+            mPositions.clear();
+            Map<String, Double> confPosition = pitch.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                }
+            }
+
             if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
@@ -65,55 +79,28 @@ public class IntakeElbow {
         else        { logger.addLine("==>  IN ELB : KO : " + status); }
 
         // Initialize position
-        this.setTransfer();
+        this.setPosition(Position.TRANSFER);
 
     }
 
-    public void setTransfer() {
+    public void setPosition(Position position) {
 
-        if( mPositions.containsKey("transfer") && mReady) {
-            mServo.setPosition(mPositions.get("transfer"));
-            mPosition = Position.TRANSFER;
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
         }
-    }
-
-    public void setOverSubmersible() {
-
-        if( mPositions.containsKey("overSub") && mReady) {
-            mServo.setPosition(mPositions.get("overSub"));
-            mPosition = Position.OVER_SUBMERSIBLE;
-        }
-
-    }
-
-    public void setLooking() {
-
-        if( mPositions.containsKey("look") && mReady) {
-            mServo.setPosition(mPositions.get("look"));
-            mPosition = Position.LOOKING;
-        }
-
-    }
-
-    public void setGrabbing() {
-
-        if( mPositions.containsKey("grab") && mReady) {
-            mServo.setPosition(mPositions.get("grab"));
-            mPosition = Position.GRABBING;
-        }
-
     }
 
     public void moveUp() {
-        if(mPosition == Position.GRABBING)              { this.setLooking();         }
-        else if(mPosition == Position.LOOKING)          { this.setOverSubmersible(); }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setTransfer();        }
+        if(mPosition == Position.GRABBING)              { this.setPosition(Position.LOOKING);          }
+        else if(mPosition == Position.LOOKING)          { this.setPosition(Position.OVER_SUBMERSIBLE); }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.TRANSFER);         }
     }
 
     public void moveDown() {
-        if(mPosition == Position.LOOKING)               { this.setGrabbing();        }
-        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setLooking();         }
-        else if(mPosition == Position.TRANSFER)         { this.setOverSubmersible(); }
+        if(mPosition == Position.LOOKING)               { this.setPosition(Position.GRABBING);         }
+        else if(mPosition == Position.OVER_SUBMERSIBLE) { this.setPosition(Position.LOOKING);          }
+        else if(mPosition == Position.TRANSFER)         { this.setPosition(Position.OVER_SUBMERSIBLE); }
     }
 
 }

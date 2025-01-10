@@ -23,23 +23,42 @@ import org.firstinspires.ftc.teamcode.components.ServoComponent;
 import org.firstinspires.ftc.teamcode.components.ServoMock;
 import org.firstinspires.ftc.teamcode.components.ServoCoupled;
 import org.firstinspires.ftc.teamcode.components.ServoSingle;
+import org.firstinspires.ftc.teamcode.intake.IntakeWrist;
 
 public class OuttakeWrist {
 
-    enum Position {
+    public enum Position {
         CENTER,
+        MIN,
+        MAX,
         UNDEFINED
     };
 
-    Telemetry           mLogger;
+    private static final Map<String, Position> sConfToPosition = Map.of(
+            "center", Position.CENTER,
+            "min", Position.MIN,
+            "max", Position.MAX
+    );
 
-    boolean             mReady;
-    Position            mPosition;
-    double              mDeltaPosition = 0;
-    ServoComponent      mServo;
-    Map<String, Double> mPositions = new LinkedHashMap<>();
+    public static final double sIncrementRatio = 0.01;
+
+    Telemetry             mLogger;
+
+    boolean               mReady;
+    Position              mPosition;
+    double                mDeltaPosition = 0;
+    ServoComponent        mServo;
+    Map<Position, Double> mPositions = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
+
+    public double   getServo() {
+        double result = -1.0;
+        if (mPositions.containsKey(Position.CENTER)) {
+            result = mPositions.get(Position.CENTER) + mDeltaPosition;
+        }
+        return result;
+    }
 
     public void setHW(Configuration config, HardwareMap hwm, Telemetry logger) {
 
@@ -58,7 +77,14 @@ public class OuttakeWrist {
             else if (roll.getHw().size() == 1) { mServo = new ServoSingle(roll, hwm, "outtake-wrist-roll", logger); }
             else if (roll.getHw().size() == 2) { mServo = new ServoCoupled(roll, hwm, "outtake-wrist-roll", logger); }
 
-            mPositions = roll.getPositions();
+            mPositions.clear();
+            Map<String, Double> confPosition = roll.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                }
+            }
+
             if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
@@ -67,31 +93,33 @@ public class OuttakeWrist {
         else        { logger.addLine("==>  OUT WRS : KO : " + status); }
 
         // Initialize position
-        this.setCenter();
+        this.setPosition(Position.CENTER);
     }
 
-    public void setCenter() {
+    public void setPosition(Position position) {
 
-        if( mPositions.containsKey("center") && mReady) {
-            mServo.setPosition(mPositions.get("center"));
-            mPosition = Position.CENTER;
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
             mDeltaPosition = 0;
         }
-
     }
 
     public void turn(double increment)
     {
-        if( mPositions.containsKey("center") &&
-                mPositions.containsKey("min") &&
-                mPositions.containsKey("max") &&
+        if( mPositions.containsKey(Position.CENTER) &&
+                mPositions.containsKey(Position.MIN) &&
+                mPositions.containsKey(Position.MAX) &&
                 mReady) {
 
-            mDeltaPosition += increment;
-            double newPosition = mPositions.get("center") + mDeltaPosition;
+            mDeltaPosition += increment * sIncrementRatio;
+            double newPosition = mPositions.get(Position.CENTER) + mDeltaPosition;
 
-            newPosition = max(newPosition, mPositions.get("min"));
-            newPosition = min(newPosition, mPositions.get("max"));
+            newPosition = max(newPosition, mPositions.get(Position.MIN));
+            newPosition = min(newPosition, mPositions.get(Position.MAX));
+
+            mLogger.addLine("" + newPosition);
+            mLogger.addLine("" + mDeltaPosition);
 
             mServo.setPosition(newPosition);
 

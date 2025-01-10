@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
 /* Qualcomm includes */
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /* FTC Controller includes */
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/* Local includes */
+/* Configuration includes */
 import org.firstinspires.ftc.teamcode.configurations.Configuration;
+
+/* Intake includes */
 import org.firstinspires.ftc.teamcode.intake.IntakeSlides;
 import org.firstinspires.ftc.teamcode.intake.IntakeArm;
 import org.firstinspires.ftc.teamcode.intake.IntakeElbow;
 import org.firstinspires.ftc.teamcode.intake.IntakeWrist;
 import org.firstinspires.ftc.teamcode.intake.IntakeClaw;
+
+/* Outtake includes */
 import org.firstinspires.ftc.teamcode.outtake.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.outtake.OuttakeElbow;
 import org.firstinspires.ftc.teamcode.outtake.OuttakeWrist;
@@ -145,7 +146,7 @@ public class Collecting {
 
         if(gamepad.b) {
             logger.addLine(String.format("==> CENTER OUT WRS : " + outtakeWrist.getPosition()));
-            if(!wasBPressed){ outtakeWrist.setCenter();}
+            if(!wasBPressed){ outtakeWrist.setPosition(OuttakeWrist.Position.CENTER);}
             wasBPressed = true;
         }
         else {
@@ -181,15 +182,15 @@ public class Collecting {
 
         if(gamepad.dpad_right) {
             logger.addLine(String.format("==> CENTER IN WRS : " + intakeWrist.getPosition()));
-            if(!wasDPadRightPressed){ intakeWrist.setCenter();}
+            if(!wasDPadRightPressed){ intakeWrist.setPosition(IntakeWrist.Position.CENTER);}
             wasDPadRightPressed = true;
         }
         else {
             wasDPadRightPressed = false;
         }
 
-        intakeWrist.turn(gamepad.left_stick_x * 0.05);
-        outtakeWrist.turn(gamepad.right_stick_x * 0.05);
+        intakeWrist.turn(gamepad.left_stick_x);
+        outtakeWrist.turn(gamepad.right_stick_x);
 
 
     }

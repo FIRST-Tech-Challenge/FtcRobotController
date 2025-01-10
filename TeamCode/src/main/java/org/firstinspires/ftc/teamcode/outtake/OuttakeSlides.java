@@ -44,6 +44,7 @@ public class OuttakeSlides {
             else {
                 mMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 mMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                
             }
         }
 

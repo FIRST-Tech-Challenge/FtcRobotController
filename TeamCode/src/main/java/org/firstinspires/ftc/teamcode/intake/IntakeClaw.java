@@ -22,17 +22,22 @@ import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class IntakeClaw {
 
-    enum Position {
+    public enum Position {
         OPEN,
         CLOSED
     };
 
-    Telemetry           mLogger;
+    private static final Map<String, Position> sConfToPosition = Map.of(
+        "open",  Position.OPEN,
+        "closed", Position.CLOSED
+    );
 
-    boolean             mReady;
-    Position            mPosition;
-    ServoComponent      mServo;
-    Map<String, Double> mPositions = new LinkedHashMap<>();
+    Telemetry             mLogger;
+
+    boolean               mReady;
+    Position              mPosition;
+    ServoComponent        mServo;
+    Map<Position, Double> mPositions = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
 
@@ -53,7 +58,14 @@ public class IntakeClaw {
             else if (move.getHw().size() == 1) { mServo = new ServoSingle(move, hwm, "intake-claw", logger); }
             else if (move.getHw().size() == 2) { mServo = new ServoCoupled(move, hwm, "intake-claw", logger); }
 
-            mPositions = move.getPositions();
+            mPositions.clear();
+            Map<String, Double> confPosition = move.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                }
+            }
+
             if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
@@ -62,30 +74,21 @@ public class IntakeClaw {
         else        { logger.addLine("==>  IN CLW : KO : " + status); }
 
         // Initialize position
-        this.setOpen();
+        this.setPosition(Position.OPEN);
     }
 
-    public void setOpen() {
+    public void setPosition(Position position) {
 
-        if( mPositions.containsKey("open") && mReady) {
-            mServo.setPosition(mPositions.get("open"));
-            mPosition = Position.OPEN;
-        }
-
-    }
-
-    public void setClosed() {
-
-        if( mPositions.containsKey("closed") && mReady) {
-            mServo.setPosition(mPositions.get("closed"));
-            mPosition = Position.CLOSED;
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
         }
 
     }
 
     public void switchPosition() {
-        if( mPosition == Position.OPEN) { this.setClosed(); }
-        else                            { this.setOpen();   }
+        if( mPosition == Position.OPEN) { this.setPosition(Position.CLOSED); }
+        else                            { this.setPosition(Position.OPEN);   }
     }
 
 }

@@ -22,12 +22,19 @@ import org.firstinspires.ftc.teamcode.components.ServoSingle;
 
 public class IntakeArm {
 
-    enum Position {
+    public enum Position {
         TRANSFER,
         OVER_SUBMERSIBLE,
         LOOKING,
         GRABBING
     };
+
+    private static final Map<String, Position> sConfToPosition = Map.of(
+        "transfer", Position.TRANSFER,
+        "overSub",  Position.OVER_SUBMERSIBLE ,
+        "look",     Position.LOOKING,
+        "grab",     Position.GRABBING
+    );
 
     Telemetry               mLogger;
 
@@ -35,7 +42,7 @@ public class IntakeArm {
 
     Position                mPosition;
     ServoComponent          mServo;
-    Map<String, Double>     mPositions   = new LinkedHashMap<>();
+    Map<Position, Double>   mPositions   = new LinkedHashMap<>();
 
     public Position getPosition() { return mPosition; }
 
@@ -56,7 +63,14 @@ public class IntakeArm {
             else if (pitch.getHw().size() == 1) { mServo = new ServoSingle(pitch, hwm, "intake-arm-pitch", logger); }
             else if (pitch.getHw().size() == 2) { mServo = new ServoCoupled(pitch, hwm, "intake-arm-pitch", logger); }
 
-            mPositions = pitch.getPositions();
+            mPositions.clear();
+            Map<String, Double> confPosition = pitch.getPositions();
+            for (Map.Entry<String, Double> pos : confPosition.entrySet()) {
+                if(sConfToPosition.containsKey(pos.getKey())) {
+                    mPositions.put(sConfToPosition.get(pos.getKey()), pos.getValue());
+                }
+            }
+
             if (!mServo.isReady()) { mReady = false; status += " HW";}
         }
 
@@ -71,21 +85,9 @@ public class IntakeArm {
 
     public void setPosition(Position position) {
 
-        if( mPositions.containsKey("transfer") && mReady && position == Position.TRANSFER) {
-            mServo.setPosition(mPositions.get("transfer"));
-            mPosition = Position.TRANSFER;
-        }
-        else if( mPositions.containsKey("overSub") && mReady && position == Position.OVER_SUBMERSIBLE) {
-            mServo.setPosition(mPositions.get("overSub"));
-            mPosition = Position.OVER_SUBMERSIBLE;
-        }
-        else if( mPositions.containsKey("look") && mReady && position == Position.LOOKING) {
-            mServo.setPosition(mPositions.get("look"));
-            mPosition = Position.LOOKING;
-        }
-        else if( mPositions.containsKey("grab") && mReady && position == Position.GRABBING) {
-            mServo.setPosition(mPositions.get("grab"));
-            mPosition = Position.GRABBING;
+        if( mPositions.containsKey(position) && mReady) {
+            mServo.setPosition(mPositions.get(position));
+            mPosition = position;
         }
     }
 
