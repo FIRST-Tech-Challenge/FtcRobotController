@@ -76,14 +76,14 @@ public class MovementCurves {
         if(!inRange(x)) {
             return -1;
         }
-        return Math.pow(Math.E, 4*x-4);
+        return Math.pow(Math.E, 3*x-3);
     }
     //follows an exponential curve, starts fast ends slow
     public static double exponentialEaseOut(double x) {
         if(!inRange(x)) {
             return -1;
         }
-        return Math.pow(Math.E, -4*x);
+        return Math.pow(Math.E, -3*x);
     }
 
 
