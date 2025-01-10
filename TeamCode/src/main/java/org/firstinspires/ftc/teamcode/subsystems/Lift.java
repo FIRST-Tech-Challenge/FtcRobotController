@@ -14,6 +14,10 @@ public class Lift{
     private DcMotor lift;
     private Encoder liftEncoder;
 
+    private int midPos = 1500;
+    private int topPos = 3000;
+    private int count = 0;
+
 //    public Lift(HardwareMap hw){
 //        this(hw, "lift", "lift");
 //    }
@@ -42,7 +46,8 @@ public class Lift{
     public void setPower(double power){
         lift.setPower(power);
     }
-    public double getPosition(){
+    public double getPosition()
+    {
         return liftEncoder.getPositionAndVelocity().position;
     }
     
@@ -53,6 +58,14 @@ public class Lift{
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(0.7);
 
+    }
+
+    public void lower()
+    {
+        lift.setTargetPosition(0);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(0.7);
+        count = 0;
     }
 
     public void setNewTargetPosition(int changePosition)
@@ -68,6 +81,27 @@ public class Lift{
     public double getLiftMotorPower()
     {
         return lift.getPower();
+    }
+
+    public void toggle()
+    {
+        if(count == 0)
+        {
+            setPosition(midPos);
+            count++;
+        }else if(count == 1)
+        {
+            setPosition(topPos);
+            count++;
+        }else if(count == 2)
+        {
+            setPosition(midPos);
+            count++;
+        }else if(count == 3)
+        {
+            setPosition(0);
+            count = 0;
+        }
     }
 
 

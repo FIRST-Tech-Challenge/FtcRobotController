@@ -21,16 +21,20 @@ public class PivotTester extends LinearOpMode {
         waitForStart();
         while(opModeIsActive())
         {
+            if(controller.left_bumper.onPress())
+            {
+                pos += i;
+                pivot.setPosition(pos);
+            }else if(controller.right_bumper.onPress())
+            {
+                pos -= i;
+                pivot.setPosition(pos);
+            }
+
 //            if(controller.left_bumper.onPress())
 //            {
-//                pos += i;
-//                pivot.setPosition(pos);
-//            }else if(controller.right_bumper.onPress())
-//            {
-//                pos -= i;
-//                pivot.setPosition(pos);
+//                pivot.toggle();
 //            }
-            pivot.toggle();
             telemetry.addData("Pivot Pos", pivot.getPosition());
             telemetry.update();
             controller.update();

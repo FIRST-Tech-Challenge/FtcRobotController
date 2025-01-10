@@ -48,19 +48,19 @@ public class Pivot {
 
     public void setZero()
     {
-        setPosition(0);
+        setPosition(80);
 
     }
 
     public void setMid()
     {
-        setPosition(-200);
+        setPosition(200);
     }
 
     public void setFull() throws InterruptedException {
-        setPosition(-400);
-        Thread.sleep(500);
-        setPosition(-500);
+        setPosition(400);
+        Thread.sleep(1000);
+        setPosition(525);
 
     }
 
@@ -73,7 +73,10 @@ public class Pivot {
         {
             setFull();
             count++;
-        }else{
+        }else if(count == 2){
+            setMid();
+            count++;
+        }else {
             setZero();
             count = 0;
         }

@@ -26,24 +26,24 @@ public class LiftTester extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
 
-//            liftPower = controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue();
-//            expectedManualLiftPos += (int)(-liftPower * 25);
-//            lift.setNewTargetPosition((expectedManualLiftPos));
-//            lift.setPower(liftPower);
+            liftPower = controller.left_trigger.getTriggerValue() - controller.right_trigger.getTriggerValue();
+            expectedManualLiftPos += (int)(-liftPower * 25);
+            lift.setNewTargetPosition((expectedManualLiftPos));
+            lift.setPower(liftPower);
 
-            if (controller.x.onPress())
-            {
-                lift.setPosition(specimenScore);
-            }else if(controller.y.onPress())
-            {
-                lift.setPosition(bucketScore);
-            }else if(gamepad1.dpad_up)
-            {
-                lift.setPosition(climb);
-            }else if(controller.a.onPress())
-            {
-                lift.setPosition(0);
-            }
+//            if (controller.x.onPress())
+//            {
+//                lift.setPosition(specimenScore);
+//            }else if(controller.y.onPress())
+//            {
+//                lift.setPosition(bucketScore);
+//            }else if(gamepad1.dpad_up)
+//            {
+//                lift.setPosition(climb);
+//            }else if(controller.a.onPress())
+//            {
+//                lift.setPosition(0);
+//            }
 //            telemetry.addData("Expected Target Pos", expectedManualLiftPos);
             telemetry.addData(" Lift Pos", lift.getPosition());
 

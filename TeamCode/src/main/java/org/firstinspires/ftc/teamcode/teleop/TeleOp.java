@@ -34,12 +34,8 @@ public class TeleOp extends LinearOpMode {
     public boolean clawIn = false;
     private Lift lift;
     private int expectedManualLiftPos;
-    private int[] liftPositions = {1000, 2000};
-    private int liftPositionIndex = 0;
-    private boolean isReversing = false;
     private Climb climb;
     private boolean fieldCentric = false;
-    private final double liftPower = 0.1;
     private DoubleHorizontalExtendo extendo;
     private Bucket bucket;
     private Pivot pivot;
@@ -49,12 +45,11 @@ public class TeleOp extends LinearOpMode {
         controller1 = new GamepadEvents(gamepad1);
         controller2 = new GamepadEvents(gamepad2);
         robot = new MechDrive(hardwareMap);
-        limelight = new LimelightLocalization(hardwareMap);
         IMU imu = hardwareMap.get(IMU.class, "imu");
         screen = new DriverHubHelp();
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         claw = new Claw(hardwareMap);
-//        lift = new Lift(hardwareMap, "liftLeft", "liftRight", "liftLeft", "liftRight" );
+        lift = new Lift(hardwareMap, "lift", "lift");
         extendo = new DoubleHorizontalExtendo(hardwareMap, "hExtendo", "hExtendo");
 //       climb = new Climb(hardwareMap,"climb");
         bucket = new Bucket(hardwareMap, "bucket");
@@ -109,7 +104,10 @@ public class TeleOp extends LinearOpMode {
 
             if(controller1.left_bumper.onPress())
             {
-
+                lift.toggle();
+            }else if(controller1.right_bumper.onPress())
+            {
+                lift.lower();
             }
             // horizontal extendo
             double extendoPos = (controller1.left_trigger.getTriggerValue() - controller1.right_trigger.getTriggerValue()) * 0.001;
