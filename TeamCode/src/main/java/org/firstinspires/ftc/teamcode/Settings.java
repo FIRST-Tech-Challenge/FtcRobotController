@@ -66,7 +66,7 @@ public class Settings {
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.2;
+                public static double TRANSFER_POSITION = 0.4;
                 public static double PLACE_POSITION = 0.9;
 
             }
@@ -111,11 +111,11 @@ public class Settings {
             // Positions in encoder ticks
 
             public static int TRANSFER = 0;
-            public static int LOW_RUNG = 500; // TODO TUNE
-            public static int LOW_BASKET = 1000; // TODO TUNE
+            public static int LOW_RUNG = 0; // TODO TUNE
+            public static int LOW_BASKET = 1430; // TODO TUNE
 
-            public static int HIGH_RUNG = 1400; // TODO TUNE
-            public static int HIGH_BASKET = 1700;
+            public static int HIGH_RUNG = 1720; // TODO TUNE
+            public static int HIGH_BASKET = 3190;
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.5;
@@ -275,7 +275,9 @@ public class Settings {
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
-        public final GamepadButton clawToggle = GamepadButton.LEFT_BUMPER;
+        public final GamepadButton clawIn = GamepadButton.OPTIONS;
+        public final GamepadButton clawOut = GamepadButton.START;
+        public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
 
         // Wrist controls
         public GamepadButton wristUp = GamepadButton.RIGHT_BUMPER;

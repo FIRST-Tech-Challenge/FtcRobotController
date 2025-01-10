@@ -106,8 +106,8 @@ public class DynamicInput {
                 Gamepad subCtrl, Settings.DefaultGamepadSettings subSettings) {
             this.extendHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.extendHorizontal);
             this.retractHorizontal = getButtonState(subCtrl, subSettings.buttonMapping.retractHorizontal);
-            this.retractVertical = getButtonState(subCtrl, subSettings.buttonMapping.retractVertical);
-            this.extendVertical = getButtonState(subCtrl, subSettings.buttonMapping.extendVertical);
+            this.retractVertical = getButtonState(mainCtrl, mainSettings.buttonMapping.retractVertical);
+            this.extendVertical = getButtonState(mainCtrl, mainSettings.buttonMapping.extendVertical);
             this.extensorBusy = extendHorizontal || retractHorizontal || retractVertical;
             this.intakeIn = getButtonState(subCtrl, subSettings.buttonMapping.intakeIn);
             this.intakeOut = getButtonState(subCtrl, subSettings.buttonMapping.intakeOut);

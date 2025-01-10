@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Linkage;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.ViperSlide;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "Meet 4 Auto", group = "Autonomous")
+@Autonomous(name = "#1 Deepak Fan", group = "Autonomous")
 public class MeetFourAuto extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RED_LEFT;
 
@@ -163,7 +164,7 @@ public class MeetFourAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        placeChamber()));
+                        hookChamber()));
 
         return placingTrajectory;
     }
@@ -210,20 +211,37 @@ public class MeetFourAuto extends LinearOpMode {
 
     }
 
-    public class PlaceChamber implements Action {
+    public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
-            baseRobot.intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            baseRobot.intake.geckoWheels.outtake();
-            pause(1500);
-            baseRobot.intake.geckoWheels.stop();
+            baseRobot.outtake.claw.forward();
+            pause(300);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
+            pause(2000);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE);
+            pause(2000);
             return false;
         }
     }
 
-    public Action placeChamber() {
-        return new PlaceChamber();
+    public Action hookChamber() {
+        return new HookChamber();
+    }
+
+    public class UnhookChamber implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            pause(300);
+            baseRobot.outtake.claw.backward();
+            pause(300);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
+            return false;
+        }
+    }
+
+    public Action unhookChamber() {
+        return new UnhookChamber();
     }
 
     public class GrabSpecimenFromHumanPlayer implements Action {
@@ -245,7 +263,8 @@ public class MeetFourAuto extends LinearOpMode {
     public class HangAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);;
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE);
             pause(2000);
             return false;
         }
@@ -262,7 +281,7 @@ public class MeetFourAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        placeChamber()));
+                        hookChamber()));
 
         return placingTrajectory;
     }
@@ -274,7 +293,7 @@ public class MeetFourAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         basketTrajectory.build(),
-                        placeChamber()));
+                        hookChamber()));
 
         return basketTrajectory;
     }
@@ -290,12 +309,15 @@ public class MeetFourAuto extends LinearOpMode {
 
     public void immediatelyPlace(StartingPosition sp) {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
-        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, placingTrajectory);
+        TrajectoryActionBuilder unhookTrajectory = getUnhookTrajectory(sp, placingTrajectory);
+        TrajectoryActionBuilder parkingTrajectory = getParkingTrajectory(sp, unhookTrajectory);
 
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        placeChamber(),
+                        hookChamber(),
+                        unhookTrajectory.build(),
+                        unhookChamber(),
                         parkingTrajectory.build(),
                         hang()));
     }
@@ -382,25 +404,51 @@ public class MeetFourAuto extends LinearOpMode {
     }
 
     private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp,
-            TrajectoryActionBuilder previousTrajectory) {
+                                                         TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get placing trajectory based on starting position
         switch (sp) {
             case RED_LEFT:
                 return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(initialPose.position.y + 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.heading);
             case RED_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(initialPose.position.y + 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.heading);
             case BLUE_LEFT:
                 return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(initialPose.position.y - 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.heading);
             case BLUE_RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(initialPose.position.y + 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.heading);
+            default:
+                return previousTrajectory.endTrajectory().fresh();
+        }
+    }
+
+    private TrajectoryActionBuilder getUnhookTrajectory(StartingPosition sp,
+                                                         TrajectoryActionBuilder previousTrajectory) {
+        // Helper method to get placing trajectory based on starting position
+        switch (sp) {
+            case RED_LEFT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(Settings.Autonomous.FieldPositions.RED_LEFT_CHAMBER_POSE.position.y - 5);
+            case RED_RIGHT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(Settings.Autonomous.FieldPositions.RED_RIGHT_CHAMBER_POSE.position.y - 5);
+            case BLUE_LEFT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(Settings.Autonomous.FieldPositions.BLUE_LEFT_CHAMBER_POSE.position.y + 5);
+            case BLUE_RIGHT:
+                return previousTrajectory.endTrajectory().fresh()
+                        .lineToY(Settings.Autonomous.FieldPositions.BLUE_RIGHT_CHAMBER_POSE.position.y + 5);
+
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
