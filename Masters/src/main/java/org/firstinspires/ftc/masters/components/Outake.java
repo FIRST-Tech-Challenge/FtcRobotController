@@ -19,15 +19,16 @@ public class Outake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.00057, i = 0, d = 0.000000015;
-    public static double f = 0.002;
+    public static double p = 0.002, i = 0, d = 0;
+    public static double f = 0.09;
 
     public int target = 0;
 
     private final Servo claw;
     private final Servo wrist, angleLeft, angleRight, position;
-    private final DcMotor extension1;
-    private final DcMotor extension2;
+    private final DcMotor OuttakeSlideLeft;
+    private final DcMotor OuttakeSlideRight;
+    private final DcMotor RightFrontMotor;
 
     private Status status;
 
@@ -64,8 +65,9 @@ public class Outake implements Component{
         wrist= init.getWrist();
 
 
-        this.extension1=init.getOuttakeSlideLeft();
-        this.extension2=init.getOuttakeSlideRight();
+        this.OuttakeSlideLeft=init.getOuttakeSlideLeft();
+        this.OuttakeSlideRight=init.getOuttakeSlideRight();
+        this.RightFrontMotor=init.getRightFrontMotor();
         angleLeft = init.getAngleLeft();
         angleRight = init.getAngleRight();
         position = init.getPosition();
@@ -147,13 +149,13 @@ public class Outake implements Component{
 
     public void moveSlide() {
 
-
-        int rotatePos = extension2.getCurrentPosition();
+//frontRight
+        int rotatePos = RightFrontMotor.getCurrentPosition();
         double pid = controller.calculate(rotatePos, target);
         double lift = pid + f;
 
-        extension1.setPower(lift);
-        extension2.setPower(lift);
+        OuttakeSlideLeft.setPower(lift);
+        OuttakeSlideRight.setPower(lift);
 
     }
 
@@ -166,7 +168,7 @@ public class Outake implements Component{
     }
 
     public int getExtensionPos(){
-        return extension2.getCurrentPosition();
+        return RightFrontMotor.getCurrentPosition();
     }
 
     public void init(){
