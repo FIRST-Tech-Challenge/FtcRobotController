@@ -153,7 +153,7 @@ public class BaseRobot {
         double brake = actions.brakeAmount;
 
         double powerMultiplier = 1 + (boost * 2) - brake;
-        double rotation = directions.rotation * powerMultiplier;
+        double rotation = directions.rotation * powerMultiplier * (whyAgney ? -1 : 1);
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
 
