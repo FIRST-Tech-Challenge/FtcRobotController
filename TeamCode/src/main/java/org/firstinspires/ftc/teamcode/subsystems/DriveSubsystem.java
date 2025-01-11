@@ -38,7 +38,7 @@ public class DriveSubsystem {
         return (frontRightDrive.isBusy() || frontLeftDrive.isBusy() || backRightDrive.isBusy() || backLeftDrive.isBusy());
 
     }
-    public void cartesianMove(double cmX, double cmY) {
+    public void cartesianMove(double cmY, double cmX) {
         Vector target = new Vector(cmX, cmY);
 
         final int TICKS_PER_CM = 18;
