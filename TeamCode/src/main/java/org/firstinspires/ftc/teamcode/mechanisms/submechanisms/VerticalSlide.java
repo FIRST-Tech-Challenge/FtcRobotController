@@ -70,13 +70,17 @@ public class VerticalSlide implements ViperSlide {
 
     @Override
     public void increment() {
-        encoderTarget += 10;
+        if (encoderTarget < VerticalPosition.HIGH_BASKET.getValue()) {
+            encoderTarget += 10;
+        }
         setPosition(encoderTarget);
     }
 
     @Override
     public void decrement() {
-        encoderTarget -= 10;
+        if (encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
+            encoderTarget -= 10;
+        }
         setPosition(encoderTarget);
     }
 }
