@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 import org.firstinspires.ftc.teamcode.utils.PID.ProfiledPIDController;
 import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 
@@ -33,11 +34,12 @@ public class PivotSubsystem extends SubsystemBase {
     public
     ProfiledPIDController m_pivotPID;
     Gamepad gamepad;
+    BTController m_controller;
 
 
-
-    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, Gamepad gamepad){
+    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, Gamepad gamepad,BTController controller){
         this.gamepad = gamepad;
+        m_controller=controller;
         this.map = map;
         pivotLeft = new MotorEx(map,"pivotLeft");//tbd
         pivotLeft.setInverted(true);
@@ -65,8 +67,20 @@ public class PivotSubsystem extends SubsystemBase {
         dashboardTelemetry.addData("lefty",gamepad.left_stick_y);
         dashboardTelemetry.addData("rightx",gamepad.right_stick_x);
         dashboardTelemetry.addData("righty",gamepad.right_stick_y);
+        dashboardTelemetry.addData("BTd leftx",m_controller.left_x.getAsDouble());
+        dashboardTelemetry.addData("BTd lefty ",m_controller.left_y.getAsDouble());
+        dashboardTelemetry.addData("BTd rightx",m_controller.right_x.getAsDouble());
+        dashboardTelemetry.addData("BTd righty",m_controller.right_y.getAsDouble());
+
+        dashboardTelemetry.addData("BT rightbutton",m_controller.m_buttonsSuppliers[BTController.Buttons.BUTTON_RIGHT.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT leftbutton",m_controller.m_buttonsSuppliers[BTController.Buttons.BUTTON_LEFT.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT bottbutton",m_controller.m_buttonsSuppliers[BTController.Buttons.BUTTON_DOWN.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT leftx",m_controller.m_buttonsSuppliers[BTController.Buttons.LEFT_X.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT lefty",m_controller.m_buttonsSuppliers[BTController.Buttons.LEFT_Y.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT rightx",m_controller.m_buttonsSuppliers[BTController.Buttons.RIGHT_X.ordinal()].getAsBoolean());
+        dashboardTelemetry.addData("BT righty",m_controller.m_buttonsSuppliers[BTController.Buttons.RIGHT_Y.ordinal()].getAsBoolean());
         updateValues();
-        updateTelemetry();
+//        updateTelemetry();
         if (m_pivotPID.atGoal()) {
         setMotors(calculateFeedForward());
         } else {
