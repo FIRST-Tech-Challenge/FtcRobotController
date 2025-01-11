@@ -148,9 +148,10 @@ public class SampleAuto extends CommandAutoOpMode {
                         commandFactory.elbowToStartPosition()
                 ),
 
-                commandFactory.driveToTarget(2300, -350, -90, .2, .5, 10)
+                commandFactory.driveToTarget(2100, -350, -90, .2, .5, 10)
+                        .alongWith(commandFactory.elbowToIntakePosition()).andThen(commandFactory.pivotToInTake()
 //                commandFactory.driveToTarget(2000, -120, -90, .13, 1, 10)
 
-        );
+        ));
     }
 }
