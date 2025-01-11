@@ -306,11 +306,17 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
         while(true){
             double leftDistance = hardware.distanceSensorLeft.getDistance(DistanceUnit.INCH);
             double rightDistance = hardware.distanceSensorRight.getDistance(DistanceUnit.INCH);
+            double fieldWidthInInches = 72;
+
+            double goalDistanceFromSideWall = (fieldWidthInInches- robotWidthInches)/2;
+
+            boolean leftDistanceFromSideWall = (Math.abs(goalDistanceFromSideWall - leftDistance)<= tolerance);
+            boolean rightDistanceFromSideWall = (Math.abs(goalDistanceFromSideWall - rightDistance)<= tolerance);
             //Check if the distance from the left and right minus half the robot width is equal, more than, or less than
             //If equal, stop
             //If left is more then right, strafe left
             //If right is more then left, strafe right
-            if (Math.abs(leftDistance - robotWidthInches/2) <= tolerance && Math.abs(rightDistance - robotWidthInches/2) <= tolerance){
+            if (leftDistanceFromSideWall && rightDistanceFromSideWall){
                 setWheelSpeed(mainEnum.STOP, 0);
                 break;
             }
@@ -373,15 +379,12 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
                 {"START_POS", Double.toString(startingDistanceFromBackWall), Double.toString(calculations.driveSpeed)}
                 //Rotate 90 degrees left
                 //Strafe until block is detected
-
                 //Move forward until block is 19 inches away
-                {"FORWARD", Double.toString(19), Double.toString(calculations.driveSpeed)}
                 //Lower arm down
                 //Engage claw
                 //Move arm up
                 //Engage claw
                 //Move forward until wall is 4 inches away
-                {"FORWARD", Double.toString(4), Double.toString(calculations.driveSpeed)}
                 //Rotate right until wall is detected again
                 //Move forward 3 inches
                 //Lift the hopper all the away
