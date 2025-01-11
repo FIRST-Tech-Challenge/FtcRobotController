@@ -4,35 +4,38 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.BaseRobot;
 import org.firstinspires.ftc.teamcode.Settings;
 
 /** @noinspection FieldCanBeLocal, unused */
 public class Claw {
-    public final CRServo clawServo;
+    public final Servo clawServo;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
     public boolean opened = true;
+    public double closePos = Settings.Hardware.Servo.Claw.CLOSED;
+    public double openPos = Settings.Hardware.Servo.Claw.OPEN;
 
     public Claw(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
-        clawServo = hardwareMap.get(CRServo.class, Settings.Hardware.IDs.CLAW);
+        clawServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW);
         stop();
     }
 
     public void forward() {
-        clawServo.setPower(1);
+        clawServo.setPosition(openPos);
     }
 
     /* Close both servos */
     public void backward() {
-        clawServo.setPower(-1);
+        clawServo.setPosition(closePos);
     }
 
     public void stop() {
-        clawServo.setPower(0);
+        clawServo.setPosition(openPos);
     }
 
 }

@@ -11,6 +11,7 @@ public class Linkage {
     public static double position = 0;
     public final Servo linkageServo;
     public final double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
+    public final double highRungPos = Settings.Hardware.Servo.Linkage.HIGH_RUNG_POSITION;
     public final double placePos = Settings.Hardware.Servo.Linkage.PLACE_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
@@ -27,6 +28,9 @@ public class Linkage {
             case PLACE:
                 position = placePos;
                 break;
+            case HIGH_RUNG:
+                position = highRungPos;
+                break;
             case TRANSFER:
             default:
                 position = transferPos;
@@ -40,6 +44,8 @@ public class Linkage {
             return Position.PLACE;
         } else if (position == transferPos) {
             return Position.TRANSFER;
+        } else if (position == highRungPos){
+            return Position.HIGH_RUNG;
         } else {
             return Position.UNKNOWN;
         }
@@ -51,8 +57,10 @@ public class Linkage {
 
         switch (currentPosition) {
             case PLACE:
-                nextPosition = Position.TRANSFER;
+                nextPosition = Position.HIGH_RUNG;
                 break;
+            case HIGH_RUNG:
+                nextPosition = Position.TRANSFER;
             case TRANSFER:
             default:
                 nextPosition = Position.PLACE;
@@ -65,6 +73,7 @@ public class Linkage {
     public enum Position {
         TRANSFER,
         PLACE,
+        HIGH_RUNG,
         UNKNOWN,
     }
 

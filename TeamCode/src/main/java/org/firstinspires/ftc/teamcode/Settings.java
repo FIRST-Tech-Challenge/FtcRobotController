@@ -67,6 +67,7 @@ public class Settings {
             @Config
             public static class Linkage {
                 public static double TRANSFER_POSITION = 0.1;
+                public static double HIGH_RUNG_POSITION = 0.9;
                 public static double PLACE_POSITION = 0.93;
 
             }
@@ -268,8 +269,9 @@ public class Settings {
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
         public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
         public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
+        public final GamepadButton flipMovement = GamepadButton.A;
 
-        public GamepadButton rotateRight = GamepadButton.A;
+        public GamepadButton rotateRight = GamepadButton.B;
         public GamepadButton rotateLeft = GamepadButton.X;
 
         // Claw controls
