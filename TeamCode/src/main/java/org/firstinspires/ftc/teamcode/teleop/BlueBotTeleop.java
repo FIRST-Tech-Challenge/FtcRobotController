@@ -26,6 +26,8 @@ public class BlueBotTeleop extends LinearOpMode {
     waitForStart();
     mek.homeArm();
     double lastTime = Utils.getTimeSeconds();
+    mek.slide.setPower(1.);
+    mek.slide2.setPower(1.);
     while (opModeIsActive()) {
 
       // 1. Calculates deltaTime
