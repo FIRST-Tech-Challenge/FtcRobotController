@@ -38,8 +38,8 @@ public class Outake implements Component{
     Init init;
 
     enum Status {
-        WallToFront1 (200),
-        WallToFront2 (400),
+        WallToFront1 (400),
+        WallToFront2 (600),
         WallToFront3 (200),
         Wall (0),
         Front(0);
@@ -181,6 +181,8 @@ public class Outake implements Component{
             case WallToFront1:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                     position.setPosition(ITDCons.positionFront);
+                    angleRight.setPosition(ITDCons.angleMiddle);
+                    angleLeft.setPosition(ITDCons.angleMiddle);
                     elapsedTime = new ElapsedTime();
                     status = Status.WallToFront2;
                 }
@@ -188,8 +190,8 @@ public class Outake implements Component{
             case WallToFront2:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                     wrist.setPosition(ITDCons.wristFront);
-                    angleRight.setPosition(ITDCons.angleFront);
                     angleLeft.setPosition(ITDCons.angleFront);
+                    angleRight.setPosition(ITDCons.angleFront);
                     elapsedTime = new ElapsedTime();
                     status = Status.WallToFront3;
                 }
