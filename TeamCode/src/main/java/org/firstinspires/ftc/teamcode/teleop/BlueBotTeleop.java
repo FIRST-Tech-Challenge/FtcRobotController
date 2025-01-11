@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Utils;
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
 
-  double slideSpeed = 50;
+  double slideSpeed = 100;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -58,7 +57,8 @@ public class BlueBotTeleop extends LinearOpMode {
         // 2. Set the pivot power
         mek.setPivot(-gamepad2.right_stick_y, gamepad2.right_bumper);
 
-        mek.runIntake(gamepad2.right_trigger > .5, gamepad2.left_trigger > .5);
+        // 3.
+        mek.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
         if (gamepad2.b && !bPressed) {
           mek.toggleWrist();
         }
@@ -73,13 +73,6 @@ public class BlueBotTeleop extends LinearOpMode {
 
 
       mek.setSlide((int) mek.slideTarget);
-
-
-
-
-
-
-
 
 
       telemetry.update();

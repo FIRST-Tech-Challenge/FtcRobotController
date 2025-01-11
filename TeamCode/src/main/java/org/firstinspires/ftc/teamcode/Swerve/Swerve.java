@@ -81,7 +81,9 @@ public class Swerve {
             ((Module.maxDriveSpeedMetersPerSec / drivebaseRadius) * speedMult) / timeToFull);
   }
 
+
   double maxErrorDeg = 1;
+
 
   public void drive(ChassisSpeeds speeds, double dt) {
     var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
@@ -117,6 +119,7 @@ public class Swerve {
     }
   }
 
+
   public void fieldRelativeDrive(ChassisSpeeds speeds, double dt) {
     var yaw =
         odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY
@@ -125,6 +128,7 @@ public class Swerve {
     drive(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, yaw), dt);
     telemetry.addData("Swerve/Yaw", yaw.getDegrees());
   }
+
 
   public void teleopDrive(double xInput, double yInput, double yawInput, double dt) {
     var translationalMagnitude = Math.hypot(xInput, yInput);
@@ -153,9 +157,11 @@ public class Swerve {
     lastHeading = odometry.getHeading().getRadians();
   }
 
+
   public Pose2d getPose() {
     return odometry.getPose();
   }
+
 
   public void initGyro() {
     odometry.resetPosAndIMU();
@@ -165,6 +171,7 @@ public class Swerve {
       Thread.currentThread().interrupt();
     }
   }
+
 
   public void alignWheels(BooleanSupplier opModeActiveSupplier) {
     var state = new SwerveModuleState();
@@ -186,6 +193,7 @@ public class Swerve {
     }
   }
 
+
   public void periodic() {
     odometry.update();
     odometryStatus = odometry.getDeviceStatus();
@@ -193,6 +201,7 @@ public class Swerve {
         "Swerve/Pinpoint status",
         odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY ? "OK" : odometryStatus.name());
   }
+
 
   public static final class Module {
     private static final double conversionFactor;
@@ -207,6 +216,9 @@ public class Swerve {
     static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
     static double maxMotorVelocity = 436.0 / 60.0;
 
+    static double maxSpeedSecondsPer60Deg = .14 * .863;
+
+
     static {
       conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
       maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
@@ -214,6 +226,7 @@ public class Swerve {
       double maxSpeedSecondsPer60Degrees = .14 * .863;
       maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
     }
+
 
     final DcMotorEx driveMotor;
     final Servo steerServo;
@@ -228,32 +241,38 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-    double kp = 5.6, ki = 0.1, kd = 0.1;
 
     Module(OpMode opMode, int id) {
-
-      steerPID = new PIDController(kp, ki, kd);
+      double kp, ki, kd;
       // TODO: Fine tune these values to stop servo hunting
       switch (id) {
         case 0 -> {
           pos = "FL";
-          countsPerRevolution = 537.0;
+          kp = 5.0;
+          ki = .1;
+          kd = 0.2;
         }
         case 1 -> {
           pos = "FR";
-          countsPerRevolution = 537.7;
+          kp = 5.0;
+          ki = .1;
+          kd = 0.2;
         }
         case 2 -> {
           pos = "BL";
-          ki = 0.2;
-          countsPerRevolution = 538.0;
+          kp = 5.0;
+          ki = .2;
+          kd = 0.2;
         }
         case 3 -> {
           pos = "BR";
-          countsPerRevolution = 537.0;
+          kp = 5.0;
+          ki = .1;
+          kd = 0.2;
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
+      steerPID = new PIDController(kp, ki, kd);
 
       driveMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get(pos + "Motor");
       steerServo = opMode.hardwareMap.servo.get(pos + "Servo");
@@ -272,6 +291,7 @@ public class Swerve {
       this.telemetry = opMode.telemetry;
       this.id = id;
     }
+
 
     double run(SwerveModuleState state) {
       var servoPos = getServoPos();
@@ -294,12 +314,15 @@ public class Swerve {
       return errorDeg;
     }
 
+
     public double getDrivePosition() {
       return driveMotor.getCurrentPosition() / conversionFactor;
     }
 
+
     private double lastPos;
     private double lastTime = -1;
+
 
     // We calculate motor velocity ourselves because REV sucks and only calculates velocity at 20
     // hz.
@@ -317,11 +340,13 @@ public class Swerve {
       return velocity;
     }
 
+
     public Rotation2d getServoPos() {
       return new Rotation2d(
           MathUtil.angleModulus(
               (Math.PI * 2) * (steerEncoder.getVoltage() / steerEncoder.getMaxVoltage())));
     }
+
 
     private void runServoVel(double velRadPerSec) {
       steerServo.setPosition((1 - steerFeedforward.calculate(velRadPerSec)) / 2);

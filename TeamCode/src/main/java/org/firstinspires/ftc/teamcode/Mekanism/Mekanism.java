@@ -6,11 +6,13 @@ package org.firstinspires.ftc.teamcode.Mekanism;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,26 +23,27 @@ public class Mekanism {
   LinearOpMode myOp;
 
   private final DcMotorEx pivot;
-  private final DcMotorEx slide;
-  private final DcMotorEx slide2;
+  private final DcMotorEx slide, slide2;
 
   private final DigitalChannel limitSwitch;
 
-  private final Servo intakeServo;
+  private final Servo intakeServo, intakeServo2;
   private final Servo wrist;
 
-  private final Servo ramp1;
-  private final Servo ramp2;
+  private final Servo ramp1, ramp2;
 
   public final double limitSlide = 4200;
-  public final double limitPivot = 2750;
+  public final double limitPivot = 3000;
   private final double countsPerDegree = 30; // TODO: This needs to be found
 
   public double slideTarget = 0;
 
+  private boolean wristMoved = false;
+
   private final Telemetry telemetry;
 
   ElapsedTime pivotTimer = new ElapsedTime();
+
 
   public Mekanism(LinearOpMode opMode) {
     // Init slaw, claw, and pivot
@@ -64,9 +67,9 @@ public class Mekanism {
     slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     slide2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-    pivot.setDirection(FORWARD);
-    slide.setDirection(FORWARD);
-    slide2.setDirection(FORWARD);
+    pivot.setDirection(DcMotorSimple.Direction.FORWARD);
+    slide.setDirection(DcMotorSimple.Direction.FORWARD);
+    slide2.setDirection(DcMotorSimple.Direction.FORWARD);
 
     pivot.setPower(1);
     slide.setPower(1);
@@ -78,11 +81,15 @@ public class Mekanism {
 
     // Servos for intake
     intakeServo = opMode.hardwareMap.get(Servo.class, "intake");
+    intakeServo2 = opMode.hardwareMap.get(Servo.class, "intake2");
     wrist = opMode.hardwareMap.get(Servo.class, "wrist");
 
-    intakeServo.setDirection(Servo.Direction.REVERSE);
-    wrist.setDirection(Servo.Direction.REVERSE);
+    intakeServo.setDirection(REVERSE);
+    intakeServo2.setDirection(FORWARD);
+    wrist.setDirection(REVERSE);
 
+    intakeServo.setPosition(0.5);
+    intakeServo2.setPosition(0.5);
     wrist.setPosition(0.65);
 
 
@@ -90,8 +97,8 @@ public class Mekanism {
     ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
     ramp2 = opMode.hardwareMap.get(Servo.class, "ramp 2");
 
-    ramp1.setDirection(Servo.Direction.FORWARD);
-    ramp2.setDirection(Servo.Direction.FORWARD);
+    ramp1.setDirection(FORWARD);
+    ramp2.setDirection(FORWARD);
 
     unclamp();
 
@@ -103,6 +110,7 @@ public class Mekanism {
     myOp = opMode;
   }
 
+
   // To extend arm, input from game pad 2 straight in
   public void setSlide(int x) {
 
@@ -111,6 +119,7 @@ public class Mekanism {
     slide.setTargetPosition(x);
     slide2.setTargetPosition(x);
   }
+
 
   public void setPivot(double x, boolean raiseLimit) {
     if (pivot.getCurrentPosition() >= (raiseLimit ? limitPivot : limitPivot + 500) && x > 0) {
@@ -123,6 +132,7 @@ public class Mekanism {
     x *= .5;
     pivot.setPower(x);
   }
+
 
   public void homeArm() {
     pivotTimer.reset();
@@ -162,31 +172,32 @@ public class Mekanism {
     slide2.setPower(1.0);
   }
 
+
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
+      intakeServo2.setPosition(0.625);
     } else if (intake) {
       intakeServo.setPosition(0);
+      intakeServo2.setPosition(0);
     } else {
-      intakeServo.setPosition(.5);
+      intakeServo.setPosition(0.5);
+      intakeServo2.setPosition(0.5);
     }
   }
 
-  public void intake() {
-    intakeServo.setPosition(1);
-  }
-
-  public void outtake() {}
 
   public void clamp() {
     ramp1.setPosition(0);
     ramp2.setPosition(.15);
   }
 
+
   public void unclamp() {
     ramp1.setPosition(.15);
     ramp2.setPosition(0);
   }
+
 
   public void autoClip() {
     telemetry.addData("pivot current pos", pivot.getCurrentPosition());
@@ -214,7 +225,6 @@ public class Mekanism {
     wristMoved = true;
   }
 
-  private boolean wristMoved = false;
 
   public void toggleWrist() {
     if (!wristMoved) {
