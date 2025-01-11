@@ -31,8 +31,9 @@ public class Mekanism {
 
   private final Servo ramp1, ramp2;
 
-  public final int limitSlide = 4000;
+  public final int limitSlide = 4200;
   public final double limitPivot = 3000;
+  public final int encoderCountsPerDegree = 13;
   private final double countsPerDegree = 30; // TODO: This needs to be found
 
   public double slideTarget = 0;
@@ -114,10 +115,16 @@ public class Mekanism {
   public void setSlide(int x) {
 
     telemetry.addData("slide current pos", slide.getCurrentPosition());
-    if(x>limitSlide)
-      x = limitSlide;
+
+    //angle measure thing
+    double maxLength = limitSlide*Math.sin(pivot.getCurrentPosition()*encoderCountsPerDegree);
+    if(maxLength<2000)
+      maxLength = 2000;
+    if(x>maxLength)
+      x = (int) maxLength;
     if(x<0)
       x = 0;
+
     slide.setTargetPosition(x);
     slide2.setTargetPosition(x);
   }
