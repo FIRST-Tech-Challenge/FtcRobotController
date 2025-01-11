@@ -21,7 +21,7 @@ public class FiniteMachineStateArm {
     private final RobotHardware robot;
 
     //bring in the finitemachinestateintake
-    private FiniteMachineStateIntake FiniteMachineStateIntake;
+    private FiniteStateMachineIntake FiniteStateMachineIntake;
     
     public enum LIFTSTATE {
         LIFT_START,

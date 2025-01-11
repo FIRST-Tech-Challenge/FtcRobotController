@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
@@ -9,7 +8,6 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -31,7 +29,7 @@ import com.qualcomm.robotcore.util.Range;
  * *default open intake when extend
  * *default close intake when retract
  */
-public class FiniteMachineStateIntake {
+public class FiniteStateMachineIntake {
 
     //Intake STATE
     public enum INTAKESTATE {
@@ -63,7 +61,7 @@ public class FiniteMachineStateIntake {
 
 
 
-    public FiniteMachineStateIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2, FiniteMachineStateArm depositArmDrive) {
+    public FiniteStateMachineIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2, FiniteMachineStateArm depositArmDrive) {
         this.gamepad_1 = gamepad_1;
         this.gamepad_2 = gamepad_2;
         this.robot = robot;

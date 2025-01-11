@@ -17,7 +17,6 @@ import com.qualcomm.hardware.lynx.LynxModule.BulkData;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
-import android.graphics.Color;
 
 /** config
  * deposit Left Arm Position initial position for installation = 0
@@ -38,7 +37,7 @@ public class BasicTeleOps extends OpMode {
 
     //Robot Intake & Deposit
     public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
-    public FiniteMachineStateIntake intakeArmDrive; //For Robot Intake
+    public FiniteStateMachineIntake intakeArmDrive; //For Robot Intake
 
     public ServoTest servoTest;
 
@@ -80,7 +79,7 @@ public class BasicTeleOps extends OpMode {
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteMachineStateIntake(robot, gamepadCo1,gamepadCo2, depositArmDrive);
+        intakeArmDrive = new FiniteStateMachineIntake(robot, gamepadCo1,gamepadCo2, depositArmDrive);
         intakeArmDrive.Init();
 
         //Servo Testing
@@ -149,7 +148,7 @@ public class BasicTeleOps extends OpMode {
             FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
 
             intakeArmDrive.IntakeArmLoop();
-            FiniteMachineStateIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
+            FiniteStateMachineIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
             telemetry.addLine("---------------------");
             telemetry.addData("Deposit State", liftState.name());
             telemetry.addData("Intake State", intakeState.name());
