@@ -1,7 +1,11 @@
 package com.kalipsorobotics.intoTheDeep;
 
 
+import android.graphics.Path;
+
+import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
@@ -23,6 +27,8 @@ import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import java.util.Set;
 
 @Autonomous
 public class AutoBasketFunnel extends LinearOpMode {
@@ -60,9 +66,20 @@ public class AutoBasketFunnel extends LinearOpMode {
         int outtakeXPos = -190;
         int outtakeYPos = 1020;
 
+        SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
+        setAutoDelayAction.setName("setAutoDelayAction");
+        while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
+            setAutoDelayAction.updateCheckDone();
+        }
+
+        WaitAction delayBeforeStart = new WaitAction(setAutoDelayAction.getTimeMs());
+        delayBeforeStart.setName("delayBeforeStart");
+        redAutoBasket.addAction(delayBeforeStart);
+
         //================begin of first specimen====================
         WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, -190);
         wallToBarHangAction.setName("wallToBarHangAction");
+        wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(wallToBarHangAction);
 
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
@@ -213,6 +230,9 @@ public class AutoBasketFunnel extends LinearOpMode {
         //move sample to basket 3
 
         //outtake sample 3
+
+        telemetry.addLine("init finished");
+        telemetry.update();
 
         waitForStart();
         while (opModeIsActive()) {

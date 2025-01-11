@@ -55,5 +55,8 @@ public class Init extends KActionSet{
         OuttakePivotAction outtakePivot = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
         outtakePivot.setDependentActions(moveLSAction);
         this.addAction(outtakePivot);
+
+        intakeClaw.getOpModeUtilities().getTelemetry().addLine("init finished");
+        intakeClaw.getOpModeUtilities().getTelemetry().update();
     }
 }

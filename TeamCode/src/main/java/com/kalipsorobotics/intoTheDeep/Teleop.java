@@ -211,11 +211,11 @@ public class Teleop extends LinearOpMode {
             }
 
             //RESET POS
-            if (resetWheelOdomPressed) {
-                driveTrain.resetWheelOdom();
-                wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
-                Log.d("teleop_odo", "   reset odometry");
-            }
+//            if (resetWheelOdomPressed) {
+//                driveTrain.resetWheelOdom();
+//                wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 180);
+//                Log.d("teleop_odo", "   reset odometry");
+//            }
 
             if (angleLockPressed) {
                 Log.d("gampad1",

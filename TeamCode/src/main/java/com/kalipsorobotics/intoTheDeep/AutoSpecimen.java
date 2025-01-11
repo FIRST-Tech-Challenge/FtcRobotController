@@ -1,5 +1,6 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
@@ -51,9 +52,20 @@ public class AutoSpecimen extends LinearOpMode {
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
 
+        SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
+        setAutoDelayAction.setName("setAutoDelayAction");
+        while(!setAutoDelayAction.getIsDone() && opModeInInit()) {
+            setAutoDelayAction.updateCheckDone();
+        }
+
+        WaitAction delayBeforeStart = new WaitAction(setAutoDelayAction.getTimeMs());
+        delayBeforeStart.setName("delayBeforeStart");
+        redAutoSpecimen.addAction(delayBeforeStart);
+
         //================begin of first specimen====================
         WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 190);
         wallToBarHangAction.setName("wallToBarHangAction");
+        wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoSpecimen.addAction(wallToBarHangAction);
         //===============end of first specimen===============
 
@@ -135,6 +147,9 @@ public class AutoSpecimen extends LinearOpMode {
 
 
         initAuto.update();
+
+        telemetry.addLine("init finished");
+        telemetry.update();
 
         redAutoSpecimen.printWithDependentActions();
         waitForStart();
