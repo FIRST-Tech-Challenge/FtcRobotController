@@ -32,9 +32,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_extension = new ExtensionSubsystem(map);
         //m_gripper = new GripperSubsystem(map);
         m_chassis = new ChassisSubsystem(map);
-        m_pivot = new PivotSubsystem(map, m_extension::getArmLength);
-
         this.gamepad1 = gamepad1;
+        m_pivot = new PivotSubsystem(map, m_extension::getArmLength, gamepad1);
+
         this.gamepad2 = gamepad2;
         m_controller = new BTController(gamepad1);
         resetGyro();
