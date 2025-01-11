@@ -60,6 +60,7 @@ public class PivotSubsystem extends SubsystemBase {
         dashboardTelemetry.addData("rightbutton",gamepad.b);
         dashboardTelemetry.addData("leftbutton",gamepad.x);
         dashboardTelemetry.addData("topbutton",gamepad.y);
+        dashboardTelemetry.addData("bottbutton",gamepad.a);
         dashboardTelemetry.addData("leftx",gamepad.left_stick_x);
         dashboardTelemetry.addData("lefty",gamepad.left_stick_y);
         dashboardTelemetry.addData("rightx",gamepad.right_stick_x);
