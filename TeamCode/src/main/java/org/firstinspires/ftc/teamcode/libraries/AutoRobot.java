@@ -69,7 +69,7 @@ public class AutoRobot {
             y = signum(y);
         }
 
-        Vector2D toGo = new Vector2D(x, y);
+   //     Vector2D toGo = new Vector2D(x, y);
         if (direction > 180) {
             direction -= 360;
         }
@@ -120,24 +120,24 @@ public class AutoRobot {
 
             if (currentTime < totalTime) {
                 timeAlotted = (totalTime - currentTime) / ((double) (time));
-                toGo.setVector(x, y);
-                toGo.adjustAngle(currentYaw);
+         //       toGo.setVector(x, y);
+         //       toGo.adjustAngle(currentYaw);
                 moveSpeed = .3 * sin(PI * (timeAlotted));
-                toGo.scaleVector(moveSpeed);
+         //       toGo.scaleVector(moveSpeed);
             } else {
-                toGo.scaleVector(0);
+           //     toGo.scaleVector(0);
             }
 
-            frontRightDrive.setPower(toGo.getJ() - toGo.getI() - rX); //double check these values
-            frontLeftDrive.setPower(toGo.getJ() + toGo.getI() + rX);
-            backLeftDrive.setPower(toGo.getJ() - toGo.getI() + rX);
-            backRightDrive.setPower(toGo.getJ() + toGo.getI() - rX);
+           // frontRightDrive.setPower(toGo.getJ() - toGo.getI() - rX); //double check these values
+           // frontLeftDrive.setPower(toGo.getJ() + toGo.getI() + rX);
+           // backLeftDrive.setPower(toGo.getJ() - toGo.getI() + rX);
+           // backRightDrive.setPower(toGo.getJ() + toGo.getI() - rX);
 
 
-            telemetry.addData("toGoI", toGo.getI());
-            telemetry.addData("toGoJ", toGo.getJ());
-            telemetry.addData("toGoAngle", toGo.getAngle());
-            telemetry.addData("target", direction);
+      //      telemetry.addData("toGoI", toGo.getI());
+      //      telemetry.addData("toGoJ", toGo.getJ());
+      //      telemetry.addData("toGoAngle", toGo.getAngle());
+      //      telemetry.addData("target", direction);
             telemetry.addData("current", currentYaw);
             telemetry.addData("power", rX);
             telemetry.addData("moveSpeed", moveSpeed);
