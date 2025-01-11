@@ -39,7 +39,7 @@ public class Outake implements Component{
 
     enum Status {
         WallToFront1 (200),
-        WallToFront2 (200),
+        WallToFront2 (400),
         WallToFront3 (200),
         Wall (0),
         Front(0);
@@ -69,13 +69,8 @@ public class Outake implements Component{
         angleLeft = init.getAngleLeft();
         angleRight = init.getAngleRight();
         position = init.getPosition();
-//        this.elbow1=init.getElbow1();
-//        this.elbow2=init.getElbow2();
-//        this.fingers=init.getFingers();
         initializeHardware();
         status = Status.Front;
-
-
 
     }
 
@@ -140,8 +135,7 @@ public class Outake implements Component{
         status= Status.WallToFront1;
 
         target = ITDCons.SpecimenTarget;
-//        wrist.setPosition(ITDCons.wristFront);
-//        position.setPosition(ITDCons.positionFront);
+
         angleRight.setPosition(ITDCons.angleMiddle);
         angleLeft.setPosition(ITDCons.angleMiddle);
         elapsedTime = new ElapsedTime();

@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
-import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
 import org.firstinspires.ftc.masters.components.Outake;
@@ -113,6 +112,7 @@ public class TeleopManualV1 extends LinearOpMode {
             }
 
             outtake.moveSlide();
+            outtake.updateOuttake();
 
 
             telemetry.addData("Slide Target", outtake.getTarget());
