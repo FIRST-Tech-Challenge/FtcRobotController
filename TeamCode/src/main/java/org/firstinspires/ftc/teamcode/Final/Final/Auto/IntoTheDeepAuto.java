@@ -40,8 +40,8 @@ public class IntoTheDeepAuto extends LinearOpMode implements AutoInterface {
         calculations.timer.reset();
 
         waitForStart();
-        while (opModeIsActive()) {
-            test();
+        while (opModeIsActive() && calculations.totalGameTime.seconds() <= 28) {
+            toSample();
         }
     }
 

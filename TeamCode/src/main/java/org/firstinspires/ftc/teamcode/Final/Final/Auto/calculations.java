@@ -9,6 +9,7 @@ public class calculations {
     private hardware hardware;
 
     //TIME
+    public ElapsedTime totalGameTime = new ElapsedTime();
     public ElapsedTime timer = new ElapsedTime();
 
     public double timeToRotate360 = 2.5;
