@@ -37,6 +37,7 @@ public class TeleOpV1 extends OpMode {
         LIFT_FROM_WALL,
         DELIVER_HIGH_BAR,
         DELIVER_UP,
+        LEVEL_ONE_ASCENT,
         DROP,
         DROP_HIGH_BAR,
         ERROR
@@ -140,17 +141,11 @@ public class TeleOpV1 extends OpMode {
         else {
             timeNeeded = 0.3;
         }
-        if(gamepad1.options && buttonTimer.seconds() > 0.3){
-            if(slowmode){
-                slowmode = false;
-                telemetry.addLine("Slow mode: OFF");
-            }
-            else {
-                slowmode = true;
-                telemetry.addLine("Slow mode: ON");
-            }
-            buttonTimer.reset();
+
+        if(gamepad1.start){
+            state = SystemStatesV1.LEVEL_ONE_ASCENT;
         }
+
         if(gamepad1.x && buttonTimer.seconds() > 0.3) {
             if(thisStateTimer.seconds() > timeNeeded) {
                 state = nextStateHighBasket();
@@ -202,7 +197,15 @@ public class TeleOpV1 extends OpMode {
             case DELIVER_HIGH_BAR:
                 deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR, 0.8);
                 deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR, 0.8);
-                deliveryAxon.setPosition(constants.DELIVERY_UP);
+                deliveryAxon.goToSavedAngle();
+                if(gamepad1.dpad_up && buttonTimer.seconds() > 0.3){
+                    deliveryAxon.setPosition(deliveryAxon.getPosition() + 0.05);
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_down && buttonTimer.seconds() > 0.3){
+                    deliveryAxon.setPosition(deliveryAxon.getPosition() - 0.05);
+                    buttonTimer.reset();
+                }
                 break;
             case HOVER_LOW:
                 slowmode = true;
