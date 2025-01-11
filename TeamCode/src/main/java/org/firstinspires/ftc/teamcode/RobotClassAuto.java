@@ -23,14 +23,17 @@ public class RobotClassAuto extends LinearOpMode /*implements BasicRobot*/ {
         //yaw will be incorrect, this handles that
         telemetry.addData("Status", "Running");
         telemetry.update();
-        // elevator(3300);
-        robot.driveBackwardsSeconds(.2);
-        robot.face(10);
-        robot.driveArcLeftForwards(80);
 
+        robot.elevatorTop();
+        robot.waitSeconds(5);
+        robot.elevatorBottom();
+        robot.waitSeconds(3);
+        robot.elevatorLoadPosition();
+        robot.waitSeconds(3);
 
-
-
+     //   robot.driveBackwardsSeconds(.2);
+     //   robot.face(10);
+     //   robot.driveArcLeftForwards(80);
 
     }
 }

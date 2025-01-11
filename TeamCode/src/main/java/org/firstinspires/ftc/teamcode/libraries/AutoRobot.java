@@ -25,8 +25,8 @@ public class AutoRobot {
     //private Servo intakeSlide1; needs to be implemented
     //private Servo intakeSlide2; needs to be implemented
 
-    // private DcMotor elavator1; needs to be implemented
-    // private DcMotor elavator2; needs to be implemented
+     private DcMotor elevator1;
+     private DcMotor elevator2;
 
     private IMU imu;
 
@@ -1078,6 +1078,34 @@ public class AutoRobot {
 
     }
 
+    public void elevatorTop() {
+        elevator2.setTargetPosition(3300);
+        elevator1.setTargetPosition(3300);
+        elevator1.setPower(1);
+        elevator2.setPower(1);
+        elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void elevatorBottom() {
+        elevator2.setTargetPosition(0);
+        elevator1.setTargetPosition(0);
+        elevator1.setPower(1);
+        elevator2.setPower(1);
+        elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void elevatorLoadPosition() {
+        elevator2.setTargetPosition(100);
+        elevator1.setTargetPosition(100);
+        elevator1.setPower(1);
+        elevator2.setPower(1);
+        elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+
     public IMU getImu() {
         return imu;
     }
@@ -1087,16 +1115,19 @@ public class AutoRobot {
         // Initialize the hardware devices
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight");
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         backRightDrive = hardwareMap.get(DcMotor.class, "backRight");
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-
+        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // outtakeAngle = hardwareMap.get(Servo.class, "outtakeAngle");
         //outtakeClaw = hardwareMap.get(Servo.class, "outtakeClaw");
@@ -1107,8 +1138,16 @@ public class AutoRobot {
         //intakeSlide1 = hardwareMap.get(Servo.class, "intakeSlide1");
         //intakeSlide2 = hardwareMap.get(Servo.class, "intakeSlide2");
 
-        //elavator1 = hardwareMap.get(DcMotor.class, "elavator1");
-        //elavator2 = hardwareMap.get(DcMotor.class, "elavator2");
+        elevator1 = hardwareMap.get(DcMotor.class, "elavator1");
+        elevator1.setDirection(DcMotorSimple.Direction.REVERSE);
+        elevator1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevator2 = hardwareMap.get(DcMotor.class, "elavator2");
+        elevator2.setDirection(DcMotorSimple.Direction.FORWARD);
+        elevator2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        elevator1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        elevator2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
