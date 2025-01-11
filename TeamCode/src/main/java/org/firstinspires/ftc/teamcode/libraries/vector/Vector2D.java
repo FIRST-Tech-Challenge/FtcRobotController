@@ -68,8 +68,8 @@ public class Vector2D {
             this.radians += 2*Math.PI;
         }
 
-        this.i = Math.cos(this.radians);
-        this.j = Math.sin(this.radians);
+        this.i = Math.cos(this.radians)*magnitude;
+        this.j = Math.sin(this.radians)*magnitude;
 
         if(this.i < .001 && this.i > -.001) {
             this.i = 0;
@@ -92,8 +92,8 @@ public class Vector2D {
             this.radians += 2*Math.PI;
         }
 
-        this.i = Math.cos(this.radians);
-        this.j = Math.sin(this.radians);
+        this.i = Math.cos(this.radians)*magnitude;
+        this.j = Math.sin(this.radians)*magnitude;
 
         if(this.i < .001 && this.i > -.001) {
             this.i = 0;
