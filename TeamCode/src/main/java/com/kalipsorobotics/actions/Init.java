@@ -2,13 +2,14 @@ package com.kalipsorobotics.actions;
 
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
 import com.kalipsorobotics.math.CalculateTickPer;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 
 public class Init extends KActionSet{
     public Init(IntakeClaw intakeClaw, Outtake outtake) {
-        KServoAutoAction outtakePivotUp = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
+        OuttakePivotAction outtakePivotUp = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
         this.addAction(outtakePivotUp);
 
         KServoAutoAction bigSweep = new KServoAutoAction(intakeClaw.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT);
@@ -51,7 +52,7 @@ public class Init extends KActionSet{
         moveLSAction.setDependentActions(clawOuttake,hangHook1,hangHook2);
         this.addAction(moveLSAction);
 
-        KServoAutoAction outtakePivot = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+        OuttakePivotAction outtakePivot = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
         outtakePivot.setDependentActions(moveLSAction);
         this.addAction(outtakePivot);
     }

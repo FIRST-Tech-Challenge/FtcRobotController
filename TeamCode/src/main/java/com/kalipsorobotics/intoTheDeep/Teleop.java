@@ -146,12 +146,12 @@ public class Teleop extends LinearOpMode {
         int hangPosY = 100;
         int hangIncrement = 60;
 
-//        Init init = new Init(intakeClaw, outtake);
-//        while(opModeInInit()) {
-//            init.updateCheckDone();
-//        }
-        outtake.init();
-        intakeClaw.init();
+        Init init = new Init(intakeClaw, outtake);
+        while(!init.getIsDone()) {
+            init.updateCheckDone();
+        }
+//        outtake.init();
+//        intakeClaw.init();
 
         waitForStart();
 
@@ -551,7 +551,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (outtakePivotStickValue > 0.5) {
-                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_BASKET_POS + 0.12);
+                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if (outtakePivotStickValue < -0.5) {
                 outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
