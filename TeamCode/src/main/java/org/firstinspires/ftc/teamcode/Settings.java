@@ -54,8 +54,8 @@ public class Settings {
             @Config
             public static class Claw {
                 /** Values for open and closed positions on the outtake claw */
-                public static double OPEN = 0.4;
-                public static double CLOSED = 0.2;
+                public static double OPEN = 0.3;
+                public static double CLOSED = 0.05;
             }
 
             @Config

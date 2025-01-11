@@ -16,6 +16,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Linkage;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.ViperSlide;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Config
@@ -85,9 +87,52 @@ public class MakeshiftAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         PlaceSample,
+                        hookChamber(),
                         trajectoryActionChosen,
-                        trajectoryActionCloseOut
+                        unhookChamber()
+//                        ,trajectoryActionCloseOut
                 )
         );
+    }
+
+    public class HookChamber implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.outtake.claw.forward();
+            pause(300);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
+            pause(2000);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE);
+            pause(2000);
+            return false;
+        }
+    }
+
+    public Action hookChamber() {
+        return new MakeshiftAuto.HookChamber();
+    }
+
+    public class UnhookChamber implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            pause(300);
+            baseRobot.outtake.claw.backward();
+            pause(300);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
+            return false;
+        }
+    }
+
+    public Action unhookChamber() {
+        return new MakeshiftAuto.UnhookChamber();
+    }
+
+    private void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
