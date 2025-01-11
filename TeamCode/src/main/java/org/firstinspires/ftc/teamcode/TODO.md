@@ -1,6 +1,9 @@
 TODO:
 
-> Auto.java 
+> Auto.java AUTONOUMOUS PERIOD CODE
+
+-Not being used anymore for original purpose, migrated to general.java
+> Can now be used for autonomous period code when we start that
 ----
 
 > LinearRailTest.java
@@ -13,3 +16,5 @@ TODO:
 
 > general.java
 ----
+
+
