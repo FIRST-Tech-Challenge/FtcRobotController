@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Arm.Tuners;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,9 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
-
 @Config
-@Autonomous(name = "Test Arm", group = "Autonomous")
+@Autonomous(name = "Tune Arm Specimen", group = "Autonomous")
 public class TuneArm extends LinearOpMode {
     Drivetrain drivetrain = null;
 

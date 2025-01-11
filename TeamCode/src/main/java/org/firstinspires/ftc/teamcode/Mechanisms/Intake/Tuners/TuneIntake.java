@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Intake.Tuners;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 @Config
-@Autonomous(name = "Test Intake", group = "Autonomous")
+@Autonomous(name = "Tune Intake", group = "Autonomous")
 public class TuneIntake extends LinearOpMode {
     Drivetrain drivetrain = null;
     public static double speed = 1;

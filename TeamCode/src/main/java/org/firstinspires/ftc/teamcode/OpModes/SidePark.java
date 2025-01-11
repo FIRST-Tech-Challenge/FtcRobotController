@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
  */
 @Config
 @Autonomous(name = "Near Side Park", group = "Autonomous")
-public class TestAuton extends LinearOpMode {
+public class SidePark extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;
     // Use FTCDashboard

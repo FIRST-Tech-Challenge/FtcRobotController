@@ -1,33 +1,22 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Lift.Tuners;
-
-import static org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils.makePoseVector;
-
-import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
-import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Claw.Claw;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
-import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 
 @Config
-@Autonomous(name = "Test Lift Feed Forward", group = "Autonomous")
+@Autonomous(name = "Tune Lift Feed Forward", group = "Autonomous")
 public class TuneFeedForwardLift  extends LinearOpMode {
 //    Encoder encoder;
     Lift lift;
