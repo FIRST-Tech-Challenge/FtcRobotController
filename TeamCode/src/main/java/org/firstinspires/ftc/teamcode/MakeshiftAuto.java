@@ -25,8 +25,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 public class MakeshiftAuto extends LinearOpMode {
     private BaseRobot baseRobot;
 
-    @Override
+
     public void runOpMode() {
+//        MeetFourAuto.goober();
+
         Pose2d initialPose = new Pose2d(11.5, -60, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -35,13 +37,13 @@ public class MakeshiftAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(38, -35), Math.toRadians(90))
-                .strafeTo(new Vector2d(38,-13))
-                .strafeTo(new Vector2d(50,-13))
-                .strafeTo(new Vector2d(50,-50))
-                .strafeTo(new Vector2d(50,-13))
-                .strafeTo(new Vector2d(60,-13))
-                .strafeTo(new Vector2d(60,-50));
+                .strafeToLinearHeading(new Vector2d(40, -35), Math.toRadians(90))
+                .strafeTo(new Vector2d(40,-5))
+                .strafeTo(new Vector2d(56+5,0))
+                .strafeTo(new Vector2d(56+5,-50))
+                .strafeTo(new Vector2d(52+5,0))
+                .strafeTo(new Vector2d(62+5,0))
+                .strafeTo(new Vector2d(62+5,-50));
         TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
                 .lineToY(37)
                 .setTangent(Math.toRadians(0))
@@ -133,4 +135,5 @@ public class MakeshiftAuto extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
     }
+
 }

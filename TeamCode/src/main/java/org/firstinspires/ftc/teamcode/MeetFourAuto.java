@@ -231,7 +231,7 @@ public class MeetFourAuto extends LinearOpMode {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
 
-        if(startingPosition == StartingPosition.RED_RIGHT) {
+        if(startingPosition.equals(StartingPosition.RED_RIGHT)) {
             goober();
             requestOpModeStop();
         }
