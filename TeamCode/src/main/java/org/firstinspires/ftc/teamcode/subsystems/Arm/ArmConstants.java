@@ -37,6 +37,9 @@ public class ArmConstants {
         public static double eTolerance = 0.2;
         public static double eGoalTolerance= 0.1;
         public static double eGoalVelocityTolerance = 0.5;
+        public static double extended = -2.5;
+        public static double closed = 0;
+        public static double score = 83;
     }
 
 

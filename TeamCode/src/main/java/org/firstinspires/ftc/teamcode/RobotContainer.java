@@ -30,7 +30,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
     public RobotContainer(HardwareMap map, Gamepad gamepad1, Gamepad gamepad2){
         m_extension = new ExtensionSubsystem(map);
-        m_gripper = new GripperSubsystem(map);
+        //m_gripper = new GripperSubsystem(map);
         m_chassis = new ChassisSubsystem(map);
         m_pivot = new PivotSubsystem(map, m_extension::getArmLength);
 
@@ -49,9 +49,6 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         () -> squareInput(m_controller.left_x.getAsDouble()),
                         () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
-        m_controller.assignCommand(m_pivot.set(),false,DPAD_RIGHT);
-        m_controller.assignCommand(m_pivot.disablePID(),true,DPAD_LEFT);
-        m_controller.assignCommand(m_pivot.enablePID(),true,DPAD_UP);
         m_controller.assignCommand(setPickup(), false,BUTTON_RIGHT);
         m_controller.assignCommand(m_extension.disablePID(), false,BUTTON_LEFT);
         m_controller.assignCommand(m_extension.enablePID(), false,BUTTON_UP);
@@ -66,7 +63,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
 
     public Command setPickup(){
-        return new ParallelCommandGroup(m_extension.setExtension(),m_pivot.set());
+        return new ParallelCommandGroup(m_extension.setExtension(extended),m_pivot.set(score));
     }
 
 }

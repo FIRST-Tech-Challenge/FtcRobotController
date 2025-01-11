@@ -132,8 +132,8 @@ public class PivotSubsystem extends SubsystemBase {
             pivotLeft.set(0);
         }
     }
-    public Command set(){
-        return new InstantCommand(()->m_pivotPID.setGoal(pSetpoint),this);
+    public Command set(double setpoint){
+        return new InstantCommand(()->m_pivotPID.setGoal(setpoint));
     }
     public Command disablePID(){
         return new InstantCommand(()->m_pivotPID.disable());

@@ -96,8 +96,8 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
 
-    public Command setExtension(){
-        return new InstantCommand(()-> m_extensionPID.setGoal(eSetpoint));
+    public Command setExtension(double setpoint){
+        return new InstantCommand(()-> m_extensionPID.setGoal(setpoint));
     }
     public Command setNegative(){
         return new InstantCommand(()-> setMotors(-0.2));
