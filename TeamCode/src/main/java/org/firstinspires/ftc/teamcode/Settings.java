@@ -66,8 +66,8 @@ public class Settings {
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.0;
-                public static double PLACE_POSITION = 1.0;
+                public static double TRANSFER_POSITION = 0.1;
+                public static double PLACE_POSITION = 0.93;
 
             }
         }
@@ -276,8 +276,8 @@ public class Settings {
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
-        public final GamepadButton clawIn = GamepadButton.A;
-        public final GamepadButton clawOut = GamepadButton.Y;
+        public final GamepadButton clawIn = GamepadButton.Y;
+        public final GamepadButton clawOut = GamepadButton.A;
         public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
 
         // Wrist controls
