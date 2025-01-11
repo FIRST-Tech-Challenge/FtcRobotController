@@ -21,6 +21,7 @@ public class LeftAutoV2 extends LinearOpMode {
     public DeliveryGrippersV1 deliveryGrippers = new DeliveryGrippersV1();
     public ElapsedTime deliveryTimer = new ElapsedTime();
     public int step = 0;
+    public boolean servoSet = false;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -57,28 +58,37 @@ public class LeftAutoV2 extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (opModeIsActive()) {
-            if(step == 0) {
+            if (step == 0) {
                 drive.followTrajectory(traj1);
                 deliveryTimer.reset();
                 step =  1;
             }
-            if(step == 1){
-                if (deliveryTimer.seconds() < 3){
+            if (step == 1){
+                while (deliveryTimer.seconds() < 3){
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                     slides.runLeftSlideToPosition(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET, 0.9);
                     slides.runRightSlideToPosition(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET, 0.9);
-                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                    if(!servoSet) {
+                        deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
+                        servoSet = true;
+                    }
+                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                if (deliveryTimer.seconds() < 7){
+                while (deliveryTimer.seconds() < 7){
+                    servoSet = false;
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
-                if (deliveryTimer.seconds() < 10){
-                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
+                while (deliveryTimer.seconds() < 10){
+                    if(!servoSet) {
+                        deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
+                        servoSet = true;
+                    }
                     slides.runLeftSlideToPosition(0, 0.9);
                     slides.runRightSlideToPosition(0, 0.9);
                 }
-                if(deliveryTimer.seconds() > 13) {
+                while (deliveryTimer.seconds() > 13) {
+                    servoSet = false;
                     step = 2;
                 }
             }
@@ -90,7 +100,10 @@ public class LeftAutoV2 extends LinearOpMode {
                 drive.followTrajectory(traj3);
                 step = 4;
             }
-            deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
+            if(step == 4) {
+                deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
+                step = 5;
+            }
         }
     }
 }
