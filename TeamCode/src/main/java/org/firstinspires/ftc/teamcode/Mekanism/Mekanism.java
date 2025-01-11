@@ -31,7 +31,7 @@ public class Mekanism {
 
   private final Servo ramp1, ramp2;
 
-  public final double limitSlide = 4200;
+  public final double limitSlide = 4000;
   public final double limitPivot = 3000;
   private final double countsPerDegree = 30; // TODO: This needs to be found
 
