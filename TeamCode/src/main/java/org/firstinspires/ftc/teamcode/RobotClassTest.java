@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+
 @Autonomous
 public class RobotClassTest extends LinearOpMode {
     @Override
@@ -18,15 +19,28 @@ public class RobotClassTest extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            //make sure forwardArcs are precise
+            robot.driveForwardsInches(12);
+            robot.driveForwardsInches(6);
+            robot.driveForwardsInches(3);
+            robot.driveForwardsInches(2);
+            robot.driveForwardsInches(1);
+            robot.waitSeconds(2);
+            robot.driveBackwardsInches(24);
+            robot.waitSeconds(5);
 
+            robot.driveForwardsInches(36);
+            robot.waitSeconds(2);
+            robot.driveBackwardsInches(36);
+            robot.waitSeconds(5);
+
+
+            //make sure forwardArcs are precise
             robot.driveArcLeftForwards(180);
             robot.waitSeconds(1);
             telemetry.addData("target", 180);
             telemetry.addData("actual", robot.getImu().getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             robot.waitSeconds(1);
-
             robot.driveArcLeftForwards(90);
             robot.waitSeconds(1);
             telemetry.addData("target", 90);
@@ -135,40 +149,45 @@ public class RobotClassTest extends LinearOpMode {
 
 
             //drive forward in a square
-            robot.driveForward(.5);
+            robot.driveForwardsSeconds(1);
             robot.face(-90);
-            robot.driveForward(.5);
+            robot.driveForwardsSeconds(1);
             robot.face(180);
-            robot.driveForward(.5);
+            robot.driveForwardsSeconds(1);
             robot.face(90);
-            robot.driveForward(.5);
+            robot.driveForwardsSeconds(1);
             robot.face(0);
             //drive right in a square
-            robot.driveRight(.5);
+            robot.driveRightSeconds(1);
             robot.face(90);
-            robot.driveRight(.5);
+            robot.driveRightSeconds(1);
             robot.face(180);
-            robot.driveRight(.5);
+            robot.driveRightSeconds(1);
             robot.face(-90);
-            robot.driveRight(.5);
+            robot.driveRightSeconds(1);
             robot.face(0);
 
             //drive backwards in a square
             robot.face(180);
-            robot.driveBackward(.5);
+            robot.driveBackwardsSeconds(1);
             robot.face(90);
-            robot.driveBackward(.5);
+            robot.driveBackwardsSeconds(1);
             robot.face(0);
-            robot.driveBackward(.5);
+            robot.driveBackwardsSeconds(1);
             robot.face(-90);
-            robot.driveBackward(.5);
+            robot.driveBackwardsSeconds(1);
 
             //drive in a square without turning
             robot.face(0);
-            robot.driveForward(.5);
-            robot.driveRight(.5);
-            robot.driveBackward(.5);
-            robot.driveLeft(.5);
+            robot.driveForwardsSeconds(1);
+            robot.driveRightSeconds(1.0);
+            robot.driveBackwardsSeconds(1);
+            robot.driveLeftSeconds(1);
+
+
+
+
+
 
 
         }

@@ -4,8 +4,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.libraries.Vector2D.Vector2D;
+import org.firstinspires.ftc.teamcode.libraries.vector.Vector2D;
 import org.firstinspires.ftc.teamcode.libraries.MovementCurves.MovementCurves;
+
 import static java.lang.Math.*;
 
 
@@ -32,6 +33,9 @@ public class AutoRobot {
 
     private static final double WHEEL_DIAMETER = 48; // In milimeters
     private static final double TICKS_PER_REVOLUTION = 1120;
+
+    private static final int TICKS_PER_INCH = 45;
+
 
     Telemetry telemetry;
     //private double current robotX; unable to reliably solve
@@ -65,7 +69,7 @@ public class AutoRobot {
             y = signum(y);
         }
 
-        Vector2D toGo = new Vector2D(x, y);
+   //     Vector2D toGo = new Vector2D(x, y);
         if (direction > 180) {
             direction -= 360;
         }
@@ -116,24 +120,24 @@ public class AutoRobot {
 
             if (currentTime < totalTime) {
                 timeAlotted = (totalTime - currentTime) / ((double) (time));
-                toGo.setVector(x, y);
-                toGo.adjustAngle(currentYaw);
+         //       toGo.setVector(x, y);
+         //       toGo.adjustAngle(currentYaw);
                 moveSpeed = .3 * sin(PI * (timeAlotted));
-                toGo.scaleVector(moveSpeed);
+         //       toGo.scaleVector(moveSpeed);
             } else {
-                toGo.scaleVector(0);
+           //     toGo.scaleVector(0);
             }
 
-            frontRightDrive.setPower(toGo.getJ() - toGo.getI() - rX); //double check these values
-            frontLeftDrive.setPower(toGo.getJ() + toGo.getI() + rX);
-            backLeftDrive.setPower(toGo.getJ() - toGo.getI() + rX);
-            backRightDrive.setPower(toGo.getJ() + toGo.getI() - rX);
+           // frontRightDrive.setPower(toGo.getJ() - toGo.getI() - rX); //double check these values
+           // frontLeftDrive.setPower(toGo.getJ() + toGo.getI() + rX);
+           // backLeftDrive.setPower(toGo.getJ() - toGo.getI() + rX);
+           // backRightDrive.setPower(toGo.getJ() + toGo.getI() - rX);
 
 
-            telemetry.addData("toGoI", toGo.getI());
-            telemetry.addData("toGoJ", toGo.getJ());
-            telemetry.addData("toGoAngle", toGo.getAngle());
-            telemetry.addData("target", direction);
+      //      telemetry.addData("toGoI", toGo.getI());
+      //      telemetry.addData("toGoJ", toGo.getJ());
+      //      telemetry.addData("toGoAngle", toGo.getAngle());
+      //      telemetry.addData("target", direction);
             telemetry.addData("current", currentYaw);
             telemetry.addData("power", rX);
             telemetry.addData("moveSpeed", moveSpeed);
@@ -150,24 +154,244 @@ public class AutoRobot {
 
     }
 
-    //drives forward for a certain amount of seconds
+    //drives forward for a certain amount of inches
+
+    public void driveForwardsInches(double inches) {
+        driveForwardsInches(inches, 1);
+    }
+
+    public void driveForwardsInches(double inches, double powerMultiplier) {
+        final int DEFAULTMOVEMENTCURVE = MovementCurves.EXPEASEOUT;
+        driveForwardsInches(inches, powerMultiplier, DEFAULTMOVEMENTCURVE);
+    }
+
+    public void driveForwardsInches(double inches, double powerMultiplier, int movementCurve) {
+        //if the wheels get unaligned this will fix it
+        final double ADJUSTVALUE = .01;
+        final double LOWTHRESHOLD = .25;
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int traveledDistance = 0;
+        final double TOTALDISTANCE = inches*TICKS_PER_INCH;
+        double percentTraveled;
+
+        double power;
+        double leftAdjust;
+        double rightAdjust;
+
+        while (traveledDistance < TOTALDISTANCE) {
+
+            percentTraveled = ((double)traveledDistance)/TOTALDISTANCE;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(percentTraveled);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(percentTraveled);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(percentTraveled);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(percentTraveled);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(percentTraveled);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(percentTraveled);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(percentTraveled);
+                    break;
+                default:
+                    power = MovementCurves.linear(percentTraveled);
+
+            }
+
+            power *= powerMultiplier;
+
+            if (frontRightDrive.getCurrentPosition() < frontLeftDrive.getCurrentPosition()) {
+                leftAdjust = ADJUSTVALUE;
+                rightAdjust = 0;
+            } else if (frontLeftDrive.getCurrentPosition() < frontRightDrive.getCurrentPosition()) {
+                rightAdjust = ADJUSTVALUE;
+                leftAdjust = 0;
+            } else {
+                leftAdjust = 0;
+                rightAdjust = 0;
+            }
+
+
+
+            if (TOTALDISTANCE-traveledDistance < 2*TICKS_PER_INCH) {
+                power = .1;
+                leftAdjust = 0;
+                rightAdjust = 0;
+            } else if (TOTALDISTANCE-traveledDistance < 6*TICKS_PER_INCH){
+                power = .2;
+            } else if (power < LOWTHRESHOLD) {
+                power = LOWTHRESHOLD;
+            }
+
+            //assign power to wheels
+            frontRightDrive.setPower(power - rightAdjust);
+            frontLeftDrive.setPower(power - leftAdjust);
+            backLeftDrive.setPower(power - leftAdjust);
+            backRightDrive.setPower(power - rightAdjust);
+
+            traveledDistance = (frontLeftDrive.getCurrentPosition()+frontRightDrive.getCurrentPosition())/2;
+        }
+
+        frontRightDrive.setPower(0);
+        frontLeftDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+
+    }
+
+
+
+    public void driveBackwardsInches(double inches) {
+        driveBackwardsInches(inches, 1);
+    }
+
+    public void driveBackwardsInches(double inches, double powerMultiplier) {
+        final int DEFAULTMOVEMENTCURVE = MovementCurves.EXPEASEOUT;
+        driveBackwardsInches(inches, powerMultiplier, DEFAULTMOVEMENTCURVE);
+    }
+
+    public void driveBackwardsInches(double inches, double powerMultiplier, int movementCurve) {
+        //if the wheels get unaligned this will fix it
+        final double ADJUSTVALUE = .01;
+        final double LOWTHRESHOLD = .25;
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int traveledDistance = 0;
+        final double TOTALDISTANCE = -inches*TICKS_PER_INCH;
+        double percentTraveled;
+
+        double power;
+        double leftAdjust;
+        double rightAdjust;
+
+        while (traveledDistance > TOTALDISTANCE) {
+
+            percentTraveled = ((double)traveledDistance)/TOTALDISTANCE;
+
+            switch (movementCurve) {
+
+                case MovementCurves.CONSTANT:
+                    power = 1;
+                    break;
+                case MovementCurves.LINEAR:
+                    power = MovementCurves.linear(percentTraveled);
+                    break;
+                case MovementCurves.SIN:
+                    power = MovementCurves.sinCurve(percentTraveled);
+                    break;
+                case MovementCurves.CIRCLE:
+                    power = MovementCurves.circleCurve(percentTraveled);
+                    break;
+                case MovementCurves.QUADRATIC:
+                    //feels smooth
+                    power = MovementCurves.quadraticCurve(percentTraveled);
+                    break;
+                case MovementCurves.ROUNDEDSQUARE:
+                    power = MovementCurves.roundedSquareCurve(percentTraveled);
+                    break;
+                case MovementCurves.PARAMETRIC:
+                    power = MovementCurves.parametricCurve(percentTraveled);
+                    break;
+                case MovementCurves.NORMAL:
+                    power = MovementCurves.normalCurve(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEIN:
+                    power = MovementCurves.exponentialEaseIn(percentTraveled);
+                    break;
+                case MovementCurves.EXPEASEOUT:
+                    power = MovementCurves.exponentialEaseOut(percentTraveled);
+                    break;
+                default:
+                    power = MovementCurves.linear(percentTraveled);
+
+            }
+
+            power *= powerMultiplier;
+
+            if (frontRightDrive.getCurrentPosition() > frontLeftDrive.getCurrentPosition()) {
+                leftAdjust = ADJUSTVALUE;
+                rightAdjust = 0;
+            } else if (frontLeftDrive.getCurrentPosition() > frontRightDrive.getCurrentPosition()) {
+                rightAdjust = ADJUSTVALUE;
+                leftAdjust = 0;
+            } else {
+                leftAdjust = 0;
+                rightAdjust = 0;
+            }
+
+
+
+            if (TOTALDISTANCE-traveledDistance > 2*TICKS_PER_INCH) {
+                power = .1;
+                leftAdjust = 0;
+                rightAdjust = 0;
+            } else if (TOTALDISTANCE-traveledDistance > 6*TICKS_PER_INCH){
+                power = .2;
+            } else if (power < LOWTHRESHOLD) {
+                power = LOWTHRESHOLD;
+            }
+
+            //assign power to wheels
+            frontRightDrive.setPower(-power + rightAdjust);
+            frontLeftDrive.setPower(-power + leftAdjust);
+            backLeftDrive.setPower(-power + leftAdjust);
+            backRightDrive.setPower(-power + rightAdjust);
+
+            traveledDistance = (frontLeftDrive.getCurrentPosition()+frontRightDrive.getCurrentPosition())/2;
+        }
+
+        frontRightDrive.setPower(0);
+        frontLeftDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+
+    }
 
 
     //drives forward for a certain amount of seconds
 
-    public void driveForward(double seconds) {
+    public void driveForwardsSeconds(double seconds) {
 
-        driveForward(seconds, 1);
+        driveForwardsSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveForward(double seconds, double powerMultiplier) {
+    public void driveForwardsSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveForward(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveForwardsSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveForward(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveForwardsSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -249,18 +473,18 @@ public class AutoRobot {
 
     //drives backwards for a certain amount of seconds
 
-    public void driveBackward(double seconds) {
-        driveBackward(seconds, 1);
+    public void driveBackwardsSeconds(double seconds) {
+        driveBackwardsSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveBackward(double seconds, double powerMultiplier) {
+    public void driveBackwardsSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveBackward(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveBackwardsSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveBackward(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveBackwardsSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -339,18 +563,18 @@ public class AutoRobot {
         backRightDrive.setPower(0);
     }
 
-    public void driveRight(double seconds) {
-        driveRight(seconds, 1);
+    public void driveRightSeconds(double seconds) {
+        driveRightSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveRight(double seconds, double powerMultiplier) {
+    public void driveRightSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveRight(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveRightSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveRight(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveRightSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -431,19 +655,19 @@ public class AutoRobot {
 
 
 
-    public void driveLeft(double seconds) {
+    public void driveLeftSeconds(double seconds) {
 
-        driveLeft(seconds, 1);
+        driveLeftSeconds(seconds, 1);
         //adjust values to change default behaviour
     }
 
-    public void driveLeft(double seconds, double powerMultiplier) {
+    public void driveLeftSeconds(double seconds, double powerMultiplier) {
         final int DEFAULTMOVEMENTCURVE = MovementCurves.QUADRATIC;
-        driveLeft(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
+        driveLeftSeconds(seconds, powerMultiplier, DEFAULTMOVEMENTCURVE);
         //adjust values to change default behaviour
     }
 
-    public void driveLeft(double seconds, double powerMultiplier, int movementCurve) {
+    public void driveLeftSeconds(double seconds, double powerMultiplier, int movementCurve) {
         //catch misuse
         if (powerMultiplier > 1) {
             powerMultiplier = 1;
@@ -874,20 +1098,6 @@ public class AutoRobot {
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 
 
-        //other robot values
-        //     frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
-        //        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        //
-        //        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
-        //        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        //
-        //        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
-        //        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        //
-        //        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
-        //        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-
-
         // outtakeAngle = hardwareMap.get(Servo.class, "outtakeAngle");
         //outtakeClaw = hardwareMap.get(Servo.class, "outtakeClaw");
 
@@ -904,14 +1114,6 @@ public class AutoRobot {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
-
-        //other robot IMU
-
-        //  IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        //                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-        //                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
-
-
         imu.initialize(parameters);
         imu.resetYaw();
 

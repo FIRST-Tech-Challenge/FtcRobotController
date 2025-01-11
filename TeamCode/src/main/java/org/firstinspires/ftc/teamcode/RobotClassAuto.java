@@ -19,14 +19,14 @@ public class RobotClassAuto extends LinearOpMode /*implements BasicRobot*/ {
         AutoRobot robot = new AutoRobot(hardwareMap, telemetry);
         waitForStart();
 
-            robot.getImu().resetYaw(); //if you move the robot at all between init and running
-            //yaw will be incorrect, this handles that
-            telemetry.addData("Status", "Running");
-            telemetry.update();
-           // elevator(3300);
-            robot.driveBackward(.2);
-            robot.face(10);
-            robot.driveArcLeftForwards(80);
+        robot.getImu().resetYaw(); //if you move the robot at all between init and running
+        //yaw will be incorrect, this handles that
+        telemetry.addData("Status", "Running");
+        telemetry.update();
+        // elevator(3300);
+        robot.driveBackwardsSeconds(.2);
+        robot.face(10);
+        robot.driveArcLeftForwards(80);
 
 
 

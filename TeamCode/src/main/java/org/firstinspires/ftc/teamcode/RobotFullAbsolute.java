@@ -4,10 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.*;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.libraries.Vector2D.Vector2D;
+import org.firstinspires.ftc.teamcode.libraries.vector.Vector2D;
 import org.firstinspires.ftc.teamcode.libraries.MovementCurves.MovementCurves;
-import static java.lang.Math.*;
-
 
 
 @TeleOp
@@ -16,14 +14,8 @@ public class RobotFullAbsolute extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         IMU  imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
-
-        //  IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        //                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-        //                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
-
-
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         imu.initialize(parameters);
         imu.resetYaw();
         //change SLOWSPEED to change how dpad works
@@ -38,7 +30,7 @@ public class RobotFullAbsolute extends LinearOpMode {
 
 
         double currentFacing;
-        double angleDifference;
+        double difference;
 
         Vector2D direction = new Vector2D(0, 0);
         Vector2D toGo = new Vector2D(0,0);
@@ -48,68 +40,70 @@ public class RobotFullAbsolute extends LinearOpMode {
         DcMotor frontLeftDrive = null;
         DcMotor backLeftDrive = null;
 
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight");
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        backRightDrive = hardwareMap.get(DcMotor.class, "backRight");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
 
-        //     frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
-        //        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        //
-        //        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
-        //        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        //
-        //        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
-        //        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        //
-        //        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
-        //        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //   frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        //   frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //   backRightDrive = hardwareMap.get(DcMotor.class, "backRight");
+        //   backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //   frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
+        //   frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        //   backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
+        //   backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 
 
 
         waitForStart();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            toGo.setVector(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            toGo.normalizeVector();
-             toGo.adjustAngle(currentFacing);
+            toGo.setVector(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
+            // toGo.normalizeVector();
+            toGo.setRelative(currentFacing);
 
-            speed = toGo.getJ() * TOTALSPEED;
+            speed = toGo.getI() * TOTALSPEED;
             speed = gamepad1.dpad_up ? speed+SLOWSPEED : speed;
             speed = gamepad1.dpad_down ? speed-SLOWSPEED : speed;
 
-            strafe = toGo.getI() * TOTALSPEED;
+            strafe = toGo.getJ() * TOTALSPEED;
             strafe = gamepad1.dpad_right ? strafe+SLOWSPEED : strafe;
             strafe = gamepad1.dpad_left ? strafe-SLOWSPEED : strafe;
 
-            direction.setVector(gamepad1.right_stick_x, -gamepad1.right_stick_y);
+            direction.setVector(-gamepad1.right_stick_y, gamepad1.right_stick_x);
 
-            angleDifference = currentFacing-direction.getAngle();
+            difference = Math.toDegrees(currentFacing-direction.getRadians());
 
 
-            if (angleDifference > 180) {
-                angleDifference -= 360;
+            if (difference > 180) {
+                difference -= 360;
             }
 
-            if (angleDifference < -180) {
-                angleDifference += 360;
+            if (difference < -180) {
+                difference += 360;
             }
 
-            if (angleDifference > 5 && angleDifference < 180) {
-                turn = MovementCurves.roundedSquareCurve(angleDifference/360);
-            } else if (angleDifference < -5 && angleDifference > -180) {
+            if (difference > 5 && difference < 180) {
+                turn = MovementCurves.circleCurve(difference/360);
+            } else if (difference < -5 && difference > -180) {
 
-                turn = -MovementCurves.roundedSquareCurve(-angleDifference/360);
+                turn = -MovementCurves.circleCurve(-difference/360);
 
             } else {
                 turn = 0;
