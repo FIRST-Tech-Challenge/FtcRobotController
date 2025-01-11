@@ -36,8 +36,8 @@ public class Intake {
 
     public void initializeHardware() {
 
-        intakeRight.setPosition(ITDCons.intakeInit);
-        intakeLeft.setPosition(ITDCons.intakeInit);
+        intakeRight.setPosition(ITDCons.intakeInitRight);
+        intakeLeft.setPosition(ITDCons.intakeInitLeft);
 
     }
 
@@ -87,13 +87,13 @@ public class Intake {
 
 
     public void dropIntake(){
-        intakeLeft.setPosition(ITDCons.dropIntake);
-        intakeRight.setPosition(ITDCons.dropIntake);
+        intakeLeft.setPosition(ITDCons.dropLeft);
+        intakeRight.setPosition(ITDCons.dropRight);
     }
 
     public void liftIntake(){
         intakeLeft.setPosition(ITDCons.liftIntake);
-        intakeRight.setPosition(ITDCons.dropIntake);
+        //intakeRight.setPosition(ITDCons.dropIntake);
     }
 
 }

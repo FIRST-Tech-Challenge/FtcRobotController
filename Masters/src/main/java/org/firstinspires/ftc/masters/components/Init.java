@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -22,6 +23,7 @@ public class Init {
 
     private final Servo led, claw;
     private final Servo wrist, angleLeft, angleRight, position;
+    private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
     private
     IMU imu;
 
@@ -65,6 +67,7 @@ public class Init {
         angleRight = hardwareMap.servo.get("angleRight");
 
         intake = hardwareMap.dcMotor.get("intake");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeExtendo= hardwareMap.dcMotor.get("intakeExtendo");
         intakeExtendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeExtendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -75,6 +78,11 @@ public class Init {
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
         outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
+
+        ptoRight = hardwareMap.servo.get("ptoRight");
+        ptoLeft = hardwareMap.servo.get("ptoLeft");
+        hangLeft = hardwareMap.servo.get("hangLeft");
+        hangRight = hardwareMap.servo.get("hangRight");
 
        led = hardwareMap.servo.get("led");
 
@@ -132,6 +140,12 @@ public class Init {
     public Servo getPosition() {
         return position;
     }
+
+    public Servo getPtoRight() {return ptoRight;}
+
+    public Servo getPtoLeft(){ return  ptoLeft;}
+     public Servo getHangLeft() {return hangLeft;}
+    public Servo getHangRight() {return hangRight;}
 
     public Telemetry getTelemetry() {
         return telemetry;
