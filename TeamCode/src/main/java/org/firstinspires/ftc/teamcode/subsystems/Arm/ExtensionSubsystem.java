@@ -58,7 +58,9 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void periodic() {
         updateTelemetry();
         updateValues();
-        setMotors(m_extensionPID.calculate(currentArmLength));
+        if(m_extensionPID.atGoal()){
+            setMotors(0);
+        } else{setMotors(m_extensionPID.calculate(currentArmLength));}
     }
 
     private void updateValues() {
@@ -96,6 +98,9 @@ public class ExtensionSubsystem extends SubsystemBase {
 
     public Command setExtension(){
         return new InstantCommand(()-> m_extensionPID.setGoal(eSetpoint));
+    }
+    public Command setNegative(){
+        return new InstantCommand(()-> setMotors(-0.2));
     }
     public Command disablePID(){
         return new InstantCommand(()->m_extensionPID.disable());

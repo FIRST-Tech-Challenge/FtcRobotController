@@ -12,6 +12,7 @@ public class ArmConstants {
     public static class pivotPIDConstants {
         public static double pSetpoint = 0;
         public static double kS = 0.032;
+        public static double kG = 0;
         public static double pKP = 0.02;
         public static double pKI = 0.005;
         public static double pKD = 0;
@@ -26,7 +27,7 @@ public class ArmConstants {
 
     @Config
     public static class extensionPIDCosntants{
-        public static double eKP = 1;
+        public static double eKP = 6;
         public static double eKI = 0;
         public static double eKD = 0;
         public static double eIzone = 0;

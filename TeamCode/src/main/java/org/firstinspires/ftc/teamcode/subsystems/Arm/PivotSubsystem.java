@@ -56,11 +56,11 @@ public class PivotSubsystem extends SubsystemBase {
     public void periodic() {
         updateValues();
         updateTelemetry();
-        if (m_pivotPID.atGoal()) {
-            setMotors(calculateFeedForward());
-        } else {
-            setMotors(-m_pivotPID.calculate(currentArmAngle) + calculateFeedForward());
-        }
+        //if (m_pivotPID.atGoal()) {
+        setMotors(calculateFeedForward());
+//        } else {
+//            setMotors(-m_pivotPID.calculate(currentArmAngle) + calculateFeedForward());
+//        }
     }
 
     
@@ -81,11 +81,11 @@ public class PivotSubsystem extends SubsystemBase {
     private void updateTelemetry() {
         dashboardTelemetry.addData("armAngle", currentArmAngle);
 //        dashboardTelemetry.addData("COMAngle", aCOMAngle());
-        dashboardTelemetry.addData("_pid+ff value", m_pivotPID.calculate(currentArmAngle)+calculateFeedForward());
+//        dashboardTelemetry.addData("_pid+ff value", m_pivotPID.calculate(currentArmAngle)+calculateFeedForward());
         dashboardTelemetry.addData("_pid value", -m_pivotPID.calculate(currentArmAngle));
         dashboardTelemetry.addData("_FF", calculateFeedForward());
-        dashboardTelemetry.addData("balanceAngle", aBalanceAngle());
-        dashboardTelemetry.addData("kG", akG(armLength));
+        dashboardTelemetry.addData("balanceAngle", aBalanceAngle(armLength));
+//        dashboardTelemetry.addData("kG", akG(armLength));
         dashboardTelemetry.addData("rightEncoder", rightEncoder.getPosition());
         dashboardTelemetry.addData("rightEncoder rev", rightEncoder.getRevolutions());
         dashboardTelemetry.addData("leftEncoder rev", leftEncoder.getRevolutions());
@@ -94,18 +94,18 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public double calculateFeedForward(){
-        return -akG(armLength) * Math.cos(Math.toRadians(aCOMAngle()));
+        return -akG(armLength)* Math.cos(Math.toRadians(aCOMAngle()));
     }
 
     private double aCOMAngle(){
-        return currentArmAngle+90 - aBalanceAngle();
+        return currentArmAngle+90 - aBalanceAngle(armLength);
     }
 
-    private double aBalanceAngle(){
-        return 3.59*armLength.getAsDouble() + 119;
+    private double aBalanceAngle(DoubleSupplier x){
+        return 117 + 7.84*x.getAsDouble() + 1.04*Math.pow(x.getAsDouble(),2);
     }
     private double akG(DoubleSupplier x) {
-        return 0.0782 + -0.0121*x.getAsDouble() + 3.17E-03*Math.pow(x.getAsDouble(),2);
+        return -0.0446*x.getAsDouble() + 0.162;
     }
 
 
@@ -133,7 +133,7 @@ public class PivotSubsystem extends SubsystemBase {
         }
     }
     public Command set(){
-        return new InstantCommand(()->m_pivotPID.setGoal(pSetpoint,currentArmAngle),this);
+        return new InstantCommand(()->m_pivotPID.setGoal(pSetpoint),this);
     }
     public Command disablePID(){
         return new InstantCommand(()->m_pivotPID.disable());
