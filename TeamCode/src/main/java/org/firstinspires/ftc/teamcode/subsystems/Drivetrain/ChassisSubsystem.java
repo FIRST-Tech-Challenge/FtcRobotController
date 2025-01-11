@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConstants.RotationPID.PIDConstants.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConstants.RotationPID.*;
+import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConstants.PIDConstants.*;
 import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConstants.RotationPID.*;
 import static org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisConstants.FeedForwardConstants.*;
 
@@ -13,11 +14,13 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.BT.BTHolonomicDriveController;
 import org.firstinspires.ftc.teamcode.utils.PID.ProfiledPIDController;
@@ -75,6 +78,16 @@ public class ChassisSubsystem extends SubsystemBase {
         motor_BL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         motor_FL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
+        motor_BR.setInverted(true);
+        motor_BL.setInverted(false);
+        motor_FL.setInverted(false);
+        motor_FR.setInverted(true);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        gyro = new RevIMU(map, "imu");
+        gyro.init(parameters);
+
         updateTelemetry();
 
     }
@@ -112,12 +125,33 @@ public class ChassisSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
+//        motor_BL.set(bl);
+//        motor_FL.set(fl);
+//        motor_BR.set(br);
+//        motor_FR.set(fr);
+
+        m_rotationpid.setPID(rkp,rki,rkd);
+        m_pidY.setPID(Ykp,Yki,Ykd);
+        m_pidY.setIntegratorRange(-yMaxIntegral,yMaxIntegral);
+        m_rotationpid.setTolerance(tolerance);
+        m_pidY.setIzone(YiZone);
+        m_pidY.setTolerance(ytolerance);
+        m_pidX.setIzone(XiZone);
+        m_pidY.setTolerance(xtolerance);
+        m_rotationpid.setIzone(rotIzone);
+//        odometry.updatePose();//todo: uncomment when starting to use odometry
+        m_pidX.setPID(Xkp,Xki,Xkd);
+        m_pidX.setConstraints(new TrapezoidProfile.Constraints(SpeedsAndAcc.maxVelocityX,SpeedsAndAcc.maxAccelerationX));
+
         updateTelemetry();
         updateValues();
     }
 
     private void updateTelemetry() {
-
+        dashboardTelemetry.addData("!bl current",motor_BL.motorEx.getCurrent(CurrentUnit.AMPS));
+        dashboardTelemetry.addData("!fl current",motor_FL.motorEx.getCurrent(CurrentUnit.AMPS));
+        dashboardTelemetry.addData("!br current",motor_BR.motorEx.getCurrent(CurrentUnit.AMPS));
+        dashboardTelemetry.addData("!fr current",motor_FR.motorEx.getCurrent(CurrentUnit.AMPS));
     }
 
     private void updateValues() {

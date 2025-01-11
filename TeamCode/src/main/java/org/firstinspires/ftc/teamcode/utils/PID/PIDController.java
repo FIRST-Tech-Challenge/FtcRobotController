@@ -51,12 +51,14 @@ public class PIDController {
 
     private double m_setpoint;
     private double m_measurement;
+    private boolean m_disabled = false;
 
     private boolean m_haveMeasurement;
     private boolean m_haveSetpoint;
     private boolean m_resetAccumilatorAtSetPoint;
     private double m_AccumilatorTolerance;
     private ElapsedTime time;
+    private double m_maximumAbsOutput=1;
 
 
     /**
@@ -84,6 +86,7 @@ public class PIDController {
         m_ki = ki;
         m_kd = kd;
         m_izone=izone;
+        m_maximumAbsOutput=1;
         if (period <= 0) {
             throw new IllegalArgumentException("Controller period must be a non-zero positive number!");
         }
@@ -178,6 +181,15 @@ public class PIDController {
     public void setIzone(double izone){
         m_izone=izone;
     }
+
+    public double getMaximumAbsOutput() {
+        return m_maximumAbsOutput;
+    }
+
+    public void setMaximumAbsOutput(double m_maximumAbsOutput) {
+        this.m_maximumAbsOutput = m_maximumAbsOutput;
+    }
+
     /**
      * Returns the period of this controller.
      *
@@ -352,9 +364,13 @@ public class PIDController {
     public double calculate(double measurement) {
         double dt=time.seconds();
         time.reset();
+
         m_measurement = measurement;
         m_prevError = m_positionError;
         m_haveMeasurement = true;
+
+
+        if (m_disabled) return 0;
 
         if (m_continuous) {
             double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
@@ -377,7 +393,7 @@ public class PIDController {
         }
 
 
-        return m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError;
+        return Math.max(Math.min(m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError,m_maximumAbsOutput),-m_maximumAbsOutput);
     }
 
     private boolean isInAccumulatorTolerance() {
@@ -395,4 +411,13 @@ public class PIDController {
         m_velocityError = 0;
         m_haveMeasurement = false;
     }
+
+    public void disable() {
+        m_disabled = true;
+    }
+    public void enable() {
+        m_disabled = false;
+        reset();
+    }
+
 }

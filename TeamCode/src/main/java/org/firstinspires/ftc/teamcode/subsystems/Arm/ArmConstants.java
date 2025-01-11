@@ -1,61 +1,48 @@
 package org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.utils.BT.BTTranslation2d;
-import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingDouble;
-import org.firstinspires.ftc.teamcode.utils.cheesy.InterpolatingTreeMap;
 
 public class ArmConstants {
-    public static final double armMass = 0;
-    public static final double totalLength = 1; //in revolutions
 
-    public static final double g = 9.81;
-    public static double maxArmAngle = 0;
+
 
     @Config
-    public static class TranslationConstants{
-        public static final double x = 0;
-        public static final double y = 0;
-        public BTTranslation2d setpoint = new BTTranslation2d(x,y);
-    }
-    @Config
-    public static class armPIDConstants {
-        public static double kG = 0;
+    public static class pivotPIDConstants {
+        public static double pSetpoint = 0;
         public static double kS = 0.032;
-        public static double eKP = 0;
+        public static double kG = 0;
+        public static double pKP = 0.02;
+        public static double pKI = 0.005;
+        public static double pKD = 0;
+        public static double pIzone = 5;
+        public static double pTolerance = 1;
+        public static double pMaxOutput=0.5;
+        public static double pGoalTolerance = 1;
+        public static double pGoalVelocityTolerance = 0.5;
+        public static double vConstraint = 30;
+        public static double aConstraint = 30;
+    }
+
+    @Config
+    public static class extensionPIDCosntants{
+        public static double eKP = 6;
         public static double eKI = 0;
         public static double eKD = 0;
-        public static double pKP = 0;
-        public static double pKI = 0;
-        public static double pKD = 0;
-
-    }
-    public static class ffConstants{
-
-    }
-
-    public static class extensionConstants {
-        public static double encoderToLength(double x){return x;}//find linear function
-        public static final double[] segmentLengths = {0,0,0};//todo:find values
-        public static final double[] segmentMasses = {0,0,0};//todo:find values
-
+        public static double eIzone = 0;
+        public static double eMaxV = 40;
+        public static double eMaxA = 10;
+        public static double eSetpoint = 0;
+        public static double eTolerance = 0.2;
+        public static double eGoalTolerance= 0.1;
+        public static double eGoalVelocityTolerance = 0.5;
+        public static double extended = -2.5;
+        public static double closed = 0;
+        public static double score = 83;
     }
 
-//    public static class FFInterpolation{
-//        private static final InterpolatingTreeMap<InterpolatingDouble,InterpolatingDouble> balanceByLength = new InterpolatingTreeMap<>();
-//        static {
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(110));
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
-//        }
-//        private static final InterpolatingTreeMap<InterpolatingDouble,InterpolatingDouble> maxFFangleByLength = new InterpolatingTreeMap<>();
-//        static {
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(110));
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
-//            balanceByLength.put(new InterpolatingDouble(0.0),new InterpolatingDouble(107.0));
-//        }
 
 
 }
+

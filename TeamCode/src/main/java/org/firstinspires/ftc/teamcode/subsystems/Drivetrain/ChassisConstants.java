@@ -27,31 +27,42 @@ public class ChassisConstants {
     public static class FeedForwardConstants {
         public static double ks = 0.085; //values from kkbotz
         public static double kv = 1;
-        }
+        public static double bl = 0;
+        public static double br = 0;
+        public static double fl = 0;
+        public static double fr = 0;
+    }
 
     public static final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(FLW, FRW, BLW, BRW);
     public static final double robotThetaVelocityMax = 180; //degree per sec
     public static final double robotThetaAccMax = 180; //degree per sec^2
 
     @Config
-    public static class RotationPID{
-        public static double rkp = 0.0;
-        public static double rki = 0.0;
-        public static double rkd = 0.0;
+    public static class RotationPID {
+        public static double rkp = 0.0145;
+        public static double rki = 0.0006;
+        public static double rkd = 0.00;
         public static double rks = 0;
-        public static double degrees = 0;
-        public static double tolerance = 0;
-        public static double rotIzone = 0;
+        public static double degrees = -100;
+        public static double tolerance = 1;
+        public static double rotIzone = 5;
+    }
 
     @Config
     public static class PIDConstants {
-        public static double Xkp = 0;
-        public static double Xki = 0;
-        public static double Xkd = 0;
-        public static double Ykp = 0;
-        public static double Yki = 0;
-        public static double Ykd = 0;
+        public static double Xkp = 3;
+        public static double Xki = 0.05;
+        public static double Xkd = 0.5;
+        public static double Ykp = 4.5;
+        public static double Yki = 8;
+        public static double Ykd = 0.28;
+        public static double XiZone = 0.1;
+        public static double YiZone = 0.06;
+        public static double yMaxIntegral=1;
+        public static double ytolerance=0.015;//1.5 cm
+        public static double xtolerance=0.025;//2 cm
 
-        }
+
     }
+
 }
