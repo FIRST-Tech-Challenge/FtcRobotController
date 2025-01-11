@@ -12,13 +12,18 @@ public class Input {
 
     Motors motors;
     Servos servos;
+    IMU imu;
     ElapsedTime elapsedTime;
 
     private int setPoint;
     private double integral = 0;
     private double prevError = 0;  // Previous error, used for derivative
-
     private double prevTime;
+
+    // Robot position
+    private double x = 0.0; // X position (strafe) in inches
+    private double y = 0.0; // Y position (forward/backward) in inches
+    private double heading = 0.0; // Robot's current heading in radians
 
     //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
@@ -26,14 +31,15 @@ public class Input {
     public Input(HardwareMap hardwareMap) {
         motors = new Motors(hardwareMap);
         servos = new Servos(hardwareMap);
-        elapsedTime = new ElapsedTime();
+        imu = new IMU(hardwareMap);
 
+        elapsedTime = new ElapsedTime();
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        setPoint = motors.getArmRestingPosition();
 
+        setPoint = motors.getArmRestingPosition();
         prevTime = elapsedTime.milliseconds();
 
     }
@@ -176,4 +182,36 @@ public class Input {
 
     }
 
+
+    public void calculatePosition() {
+        heading = Math.toRadians(imu.getAngle('y'));
+
+        // Read encoder values
+        double flTicks = motors.getLeftFrontPosition();
+        double frTicks = motors.getLeftBackPosition();
+        double blTicks = motors.getRightFrontPosition();
+        double brTicks = motors.getRightBackPosition();
+
+        // Convert encoder ticks to distances
+        double flDistance = (flTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+        double frDistance = (frTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+        double blDistance = (blTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+        double brDistance = (brTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+
+        // Calculate movement in robot-centric coordinates
+        double forward = (flDistance + frDistance + blDistance + brDistance) / 4.0;
+        double strafe = (-flDistance + frDistance + blDistance - brDistance) / 4.0;
+
+        // Transform robot-centric motion to field-centric motion
+        double deltaX = forward * Math.sin(heading) + strafe * Math.cos(heading);
+        double deltaY = forward * Math.cos(heading) - strafe * Math.sin(heading);
+
+        // Update robot's position
+        x += deltaX;
+        y += deltaY;
+
+        BotTelemetry.drawPosition(x, y, heading);
+        // Pause briefly
+        //sleep(50); // 50ms delay for smoother updates
+    }
 }
