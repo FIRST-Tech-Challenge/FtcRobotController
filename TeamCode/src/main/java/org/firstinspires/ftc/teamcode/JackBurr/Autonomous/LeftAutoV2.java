@@ -63,22 +63,24 @@ public class LeftAutoV2 extends LinearOpMode {
                 step =  1;
             }
             if(step == 1){
-                while (deliveryTimer.seconds() < 3){
+                if (deliveryTimer.seconds() < 3){
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                     slides.runLeftSlideToPosition(robotConstantsV1.LEFT_SLIDE_HIGH_BASKET, 0.9);
                     slides.runRightSlideToPosition(robotConstantsV1.RIGHT_SLIDE_HIGH_BASKET, 0.9);
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                 }
-                while (deliveryTimer.seconds() < 7){
+                if (deliveryTimer.seconds() < 7){
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
-                while (deliveryTimer.seconds() < 10){
+                if (deliveryTimer.seconds() < 10){
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                     slides.runLeftSlideToPosition(0, 0.9);
                     slides.runRightSlideToPosition(0, 0.9);
                 }
-                step = 2;
+                if(deliveryTimer.seconds() > 13) {
+                    step = 2;
+                }
             }
             if(step == 2) {
                 drive.followTrajectory(traj2);
