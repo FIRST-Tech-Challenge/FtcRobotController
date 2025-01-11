@@ -126,7 +126,7 @@ public class Settings {
         public static class HorizontalSlide {
             // Positions in encoder ticks
             // TODO: TUNE
-            public static int COLLAPSED = 0;
+            public static int COLLAPSED = -125;
             public static int LEVEL_1 = -200;
             public static int LEVEL_2 = -400;
             public static int EXPANDED = -600;
@@ -237,7 +237,7 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
-        public boolean freaky_horizontal = false;
+        public boolean freaky_horizontal = true;
         public boolean freaky_vertical = true;
 
         public final ButtonMapping buttonMapping;
@@ -260,8 +260,8 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendHorizontal = GamepadButton.B;
-        public GamepadButton retractHorizontal = GamepadButton.X;
+        public GamepadButton extendHorizontal = GamepadButton.X;
+        public GamepadButton retractHorizontal = GamepadButton.B;
         public final GamepadButton retractVertical = GamepadButton.LEFT_BUMPER;
         public final GamepadButton extendVertical = GamepadButton.RIGHT_BUMPER;
 

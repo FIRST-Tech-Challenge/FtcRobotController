@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -157,17 +158,88 @@ public class MeetFourAuto extends LinearOpMode {
         }
     }
 
+    public void goober() {
+        Pose2d initialPose = new Pose2d(11.5, -60, Math.toRadians(90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
+        // vision here that outputs position
+        int visionOutputPosition = 1;
+
+
+        TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(36, -35), Math.toRadians(90))
+                .strafeTo(new Vector2d(38,-13))
+                .strafeTo(new Vector2d(50,-13))
+                .strafeTo(new Vector2d(50,-50))
+                .strafeTo(new Vector2d(50,-13))
+                .strafeTo(new Vector2d(60,-13))
+                .strafeTo(new Vector2d(60,-50));
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
+                .lineToY(37)
+                .setTangent(Math.toRadians(0))
+                .lineToX(18)
+                .waitSeconds(3)
+                .setTangent(Math.toRadians(0))
+                .lineToXSplineHeading(46, Math.toRadians(180))
+                .waitSeconds(3);
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
+                .lineToYSplineHeading(33, Math.toRadians(180))
+                .waitSeconds(2)
+                .strafeTo(new Vector2d(46, 30))
+                .waitSeconds(3);
+        Action PlaceSample = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
+                .build();
+        Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
+                .strafeTo(new Vector2d(48, 12))
+                .build();
+
+        while (!isStopRequested() && !opModeIsActive()) {
+            int position = visionOutputPosition;
+            telemetry.addData("Position during Init", position);
+            telemetry.update();
+        }
+
+        int startPosition = visionOutputPosition;
+        telemetry.addData("Starting Position", startPosition);
+        telemetry.update();
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        Action trajectoryActionChosen;
+        if (startPosition == 1) {
+            trajectoryActionChosen = MoveSampleToHumanPlayerZone.build();
+        } else if (startPosition == 2) {
+            trajectoryActionChosen = tab2.build();
+        } else {
+            trajectoryActionChosen = tab3.build();
+        }
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        PlaceSample,
+                        hookChamber(),
+                        unhookChamber(),
+                        trajectoryActionChosen
+//                        ,trajectoryActionCloseOut
+                )
+        );
+    }
 
     public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, PlacementHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
 
+        if(startingPosition == StartingPosition.RED_RIGHT) {
+            goober();
+            requestOpModeStop();
+        }
+
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
                         hookChamber()));
-
         return placingTrajectory;
     }
 

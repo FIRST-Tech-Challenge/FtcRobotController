@@ -200,11 +200,12 @@ public class BaseRobot {
                     intake.horizontalSlide.decrement();
                 }
             } else {
+                // changed to 2 stages
                 if (contextualActions.justExtendHorizontal) {
-                    intake.horizontalSlide.extend();
+                    intake.horizontalSlide.max();
                 }
                 if (contextualActions.justRetractHorizontal) {
-                    intake.horizontalSlide.retract();
+                    intake.horizontalSlide.min();
                 }
             }
         }
