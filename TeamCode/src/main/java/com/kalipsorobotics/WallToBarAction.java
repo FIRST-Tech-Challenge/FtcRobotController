@@ -15,12 +15,18 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class WallToBarAction extends KActionSet {
 
-    //ASSUME ROBOT AT WALL READY FOR SPECIMEN
+    public static double HANG_POS = SPECIMEN_HANG_POS_X+50;
+
     public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, int hangPosY) {
+        this(driveTrain, wheelOdometry, HANG_POS, hangPosY);
+    }
+
+    //ASSUME ROBOT AT WALL READY FOR SPECIMEN
+    public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, double hangPosX, int hangPosY) {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/100.0); // Chunking pure pursuit
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
-        moveToBar1.addPoint(SPECIMEN_HANG_POS_X+50, hangPosY, 0);
+        moveToBar1.addPoint(hangPosX, hangPosY, 0);
         this.addAction(moveToBar1);
         //waits for everything to finish to prevent specimen from getting caught in bar
 //        PurePursuitAction moveToBar2 = new PurePursuitAction(driveTrain, wheelOdometry,1.0/1500.0); // Final pure pursuit
@@ -30,5 +36,4 @@ public class WallToBarAction extends KActionSet {
 //        moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
 //        this.addAction(moveToBar2);
     }
-
 }

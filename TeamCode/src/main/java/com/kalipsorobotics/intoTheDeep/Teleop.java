@@ -1,5 +1,7 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
+
 import android.util.Log;
 
 import com.kalipsorobotics.WallToBarAction;
@@ -26,6 +28,7 @@ import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
+import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
@@ -139,6 +142,7 @@ public class Teleop extends LinearOpMode {
         boolean sampleEndToEndSequencePressed;
         boolean specimenEndToEndSequencePressed;
 
+        double hangPosX = SPECIMEN_HANG_POS_X+50;
         int hangPosY = 100;
         int hangIncrement = 60;
 
@@ -238,7 +242,7 @@ public class Teleop extends LinearOpMode {
             if(wallToBarPressed) {
                 if (wallToBarAction == null || wallToBarAction.getIsDone()){
                     hangPosY += hangIncrement;
-                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosY);
+                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosX, hangPosY);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
 
                     setLastMoveAction(wallToBarAction);
@@ -510,7 +514,9 @@ public class Teleop extends LinearOpMode {
                    specimenHang = new SpecimenHang(outtake);
                    specimenHang.setName("specimenHang");
 
-                    setLastLsAction(specimenHang);
+                   hangPosX = wheelOdometry.getCurrentPosition().getX();
+
+                   setLastLsAction(specimenHang);
                 }
             }
 

@@ -68,14 +68,14 @@ public class AutoBasketFunnel extends LinearOpMode {
         PurePursuitAction moveOutSpecimen = new PurePursuitAction(driveTrain, wheelOdometry);
         moveOutSpecimen.setName("moveOutSpecimen");
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
-        moveOutSpecimen.addPoint(-585, -250, 0);
+        moveOutSpecimen.addPoint(-585, -250, 45);
         redAutoBasket.addAction(moveOutSpecimen);
         //===============end of first specimen===============
 
 
 
         //================begin of first basket====================
-        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 735);
+        SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 755);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
         sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);

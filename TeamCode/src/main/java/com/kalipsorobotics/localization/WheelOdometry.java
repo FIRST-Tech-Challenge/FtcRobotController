@@ -232,6 +232,10 @@ public class WheelOdometry {
         return currentPosition;
     }
 
+    public void setCurrentPosition(double xCoordinate, double yCoordinate, double thetaRad) {
+        this.currentPosition = new Position(xCoordinate, yCoordinate, thetaRad);
+    }
+
     public IMUModule getImuModule() {return imuModule;}
 
     public double getCurrentImuHeading() {
