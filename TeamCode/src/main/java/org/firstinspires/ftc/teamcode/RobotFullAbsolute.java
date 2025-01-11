@@ -30,7 +30,7 @@ public class RobotFullAbsolute extends LinearOpMode {
 
 
         double currentFacing;
-        double angleDifference;
+        double difference;
 
         Vector2D direction = new Vector2D(0, 0);
         Vector2D toGo = new Vector2D(0,0);
@@ -57,38 +57,38 @@ public class RobotFullAbsolute extends LinearOpMode {
         waitForStart();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            toGo.setVector(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            toGo.setVector(-gamepad1.left_stick_y, gamepad1.left_stick_x);
            // toGo.normalizeVector();
-             toGo.adjustAngle(currentFacing);
+             toGo.setRelative(currentFacing);
 
-            speed = toGo.getJ() * TOTALSPEED;
+            speed = toGo.getI() * TOTALSPEED;
             speed = gamepad1.dpad_up ? speed+SLOWSPEED : speed;
             speed = gamepad1.dpad_down ? speed-SLOWSPEED : speed;
 
-            strafe = toGo.getI() * TOTALSPEED;
+            strafe = toGo.getJ() * TOTALSPEED;
             strafe = gamepad1.dpad_right ? strafe+SLOWSPEED : strafe;
             strafe = gamepad1.dpad_left ? strafe-SLOWSPEED : strafe;
 
-            direction.setVector(gamepad1.right_stick_x, -gamepad1.right_stick_y);
+            direction.setVector(-gamepad1.right_stick_y, gamepad1.right_stick_x);
 
-            angleDifference = currentFacing-direction.getAngle();
+            difference = Math.toDegrees(currentFacing-direction.getRadians());
 
 
-            if (angleDifference > 180) {
-                angleDifference -= 360;
+            if (difference > 180) {
+                difference -= 360;
             }
 
-            if (angleDifference < -180) {
-                angleDifference += 360;
+            if (difference < -180) {
+                difference += 360;
             }
 
-            if (angleDifference > 5 && angleDifference < 180) {
-                turn = MovementCurves.roundedSquareCurve(angleDifference/360);
-            } else if (angleDifference < -5 && angleDifference > -180) {
+            if (difference > 5 && difference < 180) {
+                turn = MovementCurves.roundedSquareCurve(difference/360);
+            } else if (difference < -5 && difference > -180) {
 
-                turn = -MovementCurves.roundedSquareCurve(-angleDifference/360);
+                turn = -MovementCurves.roundedSquareCurve(-difference/360);
 
             } else {
                 turn = 0;
