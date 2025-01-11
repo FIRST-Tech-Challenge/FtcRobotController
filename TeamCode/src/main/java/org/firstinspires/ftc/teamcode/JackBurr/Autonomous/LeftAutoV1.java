@@ -56,6 +56,7 @@ public class LeftAutoV1 extends LinearOpMode {
         drive.followTrajectory(traj3);
         if (isStopRequested()) return;
         while (opModeIsActive()) {
+            deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
             deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_LEVEL_ONE_ASCENT);
         }
     }
