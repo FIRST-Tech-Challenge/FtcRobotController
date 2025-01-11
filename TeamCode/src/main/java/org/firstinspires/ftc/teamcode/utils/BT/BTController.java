@@ -8,14 +8,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-/*
-had to switch some of the button because they were acting strange
- */
 
 public class BTController{
 
     static double threshold = 0.;
-    public BooleanSupplier[] m_buttonsSuppliers;
+    private BooleanSupplier[] m_buttonsSuppliers;
 
     public final DoubleSupplier left_x;
     public final DoubleSupplier right_x;
@@ -29,16 +26,16 @@ public class BTController{
         this.m_buttonsSuppliers = new BooleanSupplier[values().length];
 
         right_x= ()->gamepad.right_stick_x;
-        right_y= ()->gamepad.left_stick_y;
+        right_y= ()->gamepad.right_stick_y;
         left_x = ()->gamepad.left_stick_x ;
-        left_y = ()->gamepad.right_stick_y ;
+        left_y = ()->gamepad.left_stick_y ;
         left_trigger = ()-> gamepad.left_trigger;
         right_trigger = ()-> gamepad.right_trigger;
 
-        this.m_buttonsSuppliers[LEFT_X.ordinal()] = (() -> Math.abs(left_x.getAsDouble()) > threshold);
-        this.m_buttonsSuppliers[LEFT_Y.ordinal()] = (() -> Math.abs(left_y.getAsDouble()) > threshold);
-        this.m_buttonsSuppliers[RIGHT_X.ordinal()] = (() -> Math.abs(right_x.getAsDouble()) > threshold);
-        this.m_buttonsSuppliers[RIGHT_Y.ordinal()] = (() -> Math.abs(right_y.getAsDouble()) > threshold);
+        this.m_buttonsSuppliers[LEFT_X.ordinal()] = (() -> Math.abs(gamepad.left_stick_x) > threshold);
+        this.m_buttonsSuppliers[LEFT_Y.ordinal()] = (() -> Math.abs(gamepad.left_stick_y) > threshold);
+        this.m_buttonsSuppliers[RIGHT_X.ordinal()] = (() -> Math.abs(gamepad.right_stick_x) > threshold);
+        this.m_buttonsSuppliers[RIGHT_Y.ordinal()] = (() -> Math.abs(gamepad.right_stick_y) > threshold);
         this.m_buttonsSuppliers[LEFT_TRIGGER.ordinal()] = (() -> Math.abs(gamepad.left_trigger) > threshold);
         this.m_buttonsSuppliers[RIGHT_TRIGGER.ordinal()] = (() -> Math.abs(gamepad.right_trigger) > threshold);
 
@@ -48,10 +45,10 @@ public class BTController{
         this.m_buttonsSuppliers[DPAD_RIGHT.ordinal()]=()->gamepad.dpad_right;
         this.m_buttonsSuppliers[DPAD_LEFT.ordinal()]=()->gamepad.dpad_left;
         this.m_buttonsSuppliers[DPAD_UP.ordinal()]=()->gamepad.dpad_up;
-        this.m_buttonsSuppliers[BUTTON_RIGHT.ordinal()]=()->gamepad.a;
-        this.m_buttonsSuppliers[BUTTON_LEFT.ordinal()]=()->gamepad.b;
+        this.m_buttonsSuppliers[BUTTON_RIGHT.ordinal()]=()->gamepad.b;
+        this.m_buttonsSuppliers[BUTTON_LEFT.ordinal()]=()->gamepad.x;
         this.m_buttonsSuppliers[BUTTON_UP.ordinal()]=()->gamepad.y;
-        this.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]=()->gamepad.x;
+        this.m_buttonsSuppliers[BUTTON_DOWN.ordinal()]=()->gamepad.a;
 
 
     }
