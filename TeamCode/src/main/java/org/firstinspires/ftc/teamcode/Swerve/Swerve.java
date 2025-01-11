@@ -72,7 +72,7 @@ public class Swerve {
     this.telemetry = opMode.telemetry;
 
     speedMult = .6;
-    double timeToFull = .5;
+    double timeToFull = .3;
 
     xLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
     yLimiter = new SlewRateLimiter((Module.maxDriveSpeedMetersPerSec * speedMult) / timeToFull);
@@ -241,34 +241,37 @@ public class Swerve {
     Telemetry telemetry;
     int id;
 
-
     Module(OpMode opMode, int id) {
-      double kp, ki, kd;
+      double kp, ki, kd, ks;
       // TODO: Fine tune these values to stop servo hunting
       switch (id) {
         case 0 -> {
           pos = "FL";
           kp = 5.0;
-          ki = .1;
-          kd = 0.2;
+          ki = 0.5;
+          kd = 0;
+          ks = 0.05;
         }
         case 1 -> {
           pos = "FR";
           kp = 5.0;
-          ki = .1;
-          kd = 0.2;
+          ki = 0.5;
+          kd = 0;
+          ks = 0.025;
         }
         case 2 -> {
           pos = "BL";
           kp = 5.0;
-          ki = .2;
-          kd = 0.2;
+          ki = 0.5;
+          kd = 0;
+          ks = 0.025;
         }
         case 3 -> {
           pos = "BR";
           kp = 5.0;
-          ki = .1;
-          kd = 0.2;
+          ki = 0.5;
+          kd = 0;
+          ks = 0.05;
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
@@ -286,7 +289,7 @@ public class Swerve {
       driveFeedforward = new SimpleMotorFeedforward(0, 1 / maxDriveSpeedMetersPerSec);
 
       steerPID.enableContinuousInput(-Math.PI, Math.PI);
-      steerFeedforward = new SimpleMotorFeedforward(0, 1 / maxSteerSpeedRadPerSec);
+      steerFeedforward = new SimpleMotorFeedforward(ks, 1 / maxSteerSpeedRadPerSec);
 
       this.telemetry = opMode.telemetry;
       this.id = id;
@@ -349,7 +352,7 @@ public class Swerve {
 
 
     private void runServoVel(double velRadPerSec) {
-      steerServo.setPosition((1 - steerFeedforward.calculate(velRadPerSec)) / 2);
+      steerServo.setPosition(MathUtil.clamp((1 - steerFeedforward.calculate(velRadPerSec)) / 2, -1, 1));
     }
   }
 }

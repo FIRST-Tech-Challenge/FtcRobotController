@@ -2,6 +2,7 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -27,6 +28,8 @@ dependencies {
             because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
         }
     }
+
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.1-ALPHA'
 
     implementation 'org.ejml:ejml-simple:0.43.1'
 }
