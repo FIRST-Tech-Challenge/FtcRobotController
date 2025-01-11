@@ -10,7 +10,7 @@ public class RobotConstantsV1 {
     //GRIPPERS=======================================================================================================
     public double GRIPPERS_OPEN = 0.8;
     public double GRIPPERS_CLOSE = 0.1;
-    public double GRIPPERS_GRAB = 0.45;
+    public double GRIPPERS_GRAB = 0.4;
     public double DELIVERY_GRIPPERS_CLOSE = 0.7;
     public double DELIVERY_GRIPPERS_OPEN = 0.3;
     //===============================================================================================================
