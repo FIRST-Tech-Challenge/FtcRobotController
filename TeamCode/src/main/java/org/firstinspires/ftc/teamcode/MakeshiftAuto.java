@@ -36,12 +36,12 @@ public class MakeshiftAuto extends LinearOpMode {
 
         TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(36, -35), Math.toRadians(90))
-                .strafeTo(new Vector2d(36,-13))
-                .strafeTo(new Vector2d(48,-13))
-                .strafeTo(new Vector2d(48,-50))
-                .strafeTo(new Vector2d(48,-13))
-                .strafeTo(new Vector2d(58,-13))
-                .strafeTo(new Vector2d(58,-50));
+                .strafeTo(new Vector2d(38,-13))
+                .strafeTo(new Vector2d(50,-13))
+                .strafeTo(new Vector2d(50,-50))
+                .strafeTo(new Vector2d(50,-13))
+                .strafeTo(new Vector2d(60,-13))
+                .strafeTo(new Vector2d(60,-50));
         TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
                 .lineToY(37)
                 .setTangent(Math.toRadians(0))
@@ -56,7 +56,7 @@ public class MakeshiftAuto extends LinearOpMode {
                 .strafeTo(new Vector2d(46, 30))
                 .waitSeconds(3);
         Action PlaceSample = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(5, -30), Math.toRadians(270))
+                .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
                 .build();
         Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
                 .strafeTo(new Vector2d(48, 12))
@@ -88,8 +88,8 @@ public class MakeshiftAuto extends LinearOpMode {
                 new SequentialAction(
                         PlaceSample,
                         hookChamber(),
-                        trajectoryActionChosen,
-                        unhookChamber()
+                        unhookChamber(),
+                        trajectoryActionChosen
 //                        ,trajectoryActionCloseOut
                 )
         );
