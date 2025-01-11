@@ -9,27 +9,20 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class Init extends KActionSet{
     public Init(IntakeClaw intakeClaw, Outtake outtake) {
-        OuttakePivotAction outtakePivotUp = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_HALFWAY_BASKET_POS);
-        this.addAction(outtakePivotUp);
 
         KServoAutoAction bigSweep = new KServoAutoAction(intakeClaw.getIntakeBigSweepServo(), IntakeClaw.INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT);
-        bigSweep.setDependentActions(outtakePivotUp);
         this.addAction(bigSweep);
 
         KServoAutoAction bigPivot = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_RETRACT_POS);
-        bigPivot.setDependentActions(outtakePivotUp);
         this.addAction(bigPivot);
 
         KServoAutoAction smallPivot = new KServoAutoAction(intakeClaw.getIntakeSmallPivotServo(), IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
-        smallPivot.setDependentActions(outtakePivotUp);
         this.addAction(smallPivot);
 
         KServoAutoAction smallSweep = new KServoAutoAction(intakeClaw.getIntakeSmallSweepServo(), IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
-        smallSweep.setDependentActions(outtakePivotUp);
         this.addAction(smallSweep);
 
         KServoAutoAction clawIntake = new KServoAutoAction(intakeClaw.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_OPEN);
-        clawIntake.setDependentActions(outtakePivotUp);
         this.addAction(clawIntake);
 
         KServoAutoAction clawOuttake = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
@@ -52,9 +45,9 @@ public class Init extends KActionSet{
         moveLSAction.setDependentActions(clawOuttake,hangHook1,hangHook2);
         this.addAction(moveLSAction);
 
-        OuttakePivotAction outtakePivot = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
-        outtakePivot.setDependentActions(moveLSAction);
-        this.addAction(outtakePivot);
+//        OuttakePivotAction outtakePivot = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+//        outtakePivot.setDependentActions(moveLSAction);
+//        this.addAction(outtakePivot);
 
         intakeClaw.getOpModeUtilities().getTelemetry().addLine("init finished");
         intakeClaw.getOpModeUtilities().getTelemetry().update();

@@ -25,16 +25,21 @@ public class AutoRobotHangAction extends KActionSet {
         hook2Up.setName("hook2Up");
         this.addAction(hook2Up);
 
-        WaitAction waitForLs = new WaitAction(200);
+        KServoAutoAction moveOuttakePivotBack = new KServoAutoAction(outtake.getOuttakePivotServo(), Outtake.OUTTAKE_PIVOT_PARKING_READY_POS);
+        moveOuttakePivotBack.setName("moveOuttakePivotBack");
+        moveOuttakePivotBack.setDependentActions(moveLsUp, moveOuttakePivotHalf);
+        this.addAction(moveOuttakePivotBack);
+
+        WaitAction waitForLs = new WaitAction(400);
         waitForLs.setName("waitForLs");
-        waitForLs.setDependentActions(moveLsUp, moveOuttakePivotHalf);
+        waitForLs.setDependentActions(moveOuttakePivotBack);
         this.addAction(waitForLs);
 
         MoveLSAction pullRobotUp = new MoveLSAction(outtake, 520);//733 ticks //311 //535
         pullRobotUp.setName("pullRobotUp");
         pullRobotUp.setOverridePower(1);
         pullRobotUp.setOverrideOn(true);
-        pullRobotUp.setDependentActions(moveLsUp);
+        pullRobotUp.setDependentActions(waitForLs);
         this.addAction(pullRobotUp);
 
         KServoAutoAction hanghook1 = new KServoAutoAction(outtake.getHangHook1(), Outtake.HOOK1_HANG_POS);

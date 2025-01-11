@@ -10,6 +10,7 @@ import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
@@ -22,6 +23,7 @@ import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.BasketReadyAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.OuttakePivotAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -36,6 +38,7 @@ import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
 import com.kalipsorobotics.utilities.KGamePad;
+import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -92,11 +95,14 @@ public class Teleop extends LinearOpMode {
         SampleEndToEndSequence specimenEndToEndSequence = null;
         SpecimenHang specimenHang = null;
         FunnelEndToEndAction intakeFunnelEndToEndAction = null;
+        KServoAutoAction hangHook1Move = null;
+        KServoAutoAction hangHook2Move = null;
         IntakeFunnelAction intakeFunnelAction = null;
         KGamePad kGamePad2 = new KGamePad(gamepad2);
         KGamePad kGamePad1 = new KGamePad(gamepad1);
         MoveLSAction moveLS = null;
         WallToBarAction wallToBarAction = null;
+        OuttakePivotAction outtakePivotAction = null;
 
         boolean needMaintainLs = true;
 
@@ -112,7 +118,8 @@ public class Teleop extends LinearOpMode {
 
         // GAMEPAD 1
         boolean resetWheelOdomPressed;
-        boolean angleLockPressed;
+        boolean hangHookUpPressed;
+        boolean hangHookDownPressed;
         boolean hangPressed = false;
         boolean moveWallTeleopPressed = false;
         boolean intakeFunnelEndToEndPressed = false;
@@ -147,18 +154,20 @@ public class Teleop extends LinearOpMode {
         int hangIncrement = 60;
 
         Init init = new Init(intakeClaw, outtake);
-        while(!init.getIsDone()) {
-            init.updateCheckDone();
-        }
 //        outtake.init();
 //        intakeClaw.init();
 
         waitForStart();
 
         while (opModeIsActive()) {
+            while(!init.getIsDone()) {
+                init.updateCheckDone();
+            }
+
             // GAMEPAD 1 ASSIGNMENTS ==============================================
             resetWheelOdomPressed = kGamePad1.isToggleDpadUp();
-            angleLockPressed = kGamePad1.isToggleButtonY();
+            hangHookUpPressed = kGamePad1.isToggleRightBumper();
+            hangHookDownPressed = kGamePad1.isRightTriggerPressed();
             hangPressed = kGamePad1.isToggleButtonB();
             moveWallTeleopPressed = kGamePad1.isToggleButtonA();
             intakeFunnelEndToEndPressed = kGamePad1.isToggleDpadLeft();
@@ -217,17 +226,17 @@ public class Teleop extends LinearOpMode {
 //                Log.d("teleop_odo", "   reset odometry");
 //            }
 
-            if (angleLockPressed) {
-                Log.d("gampad1",
-                        "gamepad1.y" + gamepad1.y + "   angle lock condition  " + (angleLockTeleOp == null || angleLockTeleOp.getIsDone()));
-
-                if (angleLockTeleOp == null || angleLockTeleOp.getIsDone()) {
-                    angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
-                    angleLockTeleOp.setName("angleLockTeleOp");
-
-                    setLastMoveAction(angleLockTeleOp);
-                }
-            }
+//            if (angleLockPressed) {
+//                Log.d("gampad1",
+//                        "gamepad1.y" + gamepad1.y + "   angle lock condition  " + (angleLockTeleOp == null || angleLockTeleOp.getIsDone()));
+//
+//                if (angleLockTeleOp == null || angleLockTeleOp.getIsDone()) {
+//                    angleLockTeleOp = new AngleLockTeleOp(driveTrain, wheelOdometry);
+//                    angleLockTeleOp.setName("angleLockTeleOp");
+//
+//                    setLastMoveAction(angleLockTeleOp);
+//                }
+//            }
 
             if(moveWallTeleopPressed) {
                 if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
@@ -272,6 +281,30 @@ public class Teleop extends LinearOpMode {
 
                     setLastLsAction(autoRobotHangAction);
                 }
+            }
+
+            if(hangHookUpPressed) {
+                if ((hangHook1Move == null || hangHook1Move.getIsDone()) && (hangHook2Move == null || hangHook2Move.getIsDone())) {
+                    hangHook1Move = new KServoAutoAction(outtake.getHangHook1(), Outtake.HOOK1_HANG_POS);
+                    hangHook2Move = new KServoAutoAction(outtake.getHangHook2(), Outtake.HOOK2_HANG_POS);
+                }
+            }
+
+            if(hangHook1Move != null && hangHook2Move != null) {
+                hangHook1Move.updateCheckDone();
+                hangHook2Move.updateCheckDone();
+            }
+
+            if(hangHookDownPressed) {
+                if ((hangHook1Move == null || hangHook1Move.getIsDone()) && (hangHook2Move == null || hangHook2Move.getIsDone())) {
+                    hangHook1Move = new KServoAutoAction(outtake.getHangHook1(), Outtake.HOOK1_DOWN_POS);
+                    hangHook2Move = new KServoAutoAction(outtake.getHangHook2(), Outtake.HOOK2_DOWN_POS);
+                }
+            }
+
+            if(hangHook1Move != null && hangHook2Move != null) {
+                hangHook1Move.updateCheckDone();
+                hangHook2Move.updateCheckDone();
             }
 
             //INTAKE SAMPLE IN FUNNEL
@@ -373,14 +406,14 @@ public class Teleop extends LinearOpMode {
 
             if ((-sweepStickValue > 0.5) && !intakeOverrideOn) {
                 setLastIntakeAction(null);
-                intakeSmallSweepPos += 0.025;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+//                intakeSmallSweepPos += 0.025;
+//                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_VERTICAL_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if ((-sweepStickValue < -0.5) && !intakeOverrideOn) {
                 setLastIntakeAction(null);
-                intakeSmallSweepPos -= 0.025;
-                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
+//                intakeSmallSweepPos -= 0.025;
+//                intakeClaw.getIntakeSmallSweepServo().setPosition(intakeSmallSweepPos);
                 intakeClaw.getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_TRANSFER_READY_POS);
                 Log.d("sweeping",  "" + intakeSmallSweepPos);
             }
@@ -551,11 +584,20 @@ public class Teleop extends LinearOpMode {
             }
 
             if (outtakePivotStickValue > 0.5) {
-                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
-                Log.d("sweeping",  "" + intakeSmallSweepPos);
+                if(outtakePivotAction == null || outtakePivotAction.getIsDone()) {
+                }
+//                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
+//                Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if (outtakePivotStickValue < -0.5) {
-                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
-                Log.d("sweeping",  "" + intakeSmallSweepPos);
+                if(outtakePivotAction == null || outtakePivotAction.getIsDone()) {
+                    outtakePivotAction = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+                }
+//                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+//                Log.d("sweeping",  "" + intakeSmallSweepPos);
+            }
+
+            if(outtakePivotAction != null) {
+                outtakePivotAction.updateCheckDone();
             }
 
             if(sampleEndToEndSequencePressed) {

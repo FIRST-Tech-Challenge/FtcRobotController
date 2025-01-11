@@ -49,6 +49,7 @@ public class SetAutoDelayAction extends Action {
             time = 0;
         }
 
+        opModeUtilities.getTelemetry().addLine("INIT FINISHED");
         opModeUtilities.getTelemetry().addData("DELAY TIME IN MS ", getTimeMs());
         opModeUtilities.getTelemetry().update();
     }

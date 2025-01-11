@@ -51,6 +51,10 @@ public class AutoSpecimen extends LinearOpMode {
 
         InitAuto initAuto = new InitAuto(intakeClaw, outtake);
         initAuto.setName("initAuto");
+        initAuto.update();
+
+        telemetry.addLine("init finished");
+        telemetry.update();
 
         SetAutoDelayAction setAutoDelayAction = new SetAutoDelayAction(opModeUtilities, gamepad1);
         setAutoDelayAction.setName("setAutoDelayAction");
@@ -122,7 +126,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 400); //400 //375
+                outtake, 290); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
         wallToBarHangRoundTrip2.setDependentActions(moveFloorSamples, specimenWallReady, moveToDepot);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
@@ -130,7 +134,7 @@ public class AutoSpecimen extends LinearOpMode {
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, 500); //500 //450
+                outtake, 390); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);
@@ -144,12 +148,6 @@ public class AutoSpecimen extends LinearOpMode {
 //        redAutoSpecimen.addAction(wallToBarHangRoundTrip4);
         //================end of specimen 4================
 
-
-
-        initAuto.update();
-
-        telemetry.addLine("init finished");
-        telemetry.update();
 
         redAutoSpecimen.printWithDependentActions();
         waitForStart();

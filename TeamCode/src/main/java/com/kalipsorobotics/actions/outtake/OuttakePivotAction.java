@@ -6,7 +6,6 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class OuttakePivotAction extends KActionSet {
     public OuttakePivotAction(Outtake outtake, double targetPos){
-
         if (outtake.outtakePivotServo.getCurrentPosition() >= 0.65 && targetPos < 0.65) {
             KServoAutoAction pivotOuttakeMiddle = new KServoAutoAction(outtake.getOuttakePivotServo(), 0.65);
             pivotOuttakeMiddle.setName("pivotOuttakeMiddle");
