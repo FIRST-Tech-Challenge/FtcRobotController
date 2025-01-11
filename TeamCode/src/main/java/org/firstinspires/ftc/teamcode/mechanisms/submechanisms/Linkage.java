@@ -61,6 +61,7 @@ public class Linkage {
                 break;
             case HIGH_RUNG:
                 nextPosition = Position.TRANSFER;
+                break;
             case TRANSFER:
             default:
                 nextPosition = Position.PLACE;
