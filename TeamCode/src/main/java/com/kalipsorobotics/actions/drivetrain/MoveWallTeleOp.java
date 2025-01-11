@@ -22,7 +22,7 @@ public class MoveWallTeleOp extends KActionSet {
         PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry,1.0/100.0);
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
-        moveBarToWall.addPoint(WALL_PICKUP_X-100, WALL_PICKUP_Y, -180); //-205, 700
+        moveBarToWall.addPoint(WALL_PICKUP_X-75, WALL_PICKUP_Y, -180); //-205, 700
         this.addAction(moveBarToWall);
 
 

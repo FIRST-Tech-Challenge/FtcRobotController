@@ -189,7 +189,7 @@ public class PurePursuitAction extends Action {
             targetPosition(follow.get());
 
         } else {
-            if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(2) ) {
+            if (Math.abs(lastPoint.getTheta() - wheelOdometry.getCurrentPosition().getTheta()) <= Math.toRadians(1.5) ) {
                 finishedMoving();
             } else {
                 Log.d("purepursaction_debug_follow",

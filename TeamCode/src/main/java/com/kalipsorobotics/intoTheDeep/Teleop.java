@@ -142,7 +142,7 @@ public class Teleop extends LinearOpMode {
         boolean sampleEndToEndSequencePressed;
         boolean specimenEndToEndSequencePressed;
 
-        double hangPosX = SPECIMEN_HANG_POS_X+50;
+        //double hangPosX = SPECIMEN_HANG_POS_X+50;
         int hangPosY = 100;
         int hangIncrement = 60;
 
@@ -242,7 +242,7 @@ public class Teleop extends LinearOpMode {
             if(wallToBarPressed) {
                 if (wallToBarAction == null || wallToBarAction.getIsDone()){
                     hangPosY += hangIncrement;
-                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosX, hangPosY);
+                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosY);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
 
                     setLastMoveAction(wallToBarAction);
@@ -514,7 +514,9 @@ public class Teleop extends LinearOpMode {
                    specimenHang = new SpecimenHang(outtake);
                    specimenHang.setName("specimenHang");
 
-                   hangPosX = wheelOdometry.getCurrentPosition().getX();
+                   wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition().getY(), wheelOdometry.getCurrentPosition().getTheta());
+//
+//                   hangPosX = wheelOdometry.getCurrentPosition().getX();
 
                    setLastLsAction(specimenHang);
                 }

@@ -89,11 +89,11 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks < mmToTicksLS(15)) {
-            lowestPower = 0.15;
+            lowestPower = 0.10;
         }
 
         if (targetTicks > mmToTicksLS(100)) {
-            lowestPower = 0.18;
+            lowestPower = 0.16;
         }
 
         if (targetTicks > mmToTicksLS(400)) {
@@ -113,7 +113,7 @@ public class MoveLSAction extends Action {
         }
 
         if (targetTicks > mmToTicksLS(710)) {
-            lowestPower = 0.6;
+            lowestPower = 0.55;
         }
 
         if (targetTicks > mmToTicksLS(730)) {

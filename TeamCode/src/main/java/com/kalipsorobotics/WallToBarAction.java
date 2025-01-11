@@ -1,6 +1,8 @@
 package com.kalipsorobotics;
 
 import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
+import static com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip.WALL_PICKUP_X;
+import static com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip.WALL_PICKUP_Y;
 
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
@@ -15,7 +17,7 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class WallToBarAction extends KActionSet {
 
-    public static double HANG_POS = SPECIMEN_HANG_POS_X+50;
+    public static double HANG_POS = SPECIMEN_HANG_POS_X;
 
     public WallToBarAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, int hangPosY) {
         this(driveTrain, wheelOdometry, HANG_POS, hangPosY);
@@ -26,6 +28,7 @@ public class WallToBarAction extends KActionSet {
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/100.0); // Chunking pure pursuit
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
+        moveToBar1.addPoint(WALL_PICKUP_X - 250, WALL_PICKUP_Y + 250, -90);
         moveToBar1.addPoint(hangPosX, hangPosY, 0);
         this.addAction(moveToBar1);
         //waits for everything to finish to prevent specimen from getting caught in bar
