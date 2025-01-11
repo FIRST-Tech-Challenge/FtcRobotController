@@ -12,12 +12,12 @@ public class Claw {
 
 
     public void open() {
-        double open = 0.6;
+        double open = 0.8;
         claw.setPosition(open);
     }
 
     public void close() {
-        double close = 0;
+        double close = 0.5;
         claw.setPosition(close);
     }
 

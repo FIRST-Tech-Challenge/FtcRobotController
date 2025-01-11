@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Claw;
 
 @TeleOp
 @Config
-// closed: 0.2,opened: 0.8,
+// closed: 0.5,opened: 0.8,
 public class ClawTest extends LinearOpMode {
     public static Boolean open=false;
     public static double c;
