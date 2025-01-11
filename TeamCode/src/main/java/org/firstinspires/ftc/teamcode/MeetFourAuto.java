@@ -122,7 +122,12 @@ public class MeetFourAuto extends LinearOpMode {
     }
 
     public void run(StartingPosition sp) {
+        baseRobot.outtake.claw.backward();
         baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
+        if (startingPosition.equals(StartingPosition.RED_RIGHT)) {
+            goober();
+            requestOpModeStop();
+        }
         switch (Settings.Deploy.AUTONOMOUS_MODE) {
             case JUST_PARK:
                 baseRobot.logger.update("Autonomous phase", "Parking due to deploy flag");
@@ -160,21 +165,21 @@ public class MeetFourAuto extends LinearOpMode {
 
     public void goober() {
         Pose2d initialPose = new Pose2d(11.5, -60, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+//        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
         // vision here that outputs position
         int visionOutputPosition = 1;
 
 
-        TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -35), Math.toRadians(90))
-                .strafeTo(new Vector2d(38,-13))
-                .strafeTo(new Vector2d(50,-13))
-                .strafeTo(new Vector2d(50,-50))
-                .strafeTo(new Vector2d(50,-13))
-                .strafeTo(new Vector2d(60,-13))
-                .strafeTo(new Vector2d(60,-50));
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder MoveSampleToHumanPlayerZone = roadRunner.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(43, -35), Math.toRadians(90))
+                .strafeTo(new Vector2d(43,-5))
+                .strafeTo(new Vector2d(56+8,0+10))
+                .strafeTo(new Vector2d(56+8,-50))
+                .strafeTo(new Vector2d(52+8,0+10))
+                .strafeTo(new Vector2d(62+11,0+10))
+                .strafeTo(new Vector2d(62+11,-50));
+        TrajectoryActionBuilder tab2 = roadRunner.actionBuilder(initialPose)
                 .lineToY(37)
                 .setTangent(Math.toRadians(0))
                 .lineToX(18)
@@ -182,12 +187,12 @@ public class MeetFourAuto extends LinearOpMode {
                 .setTangent(Math.toRadians(0))
                 .lineToXSplineHeading(46, Math.toRadians(180))
                 .waitSeconds(3);
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder tab3 = roadRunner.actionBuilder(initialPose)
                 .lineToYSplineHeading(33, Math.toRadians(180))
                 .waitSeconds(2)
                 .strafeTo(new Vector2d(46, 30))
                 .waitSeconds(3);
-        Action PlaceSample = drive.actionBuilder(initialPose)
+        Action PlaceSample = roadRunner.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
                 .build();
         Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
@@ -288,7 +293,7 @@ public class MeetFourAuto extends LinearOpMode {
     public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.claw.forward();
+            baseRobot.outtake.claw.backward();
             pause(300);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             pause(2000);
@@ -306,7 +311,7 @@ public class MeetFourAuto extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             pause(300);
-            baseRobot.outtake.claw.backward();
+            baseRobot.outtake.claw.forward();
             pause(300);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);

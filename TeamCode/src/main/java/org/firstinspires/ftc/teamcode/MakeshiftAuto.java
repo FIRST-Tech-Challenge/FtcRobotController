@@ -27,72 +27,72 @@ public class MakeshiftAuto extends LinearOpMode {
 
 
     public void runOpMode() {
-//        MeetFourAuto.goober();
+        (new MeetFourAuto()).goober();
 
-        Pose2d initialPose = new Pose2d(11.5, -60, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-
-        // vision here that outputs position
-        int visionOutputPosition = 1;
-
-
-        TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40, -35), Math.toRadians(90))
-                .strafeTo(new Vector2d(40,-5))
-                .strafeTo(new Vector2d(56+5,0))
-                .strafeTo(new Vector2d(56+5,-50))
-                .strafeTo(new Vector2d(52+5,0))
-                .strafeTo(new Vector2d(62+5,0))
-                .strafeTo(new Vector2d(62+5,-50));
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
-                .lineToY(37)
-                .setTangent(Math.toRadians(0))
-                .lineToX(18)
-                .waitSeconds(3)
-                .setTangent(Math.toRadians(0))
-                .lineToXSplineHeading(46, Math.toRadians(180))
-                .waitSeconds(3);
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(180))
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(46, 30))
-                .waitSeconds(3);
-        Action PlaceSample = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
-                .build();
-        Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
-                .strafeTo(new Vector2d(48, 12))
-                .build();
-
-        while (!isStopRequested() && !opModeIsActive()) {
-            int position = visionOutputPosition;
-            telemetry.addData("Position during Init", position);
-            telemetry.update();
-        }
-
-        int startPosition = visionOutputPosition;
-        telemetry.addData("Starting Position", startPosition);
-        telemetry.update();
-        waitForStart();
-
-        if (isStopRequested()) return;
-
-        Action trajectoryActionChosen;
-        if (startPosition == 1) {
-            trajectoryActionChosen = MoveSampleToHumanPlayerZone.build();
-        } else if (startPosition == 2) {
-            trajectoryActionChosen = tab2.build();
-        } else {
-            trajectoryActionChosen = tab3.build();
-        }
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        PlaceSample,
-                        trajectoryActionChosen
-//                        ,trajectoryActionCloseOut
-                )
-        );
+//        Pose2d initialPose = new Pose2d(11.5, -60, Math.toRadians(90));
+//        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+//
+//        // vision here that outputs position
+//        int visionOutputPosition = 1;
+//
+//
+//        TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(40, -35), Math.toRadians(90))
+//                .strafeTo(new Vector2d(40,-5))
+//                .strafeTo(new Vector2d(56+5,0))
+//                .strafeTo(new Vector2d(56+5,-50))
+//                .strafeTo(new Vector2d(52+5,0))
+//                .strafeTo(new Vector2d(62+5,0))
+//                .strafeTo(new Vector2d(62+5,-50));
+//        TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
+//                .lineToY(37)
+//                .setTangent(Math.toRadians(0))
+//                .lineToX(18)
+//                .waitSeconds(3)
+//                .setTangent(Math.toRadians(0))
+//                .lineToXSplineHeading(46, Math.toRadians(180))
+//                .waitSeconds(3);
+//        TrajectoryActionBuilder tab3 = drive.actionBuilder(initialPose)
+//                .lineToYSplineHeading(33, Math.toRadians(180))
+//                .waitSeconds(2)
+//                .strafeTo(new Vector2d(46, 30))
+//                .waitSeconds(3);
+//        Action PlaceSample = drive.actionBuilder(initialPose)
+//                .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
+//                .build();
+//        Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
+//                .strafeTo(new Vector2d(48, 12))
+//                .build();
+//
+//        while (!isStopRequested() && !opModeIsActive()) {
+//            int position = visionOutputPosition;
+//            telemetry.addData("Position during Init", position);
+//            telemetry.update();
+//        }
+//
+//        int startPosition = visionOutputPosition;
+//        telemetry.addData("Starting Position", startPosition);
+//        telemetry.update();
+//        waitForStart();
+//
+//        if (isStopRequested()) return;
+//
+//        Action trajectoryActionChosen;
+//        if (startPosition == 1) {
+//            trajectoryActionChosen = MoveSampleToHumanPlayerZone.build();
+//        } else if (startPosition == 2) {
+//            trajectoryActionChosen = tab2.build();
+//        } else {
+//            trajectoryActionChosen = tab3.build();
+//        }
+//
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        PlaceSample,
+//                        trajectoryActionChosen
+////                        ,trajectoryActionCloseOut
+//                )
+//        );
     }
 
     public class HookChamber implements Action {
