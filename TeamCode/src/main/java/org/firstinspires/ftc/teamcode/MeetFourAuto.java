@@ -50,6 +50,8 @@ public class MeetFourAuto extends LinearOpMode {
         baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
         dashboard = FtcDashboard.getInstance();
 
+        baseRobot.outtake.claw.backward();
+
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger(0);
 

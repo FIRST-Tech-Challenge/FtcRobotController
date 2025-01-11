@@ -40,7 +40,7 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public int clawState = 0;
+    public int clawState = -1;
 
     // boolean that controls whether wheel movements are flipped for making backwards movement easier
     public boolean whyAgney = false;
