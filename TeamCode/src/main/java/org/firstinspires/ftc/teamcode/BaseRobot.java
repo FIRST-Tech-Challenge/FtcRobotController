@@ -42,6 +42,9 @@ public class BaseRobot {
     public Odometry odometry;
     public int clawState = 0;
 
+    // boolean that controls whether wheel movements are flipped for making backwards movement easier
+    public boolean whyAgney = false;
+
     /**
      * Core robot class that manages hardware initialization and basic
      * functionality.
@@ -121,10 +124,11 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        double frontLeft = drivePower + strafePower + rotation;
-        double frontRight = drivePower - strafePower - rotation;
-        double rearLeft = drivePower - strafePower + rotation;
-        double rearRight = drivePower + strafePower - rotation;
+
+        double frontLeft = (drivePower + strafePower + rotation) * (whyAgney ? -1 : 1);
+        double frontRight = (drivePower - strafePower - rotation) * (whyAgney ? -1 : 1);
+        double rearLeft = (drivePower - strafePower + rotation) * (whyAgney ? -1 : 1);
+        double rearRight = (drivePower + strafePower - rotation) * (whyAgney ? -1 : 1);
 
         logger.update("FRONT LEFT", String.valueOf(frontLeft));
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
@@ -156,6 +160,7 @@ public class BaseRobot {
         logger.update("X", String.valueOf(directions.x));
         logger.update("Y", String.valueOf(directions.y));
         logger.update("strafe", String.valueOf(strafePower));
+        logger.update("Agney Mode", String.valueOf(whyAgney));
 
         /*
          * Drives the motors based on the given power/rotation
@@ -251,6 +256,9 @@ public class BaseRobot {
                 outtake.linkage.cyclePosition();
             }
 
+            if (contextualActions.justFlipMovement) {
+                whyAgney = !whyAgney;
+            }
         }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {
