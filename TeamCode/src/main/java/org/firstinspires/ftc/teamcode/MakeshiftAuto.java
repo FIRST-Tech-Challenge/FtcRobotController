@@ -35,7 +35,7 @@ public class MakeshiftAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder MoveSampleToHumanPlayerZone = drive.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36, -35), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(38, -35), Math.toRadians(90))
                 .strafeTo(new Vector2d(38,-13))
                 .strafeTo(new Vector2d(50,-13))
                 .strafeTo(new Vector2d(50,-50))
@@ -87,8 +87,6 @@ public class MakeshiftAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         PlaceSample,
-                        hookChamber(),
-                        unhookChamber(),
                         trajectoryActionChosen
 //                        ,trajectoryActionCloseOut
                 )
