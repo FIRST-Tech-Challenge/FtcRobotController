@@ -6,7 +6,6 @@ package org.firstinspires.ftc.teamcode.Mekanism;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -85,7 +84,7 @@ public class Mekanism {
     wrist = opMode.hardwareMap.get(Servo.class, "wrist");
 
     intakeServo.setDirection(REVERSE);
-    intakeServo2.setDirection(FORWARD);
+    intakeServo2.setDirection(Servo.Direction.FORWARD);
     wrist.setDirection(REVERSE);
 
     intakeServo.setPosition(0.5);
@@ -97,8 +96,8 @@ public class Mekanism {
     ramp1 = opMode.hardwareMap.get(Servo.class, "ramp 1");
     ramp2 = opMode.hardwareMap.get(Servo.class, "ramp 2");
 
-    ramp1.setDirection(FORWARD);
-    ramp2.setDirection(FORWARD);
+    ramp1.setDirection(Servo.Direction.FORWARD);
+    ramp2.setDirection(Servo.Direction.FORWARD);
 
     unclamp();
 
