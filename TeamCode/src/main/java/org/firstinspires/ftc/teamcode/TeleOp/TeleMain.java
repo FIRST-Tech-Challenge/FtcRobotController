@@ -25,9 +25,10 @@ public class TeleMain extends LinearOpMode {
 
         waitForStart();
 
-        Motors motors = new Motors(hardwareMap);
+        //Servos servos = new Servos(hardwareMap);
+        //Motors motors = new Motors(hardwareMap);
         Input input = new Input(hardwareMap);
-        Servos servos = new Servos(hardwareMap);
+
 
 
         while (opModeIsActive())
