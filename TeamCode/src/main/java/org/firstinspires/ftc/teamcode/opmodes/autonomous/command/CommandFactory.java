@@ -114,7 +114,7 @@ public class CommandFactory {
     }
 
     public MoveSliderCommand extendSlider() {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 50, DeliverySlider.Direction.EXPANDING);
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, DeliverySlider.Direction.EXPANDING);
     }
 
     public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {

@@ -30,9 +30,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
     // the encoder resolution for old 312 RPM motor is 537.7 PPR
     // the encoder resolution for new 435 RPM motor is 384.5 PPR
     // 384.5 / 537.7 = 0.715
-    private int StartPositionFromCalibration = scale(2700, .715);
+    private int StartPositionFromCalibration = scale(2800, .715);
 
-    public static int DeliveryPositionFromStart = scale(1100, .715); //CHANGED
+    public static int DeliveryPositionFromStart = scale(1250, .715); //CHANGED
 
     public static int IntakePositionFromStart = scale(-1825, .715);
 
