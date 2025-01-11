@@ -150,7 +150,7 @@ public class DynamicInput {
             this.justExtendVertical = extendVertical && !prevExtendVertical;
             this.justWristUp = wristUp && !prevWrist;
             this.justInwardClaw = inwardClaw && !prevInwardClaw;
-            this.justOutwardClaw = inwardClaw && !prevOutwardClaw;
+            this.justOutwardClaw = outwardClaw && !prevOutwardClaw;
             this.justShoulderUp = shoulderUp && !prevShoulderUp;
             this.justShoulderDown = shoulderDown && !prevShoulderDown;
         }
