@@ -14,8 +14,8 @@ public class RobotFullAbsolute extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         IMU  imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         imu.initialize(parameters);
         imu.resetYaw();
         //change SLOWSPEED to change how dpad works
@@ -40,17 +40,32 @@ public class RobotFullAbsolute extends LinearOpMode {
         DcMotor frontLeftDrive = null;
         DcMotor backLeftDrive = null;
 
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight");
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        backRightDrive = hardwareMap.get(DcMotor.class, "backRight");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontright");
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        backRightDrive = hardwareMap.get(DcMotor.class, "backright");
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleft");
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive = hardwareMap.get(DcMotor.class, "backleft");
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+
+
+
+        //   frontRightDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        //   frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //   backRightDrive = hardwareMap.get(DcMotor.class, "backRight");
+        //   backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //   frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeft");
+        //   frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        //   backLeftDrive = hardwareMap.get(DcMotor.class, "backLeft");
+        //   backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -59,9 +74,9 @@ public class RobotFullAbsolute extends LinearOpMode {
         while (opModeIsActive()) {
             currentFacing = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            toGo.setVector(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-           // toGo.normalizeVector();
-             toGo.setRelative(currentFacing);
+            toGo.setVector(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
+            // toGo.normalizeVector();
+            toGo.setRelative(currentFacing);
 
             speed = toGo.getI() * TOTALSPEED;
             speed = gamepad1.dpad_up ? speed+SLOWSPEED : speed;
@@ -85,10 +100,10 @@ public class RobotFullAbsolute extends LinearOpMode {
             }
 
             if (difference > 5 && difference < 180) {
-                turn = MovementCurves.roundedSquareCurve(difference/360);
+                turn = MovementCurves.circleCurve(difference/360);
             } else if (difference < -5 && difference > -180) {
 
-                turn = -MovementCurves.roundedSquareCurve(-difference/360);
+                turn = -MovementCurves.circleCurve(-difference/360);
 
             } else {
                 turn = 0;
