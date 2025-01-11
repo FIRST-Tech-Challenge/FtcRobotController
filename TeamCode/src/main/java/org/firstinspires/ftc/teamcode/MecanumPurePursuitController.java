@@ -27,7 +27,7 @@ public class MecanumPurePursuitController {
     private static final double WHEEL_RADIUS = 2.0; // inches
     private static final double GEAR_RATIO = 1.0;
     private static final double TICKS_PER_REVOLUTION = 537.7; // for GoBILDA 5202 Series
-    private static final double MAX_VELOCITY = 6.81; //inches/sec
+    private static final double MAX_VELOCITY = 86.6; //inches/sec
 
     public MecanumPurePursuitController(HardwareMap hardwareMap, double startX, double startY) {
         purePursuit = new PurePursuit(startX, startY);
