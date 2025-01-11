@@ -31,7 +31,7 @@ public class Mekanism {
 
   private final Servo ramp1, ramp2;
 
-  public final double limitSlide = 4000;
+  public final int limitSlide = 4000;
   public final double limitPivot = 3000;
   private final double countsPerDegree = 30; // TODO: This needs to be found
 
@@ -114,7 +114,10 @@ public class Mekanism {
   public void setSlide(int x) {
 
     telemetry.addData("slide current pos", slide.getCurrentPosition());
-
+    if(x>limitSlide)
+      x = limitSlide;
+    if(x<0)
+      x = 0;
     slide.setTargetPosition(x);
     slide2.setTargetPosition(x);
   }
