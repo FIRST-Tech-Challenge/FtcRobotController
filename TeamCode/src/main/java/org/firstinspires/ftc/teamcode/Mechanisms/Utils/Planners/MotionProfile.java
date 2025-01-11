@@ -12,7 +12,7 @@ public class MotionProfile {
     double dCruise;
     double deltaTCruise;
     double deltaT;
-    public double vMax;
+    double vMax;
     double aAccel;
     double aDecel;
     int reverse;

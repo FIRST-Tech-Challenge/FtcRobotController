@@ -28,7 +28,7 @@ public class Lift {
     public int currentPosition = 0;
     public DcMotorAdvanced liftMotorLeft;
     public DcMotorAdvanced liftMotorRight;
-    Encoder encoder;
+    public Encoder encoder;
     TouchSensor limiter;
     public static double kA=0.2;
     public static double kV=0.2;
@@ -82,15 +82,21 @@ public class Lift {
     // See above but rename the parameter to targetHeight
     public Action moveToHeight(double targetHeight) {
 
-        double currentPosition = ticksToInches(encoder.getCurrentPosition());
-        boolean reverse = !(targetHeight - currentPosition >= 0);
-        MotionProfile motionProfile = new MotionProfile(Math.abs(targetHeight-currentPosition), maxVelocity, maxAcceleration, maxDeceleration, reverse);
-        ElapsedTime t = new ElapsedTime();
-        double initialPos = currentPosition;
-
-        return new Action() {            
+        return new Action() {
+            private double initialPos;
+            private boolean reverse;
+            private MotionProfile motionProfile;
+            private ElapsedTime t;
+            private boolean initialized = false;
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
+                if(!initialized){
+                    initialPos = ticksToInches(encoder.getCurrentPosition());
+                    reverse = !(targetHeight - initialPos >= 0);
+                    motionProfile = new MotionProfile(Math.abs(targetHeight-initialPos), maxVelocity, maxAcceleration, maxDeceleration, reverse);
+                    t = new ElapsedTime();
+                    initialized = true;
+                }
                 checkLimit();
 
                 double currentPosition = ticksToInches(encoder.getCurrentPosition());
@@ -104,17 +110,13 @@ public class Lift {
                     liftMotorLeft.setPower(motorPower);
                     liftMotorRight.setPower(motorPower);
                 }
-                packet.put("Current Height: ", currentPosition);
-                packet.put("Target Height: ", targetHeight);
-                packet.put("Motor Power", motorPower);
-                packet.put("Target Pos", motionProfile.getPos(t.seconds()));
-                packet.put("Velocity: ", liftMotorLeft.getVelocity()/ticksPerInch);
-                packet.put("Target Velocity: ", motionProfile.getVelocity(t.seconds()));
-                packet.put("FF", ffPower);
+                packet.put("Current height (in)", currentPosition);
+                packet.put("Target height (in)", targetHeight);
+                packet.put("Motor velocity (in/s)", liftMotorLeft.getVelocity()/ticksPerInch);
+                packet.put("Target velocity (in/s)", motionProfile.getVelocity(t.seconds()));
+                packet.put("Feedforward power", ffPower);
                 packet.put("PID power", pidPower);
-                packet.put("mp velocity", motionProfile.getVelocity(t.seconds()));
-                packet.put("mp acceleration", motionProfile.getAcceleration(t.seconds()));
-                packet.put("mp position", motionProfile.getPos(t.seconds()));
+                packet.put("Motor power", motorPower);
 
                 return Math.abs(targetHeight - currentPosition) > liftThreshold;
             }
