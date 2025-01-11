@@ -16,7 +16,7 @@ public class AlignTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
 
-                double deliveryDistance = 97;
+                double deliveryDistance = 87;
                 double minDelivery = 70;
                 double intakeDistance = 60;
                 double minIntake = 45;
@@ -118,6 +118,8 @@ public class AlignTest extends CommandAutoOpMode {
 
                         commandFactory.collapseSpecimenSlider(500),
                         commandFactory.openSpecimenClaw(),
+
+                        commandFactory.driveToTarget(300, -1150, 0, .05, .8, 100, 2000),
 
                         commandFactory.sleep(10000)
 
