@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Mechanisms.Lift;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -15,7 +13,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.FeedForward;
-import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.LinearPID;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Encoder;
 import org.firstinspires.ftc.teamcode.Hardware.Actuators.DcMotorAdvanced;
@@ -26,7 +23,7 @@ public class Lift {
     HardwareMap hardwareMap;
     FeedForward feedForward;
     FeedForward feedForwardDown;
-    LinearPID pid;
+    PID pid;
     double motorPower;
     public int currentPosition = 0;
     public DcMotorAdvanced liftMotorLeft;
@@ -67,7 +64,7 @@ public class Lift {
 
         this.currentPosition = 0;
         this.feedForward = new FeedForward(kV, kA, 0);
-        this.pid = new LinearPID(kP, kI, kD);
+        this.pid = new PID(kP, kI, kD, PID.functionType.LINEAR);
         this.limiter = hardwareMap.get(TouchSensor.class, "liftTouch");
     }
 

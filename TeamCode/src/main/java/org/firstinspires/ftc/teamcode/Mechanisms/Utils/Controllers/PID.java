@@ -9,13 +9,18 @@ public class PID {
     public double eIntegralSum;
     public double eDerivative;
     public double ePrev;
+    public functionType type;
 
     public ElapsedTime timer = new ElapsedTime();
-
-    public PID(double kP, double kI, double kD) {
+    public enum functionType {
+        LINEAR,
+        SQRT
+    }
+    public PID(double kP, double kI, double kD, functionType type) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        this.type = type;
         eIntegralSum = 0;
         eDerivative = 0;
         ePrev = 0;
@@ -28,6 +33,11 @@ public class PID {
         eDerivative = (error - ePrev) / dt;
         ePrev = error;
         timer.reset();
-        return (kP * Math.pow(Math.abs(error), 0.5)*Math.signum(error)) + (kI * eIntegralSum) + (kD * eDerivative);
+        if (type == functionType.SQRT) {
+            return (kP * Math.pow(Math.abs(error), 0.5) * Math.signum(error)) + (kI * eIntegralSum) + (kD * eDerivative);
+        }
+        else {
+            return (kP * error) + (kI * eIntegralSum) + (kD * eDerivative);
+        }
     }
 }
