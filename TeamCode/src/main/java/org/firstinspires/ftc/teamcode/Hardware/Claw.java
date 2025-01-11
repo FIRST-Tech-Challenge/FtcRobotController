@@ -10,14 +10,13 @@ public class Claw {
         this.claw = hardwareMap.get(Servo.class, "claw");
     }
 
-
+    double open = 0.8;
+    double close = 0.5;
     public void open() {
-        double open = 0.8;
         claw.setPosition(open);
     }
 
     public void close() {
-        double close = 0.5;
         claw.setPosition(close);
     }
 

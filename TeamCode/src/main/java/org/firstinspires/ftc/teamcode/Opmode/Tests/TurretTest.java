@@ -18,6 +18,17 @@ public class TurretTest extends LinearOpMode {
         waitForStart();
         turret.setPosition(0.5);
         while(opModeIsActive()&&!isStopRequested()){
+            if(gamepad1.left_bumper) {
+                t -= 0.1;
+            }if(gamepad1.right_bumper) {
+                t += 0.1;
+            }
+            if (t < Turret.MIN) {
+             t = Turret.MIN;
+            }
+            if (t>Turret.MAX) {
+                t= turret.MAX;
+            }
             turret.setPosition(t);
         }
 
