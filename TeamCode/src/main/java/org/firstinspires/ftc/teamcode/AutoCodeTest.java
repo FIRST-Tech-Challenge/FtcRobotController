@@ -106,7 +106,9 @@ public class AutoCodeTest extends LinearOpMode {
         //TestViperSlide();
         //TestRotate180();
         //TestViperSlideArmGrabber();
-        TestViperSlideWithBrake();
+
+        //TestViperSlideUpOnButtonClick(); //test encoder
+        TestViperSlideWithBrake(); // test specimen hanging
     }
 
     public void TestDriveMotorEncodedMove(DcMotor Motor) {
@@ -313,15 +315,27 @@ public class AutoCodeTest extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
                 telemetry.addData("Move forward for 1 sec", "");
                 telemetry.update();
+                armManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
                 vsManager.ResetAndSetToEncoder();
+                armManager.MoveArmToPosition(0.3);
+                armGrabberManager.OpenOrCloseGrabber(false);
                 //armManager.MoveArmToPosition(0.4);
                 vsManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
                 //vsManager.SetTargetPosition(20);
-                vsManager.SetPower(0.5);
-                sleep(1500);
-                vsManager.BrakeOrReleaseViperSlide(true);
+                vsManager.SetPower(0.3);
+                sleep(800);
+                //vsManager.BrakeOrReleaseViperSlide(true);
                 vsManager.SetPower(0.0);
+                armManager.MoveArmToPosition(0.6);
                 sleep(3000);
+                armGrabberManager.OpenOrCloseGrabber(false);
+                vsManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
+                //vsManager.SetTargetPosition(20);
+                vsManager.SetPower(0.5);
+                sleep(200);
+                vsManager.SetPower(0.0);
+                armManager.MoveArmToPosition(0.3);
+                sleep(2000);
                 /*
                 telemetry.addData("reached position after 1 sec", "");
                 telemetry.update();
@@ -342,6 +356,7 @@ public class AutoCodeTest extends LinearOpMode {
                 //sleep(500);
 
                  */
+                //
                 break;
             }
 
@@ -379,13 +394,15 @@ public class AutoCodeTest extends LinearOpMode {
             telemetry.update();
             while (opModeIsActive() && !isStopRequested()) {
                 if (gamepad1.y){
-                    viperSlideManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, 0.5,12);
                     armManager.MoveArmToPosition(0.3);
-                    armGrabberManager.OpenOrCloseGrabber(true);
-                    sleep(100);
-                    armManager.MoveArmToPosition(0.7);
-                    armGrabberManager.OpenOrCloseGrabber(false);
-                    sleep(100);
+                    viperSlideManager.ResetAndSetToEncoder();
+                    viperSlideManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, 0.5,12);
+                    //armManager.MoveArmToPosition(0.3);
+                    //armGrabberManager.OpenOrCloseGrabber(true);
+                    sleep(2000);
+                    //armManager.MoveArmToPosition(0.7);
+                   // armGrabberManager.OpenOrCloseGrabber(false);
+                    //sleep(100);
                     break;
 
                 }

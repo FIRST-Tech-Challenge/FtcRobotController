@@ -23,7 +23,7 @@ public class AutoViperSlideManager {
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
     /*TODO: Switch to viper slide encoder resolution, gear ratio, wheel diameter*/
-    static final double     DRIVE_MOTOR_ENCODER_RESOLUTION = 435;
+    static final double     DRIVE_MOTOR_ENCODER_RESOLUTION = 384.5;
     static final double     DRIVE_MOTOR_GEAR_RATIO = 1;
     static final double     COUNTS_PER_MOTOR_REV    = DRIVE_MOTOR_ENCODER_RESOLUTION * DRIVE_MOTOR_GEAR_RATIO ;
     static final double     WHEEL_DIAMETER_INCHES   = 1.4 ;     // For figuring circumference
