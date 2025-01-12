@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -25,17 +26,19 @@ public class Teleop_live_2controllers extends LinearOpMode {
     DcMotor fl = null;
     DcMotor fr = null;
     DcMotor br = null;
-    DcMotor m0 = null;
-    DcMotor m1 = null;
+
     DcMotor m2 = null;
-    DcMotor m3 = null;
-    Servo s1 = null;
-    Servo s2 = null;
+
+
+
     Servo s3 = null;
-    CRServo s4 = null;
+
+    Servo s2 = null;
     Servo s5 = null;
-    Servo s6 = null;
-    Servo s12 = null;
+    Servo lc = null;
+    Servo rc = null;
+
+    CRServo s4 = null;
     double left1Y, right1Y, left1X, right1X;
     double left2Y, right2Y, left2X, right2X;
     boolean flag_correction = true;
@@ -82,10 +85,18 @@ public class Teleop_live_2controllers extends LinearOpMode {
         telemetry.update();
 
         // wheel motors
-        bl = hardwareMap.get(DcMotor.class, "LB");
+        bl = hardwareMap.get(DcMotorEx.class, "LB");
         fl = hardwareMap.get(DcMotor.class, "LF");
         fr = hardwareMap.get(DcMotor.class, "RF");
         br = hardwareMap.get(DcMotor.class, "RB");
+        m2 = hardwareMap.get(DcMotor.class, "lSlide");
+        s3 = hardwareMap.get(Servo.class, "BOP");
+        s4 = hardwareMap.get(CRServo.class, "iWheel");
+        s2 = hardwareMap.get(Servo.class,"iElbow");
+        s5 = hardwareMap.get(Servo.class,"iWrist");
+        lc = hardwareMap.get(Servo.class,"ClawL");
+        rc = hardwareMap.get(Servo.class,"ClawR");
+
         bl.setDirection(DcMotor.Direction.REVERSE);
         fl.setDirection(DcMotor.Direction.REVERSE);
         fr.setDirection(DcMotor.Direction.FORWARD);
@@ -101,27 +112,17 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        m0 = hardwareMap.get(DcMotor.class, "M0");
-        m1 = hardwareMap.get(DcMotor.class, "M1");
-        m2 = hardwareMap.get(DcMotor.class, "M2");
-        m3 = hardwareMap.get(DcMotor.class, "M3");
-        s1 = hardwareMap.get(Servo.class, "s1");
-        s2 = hardwareMap.get(Servo.class, "s2");
-        s3 = hardwareMap.get(Servo.class, "s3");
-        s4 = hardwareMap.get(CRServo.class, "s4");
-        s5 = hardwareMap.get(Servo.class, "s5");
-        s6 = hardwareMap.get(Servo.class, "s6");
-        s12 = hardwareMap.get(Servo.class, "s12");
-        s1.setDirection(Servo.Direction.FORWARD);
+
+
 //        s2.setDirection(Servo.Direction.FORWARD);
         s3.setDirection(Servo.Direction.REVERSE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        m1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         m2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        m3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         // Initial settings
@@ -129,21 +130,14 @@ public class Teleop_live_2controllers extends LinearOpMode {
         fl.setPower(0);
         br.setPower(0);
         fr.setPower(0);
-        s4.setPower(0);
-        s1.setDirection(Servo.Direction.FORWARD);
+
         s2.setPosition(0); // open
         //Basket
 
             s3.setDirection(Servo.Direction.FORWARD);
             s3.setPosition(0.5); //up
-        s12.setPosition(1);
-        sleep(100);
-        s12.setPosition(0.5);
-        s6.setPosition(0.75);
-        s12.setPosition(1);
-        sleep(100);
-        s12.setPosition(0.5);
-        s6.setPosition(0.75);
+
+
 
             // Start opMode
             telemetry.addData("Mode", "waiting");
@@ -178,28 +172,28 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
 //
 ////            // Intake
-                if (gamepad1.x != gamepad1x_previous && gamepad1.x) {
-                    intake_constant = !intake_constant;
-                    telemetry.addData("intake", intake_constant);
-                    telemetry.update();
-//                s1.setDirection(Servo.Direction.FORWARD);
-
-
-                    if (intake_constant) {
-                        s1.setPosition(0);
-                        //Extend
-                    } else {
-                        s1.setPosition(1);
-                        //Retract
-                    }
-                }
-                gamepad1x_previous = gamepad1.x;
+//                if (gamepad1.x != gamepad1x_previous && gamepad1.x) {
+//                    intake_constant = !intake_constant;
+//                    telemetry.addData("intake", intake_constant);
+//                    telemetry.update();
+////                s1.setDirection(Servo.Direction.FORWARD);
+//
+//
+//                    if (intake_constant) {
+//                        s1.setPosition(0);
+//                        //Extend
+//                    } else {
+//                        s1.setPosition(1);
+//                        //Retract
+//                    }
+//                }
+//                gamepad1x_previous = gamepad1.x;
 
 
                 //Intake arm motor
                 if (gamepad1.x) {
-                    s12.setPosition(0.5);
-                    s6.setPosition(0.5);
+                    s2.setPosition(0.5);
+                    s5.setPosition(0.5);
                 }
 
 
@@ -223,33 +217,33 @@ public class Teleop_live_2controllers extends LinearOpMode {
 
 
                 if (gamepad1.dpad_down != gamepad1dpadDown_previous && gamepad1.dpad_down) {
-                    s12.setPosition(1);
+                    s2.setPosition(1);
                     sleep(100);
-                    s12.setPosition(0.5);
-                    s6.setPosition(0.75);
-                    s12.setPosition(1);
+                    s2.setPosition(0.5);
+                    s5.setPosition(0.75);
+                    s2.setPosition(1);
                     sleep(100);
-                    s12.setPosition(0.5);
-                    s6.setPosition(0.75);
+                    s2.setPosition(0.5);
+                    s5.setPosition(0.75);
                 }
                 gamepad1dpadDown_previous = gamepad1.dpad_down;
 
 
                 if (gamepad1.dpad_right != gamepad1dpadRight_previous && gamepad1.dpad_right) {
-                    s12.setPosition(0.6);
-                    s6.setPosition(0.9);
+                    s2.setPosition(0.6);
+                    s5.setPosition(0.9);
                 }
                 gamepad1dpadRight_previous = gamepad1.dpad_right;
 
                 if (gamepad1.dpad_left != gamepad1dpadLeft_previous && gamepad1.dpad_left) {
                     // s12.setPosition(1);
                     //sleep(100);
-                    s12.setPosition(0.18);
+                    s2.setPosition(0.18);
                     //s6.setPosition(0.5);
                     //s12.setPosition(1);
 //                    sleep(100);
 //                    s12.setPosition(0.5);
-                    s6.setPosition(0.75);
+                    s5.setPosition(0.75);
                 }
                 gamepad1dpadLeft_previous = gamepad1.dpad_left;
 
