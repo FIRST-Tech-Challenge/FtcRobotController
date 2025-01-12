@@ -36,7 +36,7 @@ public class BasicTeleOps extends OpMode {
     public RobotDrive robotDrive;                   //For robot drive
 
     //Robot Intake & Deposit
-    public FiniteMachineStateArm depositArmDrive;   //For Robot Arm
+    public FiniteStateMachineDeposit depositArmDrive;   //For Robot Arm
     public FiniteStateMachineIntake intakeArmDrive; //For Robot Intake
 
     public ServoTest servoTest;
@@ -75,7 +75,7 @@ public class BasicTeleOps extends OpMode {
         robotDrive.Init();                                                              // Initialize RobotDrive
 
         //Deposit Arm control
-        depositArmDrive = new FiniteMachineStateArm(robot, gamepadCo1, gamepadCo2); // Pass parameters as needed);
+        depositArmDrive = new FiniteStateMachineDeposit(robot, gamepadCo1, gamepadCo2); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control
@@ -145,7 +145,7 @@ public class BasicTeleOps extends OpMode {
 
         if (controlState == ControlState.RUN) {
             depositArmDrive.DepositArmLoop();
-            FiniteMachineStateArm.LIFTSTATE liftState = depositArmDrive.State();
+            FiniteStateMachineDeposit.LIFTSTATE liftState = depositArmDrive.State();
 
             intakeArmDrive.IntakeArmLoop();
             FiniteStateMachineIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
@@ -172,7 +172,8 @@ public class BasicTeleOps extends OpMode {
         telemetry.addData("Drive Mode", currentDriveMode.name());
         telemetry.addLine("---------------------");
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
-        telemetry.addData("Color Sensor", hsvValues[0]);
+        telemetry.addData("Color Sensor", FiniteStateMachineDeposit.detectedColor);
+        telemetry.addData("Color Sensor value", hsvValues[2]);
         telemetry.update();
     }
 

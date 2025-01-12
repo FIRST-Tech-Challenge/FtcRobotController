@@ -44,7 +44,7 @@ public class FiniteStateMachineIntake {
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
-    private final FiniteMachineStateArm depositArmDrive;
+    private final FiniteStateMachineDeposit depositArmDrive;
 
     //Time member
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
@@ -57,11 +57,11 @@ public class FiniteStateMachineIntake {
 
     private double intakeArmPosition;
     private double rotationPosition;
-    FiniteMachineStateArm.LIFTSTATE depositArmState;
+    FiniteStateMachineDeposit.LIFTSTATE depositArmState;
 
 
 
-    public FiniteStateMachineIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2, FiniteMachineStateArm depositArmDrive) {
+    public FiniteStateMachineIntake(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2, FiniteStateMachineDeposit depositArmDrive) {
         this.gamepad_1 = gamepad_1;
         this.gamepad_2 = gamepad_2;
         this.robot = robot;
@@ -81,7 +81,7 @@ public class FiniteStateMachineIntake {
         robot.intakeWristServo.setPosition(RobotActionConfig.intake_Wrist_Transfer);
     }
 
-    //Loop Control
+    //FSM Loop Control
     public void IntakeArmLoop() {
         // Display current lift state and telemetry feedback
         switch (intakeState) {
@@ -188,9 +188,9 @@ public class FiniteStateMachineIntake {
                     robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                     robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Transfer);
                 }
-                if(depositArmState == FiniteMachineStateArm.LIFTSTATE.LIFT_START && intakeTimer.seconds()>= 0.8) {
+                if(depositArmState == FiniteStateMachineDeposit.LIFTSTATE.LIFT_START && intakeTimer.seconds()>= 0.8) {
                     robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
-                    depositArmDrive.SetDepositClawState(FiniteMachineStateArm.DEPOSITCLAWSTATE.CLOSE);
+                    depositArmDrive.SetDepositClawState(FiniteStateMachineDeposit.DEPOSITCLAWSTATE.CLOSE);
                 }
                 if (intakeTimer.seconds() >= 0.9){
                     robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);

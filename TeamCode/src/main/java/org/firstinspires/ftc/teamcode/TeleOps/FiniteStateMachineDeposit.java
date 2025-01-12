@@ -9,20 +9,25 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /** Button Config for deposit
  * *X                   : high basket extend State
  * *B                   : Cancel
  * *Y                   : Specimen State
  */
 
-public class FiniteMachineStateArm {
+public class FiniteStateMachineDeposit {
     private final GamepadEx gamepad_1;
     private final GamepadEx gamepad_2;
     private final RobotHardware robot;
 
     //bring in the finitemachinestateintake
     private FiniteStateMachineIntake FiniteStateMachineIntake;
-    
+
+    /** Deposit Arm State */
     public enum LIFTSTATE {
         LIFT_START,
         HIGHBASKET_TRANSFER,
@@ -35,6 +40,26 @@ public class FiniteMachineStateArm {
         LIFT_HOOK,
     }
 
+    /** Deposit Claw State  */
+    public enum DEPOSITCLAWSTATE {
+        OPEN,
+        CLOSE
+    }
+
+    /** ColorRange */
+
+    class ColorRange {
+        public String colorName;
+        public int hueMin, hueMax;
+
+        public ColorRange(String colorName, int hueMin, int hueMax) {
+            this.colorName = colorName;
+            this.hueMin = hueMin;
+            this.hueMax = hueMax;
+        }
+    }
+
+    /**  member declar */
     public DEPOSITCLAWSTATE depositClawState;
     
     private LIFTSTATE liftState = LIFTSTATE.LIFT_START; // Persisting state
@@ -44,18 +69,16 @@ public class FiniteMachineStateArm {
     private ElapsedTime debounceTimer = new ElapsedTime(); // Timer for debouncing
     private final double DEBOUNCE_THRESHOLD = 0.2; // Debouncing threshold for button presses
 
-    private boolean isBlack_color;
-
-    private boolean isRed_color;
-    private boolean isBlue_color;
-    private boolean isYellow_color;
-    private boolean empty = false;
+    List<ColorRange> colorRanges = new ArrayList<>();
+    public static String detectedColor;
 
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
+    public float hue;
+    public boolean empty;
 
-
-    public FiniteMachineStateArm(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2) {
+    /** constructor */
+    public FiniteStateMachineDeposit(RobotHardware robot, GamepadEx gamepad_1, GamepadEx gamepad_2) {
         this.gamepad_1 = gamepad_1;
         this.gamepad_2 = gamepad_2;
         this.robot = robot;
@@ -74,37 +97,38 @@ public class FiniteMachineStateArm {
         robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Transfer);
         robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Transfer);
         robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Open);
+
+        /** create a list color ranges*          */
+        colorRanges.add(new ColorRange("Black", 155, 170));
+        colorRanges.add(new ColorRange("Red", 15, 25));
+        colorRanges.add(new ColorRange("Blue", 220, 230));
+        colorRanges.add(new ColorRange("Yellow", 80, 90));
     }
 
     // Deposit Arm Control
     public void DepositArmLoop(){
         /** determine the Color */
-        Color.RGBToHSV(robot.colorSensor.red() * 8, robot.colorSensor.green() * 8, robot.colorSensor.blue() * 8, hsvValues);
-        if (hsvValues[0]>155 && hsvValues[0]<170){
-            isBlack_color = true;
-            empty =false;
-        }
-        else if(hsvValues[0]>15 && hsvValues[0]<25){
-            isRed_color = true;
-            empty =false;
-        }
-        else if (hsvValues[0]>220 && hsvValues[0]<230){
-            isBlue_color =true;
-            empty =false;
-        }
-        else if (hsvValues[0]>80 && hsvValues[0]<90){
-            isYellow_color =true;
-            empty =false;
-        }
-        else {
-            empty = true;
-            isBlue_color =false;
-            isBlack_color =false;
-            isYellow_color =false;
-            isRed_color = false;
+        Color.RGBToHSV(
+                robot.colorSensor.red() * 8,
+                robot.colorSensor.green() * 8,
+                robot.colorSensor.blue() * 8,
+                hsvValues);
+        hue = hsvValues[0];
+
+        //detect the color
+        detectedColor = "None";
+        empty = true;
+
+        for(ColorRange range : colorRanges){
+            if(hue > range.hueMin && hue < range.hueMax)
+            {
+                detectedColor = range.colorName;
+                empty = false;
+                break;
+            }
         }
 
-        //FMS Loop
+        /** FSM Loop*/
         switch (liftState) {
             case LIFT_START:
                 /** DECIDE THE COLOR FOR HIGH BASKET LIFT TRANSFER - Button X - Debounce the button press X for starting the lift extend */
@@ -112,7 +136,6 @@ public class FiniteMachineStateArm {
                         (gamepad_2.getButton(GamepadKeys.Button.X)&& gamepad_1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1)) &&
                 debounceTimer.seconds() > DEBOUNCE_THRESHOLD) {
                     debounceTimer.reset();
-                    depositClawState = DEPOSITCLAWSTATE.OPEN;
                     transfer_timer.reset();
                     liftState = LIFTSTATE.HIGHBASKET_TRANSFER;
                 }
@@ -128,22 +151,16 @@ public class FiniteMachineStateArm {
                 break;
 
             case HIGHBASKET_TRANSFER:
-                if (!(hsvValues[0] > 155 && hsvValues[0] < 165)) {
-                    // if it is yellow color,it goes to high basket transfer
-                    if (transfer_timer.milliseconds() > 100) {
-                        depositClawState = DEPOSITCLAWSTATE.CLOSE;
-                    }
 
-                    if (transfer_timer.milliseconds() > 300 && !isBlack_color) {
-                        robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
-                    }
+                if (transfer_timer.milliseconds() > 100 && !Objects.equals(detectedColor, "Black")) {
+                    robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
 
-                    if (transfer_timer.milliseconds() > 350) {
+                    if (transfer_timer.milliseconds() > 200) {
                         robot.intakeLeftArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                         robot.intakeRightArmServo.setPosition(RobotActionConfig.intake_Arm_Idle);
                     }
 
-                    if (transfer_timer.milliseconds() >= 850) {
+                    if (transfer_timer.milliseconds() >= 250) {
                         robot.liftMotorLeft.setTargetPosition(RobotActionConfig.deposit_Slide_Highbasket_Pos);
                         robot.liftMotorRight.setTargetPosition(RobotActionConfig.deposit_Slide_Highbasket_Pos);
                         robot.liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -214,7 +231,7 @@ public class FiniteMachineStateArm {
             case SPECIMEN_PICK:
                 robot.depositArmServo.setPosition(RobotActionConfig.deposit_Arm_Pick);
                 robot.depositWristServo.setPosition(RobotActionConfig.deposit_Wrist_Pick);
-                if (isBlack_color){
+                if (Objects.equals(detectedColor, "Black")){
                     depositClawState = DEPOSITCLAWSTATE.CLOSE;
                 }
                 if (depositClawState == DEPOSITCLAWSTATE.CLOSE){
@@ -290,14 +307,6 @@ public class FiniteMachineStateArm {
         return liftState;
     }
 
-    float Color (){return hsvValues[0];}
-    boolean BlackColor(){return isBlack_color;}
-
-    //Deposit Claw State
-    public enum DEPOSITCLAWSTATE {
-        OPEN,
-        CLOSE
-    }
 
     //Claw Control
     private void ClawManualControl(){
