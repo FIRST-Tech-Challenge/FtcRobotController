@@ -93,7 +93,7 @@ public class RobotHardware {
 
     public static final double ARM_SPEED = 0.01;
     public static final double ARM_MIN = 0.10 ;
-    public static final double ARM_MAX = 0.60;
+    public static final double ARM_MAX = 0.90;
     private static double armDrive = 0.3;
 
     //public static final double ARM_MIN_TWO = 0.05 ;

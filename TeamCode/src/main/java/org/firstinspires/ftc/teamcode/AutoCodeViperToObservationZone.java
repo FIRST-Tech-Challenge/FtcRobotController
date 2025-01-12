@@ -93,11 +93,12 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
                     telemetry.update();
 
                     //strafe to move to obs zone
-                    int strafeDistance = 47; //TODO: Adjust during testing
+                    int strafeDistance = 44; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
 
+                    armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
                     armPosition = 0.3; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
@@ -113,7 +114,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
-                    sleep(2000);
+                    sleep(1000);
 
                     grabberManager.OpenOrCloseGrabber(false);
                     telemetry.addData("Open Grabber", "");
@@ -189,7 +190,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
 
     private void dropSpecimenInTopRail()
     {
-        int distanceToSub = 26;
+        int distanceToSub = 25;
         telemetry.addData("Distance To Sub: ", distanceToSub);
         telemetry.update();
 
@@ -216,8 +217,8 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
 
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
-        viperSlideManager.SetPower(0.5);
-        sleep(200);
+        viperSlideManager.SetPower(0.95);
+        sleep(100);
 
         //vs stopping for arm to go back
         viperSlideManager.SetPower(0.0);
@@ -225,7 +226,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
         sleep(200);
 
         //vs moving down again
-        viperSlideManager.SetPower(0.5);
+        viperSlideManager.SetPower(0.1);
         sleep(200);
 
     }

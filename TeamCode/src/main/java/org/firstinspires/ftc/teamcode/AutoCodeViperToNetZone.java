@@ -180,7 +180,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.addData("Move backward until it reaches net zone", "");
                     telemetry.update();
 
-                    strafeDistance = 25; //TODO: Adjust during testing
+                    strafeDistance = 30; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
@@ -282,13 +282,13 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
     }
 
     public void touchTheRails(){
-        viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+        /*viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
         viperSlideManager.SetPower(0.3);
         sleep(300);
 
         //stopping vs and moving arm to drop specimen
-        viperSlideManager.SetPower(0.0);
-        armManager.MoveArmToPosition(0.6);
+        viperSlideManager.SetPower(0.0);*/
+        armManager.MoveArmToPosition(0.3);
         sleep(200);
     }
 }

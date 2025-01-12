@@ -173,7 +173,7 @@ public class AutoCodeToObservationZone extends LinearOpMode {
                     telemetry.update();
                     sleep(2000);
 
-                    armPosition = 0.9; //TODO: Correct during testing
+                    armPosition = 0.15; //TODO: Correct during testing
                     armManager.MoveArmToPosition(armPosition);
                     telemetry.addData("Set Arm Pos: ", armPosition);
                     telemetry.update();
