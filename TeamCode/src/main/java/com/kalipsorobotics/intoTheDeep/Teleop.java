@@ -550,7 +550,7 @@ public class Teleop extends LinearOpMode {
 
                     savedHangPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
                             wheelOdometry.getCurrentPosition().getY(), wheelOdometry.getCurrentPosition().getTheta());
-
+                    Log.d("savedPositions", "hang position  " + savedHangPosition.toString());
                    //wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition()
                     // .getY(), wheelOdometry.getCurrentPosition().getTheta());
 //
@@ -585,6 +585,9 @@ public class Teleop extends LinearOpMode {
                         savedWallPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
                                 wheelOdometry.getCurrentPosition().getY(),
                                 wheelOdometry.getCurrentPosition().getTheta());
+
+                        Log.d("savedPositions", "wall position  " + savedWallPosition.toString());
+
 
                         outtake.getOuttakeClaw().setPosition(outtakeClawPos);
                     }
