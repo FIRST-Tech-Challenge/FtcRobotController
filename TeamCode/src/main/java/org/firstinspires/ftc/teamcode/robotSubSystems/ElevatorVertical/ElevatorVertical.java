@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robotSubSystems.Elevator;
+package org.firstinspires.ftc.teamcode.robotSubSystems.ElevatorVertical;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,20 +6,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Utils.PID;
 
-public class Elevator {
-    private static DcMotor leftMotor;
-    private static DcMotor rightMotor;
+public class ElevatorVertical {
+    public static DcMotor leftMotor;
+    public static DcMotor rightMotor;
 
     private static int wantedPos = 0;
 
     private static final PID changeLevelPID = new PID(
-            ElevatorConstants.changeLevelKp,
-            ElevatorConstants.changeLevelKi,
-            ElevatorConstants.changeLevelKd,
-            ElevatorConstants.changeLevelKf,
-            ElevatorConstants.changeLevelIzone,
-            ElevatorConstants.changeLevelMaxSpeed,
-            ElevatorConstants.changeLevelMinSpeed
+            ElevatorVerticalConstants.changeLevelKp,
+            ElevatorVerticalConstants.changeLevelKi,
+            ElevatorVerticalConstants.changeLevelKd,
+            ElevatorVerticalConstants.changeLevelKf,
+            ElevatorVerticalConstants.changeLevelIzone,
+            ElevatorVerticalConstants.changeLevelMaxSpeed,
+            ElevatorVerticalConstants.changeLevelMinSpeed
     );
 
 
@@ -29,29 +29,29 @@ public class Elevator {
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoder();
     }
 
     private static double power = 0;
-    private static ElevatorState lastWantedState = ElevatorState.INTAKE;
-    public static void operate(ElevatorState wantedState, double gamepadVal, double secondGamepad) {
+    private static ElevatorVerticalState lastWantedState = ElevatorVerticalState.INTAKE;
+    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, double secondGamepad) {
         if (getElevatorPos() <= 2235) {
             if (gamepadVal == 0 && wantedState != lastWantedState) {
                 switch (wantedState) {
                     case INTAKE:
-                        wantedPos = ElevatorConstants.IntakePos;
+                        wantedPos = ElevatorVerticalConstants.IntakePos;
                         break;
                     case SPECIMEN:
-                        wantedPos = ElevatorConstants.SpecimenPos;
+                        wantedPos = ElevatorVerticalConstants.SpecimenPos;
                         break;
                     case PUTSPECIMEN:
-                        wantedPos = ElevatorConstants.PutSpecimenPos;
+                        wantedPos = ElevatorVerticalConstants.PutSpecimenPos;
                         break;
                 }
                 lastWantedState = wantedState;
             }
-            if (wantedState != ElevatorState.INTAKE) {
+            if (wantedState != ElevatorVerticalState.INTAKE) {
                 wantedPos -= (int) gamepadVal * 25;
             }
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
@@ -95,7 +95,9 @@ public class Elevator {
         leftMotor.setPower(changeLevelPID.update(leftMotor.getCurrentPosition()));
         rightMotor.setPower(changeLevelPID.update(leftMotor.getCurrentPosition()));
     }
-
+    public static void test() {
+        rightMotor.setPower(0.5);
+    }
 }
 
 /*

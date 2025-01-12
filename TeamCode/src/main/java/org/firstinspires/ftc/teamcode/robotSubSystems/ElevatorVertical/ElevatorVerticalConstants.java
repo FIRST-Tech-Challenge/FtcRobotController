@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.robotSubSystems.Elevator;
+package org.firstinspires.ftc.teamcode.robotSubSystems.ElevatorVertical;
 
-public class ElevatorConstants {
+public class ElevatorVerticalConstants {
 
 // PID -----------------------------------------------------
     public static final double changeLevelKp = 0.0077; //0.013,8

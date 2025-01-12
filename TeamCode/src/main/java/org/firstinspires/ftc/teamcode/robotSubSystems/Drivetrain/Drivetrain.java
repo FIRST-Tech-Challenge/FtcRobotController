@@ -29,6 +29,7 @@ public class Drivetrain {
         dtMotors[1].setDirection(DcMotorSimple.Direction.FORWARD);
         dtMotors[2].setDirection(DcMotorSimple.Direction.REVERSE);
         dtMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
+        dtMotors[3].setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoders();
     }
 
