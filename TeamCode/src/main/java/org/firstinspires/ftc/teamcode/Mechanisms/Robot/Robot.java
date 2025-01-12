@@ -60,7 +60,7 @@ public class Robot {
                     arm.armExtend(),
                     new SleepAction(1),
                     claw.servoClaw(Claw.clawState.OPEN),
-                    lift.infiniteHold()
+                    lift.moveToHeight(0)
             );
         }
         return new SequentialAction(

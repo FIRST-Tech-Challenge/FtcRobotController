@@ -61,8 +61,8 @@ public class RedSample extends LinearOpMode {
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
 
                             intake.motorIntake(Intake.intakeState.INTAKE),
-                            extension.servoExtension(Extension.extensionState.EXTEND),
                             pivot.setPosition(Intake.intakeState.INTAKE),
+                            extension.servoExtension(Extension.extensionState.EXTEND),
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),
                             arm.armNeutral(),
 
