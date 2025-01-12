@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.opencv.core.Point;
 
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,7 @@ import java.io.ObjectOutputStream;
 
 public class OdometrySpark {
     OpModeUtilities opModeUtilities;
+    KalmanFilter kalmanFilter;
     private final SparkFunOTOS myOtos;
     private final DcMotor rightEncoder;
     private final DcMotor backEncoder;
@@ -28,6 +30,7 @@ public class OdometrySpark {
         this.myOtos = myOtos;
         this.rightEncoder = rightEncoder;
         this.backEncoder = backEncoder;
+        kalmanFilter.init(new org.opencv.core.Point(0, 0));
         wheelResetData();
         sparkResetData(true, 0.0);
     }
@@ -73,6 +76,12 @@ public class OdometrySpark {
     public Position sparkUpdateData() {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Position(-pos.x, -pos.y, pos.h));
+    }
+    public Point sparkUpdateFiltered() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        kalmanFilter.predict();
+        kalmanFilter.update(new org.opencv.core.Point(pos.x, pos.y));
+        return kalmanFilter.getState();
     }
     public Position averageUpdateData() {
         double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
