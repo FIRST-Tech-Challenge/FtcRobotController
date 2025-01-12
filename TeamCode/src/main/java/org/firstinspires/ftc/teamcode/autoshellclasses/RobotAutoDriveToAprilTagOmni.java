@@ -287,6 +287,13 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
                 if (gamepad1.left_trigger > .1) {
                     drive = (rangeError == 0) ? 0 : Math.signum(rangeError) * Math.max(MIN_AUTO_SPEED, Math.min(Math.abs(axialVel), MAX_AUTO_SPEED));
                     strafe = (strafeError == 0) ? 0 : Math.signum(strafeError) * Math.max(MIN_AUTO_STRAFE, Math.min(Math.abs(strafeVel), MAX_AUTO_STRAFE));
+                    if (Math.abs(rangeError) < 15) {
+                        turn = (yawError == 0) ? 0 : Math.signum(yawError) * Math.max(.1, Math.min(Math.abs(turnVel), MAX_AUTO_TURN));
+                    } else {
+                        double tx = workingResult.getTx();
+                        turn = (tx == 0) ? 0 : Math.signum(tx) * -Math.max(.1, Math.min(Math.abs(turnVel), MAX_AUTO_TURN));
+                    }
+
                 } else if (gamepad1.right_trigger > .1) {
 
                     turn = (yawError == 0) ? 0 : Math.signum(yawError) * Math.max(.1, Math.min(Math.abs(turnVel), MAX_AUTO_TURN));
