@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class ExampleAutonomous extends BaseAutonomous {
     @Override
     protected void defineTasks() {
-        // Add a task to drive forward for 1 meter at 50% power
+        // Add a task to drive forward for 1 second at 50% power
         manager.addTask(new MecanumDriveDurationTask(robot, 1.0, 0, 0, 1, this));
     }
 }
