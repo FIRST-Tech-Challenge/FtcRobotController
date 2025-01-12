@@ -18,6 +18,9 @@ public class WheelOdometry {
 
     OpModeUtilities opModeUtilities;
     IMUModule imuModule;
+
+    private double wheelHeadingWeight = 0;
+    private double imuHeadingWeight = 1;
     final static private double TRACK_WIDTH_MM = 297;
     //maybe double check BACK Distance
     static private final double BACK_DISTANCE_TO_MID_ROBOT_MM = -70;
@@ -117,7 +120,8 @@ public class WheelOdometry {
                 String.format("encoder = %.4f, imu = %.4f, arcTan = %.4f", encoderDeltaTheta, imuDeltaTheta,
                         arcTanDeltaTheta));
 
-        double blendedDeltaTheta = (0 * encoderDeltaTheta) + (1 * imuDeltaTheta) + (0 * arcTanDeltaTheta);
+        double blendedDeltaTheta =
+                (wheelHeadingWeight * encoderDeltaTheta) + (imuHeadingWeight * imuDeltaTheta) + (wheelHeadingWeight * arcTanDeltaTheta);
         double deltaTheta = blendedDeltaTheta; //blended compliment eachother — to reduce drift of imu in big movement and to detect small change
 
         double deltaX = (deltaLeftDistance + deltaRightDistance) / 2;
@@ -222,6 +226,22 @@ public class WheelOdometry {
 
 
         return currentPosition;
+    }
+
+    public double getImuHeadingWeight() {
+        return imuHeadingWeight;
+    }
+
+    public void setImuHeadingWeight(double imuHeadingWeight) {
+        this.imuHeadingWeight = imuHeadingWeight;
+    }
+
+    public double getWheelHeadingWeight() {
+        return wheelHeadingWeight;
+    }
+
+    public void setWheelHeadingWeight(double wheelHeadingWeight) {
+        this.wheelHeadingWeight = wheelHeadingWeight;
     }
 
     public Velocity getCurrentVelocity() {

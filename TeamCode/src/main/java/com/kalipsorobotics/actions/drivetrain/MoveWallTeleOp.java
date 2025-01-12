@@ -17,12 +17,19 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 
 public class MoveWallTeleOp extends KActionSet {
 
-    public MoveWallTeleOp(DriveTrain driveTrain, WheelOdometry wheelOdometry) {
+
+    public MoveWallTeleOp(DriveTrain driveTrain, WheelOdometry wheelOdometry, Position wallPosition) {
 
         PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry,1.0/100.0);
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
-        moveBarToWall.addPoint(WALL_PICKUP_X-75, WALL_PICKUP_Y, -180); //-205, 700
+        if (wallPosition == null) {
+            moveBarToWall.addPoint(-367.5, WALL_PICKUP_Y, -180);
+            moveBarToWall.addPoint(WALL_PICKUP_X, WALL_PICKUP_Y, -180); //-205, 700
+
+        } else {
+            moveBarToWall.addPoint(wallPosition.getX(), wallPosition.getY(), wallPosition.getTheta());
+        }
         this.addAction(moveBarToWall);
 
 

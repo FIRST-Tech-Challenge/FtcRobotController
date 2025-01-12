@@ -26,6 +26,7 @@ import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
+import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
@@ -68,6 +69,10 @@ public class Teleop extends LinearOpMode {
 
         //WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
+        //0.5 because weight gets doubled
+        wheelOdometry.setWheelHeadingWeight(0.5);
+        wheelOdometry.setImuHeadingWeight(0);
+
 
         DriveAction driveAction = new DriveAction(driveTrain);
         MoveWallTeleOp moveWallTeleOp = null;
@@ -145,6 +150,9 @@ public class Teleop extends LinearOpMode {
         //double hangPosX = SPECIMEN_HANG_POS_X+50;
         int hangPosY = 100;
         int hangIncrement = 60;
+        Position savedHangPosition = null;
+
+        Position savedWallPosition = null;
 
         Init init = new Init(intakeClaw, outtake);
 //        outtake.init();
@@ -233,7 +241,7 @@ public class Teleop extends LinearOpMode {
 
             if(moveWallTeleopPressed) {
                 if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
-                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry);
+                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry, null);
                     moveWallTeleOp.setName("moveWallTeleop");
 
                     setLastMoveAction(moveWallTeleOp);
@@ -244,7 +252,7 @@ public class Teleop extends LinearOpMode {
             if(wallToBarPressed) {
                 if (wallToBarAction == null || wallToBarAction.getIsDone()){
                     hangPosY += hangIncrement;
-                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, hangPosY);
+                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
                     wallToBarAction.setName("wallToBarHangRoundTrip");
 
                     setLastMoveAction(wallToBarAction);
@@ -540,7 +548,11 @@ public class Teleop extends LinearOpMode {
                    specimenHang = new SpecimenHang(outtake);
                    specimenHang.setName("specimenHang");
 
-                   wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition().getY(), wheelOdometry.getCurrentPosition().getTheta());
+                    savedHangPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
+                            wheelOdometry.getCurrentPosition().getY(), wheelOdometry.getCurrentPosition().getTheta());
+
+                   //wheelOdometry.setCurrentPosition(WallToBarAction.HANG_POS, wheelOdometry.getCurrentPosition()
+                    // .getY(), wheelOdometry.getCurrentPosition().getTheta());
 //
 //                   hangPosX = wheelOdometry.getCurrentPosition().getX();
 
@@ -569,6 +581,11 @@ public class Teleop extends LinearOpMode {
                         outtake.getOuttakeClaw().setPosition(outtakeClawPos);
                     } else if (outtakeClawPos == Outtake.OUTTAKE_CLAW_OPEN){
                         outtakeClawPos = Outtake.OUTTAKE_CLAW_CLOSE;
+
+                        savedWallPosition = new Position(wheelOdometry.getCurrentPosition().getX(),
+                                wheelOdometry.getCurrentPosition().getY(),
+                                wheelOdometry.getCurrentPosition().getTheta());
+
                         outtake.getOuttakeClaw().setPosition(outtakeClawPos);
                     }
 
