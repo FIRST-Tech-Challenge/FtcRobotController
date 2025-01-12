@@ -1,7 +1,5 @@
 package com.kalipsorobotics.intoTheDeep;
 
-import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X;
-
 import android.util.Log;
 
 import com.kalipsorobotics.WallToBarAction;
@@ -11,13 +9,11 @@ import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
 import com.kalipsorobotics.actions.drivetrain.DriveAction;
 import com.kalipsorobotics.actions.drivetrain.MoveWallTeleOp;
 import com.kalipsorobotics.actions.intake.FunnelEndToEndAction;
 import com.kalipsorobotics.actions.intake.IntakeFunnelAction;
-import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
@@ -30,15 +26,12 @@ import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.math.CalculateTickPer;
-import com.kalipsorobotics.math.Position;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.tensorflow.CameraCapture;
 import com.kalipsorobotics.utilities.KGamePad;
-import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -49,7 +42,7 @@ public class Teleop extends LinearOpMode {
     protected boolean isRed = true;
     protected boolean takeInYellow = true;
 
-    Action lastLSAction = null;
+    Action lastOuttakeAction = null;
 
     Action lastIntakeAction = null;
 
@@ -279,7 +272,7 @@ public class Teleop extends LinearOpMode {
 
                     needMaintainLs = false;
 
-                    setLastLsAction(autoRobotHangAction);
+                    setLastOuttakeAction(autoRobotHangAction);
                 }
             }
 
@@ -495,7 +488,7 @@ public class Teleop extends LinearOpMode {
                 moveLS.setName("moveLS");
                 Log.d("ls_debug", "joystick: " + outtakeLSStickValue + " motor pos: "+ CalculateTickPer.ticksToMmLS(outtake.getLinearSlide1().getCurrentPosition()) + " setting LS target to: " + targetLsMM);
 
-                setLastLsAction(moveLS);
+                setLastOuttakeAction(moveLS);
 //                MoveOuttakeLSAction.setNeedMaintenance(true)
 //                MoveOuttakeLSAction.incrementGlobal( CalculateTickPer.mmToTicksLS(15) * -outtakeLSStickValue);
             } else {
@@ -527,7 +520,7 @@ public class Teleop extends LinearOpMode {
                     outtakeTransferReady = new OuttakeTransferReady(outtake);
                     outtakeTransferReady.setName("outtakeTransferReady");
 
-                    setLastLsAction(outtakeTransferReady);
+                    setLastOuttakeAction(outtakeTransferReady);
                 }
             }
 
@@ -537,7 +530,7 @@ public class Teleop extends LinearOpMode {
                     specimenHangReady = new SpecimenHangReady(outtake);
                     specimenHangReady.setName("specimenHangReady");
 
-                    setLastLsAction(specimenHangReady);
+                    setLastOuttakeAction(specimenHangReady);
                 }
 
             }
@@ -551,7 +544,7 @@ public class Teleop extends LinearOpMode {
 //
 //                   hangPosX = wheelOdometry.getCurrentPosition().getX();
 
-                   setLastLsAction(specimenHang);
+                   setLastOuttakeAction(specimenHang);
                 }
             }
 
@@ -560,7 +553,7 @@ public class Teleop extends LinearOpMode {
                     basketReadyAction = new BasketReadyAction(outtake);
                     basketReadyAction.setName("basketReadyAction");
 
-                    setLastLsAction(basketReadyAction);
+                    setLastOuttakeAction(basketReadyAction);
                 }
             }
 
@@ -585,19 +578,18 @@ public class Teleop extends LinearOpMode {
 
             if (outtakePivotStickValue > 0.5) {
                 if(outtakePivotAction == null || outtakePivotAction.getIsDone()) {
+                    outtakePivotAction = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
+                    setLastOuttakeAction(outtakePivotAction);
                 }
 //                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_WALL_READY_POS);
 //                Log.d("sweeping",  "" + intakeSmallSweepPos);
             } else if (outtakePivotStickValue < -0.5) {
                 if(outtakePivotAction == null || outtakePivotAction.getIsDone()) {
                     outtakePivotAction = new OuttakePivotAction(outtake, Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
+                    setLastOuttakeAction(outtakePivotAction);
                 }
 //                outtake.getOuttakePivotServo().setPosition(Outtake.OUTTAKE_PIVOT_TRANSFER_READY_POS);
 //                Log.d("sweeping",  "" + intakeSmallSweepPos);
-            }
-
-            if(outtakePivotAction != null) {
-                outtakePivotAction.updateCheckDone();
             }
 
             if(sampleEndToEndSequencePressed) {
@@ -606,7 +598,7 @@ public class Teleop extends LinearOpMode {
                     sampleEndToEndSequence.setName("sampleEndToEndSequence");
 
                     setLastIntakeAction(sampleEndToEndSequence);
-                    setLastLsAction(sampleEndToEndSequence);
+                    setLastOuttakeAction(sampleEndToEndSequence);
                 }
             }
 
@@ -617,7 +609,7 @@ public class Teleop extends LinearOpMode {
                     specimenEndToEndSequence.setName("specimenEndToEndSequence");
                     Log.d("backButton", "Creating sequence " + specimenEndToEndSequence);
 
-                    setLastLsAction(specimenEndToEndSequence);
+                    setLastOuttakeAction(specimenEndToEndSequence);
                     setLastIntakeAction(specimenEndToEndSequence);
                 }
             }
@@ -636,8 +628,8 @@ public class Teleop extends LinearOpMode {
 
             wheelOdometry.updatePosition();
 
-            if(lastLSAction != null) {
-                lastLSAction.updateCheckDone();
+            if(lastOuttakeAction != null) {
+                lastOuttakeAction.updateCheckDone();
             }
 
             if(lastIntakeAction != null) {
@@ -649,7 +641,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if(needMaintainLs) {
-                if (lastLSAction == null || lastLSAction.getIsDone()) {
+                if (lastOuttakeAction == null || lastOuttakeAction.getIsDone()) {
                     maintainLS.setIsDone(false);
                     maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
                     maintainLS.updateCheckDone();
@@ -667,11 +659,11 @@ public class Teleop extends LinearOpMode {
         }
     }
 
-    private void setLastLsAction(Action action) {
-        if(lastLSAction != null) {
-            lastLSAction.setIsDone(true);
+    private void setLastOuttakeAction(Action action) {
+        if(lastOuttakeAction != null) {
+            lastOuttakeAction.setIsDone(true);
         }
-        lastLSAction = action;
+        lastOuttakeAction = action;
     }
 
     private void setLastIntakeAction(Action action) {

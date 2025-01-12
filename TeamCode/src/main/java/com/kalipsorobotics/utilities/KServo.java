@@ -54,14 +54,16 @@ public class KServo {
     }
 
     public double getCurrentPosition() {
-        double distanceToGo = targetPosition - prevPosition;
+//        double distanceToGo = targetPosition - prevPosition;
+//
+//        currentTime = time.milliseconds();
+//        currentPosition =
+//                targetPosition - (distanceToGo - (servoSpeed * (prevTime - currentTime)));
+//        prevPosition = currentPosition;
+//        prevTime = currentTime;
+//        return currentPosition;
 
-        currentTime = time.milliseconds();
-        currentPosition =
-                targetPosition - (distanceToGo - (servoSpeed * (prevTime - currentTime)));
-        prevPosition = currentPosition;
-        prevTime = currentTime;
-        return currentPosition;
+        return getServo().getPosition();
     }
 
     public double getTime() {
