@@ -88,7 +88,7 @@ public class KalmanFilter {
     public Point cycle(Point point) {
         init(point);
         predict();
-        update();
+        //update(); //todo alan: uncomment (causing errors)
         return getState();
     }
 

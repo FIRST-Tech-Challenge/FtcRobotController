@@ -53,9 +53,8 @@ public class Outtake {
     public static final double LS_SPECIMEN_CLIP_POS = 230;
     public static final double LS_SAMPLE_BASKET_READY_POS = 675+40;
 
-    public static final double OUTTAKE_CLAW_CLOSE = 0.98;
-    public static final double OUTTAKE_CLAW_OPEN = 0.65;     //increase to make claw close more, decrease to open more
-
+    public static final double OUTTAKE_CLAW_CLOSE = 0.996;
+    public static final double OUTTAKE_CLAW_OPEN = 0.78;     //increase to make claw close more, decrease to open more
 
 
     private Outtake(OpModeUtilities opModeUtilities) {
