@@ -117,9 +117,9 @@ public class FourSpecimenAuto extends CommandOpMode {
                         new TrajectoryCommand(driveToPrimePickup2, drivetrain),
                         new ElevatorGoTo(elevator, 0).withTimeout(2000)
                 ),
-                new WaitCommand(250),
 //                new TrajectoryCommand(driveToPickup, drivetrain),
                 new CloseClaw(claw),
+                new WaitCommand(250),
 //                // score 3
                 new ElevatorGoTo(elevator, 6).withTimeout(3000),
                 new ParallelCommandGroup(

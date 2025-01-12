@@ -18,13 +18,13 @@ public class IntakeRoller extends SubsystemBase {
     public void periodic() {
         switch (state) {
             case STOP:
-                intakePower.setPower(0);
+                intakePower.setPower(0.15);
                 break;
             case INTAKE:
                 intakePower.setPower(1);
                 break;
             case OUTTAKE:
-                intakePower.setPower(-1);
+                intakePower.setPower(-0.20);
                 break;
         }
     }
@@ -42,11 +42,11 @@ public class IntakeRoller extends SubsystemBase {
     }
 
     public void rollerIntake() {
-        intakePower.setPower(1);
+        intakePower.setPower(0.8);
     }
 
     public void rollerStop() {
-        intakePower.setPower(0);
+        intakePower.setPower(0.15);
     }
 
     public void rollerOuttake() {

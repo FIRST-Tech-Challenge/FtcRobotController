@@ -4,6 +4,12 @@
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
+/**
+ * Top-level build file for ftc_app project.
+ *
+ * It is extraordinarily rare that you will ever need to edit this file.
+ */
+
 buildscript {
     repositories {
         mavenCentral()
@@ -11,7 +17,7 @@ buildscript {
     }
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:8.7.0'
     }
 }
 

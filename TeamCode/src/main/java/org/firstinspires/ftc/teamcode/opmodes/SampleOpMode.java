@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.ElevatorGoTo;
 import org.firstinspires.ftc.teamcode.commands.ExtendIntake;
+import org.firstinspires.ftc.teamcode.commands.ExtendIntakeVariable;
 import org.firstinspires.ftc.teamcode.commands.ManualElevatorCommand;
 import org.firstinspires.ftc.teamcode.commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.commands.PivotIntake;
@@ -80,23 +82,39 @@ public class SampleOpMode extends CommandOpMode {
         GamepadButton kickerButton = new GamepadButton(
                 driver, GamepadKeys.Button.A
         );
+        // You can compose triggers to bind multiple buttons to one action
+        // if the trigger is held, move the intake based on the trigger
+        Trigger extendIntake = new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1);
+
+        // If and only if the intake button is pressed (no trigger) deploy the intake to just in front of the robot
+        Trigger deployIntake = intakeButton.and(extendIntake.negate());
+
+        // If neither the intake button or trigger are active, retract the intake
+        Trigger retractIntake = intakeButton.negate().and(extendIntake.negate());
+
+        extendIntake.whenActive(new SequentialCommandGroup(
+                new ExtendIntakeVariable(intake, () -> 0.1).withTimeout(50),
+                new PivotIntake(Intake.IntakeState.COLLECT, intake),
+                new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE),
+                new ExtendIntakeVariable(intake, () -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
+        ));
+
+        deployIntake.whenActive(new SequentialCommandGroup(
+                new ExtendIntakeVariable(intake, () -> 0.1).withTimeout(50), // tune this
+                new PivotIntake(Intake.IntakeState.COLLECT, intake),
+                new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)
+        ));
+
+        retractIntake.whenActive(new SequentialCommandGroup(
+                new SetRollerState(intakeRoller, IntakeRoller.States.STOP),
+                new RetractIntake(intake),
+                new PivotIntake(Intake.IntakeState.HOME, intake)));
 
         kickerButton.whenPressed(new SetKickerPosition(false, intake))
                 .whenReleased(new SetKickerPosition(true, intake));
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
-        //zeroButton.whenPressed(new InstantCommand(() -> drivetrain.goToPos(Drivetrain)));
-
-        intakeButton.whenPressed(new SequentialCommandGroup(
-                    new ExtendIntake(intake),
-                    new PivotIntake(Intake.IntakeState.COLLECT,intake),
-                    new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)))
-       .whenReleased(new SequentialCommandGroup(
-               new SetRollerState(intakeRoller, IntakeRoller.States.STOP),
-               new RetractIntake(intake),
-               new PivotIntake(Intake.IntakeState.HOME, intake) 
-               ));
 
         outtakeButton.whenPressed(new ConditionalCommand(
                 new SequentialCommandGroup(

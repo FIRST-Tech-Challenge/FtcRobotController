@@ -65,6 +65,10 @@ public class Intake extends SubsystemBase {
 
     }
 
+    public void setExt(double ext){
+        intakeExt.setPosition(ext);
+    }
+
     public void extendKicker() {
 
         kicker.setPosition(0.35);
