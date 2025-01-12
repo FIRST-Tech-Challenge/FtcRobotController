@@ -535,7 +535,7 @@ public class Teleop extends LinearOpMode {
             //outtake hang ready
             if (specimenHangReadyPressed) {
                 if (specimenHangReady == null || specimenHangReady.getIsDone()) {
-                    specimenHangReady = new SpecimenHangReady(outtake);
+                    specimenHangReady = new SpecimenHangReady(outtake, 25);
                     specimenHangReady.setName("specimenHangReady");
 
                     setLastOuttakeAction(specimenHangReady);

@@ -46,7 +46,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         raiseSpecimen.setDependentActions(waitAtWall, closeOuttakeForSpecimen);
         this.addAction(raiseSpecimen);
 
-        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake, 25);
+        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake, 30);
         specimenHangReady.setName("hangSpecimenReady");
         specimenHangReady.setDependentActions(raiseSpecimen);
         this.addAction(specimenHangReady);

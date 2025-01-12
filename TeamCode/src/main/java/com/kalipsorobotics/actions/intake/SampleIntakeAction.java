@@ -34,7 +34,7 @@ public class SampleIntakeAction extends KActionSet {
         clawClose.setDependentActions(wait);
         this.addAction(clawClose);
 
-        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
+        KServoAutoAction moveBigPivot = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS - 0.07);
         moveBigPivot.setName("moveBigPivot");
         moveBigPivot.setDependentActions(clawClose);
         this.addAction(moveBigPivot);
