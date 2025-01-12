@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors.Battery;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
-@Autonomous(name = "Test Color Detection", group = "Autonomous")
+@Autonomous(name = "Tune Color Detection", group = "Autonomous")
 public class TuneColorDetection extends LinearOpMode {
 
     private Limelight3A limelight;

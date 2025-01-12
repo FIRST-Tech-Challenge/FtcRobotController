@@ -51,8 +51,8 @@ public class Lift {
         this.liftMotorLeft = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorLeft"), battery, maxVoltage);
         this.liftMotorRight = new DcMotorAdvanced(hardwareMap.get(DcMotorEx.class, "liftMotorRight"), battery, maxVoltage);
         this.encoder = new Encoder(hardwareMap.get(DcMotorEx.class, "liftMotorRight"));
-        this.liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.liftMotorRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         this.liftMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.liftMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

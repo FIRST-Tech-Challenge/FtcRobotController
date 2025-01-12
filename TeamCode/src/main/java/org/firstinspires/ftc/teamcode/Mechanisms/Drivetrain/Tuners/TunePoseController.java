@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.TelemetryTrack
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test Pose", group = "Autonomous")
+@Autonomous(name = "Tune Pose", group = "Autonomous")
 public class TunePoseController extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;

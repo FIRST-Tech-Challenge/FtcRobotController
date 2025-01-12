@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
 
 @Config
-@Autonomous(name = "Test Feed Forward", group = "Autonomous")
+@Autonomous(name = "Tune Feed Forward", group = "Autonomous")
 public class TuneFeedForwardGains extends LinearOpMode{
     // Create drivetrain object
     Drivetrain drivetrain = null;

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
  * TELEMETRY. DASHBOARD TELEMETRY IS BETTER!
  */
 @Config
-@Autonomous(name = "Test 3 Wheel Localizer", group = "Autonomous")
+@Autonomous(name = "Tune 3 Wheel Localizer", group = "Autonomous")
 public class TuneThreeWheelLocalizer extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;

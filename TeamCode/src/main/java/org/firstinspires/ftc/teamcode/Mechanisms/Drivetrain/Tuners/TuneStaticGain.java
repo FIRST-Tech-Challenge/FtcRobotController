@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
 
 @Config
-@Autonomous(name = "Test Static", group = "Autonomous")
+@Autonomous(name = "Tune Static", group = "Autonomous")
 public class TuneStaticGain extends LinearOpMode {
     // Create drivetrain object
     Drivetrain drivetrain = null;

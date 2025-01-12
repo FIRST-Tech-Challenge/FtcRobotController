@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 
-@Autonomous(name = "Test Block Detection", group = "Autonomous")
+@Autonomous(name = "Tune Block Detection", group = "Autonomous")
 public class TuneBlockDetection extends LinearOpMode {
 
     private Limelight3A limelight;
