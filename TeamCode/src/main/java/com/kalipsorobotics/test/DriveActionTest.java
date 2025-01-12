@@ -26,7 +26,7 @@ public class DriveActionTest extends LinearOpMode {
         DriveAction driveAction = new DriveAction(driveTrain);
 
         SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        odometryFuse = new OdometrySpark(otos, driveTrain.getfRight(), driveTrain.getbRight());
+        odometryFuse = new OdometrySpark(otos);
         odometryFuse.configureOtos(otos);
 
 //        double[] lastMotorPowers;
@@ -72,8 +72,8 @@ public class DriveActionTest extends LinearOpMode {
 
     private double[] collectOdomData() {
         return new double[]{
-            odometryFuse.pointCollectData().getX(),
-            odometryFuse.pointCollectData().getY(),
+            odometryFuse.sparkUpdateFiltered().x,
+            odometryFuse.sparkUpdateFiltered().y,
             odometryFuse.headingUpdateData("right", 0, 0)
         };
     }
