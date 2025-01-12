@@ -154,7 +154,6 @@ public class BasicTeleOps extends OpMode {
             telemetry.addData("Intake State", intakeState.name());
             telemetry.addLine("---------------------");
             //telemetry.addData("Color",depositArmDrive.Color());
-            telemetry.addData("Color",depositArmDrive.BlackColor());
         } else {
             servoTest.ServoTestLoop();
         }
