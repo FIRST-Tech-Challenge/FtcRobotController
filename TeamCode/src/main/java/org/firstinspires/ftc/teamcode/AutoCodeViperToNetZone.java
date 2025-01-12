@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp(name="Auto Place Specimen Pull Sample to Net", group="")
+@TeleOp(name="Auto Viper NetZone (1)", group="")
 public class AutoCodeViperToNetZone extends LinearOpMode {
 
     static final double     DRIVE_SPEED             = 0.9;
@@ -106,7 +106,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
                 if (moveNearToAscentZone) {
                     // Go reverse to be away from submersible to move to pick sample
-                    int reverseDistance = 8; //TODO: Adjust during testing
+                    int reverseDistance = 1; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.FORWARD, DRIVE_SPEED, reverseDistance);
                     telemetry.addData("Go reverse to be away from submersible to move to pick sample", reverseDistance);
                     telemetry.update();
@@ -157,15 +157,15 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
                 if (parkInAscent)
                 {
-                    distance = 55;
+                    distance = 47;
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
 
-                    strafeDistance = 14; //TODO: Adjust during testing
+                    strafeDistance = 11; //TODO: Adjust during testing
                     driveManager.StrafeToPosition(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, strafeDistance);
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
 
-                    rotateToPosition = 1;
+                    rotateToPosition = 0;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.LEFT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
@@ -175,7 +175,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.addData("Move backward until it reaches net zone", "");
                     telemetry.update();
 
-                    distance = 43; //TODO: Adjust during testing
+                    distance = 50; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("Move backward until it reaches net zone", "");
                     telemetry.update();
@@ -240,7 +240,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
     private void dropSpecimenInTopRail()
     {
-        int distanceToSub = 26;
+        int distanceToSub = 25;
         telemetry.addData("Distance To Sub: ", distanceToSub);
         telemetry.update();
 
@@ -257,7 +257,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
         //moving vs up
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-        viperSlideManager.SetPower(0.3);
+        viperSlideManager.SetPower(0.28);
         sleep(800);
 
         //stopping vs and moving arm to drop specimen

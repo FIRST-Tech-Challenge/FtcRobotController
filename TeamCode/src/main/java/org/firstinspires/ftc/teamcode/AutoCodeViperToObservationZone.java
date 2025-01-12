@@ -33,8 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp(name="Auto Place Specimen Park in Observation Zone", group="")
-public class AutoCodeViperSlideToObservationZone extends LinearOpMode {
+@TeleOp(name="Auto Viper ObsZone (1)", group="")
+public class AutoCodeViperToObservationZone extends LinearOpMode {
 
     static final double     DRIVE_SPEED             = 0.3;
     static final double     DRIVE_INCREASED_SPEED             = 0.8;
