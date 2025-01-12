@@ -33,11 +33,11 @@ public class PID {
         eDerivative = (error - ePrev) / dt;
         ePrev = error;
         timer.reset();
-        if (type == functionType.SQRT) {
-            return (kP * Math.pow(Math.abs(error), 0.5) * Math.signum(error)) + (kI * eIntegralSum) + (kD * eDerivative);
+        if (type == functionType.LINEAR) {
+            return (kP * error) + (kI * eIntegralSum) + (kD * eDerivative);
         }
         else {
-            return (kP * error) + (kI * eIntegralSum) + (kD * eDerivative);
+            return (kP * Math.pow(Math.abs(error), 0.5) * Math.signum(error)) + (kI * eIntegralSum) + (kD * eDerivative);
         }
     }
 }
