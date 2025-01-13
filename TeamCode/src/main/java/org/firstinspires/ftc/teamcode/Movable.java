@@ -15,7 +15,7 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BLScissorLift;
     static protected Servo SlideR;
     static protected Servo SlideL;
-    static protected boolean thrust;
+    static protected boolean inverse = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,18 +54,18 @@ abstract class Movable extends LinearOpMode {
                 disablePower();
                 break;
             case "right":
-                FLW.setPower(0.3);
-                BLW.setPower(-0.3);
-                FRW.setPower(0.3);
-                BRW.setPower(-0.3);
+                FLW.setPower(0.7);
+                BLW.setPower(-0.7);
+                FRW.setPower(0.7);
+                BRW.setPower(-0.7);
                 sleep(miliseconds);
                 disablePower();
                 break;
             case "left":
-                FLW.setPower(-0.3);
-                BLW.setPower(0.3);
-                FRW.setPower(-0.3);
-                BRW.setPower(0.3);
+                FLW.setPower(-0.7);
+                BLW.setPower(0.7);
+                FRW.setPower(-0.7);
+                BRW.setPower(0.7);
                 sleep(miliseconds);
                 disablePower();
                 break;
@@ -75,18 +75,18 @@ abstract class Movable extends LinearOpMode {
     public void turnRobot(int miliseconds, String direction) {
         switch (direction) {
             case "left":
-                FLW.setPower(-0.3);
-                BLW.setPower(-0.3);
-                FRW.setPower(-0.3);
-                BRW.setPower(-0.3);
+                FLW.setPower(-0.5);
+                BLW.setPower(-0.5);
+                FRW.setPower(-0.5);
+                BRW.setPower(-0.5);
                 sleep(miliseconds);
                 disablePower();
                 break;
             case "right":
-                FLW.setPower(0.3);
-                BLW.setPower(0.3);
-                FRW.setPower(0.3);
-                BRW.setPower(0.3);
+                FLW.setPower(0.5);
+                BLW.setPower(0.5);
+                FRW.setPower(0.5);
+                BRW.setPower(0.5);
                 sleep(miliseconds);
                 disablePower();
                 break;
@@ -110,19 +110,18 @@ abstract class Movable extends LinearOpMode {
     public void powerScissorLift(int miliseconds, String direction) {
         switch (direction) {
             case "up":
-                FRScissorLift.setPower(-1);
-                FLScissorLift.setPower(-.975);
-                BRScissorLift.setPower(1);
-                BLScissorLift.setPower(.975);
+                FRScissorLift.setPower(.9);
+                FLScissorLift.setPower(1);
+                BRScissorLift.setPower(-.9);
+                BLScissorLift.setPower(-1);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
             case "down":
-                FRScissorLift.setPower(1);
-                FLScissorLift.setPower(.975);
-                BRScissorLift.setPower(-1);
-                BLScissorLift.setPower(-.975);
-
+                FRScissorLift.setPower(-.9);
+                FLScissorLift.setPower(-1);
+                BRScissorLift.setPower(.9);
+                BLScissorLift.setPower(1);
                 sleep(miliseconds);
                 disableScissorPower();
                 break;
@@ -140,6 +139,11 @@ abstract class Movable extends LinearOpMode {
                 SlideR.setPosition(0);
                 SlideL.setPosition(0);
                 break;
+        }
+        try {
+            wait(500);
+        } catch (Exception e) {
+
         }
     }
 

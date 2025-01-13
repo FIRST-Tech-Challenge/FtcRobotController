@@ -8,8 +8,6 @@ public class AnimosityAndMortification extends Movable {
     //variables
     static double tgtPower = 0;
     static double tgtPower2 = 0;
-    static boolean stop = false;
-    static private boolean servoOpen = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,39 +30,31 @@ public class AnimosityAndMortification extends Movable {
                 //forward and backwards
                 FLW.setPower(-tgtPower);
                 BLW.setPower(-tgtPower);
-                FRW.setPower(-tgtPower);
+                FRW.setPower(tgtPower);
                 BRW.setPower(tgtPower);
-            } else if (gamepad1.left_stick_x > 0.3 || gamepad1.left_stick_x < -0.3) {
-                FLW.setPower(tgtPower2);
-                BLW.setPower(-tgtPower2);
-                FRW.setPower(-tgtPower2);
-                BRW.setPower(-tgtPower2);
             } else if (gamepad1.left_bumper) {
-                FLW.setPower(-0.5);
-                BLW.setPower(-0.5);
-                FRW.setPower(0.5);
-                BRW.setPower(-0.5);
+                // turning
+                turnRobot(0, "left");
             } else if (gamepad1.right_bumper) {
-                FLW.setPower(0.5);
-                BLW.setPower(0.5);
-                FRW.setPower(-0.5);
-                BRW.setPower(0.5);
-            } else if (gamepad1.left_trigger > .75 && !stop) {
-                powerWheels(210, "left");
-                stop = true;
-                wait(1000);
-                stop = false;
-            } else if (gamepad1.right_trigger > .75 && !stop) {
-                powerWheels(210, "right");
-                stop = true;
-                wait(1000);
-                stop = false;
+                turnRobot(0, "right");
+            } else if (gamepad1.left_trigger > .5) {
+                // strafing, controls can be switched through inverse boolean
+                if (!inverse) {
+                    powerWheels(0, "left");
+                } else {
+                    powerWheels(0, "right");
+                }
+            } else if (gamepad1.right_trigger > .5) {
+                if (!inverse) {
+                    powerWheels(0, "right");
+                } else {
+                    powerWheels(0, "left");
+                }
             } else {
                 disablePower();
             }
 
             // scissor lift
-            // enter real values once you get to test
             if(gamepad1.right_stick_y > 0.5){
                 powerScissorLift(0, "up");
             }else if(gamepad1.right_stick_y < -0.5) {
@@ -73,20 +63,22 @@ public class AnimosityAndMortification extends Movable {
                 disableScissorPower();
             }
 
-            if (gamepad1.a) {
+            // slides/arms
+            if (gamepad1.b) {
                 moveSlides("thrust");
-            } else if (gamepad1.b) {
+            } else if (gamepad1.a) {
                 moveSlides("retract");
+            }else if (gamepad1.x) {
+                // inverses control
+                inverse = !inverse;
             }
-
             updatePhoneConsole();
         }
     }
 
-
-
     public void updatePhoneConsole() {
         telemetry.addData("Status","Running");
+        telemetry.addData("Inverse", inverse);
         telemetry.addData("Target Power:", tgtPower);
         telemetry.addData("FLW Power:", FLW.getPower());
         telemetry.addData("BLW Power:", BLW.getPower());
