@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.BACK;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
 
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxModule.BulkData;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
@@ -25,19 +27,22 @@ import java.util.List;
  */
 
 @Config
-@TeleOp(name = "TeleOps_MW_FMS_v2.1_GW", group = "org.firstinspires.ftc.teamcode")
+@TeleOp(name = "TeleOps_MW_FMS_v2.2_Competition", group = "org.firstinspires.ftc.teamcode")
 public class BasicTeleOps extends OpMode {
     //Robot
     public RobotHardware robot;                     // Bring in robot hardware configuration
     public GamepadEx gamepadCo1;                    //For gamepad
     public GamepadEx gamepadCo2;
+    public Gamepad gamepad_1;
+    public Gamepad gamepad_2;
+
 
     //Robot drive
     public RobotDrive robotDrive;                   //For robot drive
 
     //Robot Intake & Deposit
-    public FiniteStateMachineDeposit depositArmDrive;   //For Robot Arm
-    public FiniteStateMachineIntake intakeArmDrive; //For Robot Intake
+    public RobotDeposit depositArmDrive;   //For Robot Arm
+    public RobotIntake intakeArmDrive; //For Robot Intake
 
     public ServoTest servoTest;
 
@@ -49,10 +54,8 @@ public class BasicTeleOps extends OpMode {
 
     float hsvValues[] = {0F,0F,0F};
 
-
     //Bulk Reading
     private List<LynxModule> allHubs;
-
 
     
     @Override
@@ -75,12 +78,12 @@ public class BasicTeleOps extends OpMode {
         robotDrive.Init();                                                              // Initialize RobotDrive
 
         //Deposit Arm control
-        depositArmDrive = new FiniteStateMachineDeposit(robot, gamepadCo1, gamepadCo2); // Pass parameters as needed);
+        depositArmDrive = new RobotDeposit(robot, gamepadCo1, gamepadCo2); // Pass parameters as needed);
         depositArmDrive.Init();
 
         //Intake Arm Control
-        intakeArmDrive = new FiniteStateMachineIntake(robot, gamepadCo1,gamepadCo2, depositArmDrive);
-        intakeArmDrive.Init();
+        intakeArmDrive = new RobotIntake(robot, gamepadCo1, gamepadCo2, gamepad1, gamepad2);
+        intakeArmDrive.intakeInit();
 
         //Servo Testing
         servoTest = new ServoTest(robot, gamepadCo1, gamepadCo2);
@@ -130,25 +133,25 @@ public class BasicTeleOps extends OpMode {
          * Yellow color HSV - 85
          * Red color HSV - 19
          */
-        Color.RGBToHSV(robot.colorSensor.red() * 8, robot.colorSensor.green() * 8, robot.colorSensor.blue() * 8, hsvValues);
+        Color.RGBToHSV(robot.colorSensor.red() * 8, robot.colorSensor.green() * 8, robot.colorSensor.blue() * 8, RobotActionConfig.hsvValues);
         //
         robotDrive.DriveLoop(); // Use RobotDrive methods
         RobotDrive.DriveMode currentDriveMode = robotDrive.getDriveMode();
 
-        if ((gamepadCo1.getButton(START) && gamepadCo1.getButton(LEFT_BUMPER)) && !startPressed) {
+        if ((gamepadCo1.getButton(BACK) && gamepadCo1.getButton(LEFT_BUMPER)) && !startPressed) {
             toggleControlState();
             debounceTimer.reset();
             startPressed = true;
-        } else if (!(gamepadCo1.getButton(START) && gamepadCo1.getButton(LEFT_BUMPER))) {
+        } else if (!(gamepadCo1.getButton(BACK) && gamepadCo1.getButton(LEFT_BUMPER))) {
             startPressed = false;
         }
 
         if (controlState == ControlState.RUN) {
-            depositArmDrive.DepositArmLoop();
-            FiniteStateMachineDeposit.LIFTSTATE liftState = depositArmDrive.State();
+            depositArmDrive.DepositControl();
+            RobotDeposit.DEPOSITCONTROLSTATE liftState = depositArmDrive.depositControlState();
 
-            intakeArmDrive.IntakeArmLoop();
-            FiniteStateMachineIntake.INTAKESTATE intakeState = intakeArmDrive.intakeState();
+            intakeArmDrive.intakeSlideControl();
+            RobotIntake.IntakeState intakeState = intakeArmDrive.intakeState();
             telemetry.addLine("---------------------");
             telemetry.addData("Deposit State", liftState.name());
             telemetry.addData("Intake State", intakeState.name());
@@ -167,12 +170,21 @@ public class BasicTeleOps extends OpMode {
         telemetry.addData("Intake Arm Right Position", robot.intakeRightArmServo.getPosition());
         telemetry.addData("Intake Wrist Position", robot.intakeWristServo.getPosition());
         telemetry.addLine("---------------------");
+        telemetry.addData("intake Rotation Position", robot.intakeRotationServo.getPosition());
+        telemetry.addLine("---------------------");
+        telemetry.addData("deposit Claw Position", robot.depositClawServo.getPosition());
+        telemetry.addData("intake Claw Position", robot.intakeClawServo.getPosition());
+        telemetry.addLine("---------------------");
+        telemetry.addData("Left Slide Position", robot.liftMotorLeft.getCurrentPosition());
+        telemetry.addData("Right Slide Position", robot.liftMotorRight.getCurrentPosition());
+        telemetry.addLine("---------------------");
         telemetry.addData("Run Mode", controlState);
         telemetry.addData("Drive Mode", currentDriveMode.name());
         telemetry.addLine("---------------------");
         telemetry.addData("Heading ", robot.imu.getRobotYawPitchRollAngles().getYaw());
-        telemetry.addData("Color Sensor", FiniteStateMachineDeposit.detectedColor);
-        telemetry.addData("Color Sensor value", hsvValues[2]);
+        telemetry.addData("Hue detected", RobotActionConfig.hsvValues[0]);
+        telemetry.addData("Value detected", RobotActionConfig.hsvValues[2]);
+        telemetry.addData("Saturation detected", RobotActionConfig.hsvValues[1]);
         telemetry.update();
     }
 
