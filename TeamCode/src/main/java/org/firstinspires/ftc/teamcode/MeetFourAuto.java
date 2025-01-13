@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -49,6 +50,8 @@ public class MeetFourAuto extends LinearOpMode {
                 Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
         baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
         dashboard = FtcDashboard.getInstance();
+
+        baseRobot.outtake.claw.backward();
 
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger(0);
@@ -116,6 +119,8 @@ public class MeetFourAuto extends LinearOpMode {
 
         roadRunner = new MecanumDrive(hardwareMap, initialPose);
         adaptiveCalibration.initialize(roadRunner);
+//        baseRobot.outtake.linkage.setPosition(Linkage.Position.HIGH_RUNG);
+
         waitForStart();
 
         run(startingPosition);
@@ -172,8 +177,11 @@ public class MeetFourAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder MoveSampleToHumanPlayerZone = roadRunner.actionBuilder(new Pose2d(11.5, -60, Math.toRadians(270))).endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(43, -35), Math.toRadians(90))
-                .strafeTo(new Vector2d(43,-5))
+                .waitSeconds(1)
+                .strafeToLinearHeading(new Vector2d(46, -35), Math.toRadians(90))
+                .strafeTo(new Vector2d(46,-5))
+                .setTangent(270)
+                .splineToSplineHeading(new Pose2d(48, -5, Math.toRadians(90)), Math.toRadians(90))
                 .strafeTo(new Vector2d(56+8,0+10))
                 .strafeTo(new Vector2d(56+8,-50))
                 .strafeTo(new Vector2d(52+8,0+10))
@@ -194,6 +202,9 @@ public class MeetFourAuto extends LinearOpMode {
                 .waitSeconds(3);
         Action PlaceSample = roadRunner.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(5, -28), Math.toRadians(270))
+                .build();
+        Action MoveForward = roadRunner.actionBuilder(new Pose2d(new Vector2d(5, -28), Math.toRadians(270)))
+                .strafeTo(new Vector2d(5, -31))
                 .build();
         Action trajectoryActionCloseOut = MoveSampleToHumanPlayerZone.endTrajectory().fresh()
                 .strafeTo(new Vector2d(48, 12))
@@ -223,8 +234,11 @@ public class MeetFourAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        PlaceSample,
-                        hookChamber(),
+                        new ParallelAction(
+                                PlaceSample,
+                                hookChamber()
+                        ),
+                        MoveForward,
                         unhookChamber(),
                         trajectoryActionChosen
 //                        ,trajectoryActionCloseOut
@@ -296,9 +310,9 @@ public class MeetFourAuto extends LinearOpMode {
             baseRobot.outtake.claw.backward();
             pause(300);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
-            pause(2000);
+            pause(1000);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE);
-            pause(2000);
+            pause(1000);
             return false;
         }
     }
