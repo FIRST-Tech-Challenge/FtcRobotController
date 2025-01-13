@@ -19,7 +19,7 @@ public class slideTest extends OpMode {
     public static double angD = 8e-6;
     public static double angCos = 0.3375;
     public static double angExt = 1e-7;
-    public static double sP;
+    public static double sP = 0;
     public static double sI;
     public static double sD;
 

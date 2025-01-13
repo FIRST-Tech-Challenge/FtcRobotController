@@ -41,7 +41,7 @@ public class driveTest extends OpMode {
         SwerveDrive = new SwerveDrive(
                 18, 18, 12, 12,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D);
+                encoderNames, driveNames, angleNames, P, I, D, 0,0,0);
         dash = FtcDashboard.getInstance();
         telemetry2 = dash.getTelemetry();
     }
@@ -51,7 +51,7 @@ public class driveTest extends OpMode {
     }
     @Override
     public void loop() {
-        SwerveDrive.loop(-gamepad1.left_stick_x, -gamepad1.left_stick_y, -gamepad1.right_stick_x);
+        SwerveDrive.loop(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
         SwerveDrive.setPID(P, I, D);
         SwerveDrive.getTelemetry(telemetry2);
         telemetry.update();

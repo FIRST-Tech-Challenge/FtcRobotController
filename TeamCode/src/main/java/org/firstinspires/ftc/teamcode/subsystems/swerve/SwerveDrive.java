@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.subsystems.swerve;
 
 import android.util.Pair;
 
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
@@ -21,11 +27,21 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.SlewRateLimiter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class SwerveDrive {
+    public TrajectoryVelocityConstraint velocityConstraint = new MinVelocityConstraint(Arrays.asList(
+            new AngularVelocityConstraint(Math.toRadians(180)),
+            new MecanumVelocityConstraint(24, 11)
+    ));
+    public TrajectoryAccelerationConstraint accelerationConstraint = new ProfileAccelerationConstraint(24);
+    public double maxAngAccel = Math.PI;
+    public double maxAngVel = Math.PI;
     OpMode OM;
     double theta;
     Gamepad gamepad; // perhaps a set power method would be better here?
@@ -36,10 +52,11 @@ public class SwerveDrive {
     boolean dontMove;
     boolean reverse;
     public SwerveDriveOdometry odo;
+    public static SampleMecanumDrive fakeDrive;
     public ElapsedTime timer;
     public SwerveModuleState[] states = new SwerveModuleState[4];
     SwerveDriveKinematics kinematics; // FTCLIB FOR AUTO
-    public static double metersPerTick = (0.061*Math.PI)/770;
+    public static double inchesPerTick = (0.061*Math.PI / 2.54 * 100)/770;
     voltageToAngleConstants angleGetter;
     gamepadToVectors vectorGetter;
     PIDController[] anglePID;
@@ -50,11 +67,12 @@ public class SwerveDrive {
     CRServo[] angleMotors = new CRServo[4];
     int[] lastDriveEncoders = new int[4];
     OptimalAngleCalculator angleFixer;
+    SlewRateLimiter[] limiters = new SlewRateLimiter[4];
     double[] angles = new double[4];
     public Pose2d nowPose;
     IMU imu;
     ArrayList<Pair<Double,Double>> targetADPairList = new ArrayList<>(4); // key = mag, value = direction
-    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD) {
+    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD, double startX, double startY, double startHeadingRads) {
         OM = opmode;
         gamepad = GP;
         aP = angleP; //I don't know what I'm doing - owner of the code
@@ -85,12 +103,13 @@ public class SwerveDrive {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
         imu.resetYaw();
-        // Adjust the orientation parameters to match your robot
+        // Adjust the orientation parameter`s to match your robot
 
 
         for (int i = 0; i < driveMotors.length; i++) {
             driveSpeeds[i] = getVelocity(driveMotors[i]);
             lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
+
         }
         targetADPairList.ensureCapacity(4);
         targetADPairList.add(new Pair<>(0.0, 0.0));
@@ -98,11 +117,15 @@ public class SwerveDrive {
         targetADPairList.add(new Pair<>(0.0, 0.0));
         targetADPairList.add(new Pair<>(0.0, 0.0));
         kinematics = new SwerveDriveKinematics(
-                new Translation2d(inchesToMeters(6.5), inchesToMeters(5.5)),
-                new Translation2d(inchesToMeters(6.5),inchesToMeters(-5.5)),
-                new Translation2d(inchesToMeters(-4.5), inchesToMeters(5.5)),
-                new Translation2d(inchesToMeters(-4.5), inchesToMeters(-5.5)));
-        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(0, 0, new Rotation2d(0)));
+                new Translation2d((6.5), (5.5)),
+                new Translation2d((6.5),(-5.5)),
+                new Translation2d((-4.5), (5.5)),
+                new Translation2d((-4.5), (-5.5)));
+        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(startX, startY, new Rotation2d(startHeadingRads)));
+        fakeDrive = new SampleMecanumDrive(opmode.hardwareMap);
+
+
+
         timer = new ElapsedTime();
         nowPose = new Pose2d();
 
@@ -119,6 +142,7 @@ public class SwerveDrive {
 
         }
         // init the other devices
+
     }
     public void resetIMU() { imu.resetYaw();}
     public void init_loop () {
@@ -179,7 +203,7 @@ public class SwerveDrive {
 //            ticksPerSecond = 0;
 //        }
         double ticksPerSecond = motor.getVelocity();
-        return metersPerTick * ticksPerSecond * DIST_MULT; // quick fix for now , x 100 but core issue is unk
+        return inchesPerTick * ticksPerSecond * DIST_MULT; // quick fix for now , x 100 but core issue is unk
     }
     public void loop(double x, double y, double rx) {
         angles = angleGetter.getBigPulleyAngles();
@@ -228,7 +252,7 @@ public class SwerveDrive {
 //                states[i].speedMetersPerSecond = -1 * driveSpeeds[i];
 //                states[i].angle = new Rotation2d(Math.toRadians((angles[i]+ 180 )));
 //            } else {
-                states[i].speedMetersPerSecond = -driveSpeeds[i];
+                states[i].speedMetersPerSecond = driveSpeeds[i]/39.37;
                 states[i].angle = new Rotation2d(Math.toRadians(angles[i]));
 //            }
             // reset the last position and time for velocity calcs
@@ -254,49 +278,47 @@ public class SwerveDrive {
         }
     }
     public void getTelemetry(Telemetry t) {
-        t.addData("FLTargAng", targetADPairList.get(0).second);
-        t.addData("FRTargAng", targetADPairList.get(1).second);
-        t.addData("BLTargAng", targetADPairList.get(2).second);
-        t.addData("BRTargAng", targetADPairList.get(3).second);
-        t.addData("FLIn", angles[0]);
-        t.addData("FRIn", angles[1]);
-        t.addData("BLIn", angles[2]);
-        t.addData("BRIn", angles[3]);
-        t.addData("FLPos", driveMotors[0].getCurrentPosition());
-        t.addData("FLAng", anglePowers[0]);
-        t.addData("FRAng", anglePowers[1]);
-        t.addData("BLAng", anglePowers[2]);
-        t.addData("BRAng", anglePowers[3]);
-        t.addData("FLDrive", drivePowers[0]);
-        t.addData("FRDrive", drivePowers[1]);
-        t.addData("BLDrive", drivePowers[2]);
-        t.addData("BRDrive", drivePowers[3]);
-        t.addData("reverseFL", angleFixer.reverses()[0]);
-        t.addData("reverseFR", angleFixer.reverses()[1]);
-        t.addData("reverseBL", angleFixer.reverses()[2]);
-        t.addData("reverseBR", angleFixer.reverses()[3]);
-        t.addData("yaw", theta);
-        t.addData("offsetFL", angleGetter.offsets[0]);
-        t.addData("offsetFR", angleGetter.offsets[1]);
-        t.addData("offsetBL", angleGetter.offsets[2]);
-        t.addData("offsetBR", angleGetter.offsets[3]);
-        t.addData("FLVelocity", states[0].speedMetersPerSecond);
-        t.addData("FRVelocity", states[1].speedMetersPerSecond);
-        t.addData("BLVelocity", states[2].speedMetersPerSecond);
-        t.addData("BRVelocity", states[3].speedMetersPerSecond);
-        t.addData("FLState", states[0].angle.getDegrees());
-        t.addData("FRState", states[1].angle.getDegrees());
-        t.addData("BLState", states[2].angle.getDegrees());
-        t.addData("BRState", states[3].angle.getDegrees());
-        t.addData("velRawFL", driveMotors[0].getVelocity());
-        t.addData("velRawFR", driveMotors[1].getVelocity());
-        t.addData("velRawBL", driveMotors[2].getVelocity());
-        t.addData("velRawBR", driveMotors[3].getVelocity());
+//        t.addData("FLTargAng", targetADPairList.get(0).second);
+//        t.addData("FRTargAng", targetADPairList.get(1).second);
+//        t.addData("BLTargAng", targetADPairList.get(2).second);
+//        t.addData("BRTargAng", targetADPairList.get(3).second);
+//        t.addData("FLIn", angles[0]);
+//        t.addData("FRIn", angles[1]);
+//        t.addData("BLIn", angles[2]);
+//        t.addData("BRIn", angles[3]);
+//        t.addData("FLPos", driveMotors[0].getCurrentPosition());
+//        t.addData("FLAng", anglePowers[0]);
+//        t.addData("FRAng", anglePowers[1]);
+//        t.addData("BLAng", anglePowers[2]);
+//        t.addData("BRAng", anglePowers[3]);
+//        t.addData("FLDrive", drivePowers[0]);
+//        t.addData("FRDrive", drivePowers[1]);
+//        t.addData("BLDrive", drivePowers[2]);
+//        t.addData("BRDrive", drivePowers[3]);
+//        t.addData("reverseFL", angleFixer.reverses()[0]);
+//        t.addData("reverseFR", angleFixer.reverses()[1]);
+//        t.addData("reverseBL", angleFixer.reverses()[2]);
+//        t.addData("reverseBR", angleFixer.reverses()[3]);
+//        t.addData("yaw", theta);
+//        t.addData("offsetFL", angleGetter.offsets[0]);
+//        t.addData("offsetFR", angleGetter.offsets[1]);
+//        t.addData("offsetBL", angleGetter.offsets[2]);
+//        t.addData("offsetBR", angleGetter.offsets[3]);
+//        t.addData("FLVelocity", states[0].speedMetersPerSecond);
+//        t.addData("FRVelocity", states[1].speedMetersPerSecond);
+//        t.addData("BLVelocity", states[2].speedMetersPerSecond);
+//        t.addData("BRVelocity", states[3].speedMetersPerSecond);
+//        t.addData("FLState", states[0].angle.getDegrees());
+//        t.addData("FRState", states[1].angle.getDegrees());
+//        t.addData("BLState", states[2].angle.getDegrees());
+//        t.addData("BRState", states[3].angle.getDegrees());
+//        t.addData("velRawFL", driveMotors[0].getVelocity());
+//        t.addData("velRawFR", driveMotors[1].getVelocity());
+//        t.addData("velRawBL", driveMotors[2].getVelocity());
+//        t.addData("velRawBR", driveMotors[3].getVelocity());
         t.addData("PoseX", nowPose.getX());
         t.addData("PoseY", nowPose.getY());
+        t.addData("PoseHeading", nowPose.getHeading());
         t.update();
-    }
-    public double inchesToMeters(double inches) {
-        return inches/39.37;
     }
 }

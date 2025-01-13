@@ -23,7 +23,7 @@ import java.util.List;
 
 @Autonomous
 @Config
-public class firstAuto extends OpMode {
+public class testAutoEmma extends OpMode {
     PIDController txPID;
     PIDController tyPID;
     PIDController rotPID;
@@ -50,7 +50,6 @@ public class firstAuto extends OpMode {
     Trajectory lastTrajThatWasFollowed;
     int trajTracker = 0;
     boolean stop = false;
-
     String[] encoderNames = {
             "fl_encoder",
             "fr_encoder",
@@ -74,46 +73,29 @@ public class firstAuto extends OpMode {
         drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, 0, 0, 0);
+                encoderNames, driveNames, angleNames, P, I, D, inchesToMeters(-66), inchesToMeters(12), 0);
         List<List<Pose2d>> pointlist = new ArrayList<>();
-        
+        List<List<Translation2d>> interiorList = new ArrayList<>();
+
         pointlist.add(new ArrayList<>());
-        pointlist.get(0).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.get(0).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(1).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.get(1).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(2).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.get(2).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(3).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.get(3).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(4).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.get(4).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(5).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.get(5).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(6).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-        pointlist.get(6).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.add(new ArrayList<>());
-        pointlist.get(7).add(new Pose2d(new Translation2d(2, 0), new Rotation2d(0)));
-        pointlist.get(7).add(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
-//        pointlist.get(1).add(new Pose2d(new Translation2d(0.5,0), new Rotation2d(0)));
-//        pointlist.get(1).add(new Pose2d(new Translation2d(0.75,0), new Rotation2d(Math.toRadians(45))));
+        pointlist.get(0).add(new Pose2d(new Translation2d(inchesToMeters(-66), inchesToMeters(12)), new Rotation2d(0)));
+        pointlist.get(0).add(new Pose2d(new Translation2d(inchesToMeters(-48),inchesToMeters(12)), new Rotation2d(0)));
+
+//        pointlist.get(1).add(new Pose2d(new Translation2d(inchesToMeters(-48),0), new Rotation2d(0)));
+//        pointlist.get(1).add(new Pose2d(new Translation2d(inchesToMeters(-12), inchesToMeters(36)), new Rotation2d(Math.PI/2)));
+//
+//        interiorList.get(1).add(new Translation2d(inchesToMeters(-36),inchesToMeters(-36)))
 
 
         trajSequence = new ArrayList<>();
         TrajectoryConfig traj1Config = new TrajectoryConfig(0.6, 0.3);
 
-        for (List<Pose2d> points : pointlist) {
+        for (int i = 0; i < pointlist.size(); i++) {
             trajSequence.add(
-                TrajectoryGenerator.generateTrajectory(
-                points,
-                traj1Config
-                )
+                    TrajectoryGenerator.generateTrajectory(
+                            pointlist.get(i),
+                            traj1Config
+                    )
             );
         }
 
@@ -126,6 +108,9 @@ public class firstAuto extends OpMode {
         trajTimer = new ElapsedTime();
         now = drive.nowPose;
         lastTrajThatWasFollowed = trajSequence.get(0);
+    }
+    public double inchesToMeters(double inches) {
+        return inches/39.37;
     }
     @Override
     public void init_loop() {
@@ -185,7 +170,7 @@ public class firstAuto extends OpMode {
 //            txPID.reset();
 //            tyPID.reset();
 //            rotPID.reset();
-            if (trajTracker < trajSequence.size()) {
+            if (trajTracker < trajSequence.size()-1) {
                 trajTracker++;
                 lastTrajThatWasFollowed = trajSequence.get(trajTracker);
             } else {
@@ -198,10 +183,10 @@ public class firstAuto extends OpMode {
     public void doTelemetry(Telemetry t) {
         t.addData("trajRot", trajPose.getRotation().getDegrees());
         t.addData("nowRot", now.getRotation().getDegrees());
-        t.addData("trajX", trajPose.getX());
-        t.addData("trajY", trajPose.getY());
-        t.addData("nowX", now.getX());
-        t.addData("nowY", now.getY());
+        t.addData("trajX", trajPose.getX() * 39.37);
+        t.addData("trajY", trajPose.getY() * 39.37);
+        t.addData("nowX", now.getX() * 39.37);
+        t.addData("nowY", now.getY() * 39.37);
         t.addData("powx", xPower);
         t.addData("powy", yPower);
         t.addData("powr", rotPower);
@@ -210,3 +195,7 @@ public class firstAuto extends OpMode {
         t.update();
     }
 }
+
+
+
+

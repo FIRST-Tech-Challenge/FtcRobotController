@@ -25,7 +25,7 @@ public class nematocyst {
     private static final double Max_Extension = 22 * ticksPerInch; // Horizontal Max Ticks
     private static final double degPerTick = (double) 360 /752;
     // PID constants
-    public static double sP = 1e-4;
+    public static double sP = 0;
     public static double sI = 0.000;
     public static double sD = 0.00;
     public double pP = 0.00425;
