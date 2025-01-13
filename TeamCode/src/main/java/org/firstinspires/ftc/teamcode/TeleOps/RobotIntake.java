@@ -125,7 +125,7 @@ public class RobotIntake {
                 if (intakeTimer.seconds() > RobotActionConfig.deposit_Claw_Close_Threshold) {
                     robot.depositClawServo.setPosition(RobotActionConfig.deposit_Claw_Close);
                 }
-                if (intakeTimer.seconds() > RobotActionConfig.intake_Claw_Open_Threshold) {
+                if (intakeTimer.seconds() > RobotActionConfig.intake_Claw_Open_Threshold+RobotActionConfig.deposit_Claw_Close_Threshold) {
                     robot.intakeClawServo.setPosition(RobotActionConfig.intake_Claw_Open);
                     intakeState = IntakeState.INTAKE_EXTEND;
                 }

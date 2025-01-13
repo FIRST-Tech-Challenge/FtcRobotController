@@ -113,16 +113,16 @@ public class BasicTeleOps extends OpMode {
             if (bulkData != null) {
                 // Example: Reading motor position for each hub
                 if (hub.equals(allHubs.get(0))) { // Assuming the first hub is Control Hub
-                    int liftLeftMotor = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
-                    int liftRightMotor = bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
-
-                    telemetry.addData("Deposit Left Motor Position (Expansion Hub)", liftLeftMotor);
-                    telemetry.addData("Deposit right Motor Position (Expansion Hub)", liftRightMotor);
-                } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
                     int frontLeftMotor = bulkData.getMotorCurrentPosition(robot.frontLeftMotor.getPortNumber());
                     int frontRightMotor = bulkData.getMotorCurrentPosition(robot.frontRightMotor.getPortNumber());
+
                     telemetry.addData("Drive Motor FL Motor (Control Hub) Position", frontLeftMotor);
                     telemetry.addData("Drive Motor FR Motor (Control Hub) Position", frontRightMotor);
+                } else if (hub.equals(allHubs.get(1))) { // Assuming the second hub is Expansion Hub
+                    int liftLeftMotor = bulkData.getMotorCurrentPosition(robot.liftMotorLeft.getPortNumber());
+                    int  liftRightMotor= bulkData.getMotorCurrentPosition(robot.liftMotorRight.getPortNumber());
+                    telemetry.addData("Deposit Left Motor Position (Expansion Hub)", liftLeftMotor);
+                    telemetry.addData("Deposit right Motor Position (Expansion Hub)", liftRightMotor);
                 }
             }
         }
@@ -149,7 +149,6 @@ public class BasicTeleOps extends OpMode {
         if (controlState == ControlState.RUN) {
             depositArmDrive.DepositControl();
             RobotDeposit.DEPOSITCONTROLSTATE liftState = depositArmDrive.depositControlState();
-
             intakeArmDrive.intakeSlideControl();
             RobotIntake.IntakeState intakeState = intakeArmDrive.intakeState();
             telemetry.addLine("---------------------");
@@ -169,6 +168,7 @@ public class BasicTeleOps extends OpMode {
         telemetry.addData("Intake Arm Left Position", robot.intakeLeftArmServo.getPosition());
         telemetry.addData("Intake Arm Right Position", robot.intakeRightArmServo.getPosition());
         telemetry.addData("Intake Wrist Position", robot.intakeWristServo.getPosition());
+        telemetry.addData("Intake Slide Position", robot.intakeLeftSlideServo.getPosition());
         telemetry.addLine("---------------------");
         telemetry.addData("intake Rotation Position", robot.intakeRotationServo.getPosition());
         telemetry.addLine("---------------------");
