@@ -115,12 +115,6 @@ public class Mechanisms {
         outTakePivotRight = opMode.hardwareMap.servo.get("otpr");
         outTakePivotLeft = opMode.hardwareMap.servo.get("otpl");
 
-        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
-        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         /*// color sensor
         intakeColorSensor = opMode.hardwareMap.colorSensor.get("colorSensor");*/
 
@@ -139,44 +133,6 @@ public class Mechanisms {
         intakePivotR = opMode.hardwareMap.servo.get(("itpr"));
 
         brakePosIT = inTakeLift.getCurrentPosition();
-        outTakeLiftRight = opMode.hardwareMap.dcMotor.get("otlr");
-        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outTakeLiftLeft = opMode.hardwareMap.dcMotor.get("otll");
-        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // outtake servos
-        outTakeClaw = opMode.hardwareMap.servo.get(("otc"));
-        outTakeFlip = opMode.hardwareMap.servo.get(("otf"));
-        outTakePivotRight = opMode.hardwareMap.servo.get("otpr");
-        outTakePivotLeft = opMode.hardwareMap.servo.get("otpl");
-
-        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
-        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        outTakeLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        outTakeLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-
-        //Intake lift
-        inTakeLift = opMode.hardwareMap.dcMotor.get("itl");
-        inTakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //Intake spinners
-        inTakeSpinners = opMode.hardwareMap.dcMotor.get("its");
-        inTakeSpinners.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //inTakeFlipControl.getController().pwmEnable();
-
-        // intake servos
-        intakePivotL = opMode.hardwareMap.servo.get(("itpl"));
-        intakePivotR = opMode.hardwareMap.servo.get(("itpr"));
-
-        brakePosIT = inTakeLift.getCurrentPosition();
-        brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
-
-        intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
-
         brakePosOT = (outTakeLiftLeft.getCurrentPosition() + outTakeLiftLeft.getCurrentPosition()) / 2.0;
 
         intakePivotL.setPosition(UP_IT_FLIP_POS - .15);
