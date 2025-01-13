@@ -3,15 +3,21 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.List;
+
 public class LinearRailTest extends LinearOpMode {
   // SERVO ORDER: Linear Rail, Claw
-  public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A")); 
-  public List<Int> servoRotations = List.of(0, 0)
+
+  public void runOpMode(){
+     List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
+
+  }
+  public List<Servo> servoRotations = List.of(0, 0);
 
   // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
 
-  public List<float> minRot = List.of(0, 0)
-  public List<float> maxRot = List.of(4, 4)
+  public float[] minRot = List.of(0, 0);
+  public float[] maxRot = List.of(4, 4);
   
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
