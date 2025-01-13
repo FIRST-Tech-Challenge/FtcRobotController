@@ -12,9 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.masters.components.ITDCons;
-import org.firstinspires.ftc.masters.components.Init;
-import org.firstinspires.ftc.masters.components.Intake;
-import org.firstinspires.ftc.masters.components.Outake;
 
 @Config // Enables FTC Dashboard
 @TeleOp(name = "Intake Test")

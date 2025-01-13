@@ -25,11 +25,13 @@ public class ITDCons {
     public static double wristBack = 0.8;
 
     public static double positionBack = 0;
+    public static double positionTransfer = 0.5;
     public static double positionFront =1;
 
     public static double angleBack = 0.19;
     public static double angleFront = 0.7;
     public static double angleMiddle = 0.5;
+    public static double angleScore = 0.6;
 
     public static int wallPickupTarget = 2000;
     public static int transferPickupTarget = 0;
@@ -41,30 +43,11 @@ public class ITDCons {
     public static double liftUp = 0.9;
     public static double liftDown = 0.1;
 
-    public static double diffyInit = 1;
 
-    public static double TransDiffy1 = .43;
-    public static double TransDiffy2 = .91;
-
-
-
-    public static double FloorDiffy1 = .27;
-    public static double FloorDiffy2 = .34;
-
-    public static double WallDiffy1 = .065;
-    public static double WallDiffy2 = .645;
-
-    public static double BucketDiffy1 = .58;
-    public static double BucketDiffy2 = .65;
     public static int BucketTarget = 50000;
-
-    public static double SpecimenDiffy1 = .065;
-    public static double SpecimenDiffy2 = .645;
     public static int SpecimenTarget = 28000;
-
     public static int ReleaseTarget = 26000;
-    public static double ReleaseDiffy1 = .085;
-    public static double ReleaseDiffy2 = .505;
+    public static int intermediateTarget = 10000;
 
 
 }

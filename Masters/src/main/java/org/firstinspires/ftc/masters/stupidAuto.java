@@ -5,11 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.masters.components.Init;
-import org.firstinspires.ftc.masters.components.Outake;
+import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
 @Autonomous(name = "Stupid")
@@ -26,7 +25,7 @@ public class stupidAuto extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         Init init = new Init(hardwareMap);
-        Outake outake = new Outake(init, telemetry);
+        Outtake outtake = new Outtake(init, telemetry);
 
         telemetry.update();
 

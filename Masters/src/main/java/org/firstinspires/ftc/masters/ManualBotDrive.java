@@ -7,12 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.components.DriveTrain;
-import org.firstinspires.ftc.masters.components.ITDCons;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
-import org.firstinspires.ftc.masters.components.Outake;
-
-import java.util.function.IntToDoubleFunction;
+import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
 @TeleOp(name = "Manual Drive")
@@ -28,7 +25,7 @@ public class ManualBotDrive extends LinearOpMode {
 
         Init init = new Init(hardwareMap);
         DriveTrain driveTrain = new DriveTrain(init, telemetry);
-        Outake outake = new Outake(init, telemetry);
+        Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
         telemetry.update();

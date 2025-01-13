@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.masters.components.DriveTrain;
 import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Intake;
-import org.firstinspires.ftc.masters.components.Outake;
+import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
 @TeleOp(name = "V1 Manual Teleop")
@@ -29,7 +29,7 @@ public class TeleopManualV1 extends LinearOpMode {
 
         Init init = new Init(hardwareMap);
         DriveTrain driveTrain = new DriveTrain(init, telemetry);
-        Outake outtake = new Outake(init, telemetry);
+        Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
         int target=0;
@@ -65,21 +65,21 @@ public class TeleopManualV1 extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                outtake.scoreSample();
+                outtake.moveToBucket();
 //                outake.diffy1(ITDCons.BucketDiffy1);
 //                outake.diffy2(ITDCons.BucketDiffy2);
                 //target= ITDCons.BucketTarget;
             }
 
             if (gamepad1.dpad_down) {
-                outtake.pickUpFromTransfer();
+                outtake.moveToTransfer();
 //                outake.diffy1(ITDCons.FloorDiffy1);
 //                outake.diffy2(ITDCons.FloorDiffy2);
                 target=0;
             }
 
             if (gamepad1.dpad_left) {
-                outtake.pickUpFromWall();
+                outtake.moveToPickUpFromWall();
 
 //                outake.diffy1(ITDCons.WallDiffy1);
 //                outake.diffy2(ITDCons.WallDiffy2);
