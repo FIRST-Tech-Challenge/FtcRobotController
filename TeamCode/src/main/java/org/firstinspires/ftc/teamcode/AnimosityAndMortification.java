@@ -34,9 +34,15 @@ public class AnimosityAndMortification extends Movable {
                 BRW.setPower(tgtPower);
             } else if (gamepad1.left_bumper) {
                 // turning
-                turnRobot(0, "left");
+                FLW.setPower(-0.6);
+                BLW.setPower(-0.6);
+                FRW.setPower(-0.6);
+                BRW.setPower(-0.6);
             } else if (gamepad1.right_bumper) {
-                turnRobot(0, "right");
+                FLW.setPower(0.6);
+                BLW.setPower(0.6);
+                FRW.setPower(0.6);
+                BRW.setPower(0.6);
             } else if (gamepad1.left_trigger > .5) {
                 // strafing, controls can be switched through inverse boolean
                 if (!inverse) {
@@ -70,8 +76,21 @@ public class AnimosityAndMortification extends Movable {
                 moveSlides("retract");
             }else if (gamepad1.x) {
                 // inverses control
-                inverse = !inverse;
+                inverseControls();
             }
+
+            if (gamepad1.dpad_left) {
+                if (!inverse) {
+                    turn90("left");
+                } else {
+                    turn90("right");
+                }
+            } else if (gamepad1.dpad_right) {
+                if (!inverse) {
+                    turn90("right");
+                } else {
+                    turn90("left");
+                }            }
             updatePhoneConsole();
         }
     }

@@ -16,6 +16,7 @@ abstract class Movable extends LinearOpMode {
     static protected Servo SlideR;
     static protected Servo SlideL;
     static protected boolean inverse = false;
+    static protected boolean stop = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -75,18 +76,18 @@ abstract class Movable extends LinearOpMode {
     public void turnRobot(int miliseconds, String direction) {
         switch (direction) {
             case "left":
-                FLW.setPower(-0.5);
-                BLW.setPower(-0.5);
-                FRW.setPower(-0.5);
-                BRW.setPower(-0.5);
+                FLW.setPower(-0.3);
+                BLW.setPower(-0.3);
+                FRW.setPower(-0.3);
+                BRW.setPower(-0.3);
                 sleep(miliseconds);
                 disablePower();
                 break;
             case "right":
-                FLW.setPower(0.5);
-                BLW.setPower(0.5);
-                FRW.setPower(0.5);
-                BRW.setPower(0.5);
+                FLW.setPower(0.3);
+                BLW.setPower(0.3);
+                FRW.setPower(0.3);
+                BRW.setPower(0.3);
                 sleep(miliseconds);
                 disablePower();
                 break;
@@ -147,6 +148,22 @@ abstract class Movable extends LinearOpMode {
         }
     }
 
+    public void inverseControls() {
+        try {
+            inverse = !inverse;
+            wait(50);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void turn180() {
+        turnRobot(2940,"right");
+    }
+
+    public void turn90(String direction) {
+        turnRobot(2940/2,direction);
+    }
 
     abstract void updatePhoneConsole();
 }
