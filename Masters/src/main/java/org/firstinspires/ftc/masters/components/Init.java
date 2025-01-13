@@ -24,8 +24,7 @@ public class Init {
     private final Servo led, claw;
     private final Servo wrist, angleLeft, angleRight, position;
     private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
-    private
-    IMU imu;
+    private IMU imu;
 
     public Telemetry telemetry;
 
@@ -44,7 +43,7 @@ public class Init {
 
         // Don't use the encoders for motor odometry
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRearMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -77,6 +76,8 @@ public class Init {
         intakeRight = hardwareMap.servo.get("intakeRight");
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
+        outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
 
         ptoRight = hardwareMap.servo.get("ptoRight");
