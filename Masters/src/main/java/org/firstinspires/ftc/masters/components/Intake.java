@@ -92,8 +92,8 @@ public class Intake {
     }
 
     public void liftIntake(){
-        intakeLeft.setPosition(ITDCons.liftIntake);
-        //intakeRight.setPosition(ITDCons.dropIntake);
+        intakeLeft.setPosition(ITDCons.liftIntakeLeft);
+        intakeRight.setPosition(ITDCons.liftIntakeRight);
     }
 
 }

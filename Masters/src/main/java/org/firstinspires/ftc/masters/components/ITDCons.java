@@ -15,6 +15,8 @@ public class ITDCons {
     public static double dropLeft =0.45;
     public static double dropRight = 0.55;
     public static double liftIntake =0.5;
+    public static double liftIntakeLeft= 0.55;
+    public static double liftIntakeRight = 0.45;
 
     public static double open = 0.35;
     public static double close = 0.75;
