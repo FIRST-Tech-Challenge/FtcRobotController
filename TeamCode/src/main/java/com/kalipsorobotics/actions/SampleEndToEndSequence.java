@@ -53,10 +53,10 @@ public class SampleEndToEndSequence extends KActionSet{
         openIntakeClaw.setDependentActions(closeOuttakeClaw);
         this.addAction(openIntakeClaw);
 
-        KServoAutoAction moveBigPivot2 = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
-        moveBigPivot2.setName("moveBigPivot2");
-        moveBigPivot2.setDependentActions(closeOuttakeClaw, openIntakeClaw);
-        this.addAction(moveBigPivot2);
+//        KServoAutoAction moveBigPivot2 = new KServoAutoAction(intakeClaw.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_INTAKE_READY_POS);
+//        moveBigPivot2.setName("moveBigPivot2");
+//        moveBigPivot2.setDependentActions(closeOuttakeClaw, openIntakeClaw);
+//        this.addAction(moveBigPivot2);
 
         MoveLSAction raiseSlidesBasket = new MoveLSAction(outtake, lsPos);
         raiseSlidesBasket.setName("raiseSlidesBasket");

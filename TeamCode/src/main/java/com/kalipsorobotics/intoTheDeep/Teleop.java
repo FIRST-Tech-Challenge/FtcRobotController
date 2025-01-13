@@ -239,25 +239,25 @@ public class Teleop extends LinearOpMode {
 //                }
 //            }
 
-            if(moveWallTeleopPressed) {
-                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
-                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry, null);
-                    moveWallTeleOp.setName("moveWallTeleop");
+//            if(moveWallTeleopPressed) {
+//                if (moveWallTeleOp == null || moveWallTeleOp.getIsDone()){
+//                    moveWallTeleOp = new MoveWallTeleOp(driveTrain, wheelOdometry, null);
+//                    moveWallTeleOp.setName("moveWallTeleop");
+//
+//                    setLastMoveAction(moveWallTeleOp);
+//                }
+//
+//            }
 
-                    setLastMoveAction(moveWallTeleOp);
-                }
-
-            }
-
-            if(wallToBarPressed) {
-                if (wallToBarAction == null || wallToBarAction.getIsDone()){
-                    hangPosY += hangIncrement;
-                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
-                    wallToBarAction.setName("wallToBarHangRoundTrip");
-
-                    setLastMoveAction(wallToBarAction);
-                }
-            }
+//            if(wallToBarPressed) {
+//                if (wallToBarAction == null || wallToBarAction.getIsDone()){
+//                    hangPosY += hangIncrement;
+//                    wallToBarAction = new WallToBarAction(driveTrain, wheelOdometry, null);
+//                    wallToBarAction.setName("wallToBarHangRoundTrip");
+//
+//                    setLastMoveAction(wallToBarAction);
+//                }
+//            }
 
 
 //            if (!isGamePadDriveJoystickZero()) {  //cacel action b/c of Manual control override
@@ -667,6 +667,8 @@ public class Teleop extends LinearOpMode {
                     maintainLS.updateCheckDone();
                 }
             }
+
+            Log.d("outtakepivot", "outtake pivotPos  " + outtake.getOuttakePivotServo().getServo().getPosition());
 
             telemetry.addData("odometry: ", wheelOdometry.getCurrentPosition().toString());
             telemetry.addData("big sweep pos: ", intakeBigSweepPos);
