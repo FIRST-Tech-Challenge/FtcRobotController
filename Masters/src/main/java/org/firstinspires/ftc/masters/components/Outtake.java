@@ -59,11 +59,11 @@ public class Outtake implements Component{
         BucketToTransfer_Final(100),
 
 
-        WallToFront1 (400),
-        WallToFront2 (600),
+        WallToFront_lift(300),
+        WallToFront_move(650),
         WallToFront3 (200),
 
-        SpecimenToWall_MoveBack(400),
+        SpecimenToWall_MoveBack(600),
         SpecimenToWall_Final(100),
 
         Front(0);
@@ -126,7 +126,7 @@ public class Outtake implements Component{
 
 
     public void moveToPickUpFromWall(){
-        if (status==Status.ScoreSpecimen) {
+//        if (status==Status.ScoreSpecimen) {
             target = ITDCons.intermediateTarget;
             wrist.setPosition(ITDCons.wristBack);
 
@@ -134,7 +134,7 @@ public class Outtake implements Component{
             setAngleServoToMiddle();
             status= Status.SpecimenToWall_MoveBack;
             elapsedTime = new ElapsedTime();
-        }
+//        }
 //        if (status == Status.Transfer){
 //            target= ITDCons.intermediateTarget;
 //            setAngleServoScore();
@@ -162,12 +162,11 @@ public class Outtake implements Component{
     }
 
     public void scoreSpecimen(){
-        status= Status.WallToFront1;
+        status= Status.WallToFront_lift;
 
         target = ITDCons.SpecimenTarget;
 
-        angleRight.setPosition(ITDCons.angleMiddle);
-        angleLeft.setPosition(ITDCons.angleMiddle);
+        setAngleServoToMiddle();
         elapsedTime = new ElapsedTime();
     }
 
@@ -178,7 +177,7 @@ public class Outtake implements Component{
     public void moveSlide() {
 
 //frontRight
-        int rotatePos = outtakeSlideEncoder.getCurrentPosition();
+        int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
         double pid = controller.calculate(rotatePos, target);
         double lift = pid + f;
 
@@ -208,18 +207,18 @@ public class Outtake implements Component{
     public void updateOuttake(){
 
         switch (status){
-            case WallToFront1:
+            case WallToFront_lift:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                     position.setPosition(ITDCons.positionFront);
                    setAngleServoToMiddle();
                     elapsedTime = new ElapsedTime();
-                    status = Status.WallToFront2;
+                    status = Status.WallToFront_move;
                 }
                 break;
-            case WallToFront2:
+            case WallToFront_move:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
                     wrist.setPosition(ITDCons.wristFront);
-                    setAngleServoToFront();
+                    setAngleServoScore();
                     elapsedTime = new ElapsedTime();
                     status = Status.WallToFront3;
                 }
