@@ -49,9 +49,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         () -> squareInput(m_controller.left_x.getAsDouble()),
                         () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
-        m_controller.assignCommand(setPickup(), false,BUTTON_RIGHT);
-        m_controller.assignCommand(m_extension.disablePID(), false,BUTTON_LEFT);
-        m_controller.assignCommand(m_extension.enablePID(), false,BUTTON_UP);
+        m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
+        m_controller.assignCommand(setIdle(), false,BUTTON_UP);
+        m_controller.assignCommand(setPickup(), false,BUTTON_LEFT);
 //        m_controller.assignCommand(m_extension.setNegative(), false,BUTTON_DOWN);
 //        m_controller.assignCommand(m_gripper.CloseGripper(),false,BUTTON_RIGHT);
 //        m_controller.assignCommand(m_gripper.OpenGripper(),false,BUTTON_LEFT);
@@ -62,8 +62,15 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_chassis.gyro.reset();
     }
 
-    public Command setPickup(){
+    public Command setScore(){
         return new ParallelCommandGroup(m_extension.setExtension(extended),m_pivot.set(score));
     }
+    public Command setIdle(){
+        return new ParallelCommandGroup(m_extension.setExtension(closed),m_pivot.set(idle));
+    }
+    public Command setPickup(){
+        return new ParallelCommandGroup(m_extension.setExtension(extended),m_pivot.set(closed));
+    }
+
 
 }

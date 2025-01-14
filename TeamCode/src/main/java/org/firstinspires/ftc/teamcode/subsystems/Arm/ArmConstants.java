@@ -40,6 +40,7 @@ public class ArmConstants {
         public static double extended = -2.5;
         public static double closed = 0;
         public static double score = 83;
+        public static double idle = 40;
     }
 
 
