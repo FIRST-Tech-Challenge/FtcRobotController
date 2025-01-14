@@ -40,13 +40,14 @@ public class SampleDetectorVisionPortalToolkit {
     public VisionPortal createVisionPortal(HardwareMap hardwareMap, List<ColorBlobLocatorProcessor> processorsList, String webcamName){
         VisionPortal.Builder portalBuilder;
         portalBuilder = new VisionPortal.Builder()
-                .setCameraResolution(new Size(1280, 960))
+                .setCameraResolution(new Size(1280, 720))
                 .setCamera(hardwareMap.get(WebcamName.class, webcamName))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         for(VisionProcessor processor : processorsList) {
             portalBuilder.addProcessor(processor);
         }
-        portalBuilder.setLiveViewContainerId(hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
+        portalBuilder.setLiveViewContainerId(
+                hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
         return portalBuilder.build();
     }
 

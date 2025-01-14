@@ -17,6 +17,7 @@ public class GrayscaleDetection extends OpMode {
     public boolean isBlue;
     private SampleDetectorPipelineGreyscale bad;
     public boolean setup = false;
+    public boolean isSetup = false;
 
     @Override
     public void init() {
@@ -38,8 +39,10 @@ public class GrayscaleDetection extends OpMode {
             //setup = true;
        // }
         bad = new SampleDetectorPipelineGreyscale(isBlue);
-
-        initVision();
+        if(!isSetup) {
+            initVision();
+            isSetup = true;
+        }
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-@Disabled
+
 @TeleOp
 public class SampleDetectorV2 extends OpMode {
     public SampleDetectorToolkit toolkit;
@@ -74,7 +74,7 @@ public class SampleDetectorV2 extends OpMode {
         telemetry.update();
 
         // If user confirms selection, start processors
-        if (gamepad1.a) {
+        if (gamepad1.a && !selected) {
             selected = true;
             configureAndStartProcessors(selectedColors);
         }
