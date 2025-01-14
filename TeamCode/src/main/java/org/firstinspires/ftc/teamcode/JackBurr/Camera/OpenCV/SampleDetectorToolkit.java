@@ -4,8 +4,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
@@ -101,5 +104,16 @@ public class SampleDetectorToolkit {
             }
         }
         return closestSample;
+    }
+    public void putText(Mat mat, SampleDetection detection){
+        Imgproc.putText(
+                mat,
+                String.format("Angle: %.2f", detection.angle),
+                detection.boxFit.center,
+                Imgproc.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                new Scalar(255, 0, 0),
+                2
+        );
     }
 }

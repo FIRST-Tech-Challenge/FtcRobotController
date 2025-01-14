@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.JackBurr.Camera.OpenCV.SampleDetectorPipelineGreyscale;
 import org.firstinspires.ftc.vision.VisionPortal;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-@Disabled
 @TeleOp
 public class GrayscaleDetection extends OpMode {
 
@@ -26,18 +25,18 @@ public class GrayscaleDetection extends OpMode {
 
     @Override
     public void init_loop(){
-        while (!setup) {
-            telemetry.addData("Press X for Blue, B for Red", "");
-            if (gamepad1.x) {
-                isBlue = true;
-                telemetry.addData("Selected", "Blue");
-            } else if (gamepad1.b) {
-                isBlue = false;
-                telemetry.addData("Selected", "Red");
-            }
-            telemetry.update();
-            setup = true;
-        }
+        //while (!setup) {
+            //telemetry.addData("Press X for Blue, B for Red", "");
+            //if (gamepad1.x) {
+               // isBlue = true;
+               // telemetry.addData("Selected", "Blue");
+            //} else if (gamepad1.b) {
+                //isBlue = false;
+                //telemetry.addData("Selected", "Red");
+            // }
+            //telemetry.update();
+            //setup = true;
+       // }
         bad = new SampleDetectorPipelineGreyscale(isBlue);
 
         initVision();
@@ -54,7 +53,7 @@ public class GrayscaleDetection extends OpMode {
          visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(640, 480))
-                .enableLiveView(true)
+                .setLiveViewContainerId(hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(bad)
                 .build();
