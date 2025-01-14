@@ -10,16 +10,16 @@ public class SlewRateLimiter {
     private double m_prevVal;
     private double m_prevTime;
     private ElapsedTime timer;
-    public SlewRateLimiter(double positiveRateLimit, double negativeRateLimit, double initialValue, ElapsedTime systemTimer) {
+    public SlewRateLimiter(double positiveRateLimit, double negativeRateLimit, double initialValue) {
         m_positiveRateLimit = positiveRateLimit;
         m_negativeRateLimit = negativeRateLimit;
         m_prevVal = initialValue;
-        m_prevTime = systemTimer.seconds();
-        timer = systemTimer;
+        timer = new ElapsedTime();
+        m_prevTime = timer.seconds();
     }
 
-    public SlewRateLimiter(double rateLimit, ElapsedTime systemTimer) {
-        this(rateLimit, -rateLimit, 0, systemTimer);
+    public SlewRateLimiter(double rateLimit) {
+        this(rateLimit, -rateLimit, 0);
     }
     public double calculate(double input) {
         double currentTime = timer.seconds();
