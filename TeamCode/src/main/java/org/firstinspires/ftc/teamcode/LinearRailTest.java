@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import java.util.List;
-//
+
 public class LinearRailTest extends LinearOpMode {
   // SERVO ORDER: Linear Rail, Claw
 
-  public void runOpMode(){
-     List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
-
-  }
-  public List<Servo> servoRotations = List.of(0, 0);
-
+  public Int linearRailIdx = 0;
+  public float linearRailRotation = 0;
+  public Int clawIdx = 1;
+  public float clawRotation = 0;
+  public Int armIdx = 2;
+  public float armRotation = 0;
+  
   // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
 
   public float[] minRot = List.of(0, 0);
@@ -22,7 +22,9 @@ public class LinearRailTest extends LinearOpMode {
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
   public void runOpMode() throws InterruptedException {
-    servoIdentity.get(0).setDirection(Servo.Direction.FORWARD);
+    List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
+    
+    servoIdentity.get(linearRailIdx).setDirection(Servo.Direction.FORWARD);
 
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -31,10 +33,10 @@ public class LinearRailTest extends LinearOpMode {
     waitForStart();
 
     while (opModeIsActive()) {
-      SetServoPosition(0, servoRotations.get(0));
+      SetServoPosition(linearRailIdx, linearRailRotation);
       ConfineServoBoundaries();
       
-      telemetry.addData("Servo Position", servoIdentity.get(0).getPosition());
+      telemetry.addData("Servo Position", linearRailPosition);
       telemetry.addData("Status", "Running");
       telemetry.update();
     }
