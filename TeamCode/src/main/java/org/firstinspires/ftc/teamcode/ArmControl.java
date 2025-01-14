@@ -4,9 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import java.util.List;
 
-public class LinearRailTest extends LinearOpMode {
-  // SERVO ORDER: Linear Rail, Claw
-
+public class ArmControl extends LinearOpMode {
   public Int linearRailIdx = 0;
   public float linearRailRotation = 0;
   public Int clawIdx = 1;
@@ -22,7 +20,7 @@ public class LinearRailTest extends LinearOpMode {
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   
   public void runOpMode() throws InterruptedException {
-    List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
+    public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
     
     servoIdentity.get(linearRailIdx).setDirection(Servo.Direction.FORWARD);
 
@@ -50,7 +48,6 @@ public class LinearRailTest extends LinearOpMode {
         }
       }
       
-     
       if (servoRotations.get(i) != -9999) {
         if (servoRotations.get(i) >= maxRot.get(i)) {
           servoRotations.get(i) = maxRot.get(i);
