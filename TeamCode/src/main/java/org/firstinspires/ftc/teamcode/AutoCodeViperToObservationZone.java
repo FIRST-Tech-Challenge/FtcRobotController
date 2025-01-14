@@ -190,7 +190,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
 
     private void dropSpecimenInTopRail()
     {
-        int distanceToSub = 25;
+        int distanceToSub = 24;
         telemetry.addData("Distance To Sub: ", distanceToSub);
         telemetry.update();
 
@@ -218,7 +218,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
         viperSlideManager.SetPower(0.95);
-        sleep(100);
+        sleep(800);
 
         //vs stopping for arm to go back
         viperSlideManager.SetPower(0.0);
@@ -226,7 +226,7 @@ public class AutoCodeViperToObservationZone extends LinearOpMode {
         sleep(200);
 
         //vs moving down again
-        viperSlideManager.SetPower(0.1);
+        viperSlideManager.SetPower(0.0);
         sleep(200);
 
     }

@@ -118,7 +118,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.update();
 
                     //MOVE FORWARD past sample
-                    distance = 30; //TODO: Adjust during testing
+                    distance = 25; //TODO: Adjust during testing
                     driveManager.MoveStraightToPosition(AutoDriveManager.DriveDirection.BACKWARD, DRIVE_SPEED, distance);
                     telemetry.addData("MOVE FORWARD past sample", distance);
                     telemetry.update();
@@ -132,7 +132,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.update();
 
                     //Rotate 180 (to point front) + 45 degrees to turn to go in diagonal to plogh sample
-                    rotateToPosition = 3;
+                    rotateToPosition = 2;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
@@ -185,7 +185,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
                     telemetry.addData("strafe to go pass submersible edges to avoid hitting when moving forward to pick samples", strafeDistance);
                     telemetry.update();
 
-                    rotateToPosition = 25;
+                    rotateToPosition = 23;
                     driveManager.TurnUsingEncoders(AutoDriveManager.DriveDirection.RIGHT, DRIVE_SPEED, rotateToPosition);
                     telemetry.addData("rotate to point to front and turn to plough the sample", "");
                     telemetry.update();
@@ -240,7 +240,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
     private void dropSpecimenInTopRail()
     {
-        int distanceToSub = 25;
+        int distanceToSub = 24;
         telemetry.addData("Distance To Sub: ", distanceToSub);
         telemetry.update();
 
@@ -257,7 +257,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
         //moving vs up
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
-        viperSlideManager.SetPower(0.28);
+        viperSlideManager.SetPower(0.26);
         sleep(800);
 
         //stopping vs and moving arm to drop specimen
@@ -267,7 +267,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
         //vs coming down for short time
         viperSlideManager.SetDirection(AutoDriveManager.DriveDirection.BACKWARD);
-        viperSlideManager.SetPower(0.5);
+        viperSlideManager.SetPower(0.7);
         sleep(200);
 
         //vs stopping for arm to go back
@@ -276,7 +276,7 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
         sleep(200);
 
         //vs moving down again
-        viperSlideManager.SetPower(0.5);
+        viperSlideManager.SetPower(0.0);
         sleep(200);
 
     }
@@ -288,7 +288,8 @@ public class AutoCodeViperToNetZone extends LinearOpMode {
 
         //stopping vs and moving arm to drop specimen
         viperSlideManager.SetPower(0.0);*/
-        armManager.MoveArmToPosition(0.3);
-        sleep(200);
+        armManager.SetDirection(AutoDriveManager.DriveDirection.FORWARD);
+        armManager.MoveArmToPosition(0.1);
+        sleep(1000);
     }
 }
