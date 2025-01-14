@@ -101,6 +101,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("verticalSlides")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    @Deprecated
     public DcMotor verticalSlide;
 
     @HardwareName("verticalSlide2")

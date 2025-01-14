@@ -23,13 +23,13 @@ public class VLiftProxy extends TaskTemplate {
     private static int INSTANCE_COUNT = 0;
     /// If you hold this lock, you have exclusive control over the Lift (by proxy of this task.)
     public final SharedResource CONTROL = new SharedResource("LiftBackgroundTask" + (++INSTANCE_COUNT));
-    private final DcMotor lift;
+    private final Lift lift;
     private final Set<SharedResource> provides = Set.of(CONTROL);
     private final Scheduler scheduler;
     private boolean manualAdjustMode = false;
     private int targetPosition = 0;
 
-    public VLiftProxy(@NotNull Scheduler scheduler, DcMotor lift) {
+    public VLiftProxy(@NotNull Scheduler scheduler, Lift lift) {
         super(scheduler);
         this.lift = lift;
         this.scheduler = scheduler;
@@ -49,6 +49,7 @@ public class VLiftProxy extends TaskTemplate {
     @Override
     public void invokeOnTick() {
         lift.setTargetPosition(targetPosition);
+        lift.update();
     }
 
     public void commitCurrent() {
@@ -59,50 +60,54 @@ public class VLiftProxy extends TaskTemplate {
     public void invokeOnStart() {
         commitCurrent();
         lift.setTargetPosition(targetPosition);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(SPEED);
     }
 
     private void startManual() {
-        // forcibly grab the lock from whatever has it at the moment
-        scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
-        scheduler.manualAcquire(CONTROL);
-        manualAdjustMode = true;
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // FIXME: NO
+        throw new IllegalStateException("Not implemented on this version");
+//        // forcibly grab the lock from whatever has it at the moment
+//        scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
+//        scheduler.manualAcquire(CONTROL);
+//        manualAdjustMode = true;
+//        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void stopManual() {
-        manualAdjustMode = false;
-        commitCurrent();
-        lift.setTargetPosition(targetPosition);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(SPEED);
-        scheduler.manualRelease(CONTROL);
+        // FIXME: NO
+        throw new IllegalStateException("Not implemented on this version");
+//        manualAdjustMode = false;
+//        commitCurrent();
+//        lift.setTargetPosition(targetPosition);
+//        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        lift.setPower(SPEED);
+//        scheduler.manualRelease(CONTROL);
     }
 
     public void controlManual(boolean goUp, boolean goDown) {
-        if (!manualAdjustMode) {
-            if (goUp || goDown) startManual();
-            return;
-        }
-        int currentPosition = lift.getCurrentPosition();
-        if (goUp && goDown) {
-            lift.setPower(0);
-            return;
-        }
-        if (goUp) {
-            if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
-                lift.setPower(SPEED);
-                return;
-            }
-        }
-        if (goDown) {
-            if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
-                lift.setPower(-SPEED);
-                return;
-            }
-        }
-        stopManual();
+        // FIXME: NO
+        throw new IllegalStateException("Not implemented on this version");
+//        if (!manualAdjustMode) {
+//            if (goUp || goDown) startManual();
+//            return;
+//        }
+//        int currentPosition = lift.getCurrentPosition();
+//        if (goUp && goDown) {
+//            lift.setPower(0);
+//            return;
+//        }
+//        if (goUp) {
+//            if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
+//                lift.setPower(SPEED);
+//                return;
+//            }
+//        }
+//        if (goDown) {
+//            if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
+//                lift.setPower(-SPEED);
+//                return;
+//            }
+//        }
+//        stopManual();
     }
 
     public boolean isManualAdjustModeEnabled() {

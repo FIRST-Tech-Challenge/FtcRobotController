@@ -81,7 +81,7 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
         } else lastTime = timeSource.markNow()
         var power = error * KP + eTotal * KI /* +D */
         if (power < -0.05) power /= 10.0
-        val powerFinal = clamp(power, -0.1, 1.0)
+        val powerFinal = clamp(power, -0.02, 1.0)
 
         if (targetPos <= 0 && currentPosition <= POWEROFF_ZERO) setPower(0.0)
         else setPower(powerFinal)
