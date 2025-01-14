@@ -2,8 +2,12 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.Hardware
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource
+import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 private fun clamp(a: Int, low: Int, hi: Int): Int {
     return max(low, min(a, hi))
@@ -18,10 +22,11 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
     companion object {
         const val MAX_HEIGHT = Hardware.VLIFT_MAX_HEIGHT
         const val MIN_HEIGHT = 0
-        const val POWEROFF_ZERO = Hardware.VLIFT_POWEROFF_HEIGHT;
+        const val POWEROFF_ZERO = Hardware.VLIFT_POWEROFF_HEIGHT
+        const val CLOSE = Hardware.VLIFT_CLOSENESS
 
-        const val KP = 1.0 / Hardware.VLIFT_CLOSENESS
-        const val KI = .0001 // maybe
+        const val KP = 1.0 / CLOSE
+        const val KI = .1 // maybe
         const val KD = 0.0
     }
     val currentPosition; get() = primaryMotor.currentPosition
@@ -43,8 +48,12 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
     fun getPower() = power
     fun getTargetPosition() = targetPos
 
+    var eTotal = 0.0
+        private set
+
     fun setTargetPosition(newPos: Int) {
         targetPos = clamp(newPos, MIN_HEIGHT, MAX_HEIGHT)
+        eTotal = 0.0
     }
 
     init {
@@ -55,9 +64,22 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
         targetPos = 0
     }
 
+    private val timeSource = TimeSource.Monotonic
+    private var lastTime: ValueTimeMark? = null
+
     fun update() {
         val error = targetPos - currentPosition
-        var power = error * KP /* + KI + KD */
+        if (lastTime != null) {
+            val now = timeSource.markNow()
+            val dt = (now - lastTime!!).toDouble(DurationUnit.SECONDS)
+            lastTime = now
+            if (abs(error) <= CLOSE) {
+                eTotal += error * dt
+            } else {
+                eTotal = 0.0
+            }
+        } else lastTime = timeSource.markNow()
+        var power = error * KP + eTotal * KI /* +D */
         if (power < -0.05) power /= 10.0
         val powerFinal = clamp(power, -0.1, 1.0)
 

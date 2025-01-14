@@ -21,6 +21,7 @@ public class VerticalSlideTool extends LinearOpMode {
             telemetry.addData("position", it.getCurrentPosition());
             telemetry.addData("directed power", h.verticalLift.getPower());
             telemetry.addData("target", h.verticalLift.getTargetPosition());
+            telemetry.addData("eTotal", h.verticalLift.getETotal());
             telemetry.update();
             if (gamepad1.y) h.verticalLift.setTargetPosition(Hardware.VLIFT_SCORE_HIGH);
             else if (gamepad1.b) h.verticalLift.setTargetPosition(300);
