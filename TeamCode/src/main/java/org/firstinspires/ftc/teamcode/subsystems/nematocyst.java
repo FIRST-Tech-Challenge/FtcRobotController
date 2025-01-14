@@ -94,11 +94,12 @@ public class nematocyst {
         targPivotPos = Math.min(0, Math.max(targPivotPos, maxPivotPos));
         // Ensure the motor does not exceed max forward extension
         double out = slidePID.calculate(slideMotor.getCurrentPosition(), targetSlidePosition);
-        SlewRateLimiter filter = new SlewRateLimiter(0.5);
+        SlewRateLimiter filter = new SlewRateLimiter(0.5); //TODO: Tune this
 
 
 
-        slideMotor.setPower(out);
+
+        slideMotor.setPower(filter.calculate(out));
         pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
         pivot.setPower(pivotPower); // use updatdePID to fix this
     }
