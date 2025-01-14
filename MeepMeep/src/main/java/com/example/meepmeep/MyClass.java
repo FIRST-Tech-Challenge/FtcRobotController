@@ -15,11 +15,12 @@ public class MyClass {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(23.6, 20, Math.toRadians(180), Math.toRadians(180), 11)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(11.75, -55, Math.toRadians(90)))
-                        .forward(5)
-                        .splineToConstantHeading(new Vector2d(56, -12), Math.PI/4)
+                        .forward(10)
+                        .strafeRight(5)
+                        .splineToConstantHeading(new Vector2d(52,-11), 0)
                         .build());
 
-
+        myBot.setDimensions(17,17);
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)

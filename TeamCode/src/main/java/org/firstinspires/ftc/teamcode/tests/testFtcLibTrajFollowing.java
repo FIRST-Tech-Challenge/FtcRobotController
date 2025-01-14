@@ -38,10 +38,10 @@ public class testFtcLibTrajFollowing extends OpMode {
     double yPower;
     TrajectorySequence trajSequence;
     SwerveDrive drive;
-    public static double tP = 1.2;
-    public static double tI = 0.2;
+    public static double tP = .2;
+    public static double tI = 0;
     public static double tD = 0;
-    public static double rP = 0.5;
+    public static double rP = .2;
     public static double rI = 0;
     public static double rD = 0;
     public static double P = 0.06;
@@ -69,17 +69,24 @@ public class testFtcLibTrajFollowing extends OpMode {
             "bl_angle",
             "br_angle"
     };
+    public Pose2d rotateFTCLibPose(com.arcrobotics.ftclib.geometry.Pose2d odoPose) {
+        Pose2d tempPose = new Pose2d(odoPose.getY()*-1,odoPose.getX(), odoPose.getHeading()+Math.PI/2);
+        return tempPose;
+    }
     @Override
     public void init() {
         drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, 12, -66, 0);
+                encoderNames, driveNames, angleNames, P, I, D, -66, -12, 0);
 
-        builder = new TrajectorySequenceBuilder(new Pose2d(12, -66, 0),
+        builder = new TrajectorySequenceBuilder(new Pose2d(12, -66, Math.PI/2),
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
-        trajSequence = builder.forward(10)
+        trajSequence = builder
+                .forward(15)
+                .strafeRight(1)
+                .splineTo(new Vector2d(54,-12), 0)
                 .build();
 
 
@@ -94,7 +101,7 @@ public class testFtcLibTrajFollowing extends OpMode {
         rotPID = new PIDController(rP, rI, rD);
         angleCalculator = new OptimalAngleCalculator();
         trajTimer = new ElapsedTime();
-        now = new Pose2d(drive.nowPose.getX(), drive.nowPose.getY(), drive.nowPose.getHeading());
+        now = rotateFTCLibPose(drive.nowPose);
     }
     public Pose2d getPoseAtTime(TrajectorySequence trajectorySequence, double time) {
         double accumulatedTime = 0.0;
@@ -113,19 +120,23 @@ public class testFtcLibTrajFollowing extends OpMode {
     @Override
     public void init_loop() {
         drive.init_loop();
+
 //        telemetry.addData("last traj that was followed pose in", lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters);
         trajTimer.reset();
     }
+//    public Pose2d rotationMatrix(Pose2d robotPose) {
+//
+//    }
     @Override
     public void loop() {
         // the problem is here
         trajPose = getPoseAtTime(trajSequence, trajTimer.seconds());
-        now = new Pose2d(drive.nowPose.getX(), drive.nowPose.getY(), drive.nowPose.getHeading());
+        now = rotateFTCLibPose(drive.nowPose);
         rotPower = -rotPID.calculate(now.getHeading(), trajPose.getHeading());
-        xPower = -txPID.calculate(now.getX(), trajPose.getX());
-        yPower = -tyPID.calculate(now.getY(), trajPose.getY());
+        xPower = txPID.calculate(now.getX(), trajPose.getX());
+        yPower = tyPID.calculate(now.getY(), trajPose.getY());
 
-        drive.loop(yPower, xPower, rotPower); // ignore the warning, is because of wpilib coord system
+        drive.loop(xPower, yPower, rotPower); // ignore the warning, is because of wpilib coord system
 
         doTelemetry(telemetry);
         doTelemetry(t2);
@@ -180,10 +191,10 @@ public class testFtcLibTrajFollowing extends OpMode {
     public void doTelemetry(Telemetry t) {
         t.addData("trajRot", trajPose.getHeading());
         t.addData("nowRot", now.getHeading());
-        t.addData("trajX", trajPose.getX() * 39.37);
-        t.addData("trajY", trajPose.getY() * 39.37);
-        t.addData("nowX", now.getX() * 39.37);
-        t.addData("nowY", now.getY() * 39.37);
+        t.addData("trajX", trajPose.getX());
+        t.addData("trajY", trajPose.getY());
+        t.addData("nowX", now.getX());
+        t.addData("nowY", now.getY());
         t.addData("powx", xPower);
         t.addData("powy", yPower);
         t.addData("powr", rotPower);

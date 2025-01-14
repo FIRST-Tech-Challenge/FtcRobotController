@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems.swerve;
 import com.qualcomm.robotcore.hardware.IMU;
 
 public class gamepadToVectors {
-    public double maxTranslationSpeed = 12;
-    public double maxRotationSpeed = 12;
+    public double maxTranslationSpeed = 2;
+    public double maxRotationSpeed = 2;
     public double ROBOT_LENGTH = 1.0;  // Length
     public double ROBOT_WIDTH = 1.0;   // Width
     IMU imu;
@@ -32,10 +32,10 @@ public class gamepadToVectors {
         double fieldX = x * Math.cos(theta2) - y * Math.sin(theta2);
         double fieldY = x * Math.sin(theta2) + y * Math.cos(theta2);
 
-        double a = fieldX + rx * (1/Math.sqrt(2));
-        double b = fieldX - rx * (1/Math.sqrt(2));
-        double c = fieldY + rx * (1/Math.sqrt(2));
-        double d = fieldY - rx * (1/Math.sqrt(2));
+        double a = fieldX + rx * (1 / Math.sqrt(2));
+        double b = fieldX - rx * (1 / Math.sqrt(2));
+        double c = fieldY + rx * (1 / Math.sqrt(2));
+        double d = fieldY - rx * (1 / Math.sqrt(2));
 
         double[] output = new double[2];
         switch (wheel) {
@@ -55,25 +55,24 @@ public class gamepadToVectors {
 
         return output;
     }
-
-    public double[] getCombinedVector (double theta, double x, double y,double rx, Wheel wheel) {
+    public double[] getCombinedVector (double x, double y,double rx, Wheel wheel) {
             double[] translationVector = getTranslationVector(x, y);
-            double[] fcVector = fieldCentrifyVector(theta, rx, translationVector, wheel);
+//            double[] fcVector = fieldCentrifyVector(theta, rx, translationVector, wheel);
 
 
-//            double rotationSpeed = getRotationSpeed(rx);
-//
-//            double[] combinedVector = {
-//                    fcVector[0] + rotationSpeed*Math.sin(getWheelAngle(wheel)),
-//                    fcVector[1] + rotationSpeed*Math.cos(getWheelAngle(wheel)),
-//            };
+            double rotationSpeed = getRotationSpeed(rx);
+
+            double[] combinedVector = {
+                    translationVector[0] + rotationSpeed*Math.sin(getWheelAngle(wheel)),
+                    translationVector[1] + rotationSpeed*Math.cos(getWheelAngle(wheel)),
+            };
 
             // public static variables for Length and Width
             //some way to tell which wheel is being talked about
             //arctan calculations as seen above
             //return based on which wheel it is after adding it
 
-            return fcVector;
+            return combinedVector;
 
     }
 
@@ -94,7 +93,7 @@ public class gamepadToVectors {
     public double getWheelAngle(Wheel wheel) {
         double angle = 0.0;
         switch (wheel) {
-            case fl:
+            case br:
                 angle = Math.atan(ROBOT_WIDTH / ROBOT_LENGTH) + Math.PI / 2;
                 break;
             case fr:
@@ -103,7 +102,7 @@ public class gamepadToVectors {
             case bl:
                 angle = Math.PI/2 - (Math.atan(ROBOT_WIDTH / ROBOT_LENGTH));
                 break;
-            case br:
+            case fl:
                 angle =  Math.PI * 2 + Math.atan(ROBOT_WIDTH / ROBOT_LENGTH) - Math.PI/2;
                 break;
         }

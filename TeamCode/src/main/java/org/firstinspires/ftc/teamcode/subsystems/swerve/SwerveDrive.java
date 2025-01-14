@@ -70,9 +70,9 @@ public class SwerveDrive {
     SlewRateLimiter[] limiters = new SlewRateLimiter[4];
     double[] angles = new double[4];
     public Pose2d nowPose;
-    IMU imu;
+    public IMU imu;
     ArrayList<Pair<Double,Double>> targetADPairList = new ArrayList<>(4); // key = mag, value = direction
-    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD, double startX, double startY, double startHeadingRads) {
+    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD, double startFTCLibX, double startFTCLibY, double startHeadingRads) {
         OM = opmode;
         gamepad = GP;
         aP = angleP; //I don't know what I'm doing - owner of the code
@@ -121,7 +121,7 @@ public class SwerveDrive {
                 new Translation2d((6.5),(-5.5)),
                 new Translation2d((-4.5), (5.5)),
                 new Translation2d((-4.5), (-5.5)));
-        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(startX, startY, new Rotation2d(startHeadingRads)));
+        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(startFTCLibX, startFTCLibY, new Rotation2d(startHeadingRads)));
         fakeDrive = new SampleMecanumDrive(opmode.hardwareMap);
 
 
@@ -137,7 +137,7 @@ public class SwerveDrive {
                 states[i] = new SwerveModuleState(-1 * driveSpeeds[i], new Rotation2d(Math.toRadians((angles[i] + 180) % 360)));
 //                }
             } else {
-                states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(Math.toRadians(angles[i])));
+                states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(Math.toRadians(angles[i]+180)));
             }
 
         }
@@ -150,12 +150,8 @@ public class SwerveDrive {
         timer.reset();
     }
     public void updateMagnitudeDirectionPair(double x, double y, double rx, double currentAngle, int m) {
-        theta = imu.getRobotYawPitchRollAngles().getYaw();
-        if (theta < 0) {theta +=360; }
-        else if (theta > 360) {theta -=360; }
             // Get the combined vector from gamepad inputs
         double[] componentsVector = vectorGetter.getCombinedVector(
-                theta,
                 x,
                 y,
                 -rx,
@@ -252,8 +248,8 @@ public class SwerveDrive {
 //                states[i].speedMetersPerSecond = -1 * driveSpeeds[i];
 //                states[i].angle = new Rotation2d(Math.toRadians((angles[i]+ 180 )));
 //            } else {
-                states[i].speedMetersPerSecond = driveSpeeds[i]/39.37;
-                states[i].angle = new Rotation2d(Math.toRadians(angles[i]));
+                states[i].speedMetersPerSecond = driveSpeeds[i];
+                states[i].angle = new Rotation2d(Math.toRadians((angles[i]+180)));
 //            }
             // reset the last position and time for velocity calcs
         }
@@ -304,14 +300,14 @@ public class SwerveDrive {
 //        t.addData("offsetFR", angleGetter.offsets[1]);
 //        t.addData("offsetBL", angleGetter.offsets[2]);
 //        t.addData("offsetBR", angleGetter.offsets[3]);
-//        t.addData("FLVelocity", states[0].speedMetersPerSecond);
-//        t.addData("FRVelocity", states[1].speedMetersPerSecond);
-//        t.addData("BLVelocity", states[2].speedMetersPerSecond);
-//        t.addData("BRVelocity", states[3].speedMetersPerSecond);
-//        t.addData("FLState", states[0].angle.getDegrees());
-//        t.addData("FRState", states[1].angle.getDegrees());
-//        t.addData("BLState", states[2].angle.getDegrees());
-//        t.addData("BRState", states[3].angle.getDegrees());
+        t.addData("FLVelocity", states[0].speedMetersPerSecond);
+        t.addData("FRVelocity", states[1].speedMetersPerSecond);
+        t.addData("BLVelocity", states[2].speedMetersPerSecond);
+        t.addData("BRVelocity", states[3].speedMetersPerSecond);
+        t.addData("FLState", states[0].angle.getDegrees());
+        t.addData("FRState", states[1].angle.getDegrees());
+        t.addData("BLState", states[2].angle.getDegrees());
+        t.addData("BRState", states[3].angle.getDegrees());
 //        t.addData("velRawFL", driveMotors[0].getVelocity());
 //        t.addData("velRawFR", driveMotors[1].getVelocity());
 //        t.addData("velRawBL", driveMotors[2].getVelocity());
