@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.hardware.EncoderFor;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMapper;
 import org.firstinspires.ftc.teamcode.hardware.HardwareName;
+import org.firstinspires.ftc.teamcode.hardware.Lift;
 import org.firstinspires.ftc.teamcode.hardware.MotorSet;
 import org.firstinspires.ftc.teamcode.hardware.Reversed;
 import org.firstinspires.ftc.teamcode.hardware.ZeroPower;
@@ -41,6 +42,10 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final double LAMP_ORANGE = 0.333;
     public static final double LAMP_YELLOW = 0.36;
     public static final double LAMP_PURPLE = 0.700;
+    public static final int VLIFT_MAX_HEIGHT = 825;
+    public static final int VLIFT_SCORE_HIGH = 790;
+    public static final double VLIFT_CLOSENESS = 50.0;
+    public static final int VLIFT_POWEROFF_HEIGHT = 30;
 
     public static int deg2arm(double degrees) {
         return (int) (degrees / 360.0 * spinTickPerRev);
@@ -97,6 +102,13 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("verticalSlides")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
     public DcMotor verticalSlide;
+
+    @HardwareName("verticalSlide2")
+    @Reversed
+    @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)
+    private DcMotor verticalSlide2;
+
+    public Lift verticalLift;
 
     @HardwareName("verticalSlides")
     @AutoClearEncoder
@@ -198,6 +210,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
                 backLeft,
                 backRight
         );
+        verticalLift = new Lift(verticalSlide, verticalSlide2);
     }
 
 }
