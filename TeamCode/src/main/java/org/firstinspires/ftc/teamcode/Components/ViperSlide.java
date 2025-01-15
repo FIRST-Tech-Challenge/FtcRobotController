@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,6 +16,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Roadrunner.Actions.viper.ViperDownForTimeAction;
+import org.firstinspires.ftc.teamcode.Roadrunner.Actions.viper.ViperToPositionAction;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -29,20 +34,27 @@ public class ViperSlide{
     private Servo bucketFlap;
     private Servo leftSpecimen;
     private Servo rightSpecimen;
+    private ElapsedTime bucketCooldownTimer;
 
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
     double minFlipLimit = 650;
+    int autoFlipPosition = 3000;
     public double holdPower = .2;
+    boolean wasScorePressed = false;
 
-    private ElapsedTime bucketCooldownTimer;
+
 
     double lastPosition;
     private Queue<Double> pastPositions;
     private static final int positionHistorySize = 5;
     String specimenGrabberPos = "closed";
     String bucketOpenClose = "open";
+
+
+    ViperToPositionAction specimenAction = new ViperToPositionAction(this, 2600);
+    ViperDownForTimeAction scoreAction = new ViperDownForTimeAction(this, 500);
 
 
 
@@ -101,7 +113,7 @@ public class ViperSlide{
             Float retractSpeed,
             Float extendSpeed,
             Boolean resetEncoders,
-            Boolean hold,
+//            Boolean hold,
             Boolean bucketRest,
             Boolean bucketScore,
             Boolean openBucket,
@@ -110,18 +122,18 @@ public class ViperSlide{
             Boolean grabSpecimen,
             Boolean releaseSpecimen,
             Boolean bucketSpecimen,
-            Boolean bucketSpecimenReset
-//            Boolean goToPositionUp,
-//            Boolean goToPositionDown
+            Boolean bucketSpecimenReset,
+            Boolean scoreSpecimen
     ) {
         // Move Viper
         if (retractSpeed != 0) {
             setPower(-retractSpeed);
         }
         else if (extendSpeed != 0) {
-//            if(getPos() > 3000) {
-//                bucketRest();
-//            }
+            if(getPos() > autoFlipPosition && getPos() < autoFlipPosition + 500) { // TODO test this
+                bucketScore();
+                closeBucket();
+            }
             setPower(extendSpeed);
         }
         else {
@@ -131,10 +143,10 @@ public class ViperSlide{
         telemetry.addData("Right Viper Position: ", rightViper.getCurrentPosition());
         telemetry.addData("Viper power: ", rightViper.getCurrent(CurrentUnit.AMPS));
 
-        // Hold Position
-        if(hold) {
-            holdPosition(getPos());
-        }
+//        // Hold Position
+//        if(hold) {
+//            holdPosition(getPos());
+//        }
 
         // Reset Encoders
         if(resetEncoders) {
@@ -142,7 +154,7 @@ public class ViperSlide{
         }
 
         // Bucket
-        if(bucketScore) {
+        if(bucketScore) { // TODO close specimen grabber so we can flip
             if(getPos() > minFlipLimit && Objects.equals(specimenGrabberPos, "closed")) {
                 closeBucket();
                 bucketScore();
@@ -207,6 +219,18 @@ public class ViperSlide{
 
         if(bucketSpecimenReset) {
             bucketRest();
+        }
+
+        if(wasScorePressed && !scoreSpecimen) {
+            telemetry.addData("Score Specimen", "released");
+        }
+
+        if(scoreSpecimen) {
+            Actions.runBlocking(
+                    new SequentialAction(specimenAction)
+            );
+            bucketSpecimen();
+
         }
 
 //        if(goToPositionUp) {
@@ -363,6 +387,7 @@ public class ViperSlide{
         setBucketPosition(1, 0);
     } // .49, .51
 
+    //TODO DOUBLE CHECK SCORING ANGLE
     public void bucketSpecimen() {
         setBucketPosition(.2, .8);
     }
