@@ -20,7 +20,7 @@ public class HorizontalSlide {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
 
-    int maxSlidePosition = 675;
+    int maxSlidePosition = 650; // 675
 //    private final Gamepad gamepad1;
 //    private final Gamepad gamepad2;
 
