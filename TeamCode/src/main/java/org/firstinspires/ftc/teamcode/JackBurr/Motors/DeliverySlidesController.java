@@ -34,7 +34,7 @@ public class DeliverySlidesController extends OpMode {
         deliverySlideL.setTargetPosition(-TARGET);
         if (deliverySlideL.getCurrentPosition() != -TARGET) {
             deliverySlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            deliverySlideL.setPower(1);
+            deliverySlideL.setPower(-1);
         }
         else {
             deliverySlideL.setPower(0);
@@ -42,13 +42,13 @@ public class DeliverySlidesController extends OpMode {
         deliverySlideR.setTargetPosition(TARGET);
         if (deliverySlideR.getCurrentPosition() != TARGET) {
             deliverySlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            deliverySlideR.setPower(1);
+            deliverySlideR.setPower(-1);
         }
         else {
             deliverySlideR.setPower(0);
         }
         telemetry.addData("Left Motor Power: ", deliverySlideL.getPower());
-        telemetry.addData("Left Encoder Position: ", deliverySlideL.getCurrentPosition());
+        telemetry.addData("Left Encoder Positin: ", deliverySlideL.getCurrentPosition());
         telemetry.addData("Left Target Encoder Position: ", deliverySlideL.getTargetPosition());
         telemetry.addData("Left ZeroPowerBehavior: ", deliverySlideL.getZeroPowerBehavior());
         telemetry.addData("Left Is Busy: ", deliverySlideL.isBusy());

@@ -45,13 +45,18 @@ public class LeftAutoV2 extends LinearOpMode {
                 .splineTo(new Vector2d(40, -15), Math.toRadians(135))
                 .build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+        Trajectory traj4 = drive.trajectoryBuilder(traj1.end())
+                .back(10)
+                .build();
+
+        Trajectory traj2 = drive.trajectoryBuilder(traj4.end())
                 .splineTo(new Vector2d(0, -15), Math.toRadians(-60))
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .back(50)
                 .build();
+
 
 
 
@@ -74,12 +79,15 @@ public class LeftAutoV2 extends LinearOpMode {
                     }
                     deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
                 }
-                while (deliveryTimer.seconds() < 7){
+                while (deliveryTimer.seconds() < 5){
                     servoSet = false;
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
-                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
+                    drive.followTrajectory(traj4);
                 }
                 while (deliveryTimer.seconds() < 10){
+                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
+                }
+                while (deliveryTimer.seconds() < 14){
                     if(!servoSet) {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                         servoSet = true;
@@ -88,6 +96,7 @@ public class LeftAutoV2 extends LinearOpMode {
                     slides.runRightSlideToPosition(0, 0.9);
                 }
                 while (deliveryTimer.seconds() > 13) {
+                    telemetry.addLine("HELLO");
                     servoSet = false;
                     step = 2;
                 }

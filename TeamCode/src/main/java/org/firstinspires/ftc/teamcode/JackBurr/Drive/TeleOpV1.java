@@ -289,7 +289,7 @@ public class TeleOpV1 extends OpMode {
                 }
                 //TODO: Sam said to make button to release grippers, but this current program can't do that
                 if(!pickedUpSample){
-                    if(diffTimer2.seconds() > 0.4){
+                    if(diffTimer2.seconds() > 0.3){
                         grippers.setPosition(constants.GRIPPERS_GRAB);
                     }
                    if (diffTimer2.seconds() > 1){
@@ -415,6 +415,8 @@ public class TeleOpV1 extends OpMode {
         telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
         telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());
         telemetry.addLine("\t Delivery Grippers Timer 02: " + deliveryGrippersTimer2.seconds());
+        telemetry.addLine("\t Left Delivery SLide: " +  deliverySlides.getLeftSlidePosition());
+        telemetry.addLine("\t Right Delivery SLide: " +  deliverySlides.getRightSlidePosition());
 
 
     }
