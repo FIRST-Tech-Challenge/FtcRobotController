@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.Sequenc
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 
 import java.util.List;
+import java.util.Vector;
 
 
 @Autonomous
@@ -84,7 +85,7 @@ public class testAutoEmma extends OpMode {
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
-                .forward(15)
+                .splineTo(new Vector2d(36,-48),0)
                 .build();
 
 
@@ -122,9 +123,6 @@ public class testAutoEmma extends OpMode {
 //        telemetry.addData("last traj that was followed pose in", lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters);
         trajTimer.reset();
     }
-    //    public Pose2d rotationMatrix(Pose2d robotPose) {
-//
-//    }
     @Override
     public void loop() {
         // the problem is here
@@ -143,49 +141,6 @@ public class testAutoEmma extends OpMode {
         rotPID.setPID(rP, rI, rD);
 
     }
-    //    public Trajectory getCurrentTraj() {
-//        telemetry.addData("Last State,", lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters);
-//        if ((Math.abs(now.getX() - lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters.getX()) < .05)
-//                && (Math.abs(now.getY() - lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters.getY())< .05)
-//                && (Math.abs(now.getHeading() - lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters.getHeading()) < 5 ||
-//                Math.abs(now.getHeading() + 360 - lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters.getHeading()) < 5 ||
-//                Math.abs(now.getHeading() - 360 - lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters.getHeading()) < 5)
-//                && (drive.timer.seconds() >= lastTrajThatWasFollowed.getTotalTimeSeconds())) {
-//////            // this returned true when...
-//////            /*
-//////            Traj Timer: 2.622744514
-//////            nowRot: 69.1708587249741
-//////            nowX: 0.15141628769543714
-//////            nowY: 0.22199981453085815
-//////
-//////            trajRot: 89.98545771535002
-//////            trajX: 0.4999907127707206
-//////            trajY: 0.4996454434762634
-//////
-//////            this is because eit wasn't comparing actual robot state. it was comparing
-//////            theoretical to theoretical.
-//////            need to check x, y, and heading.
-//////             */
-//            trajTimer.reset();
-////            txPID.reset();
-////            tyPID.reset();
-////            rotPID.reset();
-//            if (trajTracker < trajSequence.size()-1) {
-//                trajTracker++;
-//                lastTrajThatWasFollowed = trajSequence.get(trajTracker);
-//            } else {
-//                stop = true;
-//            }
-//        }
-//        return lastTrajThatWasFollowed;
-//    }
-//    public Pose2d project(SequenceSegment path, Pose2d actualPose, Pose2d displacementGuess) {
-//        // displacement means the arc length along the Trajectory
-//        // not the distance from the start of the Trajectory
-//        // this method takes where it actually is, how far it thinks it went, and the path it's following to produce the next place it has to go
-//
-//
-//    }
     public void doTelemetry(Telemetry t) {
         t.addData("trajRot", trajPose.getHeading());
         t.addData("nowRot", now.getHeading());

@@ -54,7 +54,7 @@ public class driveTest extends OpMode {
     @Override
     public void loop() {
         double[] xAndY = fieldCentricXandY(
-                SwerveDrive.imu.getRobotYawPitchRollAngles().getYaw(), -gamepad1.left_stick_x, -gamepad1.left_stick_y);
+                SwerveDrive.imu.getRobotYawPitchRollAngles().getYaw(), gamepad1.left_stick_x, gamepad1.left_stick_y);
         SwerveDrive.loop(xAndY[0], xAndY[1], gamepad1.right_stick_x);
         // trying to separate field centricity into the opmode level
         SwerveDrive.setPID(P, I, D);

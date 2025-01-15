@@ -43,12 +43,12 @@ public class SwerveDrive {
     public double maxAngAccel = Math.PI;
     public double maxAngVel = Math.PI;
     OpMode OM;
-    double theta;
     Gamepad gamepad; // perhaps a set power method would be better here?
     public final double DIST_MULT = 4/3; // Actually traveled/desired dist
     public static double aP = 0.06;
     public static double aI = 0.01;
     public static double aD = 0.0005;
+    SlewRateLimiter[] wheelLimiters = new SlewRateLimiter[4];
     boolean dontMove;
     boolean reverse;
     public SwerveDriveOdometry odo;
@@ -67,7 +67,6 @@ public class SwerveDrive {
     CRServo[] angleMotors = new CRServo[4];
     int[] lastDriveEncoders = new int[4];
     OptimalAngleCalculator angleFixer;
-    SlewRateLimiter[] limiters = new SlewRateLimiter[4];
     double[] angles = new double[4];
     public Pose2d nowPose;
     public IMU imu;
@@ -92,6 +91,7 @@ public class SwerveDrive {
             driveMotors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             driveMotors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             angleMotors[i] = hw.get(CRServo.class, angleNames[i]);
+            wheelLimiters[i] = new SlewRateLimiter(1/2.625);
         }
 
 //        driveMotors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -109,7 +109,6 @@ public class SwerveDrive {
         for (int i = 0; i < driveMotors.length; i++) {
             driveSpeeds[i] = getVelocity(driveMotors[i]);
             lastDriveEncoders[i] = driveMotors[i].getCurrentPosition();
-
         }
         targetADPairList.ensureCapacity(4);
         targetADPairList.add(new Pair<>(0.0, 0.0));
@@ -137,7 +136,7 @@ public class SwerveDrive {
                 states[i] = new SwerveModuleState(-1 * driveSpeeds[i], new Rotation2d(Math.toRadians((angles[i] + 180) % 360)));
 //                }
             } else {
-                states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(Math.toRadians(angles[i]+180)));
+                states[i] = new SwerveModuleState(driveSpeeds[i], new Rotation2d(Math.toRadians(angles[i])));
             }
 
         }
@@ -176,7 +175,7 @@ public class SwerveDrive {
             return;
         }
         // cosine compensation
-        magnitude *= Math.abs(Math.cos(Math.toRadians(Math.abs(angles[m]-direction))));
+//        magnitude *= Math.abs(Math.cos(Math.toRadians(Math.abs(angles[m]-direction))));
         // Adjust the magnitude if a direction reversal is needed
         if (angleFixer.requiresReversing(m)) {
             reverse = true;
@@ -226,15 +225,16 @@ public class SwerveDrive {
              // TODO: This returns NaN but input is not the problem
             diff = angles[i] - set;
             angleOutput = anglePID[i].calculate(diff, 0);
-            double speedOutput = targetADPairList.get(i).first;
-
-//            } else {
-//                speedOutput = 0;
-//            }
-
-
-//            // this is returning 0 for some reason
-//            // set PID current to current things
+            double magnitude = targetADPairList.get(i).first; // can be + or -
+            double speedOutput;
+            // possibly: check if positive or negative, if newly positive or negative, use a diff limiter
+            if (magnitude != 0) {
+                wheelLimiters[i].updateRateLimit(1/((2.53 * (Math.abs(angles[i]-targetADPairList.get(i).second))/90)+0.00000000000000001));
+                speedOutput = wheelLimiters[i].calculate(magnitude);
+            } else {
+                speedOutput = magnitude;
+                wheelLimiters[i].reset(0);
+            }
             angleMotors[i].setPower(-angleOutput);
             driveMotors[i].setPower(speedOutput);
 
@@ -248,8 +248,8 @@ public class SwerveDrive {
 //                states[i].speedMetersPerSecond = -1 * driveSpeeds[i];
 //                states[i].angle = new Rotation2d(Math.toRadians((angles[i]+ 180 )));
 //            } else {
-                states[i].speedMetersPerSecond = driveSpeeds[i];
-                states[i].angle = new Rotation2d(Math.toRadians((angles[i]+180)));
+            states[i].speedMetersPerSecond = driveSpeeds[i];
+            states[i].angle = new Rotation2d(Math.toRadians((angles[i])));
 //            }
             // reset the last position and time for velocity calcs
         }
@@ -279,7 +279,7 @@ public class SwerveDrive {
 //        t.addData("BLTargAng", targetADPairList.get(2).second);
 //        t.addData("BRTargAng", targetADPairList.get(3).second);
 //        t.addData("FLIn", angles[0]);
-//        t.addData("FRIn", angles[1]);
+        t.addData("FRIn", angles[1]);
 //        t.addData("BLIn", angles[2]);
 //        t.addData("BRIn", angles[3]);
 //        t.addData("FLPos", driveMotors[0].getCurrentPosition());
