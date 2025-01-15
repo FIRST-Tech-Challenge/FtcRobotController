@@ -72,20 +72,17 @@ public class GoofyLoop {
                 .setColorScheme(new ColorSchemeRedDark())
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(
                                 // starting location of blue left
-                                new Pose2d(36, -60, Math.toRadians(90)))
+                                new Pose2d(11.5, -60, Math.toRadians(90)))
                         // pick up sample from daouda
-                        .splineToSplineHeading(new Pose2d(14, -30, Math.toRadians(90)),
-                                Math.toRadians(90))
+                        .splineToSplineHeading(new Pose2d(5, -30, Math.toRadians(270)), Math.toRadians(90))
                         .waitSeconds(1)
-                        .lineTo(new Vector2d(14, -37))
-                        .splineToSplineHeading(new Pose2d(36, -60, Math.toRadians(-45)),
-                                Math.toRadians(-45))
-                        .waitSeconds(1)
-                        .splineToSplineHeading(new Pose2d(14, -30, Math.toRadians(90)),
-                                Math.toRadians(90))
-                        .waitSeconds(1)
-                        .lineTo(new Vector2d(-33.8, -30.2))
-                        .lineToSplineHeading(new Pose2d(-23.4, 12.1, Math.toRadians(0)))
+                        .lineTo(new Vector2d(36, -35))
+                        .lineTo(new Vector2d(36,-13))
+                        .lineTo(new Vector2d(48,-13))
+                        .lineTo(new Vector2d(48,-50))
+                        .lineTo(new Vector2d(48,-13))
+                        .lineTo(new Vector2d(58,-13))
+                        .lineTo(new Vector2d(58,-50))
                         .build());
 
         RoadRunnerBotEntity idealRedLeft = new DefaultBotBuilder(meepMeep)

@@ -14,7 +14,7 @@ public class Claw {
     public final Servo clawServo;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
-    public boolean opened = true;
+    public boolean opened = false;
     public double closePos = Settings.Hardware.Servo.Claw.CLOSED;
     public double openPos = Settings.Hardware.Servo.Claw.OPEN;
 

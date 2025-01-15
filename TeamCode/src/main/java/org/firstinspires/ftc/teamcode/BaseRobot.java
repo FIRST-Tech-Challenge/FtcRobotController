@@ -40,7 +40,7 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public int clawState = 0;
+    public int clawState = -1;
 
     // boolean that controls whether wheel movements are flipped for making backwards movement easier
     public boolean whyAgney = false;
@@ -200,11 +200,12 @@ public class BaseRobot {
                     intake.horizontalSlide.decrement();
                 }
             } else {
+                // changed to 2 stages
                 if (contextualActions.justExtendHorizontal) {
-                    intake.horizontalSlide.extend();
+                    intake.horizontalSlide.max();
                 }
                 if (contextualActions.justRetractHorizontal) {
-                    intake.horizontalSlide.retract();
+                    intake.horizontalSlide.min();
                 }
             }
         }
