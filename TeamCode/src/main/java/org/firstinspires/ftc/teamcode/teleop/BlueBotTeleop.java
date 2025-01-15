@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 public class BlueBotTeleop extends LinearOpMode {
 
   double slideSpeed = 100;
+  double pivotSpeed = 100;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -27,6 +28,7 @@ public class BlueBotTeleop extends LinearOpMode {
     mek.homeArm();
     double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
+
 
       // 1. Calculates deltaTime
       double currentTime = Utils.getTimeSeconds();
@@ -48,6 +50,7 @@ public class BlueBotTeleop extends LinearOpMode {
         if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
         telemetry.addData("Slide target position: ", mek.slideTarget);
 
+        // 1.5 Moves the slide all the way down if right bumper is pressed
         if (gamepad2.right_bumper) {
           mek.setSlide(0);
           mek.slideTarget = 0;
@@ -57,13 +60,14 @@ public class BlueBotTeleop extends LinearOpMode {
         // 2. Set the pivot power
         mek.setPivot(-gamepad2.right_stick_y, gamepad2.right_bumper);
 
-        // 3.
+        // 3. Intake/Outtake control
         mek.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
         if (gamepad2.b && !bPressed) {
           mek.toggleWrist();
         }
         bPressed = gamepad2.b;
 
+        // 4.
         if (gamepad2.x) {
           mek.clamp();
         } else if (gamepad2.y) {
@@ -71,9 +75,14 @@ public class BlueBotTeleop extends LinearOpMode {
         }
       }
 
+      // 5. If the arm length would make the robot too long, clip the arm length
+      double maxLen = 20 / Math.cos(mek.pivot.getTargetPosition() * Math.toRadians(mek.countsPerDegree));
+      if (mek.slideTarget * mek.countsPerInch > maxLen){
+        mek.slideTarget = maxLen * mek.countsPerInch;
+      }
 
+      // 6. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
-
 
       telemetry.update();
       lastTime = currentTime;

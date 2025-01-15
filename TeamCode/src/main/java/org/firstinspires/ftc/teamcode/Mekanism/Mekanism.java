@@ -8,6 +8,8 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
+import androidx.lifecycle.DefaultLifecycleObserver;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,14 +17,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Mekanism {
 
   LinearOpMode myOp;
 
-  private final DcMotorEx pivot;
-  private final DcMotorEx slide, slide2;
+  public final DcMotorEx pivot;
+  public final DcMotorEx slide, slide2;
 
   private final DigitalChannel limitSwitch;
 
@@ -33,7 +36,8 @@ public class Mekanism {
 
   public final int limitSlide = 4200;
   public final double limitPivot = 3000;
-  private final double countsPerDegree = 15; // TODO: This needs to be found
+  public final double countsPerDegree = 15; // TODO: This needs to be found
+  public final double countsPerInch = 100; // TODO: This needs to be found
 
   public double slideTarget = 0;
 
