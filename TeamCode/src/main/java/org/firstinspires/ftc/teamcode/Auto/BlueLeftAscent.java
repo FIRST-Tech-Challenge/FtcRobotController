@@ -133,7 +133,7 @@ public class BlueLeftAscent extends LinearOpMode {
 
         //Actions
         ViperToPositionAction viperMid = new ViperToPositionAction(viperSlide, 2500);
-        ViperToPositionAction viperAllTheWayUpAtTheTopToScoreASampleInHighBucket = new ViperToPositionAction(viperSlide, 4250);
+        ViperToPositionAction viperAllTheWayUpAtTheTopToScoreASampleInHighBucket = new ViperToPositionAction(viperSlide, 4350);
         ViperDownForTimeAction viperDownForTime = new ViperDownForTimeAction(viperSlide, 1000);
         ViperToRestAction viperToRest = new ViperToRestAction(viperSlide);
         ViperStopAction viperStop = new ViperStopAction(viperSlide);

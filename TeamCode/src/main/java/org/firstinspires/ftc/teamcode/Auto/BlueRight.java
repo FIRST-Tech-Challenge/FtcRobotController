@@ -39,6 +39,7 @@ import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Arrays;
 
@@ -63,6 +64,7 @@ public class BlueRight extends LinearOpMode {
         // RR-specific initialization
         Pose2d initialPose = new Pose2d(0, 0, Math.toRadians(180));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive.setProfile(MecanumDrive.DriveProfile.BASE);
 
         // Set velocity and accel constraints
         VelConstraint baseVelConstraint = new MinVelConstraint(Arrays.asList(
