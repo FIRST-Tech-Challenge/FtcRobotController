@@ -141,6 +141,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
     @HardwareName("clawFlip")
     public Servo clawFlip;
 
+    @HardwareName("clawTwist")
+    public Servo clawTwist;
+
     @HardwareName("horizontalSlide")
     public Servo horizontalSlide;
 
@@ -155,6 +158,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @HardwareName("clawColor")
     public ColorSensor clawColor;
+
 
     @Override
     public Encoder getLeftEncoder() {

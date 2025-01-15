@@ -61,7 +61,7 @@ public class FixStuffTeleOp extends LinearOpMode{
         hardware.arm.setPower(0.3);
         hardware.wrist.setPosition(0.28);
         hardware.claw.setPosition(Hardware.CLAW_CLOSE);
-
+        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
@@ -88,6 +88,9 @@ public class FixStuffTeleOp extends LinearOpMode{
             if (gamepad1.b){
                 SlideIn();
             }
+            if (gamepad1.x){
+                FourthSample();
+            }
 
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
             telemetry.addData("slidePos2", hardware.horizontalSlide.getPosition());
@@ -112,6 +115,29 @@ public class FixStuffTeleOp extends LinearOpMode{
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
         hardware.horizontalLeft.setPosition(1-Hardware.RIGHT_SLIDE_IN);
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
+    }
+    public void FourthSample(){
+        double PartialFlip = 0.167;
+        hardware.clawFlip.setPosition(PartialFlip);
+        sleep(500);
+        hardware.clawTwist.setPosition(0.26);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(1-Hardware.RIGHT_SLIDE_OUT);
+        sleep(500);
+        hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
+        sleep(500);
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+        sleep(500);
+        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(Hardware.SLIDE_OVERSHOOT);
+        hardware.horizontalLeft.setPosition(1 - Hardware.SLIDE_OVERSHOOT);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1-Hardware.RIGHT_SLIDE_IN);
+        sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
 }
