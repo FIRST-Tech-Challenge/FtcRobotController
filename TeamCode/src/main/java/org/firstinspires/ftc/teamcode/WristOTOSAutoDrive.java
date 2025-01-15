@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-// All the things that we use and borrow
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,8 +13,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="Auto Drive", group="Robot")
-public class OTOSAutoDrive extends LinearOpMode {
+@Autonomous(name="Wrist Auto Drive", group="Robot")
+public class WristOTOSAutoDrive extends LinearOpMode {
     // Initialize all variables for the program
     // Hardware variables
     SparkFunOTOS myOtos;
@@ -50,7 +48,12 @@ public class OTOSAutoDrive extends LinearOpMode {
     //Callie
     Servo claw = null;
     final double CLAW_MIN = 0.2;           // Claw is closed
-    final double CLAW_MAX = 0.8;           // Claw is open
+    final double CLAW_MAX = 0.54;          // Claw is open - Og non-wrist value was 0.8
+
+    // This chunk controls our wrist (todo: update values)
+    Servo wrist = null;
+    final double WRIST_MIN = 0.2;           // Wrist is in intake position (picking up)
+    final double WRIST_MAX = 0.65;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
