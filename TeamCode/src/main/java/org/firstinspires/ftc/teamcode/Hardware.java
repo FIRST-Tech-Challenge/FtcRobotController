@@ -77,8 +77,8 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
         public static final SharedResource HSlideClaw = new SharedResource("HSlideClaw");
     }
 
-    public static final double TRACK_WIDTH = 11.3385888;
-    public static final double FORWARD_OFFSET = 5.05905785;
+    public static final double TRACK_WIDTH = 11.375;
+    public static final double FORWARD_OFFSET = 3.062500;
     public static final double ENC_WHEEL_RADIUS = 1.25984 / 2.0;
     public static final int ENC_TICKS_PER_REV = 2000;
 
@@ -127,7 +127,6 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @EncoderFor("frontLeft")
     @AutoClearEncoder
-    @Reversed
     public Encoder encoderLeft;
 
     @EncoderFor("backRight")
@@ -137,6 +136,7 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     @EncoderFor("frontRight")
     @AutoClearEncoder
+    @Reversed
     public Encoder encoderRight;
 
     @HardwareName("gyro")

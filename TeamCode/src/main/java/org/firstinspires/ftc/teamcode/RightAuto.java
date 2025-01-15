@@ -140,8 +140,6 @@ public class RightAuto extends LinearOpMode {
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.verticalSlide.setTargetPosition(0);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
 

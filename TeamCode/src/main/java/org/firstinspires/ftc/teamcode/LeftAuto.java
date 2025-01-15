@@ -41,7 +41,7 @@ public class LeftAuto extends LinearOpMode {
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
-    final Pose SCORE_HIGH_BASKET = new Pose(9.8786797, 18.1213203, Math.toRadians(-45));
+    final Pose SCORE_HIGH_BASKET = new Pose(10.6286797, 17.3713203, Math.toRadians(-45));
     final Pose PARK1 = new Pose(57.5, 6, Math.toRadians(0));
     final Pose PARK2 = new Pose(55.5, -11, Math.toRadians(0));
     Hardware hardware;
@@ -145,8 +145,6 @@ public class LeftAuto extends LinearOpMode {
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.verticalSlide.setTargetPosition(0);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
 
@@ -193,6 +191,7 @@ public class LeftAuto extends LinearOpMode {
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
+                // ====
 //                .then(moveTo(SCORE_HIGH_BASKET))
 //                .then(scoreHighBasket())
 //                .then(moveTo(new Pose(28, 22, Math.toRadians(-180))))
@@ -200,6 +199,7 @@ public class LeftAuto extends LinearOpMode {
 //                .then(moveTo(SCORE_HIGH_BASKET))
 //                .then(scoreHighBasket())
 //                .then(new OneShot(scheduler, () -> scoredIn.set(finalizeTimer.time())))
+                // ====
                 .then(moveTo(PARK1))
                 .then(moveTo(PARK2))
                 .then(run(() -> {
@@ -211,7 +211,7 @@ public class LeftAuto extends LinearOpMode {
                 .then(wait(.5))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
 //                .then(moveTo(scheduler,
-//                        new Pose(65, -12, Math.toRadians(0))))
+//                        new Pose(65, -12, Math.toRadians(0))))*/
         ;
         // park
 
@@ -241,6 +241,7 @@ public class LeftAuto extends LinearOpMode {
             telemetry.addData("y", tracker.getPose().y()); // Print y attribute for pose
             telemetry.addData("heading (rad)", tracker.getPose().heading()); // Print the heading in radians
             telemetry.addData("heading (deg)", Math.toDegrees(tracker.getPose().heading())); // Print the heading in degrees
+            telemetry.addData("lift power", hardware.verticalLift.getPower()); // Print the heading in radians
             telemetry.addLine(String.format("While running: %.2fms per loop", loopTimer.getAvg() * 1000));
             telemetry.update();
         }
