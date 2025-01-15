@@ -52,6 +52,13 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    public enum DriveProfile {
+        BASE,
+        ACCURACY,
+        SPEED
+    }
+    public DriveProfile driveProfile = DriveProfile.BASE;
+
     public static class Params {
         // IMU orientation
 
@@ -87,6 +94,9 @@ public final class MecanumDrive {
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
+
+
+
     }
 
     public static Params PARAMS = new Params();
@@ -488,5 +498,9 @@ public final class MecanumDrive {
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint
         );
+    }
+
+    public void setProfile(MecanumDrive.DriveProfile profile) {
+        driveProfile = profile;
     }
 }
