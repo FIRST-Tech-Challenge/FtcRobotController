@@ -93,8 +93,14 @@ public class LeftAutoV2 extends LinearOpMode {
                         deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
                         servoSet = true;
                     }
-                    slides.runLeftSlideToPosition(0, 0.9);
-                    slides.runRightSlideToPosition(0, 0.9);
+                    if(slides.getLeftSlidePosition() !=0 || slides.getRightSlidePosition() !=0) {
+                        slides.runLeftSlideToPosition(0, 0.9);
+                        slides.runRightSlideToPosition(0, 0.9);
+                    }
+                    else if(slides.getRightSlidePosition() !=0 && slides.getLeftSlidePosition() !=0) {
+                        slides.runLeftSlideToPosition(0, 0.9);
+                        slides.runRightSlideToPosition(0, 0.9);
+                    }
                 }
                 while (deliveryTimer.seconds() > 13 && servoSet) {
                     telemetry.addLine("HELLO");

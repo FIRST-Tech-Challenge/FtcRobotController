@@ -302,7 +302,7 @@ public class TeleOpV1 extends OpMode {
                         differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                         differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
                     }
-                    if (grippersTimer.seconds() > 1) {
+                    if (grippersTimer.seconds() > 0.8) {
                         grippers.setPosition(constants.GRIPPERS_CLOSE);
                         if (!diffTimerIsReset) {
                             diffTimer.reset();

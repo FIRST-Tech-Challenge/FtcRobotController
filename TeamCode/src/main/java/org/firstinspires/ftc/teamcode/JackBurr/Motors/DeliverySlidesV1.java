@@ -18,15 +18,19 @@ public class DeliverySlidesV1 {
     }
 
     public void runLeftSlideToPosition(int position, double power){
-        leftSlide.setPower(power);
-        leftSlide.setTargetPosition(position);
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(leftSlide.getCurrentPosition() != position) {
+            leftSlide.setPower(power);
+            leftSlide.setTargetPosition(position);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public void runRightSlideToPosition(int position, double power){
-        rightSlide.setPower(power);
-        rightSlide.setTargetPosition(position);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(rightSlide.getCurrentPosition() != position) {
+            rightSlide.setPower(power);
+            rightSlide.setTargetPosition(position);
+            rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public int getLeftSlidePosition(){
