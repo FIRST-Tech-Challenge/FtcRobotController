@@ -42,7 +42,7 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1720;
+    final int VERTICAL_MAX = 1820;
     final int VERTICAL_MAX_VIPER = 1200;
     final int VERTICAL_DEFAULT_SPEED = 2000;
     int verticalAdjustedMin = 0;
@@ -51,7 +51,7 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
     final int VIPER_MAX_WIDE = 2000;
-    final int VIPER_MAX_TALL = 3300;
+    final int VIPER_MAX_TALL = 3200;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -60,11 +60,13 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
     Servo claw = null;
     final double CLAW_MIN = 0.2;        // Claw is closed
     final double CLAW_MAX = 0.8;        // Claw is open
-    double claw_position = CLAW_MAX;
+    double claw_position = CLAW_MIN;
 
-    Servo ascentStick = null;
-    final double ASCENT_MIN = 0.2;          // Stick is down
-    final double ASCENT_MAX = 0.49;         // Stick is up
+    // This chunk controls our wrist
+    Servo wrist = null;
+    final double WRIST_MIN = 0.2;       // Wrist is in intake position (picking up)
+    final double WRIST_MAX = 0.65;      // Wrist is in outtake position (dropping in basket)
+    double wrist_position = WRIST_MIN;  // Min might not be correct
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -76,11 +78,10 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "1/6/2024, 4:30 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "1/15/2024, 11:00 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         configureOtos();
-        setAscentStick(ASCENT_MIN);
         //claw.setPosition(CLAW_MAX);
         runtime.reset();
 
@@ -105,20 +106,13 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
             verticalPosition = vertical.getCurrentPosition();
             verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hits the ground, make this bigger. If it doesn't down far enough, make this smaller.
 
-            // If the right button is pressed AND it can safely raise further
-            if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {
-                setVertical(Math.min(VERTICAL_MAX, verticalPosition + 50), 2000);
+            // If the right button is pressed
+            if (gamepad1.dpad_right) {
+                setVertical(verticalPosition + 50, 1500);
             }
-            // If the left button is pressed AND it can safely lower without changing the viper
-            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MAX_VIPER) {
-                setVertical(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50), 1500);
-            }
-            // If the left button is pressed AND it can safely lower further
-            else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {
-                if (viperSlidePosition > VIPER_MAX_WIDE) {
-                    setViper(VIPER_MAX_WIDE, 1000);
-                }
-                setVertical(Math.max(verticalAdjustedMin, verticalPosition - 50),1000);
+            // If the left button is pressed
+            else if (gamepad1.dpad_left) {
+                setVertical(verticalPosition - 50, 1000);
             }
 
             // Control the viper slide - how much it extends
@@ -150,6 +144,15 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
                 claw_position -= 0.15;
             }
             claw.setPosition(claw_position);
+
+            // Control the wrist
+            if (gamepad1.dpad_down && wrist_position < WRIST_MAX) {
+                wrist_position += 0.3;
+            }
+            if (gamepad1.dpad_up && wrist_position > WRIST_MIN) {
+                wrist_position -= 0.15;
+            }
+            wrist.setPosition(wrist_position);
 
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
@@ -210,11 +213,12 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
-        claw.setPosition(CLAW_MAX);
+        claw.setPosition(CLAW_MIN);
 
-        ascentStick = hardwareMap.get(Servo.class, "ascentStick");
-        ascentStick.setDirection(Servo.Direction.REVERSE);
-        ascentStick.setPosition(ASCENT_MAX);
+        // todo: check this
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist.setDirection(Servo.Direction.REVERSE);
+        wrist.setPosition(WRIST_MAX);
     }
 
     private void setWheelPower(){
@@ -234,13 +238,12 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
         }
     }
 
-    public void setAscentStick(double target) {
-        RobotLog.vv("Rockin' Robots", "Set Ascent Stick to: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
-        ascentStick.setPosition(target);
+    public void setWrist(double target) { // todo: check this method
+        RobotLog.vv("Rockin' Robots", "Set Wrist to: %4.2f, Current: %4.2f", target, wrist.getPosition());
+        wrist.setPosition(target);
         //sleep(1000);
-        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, wrist.getPosition());
     }
-
 
     public void setVertical(int height){
         setVertical(height, VERTICAL_DEFAULT_SPEED);
@@ -286,21 +289,15 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
     private void printDataOnScreen() {
         telemetry.addData("Run Time", "%.1f", runtime.seconds());
         telemetry.addData("OTOS location: x, y, h", "%4.2f, %4.2f, %4.2f", xLoc, yLoc, hLoc);
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        //RobotLog.vv("RockinRobots", "%4.2f, %4.2f, %4.2f, %4.2f", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
-        telemetry.addData("Joystick Axial", "%4.2f", axial);
-        telemetry.addData("Joystick Lateral", "%4.2f", lateral);
-        telemetry.addData("Joystick Yaw", "%4.2f", yaw);
         telemetry.addData("Target claw position", "%4.2f", claw_position);
         telemetry.addData("Claw position", "%4.2f", claw.getPosition());
+        telemetry.addData("Wrist position", "%4.2f", wrist.getPosition());
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
         telemetry.addData("Vertical Power", "%.1f", ((DcMotorEx) vertical).getVelocity());
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
-        telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
         RobotLog.vv("Rockin", "Vert Velocity: %.1f, Vert Power: %.1f, Vert Power Consumption: %.1f, Vert Position: %d",
                 ((DcMotorEx) vertical).getVelocity(),  vertical.getPower(), ((DcMotorEx)vertical).getCurrent(CurrentUnit.AMPS), vertical.getCurrentPosition());
 
