@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -51,7 +50,8 @@ public class AutoBasket2024 extends DriveMethods {
             case ExtendSlider:
                 robot.sliderMotor.setPower(1);
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.sliderMotor.setTargetPosition(2000);
+                setSliderAndReturnConstraint(2000);
+
                 if (robot.sliderMotor.getCurrentPosition() >= 2000) {
                     currentState = State.OpenClaw;
                 }

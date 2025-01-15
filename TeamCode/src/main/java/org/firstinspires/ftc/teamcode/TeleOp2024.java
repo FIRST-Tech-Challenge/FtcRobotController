@@ -68,17 +68,7 @@ public class TeleOp2024 extends DriveMethods {
         robot.wormGear.setPower(wormGearPower);
 
         sliderPosition = sliderPosition + 10.0 * opRightStickY;
-        if (sliderPosition > robot.maxLegalSliderLength()) {
-            sliderPosition = robot.maxLegalSliderLength();
-        }
-        if (sliderPosition < robot.MIN_SLIDER_TICKS) {
-            sliderPosition = robot.MIN_SLIDER_TICKS;
-        }
-
-        if (sliderPosition > robot.MAX_SAFE_SLIDER_TICKS){
-            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
-        }
-        robot.sliderMotor.setTargetPosition((int) sliderPosition);
+        sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
         telemetry.addData("Lift","%.1f", opLeftStickY);
 //Lift means wormrote variable, which refers to the rotation of the worm gear

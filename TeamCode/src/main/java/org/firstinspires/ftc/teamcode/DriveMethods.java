@@ -51,10 +51,24 @@ public abstract class DriveMethods extends OpMode {
             robot.rightBackDrive.setPower(rightBackPower);
         }
     }
-    public void omniOp(double wormrote) {
-        robot.wormGear.setPower(wormrote);
+
+    /**
+     * Changes the slider's target position.
+     * This method will make sure the robot slider length stays safe and within the legal box limit.
+     * @param targetPosition the position in encoder ticks
+     * @return The target position, but within safe legal limits
+     */
+    double setSliderAndReturnConstraint(double targetPosition) {
+        double position = targetPosition;
+
+        position = Math.min(position, robot.maxLegalSliderLength());
+        position = Math.min(position, robot.MAX_SAFE_SLIDER_TICKS);
+        position = Math.max(position, robot.MIN_SLIDER_TICKS);
+
+        robot.sliderMotor.setTargetPosition((int) position);
+
+        return position;
     }
-    //wormrote variable controls vertical movement of the worm gear.
 }
 
 //Yaw=turn, Lateral=SideToSide,  Axial is Forward
