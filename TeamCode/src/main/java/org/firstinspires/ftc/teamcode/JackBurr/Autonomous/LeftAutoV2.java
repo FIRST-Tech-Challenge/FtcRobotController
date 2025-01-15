@@ -22,6 +22,7 @@ public class LeftAutoV2 extends LinearOpMode {
     public ElapsedTime deliveryTimer = new ElapsedTime();
     public int step = 0;
     public boolean servoSet = false;
+    public boolean traj4Followed = false;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -95,7 +96,7 @@ public class LeftAutoV2 extends LinearOpMode {
                     slides.runLeftSlideToPosition(0, 0.9);
                     slides.runRightSlideToPosition(0, 0.9);
                 }
-                while (deliveryTimer.seconds() > 13) {
+                while (deliveryTimer.seconds() > 13 && servoSet) {
                     telemetry.addLine("HELLO");
                     servoSet = false;
                     step = 2;
