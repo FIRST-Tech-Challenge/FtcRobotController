@@ -37,9 +37,9 @@ import java.util.Arrays;
 public class SwerveDrive {
     public TrajectoryVelocityConstraint velocityConstraint = new MinVelocityConstraint(Arrays.asList(
             new AngularVelocityConstraint(Math.toRadians(180)),
-            new MecanumVelocityConstraint(24, 11)
+            new MecanumVelocityConstraint(20, 11)
     ));
-    public TrajectoryAccelerationConstraint accelerationConstraint = new ProfileAccelerationConstraint(24);
+    public TrajectoryAccelerationConstraint accelerationConstraint = new ProfileAccelerationConstraint(20);
     public double maxAngAccel = Math.PI;
     public double maxAngVel = Math.PI;
     OpMode OM;

@@ -85,7 +85,14 @@ public class firstAuto extends OpMode {
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
-                .forward(36)
+                .forward(10)
+                .strafeRight(9)
+                .splineTo(new Vector2d(44,-11), 0)
+                .lineToConstantHeading(new Vector2d(48, -56))
+                .lineToConstantHeading(new Vector2d(50, -11))
+                .splineToConstantHeading(new Vector2d(52, -56), Math.toRadians(90))
+                .lineToConstantHeading(new Vector2d(60, -11))
+                .splineToConstantHeading(new Vector2d(63, -56), Math.toRadians(90))
                 .build();
 
 
@@ -130,7 +137,7 @@ public class firstAuto extends OpMode {
         now = rotateFTCLibPose(drive.nowPose);
         rotPower = -rotPID.calculate(now.getHeading(), trajPose.getHeading());
         xPower = txPID.calculate(now.getX(), trajPose.getX());
-        yPower = tyPID.calculate(now.getY(), trajPose.getY());
+        yPower = -tyPID.calculate(now.getY(), trajPose.getY());
 
         drive.loop(xPower, yPower, rotPower); // ignore the warning, is because of wpilib coord system
 

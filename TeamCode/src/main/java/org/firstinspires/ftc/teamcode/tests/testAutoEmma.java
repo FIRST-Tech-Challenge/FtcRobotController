@@ -85,7 +85,30 @@ public class testAutoEmma extends OpMode {
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
-                .splineTo(new Vector2d(36,-48),0)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
                 .build();
 
 
@@ -129,8 +152,9 @@ public class testAutoEmma extends OpMode {
         trajPose = getPoseAtTime(trajSequence, trajTimer.seconds());
         now = rotateFTCLibPose(drive.nowPose);
         rotPower = -rotPID.calculate(now.getHeading(), trajPose.getHeading());
-        xPower = -txPID.calculate(now.getX(), trajPose.getX());
-        yPower = tyPID.calculate(now.getY(), trajPose.getY());
+        // PSA: xPower = +txPID.calculate, yPower = -tyPID.calculate()
+        xPower = txPID.calculate(now.getX(), trajPose.getX());
+        yPower = -tyPID.calculate(now.getY(), trajPose.getY());
 
         drive.loop(xPower, yPower, rotPower); // ignore the warning, is because of wpilib coord system
 
