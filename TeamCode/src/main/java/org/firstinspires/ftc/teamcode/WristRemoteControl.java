@@ -174,42 +174,24 @@ public class WristRemoteControl extends LinearOpMode {
             }
             claw.setPosition(claw_position);
 
-            // Control the wrist
-            if (gamepad1.dpad_down && wrist_position < WRIST_MAX) {
-                wrist_position += 0.3;
-            }
-            if (gamepad1.dpad_up && wrist_position > WRIST_MIN) {
-                wrist_position -= 0.3;
-            }
-            wrist.setPosition(wrist_position);
-
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
-                setVertical(VERTICAL_MAX, 1000);
-                setViper(VIPER_MAX_TALL, 2000);
-                // todo: with a very heavy part of the robot quickly swinging backwards, it might tip. Test this and fine-tune speed.
-                setWrist(WRIST_MAX);
+                scoringPosition();
             }
 
             // A/X button: Complete Retraction- Viper and vertical completely retracted and down
             if (gamepad1.a) {
-                setViper(VIPER_MIN, 4000);
-                setVertical(VERTICAL_MIN, 700);
+                closedPosition();
             }
 
             // X/Square: The viper slide is completely retracted but the vertical is in submersible position.
             if (gamepad1.x) {
-                setVertical(355, 3000);
-                setViper(0, 1500);
-                wheelClimb = false;
-                setWrist(WRIST_MIN);
+                preparedPosition();
             }
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
             if (gamepad1.b) {
-                setVertical(380, 1800);
-                setViper(1900, 2000);
-                setWrist(WRIST_MIN);
+                pickupPosition();
             }
 
             // Show the elapsed game time and wheel power.
@@ -248,7 +230,7 @@ public class WristRemoteControl extends LinearOpMode {
         // todo: check this
         wrist = hardwareMap.get(Servo.class, "wrist");
         wrist.setDirection(Servo.Direction.REVERSE);
-        wrist.setPosition(WRIST_MAX);
+        setWrist(WRIST_MAX);
 
         ascentStick = hardwareMap.get(Servo.class, "ascentStick");
         ascentStick.setDirection(Servo.Direction.REVERSE);
@@ -270,6 +252,54 @@ public class WristRemoteControl extends LinearOpMode {
             leftBackPower /= max;
             rightBackPower /= max;
         }
+    }
+
+    public void scoringPosition() {
+        RobotLog.vv("Rockin' Robots", "Get in scoring position");
+        while (vertical.getCurrentPosition() < 1000 && viperSlide.getCurrentPosition() > 500) {
+            setViper(VIPER_MIN, 4000);
+        }
+        while (vertical.getCurrentPosition() < 1700) {
+            setVertical(VERTICAL_MAX, 3000);
+        }
+        setViper(VIPER_MAX_TALL, 4000);
+        setWrist(WRIST_MAX);
+    }
+
+    public void pickupPosition() {
+        RobotLog.vv("Rockin' Robots", "Get in pickup position");
+        while (viperSlide.getCurrentPosition() > 500) {
+            setViper(VIPER_MIN, 4000);
+        }
+        while (vertical.getCurrentPosition() < 500) {
+            setVertical(380, 3000);
+        }
+        setViper(VIPER_MAX_WIDE, 4000);
+        setWrist(WRIST_MIN);
+    }
+
+    public void preparedPosition() {
+        RobotLog.vv("Rockin' Robots", "Get in prepared position");
+        while (viperSlide.getCurrentPosition() > 500) {
+            setViper(VIPER_MIN, 4000);
+        }
+        while (vertical.getCurrentPosition() < 500) {
+            setVertical(380, 3000);
+        }
+        setViper(VIPER_MIN, 4000);
+        setWrist(WRIST_MIN);
+    }
+
+    public void closedPosition() {
+        RobotLog.vv("Rockin' Robots", "Get in closed position");
+        while (viperSlide.getCurrentPosition() > 500) {
+            setViper(VIPER_MIN, 4000);
+        }
+        while (vertical.getCurrentPosition() < 500) {
+            setVertical(VERTICAL_MIN, 3000);
+        }
+        setViper(VIPER_MIN, 4000);
+        setWrist(WRIST_MIN);
     }
 
     public void setAscentStick(double target) {
