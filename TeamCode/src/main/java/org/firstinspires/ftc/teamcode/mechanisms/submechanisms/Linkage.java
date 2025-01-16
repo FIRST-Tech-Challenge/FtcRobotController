@@ -11,7 +11,8 @@ public class Linkage {
     public static double position = 0;
     public final Servo linkageServo;
     public final double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
-    public final double placePos = Settings.Hardware.Servo.Linkage.PLACE_POSITION;
+    public final double placeForwardPos = Settings.Hardware.Servo.Linkage.PLACE_FORWARD_POSITION;
+    public final double placeBackwardPos = Settings.Hardware.Servo.Linkage.PLACE_BACKWARD_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
@@ -24,8 +25,11 @@ public class Linkage {
     public void setPosition(Position newPosition) {
         double oldPosition = position;
         switch (newPosition) {
-            case PLACE:
-                position = placePos;
+            case PLACE_FORWARD:
+                position = placeForwardPos;
+                break;
+            case PLACE_BACKWARD:
+                position = placeBackwardPos;
                 break;
             case TRANSFER:
             default:
@@ -36,10 +40,12 @@ public class Linkage {
     }
 
     public Position position() {
-        if (position == placePos) {
-            return Position.PLACE;
+        if (position == placeForwardPos) {
+            return Position.PLACE_FORWARD;
         } else if (position == transferPos) {
             return Position.TRANSFER;
+        } else if (position == placeBackwardPos) {
+            return Position.PLACE_BACKWARD;
         } else {
             return Position.UNKNOWN;
         }
@@ -50,12 +56,15 @@ public class Linkage {
         Position nextPosition;
 
         switch (currentPosition) {
-            case PLACE:
+            case PLACE_BACKWARD:
+                nextPosition = Position.PLACE_FORWARD;
+                break;
+            case PLACE_FORWARD:
                 nextPosition = Position.TRANSFER;
                 break;
             case TRANSFER:
             default:
-                nextPosition = Position.PLACE;
+                nextPosition = Position.PLACE_BACKWARD;
                 break;
         }
 
@@ -64,7 +73,8 @@ public class Linkage {
 
     public enum Position {
         TRANSFER,
-        PLACE,
+        PLACE_FORWARD,
+        PLACE_BACKWARD,
         UNKNOWN,
     }
 
