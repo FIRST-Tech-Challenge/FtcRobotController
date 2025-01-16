@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "#1 Deepak Fan", group = "Autonomous")
+@Autonomous(name = "deepak is sigma if he clicks on poop", group = "Autonomous")
 public class MeetFourAuto extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.LEFT;
 
@@ -147,12 +147,16 @@ public class MeetFourAuto extends LinearOpMode {
 
     public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, PlacementHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
+        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
+        TrajectoryActionBuilder unhookTrajectory = getUnhookTrajectory(sp, placingTrajectory);
 
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        hookChamber()));
+                        hookChamber(),
+                        unhookTrajectory.build(),
+                        unhookChamber()));
 
         return placingTrajectory;
     }
@@ -203,12 +207,13 @@ public class MeetFourAuto extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.outtake.claw.close();
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
             pause(500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             pause(200);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
-            pause(1000);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
+            pause(250);
             return false;
         }
     }
@@ -383,10 +388,10 @@ public class MeetFourAuto extends LinearOpMode {
         switch (sp) {
             case LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.position.y - 5);
+                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.position.y - 2);
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 5);
+                        .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 2);
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
