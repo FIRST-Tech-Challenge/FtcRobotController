@@ -222,25 +222,7 @@ public class BaseRobot {
             }
 
             if (contextualActions.justToggleClaw) {
-                switch (clawState) {
-                    case 1:
-                        clawState = 2;
-                        this.outtake.claw.forward();
-                        break;
-                    // temporary ahh solution to conner wanting the outtake to stop while moving
-                    case 2:
-                        clawState = -1;
-                        this.outtake.claw.stop();
-                        break;
-                    case -1:
-                        this.outtake.claw.backward();
-                        clawState = 0;
-                        break;
-                    default:
-                        clawState = 1;
-                        this.outtake.claw.stop();
-                        break;
-                }
+                this.outtake.claw.toggle();
             }
 
             if (contextualActions.justShoulderUp) {

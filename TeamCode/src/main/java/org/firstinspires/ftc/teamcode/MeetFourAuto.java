@@ -214,7 +214,7 @@ public class MeetFourAuto extends LinearOpMode {
     public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.claw.forward();
+            baseRobot.outtake.claw.close();
             pause(300);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             pause(2000);
@@ -232,7 +232,7 @@ public class MeetFourAuto extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             pause(300);
-            baseRobot.outtake.claw.backward();
+            baseRobot.outtake.claw.open();
             pause(300);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
