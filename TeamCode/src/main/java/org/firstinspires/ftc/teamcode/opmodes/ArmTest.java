@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -21,6 +22,16 @@ public class ArmTest extends LinearOpMode {
         DcMotor leftDrive  = hardwareMap.get(DcMotor.class, "armLeft");
         DcMotor rightDrive = hardwareMap.get(DcMotor.class, "armRight");
         DcMotor frontDrive = hardwareMap.get(DcMotor.class, "frontArm");
+
+        DcMotor spinner  = hardwareMap.get(DcMotor.class, "spinner");
+
+        CRServo slideServo = hardwareMap.get(CRServo.class, "slideServo");
+
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
         rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // make the motors brake when [power == 0]
@@ -29,33 +40,9 @@ public class ArmTest extends LinearOpMode {
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Getting some weird behaviour here where one motor is at -4500 or something
-        // while the other one is at 0 or 1
-        // - I believe it is because poor sensor connections by the build team
-        // Poor illustration below cause i got bored waiting...
-        /*
-
-              =\/= --> pos = 3850 which is likely correct
-               []
-               []
-               []             =\/= --> pos = -4000 which is NOT correct and changes wildly
-               []              []                  from this to 790 and other weird numbers
-            _______________________                which are different than the other elevator
-          //___>_______[]_______<___\\
-         [)[========================](] <-- Robot
-
-        */
-
-        // WORKING NOW BC OF FIX
 
         int rightStartingPos = rightDrive.getCurrentPosition();
         int leftStartingPos = leftDrive.getCurrentPosition();
-
-        // TODO: Find the root cause of the problem (inaccurate pos readings)
-        /// TEMP FIX TO COMBAT POOR WIRING ERRORS
-        leftStartingPos = 0;
-        rightStartingPos = 0;
-        ///
 
         int frontStartingPos = frontDrive.getCurrentPosition();
 
@@ -65,7 +52,7 @@ public class ArmTest extends LinearOpMode {
 
         rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //frontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
         if (opModeIsActive()) {
@@ -81,8 +68,8 @@ public class ArmTest extends LinearOpMode {
                 } else if (gamepad1.left_bumper) {
                     rightDrive.setPower(PARAMS.power);
                     leftDrive.setPower(PARAMS.power);
-                    rightDrive.setTargetPosition(rightStartingPos);
-                    leftDrive.setTargetPosition(leftStartingPos);
+                    rightDrive.setTargetPosition(rightStartingPos+50);
+                    leftDrive.setTargetPosition(leftStartingPos+50);
                 }
 
                 // TODO: Change to targetposition movement once motor is actually fixed
@@ -97,6 +84,12 @@ public class ArmTest extends LinearOpMode {
                 else {
                     frontDrive.setPower(0);
                 }
+                if (gamepad1.x) {
+                    spinner.setPower(-1.0);
+                }
+                else spinner.setPower(0);
+
+
 
                 /* ##################################################
                              TELEMETRY ADDITIONS
