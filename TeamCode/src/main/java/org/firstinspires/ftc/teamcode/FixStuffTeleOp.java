@@ -140,4 +140,21 @@ public class FixStuffTeleOp extends LinearOpMode{
         sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
+    public void transfer(){
+            hardware.claw.setPosition(Hardware.CLAW_OPEN);
+            hardware.arm.setTargetPosition(-30);
+            hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.arm.setPower(0.5);
+            hardware.wrist.setPosition(0);
+            sleep(500);
+            hardware.claw.setPosition(Hardware.CLAW_CLOSE);
+            sleep(1000);
+            hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+            sleep(500);
+            hardware.wrist.setPosition(Hardware.WRIST_UP);
+            hardware.arm.setTargetPosition(0);
+            hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            hardware.arm.setPower(0.5);
+            sleep(1000);
+    }
 }
