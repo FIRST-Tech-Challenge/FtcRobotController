@@ -40,7 +40,6 @@ public class Claw {
         } else {
             open();
         }
-        opened = !opened;
     }
 
 

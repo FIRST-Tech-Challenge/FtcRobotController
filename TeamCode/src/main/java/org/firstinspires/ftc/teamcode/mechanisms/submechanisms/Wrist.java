@@ -44,8 +44,6 @@ public class Wrist {
                 break;
         }
         wristLeft.setPosition(position[0]);
-        // added a delay, since the right servo seems to react ~45ms faster than the left servo
-        sleep(rightServoDelay);
         wristRight.setPosition(position[1]);
     }
 
