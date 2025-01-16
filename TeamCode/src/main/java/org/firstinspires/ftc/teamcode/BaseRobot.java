@@ -40,10 +40,7 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public int clawState = -1;
-
-    // boolean that controls whether wheel movements are flipped for making backwards movement easier
-    public boolean whyAgney = false;
+    public int clawState = 0;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -124,11 +121,10 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-
-        double frontLeft = (drivePower + strafePower + rotation) * (whyAgney ? -1 : 1);
-        double frontRight = (drivePower - strafePower - rotation) * (whyAgney ? -1 : 1);
-        double rearLeft = (drivePower - strafePower + rotation) * (whyAgney ? -1 : 1);
-        double rearRight = (drivePower + strafePower - rotation) * (whyAgney ? -1 : 1);
+        double frontLeft = drivePower + strafePower + rotation;
+        double frontRight = drivePower - strafePower - rotation;
+        double rearLeft = drivePower - strafePower + rotation;
+        double rearRight = drivePower + strafePower - rotation;
 
         logger.update("FRONT LEFT", String.valueOf(frontLeft));
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
@@ -153,14 +149,13 @@ public class BaseRobot {
         double brake = actions.brakeAmount;
 
         double powerMultiplier = 1 + (boost * 2) - brake;
-        double rotation = directions.rotation * powerMultiplier * (whyAgney ? -1 : 1);
+        double rotation = directions.rotation * powerMultiplier;
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
 
         logger.update("X", String.valueOf(directions.x));
         logger.update("Y", String.valueOf(directions.y));
         logger.update("strafe", String.valueOf(strafePower));
-        logger.update("Agney Mode", String.valueOf(whyAgney));
 
         /*
          * Drives the motors based on the given power/rotation
@@ -200,12 +195,11 @@ public class BaseRobot {
                     intake.horizontalSlide.decrement();
                 }
             } else {
-                // changed to 2 stages
                 if (contextualActions.justExtendHorizontal) {
-                    intake.horizontalSlide.max();
+                    intake.horizontalSlide.extend();
                 }
                 if (contextualActions.justRetractHorizontal) {
-                    intake.horizontalSlide.min();
+                    intake.horizontalSlide.retract();
                 }
             }
         }
@@ -227,39 +221,14 @@ public class BaseRobot {
                 }
             }
 
-            if (contextualActions.justInwardClaw) {
-                switch (clawState) {
-                    case 1:
-                        clawState = 0;
-                        this.outtake.claw.stop();
-                        break;
-                    default:
-                        clawState = 1;
-                        this.outtake.claw.forward();
-                        break;
-                }
-            }
-
-            if (contextualActions.justOutwardClaw) {
-                switch (clawState) {
-                    case -1:
-                        this.outtake.claw.stop();
-                        clawState = 0;
-                        break;
-                    default:
-                        clawState = -1;
-                        this.outtake.claw.backward();
-                        break;
-                }
+            if (contextualActions.justToggleClaw) {
+                this.outtake.claw.toggle();
             }
 
             if (contextualActions.justShoulderUp) {
                 outtake.linkage.cyclePosition();
             }
 
-            if (contextualActions.justFlipMovement) {
-                whyAgney = !whyAgney;
-            }
         }
 
         if (Settings.Deploy.LINEAR_ACTUATOR) {

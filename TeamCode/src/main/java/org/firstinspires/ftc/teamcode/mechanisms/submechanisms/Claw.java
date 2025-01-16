@@ -14,28 +14,34 @@ public class Claw {
     public final Servo clawServo;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
-    public boolean opened = false;
-    public double closePos = Settings.Hardware.Servo.Claw.CLOSED;
-    public double openPos = Settings.Hardware.Servo.Claw.OPEN;
+    public boolean opened = true;
 
     public Claw(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
         this.hardwareMap = baseRobot.hardwareMap;
         clawServo = hardwareMap.get(Servo.class, Settings.Hardware.IDs.CLAW);
-        stop();
+        close();
     }
 
-    public void forward() {
-        clawServo.setPosition(openPos);
+    public void open() {
+        clawServo.setPosition(Settings.Hardware.Servo.Claw.OPEN);
+        opened = true;
     }
 
     /* Close both servos */
-    public void backward() {
-        clawServo.setPosition(closePos);
+    public void close() {
+        clawServo.setPosition(Settings.Hardware.Servo.Claw.CLOSED);
+        opened = false;
     }
 
-    public void stop() {
-        clawServo.setPosition(openPos);
+    public void toggle() {
+        if (opened) {
+            close();
+        } else {
+            open();
+        }
+        opened = !opened;
     }
+
 
 }
