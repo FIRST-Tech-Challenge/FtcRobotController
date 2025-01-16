@@ -13,10 +13,14 @@ public class RobotHardware {
     public DcMotor leftClaw, rightClaw, leftHang, rightHang;
     public Servo leftRotation, rightRotation, rightClawServo, leftClawServo;
 
+    public DcMotorEx encoderLeft, encoderRight, encoderPerpedicular;
+
     // Initialization method to set up all hardware
     public void init(HardwareMap hardwareMap) {
         // Map each motor to its hardware configuration name
         frontLeftMotor = hardwareMap.get(DcMotor.class, "leftFront");
+        encoderLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
+
         backLeftMotor = hardwareMap.get(DcMotor.class, "leftBack");
         frontRightMotor = hardwareMap.get(DcMotor.class, "rightFront");
         backRightMotor = hardwareMap.get(DcMotor.class, "rightBack");
