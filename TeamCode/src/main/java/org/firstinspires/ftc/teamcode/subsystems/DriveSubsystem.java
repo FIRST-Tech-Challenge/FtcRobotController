@@ -41,7 +41,7 @@ public class DriveSubsystem {
     public void cartesianMove(double cmY, double cmX) {
         Vector target = new Vector(cmX, cmY);
 
-        final int TICKS_PER_CM = 18;
+        final int TICKS_PER_CM = 54;
 
         int xTicks = (int)(target.getX() * TICKS_PER_CM);
         int yTicks = (int)(target.getY() * TICKS_PER_CM);

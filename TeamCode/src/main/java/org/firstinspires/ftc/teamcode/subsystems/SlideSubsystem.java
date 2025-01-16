@@ -19,7 +19,7 @@ public class SlideSubsystem {
 
     // TODO: Change this to the correct value
 //    final double SLIDE_SCORING_IN_LOW_BASKET = 0.0;
-    final double SLIDE_SCORING_IN_HIGH_BASKET = 480.0;
+    final double SLIDE_SCORING_IN_HIGH_BASKET = 540.0;
     double slidePosition = SLIDE_COLLAPSED;
 
     public SlideSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -35,12 +35,12 @@ public class SlideSubsystem {
     }
 
 
-    private void readControls(Gamepad gamepad2) {
+    private void readControls(Gamepad gamepad) {
         double cycleTime = Common.cycleTime;
-        if (gamepad2.right_bumper) {
-            slidePosition += 850 * cycleTime;
-        } else if (gamepad2.left_bumper) {
-            slidePosition -= 850 * cycleTime;
+        if (gamepad.right_trigger > 0.5) {
+            slidePosition += 850 * cycleTime * gamepad.right_trigger * 2;
+        } else if (gamepad.left_trigger > 0.5) {
+            slidePosition -= 850 * cycleTime * gamepad.left_trigger * 2;
         }
         slidePosition = Common.clamp(slidePosition, SLIDE_COLLAPSED, SLIDE_SCORING_IN_HIGH_BASKET);
     }
@@ -51,6 +51,7 @@ public class SlideSubsystem {
     }
 
     public void updateTelemetry() {
+        Common.slidePosition = slideMotor.getCurrentPosition();
         telemetry.addData("SlideSubsystem Target Position", slideMotor.getTargetPosition());
         telemetry.addData("SlideSubsystem Encoder", slideMotor.getCurrentPosition());
         if (slideMotorEx != null) telemetry.addData("SlideSubsystem Current", slideMotorEx.getCurrent(CurrentUnit.AMPS));
@@ -65,7 +66,5 @@ public class SlideSubsystem {
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public double getSlidePosition() {
-        return slidePosition;
-    }
+
 }

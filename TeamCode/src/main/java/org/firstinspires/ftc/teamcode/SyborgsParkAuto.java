@@ -19,6 +19,7 @@ public class SyborgsParkAuto extends LinearOpMode {
     IntakeAndWristSubsystem intakeAndWrist;
     @Override
     public void runOpMode() throws InterruptedException {
+        waitForStart();
         initSubsystems();
         drive.cartesianMove(45, 1);
     }

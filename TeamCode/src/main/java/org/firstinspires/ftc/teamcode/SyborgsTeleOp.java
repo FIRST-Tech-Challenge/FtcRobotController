@@ -32,7 +32,6 @@ public class SyborgsTeleOp extends LinearOpMode {
 
             arm.handleMovementTeleOp(gamepad1, gamepad2);
             arm.updateTelemetry();
-            arm.updateArmSlideCompensation(slide.getSlidePosition());
 
             intakeAndWrist.handleMovementTeleOp(gamepad1, gamepad2);
             intakeAndWrist.updateTelemetry();

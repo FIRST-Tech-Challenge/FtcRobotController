@@ -13,57 +13,53 @@ public class ArmSubsystem {
     Telemetry telemetry;
 
     final double ARM_COLLECT = 0;
-    final double ARM_CLEAR_BARRIER = 15;
+    final double ARM_CLEAR_BARRIER = 14;
     final double ARM_SCORE_SPECIMEN = 90;
-    final double FUDGE_FACTOR = 15.0;
     final double ARM_SCORE_SAMPLE_IN_LOW = 90;
     final double ARM_ATTACH_HANGING_HOOK = 110;
-    final double ARM_SLIDE_COMPENSATION_FACTOR = 0.01291803147;
+    final double ARM_MAX_HEIGHT = 120;
+    double comp = 0;
+    final double ARM_SCORE_SAMPLE_IN_HIGH = 115;
     double armPosition = ARM_COLLECT;
-    double armPositionFudgeFactor;
 
     private final DcMotor armMotor;
     private final DcMotorEx armMotorEx;
-
+    @SuppressWarnings("unused")
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
-        readControls(gamepad1);
-
-        armPositionFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger));
+        readControls(gamepad2);
 
         setPosition();
     }
-
+    private void calculateCompensation() {
+        final double height = 200;
+        final double slideLength = 400;
+        double normalizedSlidePosition = Common.slidePosition;
+        comp = Math.toDegrees(Math.acos(height/(slideLength + normalizedSlidePosition)) - Math.acos(height/ slideLength))/1.3 + 2;
+        telemetry.addData("Compensation", comp);
+    }
     private void setPosition() {
-        armMotor.setTargetPosition((int) Common.degreesToTicks(armPosition + armPositionFudgeFactor));
+        calculateCompensation();
+        int pos = (int) Common.degreesToTicks(armPosition);
+        telemetry.addData("calculated position", pos);
+        armMotor.setTargetPosition(Math.max(pos, (int) Common.degreesToTicks(comp)));
         if (armMotorEx != null) {
-            armMotorEx.setVelocity(2100);
+            armMotorEx.setVelocity(1500 - armMotor.getCurrentPosition()*0.3);
             Common.warnIfOvercurrent(armMotorEx, telemetry, "ArmSubsystem");
         }
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
-    }
-    public void updateArmSlideCompensation(double liftPosition) {
-        double armSlideComp;
-        if (armPosition < Common.degreesToTicks(45)) {
-            armSlideComp = ARM_SLIDE_COMPENSATION_FACTOR * liftPosition;
-        } else {
-            armSlideComp = 0;
-        }
-        armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armSlideComp));
-    }
     public void updateTelemetry() {
         telemetry.addData("ArmSubsystem Target Position", armMotor.getTargetPosition());
         telemetry.addData("ArmSubsystem Encoder", armMotor.getCurrentPosition());
         if (armMotorEx != null) telemetry.addData("ArmSubsystem Current", armMotorEx.getCurrent(CurrentUnit.AMPS));
     }
-    private void readControls(Gamepad gamepad1) {
-        if (gamepad1.a) armPosition = ARM_COLLECT;
-        else if (gamepad1.b) armPosition = ARM_CLEAR_BARRIER;
-        else if (gamepad1.x) armPosition = ARM_SCORE_SAMPLE_IN_LOW;
-        else if (gamepad1.dpad_left) armPosition = ARM_COLLECT;
-        else if (gamepad1.dpad_right) armPosition = ARM_ATTACH_HANGING_HOOK;
-        else if (gamepad1.dpad_up) armPosition = ARM_ATTACH_HANGING_HOOK;
-        else if (gamepad1.dpad_down) armPosition = ARM_SCORE_SPECIMEN;
+    private void readControls(Gamepad gamepad) {
+        armPosition = Math.max(Math.min(armPosition + (100*Common.cycleTime * -gamepad.right_stick_y), ARM_MAX_HEIGHT), 0);
+        if (gamepad.a) armPosition = ARM_COLLECT;
+        else if (gamepad.b) armPosition = ARM_CLEAR_BARRIER;
+        else if (gamepad.x) armPosition = ARM_SCORE_SAMPLE_IN_LOW;
+        else if (gamepad.y) armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
     }
 
     public ArmSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -71,9 +67,9 @@ public class ArmSubsystem {
         armMotor = hardwareMap.dcMotor.get("AM");
         this.telemetry = telemetry;
         armMotorEx = Common.convertToDcMotorExOrWarn(armMotor, telemetry, "ArmSubsystem").orElse(null);
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

@@ -32,7 +32,7 @@ public class Common {
     public static double cycleTime;
     public static double loopTime;
     public static double oldTime;
-
+    public static double slidePosition = 0;
     public static void updateCycleTimes(double runtime) {
         loopTime = runtime;
         cycleTime = loopTime - oldTime;

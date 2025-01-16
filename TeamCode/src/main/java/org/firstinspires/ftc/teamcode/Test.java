@@ -35,8 +35,11 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Values can be customized
-            frontLeftDrive.setPower(gamepad1.left_stick_y);
-            frontRightDrive.setPower(gamepad1.right_stick_y);
+            frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+            frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+            frontLeftDrive.setPower(-gamepad1.left_stick_y);
+            frontRightDrive.setPower(-gamepad1.right_stick_y);
             backLeftDrive.setPower(gamepad1.left_stick_x);
             backRightDrive.setPower(gamepad1.right_stick_x);
 
