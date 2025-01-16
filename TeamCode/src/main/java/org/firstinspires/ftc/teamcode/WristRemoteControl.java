@@ -35,7 +35,7 @@ public class WristRemoteControl extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 2300; // todo: fine-tune this value
+    final int VERTICAL_MAX = 2155; // todo: fine-tune this value
     final int VERTICAL_MAX_VIPER = 1200;
     final int VERTICAL_CLIMB_POSITION = 2300;
     final int VERTICAL_DEFAULT_SPEED = 2000;
@@ -45,7 +45,7 @@ public class WristRemoteControl extends LinearOpMode {
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
     final int VIPER_MAX_WIDE = 2000;
-    final int VIPER_MAX_TALL = 3300;
+    final int VIPER_MAX_TALL = 2637;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -58,7 +58,7 @@ public class WristRemoteControl extends LinearOpMode {
     // This chunk controls our wrist (todo: update values)
     Servo wrist = null;
     final double WRIST_MIN = 0.2;       // Wrist is in intake position (picking up)
-    final double WRIST_MAX = 0.65;      // Wrist is in outtake position (dropping in basket)
+    final double WRIST_MAX = 0.8;      // Wrist is in outtake position (dropping in basket)
     double wrist_position = WRIST_MIN;  // Min might not be correct
 
     // This chunk controls our nose picker (ascent stick)
@@ -76,7 +76,7 @@ public class WristRemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "1/6/2024, 4:30 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "1/15/2024, 4:30 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         setAscentStick(ASCENT_MIN);
@@ -85,6 +85,7 @@ public class WristRemoteControl extends LinearOpMode {
 
         // Run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
             double max;
 
             // Get input from the joysticks
@@ -164,7 +165,6 @@ public class WristRemoteControl extends LinearOpMode {
                 ((DcMotorEx) viperSlide).setVelocity(gamepad1.left_trigger*4000);
                 viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
-
             // Control the claw
             if (gamepad1.right_bumper && claw_position < CLAW_MAX) {
                 claw_position += 0.3;
@@ -176,17 +176,18 @@ public class WristRemoteControl extends LinearOpMode {
 
             // Control the wrist
             if (gamepad1.dpad_down && wrist_position < WRIST_MAX) {
-                claw_position += 0.3;
+                wrist_position += 0.3;
             }
             if (gamepad1.dpad_up && wrist_position > WRIST_MIN) {
-                claw_position -= 0.15;
+                wrist_position -= 0.3;
             }
             wrist.setPosition(wrist_position);
 
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
-                setVertical(VERTICAL_MAX, 3000); // todo: with a very heavy part of the robot quickly swinging backwards, it might tip. Test this and fine-tune speed.
+                setVertical(VERTICAL_MAX, 1000);
                 setViper(VIPER_MAX_TALL, 2000);
+                // todo: with a very heavy part of the robot quickly swinging backwards, it might tip. Test this and fine-tune speed.
                 setWrist(WRIST_MAX);
             }
 
@@ -285,7 +286,6 @@ public class WristRemoteControl extends LinearOpMode {
         RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, wrist.getPosition());
     }
 
-
     public void setVertical(int height){
         setVertical(height, VERTICAL_DEFAULT_SPEED);
     }
@@ -319,6 +319,7 @@ public class WristRemoteControl extends LinearOpMode {
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
         telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
+        telemetry.addData("wrist position", "%4.2f", wrist.getPosition());
         RobotLog.vv("Rockin", "Vert Velocity: %.1f, Vert Power: %.1f, Vert Power Consumption: %.1f, Vert Position: %d",
                 ((DcMotorEx) vertical).getVelocity(),  vertical.getPower(), ((DcMotorEx)vertical).getCurrent(CurrentUnit.AMPS), vertical.getCurrentPosition());
 
