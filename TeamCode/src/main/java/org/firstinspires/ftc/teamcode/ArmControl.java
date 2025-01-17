@@ -10,7 +10,7 @@ public class ArmControl extends LinearOpMode {
   public int clawIdx = 1;
   public int armIdx = 2;
 
-  public float[] servoRotations = List.of(0, 0, 0;
+  public float[] servoRotations = List.of(0, 0, 0);
   
   // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
 
