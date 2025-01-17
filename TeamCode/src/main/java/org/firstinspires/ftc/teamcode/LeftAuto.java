@@ -117,6 +117,14 @@ public class LeftAuto extends LinearOpMode {
         return result;
     }
 
+    /* Add Ryan's fourthSample() from FixStuffTeleOp.java here
+    private ITask fourthYellow() {
+        Itask result = groupOf(inner -> ());
+
+        return result;
+    }
+    */
+
     private ITask scoreHighBasket() {
         return groupOf(inner -> inner.add(groupOf(a -> {
                     a.add(vLiftProxy.moveTo(HIGH_BASKET_TICKS, 5, 2.0));
@@ -195,6 +203,7 @@ public class LeftAuto extends LinearOpMode {
                 .then(scoreHighBasket())
                 .then(moveTo(new Pose(30.75, 12.75, Math.toRadians(75))))
                 .then(await(1000))
+                // .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 // ====
