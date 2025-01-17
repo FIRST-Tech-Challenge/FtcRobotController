@@ -36,7 +36,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     //TODO: Change these to 1 and re-tune
     public static double X_MULTIPLIER = 0.08430913348946135831381733021077; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 0.10605776937237221622292046860447; // Multiplier in the Y direction
+    public static double Y_MULTIPLIER = -0.08229482696270445024027760374233; // Multiplier in the Y direction
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -55,13 +55,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "fr"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "br"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "bl"));
-
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
         // 2 = br = Right
         // 3 = fr = Left
         // 1 = bl = Middle
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
