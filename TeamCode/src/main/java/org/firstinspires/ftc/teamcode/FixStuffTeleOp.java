@@ -103,6 +103,8 @@ public class FixStuffTeleOp extends LinearOpMode{
         }
     }
     public void SlideOut() {
+        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
         hardware.horizontalLeft.setPosition(1-Hardware.RIGHT_SLIDE_OUT);
         sleep(500);
@@ -122,6 +124,8 @@ public class FixStuffTeleOp extends LinearOpMode{
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
     public void FourthSample(){
+        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        sleep(500);
         double PartialFlip = 0.167;
         hardware.clawFlip.setPosition(PartialFlip);
         sleep(500);

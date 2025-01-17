@@ -86,7 +86,7 @@ public class LeftAuto extends LinearOpMode {
                         .then(await(250))
                         .then(run(() -> {
                             hardware.wrist.setPosition(0);
-                            hardware.arm.setTargetPosition(-28);
+                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
