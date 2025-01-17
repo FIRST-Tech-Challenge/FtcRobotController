@@ -113,6 +113,7 @@ public class Input {
         motors.MoveMotor(Motors.Type.UpArm, realPower);
 
             BotTelemetry.addData("real Power" , realPower);
+            BotTelemetry.addData("upArm Pos", motors.getUpArmPosition());
     }
 
 

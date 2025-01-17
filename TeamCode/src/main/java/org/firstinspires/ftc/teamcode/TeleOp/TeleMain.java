@@ -25,8 +25,8 @@ public class TeleMain extends LinearOpMode {
 
         waitForStart();
 
-        //Servos servos = new Servos(hardwareMap);
-        //Motors motors = new Motors(hardwareMap);
+        Servos servos = new Servos(hardwareMap);
+        Motors motors = new Motors(hardwareMap);
         Input input = new Input(hardwareMap);
 
 
@@ -50,7 +50,7 @@ public class TeleMain extends LinearOpMode {
 
             input.arm(arm);
 
-
+            input.calculatePosition();
 
             BotTelemetry.addData("MOVE:",  move);
             BotTelemetry.addData("SPIN:",  spin);
