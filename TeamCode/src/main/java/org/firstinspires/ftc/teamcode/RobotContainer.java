@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystems.Arm.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Arm.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain.ChassisSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperCommands.CloseGripper;
 import org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperSubsystem;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 
@@ -29,15 +28,13 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     BTController m_controller;
 
 
-    public RobotContainer(HardwareMap map, Gamepad gamepad1, Gamepad gamepad2){
+    public RobotContainer(HardwareMap map, BTController gamepad1){
         m_extension = new ExtensionSubsystem(map);
         //m_gripper = new GripperSubsystem(map);
         m_chassis = new ChassisSubsystem(map);
-        this.gamepad1 = gamepad1;
-        m_pivot = new PivotSubsystem(map, m_extension::getArmLength, gamepad1);
+        m_pivot = new PivotSubsystem(map, m_extension::getArmLength);
 
-        this.gamepad2 = gamepad2;
-        m_controller = new BTController(gamepad1);
+        m_controller = gamepad1;
         resetGyro();
         configureBinds();
     }
@@ -46,9 +43,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     }
     private void configureBinds() {
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
-                        () -> squareInput(-m_controller.left_y.getAsDouble()),
-                        () -> squareInput(m_controller.left_x.getAsDouble()),
-                        () -> squareInput(m_controller.right_trigger.getAsDouble() - m_controller.left_trigger.getAsDouble())),
+                        () -> squareInput(-m_controller.getAxisValue(BTController.Axes.LEFT_Y_axis)),
+                        () -> squareInput(m_controller.getAxisValue(BTController.Axes.LEFT_X_axis)),
+                        () -> squareInput(m_controller.getAxisValue(BTController.Axes.RIGHT_TRIGGER_axis) - m_controller.getAxisValue(BTController.Axes.LEFT_TRIGGER_axis))),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
         m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
         m_controller.assignCommand(setIdle(), false,BUTTON_UP);
@@ -73,5 +70,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return new SequentialCommandGroup(m_pivot.set(closed), m_extension.setExtension(extended));
     }
 
+    public void period(){
+        //can be used for general telemetry
+    }
 
 }
