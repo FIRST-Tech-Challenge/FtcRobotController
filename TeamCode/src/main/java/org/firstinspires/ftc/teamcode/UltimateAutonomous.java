@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -25,10 +24,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Autonomous(name = "THE ULTIMATE AUTONOMOUS", group = "Autonomous")
 public class UltimateAutonomous extends LinearOpMode {
-    StartingPosition startingPosition = StartingPosition.LEFT;
+    StartingPosition startingPosition = StartingPosition.RIGHT;
 
     private static final String[] MENU_OPTIONS = {
-            "Left", "Right", "Confirm"
+            "Right", "Left", "Confirm"
     };
 
     private BaseRobot baseRobot;
@@ -37,7 +36,6 @@ public class UltimateAutonomous extends LinearOpMode {
 
     private Pose2d initialPose;
 
-    private FtcDashboard dashboard;
 
     public AdaptiveCalibration adaptiveCalibration;
 
@@ -47,7 +45,6 @@ public class UltimateAutonomous extends LinearOpMode {
         DynamicInput dynamicInput = new DynamicInput(gamepad1, gamepad2,
                 Settings.DEFAULT_PROFILE, Settings.DEFAULT_PROFILE);
         baseRobot = new BaseRobot(hardwareMap, dynamicInput, this, telemetry);
-        dashboard = FtcDashboard.getInstance();
 
         AtomicBoolean menuActive = new AtomicBoolean(true);
         AtomicInteger currentSelection = new AtomicInteger(0);
@@ -211,9 +208,9 @@ public class UltimateAutonomous extends LinearOpMode {
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
             pause(500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
-            pause(200);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
-            pause(250);
+            pause(1000);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
+            pause(1000);
             return false;
         }
     }
