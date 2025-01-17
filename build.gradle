@@ -16,7 +16,7 @@ buildscript {
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
         // no lol -Miles
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.android.tools.build:gradle:8.7.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.adarshr:gradle-test-logger-plugin:4.0.0"
     }

@@ -54,12 +54,12 @@ public class FixStuffTeleOp extends LinearOpMode{
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
-        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
 
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.arm.setPower(0.3);
-        hardware.wrist.setPosition(0.28);
+        hardware.wrist.setPosition(Hardware.WRIST_BACK);
         hardware.claw.setPosition(Hardware.CLAW_CLOSE);
         hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
         // we don't have the proxy object to handle this for us
@@ -90,6 +90,10 @@ public class FixStuffTeleOp extends LinearOpMode{
             }
             if (gamepad1.x){
                 FourthSample();
+            }
+
+            if (gamepad1.y) {
+                transfer();
             }
 
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
@@ -141,20 +145,23 @@ public class FixStuffTeleOp extends LinearOpMode{
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
     public void transfer(){
+            hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
             hardware.claw.setPosition(Hardware.CLAW_OPEN);
-            hardware.arm.setTargetPosition(-30);
+            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
             hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hardware.arm.setPower(0.5);
             hardware.wrist.setPosition(0);
             sleep(500);
             hardware.claw.setPosition(Hardware.CLAW_CLOSE);
-            sleep(1000);
+            sleep(500);
             hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
             sleep(500);
-            hardware.wrist.setPosition(Hardware.WRIST_UP);
+
             hardware.arm.setTargetPosition(0);
             hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             hardware.arm.setPower(0.5);
-            sleep(1000);
+            sleep(500);
+            hardware.wrist.setPosition(Hardware.WRIST_BACK);
+            sleep(500);
     }
 }
