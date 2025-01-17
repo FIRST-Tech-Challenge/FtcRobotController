@@ -40,7 +40,6 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public int clawState = 0;
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -221,8 +220,8 @@ public class BaseRobot {
                 }
             }
 
-            if (contextualActions.justToggleClaw) {
-                this.outtake.claw.toggle();
+            if (contextualActions.toggleClaw) {
+                outtake.claw.toggle();
             }
 
             if (contextualActions.justShoulderUp) {

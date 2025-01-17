@@ -54,8 +54,8 @@ public class Settings {
             @Config
             public static class Claw {
                 /** Values for open and closed positions on the outtake claw */
-                public static double OPEN = 0.3;
-                public static double CLOSED = 0.05;
+                public static double OPEN = 0;
+                public static double CLOSED = 1;
             }
 
             @Config
@@ -66,9 +66,9 @@ public class Settings {
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.1;
-                public static double HIGH_RUNG_POSITION = 0.75;
-                public static double PLACE_POSITION = 0.93;
+                public static double TRANSFER_POSITION = 0.0;
+                public static double PLACE_FORWARD_POSITION = 0.3;
+                public static double PLACE_BACKWARD_POSITION = 1.0;
 
             }
         }
@@ -126,7 +126,7 @@ public class Settings {
         public static class HorizontalSlide {
             // Positions in encoder ticks
             // TODO: TUNE
-            public static int COLLAPSED = -125;
+            public static int COLLAPSED = 0;
             public static int LEVEL_1 = -200;
             public static int LEVEL_2 = -400;
             public static int EXPANDED = -600;
@@ -156,41 +156,26 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d RED_LEFT_INITIAL_POSE = new Pose2d(-36, -70, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_INITIAL_POSE = new Pose2d(11.5, -60, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_INITIAL_POSE = new Pose2d(36, 60, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_INITIAL_POSE = new Pose2d(-11.5, 60, Math.toRadians(270));
+            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
+            public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -70, Math.toRadians(90));
 
             // Updated parked positions for each starting position
-            public static Vector2d RED_LEFT_JUST_PARK_VEC = new Vector2d(45, -58);
-            public static Vector2d RED_RIGHT_JUST_PARK_VEC = new Vector2d(55, -58);
-            public static Vector2d BLUE_LEFT_JUST_PARK_VEC = new Vector2d(-44, 58);
-            public static Vector2d BLUE_RIGHT_JUST_PARK_VEC = new Vector2d(-55, 58);
+            public static Vector2d LEFT_JUST_PARK_VEC = new Vector2d(45, -58);
+            public static Vector2d RIGHT_JUST_PARK_VEC = new Vector2d(55, -58);
 
             // place positions for each starting position
-            public static Pose2d RED_LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(270));
-            public static Pose2d RED_RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(270));
-            public static Pose2d BLUE_LEFT_CHAMBER_POSE = new Pose2d(-5, 29, Math.toRadians(90));
-            public static Pose2d BLUE_RIGHT_CHAMBER_POSE = new Pose2d(5, 29, Math.toRadians(90));
+            public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(90));
+            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d RED_BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
-            public static Pose2d BLUE_BASKET_POSE = new Pose2d(55, 55, Math.toRadians(225));
+            public static Pose2d HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
 
-            public static Pose2d RED_HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
-            public static Pose2d BLUE_HP_POSE = new Pose2d(-36, 55.0, Math.toRadians(135));
+            public static Vector2d PARK_MIDDLEMAN = new Vector2d(-38.5, -30);
 
-            public static Vector2d RED_PARK_MIDDLEMAN = new Vector2d(-38.5, -30);
-            public static Vector2d BLUE_PARK_MIDDLEMAN = new Vector2d(40, 30);
-
-            public static Pose2d RED_LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
-            public static Pose2d RED_RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
-            public static Pose2d BLUE_LEFT_BEFORE_PARK_POSE = new Pose2d(45, -9.5, Math.toRadians(270));
-            public static Pose2d BLUE_RIGHT_BEFORE_PARK_POSE = new Pose2d(45, 9.5, Math.toRadians(270));
-
-            public static Pose2d RED_LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
-            public static Pose2d RED_RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
-            public static Pose2d BLUE_LEFT_PARK_POSE = new Pose2d(26, -13, Math.toRadians(90));
-            public static Pose2d BLUE_RIGHT_PARK_POSE = new Pose2d(26, 10, Math.toRadians(90));
+            public static Pose2d LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
+            public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
+            public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
+            public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
         }
 
         @Config
@@ -237,7 +222,7 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
-        public boolean freaky_horizontal = true;
+        public boolean freaky_horizontal = false;
         public boolean freaky_vertical = true;
 
         public final ButtonMapping buttonMapping;
@@ -260,8 +245,8 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendHorizontal = GamepadButton.X;
-        public GamepadButton retractHorizontal = GamepadButton.B;
+        public GamepadButton extendHorizontal = GamepadButton.B;
+        public GamepadButton retractHorizontal = GamepadButton.X;
         public final GamepadButton retractVertical = GamepadButton.LEFT_BUMPER;
         public final GamepadButton extendVertical = GamepadButton.RIGHT_BUMPER;
 
@@ -269,17 +254,16 @@ public class Settings {
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
         public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
         public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
-        public final GamepadButton flipMovement = GamepadButton.A;
 
-        public GamepadButton rotateRight = GamepadButton.B;
+        public GamepadButton rotateRight = GamepadButton.A;
         public GamepadButton rotateLeft = GamepadButton.X;
 
         // Claw controls
         public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
-        public final GamepadButton clawIn = GamepadButton.Y;
-        public final GamepadButton clawOut = GamepadButton.RIGHT_STICK_BUTTON;
+        public final GamepadButton clawIn = GamepadButton.OPTIONS;
+        public final GamepadButton clawOut = GamepadButton.START;
         public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
 
         // Wrist controls

@@ -12,6 +12,7 @@ public class HorizontalSlide implements ViperSlide {
     private final BaseRobot baseRobot;
     private double encoderTarget;
     private HorizontalPosition currentPosition;
+    private String deepak = "bad at coding";
 
     public HorizontalSlide(@NonNull BaseRobot baseRobot) {
         this.baseRobot = baseRobot;
