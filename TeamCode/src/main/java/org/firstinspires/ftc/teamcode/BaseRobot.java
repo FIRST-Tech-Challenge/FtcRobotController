@@ -222,7 +222,13 @@ public class BaseRobot {
             }
 
             if (contextualActions.justToggleClaw) {
-                outtake.claw.toggle();
+                if (clawOpen) {
+                    outtake.claw.close();
+                    clawOpen = false;
+                } else {
+                    outtake.claw.open();
+                    clawOpen = true;
+                }
             }
 
             if (contextualActions.justShoulderUp) {
