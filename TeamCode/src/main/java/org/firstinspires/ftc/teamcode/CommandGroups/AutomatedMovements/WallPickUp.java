@@ -75,9 +75,9 @@ public class WallPickUp extends SequentialCommandGroup {
                     Pose2d correctedPosition;
                     if (RobotContainer.rightDistance.getDistance() > 20.0 && RobotContainer.rightDistance.getDistance() < 58.0) {
                         if (RobotContainer.isRedAlliance)
-                            correctedPosition = new Pose2d(1.78435 - 0.19 + 0.0 - 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                            correctedPosition = new Pose2d(1.78435 - 0.19 + 0.03 - 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
                         else
-                            correctedPosition = new Pose2d(-1.78435 + 0.19 - 0.0 + 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
+                            correctedPosition = new Pose2d(-1.78435 + 0.19 - 0.03 + 0.01 * RobotContainer.rightDistance.getDistance(), position.getY(), position.getRotation());
 
                         RobotContainer.odometry.setCurrentPos(correctedPosition);
                     }
