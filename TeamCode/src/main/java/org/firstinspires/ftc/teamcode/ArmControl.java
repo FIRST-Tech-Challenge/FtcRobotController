@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class ArmControl extends LinearOpMode {
   public int linearRailIdx = 0;
-  public float linearRailRotation = 0;
-  private List<Integer> sigma = new ArrayList<>();
   public int clawIdx = 1;
-  public float clawRotation = 0;
   public int armIdx = 2;
-  public float armRotation = 0;
+
+  public float[] servoRotations = List.of(0, 0, 0;
   
   // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
 
@@ -21,11 +19,12 @@ public class ArmControl extends LinearOpMode {
   
   private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
   public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
+
+  // NEED TO ADJUST CLOSE AND OPEN CLAW POSITIONS
+  public float closeClawPosition = 0;
+  public float uncloseClawPosition = 0;
+  
   public void runOpMode() throws InterruptedException {
-
-
-    servoIdentity.get(linearRailIdx).setDirection(Servo.Direction.FORWARD);
-
     telemetry.addData("Status", "Initialized");
     telemetry.update();
 
@@ -33,7 +32,20 @@ public class ArmControl extends LinearOpMode {
     waitForStart();
 
     while (opModeIsActive()) {
-      SetServoPosition(linearRailIdx, linearRailRotation);
+      if (gamepad1.y) {
+        SetServoPosition(linearRailIdx, servoRotations.get(linearRailIdx) + 1);
+      }
+
+      if (gamepad1.a) {
+        SetServoPosition(linearRailIdx, servoRotations.get(linearRailIdx) - 1);
+      }
+
+      if (gamepad1.b) {
+        SetServoPosition(clawIdx, closeClawPosition);
+      } else {
+        SetServoPosition(clawIdx, uncloseClawPosition);
+      }
+      
       ConfineServoBoundaries();
       
       telemetry.addData("Servo Position", linearRailPosition);
@@ -58,7 +70,7 @@ public class ArmControl extends LinearOpMode {
     }
   }
 
-   public void SetServoRotation(int servoIdx, float position) {
-    servoIdentity.get(servoIdx).setPosition(position);
+  public void SetServoRotation(int servoIdx, float position) {
+    servoIdentity.set(servoIdx).setPosition(position);
   }
 }
