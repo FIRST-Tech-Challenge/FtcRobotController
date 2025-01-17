@@ -150,7 +150,7 @@ public class UltimateAutonomous extends LinearOpMode {
 
     public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, PlacementHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
+        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
         TrajectoryActionBuilder unhookTrajectory = getUnhookTrajectory(sp, placingTrajectory);
 
@@ -238,7 +238,6 @@ public class UltimateAutonomous extends LinearOpMode {
         public boolean run(@NonNull TelemetryPacket packet) {
             baseRobot.outtake.claw.close();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
             pause(1000);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
             pause(1500);
@@ -417,10 +416,10 @@ public class UltimateAutonomous extends LinearOpMode {
         switch (sp) {
             case LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.position.y - 2);
+                        .lineToY(Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.position.y - 5);
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 2);
+                        .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 5);
             default:
                 return previousTrajectory.endTrajectory().fresh();
         }
