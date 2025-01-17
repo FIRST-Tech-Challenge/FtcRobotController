@@ -20,16 +20,16 @@ public class Wrist {
     // Constants
     // ---------------------------------------------------------------------------------------------
     private static final String SUBSYSTEM_NAME = "Wrist";
-    public static double HOME = 0.51;
+    public static double HOME = 0.1 ;
 
-    public static double STRIGHT = 0.4;
+    public static double STRIGHT = 0.1;
 
-    public static double SCORESAMPLE = 0.65 ;
-    public static double OPEN_MIN = 0.13;
+    public static double SCORESAMPLE = 0.2 ;
+    public static double OPEN_MIN = 0;
     public static double BACK  = 0;
 
 
-    private final double FRONT = 1;
+    private final double FRONT = 0.2;
     private static final double ANGLE_TOLERANCE = 10;
     public static final double FULL_RANGE = 291 - 24; // TODO: Verify real values from CAD
 
@@ -92,8 +92,8 @@ public class Wrist {
     // Initialization
     // ---------------------------------------------------------------------------------------------
     public void init() {
-        wristLeft.setDirection(Servo.Direction.REVERSE);
-        wristRight.setDirection(Servo.Direction.FORWARD);
+        wristLeft.setDirection(Servo.Direction.FORWARD);
+        wristRight.setDirection(Servo.Direction.REVERSE);
         pid.setTolerance(ANGLE_TOLERANCE);
         angleServo.setDirection(Servo.Direction.REVERSE);
         angleServo.setPosition(0);

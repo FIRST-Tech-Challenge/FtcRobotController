@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.EasyGamepad;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @TeleOp(name = "IntakeTeleTest",group = "Tests")
 public class IntakeTestTeleOp extends LinearOpMode {
     private final FtcDashboard dash = FtcDashboard.getInstance();

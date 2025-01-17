@@ -43,15 +43,7 @@ public class ArmTuningTest extends LinearOpMode {
             }
             runningActions = newActions;
 
-            if (doOne) {
-                runningActions.clear();
-                runningActions.add(arm.moveAngle());
-                runningActions.add(arm.setAngle(15));
-                doOne = false;
-            }
-            if (gamepad1.cross){
-                wrist.stright();
-            }
+
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
             telemetry.update();

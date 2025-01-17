@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @TeleOp(name = "WristTest",group = "Tests")
 public class WristTest extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
@@ -28,10 +27,16 @@ public class WristTest extends LinearOpMode {
             TelemetryPacket packet = new TelemetryPacket();
              wrist.setPosAng(0.5);
             if (gamepad1.cross){
-                wrist.home();
+                wrist.close();
             }
             else if (gamepad1.circle){
+                wrist.open();
+            }
+            else if (gamepad1.triangle){
                 wrist.scoreSample();
+            }
+            else if(gamepad1.square) {
+                        wrist.stright();
             }
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

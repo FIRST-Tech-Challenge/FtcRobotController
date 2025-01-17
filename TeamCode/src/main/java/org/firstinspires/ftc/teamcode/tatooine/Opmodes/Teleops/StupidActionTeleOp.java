@@ -38,7 +38,7 @@ public class StupidActionTeleOp extends LinearOpMode {
 
     private boolean doOne = true;
 
-    private boolean dPadRightTriggered = false;
+    private boolean dPAdRightToggle = false;
 
     private boolean lockExtend = false;
 
@@ -51,6 +51,8 @@ public class StupidActionTeleOp extends LinearOpMode {
     private boolean circleToggle = false;
 
     private boolean intaking = false;
+
+    private boolean scoreSample = false;
 
     @Override
     public void runOpMode() {
@@ -97,71 +99,60 @@ public class StupidActionTeleOp extends LinearOpMode {
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
                 lockExtend = !lockExtend;
             }
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {
                 lockAngle = !lockAngle;
             }
-            if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && !circleToggle) {
-                wrist.stright();
-            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE) && circleToggle) {
-                wrist.openMin();
+            if (!lockExtend){
+                arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
             }
-                if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
-                    lockWrist = !lockWrist;
+            if (!lockAngle){
+                runningActions.clear();
+                arm.setPowerAngleWithF(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
+            }
+            if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPAdRightToggle){
+                lockAngle = true;
+                lockExtend = true;
+                dPAdRightToggle = true;
+                intaking = true;
+                runningActions.clear();
+                wrist.setPosAng(0.5);
+                wrist.stright();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(new SequentialAction(arm.setAngle(15), new InstantAction(() ->wrist.stright()), arm.setExtension(Arm.getMaxExtend()/2), wrist.moveToAngle(60)));
+            }
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && dPAdRightToggle) {
+                lockAngle = true;
+                lockExtend = true;
+                dPAdRightToggle = false;
+                intaking = true;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(new SequentialAction(arm.setAngle(15 * ((arm.getMinExtend() + arm.getExtend())) / arm.getMinExtend()), new InstantAction(() -> wrist.openMin()), intake.intake(), new SleepAction(2), arm.setAngle(-8), new SleepAction(2), intake.setPowerAction(0)));
+            }   else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
+                lockAngle = true;
+                lockExtend = true;
+                scoreSample = true;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(new SequentialAction(arm.setAngle(90), new InstantAction(()-> wrist.openMin()), new SleepAction(1), arm.setExtension(Arm.getMaxExtend()), new InstantAction(()-> wrist.scoreSample()), intake.outtake()));
                 }
-                if (!lockExtend) {
-                    arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
-                }
-                if (!lockAngle) {
-                    runningActions.clear();
-                    arm.setPowerAngleWithF(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
-                } else if (lockAngle && !prevLockAngle) {
-                    runningActions.add(arm.setAngle(arm.getAngle()));
-                    runningActions.add(arm.moveAngle());
-                }else if (lockAngle && !prevLockAngle) {
-                    runningActions.add(arm.moveAngle());
-                }
-                if (!lockWrist) {
-                    wrist.setPosition(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-                }
-                if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)){
-                    wrist.openMin();
-                    intake.setPowerFun(1);
-                }
-                else if (gamepadEx2.getButton(GamepadKeys.Button.LEFT_BUMPER)){
-                    wrist.scoreSample();
-                    intake.setPowerFun(0);
-                }
-                if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN)) {
-                    runningActions.clear();
-                    lockExtend = true;
-                    lockAngle = true;
-                    runningActions.add(arm.moveAngle());
-                    runningActions.add(new SequentialAction(intake.setPowerAction(0), new InstantAction(() -> wrist.close()), new SleepAction(1), new ParallelAction(arm.setExtension(0), new InstantAction(() -> wrist.home())), arm.setAngle(0)));
-                } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)) {
-                    runningActions.clear();
-                    lockExtend = true;
-                    lockAngle = true;
-                    runningActions.add(arm.moveAngle());
-                    runningActions.add(new SequentialAction(arm.setAngle(90), arm.setExtension(Arm.getMaxExtend()), new InstantAction(() -> wrist.scoreSample()), new SleepAction(1), intake.outtake(), new SleepAction(1), intake.setPowerAction(0)));
-                } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && !dPadRightTriggered) {
-                    runningActions.clear();
-                    dPadRightTriggered = true;
-                    lockExtend = true;
-                    lockAngle = true;
-                    runningActions.add(arm.moveAngle());
-                    runningActions.add(new SequentialAction(new InstantAction(() -> wrist.stright()), arm.setAngle(15), arm.setExtension(0.5 * Arm.getMaxExtend())));
-                } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_RIGHT) && dPadRightTriggered) {
-                    runningActions.clear();
-                    dPadRightTriggered = false;
-                    lockExtend = true;
-                    lockAngle = true;
-                    runningActions.add(arm.moveAngle());
-                    runningActions.add(new SequentialAction(arm.setAngle(25 * ((arm.getMinExtend())/(arm.getExtend()+ arm.getMinExtend()))
-                    )
+            else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN) && intaking) {
+                lockAngle = true;
+                lockExtend = true;
+                intaking = false;
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(new SequentialAction(arm.setAngle(15), new InstantAction(()->wrist.stright()),new InstantAction(()-> wrist.moveToAngle(60)),  arm.setExtension(0) , new InstantAction(()-> wrist.home()), arm.setAngle(0)));
+            } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN) && scoreSample) {
+                lockAngle = true;
+                lockExtend = true;
+                scoreSample = true;
+                runningActions.add(arm.moveAngle());
+                runningActions.add(intake.setPowerAction(0));
+                runningActions.add(new SequentialAction(new InstantAction(()-> wrist.close()), new SleepAction(1), new ParallelAction(arm.setExtension(0), new SequentialAction(new SleepAction(1), new InstantAction(()-> wrist.home()))) ,arm.setAngle(0)));
+            }
 
-                            , new InstantAction(() -> wrist.openMin()), intake.intake(), new SleepAction(1), arm.setAngle(-5), new SleepAction(1)));
-                }
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
                 gamepadEx1.update(gamepad1);
                 gamepadEx2.update(gamepad2);
                 telemetry.update();

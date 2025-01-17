@@ -32,7 +32,7 @@ public class Arm {
 
     // Encoder Counts Per Revolution (CPR)
     private static final double ANGLE_CPR = 28.0 * 70.0 * (34.0/16.0); // Arm angle motor
-    private static final double EXTEND_CPR = 537.7*(24.0/25.0);// Arm extension motor
+    private static final double EXTEND_CPR = 537.7*(25.0/25.0);// Arm extension motor
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
@@ -45,7 +45,7 @@ public class Arm {
 
     public static double KD = 0;
     // Feedforward
-    private static final double KF = 0.21;  // feedforward constant
+    private static final double KF = 0.22;  // feedforward constant
 
 
     // Current Limit (if applicable; set as needed)

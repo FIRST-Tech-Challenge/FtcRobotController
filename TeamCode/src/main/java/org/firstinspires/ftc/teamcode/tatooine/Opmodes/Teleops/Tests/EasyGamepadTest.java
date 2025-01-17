@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 
 import java.util.ArrayList;
 import java.util.List;
+@Disabled
 
 @TeleOp(name = "EasyGamePadTest",group = "Tests")
 public class EasyGamepadTest extends LinearOpMode {

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
 
 import java.util.ArrayList;
 import java.util.List;
+@Disabled
 @TeleOp(name = "ArmTest",group = "Tests")
 public class ArmTest extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();

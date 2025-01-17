@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.Line;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Disabled
 @TeleOp
 public class HomeStateTest extends LinearOpMode {
     private List<Action> runningActions = new ArrayList<>();

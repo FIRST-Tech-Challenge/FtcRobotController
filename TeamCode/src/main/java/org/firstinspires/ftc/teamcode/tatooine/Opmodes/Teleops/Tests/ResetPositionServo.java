@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
-
+@Disabled
 @TeleOp
 public class ResetPositionServo extends LinearOpMode{
 

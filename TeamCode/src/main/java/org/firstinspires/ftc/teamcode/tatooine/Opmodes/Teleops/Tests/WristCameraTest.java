@@ -17,7 +17,7 @@ public class WristCameraTest extends LinearOpMode {
     private FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
     private Wrist wrist = new Wrist(this, true);
-    private Camera camera = new Camera(this, false, false);
+    private Camera camera = new Camera(this, true, false);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,13 +25,10 @@ public class WristCameraTest extends LinearOpMode {
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
             if (gamepad1.cross) {
+                runningActions.clear();
                 runningActions.add(wrist.moveToAngle(camera.getAngle()));
-            }
-            if (gamepad1.circle){
-                wrist.setShouldStayParallel(true);
-            }
-            if (gamepad1.square){
-                wrist.setShouldStayParallel(false);
+            } else if (gamepad1.circle) {
+                wrist.setPosAng(camera.getAngle());
             }
             List<Action> newActions = new ArrayList<>();
             for (Action action : runningActions) {

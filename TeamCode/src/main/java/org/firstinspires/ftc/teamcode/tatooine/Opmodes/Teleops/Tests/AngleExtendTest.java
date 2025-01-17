@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.tatooine.Opmodes.Teleops.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
-
+@Disabled
 @TeleOp(name = "AngleExtendTest",group = "Tests")
 public class AngleExtendTest extends LinearOpMode {
 
