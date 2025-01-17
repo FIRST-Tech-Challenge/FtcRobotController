@@ -30,7 +30,7 @@ public class RobotConstantsV1 {
     public double DELIVERY_DROP = 0.68;
     public double DELIVERY_HIGH_BAR = 0.73;
     public double DELIVERY_WALL_PICKUP = 0.85;
-    public double WRIST_CENTER = 0.42;
+    public double WRIST_CENTER = 0.48;
     //MOTORS=========================================================================================================
     public int INTAKE_MOTOR_IN = 3;
     public int INTAKE_MOTOR_OUT = 850;
