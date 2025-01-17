@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "deepak is sigma if he clicks on poop", group = "Autonomous")
-public class MeetFourAuto extends LinearOpMode {
+@Autonomous(name = "THE ULTIMATE AUTONOMOUS", group = "Autonomous")
+public class UltimateAutonomous extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.LEFT;
 
     private static final String[] MENU_OPTIONS = {
@@ -334,7 +334,7 @@ public class MeetFourAuto extends LinearOpMode {
                         trajectory.build()));
     }
 
-    private TrajectoryActionBuilder getParkingTrajectory(MeetFourAuto.StartingPosition sp,
+    private TrajectoryActionBuilder getParkingTrajectory(UltimateAutonomous.StartingPosition sp,
                                                          TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get parking trajectory based on starting position
         switch (sp) {

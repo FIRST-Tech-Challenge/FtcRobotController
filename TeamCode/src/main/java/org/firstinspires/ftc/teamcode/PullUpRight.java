@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 
-@Autonomous(name = "poop", group = "Autonomous")
-public class Poop extends LinearOpMode {
+@Autonomous(name = "Right Only Auto, Pull Up On Chamber", group = "Autonomous")
+public class PullUpRight extends LinearOpMode {
 
     private BaseRobot baseRobot;
 

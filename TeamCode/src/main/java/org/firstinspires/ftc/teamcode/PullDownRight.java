@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -17,14 +16,9 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.ViperSlide;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
-import org.firstinspires.ftc.teamcode.systems.Logger;
-import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-@Autonomous(name = "deepak is selling if he clicks on poop", group = "Autonomous")
-public class GooberAuto extends LinearOpMode {
+@Autonomous(name = "Right Only Auto, Down Up On Chamber", group = "Autonomous")
+public class PullDownRight extends LinearOpMode {
 
     private BaseRobot baseRobot;
 
