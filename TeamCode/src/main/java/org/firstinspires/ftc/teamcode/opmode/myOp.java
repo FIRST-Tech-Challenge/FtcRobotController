@@ -24,9 +24,9 @@ public class myOp extends CommandOpMode {
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
+            m_robot.period();
             run();
         }
         reset();
-        m_robot.period();
     }
 }

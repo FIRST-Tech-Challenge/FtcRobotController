@@ -10,12 +10,15 @@ import org.firstinspires.ftc.teamcode.utils.BT.BTRecordingController;
 import java.io.File;
 import java.io.IOException;
 
-public class recorder extends periodOpMode {
+public abstract class recorder extends periodOpMode {
     BTRecordingController controller;
+    protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
+    protected abstract String file_name();
+
     @Override
     public void initialize() {
-        final String file_name="11226_rec";
-        final int maxIterations=20*30;//Hz * Sec
+        final String file_name=file_name();
+        final int maxIterations=maxIterations();
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             controller=new BTRecordingController(gamepad1,log,maxIterations);

@@ -10,8 +10,6 @@ import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 
 public class periodOpMode extends CommandOpMode {
     RobotContainer m_robot;
-    private final int periodMs = 40;//Seconds
-    private final int periodUs=periodMs*1000;
     private long nextPeriodTimeUs = 0;
 
     @Override
@@ -20,10 +18,13 @@ public class periodOpMode extends CommandOpMode {
         enable();
 
     }
+    //allow for overriding period time
+    protected int periodUs(){return 40*1000;}
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+        int periodUs=periodUs();
 
         waitForStart();
 
@@ -47,7 +48,6 @@ public class periodOpMode extends CommandOpMode {
         endFunction();
         reset();
     }
-
     protected void period(){}
     protected void endFunction(){}
 }

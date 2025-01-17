@@ -11,14 +11,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class playback extends periodOpMode{
+public abstract class playback extends periodOpMode{
     BTRecordedController controller;
     BufferedReader bufferedReader;
-    final int maxIterations=20*30;//Hz * Sec
+    //allow override by child classes
+    protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
+    protected abstract String file_name();
 
     @Override
     public void initialize() {
-        final String file_name="11226_rec";
+        final String file_name=file_name();
+        final int maxIterations=maxIterations();
+
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             bufferedReader=new BufferedReader(new FileReader(log));
