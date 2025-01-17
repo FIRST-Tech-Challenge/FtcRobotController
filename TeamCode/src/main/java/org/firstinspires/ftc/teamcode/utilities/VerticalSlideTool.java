@@ -88,17 +88,17 @@ public class VerticalSlideTool extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         scheduler = new MultitaskScheduler();
         h = new Hardware(hardwareMap);
-        vLiftProxy = scheduler.add(new VLiftProxy(scheduler, h.verticalLift));
-        DcMotor it = h.verticalSlide;
-        hardwareInit();
+        h.verticalLift.disable();
+//        vLiftProxy = scheduler.add(new VLiftProxy(scheduler, h.verticalLift));
+//        hardwareInit();
         waitForStart();
-        scheduler.add(scoreHighBasket());
+//        scheduler.add(scoreHighBasket());
 //        h.verticalLift.setTargetPosition(500);
         while (opModeIsActive()) {
-            telemetry.addData("position", it.getCurrentPosition());
-            telemetry.addData("directed power", h.verticalLift.getPower());
-            telemetry.addData("target", h.verticalLift.getTargetPosition());
-            telemetry.addData("eTotal", h.verticalLift.getETotal());
+            telemetry.addData("position", h.verticalLift.getCurrentPosition());
+//            telemetry.addData("directed power", h.verticalLift.getPower());
+//            telemetry.addData("target", h.verticalLift.getTargetPosition());
+//            telemetry.addData("eTotal", h.verticalLift.getETotal());
             telemetry.addLine();
 //            if (gamepad1.y) h.verticalLift.setTargetPosition(Hardware.VLIFT_SCORE_HIGH);
 //            else if (gamepad1.b) h.verticalLift.setTargetPosition(300);

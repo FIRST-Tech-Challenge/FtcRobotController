@@ -107,8 +107,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.verticalSlide.setTargetPosition(0);
-        hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
 
@@ -235,7 +233,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
             wrist();
             claw();
             stepper();
-            lift();
             arm();
 
             boolean shouldScoreHigh = gamepad2.left_trigger > 0.5;
@@ -290,7 +287,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
             isTxDump = shouldTxDump;
             isResetVL = shouldResetVL;
 
-            int verticalPosition = hardware.encoderVerticalSlide.getCurrentPosition();
+            int verticalPosition = hardware.verticalLift.getCurrentPosition();
 
             scheduler.tick();
             tracker.step();
@@ -351,10 +348,6 @@ public class MecanumTeleOp2 extends LinearOpMode {
             hardware.lightRight.setPosition(0);
             hardware.lightLeft.setPosition(0);
         }
-    }
-
-    private void lift() {
-        vLiftProxy.controlManual(gamepad2.dpad_up, gamepad2.dpad_down);
     }
 
     private double getArmPosDeg() {
@@ -535,9 +528,9 @@ public class MecanumTeleOp2 extends LinearOpMode {
         // if something else takes the locks between these it's the driver's fault smh
         scheduler.add(
                 groupOf(it -> it.add(run(() -> hardware.claw.setPosition(clawclose)))
-                        .then(vLiftProxy.moveTo(710, 5, 1.0))
+                        .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0))
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
-                        .then(await(1000))
+                        .then(await(500))
                         .then(run(() -> hardware.wrist.setPosition(1)))
                 ).extraDepends(
                         vLiftProxy.CONTROL,

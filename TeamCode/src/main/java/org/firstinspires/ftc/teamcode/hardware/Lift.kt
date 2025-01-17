@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.util.RobotLog
+import dev.aether.collaborative_multitasking.MultitaskScheduler
+import dev.aether.collaborative_multitasking.SharedResource
+import dev.aether.collaborative_multitasking.TaskTemplate
 import org.firstinspires.ftc.teamcode.Hardware
 import kotlin.math.abs
 import kotlin.math.max
@@ -33,11 +37,21 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
     private var power: Double = 0.0
     private var targetPos: Int = 0
 
+    private var isDisabled: Boolean = false
+
+    fun disable() {
+        isDisabled = true
+        setPower(0.0)
+        primaryMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+        secondaryMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+        RobotLog.addGlobalWarningMessage("The lift is disabled!")
+    }
+
     fun stop() {
         setPower(0.0)
     }
 
-    fun setPower(newPower: Double) {
+    private fun setPower(newPower: Double) {
         if (newPower > 0 && currentPosition >= MAX_HEIGHT) return stop()
         if (newPower < 0 && currentPosition <= MIN_HEIGHT) return stop()
         primaryMotor.power = newPower
@@ -67,7 +81,7 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
     private val timeSource = TimeSource.Monotonic
     private var lastTime: ValueTimeMark? = null
 
-    fun update() {
+    private fun runToPosition() {
         val error = targetPos - currentPosition
         if (lastTime != null) {
             val now = timeSource.markNow()
@@ -85,5 +99,9 @@ class Lift(val primaryMotor: DcMotor, val secondaryMotor: DcMotor) {
 
         if (targetPos <= 0 && currentPosition <= POWEROFF_ZERO) setPower(0.0)
         else setPower(powerFinal)
+    }
+
+    fun update() {
+        if (!isDisabled) runToPosition()
     }
 }

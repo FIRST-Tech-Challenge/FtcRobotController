@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware;
@@ -16,9 +15,8 @@ import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.TaskWithResultTemplate;
 
 public class VLiftProxy extends TaskTemplate {
-    private static final double SPEED = 1.0;
-    private static final int MAX_VERTICAL_LIFT_TICKS = 2300;
-    private static final int MIN_VERTICAL_LIFT_TICKS = 0;
+    // Speed and limits are in Lift.kt file now!
+
     private static final Set<SharedResource> requires = Set.of(Hardware.Locks.VerticalSlide);
     private static int INSTANCE_COUNT = 0;
     /// If you hold this lock, you have exclusive control over the Lift (by proxy of this task.)
@@ -26,7 +24,6 @@ public class VLiftProxy extends TaskTemplate {
     private final Lift lift;
     private final Set<SharedResource> provides = Set.of(CONTROL);
     private final Scheduler scheduler;
-    private boolean manualAdjustMode = false;
     private int targetPosition = 0;
 
     public VLiftProxy(@NotNull Scheduler scheduler, Lift lift) {
@@ -60,58 +57,6 @@ public class VLiftProxy extends TaskTemplate {
     public void invokeOnStart() {
         commitCurrent();
         lift.setTargetPosition(targetPosition);
-    }
-
-    private void startManual() {
-        // FIXME: NO
-        throw new IllegalStateException("Not implemented on this version");
-//        // forcibly grab the lock from whatever has it at the moment
-//        scheduler.filteredStop(it -> it.requirements().contains(CONTROL));
-//        scheduler.manualAcquire(CONTROL);
-//        manualAdjustMode = true;
-//        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    private void stopManual() {
-        // FIXME: NO
-        throw new IllegalStateException("Not implemented on this version");
-//        manualAdjustMode = false;
-//        commitCurrent();
-//        lift.setTargetPosition(targetPosition);
-//        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        lift.setPower(SPEED);
-//        scheduler.manualRelease(CONTROL);
-    }
-
-    public void controlManual(boolean goUp, boolean goDown) {
-        // FIXME: NO
-        throw new IllegalStateException("Not implemented on this version");
-//        if (!manualAdjustMode) {
-//            if (goUp || goDown) startManual();
-//            return;
-//        }
-//        int currentPosition = lift.getCurrentPosition();
-//        if (goUp && goDown) {
-//            lift.setPower(0);
-//            return;
-//        }
-//        if (goUp) {
-//            if (currentPosition < MAX_VERTICAL_LIFT_TICKS) {
-//                lift.setPower(SPEED);
-//                return;
-//            }
-//        }
-//        if (goDown) {
-//            if (currentPosition > MIN_VERTICAL_LIFT_TICKS) {
-//                lift.setPower(-SPEED);
-//                return;
-//            }
-//        }
-//        stopManual();
-    }
-
-    public boolean isManualAdjustModeEnabled() {
-        return manualAdjustMode;
     }
 
     public ITask target(int target) {
