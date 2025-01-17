@@ -27,7 +27,8 @@ public class BTRecordingController extends BTController{
     protected int iterationCnt;
     protected int maxIterations;
     protected FileWriter fileWriter;
-    private final Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     public BTRecordingController(Gamepad gamepad, File log, int maxIterations) throws IOException {
         super(gamepad);
@@ -44,6 +45,11 @@ public class BTRecordingController extends BTController{
         }
         fileWriter = new FileWriter(log);
     }
+    public BTRecordingController(Gamepad gamepad) throws Exception {
+        super(gamepad);
+        throw new Exception("not implemented, you much provide a file to write");
+    }
+
 
     public void addRecord(){
         axesLines.add(Arrays.stream(m_axesSuppliers).mapToDouble(DoubleSupplier::getAsDouble).toArray());
