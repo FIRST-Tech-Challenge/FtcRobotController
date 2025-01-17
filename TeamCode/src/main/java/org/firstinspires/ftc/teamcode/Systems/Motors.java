@@ -89,6 +89,10 @@ public class Motors {
     public void MoveMotor(Type motorNumber, double power) { //choose motor to move with type and move with power is 0-100
 
         double actualPower = power / 100;
+        if(motorNumber == Type.LeftFront) {
+            BotTelemetry.addData("input", power);
+            BotTelemetry.addData("Output", actualPower);
+        }
 
         motors[motorNumber.getValue()].setPower(actualPower);
     }
@@ -112,16 +116,20 @@ public class Motors {
     }
 
     public int getLeftFrontPosition() {
+        BotTelemetry.addData("leftFrontposition", motors[Type.RightFront.getValue()].getCurrentPosition());
         return motors[Type.LeftFront.getValue()].getCurrentPosition();
     }
 
     public int getLeftBackPosition() {
+        BotTelemetry.addData("leftBackPosition", motors[Type.LeftBack.getValue()].getCurrentPosition());
         return motors[Type.LeftBack.getValue()].getCurrentPosition();
     }
     public int getRightFrontPosition() {
+        BotTelemetry.addData("rightFrontPosition", motors[Type.RightFront.getValue()].getCurrentPosition());
         return motors[Type.RightFront.getValue()].getCurrentPosition();
     }
     public int getRightBackPosition() {
+        BotTelemetry.addData("rightBackPosition", motors[Type.RightBack.getValue()].getCurrentPosition());
         return motors[Type.RightBack.getValue()].getCurrentPosition();
     }
 
