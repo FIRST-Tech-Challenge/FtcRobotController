@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.opmode.autos;
 import static java.lang.Thread.sleep;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 
-public class periodOpMode extends CommandOpMode {
+public class PeriodicOpMode extends CommandOpMode {
     RobotContainer m_robot;
     private long nextPeriodTimeUs = 0;
 

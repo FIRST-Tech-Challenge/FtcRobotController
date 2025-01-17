@@ -3,15 +3,13 @@ package org.firstinspires.ftc.teamcode.opmode.autos;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.BT.BTRecordedController;
-import org.firstinspires.ftc.teamcode.utils.BT.BTRecordingController;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
-public abstract class playback extends periodOpMode{
+public abstract class Playback extends PeriodicOpMode {
     BTRecordedController controller;
     BufferedReader bufferedReader;
     //allow override by child classes

@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode.autos;
 
-import android.os.Environment;
-
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.RobotContainer;
-import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 import org.firstinspires.ftc.teamcode.utils.BT.BTRecordingController;
 
 import java.io.File;
 import java.io.IOException;
 
-public abstract class recorder extends periodOpMode {
+public abstract class Recorder extends PeriodicOpMode {
     BTRecordingController controller;
     protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
     protected abstract String file_name();
