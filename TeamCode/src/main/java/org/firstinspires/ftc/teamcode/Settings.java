@@ -176,10 +176,10 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
-            public static Pose2d RED_FIRST_PRESET_SAMPLE_POSE = new Pose2d(48, -7, Math.toRadians(90));
-            public static Pose2d RED_SECOND_PRESET_SAMPLE_POSE = new Pose2d(58, -7, Math.toRadians(90));
-            public static Pose2d BLUE_FIRST_PRESET_SAMPLE_POSE = new Pose2d(-48, 7, Math.toRadians(270));
-            public static Pose2d BLUE_SECOND_PRESET_SAMPLE_POSE = new Pose2d(-58, 7, Math.toRadians(270));
+            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(38.5, -34.3, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(38.5, -10.5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(48, -7, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(58, -7, Math.toRadians(90));
         }
 
         @Config
@@ -345,7 +345,7 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.JUST_PLACE;
+        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.CHAMBER;
 
         public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, CHAMBER, BASKET
