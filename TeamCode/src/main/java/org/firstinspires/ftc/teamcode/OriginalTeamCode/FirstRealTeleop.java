@@ -1,26 +1,19 @@
 package org.firstinspires.ftc.teamcode.OriginalTeamCode;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.PwmControl.*;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,16 +35,16 @@ public class FirstRealTeleop extends LinearOpMode {
     DcMotor armRotate = null;
     DcMotor linearActuator = null;
     //servos
-//    CRServo spool = null;
-    Servo wrist = null;
-    CRServo sampPickUpLeft = null;
-    CRServo sampPickUpRight = null;
+    ServoImplEx wrist = null;
+    Servo grabber = null;
 
 
     double actuatorPos = 0;
     double armRotPos = 0;
-    double wristPos = 1;
+    double wristPos = 0.625;
     boolean canToggle = true;
+    boolean open = true;
+    final double ARMROTMULT = 60.0/43.0;
 
     void linearActuatorMover() {
         linearActuator.setTargetPosition((int) actuatorPos);
@@ -59,9 +52,8 @@ public class FirstRealTeleop extends LinearOpMode {
     }
 
 
-    void controlBothGrabbers(int i) {
-        sampPickUpLeft.setPower(i);
-        sampPickUpRight.setPower(i);
+    void controlGrabber(double i) {
+        grabber.setPosition(i);
     }
 
     double armPos = 0;
@@ -89,13 +81,9 @@ public class FirstRealTeleop extends LinearOpMode {
         armLifterRight = hardwareMap.dcMotor.get("armLifterRight");
         armRotate = hardwareMap.dcMotor.get("armRotate");
         linearActuator = hardwareMap.dcMotor.get("linearActuator");
-//        spool = hardwareMap.crservo.get("spool");
-        wrist = hardwareMap.servo.get("wrist");
-        sampPickUpLeft = hardwareMap.crservo.get("sampPickUpLeft");
-        sampPickUpRight = hardwareMap.crservo.get("sampPickUpRight");
-
-        sampPickUpLeft.setDirection(CRServo.Direction.FORWARD);
-        sampPickUpRight.setDirection(CRServo.Direction.REVERSE);
+        wrist = hardwareMap.get(ServoImplEx.class, "wrist");
+//        wrist.setPwmRange(new PwmRange(500, 2500));
+        grabber = hardwareMap.servo.get("grabber");
 
         armLifterLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         armLifterRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -228,59 +216,21 @@ public class FirstRealTeleop extends LinearOpMode {
 
             }
 
-//            armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            armRotate.setPower(gamepad2.left_stick_y);
-//            wrist.setPosition(-(gamepad2.right_stick_y));
-//
-//            armLifterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            armLifterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-//            wrist.setPosition(wristPos);
-//            wristPos += (Math.pow(gamepad2.right_stick_y,3));
-//
-//            if(gamepad2.dpad_up){
-//                linearActuatorRaiser();
-//            } else if(gamepad2.dpad_down){
-//                linearActuatorLower();
-//            }
-//
-//            int spoolPow = 0;
-//            if(gamepad2.dpad_up){
-//                spoolPow = 1;
-//            } else if(gamepad2.dpad_down){
-//                spoolPow = -1;
-//            }
-//
-//            armLifterLeft.setPower(gamepad2.right_stick_x);
-//            armLifterRight.setPower(gamepad2.right_stick_x);
-//
-//
-//            if(isGrabbing){
-//                sampPickUpRight.setPower(1);
-//                sampPickUpLeft.setPower(1);
-//            } else{
-//                sampPickUpRight.setPower(0);
-//                sampPickUpLeft.setPower(0);
-//            }
-//            if (gamepad2.left_bumper){
-//                isGrabbing = !isGrabbing;
-//            }
-//
-//            if(gamepad2.right_bumper){
-//                sampPickUpLeft.setPower(-1);
-//                sampPickUpRight.setPower(-1);
-//            }
-//            spool.setPower(spoolPow);
-
             //arm rotate
             armRotate.setTargetPosition((int) armRotPos);
             double armRotChange = gamepad2.left_stick_y * gamepad2.left_stick_y * gamepad2.left_stick_y * 75;
-            if (armRotate.getCurrentPosition() + armRotChange > -2200) {
-                armRotPos += armRotChange;
+            if (armRotate.getCurrentPosition() + armRotChange > -2200 * ARMROTMULT) {
+                armRotPos += armRotChange * ARMROTMULT;
+            } else if (armRotate.getCurrentPosition() - armRotChange < -50 * ARMROTMULT) {
+                armRotPos -= armRotChange * ARMROTMULT;
             }
-            if (armRotate.getCurrentPosition() < -2200) {
+
+            if (armRotate.getCurrentPosition() < -2200 * ARMROTMULT) {
                 armRotate.setPower(0.25);
-                armRotPos = -2100;
+                armRotPos = -2100*ARMROTMULT;
+            } else if(armRotate.getCurrentPosition() > -50 * ARMROTMULT){
+                armRotate.setPower(0.25);
+                armRotPos = -150*ARMROTMULT;
             } else {
                 armRotate.setPower(1);
             }
@@ -298,7 +248,7 @@ public class FirstRealTeleop extends LinearOpMode {
             //extenders
             double rightTrig = gamepad2.right_trigger;
             double leftTrig = gamepad2.left_trigger;
-            if (armPos - rightTrig * 75 > -3010) {
+            if (armPos - rightTrig * 75 > -9999999) {
                 armPos -= rightTrig * 75;
             }
             if (armPos + leftTrig * 75 < 0) {
@@ -310,10 +260,10 @@ public class FirstRealTeleop extends LinearOpMode {
 //            //wrist
 //            if(gamepad2.dpad_left){
 //                wristPos = 0.5;}
-            if (gamepad2.right_stick_y > 0.1 && wristPos < 1) {
-                wristPos += 0.01;
-            } else if (gamepad2.right_stick_y < -0.1 && wristPos > 0) {
-                wristPos -= 0.01;
+            if (-gamepad2.right_stick_y > 0.01 && wristPos + 0.005 <= 1) {
+                wristPos += 0.005;
+            } else if (-gamepad2.right_stick_y < -0.01 && wristPos - 0.005 >= 0.625) {
+                wristPos -= 0.005;
             }
             wrist.setPosition(wristPos);
 
@@ -323,11 +273,15 @@ public class FirstRealTeleop extends LinearOpMode {
                     @Override
                     public void run() {
                         canToggle = true;
-                        controlBothGrabbers(0);
                     }
                 };
                 canToggle = false;
-                controlBothGrabbers(1);
+                open = !open;
+                if(open){
+                    controlGrabber(0.4);
+                } else {
+                    controlGrabber(0.75);
+                }
                 timer.schedule(task, delay);
 
             }
@@ -336,7 +290,7 @@ public class FirstRealTeleop extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Pose", "Pose: " + localizer.getPoseEstimate());
-            telemetry.addData("Arm height", "Arm height: " + actuatorPos);
+            telemetry.addData("Arm height", "Arm height: " + armPos);
             telemetry.addData("Arm rot", "Arm rot: " + armRotPos);
             telemetry.addData("wrist rot", "Wrist rot: " + wristPos);
             telemetry.update();
