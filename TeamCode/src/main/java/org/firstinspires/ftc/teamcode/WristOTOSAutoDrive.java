@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-// All the things that we use and borrow
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,8 +13,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name="Auto Drive", group="Robot")
-public class OTOSAutoDrive extends LinearOpMode {
+@Autonomous(name="Wrist Auto Drive", group="Robot")
+public class WristOTOSAutoDrive extends LinearOpMode {
     // Initialize all variables for the program
     // Hardware variables
     SparkFunOTOS myOtos;
@@ -36,13 +34,13 @@ public class OTOSAutoDrive extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1720;
+    final int VERTICAL_MAX = 2245;
     final int VERTICAL_DEFAULT_SPEED = 3000;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
     final int VIPER_MIN = 0;
-    final int VIPER_MAX = 3100;
+    final int VIPER_MAX = 2540;
     final int VIPER_GROUND = 1000;
     final int VIPER_DEFAULT_SPEED = 3000;
 
@@ -50,7 +48,12 @@ public class OTOSAutoDrive extends LinearOpMode {
     //Callie
     Servo claw = null;
     final double CLAW_MIN = 0.2;           // Claw is closed
-    final double CLAW_MAX = 0.8;           // Claw is open
+    final double CLAW_MAX = 0.54;          // Claw is open - Og non-wrist value was 0.8
+
+    // This chunk controls our wrist (todo: update values)
+    Servo wrist = null;
+    final double WRIST_MIN = 0.2;           // Wrist is in intake position (picking up)
+    final double WRIST_MAX = 0.8;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.17;          // Stick is down
@@ -64,7 +67,7 @@ public class OTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "01/10/2025, 11:43 am"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/15/2025, 11:18 am"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -72,14 +75,15 @@ public class OTOSAutoDrive extends LinearOpMode {
         configureOtos();
 
         // First Sample ///////////////////////////////////////////////////////////////
+        driveToLoc(-14.5, 11.6, -45, 1);  // Go to basket
+        sleep(200);
         setVertical(VERTICAL_MAX);                                  // Raising Arm
         setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(500);
-        driveToLoc(9, 14, 45, 1);  // Go to basket
-        sleep(100);
+        sleep(2000);
+        setWrist(WRIST_MAX);
         setClaw(CLAW_MAX);                                          // Drop the block
-        sleep(200);
-
+        sleep(5000);
+ /*
         // Second Sample ///////////////////////////////////////////////////////////////
         RobotLog.vv("Rockin'", "Get Sample 2");
         driveToLoc(15, 12, -10, 4);
@@ -146,6 +150,8 @@ public class OTOSAutoDrive extends LinearOpMode {
         // End of autonomous program
         telemetry.addData("Autonomous", "Complete");
         telemetry.update();
+
+  */
     }
 
     public void setAscentStick(double target) {
@@ -177,6 +183,12 @@ public class OTOSAutoDrive extends LinearOpMode {
     public void setClaw(double position) {
         RobotLog.vv("Rockin' Robots", "setClaw() position: %4.2f, current: %4.2f", position, claw.getPosition());
         claw.setPosition(position);
+        sleep(400);
+    }
+
+    public void setWrist(double position) {
+        RobotLog.vv("Rockin' Robots", "setWrist() position: %4.2f, current: %4.2f", position, wrist.getPosition());
+        wrist.setPosition(position);
         sleep(400);
     }
 
@@ -348,6 +360,10 @@ public class OTOSAutoDrive extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
+
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist.setDirection(Servo.Direction.REVERSE);
+        wrist.setPosition(WRIST_MAX);
 
         ascentStick = hardwareMap.get(Servo.class, "ascentStick");
         ascentStick.setDirection(Servo.Direction.REVERSE);

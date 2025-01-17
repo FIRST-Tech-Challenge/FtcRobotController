@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,12 +12,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Remote Control", group="Linear OpMode")
-public class RemoteControl extends LinearOpMode {
+@TeleOp(name="OTOSRemoteControlTuner", group="Linear OpMode")
+public class OTOSRemoteControlTuner extends LinearOpMode {
     // Initialize all variables for the program below:
-    // This chunk controls our wheels
+    // Hardware variables
+    SparkFunOTOS myOtos;
+    double xLoc = 0;
+    double yLoc = 0;
+    double hLoc = 0;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -25,7 +33,6 @@ public class RemoteControl extends LinearOpMode {
     double leftBackPower = 0;
     double rightBackPower = 0;
     double max = 0;
-    boolean wheelClimb = false;
 
     // Collect joystick position data
     double axial = 0;
@@ -35,9 +42,8 @@ public class RemoteControl extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1720;
+    final int VERTICAL_MAX = 1820;
     final int VERTICAL_MAX_VIPER = 1200;
-    final int VERTICAL_CLIMB_POSITION = 2300;
     final int VERTICAL_DEFAULT_SPEED = 2000;
     int verticalAdjustedMin = 0;
     int verticalPosition = VERTICAL_MIN;
@@ -45,7 +51,7 @@ public class RemoteControl extends LinearOpMode {
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
     final int VIPER_MAX_WIDE = 2000;
-    final int VIPER_MAX_TALL = 3300;
+    final int VIPER_MAX_TALL = 3200;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
@@ -54,11 +60,13 @@ public class RemoteControl extends LinearOpMode {
     Servo claw = null;
     final double CLAW_MIN = 0.2;        // Claw is closed
     final double CLAW_MAX = 0.8;        // Claw is open
-    double claw_position = CLAW_MAX;
+    double claw_position = CLAW_MIN;
 
-    Servo ascentStick = null;
-    final double ASCENT_MIN = 0.2;          // Stick is down
-    final double ASCENT_MAX = 0.49;         // Stick is up
+    // This chunk controls our wrist
+    Servo wrist = null;
+    final double WRIST_MIN = 0.2;       // Wrist is in intake position (picking up)
+    final double WRIST_MAX = 0.65;      // Wrist is in outtake position (dropping in basket)
+    double wrist_position = WRIST_MIN;  // Min might not be correct
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -70,10 +78,10 @@ public class RemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "1/6/2024, 4:30 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "1/15/2024, 11:00 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
-        setAscentStick(ASCENT_MIN);
+        configureOtos();
         //claw.setPosition(CLAW_MAX);
         runtime.reset();
 
@@ -88,54 +96,23 @@ public class RemoteControl extends LinearOpMode {
 
             setWheelPower();
 
-            if(!wheelClimb) {
-                // Send calculated power to wheels
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-            }
+            // Send calculated power to wheels
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             // Control the vertical - the rotation level of the arm
             verticalPosition = vertical.getCurrentPosition();
             verticalAdjustedMin = (int)(0.07*viperSlidePosition+VERTICAL_MIN); // 0.07 - If the viper is hits the ground, make this bigger. If it doesn't down far enough, make this smaller.
 
-            // Set vertical into initial climb position
-            if (gamepad1.dpad_up) {
-                // Hook onto the bar
-                setVertical(VERTICAL_CLIMB_POSITION, 2500);
+            // If the right button is pressed
+            if (gamepad1.dpad_right) {
+                setVertical(verticalPosition + 50, 1500);
             }
-            // Active climb
-            else if (gamepad1.dpad_down) {
-                if (vertical.getCurrentPosition() > 100) {
-                    wheelClimb = true;
-                    vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    vertical.setPower(-0.8);
-                    leftBackDrive.setPower(0.5);
-                    rightBackDrive.setPower(0.5);
-                }
-                else {
-                        leftBackDrive.setPower(0);
-                        rightBackDrive.setPower(0);
-                        wheelClimb = false;
-                        setVertical(VERTICAL_MIN, 1000);
-                }
-            }
-
-            // If the right button is pressed AND it can safely raise further
-            else if (gamepad1.dpad_right && verticalPosition < VERTICAL_MAX) {
-                setVertical(Math.min(VERTICAL_MAX, verticalPosition + 50), 2000);
-            }
-            // If the left button is pressed AND it can safely lower without changing the viper
-            else if (gamepad1.dpad_left && verticalPosition > VERTICAL_MAX_VIPER) {
-                setVertical(Math.max(VERTICAL_MAX_VIPER, verticalPosition - 50), 1500);
-            }
-            // If the left button is pressed AND it can safely lower further
-            else if (gamepad1.dpad_left && verticalPosition > verticalAdjustedMin) {
-                if (viperSlidePosition > VIPER_MAX_WIDE) {
-                    setViper(VIPER_MAX_WIDE, 1000);
-                }
-                setVertical(Math.max(verticalAdjustedMin, verticalPosition - 50),1000);
+            // If the left button is pressed
+            else if (gamepad1.dpad_left) {
+                setVertical(verticalPosition - 50, 1000);
             }
 
             // Control the viper slide - how much it extends
@@ -168,6 +145,15 @@ public class RemoteControl extends LinearOpMode {
             }
             claw.setPosition(claw_position);
 
+            // Control the wrist
+            if (gamepad1.dpad_down && wrist_position < WRIST_MAX) {
+                wrist_position += 0.3;
+            }
+            if (gamepad1.dpad_up && wrist_position > WRIST_MIN) {
+                wrist_position -= 0.15;
+            }
+            wrist.setPosition(wrist_position);
+
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
                 setVertical(VERTICAL_MAX, 3000);
@@ -184,7 +170,6 @@ public class RemoteControl extends LinearOpMode {
             if (gamepad1.x) {
                 setVertical(355, 3000);
                 setViper(0, 1500);
-                wheelClimb = false;
             }
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
@@ -193,6 +178,8 @@ public class RemoteControl extends LinearOpMode {
                 setViper(1900, 2000);
             }
 
+            getPosition();
+
             // Show the elapsed game time and wheel power.
             printDataOnScreen();
         }
@@ -200,6 +187,8 @@ public class RemoteControl extends LinearOpMode {
     }
 
     private void initializeHardwareVariables() {
+        myOtos = hardwareMap.get(SparkFunOTOS.class, "OTOS");
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -224,11 +213,12 @@ public class RemoteControl extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setDirection(Servo.Direction.REVERSE);
-        claw.setPosition(CLAW_MAX);
+        claw.setPosition(CLAW_MIN);
 
-        ascentStick = hardwareMap.get(Servo.class, "ascentStick");
-        ascentStick.setDirection(Servo.Direction.REVERSE);
-        ascentStick.setPosition(ASCENT_MAX);
+        // todo: check this
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist.setDirection(Servo.Direction.REVERSE);
+        wrist.setPosition(WRIST_MAX);
     }
 
     private void setWheelPower(){
@@ -248,13 +238,12 @@ public class RemoteControl extends LinearOpMode {
         }
     }
 
-    public void setAscentStick(double target) {
-        RobotLog.vv("Rockin' Robots", "Set Ascent Stick to: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
-        ascentStick.setPosition(target);
+    public void setWrist(double target) { // todo: check this method
+        RobotLog.vv("Rockin' Robots", "Set Wrist to: %4.2f, Current: %4.2f", target, wrist.getPosition());
+        wrist.setPosition(target);
         //sleep(1000);
-        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, ascentStick.getPosition());
+        RobotLog.vv("Rockin' Robots", "Target: %4.2f, Current: %4.2f", target, wrist.getPosition());
     }
-
 
     public void setVertical(int height){
         setVertical(height, VERTICAL_DEFAULT_SPEED);
@@ -265,30 +254,50 @@ public class RemoteControl extends LinearOpMode {
         ((DcMotorEx) vertical).setVelocity(speed);
         vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
     public void setViper(int length, int speed){
         viperSlide.setTargetPosition(length);
         ((DcMotorEx) viperSlide).setVelocity(speed);
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         RobotLog.vv("Rockin' Robots", "Viper set to %d", viperSlide.getCurrentPosition());
     }
+
+    private void getPosition() {
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+        xLoc = pos.x;
+        yLoc = pos.y;
+        hLoc = pos.h;
+    }
+
+    private void configureOtos() {
+        myOtos.setLinearUnit(DistanceUnit.INCH);
+        myOtos.setAngularUnit(AngleUnit.DEGREES);
+        SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-3.5, 1.1, 90);
+        myOtos.setOffset(offset);
+        myOtos.setLinearScalar(1.0);
+        myOtos.setAngularScalar(1.0);
+        myOtos.calibrateImu();
+        myOtos.resetTracking();
+        SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+        myOtos.setPosition(currentPosition);
+        SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
+        SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
+        myOtos.getVersionInfo(hwVersion, fwVersion);
+    }
+
     // Log all (relevant) info about the robot on the hub.
     private void printDataOnScreen() {
         telemetry.addData("Run Time", "%.1f", runtime.seconds());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        //RobotLog.vv("RockinRobots", "%4.2f, %4.2f, %4.2f, %4.2f", leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
-        telemetry.addData("Joystick Axial", "%4.2f", axial);
-        telemetry.addData("Joystick Lateral", "%4.2f", lateral);
-        telemetry.addData("Joystick Yaw", "%4.2f", yaw);
+        telemetry.addData("OTOS location: x, y, h", "%4.2f, %4.2f, %4.2f", xLoc, yLoc, hLoc);
         telemetry.addData("Target claw position", "%4.2f", claw_position);
         telemetry.addData("Claw position", "%4.2f", claw.getPosition());
+        telemetry.addData("Wrist position", "%4.2f", wrist.getPosition());
         telemetry.addData("Viper Slide Velocity", "%4.2f", ((DcMotorEx) viperSlide).getVelocity());
         telemetry.addData("Viper power consumption", "%.1f", ((DcMotorEx) viperSlide).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Viper Slide Position", "%d", viperSlidePosition);
         telemetry.addData("Vertical Power", "%.1f", ((DcMotorEx) vertical).getVelocity());
         telemetry.addData("Vertical power consumption", "%.1f", ((DcMotorEx) vertical).getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Vertical Position", "%d", vertical.getCurrentPosition());
-        telemetry.addData("Vertical Adjusted Min", "%d", verticalAdjustedMin);
         RobotLog.vv("Rockin", "Vert Velocity: %.1f, Vert Power: %.1f, Vert Power Consumption: %.1f, Vert Position: %d",
                 ((DcMotorEx) vertical).getVelocity(),  vertical.getPower(), ((DcMotorEx)vertical).getCurrent(CurrentUnit.AMPS), vertical.getCurrentPosition());
 
