@@ -77,7 +77,7 @@ public class WristRemoteControl extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Remote Control Ready", "press PLAY");
-        telemetry.addData("This code was last updated", "1/17/2024, 11:32 am"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "1/17/2024, 11:47 am"); // Todo: Update this date when the code is updated
         telemetry.update();
         waitForStart();
         setAscentStick(ASCENT_MIN);
@@ -170,28 +170,44 @@ public class WristRemoteControl extends LinearOpMode {
             if (gamepad1.right_bumper && claw.getPosition() < CLAW_MAX) {
                 setClaw(claw.getPosition() + 0.3);
             }
-            if (gamepad1.left_bumper && claw.getPosition() > CLAW_MIN) {
+            else if (gamepad1.left_bumper && claw.getPosition() > CLAW_MIN) {
                 setClaw(claw.getPosition() - 0.15);
             }
 
             // Y/Triangle: High basket scoring position.
             if (gamepad1.y) {
-                tScoringPosition();
+                // Create a new thread for the scoring position
+                Thread bgThreadTScore = new Thread(() -> {
+                    tScoringPosition();
+                });
+                bgThreadTScore.start();
             }
 
             // A/X button: Complete Retraction- Viper and vertical completely retracted and down
             if (gamepad1.a) {
-                xClosedPosition();
+                // Create a new thread for the closed position
+                Thread bgThreadXClosed = new Thread(() -> {
+                    xClosedPosition();
+                });
+                bgThreadXClosed.start();
             }
 
             // X/Square: The viper slide is completely retracted but the vertical is in submersible position.
             if (gamepad1.x) {
-                sDrivingPosition();
+                // Create a new thread for the driving position
+                Thread bgThreadSDrive = new Thread(() -> {
+                    sDrivingPosition();
+                });
+                bgThreadSDrive.start();
             }
 
             // B/Circle: The vertical is in submersible position and the viper slide is all the way out.
             if (gamepad1.b) {
-                oPickupPosition();
+                // Create a new thread for the driving position
+                Thread bgThreadOPickup = new Thread(() -> {
+                    oPickupPosition();
+                });
+                bgThreadOPickup.start();
             }
 
             // Show the elapsed game time and wheel power.
