@@ -34,14 +34,14 @@ public class SampleAuto extends CommandAutoOpMode {
                 ),
 
                 // ?
-                commandFactory.driveToTarget(10, 420, -45, 0.13, .8, 50),
+                commandFactory.driveToTarget(-10, 430, -45, 0.15, .8, 50),
 
                 // deliver preloaded sample
                 commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
                 //endregion
 
                 //region sample #1
-                commandFactory.driveToTarget(480, 270, 0, 0.13, .7, 5),
+                commandFactory.driveToTarget(510, 280, 0, 0.13, .7, 5),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -63,14 +63,14 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 commandFactory.extendSlider(),
 
-                commandFactory.driveToTarget(20, 440, -45, 0.13, .5, 10),
+                commandFactory.driveToTarget(10, 450, -45, 0.13, .5, 10),
 
                 // Sample #1
                 commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
                 //endregion for sample #1
 
                 //region sample #2
-                commandFactory.driveToTarget(480, 520, 0, 0.13, .5, 5)),
+                commandFactory.driveToTarget(490, 520, 0, 0.13, .5, 5)),
 
                 new ParallelCommandGroup(
                     commandFactory.collapseSlider(),
@@ -93,7 +93,7 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 10),
                 commandFactory.extendSlider(),
-                commandFactory.driveToTarget(30, 460, -45, 0.13, .8, 10),
+                commandFactory.driveToTarget(5, 475, -45, 0.13, .8, 10),
 
 
                 // Sample #2
@@ -142,16 +142,15 @@ public class SampleAuto extends CommandAutoOpMode {
 //                )
 
                 new ParallelCommandGroup(
-                        commandFactory.pivotToStart(),
-                        commandFactory.sleep(300).andThen(commandFactory.collapseSlider()),
+                        commandFactory.sleep(300).andThen(commandFactory.collapseSlider()).andThen(commandFactory.pivotToStart()),
                         commandFactory.driveToTarget(2300, 0, -90, .5, 1, 10),
                         commandFactory.elbowToStartPosition()
                 ),
 
                 commandFactory.driveToTarget(2100, -350, -90, .2, .5, 10)
-                        .alongWith(commandFactory.elbowToIntakePosition()).andThen(commandFactory.pivotToInTake()
+                        //.alongWith(commandFactory.elbowToIntakePosition()).andThen(commandFactory.pivotToInTake()
 //                commandFactory.driveToTarget(2000, -120, -90, .13, 1, 10)
 
-        ));
+        );
     }
 }

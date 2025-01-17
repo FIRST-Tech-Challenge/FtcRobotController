@@ -212,11 +212,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGround(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .1);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .07);
     }
 
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .1);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .07);
     }
 
     public ParallelRaceGroup intakeFromGround2(int waitTime) {

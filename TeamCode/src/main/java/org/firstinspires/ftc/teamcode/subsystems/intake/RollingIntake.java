@@ -178,11 +178,11 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInSampleDeliveryPosition() {
-        this.elbowServo.setPosition(0.30);
+        this.elbowServo.setPosition(0.1);
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.7);
+        this.elbowServo.setPosition(.45);
     }
 
     public void SetElbowInIntakePositionForSample3() {
