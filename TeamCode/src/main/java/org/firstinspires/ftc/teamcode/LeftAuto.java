@@ -92,6 +92,8 @@ public class LeftAuto extends LinearOpMode {
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(250))
                         .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(await(100))
+                        .then(run(() -> hardware.clawFront.setPosition(0.6)))
                         .then(await(250))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
@@ -121,7 +123,7 @@ public class LeftAuto extends LinearOpMode {
                     a.add(run(() -> hardware.arm.setTargetPosition(222)));
                 }))
                         .then(run(() -> hardware.wrist.setPosition(0.94)))
-                        .then(await(200))
+                        .then(await(100))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
                         .then(await(100))
                         .then(run(() -> hardware.wrist.setPosition(0.28)))
@@ -191,6 +193,10 @@ public class LeftAuto extends LinearOpMode {
                 .then(pickUpYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
+                .then(moveTo(new Pose(30.75, 12.75, Math.toRadians(75))))
+                .then(await(1000))
+                .then(moveTo(SCORE_HIGH_BASKET))
+                .then(scoreHighBasket())
                 // ====
 //                .then(moveTo(SCORE_HIGH_BASKET))
 //                .then(scoreHighBasket())
@@ -203,10 +209,10 @@ public class LeftAuto extends LinearOpMode {
                 .then(moveTo(PARK1))
                 .then(moveTo(PARK2))
                 .then(run(() -> {
-                    hardware.frontLeft.setPower(0.55);
-                    hardware.frontRight.setPower(-0.55);
-                    hardware.backLeft.setPower(-0.55);
-                    hardware.backRight.setPower(0.55);
+                    hardware.frontLeft.setPower(0.3);
+                    hardware.frontRight.setPower(-0.3);
+                    hardware.backLeft.setPower(-0.3);
+                    hardware.backRight.setPower(0.3);
                 }))
                 .then(wait(.5))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
