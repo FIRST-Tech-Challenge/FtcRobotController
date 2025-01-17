@@ -54,19 +54,19 @@ public class PlaceSpecimenAddOffset extends SequentialCommandGroup {
 
                 //new Pause(1),
 
-                //reseting Y based on front distance sensor
-                new InstantCommand(()-> {
-                    Pose2d position = RobotContainer.odometry.getCurrentPos();
-                    Pose2d correctedPosition;
-                    if (RobotContainer.frontDistance.getDistance()<=7.0){
-                        if(RobotContainer.isRedAlliance)
-                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.05-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
-                        else
-                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.05+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
-
-                        RobotContainer.odometry.setCurrentPos(correctedPosition);
-                    }
-                }),
+//                //reseting Y based on front distance sensor
+//                new InstantCommand(()-> {
+//                    Pose2d position = RobotContainer.odometry.getCurrentPos();
+//                    Pose2d correctedPosition;
+//                    if (RobotContainer.frontDistance.getDistance()<=7.0){
+//                        if(RobotContainer.isRedAlliance)
+//                            correctedPosition = new Pose2d(position.getX(),-0.565-0.185-0.05-0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+//                        else
+//                            correctedPosition = new Pose2d(position.getX(),0.565+0.185+0.05+0.01*RobotContainer.frontDistance.getDistance(), position.getRotation());
+//
+//                        RobotContainer.odometry.setCurrentPos(correctedPosition);
+//                    }
+//                }),
 
                 //new Pause(0.5),
                 //max speed = 1

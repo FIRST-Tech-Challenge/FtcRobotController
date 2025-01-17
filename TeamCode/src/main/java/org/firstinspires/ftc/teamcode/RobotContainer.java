@@ -93,7 +93,7 @@ public class RobotContainer {
     public static ClawTouchSensor clawTouch;
     public static Blinkin blinkin;
     public static RightDistance rightDistance;
-    public static FrontDistance frontDistance;
+  //  public static FrontDistance frontDistance;
     public static OperatingMode operatingMode;
 
     //Angle of the robot at the start of auto
@@ -273,7 +273,7 @@ public class RobotContainer {
         clawTouch = new ClawTouchSensor();
         blinkin = new Blinkin();
         rightDistance = new RightDistance();
-        frontDistance = new FrontDistance();
+        //frontDistance = new FrontDistance();
         operatingMode = new OperatingMode();
 
         //if (isRedAlliance){
