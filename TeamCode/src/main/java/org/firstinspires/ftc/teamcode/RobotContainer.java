@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.*;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -69,7 +70,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return new ParallelCommandGroup(m_extension.setExtension(closed),m_pivot.set(idle));
     }
     public Command setPickup(){
-        return new ParallelCommandGroup(m_extension.setExtension(extended),m_pivot.set(closed));
+        return new SequentialCommandGroup(m_pivot.set(closed), m_extension.setExtension(extended));
     }
 
 
