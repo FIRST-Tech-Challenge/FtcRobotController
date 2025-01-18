@@ -35,26 +35,25 @@ public class Arm {
         SPEC
     }
     armState armPos = armState.RETRACT;
-    ElapsedTime hahaALEX = new ElapsedTime();
-    ElapsedTime hahaALEX2 = new ElapsedTime();
+    ElapsedTime armTimer = new ElapsedTime();
     public Action servoArm(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                    double tiem = hahaALEX.seconds();
-                    if (tiem > .3) {
+                    double time = armTimer.seconds();
+                    if (time > .3) {
                         if (armPos == armState.RETRACT) {
                             servoArmLeft.setPosition(armExtend);
                             servoArmRight.setPosition(armExtend);
                             servoWrist.setPosition(wristExtend);
                             armPos = armState.EXTEND;
-                            hahaALEX.reset();
+                            armTimer.reset();
                         } else if (armPos == armState.EXTEND) {
                             servoArmLeft.setPosition(armRetract);
                             servoArmRight.setPosition(armRetract);
                             servoWrist.setPosition(wristRetract);
                             armPos = armState.RETRACT;
-                            hahaALEX.reset();
+                            armTimer.reset();
                         }
                     }
                 return false;
@@ -98,20 +97,20 @@ public class Arm {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket Packet) {
-                double tiem2 = hahaALEX.seconds();
-                if (tiem2 > .3) {
+                double time = armTimer.seconds();
+                if (time > .3) {
                     if (armPos == armState.RETRACT) {
                         servoArmLeft.setPosition(armSpecimenExtend);
                         servoArmRight.setPosition(armSpecimenExtend);
                         servoWrist.setPosition(wristSpecimenExtend);
                         armPos = armState.SPEC;
-                        hahaALEX.reset();
+                        armTimer.reset();
                     } else if (armPos == armState.SPEC) {
                         servoArmLeft.setPosition(armRetract);
                         servoArmRight.setPosition(armRetract);
                         servoWrist.setPosition(wristRetract);
                         armPos = armState.RETRACT;
-                        hahaALEX.reset();
+                        armTimer.reset();
                     }
                 }
                 return false;

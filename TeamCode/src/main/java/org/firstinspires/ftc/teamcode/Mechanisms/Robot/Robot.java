@@ -24,10 +24,6 @@ public class Robot {
     public Arm arm;
     public Claw claw;
     public Lift lift;
-    public enum sampleState {
-        UP,
-        DOWN,
-    }
     public Robot(HardwareMap hardwareMap){
         this.battery = new Battery(hardwareMap);
         this.drivetrain = new Drivetrain(hardwareMap, battery);
@@ -45,29 +41,18 @@ public class Robot {
                 intake.motorIntake(intakeMechState)
         );
     }
-    public Action sampleToTop(sampleState state){
-        if (state == sampleState.UP){
-            return new SequentialAction(
-                    extension.servoExtension(Extension.extensionState.RETRACT),
-                    pivot.setPosition(Intake.intakeState.STOP),
-                    new SleepAction(1),
-                    arm.armRetract(),
-                    new SleepAction(1),
-                    claw.servoClaw(Claw.clawState.CLOSE),
-                    new SleepAction(1),
-                    lift.moveToHeight(28),
-                    new SleepAction(1),
-                    arm.armExtend(),
-                    new SleepAction(1),
-                    claw.servoClaw(Claw.clawState.OPEN),
-                    lift.moveToHeight(0)
-            );
-        }
+    public Action intakeDown(){
         return new SequentialAction(
-                arm.armRetract(),
-                claw.servoClaw(Claw.clawState.OPEN),
-                new SleepAction(1),
-                lift.moveToHeight(0)
+                intake.motorIntake(Intake.intakeState.INTAKE),
+                pivot.setPosition(Intake.intakeState.INTAKE),
+                extension.servoExtension(Extension.extensionState.EXTEND)
+        );
+    }
+    public Action intakeUp(){
+        return new SequentialAction(
+                intake.motorIntake(Intake.intakeState.STOP),
+                pivot.setPosition(Intake.intakeState.STOP),
+                extension.servoExtension(Extension.extensionState.RETRACT)
         );
     }
     public Action sampleScore(){

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -57,24 +58,23 @@ public class RedSample extends LinearOpMode {
         Actions.runBlocking(
 
                 new SequentialAction(
+                        robot.intakeUp(),
+                        arm.armNeutral(),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
-
-                            intake.motorIntake(Intake.intakeState.INTAKE),
-                            pivot.setPosition(Intake.intakeState.INTAKE),
-                            extension.servoExtension(Extension.extensionState.EXTEND),
+                        new ParallelAction(
+                            robot.intakeDown(),
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),
-                            arm.armNeutral(),
-
+                            arm.armNeutral()
+                        ),
                         drivetrain.goToPose(Utils.makePoseVector(-49.5,-23.5,0)),
-                        pivot.setPosition(Intake.intakeState.STOP),
                         new SleepAction(0.3),
-                        // waits for intake to grab
+                        new ParallelAction(
                             claw.servoClaw(Claw.clawState.OPEN),
-                            extension.servoExtension(Extension.extensionState.RETRACT),
+                            robot.intakeUp()
+                        ),
                         new SleepAction(0.5),
                         arm.armRetract(),
-                        intake.motorIntake(Intake.intakeState.STOP),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         new SleepAction(0.3),
@@ -83,18 +83,14 @@ public class RedSample extends LinearOpMode {
                         new SleepAction(0.3),
                         //lift,
                         claw.servoClaw(Claw.clawState.OPEN),
-                        pivot.setPosition(Intake.intakeState.INTAKE),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
                         drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
-                        extension.servoExtension(Extension.extensionState.EXTEND),
-                        intake.motorIntake(Intake.intakeState.INTAKE),
+                        robot.intakeDown(),
                         drivetrain.goToPose(Utils.makePoseVector(-49.5,-13.5,0)),
                         new SleepAction(1),
-                        pivot.setPosition(Intake.intakeState.STOP),
-                        intake.motorIntake(Intake.intakeState.STOP),
+                        robot.intakeUp(),
                         claw.servoClaw(Claw.clawState.OPEN),
                         arm.armNeutral(),
-                        extension.servoExtension(Extension.extensionState.RETRACT),
                         new SleepAction(0.5),
                         arm.armRetract(),
                         new SleepAction(1),
@@ -104,7 +100,6 @@ public class RedSample extends LinearOpMode {
                         //lift,
                         claw.servoClaw(Claw.clawState.OPEN),
                         arm.armExtend()
-
                 )
         );
     }

@@ -6,13 +6,12 @@ import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID;
 import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.PID.functionType;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
-import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Controllers.SQRTPID;
 
 @Config
 public class PoseController {
-    public SQRTPID xPID;
-    public SQRTPID yPID;
-    public SQRTPID tPID;
+    public PID xPID;
+    public PID yPID;
+    public PID tPID;
     public static double kPX = 10;
     public static double kPY = 10;
     public static double kPTheta= 5;
@@ -22,9 +21,9 @@ public class PoseController {
     public static double kDTheta = 0;
 
     public PoseController(){
-        this.xPID = new SQRTPID(kPX, kIX, kDX);
-        this.yPID = new SQRTPID(kPY, kIY, kDY);
-        this.tPID = new SQRTPID(kPTheta, kITheta, kDTheta);
+        this.xPID = new PID(kPX, kIX, kDX, functionType.SQRT);
+        this.yPID = new PID(kPY, kIY, kDY, functionType.SQRT);
+        this.tPID = new PID(kPTheta, kITheta, kDTheta, functionType.SQRT);
     }
     public SimpleMatrix calculate(SimpleMatrix pose, SimpleMatrix desiredPose){
         SimpleMatrix errorField = new SimpleMatrix(
