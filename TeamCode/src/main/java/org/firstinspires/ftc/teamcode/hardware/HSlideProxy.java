@@ -63,7 +63,7 @@ public class HSlideProxy extends TaskTemplate {
                 if (activeTask != null) activeTask.requestStop();
                 activeTask = this;
                 isOut = false;
-                moveTo(Hardware.RIGHT_SLIDE_IN - Hardware.SLIDE_OVERSHOOT);
+                moveTo(Hardware.SLIDE_OVERSHOOT);
                 timer = new ElapsedTime();
                 timer.reset();
             }

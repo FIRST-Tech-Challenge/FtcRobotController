@@ -36,14 +36,13 @@ import kotlin.Unit;
 // STOP POSTING ABOUT DefaultLocale IM TIRED OF SEEING IT
 @SuppressLint("DefaultLocale")
 public class LeftAuto extends LinearOpMode {
-    // Constants //
-    public static final int HIGH_BASKET_TICKS = 2180;
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
     final Pose SCORE_HIGH_BASKET = new Pose(10.6286797, 17.3713203, Math.toRadians(-45));
-    final Pose PARK1 = new Pose(57.5, 6, Math.toRadians(0));
+    final Pose PARK1 = new Pose(57.5, 0, Math.toRadians(0));
     final Pose PARK2 = new Pose(55.5, -11, Math.toRadians(0));
+    final Pose START = new Pose(0, 4.66, Math.toRadians(0));
     Hardware hardware;
     EncoderTracking tracker;
     private VLiftProxy vLiftProxy;
@@ -91,14 +90,14 @@ public class LeftAuto extends LinearOpMode {
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(250))
-                        .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(run(() -> {
+                            hardware.arm.setTargetPosition(0);
+                            hClawProxy.setClaw(Hardware.FRONT_OPEN);
+                        }))
                         .then(await(100))
                         .then(run(() -> hardware.clawFront.setPosition(0.6)))
                         .then(await(250))
-                        .then(run(() -> {
-                            hardware.arm.setTargetPosition(0);
-                            hardware.wrist.setPosition(Hardware.WRIST_BACK);
-                        }))
+                        .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
         );
     }
 
@@ -117,18 +116,32 @@ public class LeftAuto extends LinearOpMode {
         return result;
     }
 
-    /* Add Ryan's fourthSample() from FixStuffTeleOp.java here
+    /* Add Ryan's fourthSample() from FixStuffTeleOp.java here */
     private ITask fourthYellow() {
-        Itask result = groupOf(inner -> ());
-
+        ITask result = groupOf(inner -> inner.add(hClawProxy.aSetFlipClaw(0.167, Hardware.FRONT_OPEN))
+                .then(await(200))
+                .then(run(() -> hardware.clawTwist.setPosition(0.26)))
+//                .then(await(500))
+                .then(hSlideProxy.moveOut())
+                .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
+                .then(await(200))
+                .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
+                .then(await(200))
+                .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
+                .then(await(200))
+                .then(hSlideProxy.moveIn())
+                .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
+        );
+        result.then(transfer());
         return result;
     }
-    */
 
     private ITask scoreHighBasket() {
         return groupOf(inner -> inner.add(groupOf(a -> {
-                    a.add(vLiftProxy.moveTo(HIGH_BASKET_TICKS, 5, 2.0));
+                    // all of these:
+                    a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 10, 2.0));
                     a.add(run(() -> hardware.arm.setTargetPosition(222)));
+                    a.add(await(250)); // minimum duration
                 }))
                         .then(run(() -> hardware.wrist.setPosition(0.94)))
                         .then(await(100))
@@ -141,11 +154,11 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private void hardwareInit() {
-        tracker = new EncoderTracking(hardware);
+        tracker = new EncoderTracking(hardware, START);
         loopTimer = new LoopStopwatch();
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.20 seconds
         ramps = new Ramps(
-                Ramps.linear(2.0),
+                Ramps.linear(5.0),
                 Ramps.linear(1 / 12.0),
 //                Easing.power(3.0, 12.0),
                 Ramps.LimitMode.SCALE
@@ -202,28 +215,25 @@ public class LeftAuto extends LinearOpMode {
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
                 .then(moveTo(new Pose(30.75, 12.75, Math.toRadians(75))))
-                .then(await(1000))
-                // .then(fourthYellow())
+                .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                // ====
-//                .then(moveTo(SCORE_HIGH_BASKET))
-//                .then(scoreHighBasket())
-//                .then(moveTo(new Pose(28, 22, Math.toRadians(-180))))
-//                .then(pickUpYellow(scheduler))
-//                .then(moveTo(SCORE_HIGH_BASKET))
-//                .then(scoreHighBasket())
-//                .then(new OneShot(scheduler, () -> scoredIn.set(finalizeTimer.time())))
-                // ====
                 .then(moveTo(PARK1))
-                .then(moveTo(PARK2))
+//                .then(moveTo(PARK2))
+                .then(run(() -> {
+                    hardware.frontLeft.setPower(0.6);
+                    hardware.frontRight.setPower(-0.6);
+                    hardware.backLeft.setPower(-0.6);
+                    hardware.backRight.setPower(0.6);
+                }))
+                .then(wait(0.5))
                 .then(run(() -> {
                     hardware.frontLeft.setPower(0.3);
                     hardware.frontRight.setPower(-0.3);
                     hardware.backLeft.setPower(-0.3);
                     hardware.backRight.setPower(0.3);
                 }))
-                .then(wait(.5))
+                .then(wait(0.5))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
 //                .then(moveTo(scheduler,
 //                        new Pose(65, -12, Math.toRadians(0))))*/
