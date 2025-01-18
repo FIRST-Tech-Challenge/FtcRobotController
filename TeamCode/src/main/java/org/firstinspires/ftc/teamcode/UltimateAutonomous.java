@@ -238,11 +238,11 @@ public class UltimateAutonomous extends LinearOpMode {
     public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             baseRobot.outtake.claw.close();
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
-            pause(1000);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
+            pause(3500);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 600);
             pause(1500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             return false;
@@ -272,9 +272,12 @@ public class UltimateAutonomous extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.claw.open();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
+            pause(500);
+            baseRobot.outtake.claw.close();
+            pause(200);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             return false;
         }
     }
@@ -390,9 +393,8 @@ public class UltimateAutonomous extends LinearOpMode {
     private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
         return previousTrajectory.endTrajectory().fresh()
                 .strafeToLinearHeading(Settings.Autonomous.FieldPositions.HP_POSE.position,
-                        Settings.Autonomous.FieldPositions.HP_POSE.heading)
-        .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y-5);
-    }
+                        Settings.Autonomous.FieldPositions.HP_POSE.heading).waitSeconds(1)
+        .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y-10).waitSeconds(1)
 
     private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp,
                                                          TrajectoryActionBuilder previousTrajectory) {
