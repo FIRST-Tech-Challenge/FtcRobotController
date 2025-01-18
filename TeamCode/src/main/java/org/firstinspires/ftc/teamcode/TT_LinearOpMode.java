@@ -34,6 +34,7 @@ public class TT_LinearOpMode extends LinearOpMode {
                 robot.moveExtension();
                 robot.moveExtensionArm();
                 robot.moveExtensionSpin();
+                robot.moveExtensionGripper();
             }
             robot.displayTelemetry();
         }

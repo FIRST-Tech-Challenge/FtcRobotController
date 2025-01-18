@@ -57,16 +57,19 @@ public class TT_RobotHardware {
 
     public GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public GoBuildaDriveToPoint nav; //OpMode member for the point-to-point navigation class
+    public double MaxPowerAdjustment = 1;
 
     public DigitalChannel liftSafetyButton = null;
     public ScaledServo extension = null;
     public ScaledServo extensionArm = null;
+    public ScaledServo extensionGripper = null;
     public ScaledServo extensionSpin = null;
     public ScaledServo liftArm = null;
     public ScaledServo light = null;
 
     // Initialize servo settings
     public boolean extensionArmUp = true;
+    public boolean extensionGripperOpen = true;
     private boolean extensionArmButtonPress = false;
     private boolean lift = true;
     private boolean liftArmUp = true;
@@ -79,11 +82,11 @@ public class TT_RobotHardware {
     public static final double ARM_DOWN_POWER = -0.45;
     private boolean liftEnabled = false;
     public int liftHeight = 0;
-    public int liftHeightMax = 1500;
+    public int liftHeightMax = 1355;
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
     public double effectivePower = 0;
-    public double liftPowerMax = .5;
+    public double liftPowerMax = 1;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public TT_RobotHardware(LinearOpMode opmode) {
@@ -138,6 +141,7 @@ public class TT_RobotHardware {
         leftLift.setTargetPosition(liftHeight);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         liftSafetyButton = myOpMode.hardwareMap.get(DigitalChannel.class, "Lift Safety Button");
         liftSafetyButton.setMode(DigitalChannel.Mode.INPUT);
         if (!liftSafetyButton.getState()) {
@@ -151,18 +155,18 @@ public class TT_RobotHardware {
         odo.resetPosAndIMU();
 
         nav = new GoBuildaDriveToPoint(myOpMode);
-        nav.setDriveType(GoBuildaDriveToPoint.DriveType.MECANUM);
 
-        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.27, 0.5);
-        extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension", 0, 1);
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.28, 0.55);
+        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.2, 0.7);
+        extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension", 0, .7);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.37, 0.60);
+        extensionGripper = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Gripper"), "Extension", 0.8, .9);
+
         light = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Light"), "Light", 0.0, 1.0);
         liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Arm", 0.38, .55);
 
+        extension.setTargetPosition(.9);
+
         myOpMode.telemetry.addData(">", "Hardware Initialized");
-        myOpMode.telemetry.addData("X offset", odo.getXOffset());
-        myOpMode.telemetry.addData("Y offset", odo.getYOffset());
-        myOpMode.telemetry.addData("Device Scalar", odo.getYawScalar());
         myOpMode.telemetry.update();
         light.setTargetPosition(.5);
     }
@@ -187,7 +191,7 @@ public class TT_RobotHardware {
     public void moveExtensionArm() {
         if (myOpMode.gamepad1.b) {
             // positioned over blocks for easy viewing
-            extensionArm.setTargetPosition(.75);
+            extensionArm.setTargetPosition(.8);
         } else if (myOpMode.gamepad1.a) {
             // pickup the block
             extensionArm.setTargetPosition(1);
@@ -217,7 +221,7 @@ public class TT_RobotHardware {
         if (myOpMode.gamepad1.right_trigger > 0) {
             extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 10));
         } else if (myOpMode.gamepad1.left_trigger > 0) {
-            extension.setTargetPosition(extension.getPosition()  + (myOpMode.gamepad1.left_trigger/10));
+            extension.setTargetPosition(extension.getPosition() + (myOpMode.gamepad1.left_trigger / 10));
         } else {
             extension.setTargetPosition(extension.getPosition());
         }
@@ -225,16 +229,30 @@ public class TT_RobotHardware {
 
     public void moveExtensionSpin() {
         if (myOpMode.gamepad1.left_bumper) {
-            extensionSpin.setTargetPosition(.75);
+            extensionSpin.setTargetPosition(1);
         } else if (myOpMode.gamepad1.right_bumper) {
-            extensionSpin.setTargetPosition(.25);
+            extensionSpin.setTargetPosition(0);
         } else {
-            extensionSpin.setTargetPosition(.5);
+            extensionSpin.setTargetPosition(extensionSpin.getPosition());
+        }
+    }
+
+    public void moveExtensionGripper() {
+        if (myOpMode.gamepad1.y) {
+            if (extensionGripperOpen) {
+                extensionGripperOpen = false;
+                extensionGripper.setTargetPosition(1);
+            } else {
+                extensionGripperOpen = true;
+                extensionGripper.setTargetPosition(0);
+            }
+        } else {
+            //extensionSpin.setTargetPosition(0.5);
         }
     }
 
     public void drivelift() {
-        if (liftEnabled) {
+        if (liftEnabled || !liftEnabled) {
             if (myOpMode.gamepad1.dpad_down) {
                 light.setTargetPosition(.6);
                 setLiftPosition(liftHeightMin);
@@ -323,7 +341,7 @@ public class TT_RobotHardware {
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
 
-        //max *= 1.5;
+        max *= MaxPowerAdjustment;
 
         if (max > 1.0) {
             leftFrontPower /= max;
@@ -358,10 +376,12 @@ public class TT_RobotHardware {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             myOpMode.telemetry.addData("Position", data);
             myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            myOpMode.telemetry.addData("Servos", "Ext %1.1f Ext Arm %1.1f", extension.getPosition(), extensionArm.getPosition());
-
+            myOpMode.telemetry.addData("Lift", "Left %3d  Right %3d  Arm %1.1f", leftLift.getCurrentPosition(), rightLift.getCurrentPosition(), liftArm.getPosition());
+            myOpMode.telemetry.addData("Extension", "Ext %1.1f  Arm %1.1f  Spin %1.1f  Gripper %1.1f", extension.getPosition(), extensionArm.getPosition(), extensionSpin.getPosition(), extensionGripper.getPosition());
             myOpMode.telemetry.update();
         } catch (Exception ex) {
+            myOpMode.telemetry.addData("Error", "%s", ex.getMessage());
+            myOpMode.telemetry.update();
         }
     }
 
