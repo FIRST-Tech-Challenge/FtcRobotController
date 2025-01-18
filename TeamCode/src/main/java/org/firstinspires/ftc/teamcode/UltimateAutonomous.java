@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -150,15 +151,16 @@ public class UltimateAutonomous extends LinearOpMode {
 
     public TrajectoryActionBuilder gameLoopSetup(StartingPosition sp, PlacementHeight chamberHeight) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
         TrajectoryActionBuilder unhookTrajectory = getUnhookTrajectory(sp, placingTrajectory);
 
         Actions.runBlocking(
                 new SequentialAction(
-                        placingTrajectory.build(),
-                        hookChamber(),
-                        unhookTrajectory.build(),
+                        new ParallelAction(
+                                placingTrajectory.build(),
+                                hookChamber()
+                        ),
+
                         unhookChamber()));
 
         return unhookTrajectory;
@@ -236,10 +238,11 @@ public class UltimateAutonomous extends LinearOpMode {
     public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             baseRobot.outtake.claw.close();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             pause(1000);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 400);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
             pause(1500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             return false;
@@ -269,12 +272,9 @@ public class UltimateAutonomous extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.outtake.claw.open();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-            pause(500);
-            baseRobot.outtake.claw.close();
-            pause(200);
-            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
             return false;
         }
     }
@@ -286,7 +286,7 @@ public class UltimateAutonomous extends LinearOpMode {
     public class HangAction implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             pause(2000);
             return false;
@@ -304,7 +304,8 @@ public class UltimateAutonomous extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         placingTrajectory.build(),
-                        hookChamber()));
+                        hookChamber(),
+                        unhookChamber()));
 
         return placingTrajectory;
     }
@@ -389,7 +390,8 @@ public class UltimateAutonomous extends LinearOpMode {
     private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
         return previousTrajectory.endTrajectory().fresh()
                 .strafeToLinearHeading(Settings.Autonomous.FieldPositions.HP_POSE.position,
-                        Settings.Autonomous.FieldPositions.HP_POSE.heading);
+                        Settings.Autonomous.FieldPositions.HP_POSE.heading)
+        .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y-5);
     }
 
     private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp,
@@ -398,12 +400,10 @@ public class UltimateAutonomous extends LinearOpMode {
         switch (sp) {
             case LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(initialPose.position.y + 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.heading);
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .lineToY(initialPose.position.y + 10)
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.heading);
             default:
