@@ -272,7 +272,6 @@ public class UltimateAutonomous extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.claw.open();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             pause(500);
             baseRobot.outtake.claw.close();
