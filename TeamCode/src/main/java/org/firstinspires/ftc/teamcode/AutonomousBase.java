@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 import android.os.Environment;
@@ -432,25 +431,25 @@ public abstract class AutonomousBase extends LinearOpMode {
     void autoPanMotorMoveToTarget(int targetEncoderCount )
     {
         // Configure target encoder count
-        robot.wormPanMotor.setTargetPosition( targetEncoderCount );
+        robot.snorkleLMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
-        robot.wormPanMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        robot.snorkleLMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
         // Begin our timer and start the movement
         autoPanMotorTimer.reset();
-        robot.wormPanMotor.setPower( 0.80 );
+        robot.snorkleLMotor.setPower( 0.80 );
     } // autoPanMotorMoveToTarget
 
     boolean autoPanMotorMoving() {
         boolean panMoving = true;
         // Did the movement finish?
-        if( !robot.wormPanMotor.isBusy() ) {
+        if( !robot.snorkleLMotor.isBusy() ) {
             panMoving = false;
-            robot.wormPanMotor.setPower( 0.0 );
+            robot.snorkleLMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoPanMotorTimer.milliseconds() > 5000 ) {
             panMoving = false;
-            robot.wormPanMotor.setPower( 0.0 );
+            robot.snorkleLMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer

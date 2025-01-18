@@ -73,7 +73,7 @@ public abstract class Teleop extends LinearOpMode {
 
     boolean geckoServoCollecting = false; // Is the collector servo currently intaking (true) or OFF (false);
     boolean geckoServoEjecting   = false; // Is the collector servo currently ejecting (true) or OFF (false);
-    boolean panAngleTweaked      = false; // Reminder to zero power when PAN  input stops
+    boolean snorkleTweaked = false; // Reminder to zero power when PAN  input stops
     boolean tiltAngleTweaked     = false; // Reminder to zero power when TILT input stops
     boolean liftTweaked          = false; // Reminder to zero power when LIFT input stops
     boolean enableOdometry       = true; // Process/report odometry updates?
@@ -227,11 +227,11 @@ public abstract class Teleop extends LinearOpMode {
                 } // switch()
             } // processDpadDriveMode
 
-//          processPanControls();
             processTiltControls();
             ProcessViperLiftControls();
             processClaw();
             processLevel2Ascent();
+            processSnorkleControls();
             performEveryLoopTeleop();
 
             // Compute current cycle time
@@ -247,7 +247,7 @@ public abstract class Teleop extends LinearOpMode {
 //                  rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
-//          telemetry.addData("Pan", "%d counts", robot.wormPanMotorPos );
+            telemetry.addData("Snorkel", "L = %d, R = %d counts", robot.snorkleLMotorPos, robot.snorkleRMotorPos );
             telemetry.addData("Tilt", "%d counts %.1f deg %.1f raw deg", robot.wormTiltMotorPos, robot.armTiltAngle, robot.computeRawAngle(robot.armTiltEncoder.getVoltage()));
             telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
@@ -545,11 +545,11 @@ public abstract class Teleop extends LinearOpMode {
     } // processDriverCentricDriveMode
     
     /*---------------------------------------------------------------------------------*/
-    void processPanControls() {
-        boolean safeToManuallyLeft  = (robot.wormPanMotorPos > robot.PAN_ANGLE_HW_MIN);
-        boolean safeToManuallyRight = (robot.wormPanMotorPos < robot.PAN_ANGLE_HW_MAX);
-        double  gamepad2_left_stick = gamepad2.left_stick_x;
-        boolean manual_pan_control = ( Math.abs(gamepad2_left_stick) > 0.15 );
+    void processSnorkleControls() {
+        boolean safeToManuallyLower  = (robot.snorkleLMotorPos > robot.SNORKLE_HW_MIN);
+        boolean safeToManuallyRaise = (robot.snorkleLMotorPos < robot.SNORKLE_HW_MAX);
+        double  gamepad2_left_stick = -gamepad2.left_stick_y;
+        boolean manual_snorkle_control = ( Math.abs(gamepad2_left_stick) > 0.15 );
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
@@ -563,27 +563,30 @@ public abstract class Teleop extends LinearOpMode {
         }
 
         //===================================================================
-        else if( manual_pan_control || panAngleTweaked) {
-            // Does user want to rotate turret LEFT (negative joystick input)
-            if( safeToManuallyLeft && (gamepad2_left_stick < -0.15) ) {
-                double motorPower = 0.20 * gamepad2_left_stick; // NEGATIVE
-                robot.wormPanMotor.setPower( motorPower );   // -3% to -20%
-                panAngleTweaked = true;
+        else if( manual_snorkle_control || snorkleTweaked) {
+            // Does user want to lower snorkle arm (negative joystick input)
+            if( safeToManuallyLower && (gamepad2_left_stick < -0.15) ) {
+                double motorPower = 1.00 * gamepad2_left_stick; // NEGATIVE
+                robot.snorkleLMotor.setPower( motorPower );   // -3% to -20%
+                robot.snorkleRMotor.setPower( motorPower );   // -3% to -20%
+                snorkleTweaked = true;
             }
-            // Does user want to rotate turret RIGHT (positive joystick input)
-            else if( safeToManuallyRight && (gamepad2_left_stick > 0.15) ) {
-                double motorPower = 0.20 * gamepad2_left_stick; // POSITIVE
-                robot.wormPanMotor.setPower( motorPower );   // +3% to +20%
-                panAngleTweaked = true;
+            // Does user want to raise snorkle RIGHT (positive joystick input)
+            else if( safeToManuallyRaise && (gamepad2_left_stick > 0.15) ) {
+                double motorPower = 1.00 * gamepad2_left_stick; // POSITIVE
+                robot.snorkleLMotor.setPower( motorPower );   // +3% to +20%
+                robot.snorkleRMotor.setPower( motorPower );   // +3% to +20%
+                snorkleTweaked = true;
             }
             // No more input?  Time to stop turret movement!
-            else if(panAngleTweaked) {
-                robot.wormPanMotor.setPower( 0.0 );
-                panAngleTweaked = false;
+            else if(snorkleTweaked) {
+                robot.snorkleLMotor.setPower( 0.0 );
+                robot.snorkleRMotor.setPower( 0.0 );
+                snorkleTweaked = false;
             }
-        } // manual_pan_control
+        } // manual_snorkle_control
 
-    } // processPanControls
+    } // processSnorkleControls
 
     /*---------------------------------------------------------------------------------*/
     void processTiltControls() {
@@ -789,7 +792,7 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad1_touchpad_now && !gamepad1_touchpad_last ) {
             robot.viperMotor.setPower( 0.0 );
             robot.wormTiltMotor.setPower( 0.0 );
-            robot.wormPanMotor.setPower( 0.0 );
+            robot.snorkleLMotor.setPower( 0.0 );
             ascent2state = ASCENT_STATE_IDLE;
 			ascent2telem = false;
         }
@@ -844,7 +847,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Tilt Motor", "%.1f Amp (%.1f peak)",
                robot.wormTiltMotorAmps, robot.wormTiltMotorAmpsPk );
             telemetry.addData("Pan Motor", "%.1f Amp (%.1f peak)", 
-               robot.wormPanMotorAmps, robot.wormPanMotorAmpsPk );
+               robot.snorkleLMotorAmps, robot.snorkleLMotorAmpsPk );
         } // ascent2started
 
     }  // processLevel2Ascent

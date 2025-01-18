@@ -76,20 +76,33 @@ public class Hardware2025Bot
     // The math above assumes motor encoders.  For REV odometry pods, the counts per inch is different
     protected double COUNTS_PER_INCH2      = 1738.4;  // 8192 counts-per-rev / (1.5" omni wheel * PI)
 
-    //====== Worm gear pan and tilt MOTORS (RUN_USING_ENCODER) =====
-    protected DcMotorEx wormPanMotor       = null;
-    public int          wormPanMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
-    public int          wormPanMotorPos    = 0;       // current encoder count
-    public double       wormPanMotorVel    = 0.0;     // encoder counts per second
-    public double       wormPanMotorAmps   = 0.0;     // current power draw (Amps)
-    public double       wormPanMotorAmpsPk = 0.0;     // peak power draw (Amps)
-    public double       wormPanMotorSetPwr = 0.0;     // requested power setting
-    public double       wormPanMotorPwr    = 0.0;     // current power setting
+    //====== Linear actuator snorkle MOTORS (RUN_USING_ENCODER) =====
+    protected DcMotorEx snorkleLMotor = null;
+    public int          snorkleLMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
+    public int          snorkleLMotorPos    = 0;       // current encoder count
+    public double       snorkleLMotorVel    = 0.0;     // encoder counts per second
+    public double       snorkleLMotorAmps   = 0.0;     // current power draw (Amps)
+    public double       snorkleLMotorAmpsPk = 0.0;     // peak power draw (Amps)
+    public double       snorkleLMotorSetPwr = 0.0;     // requested power setting
+    public double       snorkleLMotorPwr    = 0.0;     // current power setting
 
-    public double       PAN_ANGLE_HW_MAX    =  200.0;  // encoder angles at maximum rotation RIGHT
-    public double       PAN_ANGLE_HW_BASKET =    0.0;  // encoder for rotation back to the basket for scoring
-    public double       PAN_ANGLE_HW_MIN    = -575.0;  // encoder angles at maximum rotation LEFT
+    protected DcMotorEx snorkleRMotor = null;
+    public int          snorkleRMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
+    public int          snorkleRMotorPos    = 0;       // current encoder count
+    public double       snorkleRMotorVel    = 0.0;     // encoder counts per second
+    public double       snorkleRMotorAmps   = 0.0;     // current power draw (Amps)
+    public double       snorkleRMotorAmpsPk = 0.0;     // peak power draw (Amps)
+    public double       snorkleRMotorSetPwr = 0.0;     // requested power setting
+    public double       snorkleRMotorPwr    = 0.0;     // current power setting
 
+    public double       SNORKLE_HW_MAX      = 3328.0;  // encoder for max possible extension RIGHT
+    public double       SNORKLE_LEVEL3A     = 2750.0;  // encoder for snorkle above the bar
+    public double       SNORKLE_TOUCH       = 2400.0;  // encoder for robot of the floor (against lower barrier)
+    public double       SNORKLE_LEVEL3B     = 1650.0;  // encoder for robot of the floor (against lower barrier)
+    public double       SNORKLE_SLOW        = 500.0;   // encoder for almost reset to 0
+    public double       SNORKLE_HW_MIN      = 0.0;     // encoder angles at maximum rotation LEFT
+
+    //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx wormTiltMotor       = null;
     public int          wormTiltMotorTgt    = 0;      // RUN_TO_POSITION target encoder count
     public int          wormTiltMotorPos    = 0;      // current encoder count
@@ -122,16 +135,16 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
-    public final static double TILT_ANGLE_ZERO_DEG        =  6.00; // Arm for parking fully reset in auto
-    public final static double TILT_ANGLE_DRIVE_DEG       =  6.00; // Arm for parking in auto or driving around
+    public final static double TILT_ANGLE_ZERO_DEG        =  4.00; // Arm for parking fully reset in auto
+    public final static double TILT_ANGLE_DRIVE_DEG       =  4.00; // Arm for parking in auto or driving around
     public final static double TILT_ANGLE_SPECIMEN0_DEG   = 60.00; // (NEW) Angle for grabbing specimens off field wall
     public final static double TILT_ANGLE_SPECIMEN1_DEG   = 65.00; // AUTO: Angle for scoring specimens (above bar)
     public final static double TILT_ANGLE_SPECIMEN2_DEG   = 59.40; // AUTO: Angle for scoring specimens (clipped)
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
-    public final static double TILT_ANGLE_COLLECT_DEG     =  6.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_COLLECT1_DEG    =  5.00; // Arm to collect samples at ground level for only the first sample
-    public final static double TILT_ANGLE_SAMPLE3_DEG     =  6.00; // Arm to collect samples at ground level (3rd one against wall)
+    public final static double TILT_ANGLE_COLLECT_DEG     =  4.00; // Arm to collect samples at ground level
+    public final static double TILT_ANGLE_COLLECT1_DEG    =  4.00; // Arm to collect samples at ground level for only the first sample
+    public final static double TILT_ANGLE_SAMPLE3_DEG     =  4.00; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
@@ -257,7 +270,7 @@ public class Hardware2025Bot
     public final static double CLAW_SERVO_CLOSED  = 0.443;  // Claw closed (hold sample/specimen)
     public final static double CLAW_SERVO_INIT    = 0.500;  // Claw in init position (servo default power-on state)
     public final static double CLAW_SERVO_OPEN_N  = 0.600;  // claw opened narrow (enough to release/drop)
-    public final static double CLAW_SERVO_OPEN_W  = 0.860;  // claw opened wide (fully open and above samples on floor)
+    public final static double CLAW_SERVO_OPEN_W  = 0.900;  // claw opened wide (fully open and above samples on floor)
 
     public enum clawStateEnum {
         CLAW_INIT,
@@ -337,29 +350,33 @@ public class Hardware2025Bot
         rearLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Define and Initialize pan and tilt motors
-        wormPanMotor   = hwMap.get(DcMotorEx.class,"WormPan");   // Control Hub port 0
+        // Define and Initialize tilt motor and absolute position encoder
         wormTiltMotor  = hwMap.get(DcMotorEx.class,"WormTilt");  // Control Hub port 1
         armTiltEncoder = hwMap.get(AnalogInput.class, "tiltMA3"); // Expansion Hub analog 0
         startingArmTiltAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
-
-        wormPanMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        wormPanMotor.setPower( 0.0 );
         wormTiltMotor.setPower( 0.0 );
 
-        if( isAutonomous ) {
-            wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // Define and initialize the two snorkle motors
+        snorkleLMotor = hwMap.get(DcMotorEx.class,"SnorkleL");   // Control Hub port 0
+        snorkleRMotor = hwMap.get(DcMotorEx.class,"SnorkleR");   // Control Hub port 2
+        snorkleLMotor.setDirection(DcMotor.Direction.FORWARD);
+        snorkleRMotor.setDirection(DcMotor.Direction.FORWARD);
+        snorkleLMotor.setPower( 0.0 );
+        snorkleRMotor.setPower( 0.0 );
 
-            wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if( isAutonomous ) {
+            snorkleLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            snorkleRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            snorkleLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            snorkleRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } // not for teleop
 
         // Reset tilt encoder so we can base everything off the absolute position encoder
         wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        wormPanMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        snorkleLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wormTiltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Viper slide motor
@@ -398,13 +415,15 @@ public class Hardware2025Bot
 
     /*--------------------------------------------------------------------------------------------*/
     public void resetEncoders() {
-        wormPanMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wormTiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        snorkleLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        snorkleRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wormPanMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wormTiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        snorkleLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        snorkleRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         odom.resetPosAndIMU();
 
@@ -559,10 +578,13 @@ public class Hardware2025Bot
         viperMotorPos      = viperMotor.getCurrentPosition();
         viperMotorVel      = viperMotor.getVelocity();
         viperMotorPwr      = viperMotor.getPower();
-        //---- Worm drive PAN motor data ----
-        wormPanMotorPos    = wormPanMotor.getCurrentPosition();
-        wormPanMotorVel    = wormPanMotor.getVelocity();
-        wormPanMotorPwr    = wormPanMotor.getPower();
+        //---- Snorkle motor data ----
+        snorkleLMotorPos    = snorkleLMotor.getCurrentPosition();
+        snorkleLMotorVel    = snorkleLMotor.getVelocity();
+        snorkleLMotorPwr    = snorkleLMotor.getPower();
+        snorkleRMotorPos    = snorkleRMotor.getCurrentPosition();
+        snorkleRMotorVel    = snorkleRMotor.getVelocity();
+        snorkleRMotorPwr    = snorkleRMotor.getPower();
         //---- Worm drive TILT motor data ----
         wormTiltMotorPos    = wormTiltMotor.getCurrentPosition();
         wormTiltMotorVel    = wormTiltMotor.getVelocity();
@@ -574,7 +596,7 @@ public class Hardware2025Bot
 //      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
 //      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
 //      viperMotorAmps      = viperMotor.getCurrent(MILLIAMPS);
-//      wormPanMotorAmps    = wormPanMotor.getCurrent(MILLIAMPS);
+//      snorkleLMotorAmps    = snorkleLMotor.getCurrent(MILLIAMPS);
 //      wormTiltMotorAmps   = wormTiltMotor.getCurrent(MILLIAMPS);
     } // readBulkData
 
@@ -590,8 +612,8 @@ public class Hardware2025Bot
         if( wormTiltMotorAmps > wormTiltMotorAmpsPk ) wormTiltMotorAmpsPk = wormTiltMotorAmps;
 
         // monitor the arm pan motor current needed to keep arm from rotating during ascent
-        wormPanMotorAmps = wormPanMotor.getCurrent(CurrentUnit.AMPS);
-        if( wormPanMotorAmps > wormPanMotorAmpsPk ) wormPanMotorAmpsPk = wormPanMotorAmps;
+        snorkleLMotorAmps = snorkleLMotor.getCurrent(CurrentUnit.AMPS);
+        if( snorkleLMotorAmps > snorkleLMotorAmpsPk ) snorkleLMotorAmpsPk = snorkleLMotorAmps;
 
     } // updateAscendMotorAmps
 

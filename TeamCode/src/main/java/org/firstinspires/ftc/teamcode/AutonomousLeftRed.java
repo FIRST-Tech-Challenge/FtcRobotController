@@ -310,7 +310,7 @@ public class AutonomousLeftRed extends AutonomousBase {
             case 1:
                 // Drive forward toward the wall
                 driveToPosition( 20.9, -32.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(1500);  // viper should already be in position
+                sleep(1000);  // viper should already be in position
                 break;
             case 2:
                 driveToPosition( 20.9, -43.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
