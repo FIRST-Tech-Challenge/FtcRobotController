@@ -61,32 +61,32 @@ public class Init {
 
         // Initialize intake motors and servos
         claw = hardwareMap.servo.get("claw");
-        position= hardwareMap.servo.get("position");
+        position = hardwareMap.servo.get("position");
         wrist = hardwareMap.servo.get("wrist");
-        angleLeft= hardwareMap.servo.get("angleLeft");
+        angleLeft = hardwareMap.servo.get("angleLeft");
         angleRight = hardwareMap.servo.get("angleRight");
 
         intake = hardwareMap.dcMotor.get("intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeExtendo= hardwareMap.dcMotor.get("intakeExtendo");
+        intakeExtendo = hardwareMap.dcMotor.get("intakeExtendo");
         intakeExtendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeExtendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeExtendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        intakeLeft =hardwareMap.servo.get("intakeLeft");
+        intakeLeft = hardwareMap.servo.get("intakeLeft");
         intakeRight = hardwareMap.servo.get("intakeRight");
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
         outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
+        outtakeSlideLeft = hardwareMap.dcMotor.get("vertSlideLeft");
 
         ptoRight = hardwareMap.servo.get("ptoRight");
         ptoLeft = hardwareMap.servo.get("ptoLeft");
         hangLeft = hardwareMap.servo.get("hangLeft");
         hangRight = hardwareMap.servo.get("hangRight");
 
-       led = hardwareMap.servo.get("led");
+        led = hardwareMap.servo.get("led");
 
     }
 

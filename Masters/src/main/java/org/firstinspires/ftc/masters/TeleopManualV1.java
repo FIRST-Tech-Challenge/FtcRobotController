@@ -32,11 +32,16 @@ public class TeleopManualV1 extends LinearOpMode {
         Outtake outtake = new Outtake(init, telemetry);
         Intake intake = new Intake(init, telemetry);
 
+        outtake.initTeleopWall();
+
         int target=0;
+
+        telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
 
         telemetry.update();
 
         waitForStart();
+
 
         while (opModeIsActive()) {
 

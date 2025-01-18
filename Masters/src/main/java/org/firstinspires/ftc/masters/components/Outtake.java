@@ -25,7 +25,7 @@ public class Outtake implements Component{
     private final Servo wrist, angleLeft, angleRight, position;
     private final DcMotor outtakeSlideLeft;
     private final DcMotor outtakeSlideRight;
-    private final DcMotor outtakeSlideEncoder;
+    public final DcMotor outtakeSlideEncoder;
 
     private Status status;
 
@@ -40,11 +40,12 @@ public class Outtake implements Component{
         Specimen
     }
 
-    enum Status {
+    public enum Status {
         Transfer(0),
         ScoreSpecimen(0),
         Wall (0),
         Bucket(0),
+        InitWall(0),
 
         TransferToBucket_CloseClaw(100),
         TransferToBucket_Lift(0),
@@ -108,7 +109,14 @@ public class Outtake implements Component{
 
         target = 0;
 
-        claw.setPosition(ITDCons.close);
+    }
+
+    public void initTeleopWall(){
+        position.setPosition(ITDCons.positionBack);
+        angleLeft.setPosition(ITDCons.angleBack);
+        angleRight.setPosition(ITDCons.angleBack);
+        claw.setPosition(ITDCons.open);
+        status= Status.InitWall;
 
     }
 
@@ -126,7 +134,7 @@ public class Outtake implements Component{
 
 
     public void moveToPickUpFromWall(){
-//        if (status==Status.ScoreSpecimen) {
+        if (status==Status.ScoreSpecimen) {
             target = ITDCons.intermediateTarget;
             wrist.setPosition(ITDCons.wristBack);
 
@@ -134,11 +142,13 @@ public class Outtake implements Component{
             setAngleServoToMiddle();
             status= Status.SpecimenToWall_MoveBack;
             elapsedTime = new ElapsedTime();
-//        }
-//        if (status == Status.Transfer){
-//            target= ITDCons.intermediateTarget;
-//            setAngleServoScore();
-//        }
+        }
+        if (status == Status.InitWall){
+            target = ITDCons.WallTarget;
+            openClaw();
+
+            status= Status.Wall;
+        }
 
     }
 
@@ -166,7 +176,6 @@ public class Outtake implements Component{
 
         target = ITDCons.SpecimenTarget;
 
-        setAngleServoToMiddle();
         elapsedTime = new ElapsedTime();
     }
 
@@ -306,5 +315,7 @@ public class Outtake implements Component{
         angleRight.setPosition(ITDCons.angleScore);
     }
 
-
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
