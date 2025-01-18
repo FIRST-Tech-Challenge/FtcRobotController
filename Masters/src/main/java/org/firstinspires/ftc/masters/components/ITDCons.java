@@ -1,0 +1,74 @@
+package org.firstinspires.ftc.masters.components;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
+public class ITDCons {
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    public static double zero = 0;
+
+    public static double intakeInit = 0.5;
+    public static double intakeInitLeft = 0;
+    public static double intakeInitRight = 1;
+    public static double dropLeft =0.45;
+    public static double dropRight = 0.55;
+    public static double liftIntake =0.5;
+    public static double liftIntakeLeft= 0.55;
+    public static double liftIntakeRight = 0.45;
+
+    public static double open = 0.35;
+    public static double close = 0.75;
+
+    public static double wristFront= 0.2;
+    public static double wristBack = 0.8;
+
+    public static double positionBack = 0;
+    public static double positionTransfer = 0.5;
+    public static double positionFront =1;
+
+    public static double angleBack = 0.19;
+    public static double angleFront = 0.7;
+    public static double angleMiddle = 0.5;
+    public static double angleScore = 0.6;
+
+    public static int wallPickupTarget = 2000;
+    public static int transferPickupTarget = 0;
+
+    public static double slideInit = 0.5;
+    public static double slideOut=0.4;
+    public static double slideIn =0.5;
+    public static double liftInit = 0.9;
+    public static double liftUp = 0.9;
+    public static double liftDown = 0.1;
+
+
+    public static int BucketTarget = 50000;
+    public static int SpecimenTarget = 28000;
+    public static int ReleaseTarget = 26000;
+    public static int intermediateTarget = 10000;
+    public static int WallTarget = 6000;
+
+
+}
+
+/*
+
+   ╚ ╔ ╩ ╦ ╠ ═ ╬ ╣ ║ ╗ ╝
+       THE WISDOM!
+   T H E   W I S D O M !
+                    ║
+            ╔═══════╣
+            ║  ╔════╣
+            ║  ║    ║
+            ║  ║    ║
+                    ║
+
+ */
+
+// Wall Hanging Grab Diffy 1 = .17, Diffy 2 = .65
+// Floor Grab Diffy 1 = .27, Diffy 2 = .34
+
+// Bucket Diffy 1 = .58, Diffy 2 = .65, Slide Target = 50000
+// Specimen Diffy 1 = 0.015, Diffy 2 = 0.815, Slide Target = 18800
