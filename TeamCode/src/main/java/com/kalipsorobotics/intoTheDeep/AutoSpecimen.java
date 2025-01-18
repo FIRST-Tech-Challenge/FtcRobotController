@@ -93,7 +93,7 @@ public class AutoSpecimen extends LinearOpMode {
         //second sample to depot
         moveFloorSamples.addPoint(-1330, -775, -180); //y -800
         moveFloorSamples.addPoint(-1330, -1065, -180);// before push
-        moveFloorSamples.addPoint(-367.5,-1065,-180);
+        moveFloorSamples.addPoint(-400,-1065,-180); //-367.5
         //moveFloorSamples.addPoint(-175, -1065, -180);
 
         //third sample to depot
@@ -113,12 +113,12 @@ public class AutoSpecimen extends LinearOpMode {
         specimenWallReady.setDependentActions(waitBeforeSpecimenReady);
         redAutoSpecimen.addAction(specimenWallReady);
 
-        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/2500.0); //2200
+        PurePursuitAction moveToDepot = new PurePursuitAction(driveTrain,wheelOdometry, 1.0/3000.0); //2200
         moveToDepot.setName("moveToDepot");
         moveToDepot.setDependentActions(moveFloorSamples, specimenWallReady);
         //to depot for specimen
         //moveToDepot.addPoint(-380, -1050, -180); //-380, -615
-        moveToDepot.setMaxTimeOutMS(1000);
+        moveToDepot.setMaxTimeOutMS(1200);
         moveToDepot.addPoint(WallToBarHangRoundTrip.WALL_PICKUP_X, -1065, -180);//-130, -615
         redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================
