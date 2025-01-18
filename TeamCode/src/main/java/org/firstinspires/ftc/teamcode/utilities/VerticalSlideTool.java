@@ -78,7 +78,7 @@ public class VerticalSlideTool extends LinearOpMode {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         h.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        h.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        h.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
         h.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         h.lightRight.setPosition(Hardware.LAMP_PURPLE);

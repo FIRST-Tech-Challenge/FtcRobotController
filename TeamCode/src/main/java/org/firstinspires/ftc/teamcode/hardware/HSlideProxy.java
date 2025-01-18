@@ -49,7 +49,7 @@ public class HSlideProxy extends TaskTemplate {
 
     public void update() {
         hardware.horizontalSlide.setPosition(position);
-        hardware.horizontalLeft.setPosition(1 - position);
+        hardware.horizontalLeft.setPosition(1.05 - position);
     }
 
     private void moveTo(double newPos) {

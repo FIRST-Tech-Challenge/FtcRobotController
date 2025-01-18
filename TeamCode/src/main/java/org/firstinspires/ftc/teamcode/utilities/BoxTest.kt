@@ -55,7 +55,7 @@ class BoxTest : LinearOpMode() {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.position = Hardware.RIGHT_SLIDE_IN;
-        hardware.horizontalLeft.position = 1 - Hardware.RIGHT_SLIDE_IN;
+        hardware.horizontalLeft.position = 1.05 - Hardware.RIGHT_SLIDE_IN;
 
         hardware.lightLeft.position = Hardware.LAMP_PURPLE;
         hardware.lightRight.position = Hardware.LAMP_PURPLE;

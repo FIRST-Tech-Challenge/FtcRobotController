@@ -85,7 +85,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
         hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
@@ -152,7 +152,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_OUT);
         sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
 
@@ -164,10 +164,10 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.clawFlip.setPosition(Hardware.FLIP_ONE_THIRD);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.SLIDE_OVERSHOOT);
-        hardware.horizontalLeft.setPosition(1 - Hardware.SLIDE_OVERSHOOT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.SLIDE_OVERSHOOT);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
 
@@ -180,7 +180,7 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.clawTwist.setPosition(0.26);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_OUT);
         sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
         sleep(500);
@@ -189,10 +189,10 @@ public class FixStuffTeleOp extends LinearOpMode {
         hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.SLIDE_OVERSHOOT);
-        hardware.horizontalLeft.setPosition(1 - Hardware.SLIDE_OVERSHOOT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.SLIDE_OVERSHOOT);
         sleep(500);
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
         sleep(500);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }

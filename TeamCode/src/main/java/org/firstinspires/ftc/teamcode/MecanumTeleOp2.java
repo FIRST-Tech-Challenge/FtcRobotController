@@ -120,7 +120,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
         hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
@@ -439,7 +439,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         abandonLock(Locks.ArmAssembly);
         abandonLock(vLiftProxy.CONTROL);
         scheduler.add(
-                groupOf(inner -> inner.add(vLiftProxy.moveTo(highBasketTicks, 5, 2.0))
+                groupOf(inner -> inner.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 5, 2.0))
                                 .then(run(() -> hardware.arm.setTargetPosition(222)))
 //                        .then(run(() -> hardware.claw.setPosition(0.02)))
 //                        .then(await(500))
@@ -638,12 +638,14 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(250))
-                        .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(run(() -> {
+                            hardware.arm.setTargetPosition(0);
+                            hClawProxy.setClaw(Hardware.FRONT_OPEN);
+                        }))
                         .then(await(100))
                         .then(run(() -> hardware.clawFront.setPosition(0.6)))
                         .then(await(250))
                         .then(run(() -> {
-                            hardware.arm.setTargetPosition(0);
                             hardware.wrist.setPosition(Hardware.WRIST_BACK);
                         }))
         ).extraDepends(

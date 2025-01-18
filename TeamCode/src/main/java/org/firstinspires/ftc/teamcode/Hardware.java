@@ -25,14 +25,14 @@ import dev.aether.collaborative_multitasking.SharedResource;
 public class Hardware extends HardwareMapper implements TriOdoProvider {
     public static final int ARM_TRANSFER_POS = -40;
     public static final double spinTickPerRev = 751.8;
-    public static final double RIGHT_SLIDE_OUT = 0.64;
-    @Deprecated public static final double LEFT_SLIDE_OUT = 1 - RIGHT_SLIDE_OUT;
-    public static final double RIGHT_SLIDE_IN = 0.375;
-    @Deprecated public static final double LEFT_SLIDE_IN = 1 - RIGHT_SLIDE_IN;
+    public static final double RIGHT_SLIDE_OUT = 0.69;
+    @Deprecated public static final double LEFT_SLIDE_OUT = 1.05 - RIGHT_SLIDE_OUT;
+    public static final double RIGHT_SLIDE_IN = 0.38;
+    @Deprecated public static final double LEFT_SLIDE_IN = 1.05 - RIGHT_SLIDE_IN;
     public static final double CLAW_TWIST_INIT = 0.48;
     public static final double SLIDE_INWARD_TIME = 0.75; // seconds
     public static final double SLIDE_OUTWARD_TIME = 0.45; // seconds
-    public static final double SLIDE_OVERSHOOT = 0.2;
+    public static final double SLIDE_OVERSHOOT = 0.28;
     public static final double FLIP_DOWN = 0.00;
     public static final double FRONT_OPEN = 0.25;
     public static final double FRONT_CLOSE = 0.07;

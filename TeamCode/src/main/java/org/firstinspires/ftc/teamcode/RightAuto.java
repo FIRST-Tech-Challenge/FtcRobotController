@@ -148,7 +148,7 @@ public class RightAuto extends LinearOpMode {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
         hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);

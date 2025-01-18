@@ -109,40 +109,41 @@ public class LeftAuto extends LinearOpMode {
                 .then(await(500))
                 .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
                 .then(await(250))
-                .then(hClawProxy.aSetFlip(flipThird))
+                .then(hClawProxy.aSetFlip(flipThird)));
+        result
                 .then(hSlideProxy.moveIn())
-                .then(hClawProxy.aSetFlip(Hardware.FLIP_UP)));
-        result.then(transfer());
+                .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
+                .then(transfer());
         return result;
     }
 
     /* Add Ryan's fourthSample() from FixStuffTeleOp.java here */
     private ITask fourthYellow() {
         ITask result = groupOf(inner -> inner.add(hClawProxy.aSetFlipClaw(0.167, Hardware.FRONT_OPEN))
-                .then(await(200))
-                .then(run(() -> hardware.clawTwist.setPosition(0.26)))
+                        .then(await(200))
+                        .then(run(() -> hardware.clawTwist.setPosition(0.26)))
 //                .then(await(500))
-                .then(hSlideProxy.moveOut())
-                .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
-                .then(await(200))
-                .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
-                .then(await(200))
-                .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
-                .then(await(200))
-                .then(hSlideProxy.moveIn())
-                .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
+                        .then(hSlideProxy.moveOut())
+                        .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
+                        .then(await(200))
+                        .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
+                        .then(await(200))
+                        .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
+                        .then(await(200))
         );
-        result.then(transfer());
+        result.then(hSlideProxy.moveIn())
+                .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
+                .then(transfer());
         return result;
     }
 
     private ITask scoreHighBasket() {
         return groupOf(inner -> inner.add(groupOf(a -> {
-                    // all of these:
-                    a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 10, 2.0));
-                    a.add(run(() -> hardware.arm.setTargetPosition(222)));
-                    a.add(await(250)); // minimum duration
-                }))
+                            // all of these:
+                            a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 10, 2.0));
+                            a.add(run(() -> hardware.arm.setTargetPosition(222)));
+                            a.add(await(250)); // minimum duration
+                        }))
                         .then(run(() -> hardware.wrist.setPosition(0.94)))
                         .then(await(100))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_OPEN)))
@@ -181,7 +182,7 @@ public class LeftAuto extends LinearOpMode {
         // we don't have the proxy object to handle this for us
         // so manually implement the inversion
         hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
-        hardware.horizontalLeft.setPosition(1 - Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
 
         hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
