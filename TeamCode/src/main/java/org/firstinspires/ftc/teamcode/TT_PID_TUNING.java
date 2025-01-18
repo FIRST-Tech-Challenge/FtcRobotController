@@ -56,6 +56,7 @@ public class TT_PID_TUNING extends LinearOpMode {
         robot.init();
         StateMachine stateMachine;
         stateMachine = StateMachine.DRIVE_TO_TARGET_1;
+        robot.nav.setXYCoefficients(pGain, dGain, accel, MM, xyTolerance);
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
@@ -64,12 +65,12 @@ public class TT_PID_TUNING extends LinearOpMode {
 
             switch (stateMachine) {
                 case DRIVE_TO_TARGET_1:
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_1, autonomousPower, .2)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_1, autonomousPower, 2)) {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_2;
                     }
                     break;
                 case DRIVE_TO_TARGET_2:
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_2, autonomousPower, .2)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_2, autonomousPower, 2)) {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_1;
                     }
                     break;
@@ -95,9 +96,10 @@ public class TT_PID_TUNING extends LinearOpMode {
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", "X:   %4d     Y:   %4d", xCoor, yCoor);
             telemetry.addData("P Gain", "%1.3f", pGain);
-            telemetry.addData("D Gain", "1.5f", dGain);
+            telemetry.addData("D Gain", "%1.5f", dGain);
+            telemetry.addData("Acceleration", "%1.1f", accel);
+            telemetry.addData("Power", "%1.2f", autonomousPower);
             telemetry.update();
-
 
         }
     }
