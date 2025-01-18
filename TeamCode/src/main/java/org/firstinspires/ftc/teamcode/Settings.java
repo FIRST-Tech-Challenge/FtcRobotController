@@ -168,9 +168,9 @@ public class Settings {
             public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(90));
             public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(45, -60.0, Math.toRadians(90));
+            public static Pose2d HP_POSE = new Pose2d(55, -62.0, Math.toRadians(90));
 
-            public static Vector2d PARK_MIDDLEMAN = new Vector2d(-38.5, -30);
+            public static Vector2d PARK_MIDDLEMAN = new Vector2d(-45, -30);
 
             public static Pose2d LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));

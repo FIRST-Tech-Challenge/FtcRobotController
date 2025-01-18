@@ -239,7 +239,7 @@ public class UltimateAutonomous extends LinearOpMode {
             baseRobot.outtake.claw.close();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             pause(1000);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 400);
             pause(1500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             return false;
@@ -269,10 +269,12 @@ public class UltimateAutonomous extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
+            pause(500);
             baseRobot.outtake.claw.close();
             pause(200);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             return false;
         }
     }
