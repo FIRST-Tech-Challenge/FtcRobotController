@@ -13,7 +13,8 @@ public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         while (opModeIsActive()) {
-            telemetry.addLine("" + odometry.sparkUpdateFiltered());
+            telemetry.addLine("x: " + odometry.sparkUpdateFiltered().x);
+            telemetry.addLine("y: " + odometry.sparkUpdateFiltered().y);
             telemetry.update();
         }
     }
