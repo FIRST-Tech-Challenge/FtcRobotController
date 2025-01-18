@@ -27,6 +27,10 @@ public class HSlideProxy extends TaskTemplate {
         this.hardware = hardware;
     }
 
+    public boolean isOut() {
+        return isOut;
+    }
+
     @Override
     @NotNull
     public Set<SharedResource> requirements() {

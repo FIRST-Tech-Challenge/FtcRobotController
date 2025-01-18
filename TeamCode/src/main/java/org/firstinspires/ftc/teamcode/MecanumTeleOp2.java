@@ -268,6 +268,13 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 hardware.arm.setMode(mode);
             }
 
+            boolean twist90 = gamepad1.y;
+            boolean untwist90 = gamepad1.a;
+            if (hSlideProxy.isOut() && !scheduler.isResourceInUse(hSlideProxy.CONTROL) && !scheduler.isResourceInUse(hClawProxy.CONTROL_FLIP)) {
+                if (twist90) hardware.clawTwist.setPosition(0.83);
+                if (untwist90) hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
+            }
+
             boolean shouldFlipIn = gamepad1.right_trigger > 0.5;
             if (shouldFlipIn && !isFlipIn) Flipin();
             boolean shouldFlipOut = gamepad1.left_trigger > 0.5;
@@ -592,6 +599,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 it -> it.add(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
                         .then(hSlideProxy.moveOut())
                         .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
+                        .then(await(200))
         ).extraDepends(
                 hSlideProxy.CONTROL,
                 hClawProxy.CONTROL_FLIP,
@@ -605,6 +613,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         double flipThird = 0.66;
         scheduler.add(groupOf(
                 it -> it.add(hClawProxy.aSetFlip(flipThird))
+                        .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
                         .then(hSlideProxy.moveIn())
                         .then(hClawProxy.aSetFlip(Hardware.FLIP_UP))
         ).extraDepends(
@@ -619,6 +628,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(run(() -> {
                             hClawProxy.setClaw(Hardware.FRONT_CLOSE);
                             hardware.claw.setPosition(Hardware.CLAW_OPEN);
+                            hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
                         }))
                         .then(await(250))
                         .then(run(() -> {
