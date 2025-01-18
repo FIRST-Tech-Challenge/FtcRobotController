@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.BT.BTController;
 import org.firstinspires.ftc.teamcode.utils.PID.ProfiledPIDController;
 import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 
@@ -32,12 +33,10 @@ public class PivotSubsystem extends SubsystemBase {
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
     public
     ProfiledPIDController m_pivotPID;
-    Gamepad gamepad;
 
 
 
-    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength, Gamepad gamepad){
-        this.gamepad = gamepad;
+    public PivotSubsystem(HardwareMap map, DoubleSupplier armLength){
         this.map = map;
         pivotLeft = new MotorEx(map,"pivotLeft");//tbd
         pivotLeft.setInverted(true);
@@ -57,13 +56,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        dashboardTelemetry.addData("rightbutton",gamepad.b);
-        dashboardTelemetry.addData("leftbutton",gamepad.x);
-        dashboardTelemetry.addData("topbutton",gamepad.y);
-        dashboardTelemetry.addData("leftx",gamepad.left_stick_x);
-        dashboardTelemetry.addData("lefty",gamepad.left_stick_y);
-        dashboardTelemetry.addData("rightx",gamepad.right_stick_x);
-        dashboardTelemetry.addData("righty",gamepad.right_stick_y);
         updateValues();
         updateTelemetry();
         if (m_pivotPID.atGoal()) {

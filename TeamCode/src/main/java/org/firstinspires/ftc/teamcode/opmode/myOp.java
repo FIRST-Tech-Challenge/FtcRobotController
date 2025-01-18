@@ -4,14 +4,15 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.utils.BT.BTController;
+
 @TeleOp
 public class myOp extends CommandOpMode {
-    RobotContainer m_robot;
-    double period=0.03;
+    protected RobotContainer m_robot;
 
     @Override
     public void initialize() {
-        m_robot= new RobotContainer(hardwareMap,gamepad1,gamepad2);
+        m_robot= new RobotContainer(hardwareMap, new BTController(gamepad1));
         enable();
 
     }
@@ -23,7 +24,7 @@ public class myOp extends CommandOpMode {
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {
-
+            m_robot.period();
             run();
         }
         reset();
