@@ -20,10 +20,11 @@ public class EdgeDetector extends OpMode {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         camera.setPipeline(pipeline);
+        pipeline.init(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

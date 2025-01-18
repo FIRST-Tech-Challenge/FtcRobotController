@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.JackBurr.Camera.OpenCV;
 
+import android.provider.ContactsContract;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -9,67 +14,52 @@ import java.util.List;
 
 public class EdgeDetectionPipeline extends OpenCvPipeline {
     // Mat objects for processing
-    private Mat grayMat = new Mat();
-    private Mat thresholdMat = new Mat();
-    private Mat contoursMat = new Mat();
-
+    public Telemetry telemetry;
+    private Mat blurred = new Mat();
+    public Mat grayMat = new Mat();
+    public Mat edges = new Mat();
+    public int MIN_AREA = 400;
+    public int MAX_AREA = 10000;
+    public void init(Telemetry telemetry){
+        this.telemetry = telemetry;
+    }
     // Angle of the detected sample
     private double detectedAngle = 0;
+    public double area = 0;
 
     @Override
     public Mat processFrame(Mat input) {
         // Convert the input frame to grayscale
         Imgproc.cvtColor(input, grayMat, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.GaussianBlur(grayMat, blurred, new Size(5, 5), 0);
+        Imgproc.Canny(blurred, edges, 50, 150);
 
-        // Apply binary thresholding to isolate the sample
-        Imgproc.threshold(grayMat, thresholdMat, 128, 255, Imgproc.THRESH_BINARY);
-
-        // Find contours in the thresholded image
+// Find contours
         List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(thresholdMat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Draw contours and calculate angle
-        contoursMat = input.clone();
         for (MatOfPoint contour : contours) {
-            // Approximate the contour to a polygon
-            MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
-            RotatedRect rotatedRect = Imgproc.minAreaRect(contour2f);
-
-            // Draw the rectangle around the sample
-            Point[] rectPoints = new Point[4];
-            rotatedRect.points(rectPoints);
-            for (int i = 0; i < 4; i++) {
-                Imgproc.line(contoursMat, rectPoints[i], rectPoints[(i + 1) % 4], new Scalar(0, 255, 0), 2);
+            // Filter by size and aspect ratio
+            if (area > MIN_AREA && area < MAX_AREA) {
+                RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
+                area = rect.size.height * rect.size.width;
+                detectedAngle = rect.angle;
+                Point[] vertices = new Point[4];
+                rect.points(vertices); // Get the rectangle vertices
+                for (int i = 0; i < 4; i++) {
+                    Imgproc.line(input, vertices[i], vertices[(i + 1) % 4], new Scalar(0, 255, 0), 2); // Green lines
+                }
+                // Assuming the sample has a specific size/shape
+                telemetry.addLine("Detected Sample:");
+                telemetry.addLine("\t Width: " + rect.size.width);
+                telemetry.addLine("\t Height: " + rect.size.height);
+                telemetry.addLine("\t Angle: " + detectedAngle);
             }
-
-            // Get the angle of the sample
-            detectedAngle = rotatedRect.angle;
-            if (rotatedRect.size.width < rotatedRect.size.height) {
-                detectedAngle += 90; // Adjust for vertical orientation
-            }
-
-            // Display the angle on the image
-            Imgproc.putText(
-                    contoursMat,
-                    String.format("Angle: %.2f", detectedAngle),
-                    rotatedRect.center,
-                    Imgproc.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    new Scalar(255, 0, 0),
-                    2
-            );
         }
-
         // Return the image with contours and angle annotations
-        return contoursMat;
+        return input;
     }
 
-    /**
-     * Get the detected angle of the sample.
-     *
-     * @return The angle in degrees.
-     */
     public double getDetectedAngle() {
         return detectedAngle;
     }
