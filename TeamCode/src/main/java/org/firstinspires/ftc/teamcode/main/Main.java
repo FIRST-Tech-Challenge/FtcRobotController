@@ -184,7 +184,10 @@ public class Main extends LinearOpMode {
             }
 
             setArmLiftComp();
-            runArm();
+            setArmTargetPosition();
+            if (liftMotor.getCurrentPosition() == liftPosition) {
+                runArm();
+            }
             /* Here we set the lift position based on the driver input.
             This is a.... weird, way to set the position of a "closed loop" device. The lift is run
             with encoders. So it knows exactly where it is, and there's a limit to how far in and
@@ -214,9 +217,8 @@ public class Main extends LinearOpMode {
             liftNormalization();
             runLift();
 
-
             /* Check to see if our arm is over the current limit, and report via telemetry. */
-            if (((DcMotorEx) armMotor).isOverCurrent()){
+            if (((DcMotorEx) armMotor).isOverCurrent()) {
                 telemetry.addLine("ARM MOTOR EXCEEDED CURRENT LIMIT!!");
             }
 
@@ -246,6 +248,7 @@ public class Main extends LinearOpMode {
 
 
 
+//    ------------------------------------------------------------------------------------------------
 //    ------------------------------------------------------------------------------------------------
 //    ------------------------------------------------------------------------------------------------
 //    ------------------------------------------------------------------------------------------------
@@ -328,10 +331,10 @@ public class Main extends LinearOpMode {
         intake.setPower(0.0); // power off
     }
     public void wristIn() {
-        wrist.setPosition(.7); // 0.43
+        wrist.setPosition(.87); // 0.43
     }
     public void wristOut() {
-        wrist.setPosition(1);
+        wrist.setPosition(.52);
     }
     public void setArmPosition(int ticks) {
         armPosition = ticks;
@@ -353,8 +356,8 @@ public class Main extends LinearOpMode {
         armPosition = armDegreesToTicks(90);
     }
     public void armScoreSampleInLow() {
-        armPosition = armDegreesToTicks(90);
-    }
+        armPosition = armDegreesToTicks(110);
+    } // 90
     public void armAttachHangingHook() {
         armPosition = armDegreesToTicks(110);
     }
@@ -426,7 +429,7 @@ public class Main extends LinearOpMode {
 
         /* Make sure that the intake is off, and the wrist is folded in. */
         intakeOff();
-        wristIn();
+        wristOut();
 
         /* Send telemetry message to signify robot waiting */
         telemetry.addLine("Robot Ready.");
@@ -503,7 +506,7 @@ public class Main extends LinearOpMode {
             armLiftComp = 0;
         }
     }
-    public void runArm() {
+    public void setArmTargetPosition() {
            /* Here we set the target position of our arm to match the variable that was selected
             by the driver. We add the armPosition Variable to our armPositionFudgeFactor, before adding
             our armLiftComp, which adjusts the arm height for different lift extensions.
@@ -511,14 +514,15 @@ public class Main extends LinearOpMode {
 
         //
         armMotor.setTargetPosition(armPosition + armPositionFudgeFactor + armLiftComp);
-
-        ((DcMotorEx) armMotor).setVelocity(300);
+    }
+    public void runArm() {
+        ((DcMotorEx) armMotor).setVelocity(300); // 300
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void runLift() {
         liftMotor.setTargetPosition(liftPosition);
 
-        ((DcMotorEx) liftMotor).setVelocity(200); // 2100 velocity of the viper slide
+        ((DcMotorEx) liftMotor).setVelocity(600); // 2100 velocity of the viper slide 200
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     private void configureOtos() {
