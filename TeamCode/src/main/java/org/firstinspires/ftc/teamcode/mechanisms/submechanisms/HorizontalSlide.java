@@ -69,13 +69,13 @@ public class HorizontalSlide implements ViperSlide {
 
     @Override
     public void increment() {
-        encoderTarget += 10;
+        encoderTarget += 15;
         setPosition(encoderTarget);
     }
 
     @Override
     public void decrement() {
-        encoderTarget -= 10;
+        encoderTarget -= 15;
         setPosition(encoderTarget);
     }
 }

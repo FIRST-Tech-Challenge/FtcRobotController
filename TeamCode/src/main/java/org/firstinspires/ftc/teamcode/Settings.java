@@ -62,11 +62,11 @@ public class Settings {
             public static class Wrist {
                 public static double[] HORIZONTAL_POSITION = {0.72, 1.0} ;
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0, 0.1};
+                public static double[] VERTICAL_POSITION = {0.25, 0.1};
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.0;
+                public static double TRANSFER_POSITION = 0.2;
                 public static double PLACE_FORWARD_POSITION = 0.3;
                 public static double PLACE_BACKWARD_POSITION = 1.0;
 
@@ -119,7 +119,7 @@ public class Settings {
             public static int HIGH_BASKET = 3190;
 
             // Motor power settings
-            public static double MOVEMENT_POWER = 0.5;
+            public static double MOVEMENT_POWER = 0.9;
         }
 
         @Config
@@ -168,7 +168,7 @@ public class Settings {
             public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(90));
             public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
+            public static Pose2d HP_POSE = new Pose2d(45, -60.0, Math.toRadians(90));
 
             public static Vector2d PARK_MIDDLEMAN = new Vector2d(-38.5, -30);
 
@@ -176,10 +176,10 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
-            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(38.5, -34.3, Math.toRadians(90));
-            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(38.5, -10.5, Math.toRadians(90));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(48, -7, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(58, -7, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(40.5, -34.3, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(40.5, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(50, -2, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(60, -2, Math.toRadians(90));
         }
 
         @Config
@@ -208,7 +208,7 @@ public class Settings {
         public double stick_deadzone = 0.05;
 
         /** Sensitivity multiplier for right stick input */
-        public double right_stick_sensitivity = 0.5;
+        public double right_stick_sensitivity = 0.7;
 
         /** Bumper rotation speed */
         public double bumper_rotation_speed = 0.8;
@@ -226,7 +226,7 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
-        public boolean freaky_horizontal = false;
+        public boolean freaky_horizontal = true;
         public boolean freaky_vertical = true;
 
         public final ButtonMapping buttonMapping;
@@ -249,8 +249,8 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendHorizontal = GamepadButton.B;
-        public GamepadButton retractHorizontal = GamepadButton.X;
+        public GamepadButton extendHorizontal = GamepadButton.X;
+        public GamepadButton retractHorizontal = GamepadButton.B;
         public final GamepadButton retractVertical = GamepadButton.LEFT_BUMPER;
         public final GamepadButton extendVertical = GamepadButton.RIGHT_BUMPER;
 
@@ -258,6 +258,7 @@ public class Settings {
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
         public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
         public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
+        public final GamepadButton flipMovement = GamepadButton.A;
 
         public GamepadButton rotateRight = GamepadButton.A;
         public GamepadButton rotateLeft = GamepadButton.X;
@@ -271,8 +272,8 @@ public class Settings {
         public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
 
         // Wrist controls
-        public GamepadButton wristUp = GamepadButton.DPAD_RIGHT;
-        public GamepadButton wristDown = GamepadButton.DPAD_LEFT;
+        public GamepadButton wristUp = GamepadButton.DPAD_LEFT;
+        public GamepadButton wristDown = GamepadButton.DPAD_RIGHT;
 
         // Ascend extensor controls
         public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;

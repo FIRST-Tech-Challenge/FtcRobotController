@@ -15,9 +15,9 @@ public class Wrist {
     public final Servo wristLeft;
     public final Servo wristRight;
     public static long rightServoDelay = 45;
-    public final double[] verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
+    public static double[] verticalPos = Settings.Hardware.Servo.Wrist.VERTICAL_POSITION;
 //    public final double[] chamberPos = Settings.Hardware.Servo.Wrist.CHAMBER_POSITION;
-    public final double[] horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
+    public static double[] horizPos = Settings.Hardware.Servo.Wrist.HORIZONTAL_POSITION;
 
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;

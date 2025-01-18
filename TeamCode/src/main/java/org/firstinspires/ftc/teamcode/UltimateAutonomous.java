@@ -124,11 +124,11 @@ public class UltimateAutonomous extends LinearOpMode {
                 while (30 - baseRobot.parentOp.getRuntime() > (Settings.ms_needed_to_park / 1000)) {
                     phase += 1;
                     adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(), roadRunner);
-                    if (phase < 3) {
-                        previousChamberTrajectory = pushSamples(sp, previousChamberTrajectory, phase);
-                    } else {
+//                    if (phase < 3) {
+//                        previousChamberTrajectory = pushSamples(sp, previousChamberTrajectory, phase);
+//                    } else {
                         previousChamberTrajectory = placeLoop(sp, previousChamberTrajectory, PlacementHeight.CHAMBER_HIGH);
-                    }
+//                    }
                 }
                 baseRobot.logger.update("Autonomous phase", "Parking");
                 gameLoopEnd(sp, previousChamberTrajectory);
@@ -161,7 +161,7 @@ public class UltimateAutonomous extends LinearOpMode {
                         unhookTrajectory.build(),
                         unhookChamber()));
 
-        return placingTrajectory;
+        return unhookTrajectory;
     }
 
     public TrajectoryActionBuilder pushSamples(StartingPosition sp, TrajectoryActionBuilder previousTrajectory,
@@ -269,11 +269,10 @@ public class UltimateAutonomous extends LinearOpMode {
     public class GrabSpecimenFromHumanPlayer implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.intake.wrist.setPosition(Wrist.Position.HORIZONTAL);
-            baseRobot.intake.geckoWheels.intake();
-            pause(1500);
-            baseRobot.intake.wrist.setPosition(Wrist.Position.VERTICAL);
-            baseRobot.intake.geckoWheels.stop();
+            baseRobot.outtake.claw.close();
+            pause(200);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.LOW_BASKET);
             return false;
         }
     }

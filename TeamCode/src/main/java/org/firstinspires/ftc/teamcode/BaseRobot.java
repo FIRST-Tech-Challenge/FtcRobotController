@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Outtake;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.LinearActuator;
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Linkage;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.systems.Logger;
 import org.firstinspires.ftc.teamcode.systems.Odometry;
@@ -42,6 +43,9 @@ public class BaseRobot {
     public Odometry odometry;
     public boolean clawOpen = false;
 
+    // boolean that controls whether wheel movements are flipped for making backwards movement easier
+    public boolean whyAgney = false;
+    public static boolean activateAutoTransition = true;
     /**
      * Core robot class that manages hardware initialization and basic
      * functionality.
@@ -121,10 +125,10 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        double frontLeft = drivePower + strafePower + rotation;
-        double frontRight = drivePower - strafePower - rotation;
-        double rearLeft = drivePower - strafePower + rotation;
-        double rearRight = drivePower + strafePower - rotation;
+        double frontLeft = (drivePower + strafePower + rotation) * (whyAgney ? -1 : 1);
+        double frontRight = (drivePower - strafePower - rotation) * (whyAgney ? -1 : 1);
+        double rearLeft = (drivePower - strafePower + rotation) * (whyAgney ? -1 : 1);
+        double rearRight = (drivePower + strafePower - rotation) * (whyAgney ? -1 : 1);
 
         logger.update("FRONT LEFT", String.valueOf(frontLeft));
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
@@ -149,7 +153,7 @@ public class BaseRobot {
         double brake = actions.brakeAmount;
 
         double powerMultiplier = 1 + (boost * 2) - brake;
-        double rotation = directions.rotation * powerMultiplier;
+        double rotation = directions.rotation * powerMultiplier * (whyAgney ? -1 : 1);
         double strafePower = directions.x * powerMultiplier;
         double drivePower = directions.y * powerMultiplier;
 
@@ -222,17 +226,28 @@ public class BaseRobot {
             }
 
             if (contextualActions.justToggleClaw) {
-                if (clawOpen) {
-                    outtake.claw.close();
-                    clawOpen = false;
-                } else {
-                    outtake.claw.open();
-                    clawOpen = true;
-                }
+//                if (clawOpen) {
+                    if (!clawOpen && activateAutoTransition) {
+                        intake.geckoWheels.outtake();
+                        pause(100);
+                        intake.geckoWheels.stop();
+                    }
+//                    outtake.claw.close();
+//                    clawOpen = false;
+//                } else {
+//                    outtake.claw.open();
+//                    clawOpen = true;
+//                }
+                outtake.claw.toggle();
             }
 
             if (contextualActions.justShoulderUp) {
                 outtake.linkage.cyclePosition();
+            }
+
+
+            if (contextualActions.justFlipMovement) {
+                whyAgney = !whyAgney;
             }
 
         }
@@ -277,6 +292,14 @@ public class BaseRobot {
         // Stop all motors
         for (DcMotor motor : motors.values()) {
             motor.setPower(0);
+        }
+    }
+
+    private void pause(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }
