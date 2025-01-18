@@ -86,6 +86,8 @@ public class Robot {
 
                     if (depositDesiredState == Deposit.TargetState.specIntake) {
                         deposit.setTargetState(Deposit.TargetState.preSpecIntake);
+                    } else if (depositDesiredState == Deposit.TargetState.sampleDeposit) {
+                        deposit.setTargetState(Deposit.TargetState.samplePreDeposit);
                     } else {
                         deposit.setTargetState(Deposit.TargetState.preTransfer);
                     }

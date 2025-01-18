@@ -16,14 +16,14 @@ public class DepositConstants {
     public static final double
             armRightTransferPos = 0.932,
             armRightSpecIntakePos = 0.04,
-            armRightSpecDepositPos = 0.92,
+            armRightSpecDepositPos = 0.89,
             armRightSampleDepositPos = 0.32;
 
     // Arm Enc Positions
     public static final double
             armRightEncTransferPos = 42.00,
             armRightEncSpecIntakePos = 330.50,
-            armRightEncSpecDepositPos = 47.60,
+            armRightEncSpecDepositPos = 53.60,
             armRightEncSampleDepositPos = 240.70,
             armRightEncSlideDownSafePos = 165.00,
             armRightPositionTolerance = 10.00;
@@ -45,7 +45,7 @@ public class DepositConstants {
             slideTransferPos = 5.20,
             slidePreTransferPos = 20.00,
             slideSpecIntakePos = 0.00,
-            slideSpecDepositReadyPos = 41.90,
+            slideSpecDepositReadyPos = 44.90,
             slideSpecClippedPos = 63.00,
             slideSampleDepositPos = 72,
             slideMaxExtension = 72,

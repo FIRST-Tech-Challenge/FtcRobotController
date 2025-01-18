@@ -26,6 +26,7 @@ public class Deposit {
         specDepositReady,
         specDepositClipped,
         sampleDeposit,
+        samplePreDeposit,
         preSpecIntake,
         intermediate;
     }
@@ -106,6 +107,11 @@ public class Deposit {
 
                 break;
 
+            case samplePreDeposit:
+                slides.setTargetCM(DepositConstants.slideSampleDepositPos);
+                arm.setPosition(DepositConstants.armRightTransferPos);
+
+                break;
         }
 
 
