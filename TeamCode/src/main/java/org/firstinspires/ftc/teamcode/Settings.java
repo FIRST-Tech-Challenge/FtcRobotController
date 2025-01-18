@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 10000;
+    public static double ms_needed_to_park = 2000;
 
     // Movement settings
     @Config
