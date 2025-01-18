@@ -42,14 +42,19 @@ public class SlideSubsystem {
         } else if (gamepad2.left_trigger > 0.5) {
             slidePosition -= 850 * cycleTime * gamepad2.left_trigger * 2;
         }
-        slidePosition = Common.clamp(slidePosition, SLIDE_COLLAPSED, SLIDE_SCORING_IN_HIGH_BASKET);
-        if (gamepad1.x && gamepad1.y) {
+
+        if (gamepad1.x) {
             holdingReset = true;
-            slidePosition -= 500*Common.cycleTime;
-        } else if (holdingReset) {
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            slidePosition = 0;
+        }
+        if (holdingReset) {
+            slidePosition -= 1500*Common.cycleTime;
+        } else {
+            slidePosition = Common.clamp(slidePosition, SLIDE_COLLAPSED, SLIDE_SCORING_IN_HIGH_BASKET);
+        }
+        if (gamepad1.y) {
             holdingReset = false;
+            slidePosition = 0;
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
     @SuppressWarnings("unused")
