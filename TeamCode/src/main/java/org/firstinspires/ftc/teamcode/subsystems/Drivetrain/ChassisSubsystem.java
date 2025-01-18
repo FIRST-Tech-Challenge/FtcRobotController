@@ -148,10 +148,7 @@ public class ChassisSubsystem extends SubsystemBase {
     }
 
     private void updateTelemetry() {
-        dashboardTelemetry.addData("!bl current",motor_BL.motorEx.getCurrent(CurrentUnit.AMPS));
-        dashboardTelemetry.addData("!fl current",motor_FL.motorEx.getCurrent(CurrentUnit.AMPS));
-        dashboardTelemetry.addData("!br current",motor_BR.motorEx.getCurrent(CurrentUnit.AMPS));
-        dashboardTelemetry.addData("!fr current",motor_FR.motorEx.getCurrent(CurrentUnit.AMPS));
+        dashboardTelemetry.addData("gyro", gyro.getAbsoluteHeading());
     }
 
     private void updateValues() {
@@ -174,7 +171,7 @@ public class ChassisSubsystem extends SubsystemBase {
         return new RunCommand(() -> {
 
             BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
-            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(gyro.getHeading()));
+            BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
             drive(rotated.getY(), rotated.getX(),  rotation.getAsDouble());
         }, this);
     }

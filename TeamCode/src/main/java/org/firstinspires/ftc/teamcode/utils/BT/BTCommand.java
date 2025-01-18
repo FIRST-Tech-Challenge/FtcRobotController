@@ -5,8 +5,6 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RepeatCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
-
-
 import java.util.function.BooleanSupplier;
 
 public class BTCommand extends CommandBase {
