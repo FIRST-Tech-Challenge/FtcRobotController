@@ -30,7 +30,7 @@ public class ChassisConstants {
         public static double bl = 0;
         public static double br = 0;
         public static double fl = 0;
-        public static double fr = 0;
+        public static double fr = 0.8;
     }
 
     public static final MecanumDriveKinematics kinematics = new MecanumDriveKinematics(FLW, FRW, BLW, BRW);

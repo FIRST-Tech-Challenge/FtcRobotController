@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode.StateMachine;
 
-public class RobotStateMachine {
+import org.firstinspires.ftc.TBlib.Subsystems.TBVirtualSubsystem;
+
+public class RobotStateMachine extends TBVirtualSubsystem {
+
 }
