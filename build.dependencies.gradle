@@ -18,3 +18,4 @@ dependencies {
     implementation 'com.pedropathing:pedro:1.0.6'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
 }
+
