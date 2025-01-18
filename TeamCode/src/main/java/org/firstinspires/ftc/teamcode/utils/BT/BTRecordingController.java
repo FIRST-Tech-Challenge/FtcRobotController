@@ -44,6 +44,9 @@ public class BTRecordingController extends BTController{
             }
         }
         fileWriter = new FileWriter(log);
+
+        dashboardTelemetry.addData("recoding to:",log.getPath());
+        dashboardTelemetry.update();
     }
     public BTRecordingController(Gamepad gamepad) throws Exception {
         super(gamepad);

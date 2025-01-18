@@ -23,8 +23,7 @@ public abstract class Playback extends PeriodicOpMode {
 
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
-            bufferedReader=new BufferedReader(new FileReader(log));
-            controller=new BTRecordedController(gamepad1,bufferedReader,maxIterations);
+            controller=new BTRecordedController(gamepad1,log,maxIterations);
             m_robot=new RobotContainer(hardwareMap,controller);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -39,7 +38,7 @@ public abstract class Playback extends PeriodicOpMode {
     @Override
     protected void endFunction() {
         try {
-            bufferedReader.close();
+            controller.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

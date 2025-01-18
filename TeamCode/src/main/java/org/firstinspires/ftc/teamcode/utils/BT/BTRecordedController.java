@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
@@ -20,9 +23,9 @@ public class BTRecordedController extends BTController {
     protected boolean readErrorAccured;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
-    public BTRecordedController(Gamepad gamepad, BufferedReader bufferedReader, int maxIterations) {
+    public BTRecordedController(Gamepad gamepad, File log, int maxIterations) throws FileNotFoundException {
         super(gamepad);
-        this.bufferedReader = bufferedReader;
+        this.bufferedReader =new BufferedReader(new FileReader(log));
         this.maxIterations = maxIterations;
         this.iterationCnt = 0;
         this.readErrorAccured=false;
@@ -44,12 +47,17 @@ public class BTRecordedController extends BTController {
 
         //later this could be change to true and i want the user to see the change so i clear the data now.
         dashboardTelemetry.addData("readErrorAccured",false);
+        dashboardTelemetry.addData("playing recording from:",log.getPath());
+        dashboardTelemetry.update();
 
     }
 
     public BTRecordedController(Gamepad gamepad) throws Exception {
         super(gamepad);
         throw new Exception("not implemented, you must provide a file to read");
+    }
+    public void close() throws IOException {
+        bufferedReader.close();
     }
 
     public void next()  {
