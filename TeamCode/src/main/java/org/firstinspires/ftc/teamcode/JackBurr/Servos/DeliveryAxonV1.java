@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 
 public class DeliveryAxonV1 {
     public Servo axon;
-    public double savedAngle = 0.0;
+    public double savedAngle = 0.73;
     public HardwareMap hardwareMap;
     public RobotConstantsV1 constants = new RobotConstantsV1();
 
