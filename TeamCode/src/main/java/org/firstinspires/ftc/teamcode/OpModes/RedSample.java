@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.Mechanisms.Drivetrain.Utils.Utils;
 import org.firstinspires.ftc.teamcode.Mechanisms.Extension.Extension;
 import org.firstinspires.ftc.teamcode.Mechanisms.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Mechanisms.Lift.Lift;
 import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
@@ -32,6 +33,7 @@ public class RedSample extends LinearOpMode {
     Arm arm;
     Claw claw;
     Pivot pivot;
+    Lift lift;
     @Override
     public void runOpMode() {
         // Set dashboard
@@ -45,6 +47,7 @@ public class RedSample extends LinearOpMode {
         arm = robot.arm;
         claw = robot.claw;
         pivot = robot.pivot;
+        lift = robot.lift;
         drivetrain.setInitialPose(-63,-36,0);
         telemetry.addData("X", 0);
         telemetry.addData("Y", 0);
@@ -60,8 +63,17 @@ public class RedSample extends LinearOpMode {
                 new SequentialAction(
                         robot.intakeUp(),
                         arm.armNeutral(),
+                        claw.servoClaw(Claw.clawState.CLOSE),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
+                        lift.moveToHeight(24),
+                        new SleepAction(1),
+                        arm.armExtend(),
+                        new SleepAction(0.3),
+                        claw.servoClaw(Claw.clawState.OPEN),
+                        new SleepAction(0.3),
+                        arm.armNeutral(),
+                        lift.moveToHeight(0),
                         new ParallelAction(
                             robot.intakeDown(),
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),

@@ -15,8 +15,8 @@ public class Pivot {
     ServoAdvanced pivotLeft;
     ServoAdvanced pivotRight;
 
-    public static double pivotDown = -0.5;
-    public static double pivotUp = 0.4;
+    public static double pivotDown = 0;
+    public static double pivotUp = 0.5;
     public Pivot(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
         this.pivotLeft = new ServoAdvanced(hardwareMap.get(Servo.class, "pivotLeft"));
