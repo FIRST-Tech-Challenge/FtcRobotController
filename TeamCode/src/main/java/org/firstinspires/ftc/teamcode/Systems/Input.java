@@ -93,7 +93,7 @@ public class Input {
             //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 //up 1435 to 1030
             double realPower = 0;
-            if (((motors.getArmPosition() < 1435) && (motors.getArmPosition() > 1030)) || (motors.getArmPosition() > 2600) || (power < 0))  {
+            if (((motors.getArmPosition() < 1400) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
                 realPower = power;
             }
             else {
@@ -175,7 +175,7 @@ public class Input {
 
 
     public void calculatePosition() {
-        heading = Math.toRadians(imu.getAngle('y'));
+        heading = imu.getAngle('y');
 
         // Read encoder values
         double flTicks = motors.getLeftFrontPosition();

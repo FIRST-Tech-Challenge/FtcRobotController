@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
 
     //Arm Reaching Positions
-    public static int ARM_MAX_POSITION_OFFSET = 3000;
+    public static int ARM_MAX_POSITION_OFFSET = 2650;
     public static int UP_ARM_MAX_POSITION_OFFSET = -11550;
 
     // PID variables
