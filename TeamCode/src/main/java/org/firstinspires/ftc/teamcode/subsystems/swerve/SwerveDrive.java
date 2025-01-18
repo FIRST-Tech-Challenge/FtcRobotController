@@ -39,15 +39,15 @@ public class SwerveDrive {
             new AngularVelocityConstraint(Math.toRadians(180)),
             new MecanumVelocityConstraint(20, 11)
     ));
-    public TrajectoryAccelerationConstraint accelerationConstraint = new ProfileAccelerationConstraint(20);
+    public TrajectoryAccelerationConstraint accelerationConstraint = new ProfileAccelerationConstraint(15);
     public double maxAngAccel = Math.PI;
     public double maxAngVel = Math.PI;
     OpMode OM;
     Gamepad gamepad; // perhaps a set power method would be better here?
     public final double DIST_MULT = 4/3; // Actually traveled/desired dist
-    public static double aP = 0.06;
+    public static double aP = 0.03;
     public static double aI = 0.01;
-    public static double aD = 0.0005;
+    public static double aD = 0.01;
     SlewRateLimiter[] wheelLimiters = new SlewRateLimiter[4];
     boolean dontMove;
     boolean reverse;
@@ -71,12 +71,9 @@ public class SwerveDrive {
     public Pose2d nowPose;
     public IMU imu;
     ArrayList<Pair<Double,Double>> targetADPairList = new ArrayList<>(4); // key = mag, value = direction
-    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double angleP, double angleI, double angleD, double startFTCLibX, double startFTCLibY, double startHeadingRads) {
+    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double startFTCLibX, double startFTCLibY, double startHeadingRads) {
         OM = opmode;
         gamepad = GP;
-        aP = angleP; //I don't know what I'm doing - owner of the code
-        aI = angleI;
-        aD = angleD;
         anglePID = new PIDController[]{new PIDController(aP, aI, aD), new PIDController(aP, aI, aD), new PIDController(aP, aI, aD), new PIDController(aP, aI, aD)};
         angleGetter = new voltageToAngleConstants(opmode, hw, encoderNames);
         vectorGetter = new gamepadToVectors();
@@ -175,7 +172,7 @@ public class SwerveDrive {
             return;
         }
         // cosine compensation
-//        magnitude *= Math.abs(Math.cos(Math.toRadians(Math.abs(angles[m]-direction))));
+        magnitude *= Math.abs(Math.cos(Math.toRadians(Math.abs(angles[m]-direction))));
         // Adjust the magnitude if a direction reversal is needed
         if (angleFixer.requiresReversing(m)) {
             reverse = true;
@@ -278,10 +275,10 @@ public class SwerveDrive {
 //        t.addData("FRTargAng", targetADPairList.get(1).second);
 //        t.addData("BLTargAng", targetADPairList.get(2).second);
 //        t.addData("BRTargAng", targetADPairList.get(3).second);
-//        t.addData("FLIn", angles[0]);
-        t.addData("FRIn", angles[1]);
-//        t.addData("BLIn", angles[2]);
-//        t.addData("BRIn", angles[3]);
+        t.addData("inFL", angles[0]);
+        t.addData("inFR", angles[1]);
+        t.addData("inBL", angles[2]);
+        t.addData("inBR", angles[3]);
 //        t.addData("FLPos", driveMotors[0].getCurrentPosition());
 //        t.addData("FLAng", anglePowers[0]);
 //        t.addData("FRAng", anglePowers[1]);

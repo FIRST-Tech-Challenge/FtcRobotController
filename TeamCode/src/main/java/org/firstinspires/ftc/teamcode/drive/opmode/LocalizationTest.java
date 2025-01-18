@@ -47,7 +47,7 @@ public class LocalizationTest extends LinearOpMode {
         SwerveDrive drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, 0, 0, 0);
+                encoderNames, driveNames, angleNames, 0, 0, 0);
 
         dash = FtcDashboard.getInstance();
         telemetry2 = dash.getTelemetry();

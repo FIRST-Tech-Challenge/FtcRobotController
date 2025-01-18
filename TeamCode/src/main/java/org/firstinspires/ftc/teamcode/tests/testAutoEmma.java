@@ -45,7 +45,7 @@ public class testAutoEmma extends OpMode {
     public static double rP = .2;
     public static double rI = 0;
     public static double rD = 0;
-    public static double P = 0.06;
+    public static double P = 0.03;
     public static double I = 0.01;
     public static double D = 0.005;
     OptimalAngleCalculator angleCalculator;
@@ -79,12 +79,36 @@ public class testAutoEmma extends OpMode {
         drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, -66, -12, 0);
+                encoderNames, driveNames, angleNames, -66, -12, 0);
 
         builder = new TrajectorySequenceBuilder(new Pose2d(12, -66, Math.PI/2),
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
+                .forward(36)
+                .back(36)
                 .forward(36)
                 .back(36)
                 .forward(36)
@@ -163,7 +187,7 @@ public class testAutoEmma extends OpMode {
         txPID.setPID(tP, tI, tD);
         tyPID.setPID(tP, tI, tD);
         rotPID.setPID(rP, rI, rD);
-
+        drive.setPID(P, I, D);
     }
     public void doTelemetry(Telemetry t) {
         t.addData("trajRot", trajPose.getHeading());

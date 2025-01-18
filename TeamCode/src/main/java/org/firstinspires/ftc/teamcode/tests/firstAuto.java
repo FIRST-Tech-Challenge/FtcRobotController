@@ -79,7 +79,7 @@ public class firstAuto extends OpMode {
         drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, -66, -12, 0);
+                encoderNames, driveNames, angleNames, -66, -12, 0);
 
         builder = new TrajectorySequenceBuilder(new Pose2d(12, -66, Math.PI/2),
                 drive.velocityConstraint, drive.accelerationConstraint,

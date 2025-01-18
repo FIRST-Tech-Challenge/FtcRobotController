@@ -43,7 +43,7 @@ public class driveTest extends OpMode {
         SwerveDrive = new SwerveDrive(
                 18, 18, 12, 12,
                 this, gamepad1, hardwareMap,
-                encoderNames, driveNames, angleNames, P, I, D, 0,0,0);
+                encoderNames, driveNames, angleNames, 0,0,0);
         dash = FtcDashboard.getInstance();
         telemetry2 = dash.getTelemetry();
     }

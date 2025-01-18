@@ -36,7 +36,7 @@ public class slideTest extends OpMode {
 
     @Override
     public void loop() {
-        slide.loop();
+        slide.loop(sP, sI, sD);
         slide.updatePID(angP, angI, angD, angCos, angExt);
         slide.updateSlidePID(sP, sI, sD);
         slide.getTelemetry();

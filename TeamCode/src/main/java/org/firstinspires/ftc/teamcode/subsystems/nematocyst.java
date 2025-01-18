@@ -25,9 +25,9 @@ public class nematocyst {
     private static final double Max_Extension = 22 * ticksPerInch; // Horizontal Max Ticks
     private static final double degPerTick = (double) 360 /752;
     // PID constants
-    public static double sP = 0;
-    public static double sI = 0.000;
-    public static double sD = 0.00;
+    public double sP = 0;
+    public double sI = 0.000;
+    public double sD = 0.00;
     public double pP = 0.00425;
     public double pI = 0;
     public double pD = 8e-6;
@@ -70,7 +70,7 @@ public class nematocyst {
         wristIn();
     }
 
-    public void loop() {
+    public void loop(double P, double I, double D) {
         if (opMode.gamepad1.a) {
             goUp(0);
         } else if (opMode.gamepad1.x) {
@@ -94,12 +94,12 @@ public class nematocyst {
         targPivotPos = Math.min(0, Math.max(targPivotPos, maxPivotPos));
         // Ensure the motor does not exceed max forward extension
         double out = slidePID.calculate(slideMotor.getCurrentPosition(), targetSlidePosition);
-        SlewRateLimiter slideLimiter = new SlewRateLimiter(0.5); //TODO: Tune this
+//        SlewRateLimiter slideLimiter = new SlewRateLimiter(0.5); //TODO: Tune this
 
 
+        slidePID.setPIDF(P, I, D,0);
 
-
-        slideMotor.setPower(slideLimiter.calculate(out));
+        slideMotor.setPower(out);
         pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
         pivot.setPower(pivotPower); // use updatdePID to fix this
     }
@@ -119,7 +119,7 @@ public class nematocyst {
         slidePID.setPIDF(P, I, D, 0);
     }
     public void goUp(double inches) {
-        targPivotPos = 0;
+        targPivotPos = -15;
         targSlideHeight = inches;
         targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
     }
@@ -131,7 +131,7 @@ public class nematocyst {
     }
     public void goGround(double inches) {
         targSlideHeight = inches;
-        targPivotPos = -190;
+        targPivotPos = -168;
         targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
         targetSlidePosition = Math.max(0, Math.min(targetSlidePosition, maxSlidePos));
     }
