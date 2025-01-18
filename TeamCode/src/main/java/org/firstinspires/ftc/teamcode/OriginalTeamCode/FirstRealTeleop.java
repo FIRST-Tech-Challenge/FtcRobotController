@@ -260,9 +260,9 @@ public class FirstRealTeleop extends LinearOpMode {
 //            //wrist
 //            if(gamepad2.dpad_left){
 //                wristPos = 0.5;}
-            if (-gamepad2.right_stick_y > 0.01 && wristPos + 0.005 <= 1) {
+            if (-gamepad2.right_stick_y > 0.01 && wristPos + 0.005 * 0.75 <= 1) {
                 wristPos += 0.005;
-            } else if (-gamepad2.right_stick_y < -0.01 && wristPos - 0.005 >= 0.625) {
+            } else if (-gamepad2.right_stick_y < -0.01 && wristPos - 0.005 * 0.75 >= 0.625) {
                 wristPos -= 0.005;
             }
             wrist.setPosition(wristPos);

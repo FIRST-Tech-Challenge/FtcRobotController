@@ -7,10 +7,10 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -27,13 +27,13 @@ public class PerfectAuto extends LinearOpMode {
     DcMotor linearActuator = null;
     //servos
 //    CRServo spool = null;
-    Servo wrist = null;
+    ServoImplEx wrist = null;
     Servo grabber = null;
 
 
     double actuatorPos = 0;
     double armRotPos = 0;
-    double wristRotPos=1;
+    double wristRotPos=0.65;
 
     SampleMecanumDrive drive;
     double grabOpen = 0.75;
@@ -73,11 +73,13 @@ public class PerfectAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry.addData("start of run opmode","start of run opmode");
+        telemetry.update();
         armLifterLeft = hardwareMap.dcMotor.get("armLifterLeft");
         armLifterRight = hardwareMap.dcMotor.get("armLifterRight");
         armRotate = hardwareMap.dcMotor.get("armRotate");
         linearActuator = hardwareMap.dcMotor.get("linearActuator");
-        wrist = hardwareMap.servo.get("wrist");
+        wrist = hardwareMap.get(ServoImplEx.class, "wrist");
         grabber = hardwareMap.servo.get("grabber");
 
         grabber.setDirection(Servo.Direction.FORWARD);
@@ -97,28 +99,17 @@ public class PerfectAuto extends LinearOpMode {
         linearActuator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        armLifterRight.setPower(1);
-        armLifterLeft.setPower(1);
-        linearActuator.setPower(1);
-        armRotate.setPower(1);
-
-        armLifterLeft.setTargetPosition((int) armPos);
-        armLifterRight.setTargetPosition((int) armPos);
-        linearActuator.setTargetPosition((int) actuatorPos);
-        armRotate.setTargetPosition((int) armRotPos);
-        armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("before loop","before loop");
         while (opModeIsActive()) {
 
             // Push telemetry to the Driver Station.
+            telemetry.addData("in loop","in loop");
             telemetry.update();
+
             // Share the CPU.
             sleep(20);
-
         }
-
+        telemetry.addData("after loop","after loop");
         drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d();
 
@@ -155,6 +146,20 @@ public class PerfectAuto extends LinearOpMode {
         waitForStart(); /*****  DON'T RUN ANY MOTOR MOVEMENT ABOVE THIS LINE!! You WILL get PENALTIES! And it's UNSAFE! *****/
         if (isStopRequested()) return;
 
+        armLifterLeft.setTargetPosition((int) armPos);
+        armLifterRight.setTargetPosition((int) armPos);
+        linearActuator.setTargetPosition((int) actuatorPos);
+        armRotate.setTargetPosition((int) armRotPos);
+        armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        armLifterRight.setPower(1);
+        armLifterLeft.setPower(1);
+        linearActuator.setPower(1);
+        armRotate.setPower(1);
+telemetry.addData("stuff starts","stuff starts");
         /***** start of manual code running or initiation or whatever *****/
         controlArmRotate();
         controlWristRotate();
@@ -166,12 +171,14 @@ public class PerfectAuto extends LinearOpMode {
         sleep(1000);
         //move to chambers
         drive.followTrajectory(tr1);
+        telemetry.addData("tr1","tr1");
         //set on  chamber
         wristRotPos = 0.81;
         armRotPos = -1682.074;
         controlWristRotate();
         controlArmRotate();
         drive.followTrajectory(tr2);
+        telemetry.addData("tr2","tr2");
         //back up and move arm to safety
         wristRotPos = 0.625;
         armRotPos = 0;
@@ -218,11 +225,11 @@ public class PerfectAuto extends LinearOpMode {
         controlArmRotate();
         controlWristRotate();
         controlBothArmExtenders();
-        drive.followTrajectory(tr7);
-        drive.followTrajectory(tr8);
-        drive.followTrajectory(tr9);
-        armPos = -2053.53;
-        controlBothArmExtenders();
+//        drive.followTrajectory(tr7);
+//        drive.followTrajectory(tr8);
+//        drive.followTrajectory(tr9);
+//        armPos = -2053.53;
+//        controlBothArmExtenders();
 
 
 
