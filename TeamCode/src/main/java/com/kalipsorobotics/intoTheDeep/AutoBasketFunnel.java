@@ -13,6 +13,7 @@ import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.autoActions.SampleToBasketFunnelRoundTrip;
+import com.kalipsorobotics.actions.intake.IntakeFunnelReady;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
 import com.kalipsorobotics.actions.intake.SampleIntakeAction;
 import com.kalipsorobotics.actions.intake.SampleIntakeReady;
@@ -87,6 +88,11 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveOutSpecimen.setDependentActions(wallToBarHangAction);
         moveOutSpecimen.addPoint(-585, -250, 45);
         redAutoBasket.addAction(moveOutSpecimen);
+
+        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake);
+        intakeFunnelReady1.setName("intakeFunnelReady1");
+        intakeFunnelReady1.setDependentActions(wallToBarHangAction);
+        redAutoBasket.addAction(intakeFunnelReady1);
         //===============end of first specimen===============
 
 
@@ -94,7 +100,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         //================begin of first basket====================
         SampleToBasketFunnelRoundTrip sampleToBasketFunnelRoundTrip1 = new SampleToBasketFunnelRoundTrip(driveTrain, wheelOdometry, outtake, intakeClaw, 755);
         sampleToBasketFunnelRoundTrip1.setName("sampleToBasketFunnelRoundTrip1");
-        sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen);
+        sampleToBasketFunnelRoundTrip1.setDependentActions(moveOutSpecimen, intakeFunnelReady1);
         redAutoBasket.addAction(sampleToBasketFunnelRoundTrip1);
         //===============end of first basket===============
 
