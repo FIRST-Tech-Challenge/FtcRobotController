@@ -117,7 +117,7 @@ public class Mekanism {
     telemetry.addData("slide current pos", slide.getCurrentPosition());
 
     //angle measure thing
-    double maxLength = limitSlide*Math.sin(pivot.getCurrentPosition()*countsPerDegree);
+    double maxLength = limitSlide * Math.sin(pivot.getCurrentPosition() * Math.toRadians(countsPerDegree));
     if(maxLength<2000)
       maxLength = 2000;
     if(x>maxLength)

@@ -67,7 +67,7 @@ public class BlueBotTeleop extends LinearOpMode {
         }
         bPressed = gamepad2.b;
 
-        // 4.
+        // 4. clamp/unclamp
         if (gamepad2.x) {
           mek.clamp();
         } else if (gamepad2.y) {
@@ -76,10 +76,12 @@ public class BlueBotTeleop extends LinearOpMode {
       }
 
       // 5. If the arm length would make the robot too long, clip the arm length
+      /*
       double maxLen = 20 / Math.cos(mek.pivot.getTargetPosition() * Math.toRadians(mek.countsPerDegree));
       if (mek.slideTarget * mek.countsPerInch > maxLen){
         mek.slideTarget = maxLen * mek.countsPerInch;
       }
+      */
 
       // 6. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
