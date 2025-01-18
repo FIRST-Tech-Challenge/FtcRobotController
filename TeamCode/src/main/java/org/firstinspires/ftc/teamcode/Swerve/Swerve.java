@@ -247,31 +247,31 @@ public class Swerve {
       switch (id) {
         case 0 -> {
           pos = "FL";
-          kp = 5.0;
-          ki = 0.5;
-          kd = 0;
-          ks = 0.05;
+          kp = 1.5;
+          ki = 0;
+          kd = 0.15;
+          ks = 0.11;
         }
         case 1 -> {
           pos = "FR";
-          kp = 5.0;
-          ki = 0.5;
-          kd = 0;
-          ks = 0.025;
+          kp = 4;
+          ki = 0;
+          kd = 0.15;
+          ks = 0.03;
         }
         case 2 -> {
           pos = "BL";
-          kp = 5.0;
-          ki = 0.5;
-          kd = 0;
-          ks = 0.025;
+          kp = 1.5;
+          ki = 0;
+          kd = 0.15;
+          ks = 0.1;
         }
         case 3 -> {
           pos = "BR";
-          kp = 5.0;
-          ki = 0.5;
-          kd = 0;
-          ks = 0.05;
+          kp = 4;
+          ki = 0;
+          kd = 0.15;
+          ks = 0.04;
         }
         default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
