@@ -21,7 +21,7 @@ public class SyborgsParkAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         waitForStart();
         initSubsystems();
-        drive.cartesianMove(45, 1);
+        drive.cartesianMove(45,0);
     }
     public void initSubsystems() {
         drive = new DriveSubsystem(hardwareMap, telemetry);

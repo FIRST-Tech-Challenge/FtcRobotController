@@ -16,7 +16,7 @@ public class SlideSubsystem {
     private final Telemetry telemetry;
 
     final double SLIDE_COLLAPSED = 0.0;
-
+    boolean holdingReset = false;
     // TODO: Change this to the correct value
 //    final double SLIDE_SCORING_IN_LOW_BASKET = 0.0;
     final double SLIDE_SCORING_IN_HIGH_BASKET = 540.0;
@@ -35,18 +35,26 @@ public class SlideSubsystem {
     }
 
 
-    private void readControls(Gamepad gamepad) {
+    private void readControls(Gamepad gamepad1, Gamepad gamepad2) {
         double cycleTime = Common.cycleTime;
-        if (gamepad.right_trigger > 0.5) {
-            slidePosition += 850 * cycleTime * gamepad.right_trigger * 2;
-        } else if (gamepad.left_trigger > 0.5) {
-            slidePosition -= 850 * cycleTime * gamepad.left_trigger * 2;
+        if (gamepad2.right_trigger > 0.5) {
+            slidePosition += 850 * cycleTime * gamepad2.right_trigger * 2;
+        } else if (gamepad2.left_trigger > 0.5) {
+            slidePosition -= 850 * cycleTime * gamepad2.left_trigger * 2;
         }
         slidePosition = Common.clamp(slidePosition, SLIDE_COLLAPSED, SLIDE_SCORING_IN_HIGH_BASKET);
+        if (gamepad1.x && gamepad1.y) {
+            holdingReset = true;
+            slidePosition -= 500*Common.cycleTime;
+        } else if (holdingReset) {
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slidePosition = 0;
+            holdingReset = false;
+        }
     }
     @SuppressWarnings("unused")
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
-        readControls(gamepad2);
+        readControls(gamepad1, gamepad2);
         setPosition();
     }
 

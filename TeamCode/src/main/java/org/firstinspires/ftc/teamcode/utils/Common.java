@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class Common {
 
+
     public static double degreesToTicks(double degrees) {
         final double ARM_TICKS_PER_DEGREE = 28.0 * 250047.0 / 4913.0 * 100.0 / 20.0 / 360.0;
         return degrees * ARM_TICKS_PER_DEGREE;
@@ -33,6 +34,7 @@ public class Common {
     public static double loopTime;
     public static double oldTime;
     public static double slidePosition = 0;
+    public static double armPosition = 0;
     public static void updateCycleTimes(double runtime) {
         loopTime = runtime;
         cycleTime = loopTime - oldTime;

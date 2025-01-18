@@ -26,7 +26,7 @@ public class ArmSubsystem {
     private final DcMotorEx armMotorEx;
     @SuppressWarnings("unused")
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
-        readControls(gamepad2);
+        readControls(gamepad1, gamepad2);
 
         setPosition();
     }
@@ -50,16 +50,18 @@ public class ArmSubsystem {
     }
 
     public void updateTelemetry() {
+        Common.armPosition = armMotor.getCurrentPosition();
         telemetry.addData("ArmSubsystem Target Position", armMotor.getTargetPosition());
         telemetry.addData("ArmSubsystem Encoder", armMotor.getCurrentPosition());
         if (armMotorEx != null) telemetry.addData("ArmSubsystem Current", armMotorEx.getCurrent(CurrentUnit.AMPS));
     }
-    private void readControls(Gamepad gamepad) {
-        armPosition = Math.max(Math.min(armPosition + (100*Common.cycleTime * -gamepad.right_stick_y), ARM_MAX_HEIGHT), 0);
-        if (gamepad.a) armPosition = ARM_COLLECT;
-        else if (gamepad.b) armPosition = ARM_CLEAR_BARRIER;
-        else if (gamepad.x) armPosition = ARM_SCORE_SAMPLE_IN_LOW;
-        else if (gamepad.y) armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
+    private void readControls(Gamepad gamepad1, Gamepad gamepad2) {
+        armPosition = Math.max(Math.min(armPosition + (50*Common.cycleTime * -gamepad2.right_stick_y), ARM_MAX_HEIGHT), 0);
+        if (gamepad2.a) armPosition = ARM_COLLECT;
+        else if (gamepad2.b) armPosition = ARM_CLEAR_BARRIER;
+        else if (gamepad2.x) armPosition = ARM_SCORE_SAMPLE_IN_LOW;
+        else if (gamepad2.y) armPosition = ARM_SCORE_SAMPLE_IN_HIGH;
+
     }
 
     public ArmSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
