@@ -380,7 +380,7 @@ public class UltimateAutonomous extends LinearOpMode {
                         .strafeTo(Settings.Autonomous.FieldPositions.LEFT_PARK_POSE.position);
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeTo(Settings.Autonomous.FieldPositions.RIGHT_PARK_POSE.position);
+                        .strafeTo(Settings.Autonomous.FieldPositions.HP_POSE.position);
             default:
                 return previousTrajectory;
         }
