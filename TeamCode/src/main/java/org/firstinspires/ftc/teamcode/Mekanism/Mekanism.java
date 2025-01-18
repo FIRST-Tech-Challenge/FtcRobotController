@@ -33,8 +33,8 @@ public class Mekanism {
 
   public final int limitSlide = 4200;
   public final double limitPivot = 3000;
-  public final double countsPerDegree = 41; // TODO: This needs to be found
-  public final double countsPerInch = 100; // TODO: This needs to be found
+  public final double countsPerDegree = 41;
+  public final double countsPerInch = 120.88;
 
   public double slideTarget = 0;
 
@@ -118,8 +118,8 @@ public class Mekanism {
 
     //angle measure thing
     double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
-    if(maxLength<2000)
-      maxLength = 2000;
+    if(maxLength<2500)
+      maxLength = 2500;
     if(maxLength>limitSlide)
       maxLength = limitSlide;
     if(x>maxLength)
