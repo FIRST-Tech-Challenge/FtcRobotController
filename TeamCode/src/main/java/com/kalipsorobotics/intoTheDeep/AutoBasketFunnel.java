@@ -89,9 +89,9 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveOutSpecimen.addPoint(-585, -250, 45);
         redAutoBasket.addAction(moveOutSpecimen);
 
-        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake);
+        IntakeFunnelReady intakeFunnelReady1 = new IntakeFunnelReady(intakeClaw, outtake, false);
         intakeFunnelReady1.setName("intakeFunnelReady1");
-        intakeFunnelReady1.setDependentActions(wallToBarHangAction);
+        intakeFunnelReady1.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(intakeFunnelReady1);
         //===============end of first specimen===============
 
@@ -124,7 +124,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         moveToSample3.setDependentActions(sampleToBasketFunnelRoundTrip2);
         //move basket to sample 3
 //        moveToSample3.addPoint(-440, 1030, 180-29.6);
-        moveToSample3.addPoint(INTAKE_SAMPLE_X-85, 760, 90);
+        moveToSample3.addPoint(INTAKE_SAMPLE_X-80, 760, 90);
         moveToSample3.setMaxCheckDoneCounter(15);
         redAutoBasket.addAction(moveToSample3);
 

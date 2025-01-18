@@ -7,7 +7,7 @@ import com.kalipsorobotics.modules.Outtake;
 public class BasketReadyAction extends KActionSet {
     public BasketReadyAction(Outtake outtake) {
 
-        MoveLSAction raiseSlidesBasket = new MoveLSAction(outtake, 740);
+        MoveLSAction raiseSlidesBasket = new MoveLSAction(outtake, Outtake.LS_SAMPLE_BASKET_READY_POS);
         raiseSlidesBasket.setName("raiseSlidesBasket");
         this.addAction(raiseSlidesBasket);
 
