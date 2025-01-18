@@ -393,8 +393,8 @@ public class UltimateAutonomous extends LinearOpMode {
     private TrajectoryActionBuilder getHPTrajectory(StartingPosition sp, TrajectoryActionBuilder previousTrajectory) {
         return previousTrajectory.endTrajectory().fresh()
                 .strafeToLinearHeading(Settings.Autonomous.FieldPositions.HP_POSE.position,
-                        Settings.Autonomous.FieldPositions.HP_POSE.heading).waitSeconds(1)
-        .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y-10).waitSeconds(1)
+                        Settings.Autonomous.FieldPositions.HP_POSE.heading);
+    }
 
     private TrajectoryActionBuilder getPlacingTrajectory(StartingPosition sp,
                                                          TrajectoryActionBuilder previousTrajectory) {
