@@ -109,6 +109,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
 
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -419,7 +420,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
                 .then(await(200))
                 .then(run(() -> {
                     hardware.arm.setTargetPosition(0);
-                    hardware.wrist.setPosition(Hardware.WRIST_UP);
+                    hardware.wrist.setPosition(0.28);
                 }))
                 .then(await(200))
                 .then(vLiftProxy.moveTo(0, 5, 1.0))
@@ -445,7 +446,7 @@ public class MecanumTeleOp2 extends LinearOpMode {
 
     public void ScoreHighBasket2() {
         // prevent doing this by accident
-        if (hardware.verticalSlide.getCurrentPosition() < 1000) return;
+        if (hardware.verticalLift.getCurrentPosition() < 700) return;
         if (hardware.arm.getCurrentPosition() < 190) return;
         abandonLock(Locks.ArmAssembly);
         abandonLock(vLiftProxy.CONTROL);
@@ -623,18 +624,19 @@ public class MecanumTeleOp2 extends LinearOpMode {
                         .then(await(250))
                         .then(run(() -> {
                             hardware.wrist.setPosition(0);
-                            hardware.arm.setTargetPosition(-28);
+                            hardware.arm.setTargetPosition(Hardware.ARM_TRANSFER_POS);
                         }))
-                        .then(await(300))
+                        .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(250))
                         .then(hClawProxy.aSetClaw(Hardware.FRONT_OPEN))
+                        .then(await(100))
+                        .then(run(() -> hardware.clawFront.setPosition(0.6)))
                         .then(await(250))
                         .then(run(() -> {
                             hardware.arm.setTargetPosition(0);
                             hardware.wrist.setPosition(Hardware.WRIST_BACK);
                         }))
-
         ).extraDepends(
                 hClawProxy.CONTROL_CLAW,
                 vLiftProxy.CONTROL,
