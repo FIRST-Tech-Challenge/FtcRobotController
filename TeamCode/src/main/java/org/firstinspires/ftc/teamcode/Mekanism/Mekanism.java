@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Mekanism {
@@ -104,6 +103,7 @@ public class Mekanism {
     myOp = opMode;
   }
 
+
   public void homeArm() {
     pivotTimer.reset();
 
@@ -142,6 +142,7 @@ public class Mekanism {
     slide2.setPower(1.0);
   }
 
+
   // To extend arm, input from game pad 2 straight in
   public void setSlide(int x) {
 
@@ -160,6 +161,7 @@ public class Mekanism {
     slide2.setTargetPosition(x);
   }
 
+
   public void setPivot(double x, boolean raiseLimit) {
     if (pivot.getCurrentPosition() >= (raiseLimit ? limitPivot : limitPivot + 500) && x > 0) {
       x = 0;
@@ -171,6 +173,7 @@ public class Mekanism {
     x *= .5;
     pivot.setPower(x);
   }
+
 
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
@@ -185,15 +188,18 @@ public class Mekanism {
     }
   }
 
+
   public void clamp() {
     ramp1.setPosition(0);
     ramp2.setPosition(.15);
   }
 
+
   public void unclamp() {
     ramp1.setPosition(.15);
     ramp2.setPosition(0);
   }
+
 
   public void autoClip() {
     telemetry.addData("Clip Step: ", clipStep);
@@ -220,7 +226,6 @@ public class Mekanism {
       case 3:
         slideTarget = 50;
         break;
-
     }
   }
 
@@ -233,10 +238,5 @@ public class Mekanism {
       wrist.setPosition(0.65);
       wristMoved = false;
     }
-  }
-
-  public void topSpecimenRung() {
-    // setPivot();
-    // setSlide();
   }
 }

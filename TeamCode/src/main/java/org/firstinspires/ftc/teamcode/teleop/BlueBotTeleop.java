@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Utils;
@@ -67,17 +66,12 @@ public class BlueBotTeleop extends LinearOpMode {
       } else if (gamepad2.y) {
         mek.unclamp();
       }
-
+      
       // 5. Starts auto clip
       if (gamepad2.a) {
         mek.clipStep = 1;
-        // 4. clamp/unclamp
-        if (gamepad2.x) {
-          mek.clamp();
-        } else if (gamepad2.y) {
-          mek.unclamp();
-        }
       }
+
 
       // 6. Safeties
       if (!gamepad2.atRest()) {
@@ -86,7 +80,6 @@ public class BlueBotTeleop extends LinearOpMode {
 
       // 7. Updates the target position of the slide
       mek.autoClip();
-      // 5. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
 
       telemetry.update();
