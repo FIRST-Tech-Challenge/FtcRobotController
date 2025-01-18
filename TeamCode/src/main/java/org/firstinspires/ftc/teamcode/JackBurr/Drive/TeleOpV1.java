@@ -288,12 +288,12 @@ public class TeleOpV1 extends OpMode {
                     buttonTimer.reset();
                 }
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveLeft(0.2);
+                    wrist.moveLeft(0.1);
                     buttonTimer.reset();
 
                 }
                 else if (gamepad1.right_bumper && buttonTimer.seconds() > 0.35){
-                    wrist.moveRight(0.2);
+                    wrist.moveRight(0.1);
                     buttonTimer.reset();
                 }
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
