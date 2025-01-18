@@ -47,9 +47,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.LEFT_X_axis)),
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.RIGHT_TRIGGER_axis) - m_controller.getAxisValue(BTController.Axes.LEFT_TRIGGER_axis))),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
-        m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
-        m_controller.assignCommand(setIdle(), false,BUTTON_UP);
-        m_controller.assignCommand(setPickup(), false,BUTTON_LEFT);
+//        m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
+//        m_controller.assignCommand(setIdle(), false,BUTTON_UP);
+//        m_controller.assignCommand(setPickup(), false,BUTTON_LEFT);
 //        m_controller.assignCommand(m_extension.setNegative(), false,BUTTON_DOWN);
 //        m_controller.assignCommand(m_gripper.CloseGripper(),false,BUTTON_RIGHT);
 //        m_controller.assignCommand(m_gripper.OpenGripper(),false,BUTTON_LEFT);

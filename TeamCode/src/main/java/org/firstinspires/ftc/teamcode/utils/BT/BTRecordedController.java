@@ -68,7 +68,7 @@ public class BTRecordedController extends BTController {
                 line = bufferedReader.readLine().split(",");
                 m_axes = stringArrToDouble(line, Axes.values().length, 0, Axes.values().length);
                 m_buttons = stringArrToBool(line, Buttons.values().length, Axes.values().length, Buttons.values().length + Axes.values().length);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 //we don't want the code to crash so we just log and then read only default values.
                 readErrorAccured=true;
                 dashboardTelemetry.addData("readErrorAccured",true);

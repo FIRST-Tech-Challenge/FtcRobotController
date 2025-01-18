@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utils.BT.BTRecordedController;
@@ -15,6 +18,8 @@ public abstract class Playback extends PeriodicOpMode {
     //allow override by child classes
     protected abstract int maxIterations();// default should be 20*30 //Hz * Sec
     protected abstract String file_name();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
     @Override
     public void initialize() {
@@ -26,7 +31,8 @@ public abstract class Playback extends PeriodicOpMode {
             controller=new BTRecordedController(gamepad1,log,maxIterations);
             m_robot=new RobotContainer(hardwareMap,controller);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            dashboardTelemetry.addData("error data:",e.toString());
+            dashboardTelemetry.update();
         }
     }
 

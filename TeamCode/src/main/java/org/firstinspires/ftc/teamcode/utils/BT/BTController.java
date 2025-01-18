@@ -17,7 +17,8 @@ public class BTController {
 
 
     public BTController(Gamepad gamepad) {
-        this.m_buttonsSuppliers = new BooleanSupplier[values().length];
+        this.m_buttonsSuppliers = new BooleanSupplier[Buttons.values().length];
+        this.m_axesSuppliers= new DoubleSupplier[Axes.values().length];
 
         this.m_axesSuppliers[Axes.RIGHT_X_axis.ordinal()] = () -> gamepad.right_stick_x;
         this.m_axesSuppliers[Axes.RIGHT_Y_axis.ordinal()] = () -> gamepad.right_stick_y;
@@ -86,8 +87,6 @@ public class BTController {
         DPAD_DOWN,
         DPAD_LEFT,
         DPAD_RIGHT,
-        TRIGGER_RIGHT,
-        TRIGGER_LEFT,
         BUMPER_RIGHT,
         BUMPER_LEFT,
     }

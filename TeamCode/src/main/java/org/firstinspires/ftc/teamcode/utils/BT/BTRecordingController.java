@@ -57,9 +57,15 @@ public class BTRecordingController extends BTController{
     public void addRecord(){
         axesLines.add(Arrays.stream(m_axesSuppliers).mapToDouble(DoubleSupplier::getAsDouble).toArray());
         boolean[] buttons=new boolean[m_buttonsSuppliers.length];
-        for (int i = 0; i < buttons.length; i++) {
-            buttons[i]=m_buttonsSuppliers[i].getAsBoolean();
+        int i=0;
+        try {
+            for (i = 0; i < buttons.length; i++) {
+                buttons[i]=m_buttonsSuppliers[i].getAsBoolean();
+            }
+        }catch (NullPointerException e){
+            dashboardTelemetry.addData("error null poirnter",i+"\n"+e.toString());
         }
+
         buttonsLines.add(buttons.clone());
         iterationCnt++;
     }
