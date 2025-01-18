@@ -14,10 +14,11 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
+@Disabled
 public class PIDCalibration extends LinearOpMode {
     static double learningRateP = 0.0075;
     static double learningRateI = 0.000075;
