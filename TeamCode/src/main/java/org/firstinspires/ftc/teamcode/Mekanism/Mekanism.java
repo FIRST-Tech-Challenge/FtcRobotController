@@ -33,7 +33,7 @@ public class Mekanism {
 
   public final int limitSlide = 4200;
   public final double limitPivot = 3000;
-  public final double countsPerDegree = 15; // TODO: This needs to be found
+  public final double countsPerDegree = 41; // TODO: This needs to be found
   public final double countsPerInch = 100; // TODO: This needs to be found
 
   public double slideTarget = 0;
@@ -117,13 +117,14 @@ public class Mekanism {
     telemetry.addData("slide current pos", slide.getCurrentPosition());
 
     //angle measure thing
-    double maxLength = limitSlide * Math.sin(pivot.getCurrentPosition() * Math.toRadians(countsPerDegree));
+    double maxLength = limitSlide * Math.cos(pivot.getCurrentPosition() * Math.toRadians(countsPerDegree));
     if(maxLength<2000)
       maxLength = 2000;
     if(x>maxLength)
       x = (int) maxLength;
     if(x<0)
       x = 0;
+    slideTarget = x;
 
     slide.setTargetPosition(x);
     slide2.setTargetPosition(x);

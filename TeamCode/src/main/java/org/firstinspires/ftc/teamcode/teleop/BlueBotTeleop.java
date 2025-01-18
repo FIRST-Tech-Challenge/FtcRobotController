@@ -75,15 +75,7 @@ public class BlueBotTeleop extends LinearOpMode {
         }
       }
 
-      // 5. If the arm length would make the robot too long, clip the arm length
-      /*
-      double maxLen = 20 / Math.cos(mek.pivot.getTargetPosition() * Math.toRadians(mek.countsPerDegree));
-      if (mek.slideTarget * mek.countsPerInch > maxLen){
-        mek.slideTarget = maxLen * mek.countsPerInch;
-      }
-      */
-
-      // 6. Updates the target position of the slide
+      // 5. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
 
       telemetry.update();
