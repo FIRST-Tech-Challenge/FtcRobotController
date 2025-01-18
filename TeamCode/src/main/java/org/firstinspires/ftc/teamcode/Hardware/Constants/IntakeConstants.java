@@ -53,9 +53,9 @@ public class IntakeConstants {
 
     // SampleDetector max values
     public static final double
-            maxR = 3894.0,
-            maxG = 7619.00,
-            maxB = 6072.00,
-            maxA = 5861.00;
+            maxR = 2380.0,
+            maxG = 4500.00,
+            maxB = 3750.00,
+            maxA = 3550.00;
 
 }
