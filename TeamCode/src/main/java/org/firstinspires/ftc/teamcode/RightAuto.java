@@ -275,7 +275,7 @@ public class RightAuto extends LinearOpMode {
 //                .then(await(500))
                 .then(groupOf(a -> {
                     a.add(moveTo(new Pose(4, -27, 0)));
-                    a.add(blinkenlights(1.0));
+                    a.add(blinkenlights(.5));
                 }))
                 .then(run(() -> hardware.driveMotors.setAll(-0.30)))
                 .then(await(300))
@@ -290,7 +290,7 @@ public class RightAuto extends LinearOpMode {
                 .then(groupOf(a -> {
                     a.add(moveTo(new Pose(4, -27, 0)));
                     a.add(postScoreSpecimen());
-                    a.add(blinkenlights(1.0));
+                    a.add(blinkenlights(.5));
                 }))
                 .then(run(() -> hardware.driveMotors.setAll(-0.30)))
                 .then(await(300))

@@ -127,7 +127,7 @@ public class LeftAuto extends LinearOpMode {
                         .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
                         .then(await(200))
                         .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
-                        .then(await(200))
+                        .then(await(300))
                         .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
                         .then(await(200))
         );
