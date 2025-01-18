@@ -165,10 +165,10 @@ public class Settings {
 
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(5, -28, Math.toRadians(90));
             public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(40, -55.0, Math.toRadians(90));
+            public static Pose2d HP_POSE = new Pose2d(50, -55.0, Math.toRadians(90));
 
             public static Vector2d PARK_MIDDLEMAN = new Vector2d(-45, -30);
 

@@ -154,9 +154,12 @@ public class UltimateAutonomous extends LinearOpMode {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose));
         TrajectoryActionBuilder unhookTrajectory = getUnhookTrajectory(sp, placingTrajectory);
 
+        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
+
         Actions.runBlocking(
                 new SequentialAction(
-                        new ParallelAction(
+
+                        new SequentialAction(
                                 placingTrajectory.build(),
                                 hookChamber()
                         ),
@@ -242,7 +245,7 @@ public class UltimateAutonomous extends LinearOpMode {
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             pause(3500);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 700);
+            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 800);
             pause(1500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             return false;
