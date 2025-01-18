@@ -32,7 +32,6 @@ import dev.aether.collaborative_multitasking.Scheduler;
 import dev.aether.collaborative_multitasking.TaskGroup;
 import dev.aether.collaborative_multitasking.TaskTemplate;
 import dev.aether.collaborative_multitasking.ext.Pause;
-import kotlin.Pair;
 import kotlin.Unit;
 
 @Autonomous // Appear on the autonomous drop down
@@ -44,13 +43,9 @@ public class RightAuto extends LinearOpMode {
     public static final double ACCEPT_TURN = Math.toRadians(5);
     // power biases
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
-    public static final double CLAW_OPEN = 0.55;
     public static final double CLAW_CLOSE = 0.02;
-    public static final double WRIST_UP = 0.46;
-    public static final double WRIST_BACK = 0.30;
-    public static final double VERTICAL_SLIDE_SPEED = 0.75;
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
-    final Pose PARK = new Pose(4, -36, Math.toRadians(0));
+    final Pose STARTPOS = new Pose(0, 4.20, Math.toRadians(0));
     Hardware hardware;
     private final Runnable setup = () -> {
         hardware.claw.setPosition(CLAW_CLOSE);
@@ -120,7 +115,7 @@ public class RightAuto extends LinearOpMode {
     }
 
     private void hardwareInit() {
-        tracker = new EncoderTracking(hardware);
+        tracker = new EncoderTracking(hardware, STARTPOS);
         loopTimer = new LoopStopwatch();
         speed2Power = new Speed2Power(0.20); // Set a speed2Power corresponding to a speed of 0.20 seconds
         ramps = new Ramps(
@@ -131,7 +126,7 @@ public class RightAuto extends LinearOpMode {
         );
         rampsSlowEdition = new Ramps(
                 x -> 0.25,
-                Ramps.linear(1 / 12.0),
+                Ramps.linear(1/12.0),
 //                Easing.power(3.0, 12.0),
                 Ramps.LimitMode.SCALE
         );
@@ -142,6 +137,7 @@ public class RightAuto extends LinearOpMode {
         hardware.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.clawFlip.setPosition(Hardware.FLIP_UP);
         hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
 
         hardware.arm.setTargetPosition(0);
         hardware.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -156,30 +152,6 @@ public class RightAuto extends LinearOpMode {
 
         hardware.lightLeft.setPosition(Hardware.LAMP_PURPLE);
         hardware.lightRight.setPosition(Hardware.LAMP_PURPLE);
-    }
-
-    private Pair<ITask, ITask> specimenWallPick() {
-        ITask first = scheduler.add(run(() -> hardware.claw.setPosition(CLAW_OPEN)));
-        ITask last = first
-                .then(wait(1.000))
-                .then(run(() -> hardware.wrist.setPosition(WRIST_UP)))
-                .then(wait(1.000))
-                .then(run(() -> hardware.arm.setTargetPosition(45)))
-                .then(wait(0.500))
-                .then(run(() -> hardware.claw.setPosition(CLAW_CLOSE)))
-                .then(wait(1.000))
-                .then(run(() -> {
-                    hardware.verticalSlide.setTargetPosition(300);
-                    hardware.verticalSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    hardware.verticalSlide.setPower(VERTICAL_SLIDE_SPEED);
-                }))
-                .then(wait(1.000))
-                .then(run(() -> hardware.wrist.setPosition(WRIST_BACK)))
-                .then(wait(1.000))
-                .then(run(() -> hardware.arm.setTargetPosition(10)))
-                .then(wait(1.000))
-                .then(run(() -> hardware.verticalSlide.setTargetPosition(0)));
-        return new Pair<>(first, last);
     }
 
     private ITask grab() {
@@ -236,7 +208,7 @@ public class RightAuto extends LinearOpMode {
     private ITask preScoreSpecimen() {
         return groupOf(it -> it.add(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                 .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(-99))))
-                .then(vLiftProxy.moveTo(710, 5, 1.0)));
+                .then(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_SPECIMEN, 5, 1.0)));
     }
 
     private ITask postScoreSpecimen() {
@@ -262,11 +234,11 @@ public class RightAuto extends LinearOpMode {
                         .then(await(200))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_UP)))
                         .then(await(200))
-                        .then(run(() -> hardware.arm.setTargetPosition(50)))
+                        .then(run(() -> hardware.arm.setTargetPosition(65)))
                         .then(await(500))
                         .then(run(() -> hardware.claw.setPosition(Hardware.CLAW_CLOSE)))
                         .then(await(200))
-                        .then(vLiftProxy.moveTo(225, 5, 0.4))
+                        .then(vLiftProxy.moveTo(50, 3, 0.4))
                         .then(run(() -> hardware.wrist.setPosition(Hardware.WRIST_BACK)))
 //                        .then(await(200))
                         .then(run(() -> hardware.arm.setTargetPosition(Hardware.deg2arm(10))))
@@ -278,7 +250,7 @@ public class RightAuto extends LinearOpMode {
     public void runAuto() {
         scheduler.add(new OneShot(scheduler, setup))
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(30, 12, 0)));
+                    a.add(moveTo(new Pose(29, 12, 0)));
                     a.add(preScoreSpecimen());
                 }))
                 .then(scoreSpecimen())
@@ -290,27 +262,43 @@ public class RightAuto extends LinearOpMode {
                 .then(groupOf(a -> {
                     a.add(transfer())
                             .then(drop());
-                    a.add(moveTo(new Pose(11.5, -36, 0)));
+                    a.add(moveTo(new Pose(11.5, -36, Math.toRadians(30))));
                 }))
-                .then(moveTo(new Pose(15.5, -46.25, 0)))
-                .then(grab())
-                .then(groupOf(a -> {
-                    a.add(transfer())
-                            .then(drop());
-                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
-                }))
+//                .then(moveTo(new Pose(15.5, -46.25, 0)))
+//                .then(grab())
+//                .then(groupOf(a -> {
+//                    a.add(transfer())
+//                            .then(drop());
+//                    a.add(moveTo(new Pose(11.5, -46.25, 0)));
+//                }))
 //                .then(moveTo(new Pose(14, -27, 0)))
 //                .then(await(500))
-                .then(moveTo(new Pose(6, -27, 0)))
-                .then(blinkenlights(1.0))
-                .then(moveToSlow(new Pose(2, -27, 0)))
-                .then(run(() -> hardware.driveMotors.setAll(-0.40)))
-                .then(await(500))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(4, -27, 0)));
+                    a.add(blinkenlights(1.0));
+                }))
+                .then(run(() -> hardware.driveMotors.setAll(-0.30)))
+                .then(await(300))
                 .then(run(() -> hardware.driveMotors.setAll(0)))
                 .then(pickSpecimen())
                 .then(lightColor(Hardware.LAMP_PURPLE))
                 .then(groupOf(a -> {
-                    a.add(moveTo(new Pose(30, 6, 0)));
+                    a.add(moveTo(new Pose(29, 8, 0)));
+                    a.add(preScoreSpecimen());
+                }))
+                .then(scoreSpecimen())
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(4, -27, 0)));
+                    a.add(postScoreSpecimen());
+                    a.add(blinkenlights(1.0));
+                }))
+                .then(run(() -> hardware.driveMotors.setAll(-0.30)))
+                .then(await(300))
+                .then(run(() -> hardware.driveMotors.setAll(0)))
+                .then(pickSpecimen())
+                .then(lightColor(Hardware.LAMP_PURPLE))
+                .then(groupOf(a -> {
+                    a.add(moveTo(new Pose(29, 4, 0)));
                     a.add(preScoreSpecimen());
                 }))
                 .then(scoreSpecimen())
