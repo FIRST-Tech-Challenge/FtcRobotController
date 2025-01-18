@@ -88,7 +88,7 @@ public class MoveToTask extends TaskTemplate {
         double speed = ramps.ease(
                 now,
                 dToTarget,
-                0.75
+                1.0
         );
         action.apply(hardware.driveMotors, RightAuto.CALIBRATION, speed, speed2Power);
         telemetry.addData("forward", action.forward());

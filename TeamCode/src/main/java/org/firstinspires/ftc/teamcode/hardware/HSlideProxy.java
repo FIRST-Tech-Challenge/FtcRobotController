@@ -27,6 +27,10 @@ public class HSlideProxy extends TaskTemplate {
         this.hardware = hardware;
     }
 
+    public boolean isOut() {
+        return isOut;
+    }
+
     @Override
     @NotNull
     public Set<SharedResource> requirements() {
@@ -45,7 +49,7 @@ public class HSlideProxy extends TaskTemplate {
 
     public void update() {
         hardware.horizontalSlide.setPosition(position);
-        hardware.horizontalLeft.setPosition(1 - position);
+        hardware.horizontalLeft.setPosition(1.05 - position);
     }
 
     private void moveTo(double newPos) {
@@ -63,7 +67,7 @@ public class HSlideProxy extends TaskTemplate {
                 if (activeTask != null) activeTask.requestStop();
                 activeTask = this;
                 isOut = false;
-                moveTo(Hardware.RIGHT_SLIDE_IN - Hardware.SLIDE_OVERSHOOT);
+                moveTo(Hardware.SLIDE_OVERSHOOT);
                 timer = new ElapsedTime();
                 timer.reset();
             }
