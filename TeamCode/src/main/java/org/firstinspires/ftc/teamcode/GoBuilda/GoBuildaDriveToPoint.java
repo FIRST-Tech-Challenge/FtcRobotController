@@ -50,6 +50,7 @@ public class GoBuildaDriveToPoint {
 
     private double leftFrontMotorOutput = 0;
     private double rightFrontMotorOutput = 0;
+    ;
     private double leftBackMotorOutput = 0;
     private double rightBackMotorOutput = 0;
 
@@ -71,8 +72,8 @@ public class GoBuildaDriveToPoint {
     }
 
     //public void setDriveType(DriveType driveType) {
-       // selectedDriveType = driveType;
-   //}
+    // selectedDriveType = driveType;
+    //}
 
 
     public void setXYCoefficients(double p, double d, double acceleration, DistanceUnit unit, double tolerance) {
@@ -163,7 +164,16 @@ public class GoBuildaDriveToPoint {
             return yPID.calculateAxisPID(yError, pGain, dGain, accel, PIDTimer.seconds());
         }
         if (direction == Direction.h) {
-            double hError = targetPosition.getHeading(AngleUnit.RADIANS) - currentPosition.getHeading(AngleUnit.RADIANS);
+            //double hError = (targetPosition.getHeading(AngleUnit.RADIANS) ) - (currentPosition.getHeading(AngleUnit.RADIANS) );
+            double hError;
+            if (targetPosition.getHeading(AngleUnit.DEGREES) > currentPosition.getHeading(AngleUnit.DEGREES)
+            && targetPosition.getHeading(AngleUnit.DEGREES) > 90 && currentPosition.getHeading(AngleUnit.DEGREES) < -90)
+            {
+                hError = - (targetPosition.getHeading(AngleUnit.RADIANS) + currentPosition.getHeading(AngleUnit.RADIANS));
+            } else {
+                hError = targetPosition.getHeading(AngleUnit.RADIANS) - currentPosition.getHeading(AngleUnit.RADIANS);
+            }
+
             return hPID.calculateAxisPID(hError, yawPGain, yawDGain, yawAccel, PIDTimer.seconds());
         }
         return 0;

@@ -37,25 +37,28 @@ public class TT_AutonomousRightSide extends LinearOpMode {
         DRIVE_TO_TARGET_14,
         DRIVE_TO_TARGET_15,
     }
-// REMEMBER TO ADD 50 DISTANCE TO Y AXIS MOVING RIGHT
-    final Pose2D TARGET_1 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-745), 0, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-600), 725, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 725, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 900, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-100), 900, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 900, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_7 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 1125, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_8 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-100), 1125, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 1125, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_10 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-1300), 1350, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_11 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-100), 1350, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_12 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-50), 0, AngleUnit.DEGREES, 0);
+
+    // REMEMBER TO ADD 50 DISTANCE TO Y AXIS MOVING RIGHT
+    int MAX_FORWARD_POSITION = 1250;
+    final Pose2D TARGET_1 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), 0, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-675), 655, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 655, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 850, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 925, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 900, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_7 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1100, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_8 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 1150, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1100, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_10 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1340, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_11 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 1340, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_12 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 728, AngleUnit.DEGREES, 180);
+
     @Override
     public void runOpMode() {
         robot.init();
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
-       robot.MaxPowerAdjustment=1.5;
+        robot.MaxPowerAdjustment = 1.5;
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -69,6 +72,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     //the first step in the autonomous
                     stateMachine = StateMachine.DRIVE_TO_TARGET_1;
                     robot.setLiftPosition(robot.liftHeightMax);
+                    autonomousPower = 0.4;
                     sleep(250);
                     break;
                 case DRIVE_TO_TARGET_1:
@@ -79,20 +83,23 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                      */
 
                     robot.setLiftPosition(robot.liftHeightMax);
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_1, autonomousPower, 6)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_1, autonomousPower, 2.1)) {
                         telemetry.addLine("at position #1!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_2;
-                        robot.setLiftPosition(1345);
-                        sleep(500);
-                        robot.setLiftPosition(0);
-
+                        //robot.setLiftPosition(robot.liftHeightMax - 200);
+                        sleep(750);
+                        robot.liftPowerMax = .3;
+                        robot.setLiftPosition(robot.liftHeightMax - 600);
+                        sleep(1000);
+                        autonomousPower = .7;
                     }
                     break;
                 case DRIVE_TO_TARGET_2:
                     //drive to the second target
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_2, autonomousPower, 0)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_2, autonomousPower, .2)) {
                         telemetry.addLine("at position #2!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_3;
+                        robot.setLiftPosition(0);
                     }
                     break;
                 case DRIVE_TO_TARGET_3:
@@ -113,14 +120,8 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_6;
                     }
                     break;
-                //case DRIVE_TO_TARGET_6:
-                //    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_6, autonomousPower, 1)) {
-                //       telemetry.addLine("There!");
-                //       stateMachine = StateMachine.AT_TARGET;
-                //   }
-                //   break;
                 case DRIVE_TO_TARGET_6:
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_6, autonomousPower, 0)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_6, autonomousPower, .2)) {
                         telemetry.addLine("There!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_7;
                     }
@@ -148,7 +149,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
 
                 */
                 case DRIVE_TO_TARGET_9:
-                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_9, autonomousPower, 0)) {
+                    if (robot.nav.driveTo(robot.odo.getPosition(), TARGET_9, autonomousPower, .2)) {
                         telemetry.addLine("There!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_10;
                     }

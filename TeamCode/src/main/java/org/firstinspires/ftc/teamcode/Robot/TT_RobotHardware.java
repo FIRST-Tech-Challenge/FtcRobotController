@@ -82,7 +82,7 @@ public class TT_RobotHardware {
     public static final double ARM_DOWN_POWER = -0.45;
     private boolean liftEnabled = false;
     public int liftHeight = 0;
-    public int liftHeightMax = 1405;
+    public int liftHeightMax = 1355;
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
     public double effectivePower = 0;
