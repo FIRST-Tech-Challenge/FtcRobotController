@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 //import com.qualcomm.robotcore.hardware.Servo;
 
-
-
 //port=0
 //linear rail= port 2
 //open and closing claw=1 Port
 
 
-public class dArmRotating extends LinearOpMode {
+public class ArmRotating extends LinearOpMode {
     private String armservo="";//get config
     @Override
     public void runOpMode() {
