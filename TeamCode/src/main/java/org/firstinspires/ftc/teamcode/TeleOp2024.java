@@ -38,6 +38,7 @@ public class TeleOp2024 extends DriveMethods {
         }
 
 
+
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;
         double driveLeftStickX = driver.left_stick_x;
@@ -67,7 +68,13 @@ public class TeleOp2024 extends DriveMethods {
 
         robot.wormGear.setPower(wormGearPower);
 
-        sliderPosition = sliderPosition + 10.0 * opRightStickY;
+        // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
+        if (operator.x) {
+            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
+        } else {
+            sliderPosition = sliderPosition + 10.0 * opRightStickY;
+        }
+
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
         telemetry.addData("Lift","%.1f", opLeftStickY);
