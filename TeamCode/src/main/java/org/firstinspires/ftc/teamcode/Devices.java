@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -77,9 +75,14 @@ public class Devices {
         return Math.toRadians(wormGearAngle());
     }
 
-    double maxLegalSliderLength() {
+    double upperMaxLegalSliderLength() {
         return MAX_HORIZONTAL_SLIDER_TICKS / Math.cos(wormGearRadians());
     }
 
 
+
+    double lowerMaxLegalSliderLength() {
+        return 1341.3 * Math.cos(wormGearRadians());
+    }
+//Robot Height is approx 1341.3 in ticks
 }
