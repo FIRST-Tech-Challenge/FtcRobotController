@@ -71,16 +71,16 @@ public class VerticalSlide implements ViperSlide {
     @Override
     public void increment() {
         if (encoderTarget < VerticalPosition.HIGH_BASKET.getValue()) {
-            encoderTarget += 10;
+            encoderTarget += 20;
         }
         setPosition(encoderTarget);
     }
 
     @Override
     public void decrement() {
-        if (encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
-            encoderTarget -= 10;
-        }
+//        if (encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
+            encoderTarget -= 20;
+//        }
         setPosition(encoderTarget);
     }
 }

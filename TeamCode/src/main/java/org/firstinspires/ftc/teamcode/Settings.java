@@ -62,13 +62,13 @@ public class Settings {
             public static class Wrist {
                 public static double[] HORIZONTAL_POSITION = {0.72, 1.0} ;
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0.25, 0.1};
+                public static double[] VERTICAL_POSITION = {0.26, 0.1};
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.2;
-                public static double PLACE_FORWARD_POSITION = 0.3;
-                public static double PLACE_BACKWARD_POSITION = 1.0;
+                public static double TRANSFER_POSITION = 1;
+                public static double PLACE_FORWARD_POSITION = 0.7;
+                public static double PLACE_BACKWARD_POSITION = 0;
 
             }
         }
@@ -156,7 +156,7 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
+//            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
             public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -70, Math.toRadians(90));
 
             // Updated parked positions for each starting position
@@ -165,10 +165,11 @@ public class Settings {
 
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(5, -32, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE_2 = new Pose2d(2, -32, Math.toRadians(90));
+//            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(50, -55.0, Math.toRadians(90));
+            public static Pose2d HP_POSE = new Pose2d(55, -54.0, Math.toRadians(90));
 
             public static Vector2d PARK_MIDDLEMAN = new Vector2d(-45, -30);
 
@@ -176,10 +177,19 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
-            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(40.5, -34.3, Math.toRadians(90));
-            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(40.5, -5, Math.toRadians(90));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(50, -2, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(60, -2, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(45, -36, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(65, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(65, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_PUSH = new Pose2d(65, -55, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(70, -5, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_PUSH = new Pose2d(70, -55, Math.toRadians(90));
+
+            // I added this to help transition between placing position and collecting samples to place in basket or chamber
+            public static Vector2d RED_Right_Sample_MIDDLEMAN = new Vector2d(32, -30);
+
+            // I am adding this to push samples into human player zone
+            public static Pose2d Red_Sample_Push_Pose_1 = new Pose2d(48, -13, Math.toRadians(90));
+            public static Pose2d Red_Sample_Push_Pose_2 = new Pose2d(58, -13, Math.toRadians(90));
         }
 
         @Config
@@ -264,8 +274,8 @@ public class Settings {
         public GamepadButton rotateLeft = GamepadButton.X;
 
         // Claw controls
-        public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
-        public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeIn = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeOut = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
         public final GamepadButton clawIn = GamepadButton.OPTIONS;
         public final GamepadButton clawOut = GamepadButton.START;

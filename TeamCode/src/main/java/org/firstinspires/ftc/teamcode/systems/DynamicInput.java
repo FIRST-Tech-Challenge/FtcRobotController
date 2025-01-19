@@ -180,6 +180,7 @@ public class DynamicInput {
         prevWrist = actions.wristUp;
         prevInwardClaw = actions.inwardClaw;
         prevOutwardClaw = actions.outwardClaw;
+        prevToggleClaw = actions.toggleClaw;
         prevShoulderUp = actions.shoulderUp;
         prevShoulderDown = actions.shoulderDown;
         prevFlipMovement = actions.flipMovement;

@@ -229,7 +229,7 @@ public class BaseRobot {
 //                if (clawOpen) {
                     if (!clawOpen && activateAutoTransition) {
                         intake.geckoWheels.outtake();
-                        pause(100);
+                        pause(30);
                         intake.geckoWheels.stop();
                     }
 //                    outtake.claw.close();
