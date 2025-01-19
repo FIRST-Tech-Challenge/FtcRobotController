@@ -35,7 +35,7 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.5;       //increase to go down, decrease to go up
 
-    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.13;     //decrease to pivot back of the robot, increase to pivot to front
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.19;     //decrease to pivot back of the robot, increase to pivot to front
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.46;
 
