@@ -80,9 +80,12 @@ public class Devices {
     }
 
 
-
-    double lowerMaxLegalSliderLength() {
-        return 1341.3 * Math.cos(wormGearRadians());
+    /**
+     * lowerMaxSliderLength stops the slider from hitting the ground
+     * @return
+     */
+    double lowerMaxSliderLength() {
+        return 1341.3 / Math.cos((0.5 * Math.PI) + wormGearRadians());
     }
 //Robot Height is approx 1341.3 in ticks
 }
