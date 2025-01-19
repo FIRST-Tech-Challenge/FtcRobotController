@@ -3,44 +3,60 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import java.util.List;
+import java.util.ArrayList;
 
 public class ArmControl extends LinearOpMode {
-  public Int linearRailIdx = 0;
-  public float linearRailRotation = 0;
-  public Int clawIdx = 1;
-  public float clawRotation = 0;
-  public Int armIdx = 2;
-  public float armRotation = 0;
+  public int linearRailIdx = 0;
+  public int clawIdx = 1;
+  public int armIdx = 2;
+
+  public float[] servoRotations = List.of(0, 0, 0);
   
   // HOW TO REMOVE LIMITS FOR SERVO ROTATIONS: Set maxRot to 9999 or set minRot to -9999
 
   public float[] minRot = List.of(0, 0);
   public float[] maxRot = List.of(4, 4);
   
-  private Gamepad gamepad1 = new Gamepad(); // Still needs some work...
+  private Gamepad gamepad = new Gamepad(); // Still needs some work...
+  public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
+
+  // NEED TO ADJUST CLOSE AND OPEN CLAW POSITIONS
+  public float closeClawPosition = 0;
+  public float openClawPosition = 0;
   
   public void runOpMode() throws InterruptedException {
-    public List<Servo> servoIdentity = List.of(hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"), hardwareMap.get(Servo.class, "N/A"));
-    
-    servoIdentity.get(linearRailIdx).setDirection(Servo.Direction.FORWARD);
-
-    telemetry.addData("Status", "Initialized");
+    telemetry.addData("Status", "Initialized, Waiting For Controller Input");
     telemetry.update();
 
     // Wait to press START on controller
     waitForStart();
 
     while (opModeIsActive()) {
-      SetServoPosition(linearRailIdx, linearRailRotation);
+      if (gamepad.y) {
+        SetServoPosition(linearRailIdx, servoRotations.get(linearRailIdx) + 1);
+      }
+
+      if (gamepad.a) {
+        SetServoPosition(linearRailIdx, servoRotations.get(linearRailIdx) - 1);
+      }
+
+      if (gamepad.b) {
+        SetServoPosition(clawIdx, closeClawPosition);
+      } else {
+        SetServoPosition(clawIdx, openClawPosition);
+      }
+      
       ConfineServoBoundaries();
       
-      telemetry.addData("Servo Position", linearRailPosition);
+      telemetry.addData("Servo Position: LinearRail", servoRotations[linearRailIdx]);
+      telemetry.addData("Servo Position: Claw", servoRotations[clawIdx]);
+      telemetry.addData("Servo Position: Arm", servoRotations[armIdx]);
       telemetry.addData("Status", "Running");
       telemetry.update();
     }
   }
 
-  public static void ConfineServoBoundaries() {
+  public void ConfineServoBoundaries() {
     for (int i=0; i<servoRotations.Length; i++) {
       if (servoRotations.get(i) != 9999) {
         if (servoRotations.get(i) <= minRot.get(i)) {
@@ -56,7 +72,6 @@ public class ArmControl extends LinearOpMode {
     }
   }
 
-  public static void SetServoRotation(int servoIdx, float position) {
-    servoIdentity.get(servoIdx).setPosition(position);
+  public void SetServoRotation(int servoIdx, float position) {
+    servoIdentity.set(servoIdx).setPosition(position);
   }
-}
