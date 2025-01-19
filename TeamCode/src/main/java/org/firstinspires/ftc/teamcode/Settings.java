@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 2000;
+    public static double ms_needed_to_park = 2000; // TODO: TIME THIS SO WE DON'T WASTE TIME
 
     // Movement settings
     @Config
@@ -60,12 +60,15 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double[] HORIZONTAL_POSITION = {0.72, 1.0} ;
+                // At the moment, the right servo is messed up, so only the left positions are being used
+                // TODO: TUNE WHEN RIGHT SERVO IS PHYSICALLY REPOSITIONED
+                public static double[] HORIZONTAL_POSITION = {0.72, 1.0};
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
                 public static double[] VERTICAL_POSITION = {0.26, 0.1};
             }
             @Config
             public static class Linkage {
+                // TODO: TUNE WHEN NEW SERVO GOES IN
                 public static double TRANSFER_POSITION = 1;
                 public static double PLACE_FORWARD_POSITION = 0.7;
                 public static double PLACE_BACKWARD_POSITION = 0;
@@ -120,6 +123,8 @@ public class Settings {
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.9;
+
+            public static double FREAKY_MOVEMENT_POWER = 20;
         }
 
         @Config
@@ -133,6 +138,7 @@ public class Settings {
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.7;
+            public static double FREAKY_MOVEMENT_POWER = 15;
         }
 
         @Config
@@ -156,7 +162,7 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-//            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
+            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
             public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -70, Math.toRadians(90));
 
             // Updated parked positions for each starting position
@@ -169,14 +175,14 @@ public class Settings {
             public static Pose2d RIGHT_CHAMBER_POSE_2 = new Pose2d(2, -32, Math.toRadians(90));
 //            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(55, -54.0, Math.toRadians(90));
+            public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
 
             public static Vector2d PARK_MIDDLEMAN = new Vector2d(-45, -30);
 
             public static Pose2d LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
-            public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
+            public static Pose2d RIGHT_PARK_POSE = new Pose2d(55, -54, Math.toRadians(180));
             public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(45, -36, Math.toRadians(90));
             public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(65, -5, Math.toRadians(90));
             public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(65, -5, Math.toRadians(90));
@@ -185,11 +191,11 @@ public class Settings {
             public static Pose2d SECOND_PRESET_SAMPLE_PUSH = new Pose2d(70, -55, Math.toRadians(90));
 
             // I added this to help transition between placing position and collecting samples to place in basket or chamber
-            public static Vector2d RED_Right_Sample_MIDDLEMAN = new Vector2d(32, -30);
+            public static Vector2d RED_RIGHT_SAMPLE_MIDDLEMAN = new Vector2d(32, -30);
 
             // I am adding this to push samples into human player zone
-            public static Pose2d Red_Sample_Push_Pose_1 = new Pose2d(48, -13, Math.toRadians(90));
-            public static Pose2d Red_Sample_Push_Pose_2 = new Pose2d(58, -13, Math.toRadians(90));
+            public static Pose2d RED_SAMPLE_PUSH_POSE_1 = new Pose2d(48, -13, Math.toRadians(90));
+            public static Pose2d RED_SAMPLE_PUSH_POSE_2 = new Pose2d(58, -13, Math.toRadians(90));
         }
 
         @Config
@@ -338,6 +344,8 @@ public class Settings {
         RIGHT_STICK_X, RIGHT_STICK_Y
     }
 
+
+
     // Deploy flags
     @Config
     public static class Deploy {
@@ -356,7 +364,8 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.CHAMBER;
+        public static AutonomousMode AUTONOMOUS_MODE_LEFT = AutonomousMode.BASKET;
+        public static AutonomousMode AUTONOMOUS_MODE_RIGHT = AutonomousMode.CHAMBER;
 
         public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, CHAMBER, BASKET

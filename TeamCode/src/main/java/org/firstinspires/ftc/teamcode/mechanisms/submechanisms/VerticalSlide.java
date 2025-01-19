@@ -71,7 +71,7 @@ public class VerticalSlide implements ViperSlide {
     @Override
     public void increment() {
         if (encoderTarget < VerticalPosition.HIGH_BASKET.getValue()) {
-            encoderTarget += 20;
+            encoderTarget += Settings.Hardware.VerticalSlide.FREAKY_MOVEMENT_POWER;
         }
         setPosition(encoderTarget);
     }
@@ -79,7 +79,7 @@ public class VerticalSlide implements ViperSlide {
     @Override
     public void decrement() {
 //        if (encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
-            encoderTarget -= 20;
+            encoderTarget -= Settings.Hardware.VerticalSlide.FREAKY_MOVEMENT_POWER;
 //        }
         setPosition(encoderTarget);
     }
