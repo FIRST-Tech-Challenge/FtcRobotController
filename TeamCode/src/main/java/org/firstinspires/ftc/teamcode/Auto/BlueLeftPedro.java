@@ -23,6 +23,7 @@ public class BlueLeftPedro extends LinearOpMode {
 
         Follower follower = new Follower(hardwareMap);
         Pose startPose = new Pose(8, 108, Math.toRadians(0));  // Starting position
+        PathChain path = new BlueLeftPath().getPath();
         follower.setStartingPose(startPose);
 
         // Define paths separately
@@ -90,13 +91,15 @@ public class BlueLeftPedro extends LinearOpMode {
         waitForStart();
 
         // Execute paths sequentially with a half-second delay
-        executePath(follower, path1);
-        executePath(follower, path2);
-        executePath(follower, path3);
-        executePath(follower, path4);
-        executePath(follower, path5);
-        executePath(follower, path6);
-        executePath(follower, path7);
+//        executePath(follower, path1);
+//        executePath(follower, path2);
+//        executePath(follower, path3);
+//        executePath(follower, path4);
+//        executePath(follower, path5);
+//        executePath(follower, path6);
+//        executePath(follower, path7);
+
+        follower.followPath(path);
     }
 
     private void executePath(Follower follower, PathChain path) throws InterruptedException {
@@ -116,3 +119,5 @@ public class BlueLeftPedro extends LinearOpMode {
         sleep(500);
     }
 }
+
+
