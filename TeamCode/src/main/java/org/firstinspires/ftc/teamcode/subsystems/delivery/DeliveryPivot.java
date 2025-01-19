@@ -171,6 +171,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
         if(addTelemetry) {
             telemetry.addData("pivot target", currentTarget);
             telemetry.addData("pivot current", position);
+            telemetry.addData("angle", position * 0.046);
             telemetry.addData("pivot color  depth", GetDepth());
         }
 

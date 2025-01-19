@@ -55,7 +55,9 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private Supplier<Boolean> pivotLowEnoughSupplier;
 
-    public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
+    private DeliveryPivot pivot;
+
+    public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback, DeliveryPivot pivot) {
         /* instantiate motors */
         this.motor  = new Motor(hardwareMap, "Slider1");
         this.motor2  = new Motor(hardwareMap, "Slider2");
@@ -66,6 +68,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         this.gamepad = gamepad;
         this.telemetry = telemetry;
         this.feedback = feedback;
+        this.pivot = pivot;
 
         this.motor.encoder.reset();
 
@@ -144,10 +147,19 @@ public class DeliverySlider extends SonicSubsystemBase {
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
+        double expectedPivotAngle = Math.toDegrees(Math.asin(7.25 / (14.5 + position * 0.0329)));
+        double sliderLength = position * 0.0329;
+        int extraTicks = (int)((30 - expectedPivotAngle) * -3);
+
         if(addTelemetry) {
             telemetry.addData("slider target", currentTarget);
             telemetry.addData("slider current", position);
+            telemetry.addData("slider length", sliderLength);
+            telemetry.addData("expected pivot angle", expectedPivotAngle);
+
+            telemetry.addData("currrent pivot position", pivot.getPosition());
+            telemetry.addData("new pivot position", pivot.getPosition() + extraTicks);
             telemetry.update();
         }
 
@@ -183,21 +195,47 @@ public class DeliverySlider extends SonicSubsystemBase {
         } else {
             //Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
 
-            if(addTelemetry) {
-                telemetry.addData("slider", position);
-                //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
-                telemetry.addData("motor", motor.get());
-            }
-
+//            if(addTelemetry) {
+//                telemetry.addData("slider", position);
+//                //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
+//                telemetry.addData("motor", motor.get());
+//            }
 
             if (pivotLowEnoughSupplier != null
                     && pivotLowEnoughSupplier.get()
-                    && Math.abs(motor.get()) > 0
-                    && position > ExtendLimit) {
+                    && Math.abs(motor.get()) > 0) {
+                if(position > ExtendLimit) {
 
                     motor.stopMotor();
                     motor2.stopMotor();
                     MoveToValidPosition();
+                } else {
+                    int newPivotPosition = pivot.getPosition();
+
+                    if(sliderLength > 14) {
+                        newPivotPosition = -1664;
+
+                    } else if (sliderLength > 12.5) {
+                        newPivotPosition = -1632;
+
+                    } else if (sliderLength > 10) {
+                        newPivotPosition = -1605;
+
+                    } else if (sliderLength > 7.5) {
+                        newPivotPosition = -1580;
+
+                    } else if (sliderLength > 5) {
+                        newPivotPosition = -1481;
+
+                    } else if (sliderLength > 2.5) {
+                        newPivotPosition = -1413;
+                    } else {
+                        newPivotPosition = -1300;
+                    }
+
+                    pivot.SetTargetToCurrent(newPivotPosition);
+                }
+
             }
 
             if (position > BasketDeliveryPosition &&
