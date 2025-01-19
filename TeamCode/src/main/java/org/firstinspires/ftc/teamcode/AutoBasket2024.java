@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Autonomous
 public class AutoBasket2024 extends DriveMethods {
 
-    double startTime = -1;
+    double stateStartTime = -1;
 
     enum State {
-        Sideways,
-        Turning,
         Finished,
         Unstarted,
         RaiseArm,
+        MoveForward,
         ExtendSlider,
         OpenClaw
     }
@@ -37,14 +36,24 @@ public class AutoBasket2024 extends DriveMethods {
 
         switch (currentState) {
             case Unstarted:
-                currentState = State.RaiseArm;
+                changeState(State.RaiseArm);
                 break;
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
                 if (robot.wormGearAngle() >= 50) {
                     robot.wormGear.setPower(0);
-                    currentState = State.ExtendSlider;
+
+                    changeState(State.MoveForward);
+                }
+                break;
+            case MoveForward:
+                omniDrive(0.5, 0, 0);
+
+                if (getStateTime() >= 2) {
+                    omniDrive(0, 0, 0);
+
+                    changeState(State.ExtendSlider);
                 }
                 break;
             case ExtendSlider:
@@ -53,12 +62,12 @@ public class AutoBasket2024 extends DriveMethods {
                 setSliderAndReturnConstraint(2000);
 
                 if (robot.sliderMotor.getCurrentPosition() >= 2000) {
-                    currentState = State.OpenClaw;
+                    changeState(State.OpenClaw);
                 }
                 break;
             case OpenClaw:
                 robot.clawServo.setPosition(robot.CLAW_OPEN);
-                currentState = State.Finished;
+                changeState(State.Finished);
                 break;
             case Finished:
                 omniDrive(0, 0, 0);
@@ -66,6 +75,16 @@ public class AutoBasket2024 extends DriveMethods {
         }
 
     }
+
+    void changeState(State nextState) {
+        currentState = nextState;
+        stateStartTime = getRuntime();
+    }
+
+    double getStateTime() {
+       return getRuntime() - stateStartTime;
+    }
+
 
 //        if (getRuntime() < 2) {
 //            omniDrive(0, 1, 0);
