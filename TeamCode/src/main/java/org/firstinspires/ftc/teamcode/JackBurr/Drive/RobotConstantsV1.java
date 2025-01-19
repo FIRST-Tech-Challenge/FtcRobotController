@@ -23,6 +23,8 @@ public class RobotConstantsV1 {
     public double FRONT_RIGHT_LOW_HOVER = 0.095;
     public double FRONT_LEFT_HOVER = 0.16;
     public double FRONT_RIGHT_HOVER = 0.16;
+    public double FRONT_LEFT_OVER_LOW_BAR = 0.25;
+    public double FRONT_RIGHT_OVER_LOW_BAR = 0.25;
     public double DELIVERY_DOWN = 1;
     public double DELIVERY_GRAB = 0.26;
     public double DELIVERY_LEVEL_ONE_ASCENT = 0.55;

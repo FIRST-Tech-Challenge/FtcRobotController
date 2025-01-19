@@ -49,6 +49,13 @@ public class IntakeSlidesV1 {
         }
     }
 
+    public boolean isIn(){
+        return getCurrentPosition() == 135;
+    }
+    public boolean isOut(){
+        return getCurrentPosition() == 850;
+    }
+
     public double getPower(){
         return this.power;
     }
