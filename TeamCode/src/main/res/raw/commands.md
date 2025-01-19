@@ -7,3 +7,6 @@ adb devices
 
 netsh wlan connect name="16498-RC"
 netsh wlan connect name="2WIRE-Eads"
+
+adb pull /sdcard/FTCLogs/log.txt ./log.txt
+adb shell ls /sdcard/FTCLogs
