@@ -62,7 +62,6 @@ public abstract class DriveMethods extends OpMode {
         double position = targetPosition;
 
         position = Math.min(position, robot.upperMaxLegalSliderLength());
-        position = Math.min(position, robot.lowerMaxLegalSliderLength());
         position = Math.min(position, robot.MAX_SAFE_SLIDER_TICKS);
         position = Math.max(position, robot.MIN_SLIDER_TICKS);
 
