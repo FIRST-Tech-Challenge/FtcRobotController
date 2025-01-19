@@ -23,7 +23,7 @@ public class Devices {
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
         /** This is the angle that the arm starts each match */
-        final double STARTING_ANGLE = -20;
+        final double STARTING_ANGLE = -7;
 
         final double MAX_SAFE_SLIDER_TICKS = 3050; // needs to be tested
 
