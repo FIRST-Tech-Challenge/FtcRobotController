@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utils.PID;
 
 public class ElevatorVertical {
@@ -33,10 +34,10 @@ public class ElevatorVertical {
         resetEncoder();
     }
 
+    public static final int MAX_OPEN_POS = 1800;
     private static double power = 0;
     private static ElevatorVerticalState lastWantedState = ElevatorVerticalState.INTAKE;
-    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, double secondGamepad) {
-        if (getElevatorPos() <= 2235) {
+    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, double secondGamepad, Telemetry telemetry) {
             if (gamepadVal == 0 && wantedState != lastWantedState) {
                 switch (wantedState) {
                     case INTAKE:
@@ -53,12 +54,16 @@ public class ElevatorVertical {
             }
             if (wantedState != ElevatorVerticalState.INTAKE) {
                 wantedPos -= (int) gamepadVal * 25;
+
             }
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
-            wantedPos = limiter(wantedPos, 0, 2235);
+            wantedPos = limiter(wantedPos, 0, MAX_OPEN_POS);
             changeLevelPID.setWanted(wantedPos);
-
+            telemetry.addData("wantedPos",wantedPos);
+            telemetry.addData("elevatorpos",getElevatorPos());
             power = changeLevelPID.update(getElevatorPos());
+            telemetry.addData("power",power);
+
 
             if (secondGamepad == 0) {
                 leftMotor.setPower(power);
@@ -67,7 +72,7 @@ public class ElevatorVertical {
                 leftMotor.setPower(0.5 * secondGamepad);
                 rightMotor.setPower(0.5 * secondGamepad);
             }
-        }
+
 
     }
     private static int encoderResetVal = 0;
