@@ -41,8 +41,8 @@ public class RobotConstantsV1 {
     public int RIGHT_SLIDE_HIGH_BASKET = 2720;
     public int LEFT_SLIDE_LOW_BASKET = -1416;
     public int RIGHT_SLIDE_LOW_BASKET = 1423;
-    public int LEFT_SLIDE_HIGH_BAR = -585;
-    public int RIGHT_SLIDE_HIGH_BAR = 574;
+    public int LEFT_SLIDE_HIGH_BAR = -485;
+    public int RIGHT_SLIDE_HIGH_BAR = 489;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -1343;
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 1366;
 
