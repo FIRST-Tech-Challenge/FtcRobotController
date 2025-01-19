@@ -85,7 +85,7 @@ public class Devices {
      * @return
      */
     double lowerMaxSliderLength() {
-        return 1341.3 / Math.cos((0.5 * Math.PI) + wormGearRadians());
+        return 475.1 / Math.cos((0.5 * Math.PI) + wormGearRadians());
     }
 //Robot Height is approx 1341.3 in ticks
 }
