@@ -26,7 +26,7 @@ public class RobotConstantsV1 {
     public double FRONT_LEFT_OVER_LOW_BAR = 0.25;
     public double FRONT_RIGHT_OVER_LOW_BAR = 0.25;
     public double DELIVERY_DOWN = 1;
-    public double DELIVERY_GRAB = 0.19;
+    public double DELIVERY_GRAB = 0.21;
     public double DELIVERY_LEVEL_ONE_ASCENT = 0.55;
     public double DELIVERY_UP = 0.65;
     public double DELIVERY_DROP = 0.68;
@@ -41,8 +41,8 @@ public class RobotConstantsV1 {
     public int RIGHT_SLIDE_HIGH_BASKET = 2720;
     public int LEFT_SLIDE_LOW_BASKET = -1416;
     public int RIGHT_SLIDE_LOW_BASKET = 1423;
-    public int LEFT_SLIDE_HIGH_BAR = -485;
-    public int RIGHT_SLIDE_HIGH_BAR = 489;
+    public int LEFT_SLIDE_HIGH_BAR = -435;
+    public int RIGHT_SLIDE_HIGH_BAR = 439;
     public int LEFT_SLIDE_LEVEL_TWO_ASCENT = -1343;
     public int RIGHT_SLIDE_LEVEL_TWO_ASCENT = 1366;
 

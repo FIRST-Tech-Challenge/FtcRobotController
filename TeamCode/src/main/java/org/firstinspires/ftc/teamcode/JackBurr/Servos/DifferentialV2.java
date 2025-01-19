@@ -169,6 +169,10 @@ public class DifferentialV2 {
     public double getTopLeftServoEncoderPosition(){
         return topLeftEncoder.getVoltage() / 3.3 * 360;
     }
+
+    public boolean leftEncoderIsPast(double position){
+        return getTopLeftServoEncoderPosition() < position;
+    }
     /*
     public double getBottomLeftServoEncoderPosition(){
         return bottomLeftEncoder.getVoltage() / 3.3 * 360;
@@ -176,6 +180,9 @@ public class DifferentialV2 {
      */
     public double getTopRightServoEncoderPosition(){
         return topRightEncoder.getVoltage() / 3.3 * 360;
+    }
+    public boolean rightEncoderIsPast(double position){
+        return getTopRightServoEncoderPosition() > position;
     }
     /*
     public double getBottomRightServoEncoderPosition(){

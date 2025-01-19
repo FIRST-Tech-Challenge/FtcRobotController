@@ -93,6 +93,7 @@ public class TeleOpV2 extends OpMode {
     public boolean grippersOpened = false;
     public boolean droppedSample = false;
     public boolean slowmode = false;
+    public boolean waitForSlides = true;
     public boolean sampleTransferred = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
@@ -128,6 +129,7 @@ public class TeleOpV2 extends OpMode {
         deliveryGrippersTimer.reset();
         diffTimer.reset();
         wrist.setPosition(constants.WRIST_CENTER);
+        //TODO: Try telemetry.setAutoClear(false);
     }
 
     @Override
@@ -363,7 +365,7 @@ public class TeleOpV2 extends OpMode {
                                 diffTimer.reset();
                                 diffTimerIsReset = true;
                             }
-                            if (diffTimer.seconds() > 1.2) {
+                            if(differentialV2.rightEncoderIsPast(292) && differentialV2.leftEncoderIsPast(77)){
                                 intakeSlides.intakeAllTheWayIn();
                             }
                             else {
@@ -414,7 +416,7 @@ public class TeleOpV2 extends OpMode {
                 diffTimerIsReset = false;
                 //Move delivery arm to sample
                 if(!sampleTransferred) {
-                    intakeSlides.intakeAllTheWayIn();
+                    //intakeSlides.intakeAllTheWayIn();
                     telemetry.addLine("not waiting");
                 }
                 if(!deliveryGrippersClosed) {

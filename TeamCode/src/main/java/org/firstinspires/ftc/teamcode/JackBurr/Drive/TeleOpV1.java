@@ -340,7 +340,8 @@ public class TeleOpV1 extends OpMode {
                                 diffTimer.reset();
                                 diffTimerIsReset = true;
                             }
-                            if (diffTimer.seconds() > 0.6) {
+                            //if (diffTimer.seconds() > 0.6) {
+                            if(differentialV2.rightEncoderIsPast(292) && differentialV2.leftEncoderIsPast(77)){
                                 intakeSlides.intakeAllTheWayIn();
                             }
                         } else {
