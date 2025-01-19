@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDrive;
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
 @TeleOp(group = "drive")
+@Config
 public class LocalizationTest extends LinearOpMode {
     String[] encoderNames = {
             "fl_encoder",
@@ -37,7 +39,7 @@ public class LocalizationTest extends LinearOpMode {
             "bl_angle",
             "br_angle"
     };
-    public static double P = 0.06;
+    public static double P = 0.03;
     public static double I = 0.01;
     public static double D = 0.005;
     Telemetry telemetry2;
@@ -64,7 +66,7 @@ public class LocalizationTest extends LinearOpMode {
                 -gamepad1.right_stick_x
             );
 
-
+//            drive.setPID(P,I,D);
             Pose2d poseEstimate = rotateFTCLibPose(drive.odo.getPoseMeters());
             com.arcrobotics.ftclib.geometry.Pose2d odoPose = drive.odo.getPoseMeters();
             telemetry.addData("x", poseEstimate.getX());
@@ -79,6 +81,7 @@ public class LocalizationTest extends LinearOpMode {
             telemetry2.addData("Fx", odoPose.getX());
             telemetry2.addData("Fy", odoPose.getY());
             telemetry2.addData("Fheading", odoPose.getHeading());
+            drive.getTelemetry(telemetry2);
             telemetry.update();
             telemetry2.update();
         }

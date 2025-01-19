@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.equation.Sequence;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.nematocyst;
 import org.firstinspires.ftc.teamcode.subsystems.swerve.OptimalAngleCalculator;
 import org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -38,11 +39,12 @@ public class firstAuto extends OpMode {
     double xPower;
     double yPower;
     TrajectorySequence trajSequence;
+    nematocyst n;
     SwerveDrive drive;
-    public static double tP = .2;
+    public static double tP = .22;
     public static double tI = 0;
-    public static double tD = 0;
-    public static double rP = .2;
+    public static double tD = 0.0001;
+    public static double rP = .075;
     public static double rI = 0;
     public static double rD = 0;
     public static double P = 0.06;
@@ -76,6 +78,8 @@ public class firstAuto extends OpMode {
     }
     @Override
     public void init() {
+        n = new nematocyst(this);
+        n.init("pivot", "slide", "wrist", "claw");
         drive = new SwerveDrive(
                 11, 11, 18, 18,
                 this, gamepad1, hardwareMap,
@@ -85,9 +89,35 @@ public class firstAuto extends OpMode {
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
-                .forward(10)
+                .forward(20)
+                .addDisplacementMarker(() -> {
+                    n.wristDown();
+                    n.goUp(27);
+                    boolean stop = false;
+                    while (!stop) {
+                        if (n.isAtTargAng() && n.isAtTargetHeight()) {
+                            stop = true;
+                        }
+                    }
+                })
+                .forward(5)
+                .addDisplacementMarker(() -> {
+                    n.goUp(25);
+                    boolean stop = false;
+                    while (!stop) {
+                        if (n.isAtTargAng() && n.isAtTargetHeight()) {
+                            n.release();
+                            stop = true;
+                            n.goUp(27);
+                        }
+                    }
+                })
+                .back(5)
+                .addDisplacementMarker(() -> {
+                    n.goUp(0);
+                })
                 .strafeRight(9)
-                .splineTo(new Vector2d(44,-11), 0)
+                .splineToSplineHeading(new Pose2d(46,-11,Math.PI), 0)
                 .lineToConstantHeading(new Vector2d(48, -56))
                 .lineToConstantHeading(new Vector2d(50, -11))
                 .splineToConstantHeading(new Vector2d(52, -56), Math.toRadians(90))
@@ -97,9 +127,6 @@ public class firstAuto extends OpMode {
 
 
         // takes the robot's location and velocity and the target location and returns the power to get there
-
-
-
         dash = FtcDashboard.getInstance();
         t2 = dash.getTelemetry();
         txPID = new PIDController(tP, tI, tD);

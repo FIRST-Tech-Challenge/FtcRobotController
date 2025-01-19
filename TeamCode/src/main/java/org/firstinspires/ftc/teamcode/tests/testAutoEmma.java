@@ -39,10 +39,10 @@ public class testAutoEmma extends OpMode {
     double yPower;
     TrajectorySequence trajSequence;
     SwerveDrive drive;
-    public static double tP = .2;
+    public static double tP = .22;
     public static double tI = 0;
-    public static double tD = 0;
-    public static double rP = .2;
+    public static double tD = 0.0001;
+    public static double rP = .075;
     public static double rI = 0;
     public static double rD = 0;
     public static double P = 0.03;
@@ -85,54 +85,54 @@ public class testAutoEmma extends OpMode {
                 drive.velocityConstraint, drive.accelerationConstraint,
                 drive.maxAngVel, drive.maxAngAccel); // TODO: Maybe bad radians/degrees
         trajSequence = builder
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
-                .forward(36)
-                .back(36)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
+                .forward(72)
+                .back(72)
                 .build();
 
 
@@ -166,7 +166,6 @@ public class testAutoEmma extends OpMode {
     @Override
     public void init_loop() {
         drive.init_loop();
-
 //        telemetry.addData("last traj that was followed pose in", lastTrajThatWasFollowed.getStates().get(lastTrajThatWasFollowed.getStates().size()-1).poseMeters);
         trajTimer.reset();
     }
@@ -180,16 +179,17 @@ public class testAutoEmma extends OpMode {
         xPower = txPID.calculate(now.getX(), trajPose.getX());
         yPower = -tyPID.calculate(now.getY(), trajPose.getY());
 
-        drive.loop(xPower, yPower, rotPower); // ignore the warning, is because of wpilib coord system
+        drive.loopFC(now.getHeading(), xPower, yPower, rotPower); // ignore the warning, is because of wpilib coord system
 
         doTelemetry(telemetry);
         doTelemetry(t2);
         txPID.setPID(tP, tI, tD);
         tyPID.setPID(tP, tI, tD);
         rotPID.setPID(rP, rI, rD);
-        drive.setPID(P, I, D);
+//        drive.setPID(P, I, D);
     }
     public void doTelemetry(Telemetry t) {
+//        drive.getTelemetry(t);
         t.addData("trajRot", trajPose.getHeading());
         t.addData("nowRot", now.getHeading());
         t.addData("trajX", trajPose.getX());

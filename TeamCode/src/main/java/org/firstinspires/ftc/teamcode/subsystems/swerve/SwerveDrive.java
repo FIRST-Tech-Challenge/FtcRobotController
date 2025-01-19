@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.swerve;
 
 import android.util.Pair;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+@Config
 public class SwerveDrive {
     public TrajectoryVelocityConstraint velocityConstraint = new MinVelocityConstraint(Arrays.asList(
             new AngularVelocityConstraint(Math.toRadians(180)),
@@ -45,9 +47,9 @@ public class SwerveDrive {
     OpMode OM;
     Gamepad gamepad; // perhaps a set power method would be better here?
     public final double DIST_MULT = 4/3; // Actually traveled/desired dist
-    public static double aP = 0.03;
+    public static double aP = 0.02;
     public static double aI = 0.01;
-    public static double aD = 0.01;
+    public static double aD = 0.0015;
     SlewRateLimiter[] wheelLimiters = new SlewRateLimiter[4];
     boolean dontMove;
     boolean reverse;
@@ -71,7 +73,10 @@ public class SwerveDrive {
     public Pose2d nowPose;
     public IMU imu;
     ArrayList<Pair<Double,Double>> targetADPairList = new ArrayList<>(4); // key = mag, value = direction
-    public SwerveDrive(double length, double width, double maxRot, double maxTrans, OpMode opmode, Gamepad GP, HardwareMap hw, String[] encoderNames, String[] driveNames, String[] angleNames, double startFTCLibX, double startFTCLibY, double startHeadingRads) {
+    public SwerveDrive(double length, double width, double maxRot, double maxTrans,
+                       OpMode opmode, Gamepad GP, HardwareMap hw,
+                       String[] encoderNames, String[] driveNames, String[] angleNames,
+                       double startFTCLibX, double startFTCLibY, double startHeadingRads) {
         OM = opmode;
         gamepad = GP;
         anglePID = new PIDController[]{new PIDController(aP, aI, aD), new PIDController(aP, aI, aD), new PIDController(aP, aI, aD), new PIDController(aP, aI, aD)};
@@ -117,7 +122,7 @@ public class SwerveDrive {
                 new Translation2d((6.5),(-5.5)),
                 new Translation2d((-4.5), (5.5)),
                 new Translation2d((-4.5), (-5.5)));
-        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), new Pose2d(startFTCLibX, startFTCLibY, new Rotation2d(startHeadingRads)));
+        odo = new SwerveDriveOdometry(kinematics, new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw()), new Pose2d(startFTCLibX, startFTCLibY, new Rotation2d(startHeadingRads)));
         fakeDrive = new SampleMecanumDrive(opmode.hardwareMap);
 
 
@@ -197,6 +202,13 @@ public class SwerveDrive {
         double ticksPerSecond = motor.getVelocity();
         return inchesPerTick * ticksPerSecond * DIST_MULT; // quick fix for now , x 100 but core issue is unk
     }
+    public void loopFC(double theta, double x, double y, double rx) {
+        double theta2 = Math.toRadians(theta);
+        double fieldX = x * Math.cos(theta2) - y * Math.sin(theta2);
+        double fieldY = x * Math.sin(theta2) + y * Math.cos(theta2);
+
+        this.loop(fieldX, fieldY, rx);
+    }
     public void loop(double x, double y, double rx) {
         angles = angleGetter.getBigPulleyAngles();
         angleGetter.loop();
@@ -265,16 +277,16 @@ public class SwerveDrive {
          */
         nowPose = odo.updateWithTime(timer.seconds(), new Rotation2d(Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw())), states);
     }
-    public void setPID(double ap, double ai, double ad) {
-        for (PIDController pid : anglePID) {
-            pid.setPID(ap, ai, ad);
-        }
-    }
+//    public void setPID(double ap, double ai, double ad) {
+//        for (PIDController pid : anglePID) {
+//            pid.setPID(ap, ai, ad);
+//        }
+//    }
     public void getTelemetry(Telemetry t) {
-//        t.addData("FLTargAng", targetADPairList.get(0).second);
-//        t.addData("FRTargAng", targetADPairList.get(1).second);
-//        t.addData("BLTargAng", targetADPairList.get(2).second);
-//        t.addData("BRTargAng", targetADPairList.get(3).second);
+        t.addData("FLTargAng", targetADPairList.get(0).second);
+        t.addData("FRTargAng", targetADPairList.get(1).second);
+        t.addData("BLTargAng", targetADPairList.get(2).second);
+        t.addData("BRTargAng", targetADPairList.get(3).second);
         t.addData("inFL", angles[0]);
         t.addData("inFR", angles[1]);
         t.addData("inBL", angles[2]);

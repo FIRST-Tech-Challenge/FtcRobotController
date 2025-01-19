@@ -135,7 +135,21 @@ public class nematocyst {
         targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
         targetSlidePosition = Math.max(0, Math.min(targetSlidePosition, maxSlidePos));
     }
-        // Initialize motor
+    public boolean isAtTargetHeight() {
+        if (Math.abs(slideMotor.getCurrentPosition()/ticksPerInch - targSlideHeight) < 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean isAtTargAng() {
+        if (Math.abs(pivot.getCurrentPosition() - targPivotPos) < 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    // Initialize motor
     public void manualOut() {
         targetSlidePosition += 1;
     }
