@@ -92,6 +92,7 @@ public class TeleOpV2 extends OpMode {
     public boolean grippersOpened = false;
     public boolean droppedSample = false;
     public boolean slowmode = false;
+    public boolean sampleTransferred = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
     @Override
@@ -194,6 +195,7 @@ public class TeleOpV2 extends OpMode {
                 slidesReset = true;
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_TRANSFER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_TRANSFER);
+
                 intakeSlides.intakeIn();
                 grippers.setPosition(constants.GRIPPERS_CLOSE);
                 grippersClosed = true;
@@ -312,6 +314,7 @@ public class TeleOpV2 extends OpMode {
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_PICKUP);
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
                 grippersOpened = false;
+                sampleTransferred = false;
                 break;
             case ARM_UP:
                 slowmode = false;
@@ -348,12 +351,12 @@ public class TeleOpV2 extends OpMode {
                     }
                     else {
                         if (grippersTimer.seconds() > 0.1) {
-                            grippers.setPosition(constants.GRIPPERS_CLOSE);
+                            grippers.setPosition(constants.GRIPPERS_GRAB);
                             if (!diffTimerIsReset) {
                                 diffTimer.reset();
                                 diffTimerIsReset = true;
                             }
-                            if (diffTimer.seconds() > 0.6) {
+                            if (diffTimer.seconds() > 1.2) {
                                 intakeSlides.intakeAllTheWayIn();
                             }
                         } else {
@@ -377,6 +380,7 @@ public class TeleOpV2 extends OpMode {
                 if(slidesTimer.seconds() > 1){
                     grippers.setPosition(constants.GRIPPERS_OPEN);
                 }
+                sampleTransferred = false;
                 break;
             case READY_FOR_DELIVERY:
                 slowmode = false;
@@ -384,7 +388,7 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                else if(gamepad1.a && buttonTimer.seconds() > 0.3){
+                else if(gamepad1.cross && buttonTimer.seconds() > 0.3){
                     if(grippersOpened){
                         state = SystemStatesV1.DELIVER_LOW_BASKET;
                         buttonTimer.reset();
@@ -398,7 +402,9 @@ public class TeleOpV2 extends OpMode {
 
                 diffTimerIsReset = false;
                 //Move delivery arm to sample
-                intakeSlides.intakeAllTheWayIn();
+                if(!sampleTransferred) {
+                    intakeSlides.intakeAllTheWayIn();
+                }
                 if(!deliveryGrippersClosed) {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 }
@@ -411,12 +417,16 @@ public class TeleOpV2 extends OpMode {
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
                     deliveryGrippersClosed = true;
                     deliveryGrippersTimer2.reset();
+                    grippersTimer.reset();
                 }
                 else {
                     grippers.setPosition(constants.GRIPPERS_OPEN);
+                    sampleTransferred = true;
                     grippersOpened = true;
+                    if(grippersTimer.seconds() > 0.5){
+                        intakeSlides.intakeIn();
+                    }
                 }
-
                 deliveryGrippersTimer2.reset();
                 break;
             case DELIVER_UP:
@@ -475,11 +485,13 @@ public class TeleOpV2 extends OpMode {
                 break;
 
             case UNDER_LOW_BAR:
+                slowmode = false;
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_HOVER);
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_HOVER);
                 grippers.setPosition(constants.GRIPPERS_OPEN);
                 break;
             case UNDER_LOW_BAR_SLIDES_OUT:
+                slowmode = true;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.UNDER_LOW_BAR;
                     buttonTimer.reset();
@@ -488,6 +500,7 @@ public class TeleOpV2 extends OpMode {
                 intakeSlides.intakeOut();
                 break;
             case UNDER_LOW_BAR_GRIPPERS_HOVER_LOW:
+                slowmode = true;
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
                     wrist.moveLeft(0.1);
                     buttonTimer.reset();
@@ -506,6 +519,7 @@ public class TeleOpV2 extends OpMode {
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_LOW_HOVER);
                 break;
             case UNDER_LOW_BAR_GRIPPERS_DOWN:
+                slowmode = true;
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
                     wrist.moveLeft(0.1);
                     buttonTimer.reset();
@@ -523,6 +537,7 @@ public class TeleOpV2 extends OpMode {
                 differentialV2.setTopLeftServoPosition(constants.FRONT_LEFT_PICKUP);
                 break;
             case UNDER_LOW_BAR_GRAB:
+                slowmode = true;
                 if (gamepad1.left_bumper && buttonTimer.seconds() > 0.35){
                     wrist.moveLeft(0.1);
                     buttonTimer.reset();
@@ -539,6 +554,7 @@ public class TeleOpV2 extends OpMode {
                 grippers.setPosition(constants.GRIPPERS_GRAB);
                 break;
             case UNDER_LOW_BAR_UP:
+                slowmode = false;
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.UNDER_LOW_BAR_GRAB;
                     buttonTimer.reset();
@@ -548,21 +564,23 @@ public class TeleOpV2 extends OpMode {
                 differentialV2.setTopRightServoPosition(constants.FRONT_RIGHT_OVER_LOW_BAR);
                 break;
             case UNDER_LOW_BAR_SLIDES_IN:
+                slowmode = false;
                 if(gamepad1.right_bumper && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.EXTEND_AND_DROP;
                     buttonTimer.reset();
                 }
                 intakeSlides.intakeIn();
+                slidesTimer.reset();
                 break;
             case EXTEND_AND_DROP:
                 if(gamepad1.triangle && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                if(intakeSlides.isOut()){
+                if (slidesTimer.seconds() > 1){
                     grippers.setPosition(constants.GRIPPERS_OPEN);
                 }
-                else {
+                else{
                     intakeSlides.intakeOut();
                 }
                 break;

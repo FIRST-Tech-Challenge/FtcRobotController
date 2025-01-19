@@ -29,9 +29,15 @@ public class IntakeSlidesV1 {
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    public void intakeAway(){
+        intakeSlides.setPower(1);
+        intakeSlides.setTargetPosition(175);
+        intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public void intakeAllTheWayIn(){
         intakeSlides.setPower(1);
-        intakeSlides.setTargetPosition(70);
+        intakeSlides.setTargetPosition(50);
         intakeSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
