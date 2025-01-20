@@ -82,7 +82,7 @@ public class TT_RobotHardware {
     public static final double ARM_DOWN_POWER = -0.45;
     private boolean liftEnabled = false;
     public int liftHeight = 0;
-    public int liftHeightMax = 1355;
+    public int liftHeightMax = 1300;
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
     public double effectivePower = 0;
@@ -156,15 +156,17 @@ public class TT_RobotHardware {
 
         nav = new GoBuildaDriveToPoint(myOpMode);
 
-        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.2, 0.7);
-        extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension", 0, .7);
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension", 0.37, 0.60);
-        extensionGripper = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Gripper"), "Extension", 0.8, .9);
-
+        extension = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension"), "Extension", 0.0, 0.6);
+        extension.setTargetPosition(1.0);
+        extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension Spin", .85, 0.95);
+        extensionSpin.setTargetPosition(0.5);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension Arm", 0.66, 0.9);
+        extensionArm.setTargetPosition(0);
+        extensionGripper = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Gripper"), "Extension Gripper", 0.55, .85);
+        extensionGripper.setTargetPosition(1);
         light = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Light"), "Light", 0.0, 1.0);
-        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Arm", 0.38, .55);
-
-        extension.setTargetPosition(.9);
+        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Lift Arm", 0.35, .6);
+        //extension.setTargetPosition(.9);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
@@ -191,7 +193,7 @@ public class TT_RobotHardware {
     public void moveExtensionArm() {
         if (myOpMode.gamepad1.b) {
             // positioned over blocks for easy viewing
-            extensionArm.setTargetPosition(.8);
+            extensionArm.setTargetPosition(.9);
         } else if (myOpMode.gamepad1.a) {
             // pickup the block
             extensionArm.setTargetPosition(1);
@@ -219,21 +221,21 @@ public class TT_RobotHardware {
     public void moveExtension() {
 
         if (myOpMode.gamepad1.right_trigger > 0) {
-            extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 10));
+            extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 20));
         } else if (myOpMode.gamepad1.left_trigger > 0) {
-            extension.setTargetPosition(extension.getPosition() + (myOpMode.gamepad1.left_trigger / 10));
+            extension.setTargetPosition(extension.getPosition() + (myOpMode.gamepad1.left_trigger / 20));
         } else {
             extension.setTargetPosition(extension.getPosition());
         }
     }
 
     public void moveExtensionSpin() {
+        double increment = .05;
+        double currentPosition = extensionSpin.getPosition();
         if (myOpMode.gamepad1.left_bumper) {
-            extensionSpin.setTargetPosition(1);
+            extensionSpin.setTargetPosition(currentPosition - increment);
         } else if (myOpMode.gamepad1.right_bumper) {
-            extensionSpin.setTargetPosition(0);
-        } else {
-            extensionSpin.setTargetPosition(extensionSpin.getPosition());
+            extensionSpin.setTargetPosition(currentPosition + increment);
         }
     }
 
@@ -246,8 +248,6 @@ public class TT_RobotHardware {
                 extensionGripperOpen = true;
                 extensionGripper.setTargetPosition(0);
             }
-        } else {
-            //extensionSpin.setTargetPosition(0.5);
         }
     }
 
@@ -324,8 +324,12 @@ public class TT_RobotHardware {
         double max;
 
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial = -myOpMode.gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        /*double axial = -myOpMode.gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
         double lateral = myOpMode.gamepad1.left_stick_x;
+        double yaw = myOpMode.gamepad1.right_stick_x;
+         */
+        double axial = myOpMode.gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+        double lateral = -myOpMode.gamepad1.left_stick_x;
         double yaw = myOpMode.gamepad1.right_stick_x;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
