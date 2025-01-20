@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 public abstract class DriveMethods extends OpMode {
     Devices robot = new Devices();
-
     /**
      * Given the desired movement, sets the power to each wheel to match that as well as it can.
      * @param axial describes the backward and forward movement
@@ -14,16 +11,13 @@ public abstract class DriveMethods extends OpMode {
     public void omniDrive(double axial, double lateral, double yaw) {
         // code copied from BasicOmniOpMode_Linear.java
         double max;
-
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
-
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
-
         if (max > 1.0) {
             leftFrontPower  /= max;
             rightFrontPower /= max;
@@ -38,7 +32,6 @@ public abstract class DriveMethods extends OpMode {
 
         boolean slowMode = gamepad1.right_bumper;
         double SLOW_MODE_SPEED = .15;
-
         if (slowMode) {
             robot.leftFrontDrive.setPower(SLOW_MODE_SPEED * leftFrontPower);
             robot.rightFrontDrive.setPower(SLOW_MODE_SPEED * rightFrontPower);
@@ -62,9 +55,11 @@ public abstract class DriveMethods extends OpMode {
         double position = targetPosition;
 
         position = Math.min(position, robot.upperMaxLegalSliderLength());
-        position = Math.min(position, robot.lowerMaxLegalSliderLength());
         position = Math.min(position, robot.MAX_SAFE_SLIDER_TICKS);
         position = Math.max(position, robot.MIN_SLIDER_TICKS);
+
+//        if (robot.wormGearAngle() < 0) {
+//            position = Math.min(position, robot.lowerMaxSliderLength());
 
         robot.sliderMotor.setTargetPosition((int) position);
 

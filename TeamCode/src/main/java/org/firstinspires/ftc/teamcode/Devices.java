@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Devices {
-        final double CLAW_OPEN = .864;
-        final double CLAW_CLOSED = 1.05;
+    final double CLAW_OPEN = 0.864;
+    final double CLAW_CLOSED = 1.05;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
 
@@ -19,11 +19,11 @@ public class Devices {
      *  horizontally.
      */
         final double MAX_HORIZONTAL_SLIDER_TICKS = 2660;
-//        final double MAX_SLIDER_INCHES = 24.25;
+//         final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
         /** This is the angle that the arm starts each match */
-        final double STARTING_ANGLE = -20;
+        final double STARTING_ANGLE = -7;
 
         final double MAX_SAFE_SLIDER_TICKS = 3050; // needs to be tested
 
@@ -79,10 +79,12 @@ public class Devices {
         return MAX_HORIZONTAL_SLIDER_TICKS / Math.cos(wormGearRadians());
     }
 
-
-
-    double lowerMaxLegalSliderLength() {
-        return 1341.3 * Math.cos(wormGearRadians());
+    /**
+     * lowerMaxSliderLength stops the slider from hitting the ground
+     * @return
+     */
+    double lowerMaxSliderLength() {
+        return 475.1 / Math.cos((0.5 * Math.PI) + wormGearRadians());
     }
 //Robot Height is approx 1341.3 in ticks
 }

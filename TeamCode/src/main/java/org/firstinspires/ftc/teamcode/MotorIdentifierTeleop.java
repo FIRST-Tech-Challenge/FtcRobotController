@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class MotorIdentifierTeleop extends DriveMethods {
@@ -58,7 +59,6 @@ public class MotorIdentifierTeleop extends DriveMethods {
         if (isPressed && !wasPressed) {
             telemetry.speak(name);
         }
-
         telemetry.addData("motor", name);
         telemetry.addData("power", "%.1f", power);
         telemetry.addData("sliderTicks", "%.1f", (double) robot.sliderMotor.getCurrentPosition());
