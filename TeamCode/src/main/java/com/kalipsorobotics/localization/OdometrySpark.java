@@ -26,9 +26,6 @@ public class OdometrySpark {
 
     public OdometrySpark(SparkFunOTOS myOtos) {
         this.myOtos = myOtos;
-        double[][] newdouble = ;
-        kalmanFilter = new KalmanFilter(,0,0,0);
-        kalmanFilter.init(new org.opencv.core.Point(0, 0));
 //        wheelResetData();
 //        sparkResetData(true, 0.0);
     }
@@ -75,12 +72,12 @@ public class OdometrySpark {
         SparkFunOTOS.Pose2D pos = myOtos.getPosition();
         return(new Position(-pos.x, -pos.y, pos.h));
     }
-    public Point sparkUpdateFiltered() {
-        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-        kalmanFilter.predict();
-        kalmanFilter.update(new org.opencv.core.Point(pos.x, pos.y));
-        return kalmanFilter.getState();
-    }
+//    public Point sparkUpdateFiltered() {
+//        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+//        kalmanFilter.predict();
+//        kalmanFilter.update(new org.opencv.core.Point(pos.x, pos.y));
+//        return kalmanFilter.getState();
+//    }
 //    public Position averageUpdateData() {
 //        double TICKSTOINCH = 40 / -13510.0 * (40.0 / 40.3612);
 //        SparkFunOTOS.Pose2D pos = myOtos.getPosition();

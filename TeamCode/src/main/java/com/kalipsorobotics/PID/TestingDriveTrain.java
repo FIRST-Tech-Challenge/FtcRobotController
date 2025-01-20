@@ -65,7 +65,7 @@ public class TestingDriveTrain {
     @SuppressLint("DefaultLocale")
     public void move(double dx, double dy, double dh, Telemetry telemetry) {
         double startingTime = SystemClock.elapsedRealtimeNanos();
-        Position pos = new Position(odometryFuse.sparkUpdateFiltered().x, odometryFuse.sparkUpdateFiltered().y, odometryFuse.headingUpdateData("right", 0, 0));
+        Position pos = new Position(odometryFuse.sparkUpdateData().getX(), odometryFuse.sparkUpdateData().getY(), odometryFuse.headingUpdateData("right", 0, 0));
 
         double curX = -pos.getX();
         double curY = -pos.getY();
@@ -80,7 +80,7 @@ public class TestingDriveTrain {
                 (Math.abs(target.x - curX) > 0.1 || Math.abs(target.y - curY) > 0.1 || Math.abs(target.h - curH) > 2)
                         && ((SystemClock.elapsedRealtimeNanos() - startingTime) / 1e9) < 5
         ) {  // I think this while loop is causing an exit error
-            pos = new Position(odometryFuse.sparkUpdateFiltered().x, odometryFuse.sparkUpdateFiltered().y, odometryFuse.headingUpdateData("right", 0, 0));
+            pos = new Position(odometryFuse.sparkUpdateData().getX(), odometryFuse.sparkUpdateData().getY(), odometryFuse.headingUpdateData("right", 0, 0));
             curX = -pos.getX();  // odometryfuse returns negative
             curY = -pos.getY();
             curH = MathFunctions.angleWrapDeg(odometryFuse.headingUpdateData("left", 0, 0));
