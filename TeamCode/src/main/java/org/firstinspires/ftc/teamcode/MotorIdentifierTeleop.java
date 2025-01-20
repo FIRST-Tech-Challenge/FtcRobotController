@@ -58,7 +58,6 @@ public class MotorIdentifierTeleop extends DriveMethods {
         if (isPressed && !wasPressed) {
             telemetry.speak(name);
         }
-
         telemetry.addData("motor", name);
         telemetry.addData("power", "%.1f", power);
         telemetry.addData("sliderTicks", "%.1f", (double) robot.sliderMotor.getCurrentPosition());

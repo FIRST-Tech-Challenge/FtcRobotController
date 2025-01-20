@@ -9,7 +9,6 @@ public class TeleOp2024 extends DriveMethods {
     boolean wasClawTogglePressed = false;
     double sliderPosition = robot.MIN_SLIDER_TICKS;
     boolean isClawOpen = false;
-
     @Override
     public void init() {
         robot.init(hardwareMap);
@@ -17,7 +16,6 @@ public class TeleOp2024 extends DriveMethods {
         robot.sliderMotor.setPower(1);
         robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.clawServo.setPosition(robot.CLAW_CLOSED);
-
 
     }
 
@@ -36,8 +34,6 @@ public class TeleOp2024 extends DriveMethods {
                 isClawOpen = true;
             }
         }
-
-
 
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;

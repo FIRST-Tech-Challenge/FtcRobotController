@@ -12,18 +12,17 @@ public class AutoBasket2024 extends DriveMethods {
         Finished,
         Unstarted,
         RaiseArm,
+        StrafeRight,
         MoveForward,
         ExtendSlider,
         OpenClaw
     }
-
     State currentState = State.Unstarted;
 
     @Override
     public void init() {
         robot.init(hardwareMap);
     }
-
 
     @Override
     public void loop() {
@@ -33,25 +32,33 @@ public class AutoBasket2024 extends DriveMethods {
         telemetry.addData("imu", "%.1f", robot.imu.getRobotYawPitchRollAngles().getYaw());
 
         telemetry.addData("state", currentState);
-
         switch (currentState) {
             case Unstarted:
-                changeState(State.RaiseArm);
+                changeState(State.StrafeRight);
                 break;
+            case StrafeRight:
+                omniDrive(0, 0.25, 0);
+
+                if (getStateTime() >= 0.5) {
+                    omniDrive(0, 0, 0);
+
+                    changeState(State.MoveForward);
+                }
+                break;
+//            case MoveForward:
+//                omniDrive(0.5, 0, 0);
+//
+//                if (getStateTime() >= 0.7) {
+//                    omniDrive(0, 0, 0);
+//
+//                    changeState(State.RaiseArm);
+//                }
+//                break;
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
                 if (robot.wormGearAngle() >= 50) {
                     robot.wormGear.setPower(0);
-
-                    changeState(State.MoveForward);
-                }
-                break;
-            case MoveForward:
-                omniDrive(0.5, 0, 0);
-
-                if (getStateTime() >= 2) {
-                    omniDrive(0, 0, 0);
 
                     changeState(State.ExtendSlider);
                 }
@@ -59,7 +66,7 @@ public class AutoBasket2024 extends DriveMethods {
             case ExtendSlider:
                 robot.sliderMotor.setPower(1);
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                setSliderAndReturnConstraint(2000);
+                setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
 
                 if (robot.sliderMotor.getCurrentPosition() >= 2000) {
                     changeState(State.OpenClaw);
@@ -75,7 +82,6 @@ public class AutoBasket2024 extends DriveMethods {
         }
 
     }
-
     void changeState(State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();

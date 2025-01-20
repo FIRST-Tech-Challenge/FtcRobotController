@@ -79,7 +79,6 @@ public class Devices {
         return MAX_HORIZONTAL_SLIDER_TICKS / Math.cos(wormGearRadians());
     }
 
-
     /**
      * lowerMaxSliderLength stops the slider from hitting the ground
      * @return
