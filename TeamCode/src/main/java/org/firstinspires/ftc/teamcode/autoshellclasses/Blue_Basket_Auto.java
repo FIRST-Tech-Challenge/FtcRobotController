@@ -18,15 +18,17 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 @Config
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
+
     @Override
     public void runOpMode() {
     //Initialization steps
+
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
 
         //Initializes Pinpoint
-        Pose2d initialPose = new Pose2d(31, 63, Math.toRadians(180));
+        Pose2d initialPose = new Pose2d(31, 61.875, Math.toRadians(180));
         PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
 
         //closes claw on init
@@ -38,7 +40,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Vector2d drop_position = new Vector2d(52.5, 52.5);
+        Vector2d drop_position = new Vector2d(56.5, 55.875);
         double drop_heading = Math.toRadians(-135);
 
         Vector2d outer_sample_pickup_position = new Vector2d(46, 43.25);
@@ -179,79 +181,83 @@ public class Blue_Basket_Auto extends LinearOpMode {
         clawOpenWait4 = drive.actionBuilder(drive.pose)
                 .waitSeconds(0.5)
                 .build();
+//        Action test = drive.actionBuilder(drive.pose)
+//                        .turnTo(Math.toRadians(225))
+//                        .build();
 
         Actions.runBlocking(
                 new SequentialAction(
                         // JOSHUANOTE: This is where you put the final set of actions.
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
-                        driveToDrop1,
-                        _ViperArmActions.MoveArmToHighBasket(),
-                        armUpWait1,
-                        _ViperArmActions.MoveViperToHighBasket(),
-                        viperUpWait1,
-                        _WristClawActions.OpenClaw(),
-                        clawOpenWait1,
-                        _WristClawActions.WristDown(),
-                        wristDownWait1,
-                        _ViperArmActions.MoveViperToHome(),
-                        viperDownWait1,
-                        _ViperArmActions.MoveArmToHome(),
-                        armDownWait1,
-                        samplePickup1,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseWait1,
-                        _WristClawActions.WristUp(),
-                        wristUpWait1,
-                        driveToDrop2,
-                        _ViperArmActions.MoveArmToHighBasket(),
-                        armUpWait2,
-                        _ViperArmActions.MoveViperToHighBasket(),
-                        viperUpWait2,
-                        _WristClawActions.OpenClaw(),
-                        clawOpenWait2,
-                        _WristClawActions.WristDown(),
-                        wristDownWait2,
-                        _ViperArmActions.MoveViperToHome(),
-                        viperDownWait2,
-                        _ViperArmActions.MoveArmToHome(),
-                        armDownWait2,
-                        samplePickup2,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseWait2,
-                        _WristClawActions.WristUp(),
-                        wristUpWait2,
-                        driveToDrop3,
-                        _ViperArmActions.MoveArmToHighBasket(),
-                        armUpWait3,
-                        _ViperArmActions.MoveViperToHighBasket(),
-                        viperUpWait3,
-                        _WristClawActions.OpenClaw(),
-                        clawOpenWait3,
-                        _WristClawActions.WristDown(),
-                        wristDownWait3,
-                        _ViperArmActions.MoveViperToHome(),
-                        viperDownWait3,
-                        _ViperArmActions.MoveArmToHome(),
-                        armDownWait3,
-                        samplePickup3,
-                        _WristClawActions.CloseClaw(),
-                        clawCloseWait4,
-                        _WristClawActions.WristUp(),
-                        wristUpWait3,
-                        driveToDrop4,
-                        _ViperArmActions.MoveArmToHighBasket(),
-                        armUpWait4,
-                        _ViperArmActions.MoveViperToHighBasket(),
-                        viperUpWait4,
-                        _WristClawActions.OpenClaw(),
-                        clawOpenWait4,
-                        _WristClawActions.WristDown(),
-                        wristDownWait4,
-                        _ViperArmActions.MoveViperToHome(),
-                        viperDownWait4,
-                        _ViperArmActions.MoveArmToHome(),
-                        armDownWait4,
-                        driveToPark
+                       // test
+                        driveToDrop1
+//                        _ViperArmActions.MoveArmToHighBasket(),
+//                        armUpWait1,
+//                        _ViperArmActions.MoveViperToHighBasket(),
+//                        viperUpWait1,
+//                        _WristClawActions.OpenClaw(),
+//                        clawOpenWait1,
+//                        _WristClawActions.WristDown(),
+//                        wristDownWait1,
+//                        _ViperArmActions.MoveViperToHome(),
+//                        viperDownWait1,
+//                        _ViperArmActions.MoveArmToHome(),
+//                        armDownWait1,
+//                        samplePickup1,
+//                        _WristClawActions.CloseClaw(),
+//                        clawCloseWait1,
+//                        _WristClawActions.WristUp(),
+//                        wristUpWait1,
+//                        driveToDrop2,
+//                        _ViperArmActions.MoveArmToHighBasket(),
+//                        armUpWait2,
+//                        _ViperArmActions.MoveViperToHighBasket(),
+//                        viperUpWait2,
+//                        _WristClawActions.OpenClaw(),
+//                        clawOpenWait2,
+//                        _WristClawActions.WristDown(),
+//                        wristDownWait2,
+//                        _ViperArmActions.MoveViperToHome(),
+//                        viperDownWait2,
+//                        _ViperArmActions.MoveArmToHome(),
+//                        armDownWait2,
+//                        samplePickup2,
+//                        _WristClawActions.CloseClaw(),
+//                        clawCloseWait2,
+//                        _WristClawActions.WristUp(),
+//                        wristUpWait2,
+//                        driveToDrop3,
+//                        _ViperArmActions.MoveArmToHighBasket(),
+//                        armUpWait3,
+//                        _ViperArmActions.MoveViperToHighBasket(),
+//                        viperUpWait3,
+//                        _WristClawActions.OpenClaw(),
+//                        clawOpenWait3,
+//                        _WristClawActions.WristDown(),
+//                        wristDownWait3,
+//                        _ViperArmActions.MoveViperToHome(),
+//                        viperDownWait3,
+//                        _ViperArmActions.MoveArmToHome(),
+//                        armDownWait3,
+//                        samplePickup3,
+//                        _WristClawActions.CloseClaw(),
+//                        clawCloseWait4,
+//                        _WristClawActions.WristUp(),
+//                        wristUpWait3,
+//                        driveToDrop4,
+//                        _ViperArmActions.MoveArmToHighBasket(),
+//                        armUpWait4,
+//                        _ViperArmActions.MoveViperToHighBasket(),
+//                        viperUpWait4,
+//                        _WristClawActions.OpenClaw(),
+//                        clawOpenWait4,
+//                        _WristClawActions.WristDown(),
+//                        wristDownWait4,
+//                        _ViperArmActions.MoveViperToHome(),
+//                        viperDownWait4,
+//                        _ViperArmActions.MoveArmToHome(),
+//                        armDownWait4,
+//                        driveToPark
                         )
         );
         while(opModeIsActive()) {

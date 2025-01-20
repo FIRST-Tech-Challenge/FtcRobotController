@@ -10,6 +10,7 @@ package org.firstinspires.ftc.teamcode.BBcode;
 //import com.acmerobotics.roadrunner.ftc.Actions;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +18,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
+import java.util.Locale;
 
 @TeleOp(name = "MainTeleopQ2")
 public class MainTeleOpQ2 extends LinearOpMode{
@@ -86,9 +90,14 @@ public class MainTeleOpQ2 extends LinearOpMode{
         }
     }
 
+    GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
+
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
+
+        odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
         telemetry.setAutoClear(false);
@@ -110,6 +119,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
         arm.MoveToHome();
 
         while(opModeIsActive()){ //while loop for when program is active
+
 
             //Drive code
             drivetrain.Drive();
@@ -241,10 +251,19 @@ public class MainTeleOpQ2 extends LinearOpMode{
                     }
 
 
+
             }
+
+            //Pose2d pos = odo.getPositionRR();
+            //String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+            //telemetry.update("Position", ()-> getPinpoint(odoGetPositionRR()));
 
             telemetry.update();
 
         }
+
+    }
+    private String getPinpoint(Pose2d pos) {
+        return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
     }
 }
