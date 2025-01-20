@@ -10,12 +10,21 @@ public class ExtendIntakeVariable extends CommandBase {
     private Intake intake;
     private DoubleSupplier supplier;
 
+
     public ExtendIntakeVariable(Intake intake, DoubleSupplier extension) {
+        this(intake, extension, true);
+    }
+
+
+    public ExtendIntakeVariable(Intake intake, DoubleSupplier extension, boolean isBlocking) {
         this.intake = intake;
         this.supplier = extension;
 
-        addRequirements(intake);
+        if (isBlocking) {
+            addRequirements(intake);
+        }
     }
+
 
     @Override
     public void execute() {

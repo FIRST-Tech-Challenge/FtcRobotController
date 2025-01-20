@@ -15,7 +15,8 @@ public class Intake extends SubsystemBase {
     public enum IntakeState {
         HOME,
         COLLECT,
-        STORE
+        STORE,
+        SPEW
     }
 
     public Intake(HardwareMap hMap) {
@@ -38,6 +39,9 @@ public class Intake extends SubsystemBase {
         intakeExt.setPosition(0.3);
 
     }
+    public double getExtensionPosition() {
+        return intakeExt.getPosition();
+    }
 
     public IntakeState getState() {
         return state;
@@ -57,6 +61,9 @@ public class Intake extends SubsystemBase {
                 break;
             case STORE:
                 intakePivot.setPosition(0.2);
+                break;
+            case SPEW:
+                intakePivot.setPosition(0.75);
                 break;
             case COLLECT:
                 intakePivot.setPosition(1);

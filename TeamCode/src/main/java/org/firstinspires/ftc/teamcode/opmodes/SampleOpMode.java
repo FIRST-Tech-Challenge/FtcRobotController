@@ -68,7 +68,7 @@ public class SampleOpMode extends CommandOpMode {
         );
 
         GamepadButton outtakeButton = new GamepadButton(
-                driver, GamepadKeys.Button.LEFT_BUMPER
+                driver, GamepadKeys.Button.RIGHT_BUMPER
         );
 
         GamepadButton elevatorUpButton = new GamepadButton(
@@ -84,26 +84,50 @@ public class SampleOpMode extends CommandOpMode {
         );
         // You can compose triggers to bind multiple buttons to one action
         // if the trigger is held, move the intake based on the trigger
-        Trigger extendIntake = new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1);
+        Trigger extendLaterator = new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.1);
+        Trigger deployIntake = new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.1);
 
-        // If and only if the intake button is pressed (no trigger) deploy the intake to just in front of the robot
-        Trigger deployIntake = intakeButton.and(extendIntake.negate());
+        Trigger quickDeploy = deployIntake.and(extendLaterator.negate());
+        Trigger transfer = outtakeButton.and(extendLaterator.negate()).and(deployIntake.negate());
+        Trigger spew = outtakeButton.and(extendLaterator);
 
-        // If neither the intake button or trigger are active, retract the intake
-        Trigger retractIntake = intakeButton.negate().and(extendIntake.negate());
+        Trigger retractIntake = deployIntake.negate().and(extendLaterator.negate());
 
-        extendIntake.whenActive(new SequentialCommandGroup(
-                new ExtendIntakeVariable(intake, () -> 0.1).withTimeout(50),
-                new PivotIntake(Intake.IntakeState.COLLECT, intake),
-                new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE),
-                new ExtendIntakeVariable(intake, () -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
-        ));
+        extendLaterator.whileActiveOnce(
+            new ExtendIntakeVariable(intake, () -> driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER), false)
+        );
 
         deployIntake.whenActive(new SequentialCommandGroup(
-                new ExtendIntakeVariable(intake, () -> 0.1).withTimeout(50), // tune this
-                new PivotIntake(Intake.IntakeState.COLLECT, intake),
-                new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)
+            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+            new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)
+        )).whenInactive(new SequentialCommandGroup(
+            new PivotIntake(Intake.IntakeState.HOME, intake),
+            new SetRollerState(intakeRoller, IntakeRoller.States.STOP)
         ));
+
+        quickDeploy.whenActive(new SequentialCommandGroup(
+            new ExtendIntakeVariable(intake, () -> 0.1).withTimeout(300),
+            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+            new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)
+            )
+        );
+
+        transfer.whenActive(new SequentialCommandGroup(
+            new PivotIntake(Intake.IntakeState.STORE, intake),
+            new RunCommand(() -> {}).withTimeout(150),
+            new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE))
+        ).whenInactive(
+            new SequentialCommandGroup(
+                new PivotIntake(Intake.IntakeState.HOME, intake),
+                new SetRollerState(intakeRoller, IntakeRoller.States.STOP))
+        );
+
+        spew.whenActive(
+            new PivotIntake(Intake.IntakeState.SPEW, intake).alongWith(new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE))
+        ).whenInactive(
+            new PivotIntake(Intake.IntakeState.HOME, intake).alongWith(new SetRollerState(intakeRoller, IntakeRoller.States.STOP))
+        );
+
 
         retractIntake.whenActive(new SequentialCommandGroup(
                 new SetRollerState(intakeRoller, IntakeRoller.States.STOP),
@@ -115,34 +139,6 @@ public class SampleOpMode extends CommandOpMode {
 
         armButton.whenHeld(new InstantCommand(() -> arm.goToPos(Arm.ArmState.SCORE)))
                         .whenReleased(new InstantCommand(() -> arm.goToPos(Arm.ArmState.INTAKE)));
-
-        outtakeButton.whenPressed(new ConditionalCommand(
-                new SequentialCommandGroup(
-                    new PivotIntake(Intake.IntakeState.STORE, intake),
-                    new RunCommand(() -> {}).withTimeout(300),
-                    new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE)),
-                new SequentialCommandGroup(
-                        new SetRollerState(intakeRoller, IntakeRoller.States.OUTTAKE)
-                ),
-                () -> {
-                    if (intake.getState() == Intake.IntakeState.STORE || intake.getState() == Intake.IntakeState.HOME) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }))
-        .whenReleased(new ConditionalCommand(
-            new SequentialCommandGroup(
-                new SetRollerState(intakeRoller, IntakeRoller.States.STOP),
-                new PivotIntake(Intake.IntakeState.HOME, intake)),
-            new SequentialCommandGroup(new SetRollerState(intakeRoller, IntakeRoller.States.INTAKE)),
-            () -> {
-                if (intake.getState() == Intake.IntakeState.STORE) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }));
 
         clawButton.whenPressed(new OpenClaw(claw)).whenReleased(new CloseClaw(claw));
 

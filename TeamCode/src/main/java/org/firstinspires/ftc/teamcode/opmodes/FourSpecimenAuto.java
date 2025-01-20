@@ -12,24 +12,25 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.CloseClaw;
 import org.firstinspires.ftc.teamcode.commands.ElevatorGoTo;
+import org.firstinspires.ftc.teamcode.commands.ExtendIntake;
+import org.firstinspires.ftc.teamcode.commands.ExtendIntakeVariable;
 import org.firstinspires.ftc.teamcode.commands.OpenClaw;
 import org.firstinspires.ftc.teamcode.commands.PivotIntake;
 import org.firstinspires.ftc.teamcode.commands.RetractIntake;
-import org.firstinspires.ftc.teamcode.commands.SetKickerPosition;
-import org.firstinspires.ftc.teamcode.commands.StrafeToPos;
-import org.firstinspires.ftc.teamcode.commands.StrafeWithHeading;
 import org.firstinspires.ftc.teamcode.commands.TrajectoryCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@Autonomous(name = "4 Specimen Auto")
+@Autonomous(name = "Four Specimen Auto")
 public class FourSpecimenAuto extends CommandOpMode {
+
     private Drivetrain drivetrain;
     private Claw claw;
     private Elevator elevator;
     private Intake intake;
+
     @Override
     public void initialize() {
         drivetrain = new Drivetrain(hardwareMap, new Pose2d(0, -61, Math.toRadians(180)), telemetry);
@@ -37,116 +38,138 @@ public class FourSpecimenAuto extends CommandOpMode {
         elevator = new Elevator(hardwareMap, telemetry);
         intake = new Intake(hardwareMap);
 
-        Vector2d primePickup = new Vector2d(43, -55);
-        Vector2d pickup = new Vector2d(43, -65);
-
         Action driveToFirstScore = drivetrain.getTrajectoryBuilder(new Pose2d(0, -61, Math.toRadians(180)))
-                .strafeTo(new Vector2d(0, -31))
-                .build();
+            .strafeTo(new Vector2d(0, -31))
+            .build();
 
         Action driveToPrimePush = drivetrain.getTrajectoryBuilder(new Pose2d(0, -31, Math.toRadians(180)))
-                .strafeTo(new Vector2d(0, -44))
-                .strafeToLinearHeading(new Vector2d(31, -44), Math.toRadians(0))
-                .strafeTo(new Vector2d(40, -15))
-                .build();
+            .splineToConstantHeading(new Vector2d(0,-39), Math.toRadians(0))
+            .splineToSplineHeading(new Pose2d(24.75,-37, Math.toRadians(50)), Math.toRadians(50))
+            .build();
 
-        Action pushSpecimen = drivetrain.getTrajectoryBuilder(new Pose2d(40, -15, Math.toRadians(0)))
-                .strafeTo(new Vector2d(47, -15))
-                .strafeTo(new Vector2d(47, -55))
-//                .strafeTo(new Vector2d(47, -15))
-//                .strafeTo(new Vector2d(58, -15))
-//                .strafeTo(new Vector2d(58, -55))
-                .build();
+        Action pushFirstSample = drivetrain.getTrajectoryBuilder(new Pose2d(24.75, -37, Math.toRadians(50)))
+            .strafeToLinearHeading(new Vector2d(24.75,-50), Math.toRadians(330))
+            .build();
 
-        Action driveToPrimePickup = drivetrain.getTrajectoryBuilder(new Pose2d(47, -55, Math.toRadians(0)))
-                .strafeTo(new Vector2d(47, -47))
-                .build();
+        Action goToSecondSample = drivetrain.getTrajectoryBuilder(new Pose2d(24.75,-50, Math.toRadians(330)))
+            .strafeToLinearHeading(new Vector2d(32.5, -37), Math.toRadians(35))
+            .build();
 
-        Action driveToPrimePickup2 = drivetrain.getTrajectoryBuilder(new Pose2d(-6, -31, Math.toRadians(180)))
-                .strafeToLinearHeading(new Vector2d(47, -62), Math.toRadians(0))
-                .strafeTo(new Vector2d(47, -65))
-                .build();
+        Action pushSecondSample = drivetrain.getTrajectoryBuilder(new Pose2d(32.5,-37, Math.toRadians(35)))
+            .strafeToLinearHeading(new Vector2d(32.5, -50), Math.toRadians(330))
+            .build();
 
-        Action driveToPickup = drivetrain.getTrajectoryBuilder(new Pose2d(47, -47, Math.toRadians(0)))
-                .strafeTo(new Vector2d(47, -65)).build();
+        Action goToThirdSample = drivetrain.getTrajectoryBuilder(new Pose2d(32.5,-50, Math.toRadians(330)))
+            .strafeToLinearHeading(new Vector2d(41, -20), Math.toRadians(0))
+            .build();
 
-        Action driveToScore2 = drivetrain.getTrajectoryBuilder(new Pose2d(47, -65, Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(-6, -31), Math.toRadians(180)).build();
+        Action pushThirdSample = drivetrain.getTrajectoryBuilder(new Pose2d(41,-20, Math.toRadians(0)))
+            .strafeToLinearHeading(new Vector2d(37, -65), Math.toRadians(0))
+            .build();
 
-        Action driveToScore3 = drivetrain.getTrajectoryBuilder(new Pose2d(47, -65, Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(3, -31), Math.toRadians(180)).build();
+        Action scoreSecondSample = drivetrain.getTrajectoryBuilder(new Pose2d(38, -65, Math.toRadians(0)))
+            .strafeToSplineHeading(new Vector2d(3, -31), Math.toRadians(180))
+            .build();
 
-        Action driveToPark = drivetrain.getTrajectoryBuilder(new Pose2d(3, -31, Math.toRadians(180)))
-                        .strafeTo(new Vector2d(47, -60)).build();
+        Action pickUpThirdSample = drivetrain.getTrajectoryBuilder(new Pose2d(3, -31, Math.toRadians(180)))
+            .strafeToSplineHeading(new Vector2d(39, -65.5), Math.toRadians(0))
+            .build();
+
+        Action scoreThirdSample = drivetrain.getTrajectoryBuilder(new Pose2d(39, -65.5, Math.toRadians(0)))
+            .strafeToSplineHeading(new Vector2d(-2, -31), Math.toRadians(180))
+            .build();
+
+        Action pickUpFourthSample = drivetrain.getTrajectoryBuilder(new Pose2d(-2, -31, Math.toRadians(180)))
+            .strafeToSplineHeading(new Vector2d(39, -66), Math.toRadians(0))
+            .build();
+
+        Action scoreFourthSample = drivetrain.getTrajectoryBuilder(new Pose2d(39, -66, Math.toRadians(0)))
+            .strafeToSplineHeading(new Vector2d(-6, -31), Math.toRadians(180))
+            .build();
+
+
+        Action driveToPark = drivetrain.getTrajectoryBuilder(new Pose2d(-6, -31, Math.toRadians(180)))
+            .strafeTo(new Vector2d(47, -60)).build();
 
         schedule(new RunCommand(() -> telemetry.update()));
         register(drivetrain, claw, elevator, intake);
         waitForStart();
 
         schedule(new SequentialCommandGroup(
-                new RetractIntake(intake),
+            new RetractIntake(intake),
+            new PivotIntake(Intake.IntakeState.HOME, intake),
+            new CloseClaw(claw),
+            new ParallelCommandGroup(
+                new TrajectoryCommand(driveToFirstScore, drivetrain),
+                new ElevatorGoTo(elevator, 25).withTimeout(2000)
+            ),
+            new ElevatorGoTo(elevator, 18),
+            new OpenClaw(claw),
+            new ParallelCommandGroup(
+                new TrajectoryCommand(driveToPrimePush, drivetrain),
+                new ElevatorGoTo(elevator, 0).withTimeout(2000)
+            ),
+            new ExtendIntake(intake),
+            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+            new WaitCommand(500),
+            new TrajectoryCommand(pushFirstSample, drivetrain),
+            new ParallelCommandGroup(
+                //new ExtendIntakeVariable(intake, () -> 0.3).withTimeout(300),
                 new PivotIntake(Intake.IntakeState.HOME, intake),
-                new CloseClaw(claw),
-                // drive to chamber and raise elevator scoring height
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToFirstScore, drivetrain),
-                        new ElevatorGoTo(elevator, 27).withTimeout(2000)
-                ),
-                new ElevatorGoTo(elevator, 20.5),
-                new OpenClaw(claw),
-                // drive to start push
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToPrimePush, drivetrain),
-                        new ElevatorGoTo(elevator, 0).withTimeout(2000)
-                ),
-                new TrajectoryCommand(pushSpecimen, drivetrain),
-                new TrajectoryCommand(driveToPrimePickup, drivetrain),
-                new WaitCommand(500),
-                new TrajectoryCommand(driveToPickup, drivetrain),
-                new CloseClaw(claw),
-                new WaitCommand(250),
-                new ElevatorGoTo(elevator, 6).withTimeout(3000),
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToScore2, drivetrain),
-                        new ElevatorGoTo(elevator, 27).withTimeout(3000)
-                ),
-                new ElevatorGoTo(elevator, 18).withTimeout(3000),
-                new OpenClaw(claw),
-//                // pick up 3
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToPrimePickup2, drivetrain),
-                        new ElevatorGoTo(elevator, 0).withTimeout(2000)
-                ),
-//                new TrajectoryCommand(driveToPickup, drivetrain),
-                new CloseClaw(claw),
-                new WaitCommand(250),
-//                // score 3
-                new ElevatorGoTo(elevator, 6).withTimeout(3000),
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToScore3, drivetrain),
-                        new ElevatorGoTo(elevator, 28.5).withTimeout(3000)
-                ),
-                new ElevatorGoTo(elevator, 18).withTimeout(3000),
-                new OpenClaw(claw),
-                new ParallelCommandGroup(
-                        new TrajectoryCommand(driveToPark, drivetrain),
-                        new ElevatorGoTo(elevator, 0).withTimeout(2000)
-                )
-//                // pick up 4 - we don't do this
-//                new ParallelCommandGroup(
-//                        new StrafeWithHeading(primePickup,0, drivetrain),
-//                        new ElevatorGoTo(elevator, 0).withTimeout(2000),
-//                        ),
-//                new StrafeToPos(pickup, drivetrain),
-//                new CloseClaw(claw),
-//                // score 4
-//                new ElevatorGoTo(elevator, 6).withTimeout(3000),
-//                new ParallelCommandGroup(
-//                        new StrafeWithHeading(new Vector2d(-18, -30.5), Math.toRadians(180), drivetrain),
-//                        new ElevatorGoTo(elevator, 28.5).withTimeout(3000)
-//                ),
-//                new ElevatorGoTo(elevator, 18).withTimeout(3000),
-//                new OpenClaw(claw)
+                new TrajectoryCommand(goToSecondSample, drivetrain)
+            ),
+//            new ExtendIntake(intake),
+            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+            new WaitCommand(250),
+            new TrajectoryCommand(pushSecondSample, drivetrain),
+            new ParallelCommandGroup(
+//                new ExtendIntakeVariable(intake, () -> 0.3).withTimeout(300),
+                new PivotIntake(Intake.IntakeState.HOME, intake),
+                new TrajectoryCommand(goToThirdSample, drivetrain)
+            ),
+//            new ExtendIntake(intake),
+            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+            //new WaitCommand(100),
+            new TrajectoryCommand(pushThirdSample, drivetrain),
+            new PivotIntake(Intake.IntakeState.HOME, intake),
+            new RetractIntake(intake),
+            new CloseClaw(claw),
+            new WaitCommand(500),
+            new ElevatorGoTo(elevator, 6).withTimeout(1000), // pick up 2nd
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 25).withTimeout(2000),
+                new TrajectoryCommand(scoreSecondSample, drivetrain)
+            ),
+            new ElevatorGoTo(elevator, 18).withTimeout(2000),
+            new OpenClaw(claw), // Scored second sample
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 0 ).withTimeout(2000),
+                new TrajectoryCommand(pickUpThirdSample, drivetrain)
+            ),
+            new CloseClaw(claw),
+            new WaitCommand(250),
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 25).withTimeout(2000),
+                new TrajectoryCommand(scoreThirdSample, drivetrain)
+            ),
+            new ElevatorGoTo(elevator, 18).withTimeout(2000),
+            new OpenClaw(claw),
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 0 ).withTimeout(2000),
+                new TrajectoryCommand(pickUpFourthSample, drivetrain)
+            ),
+            new CloseClaw(claw),
+            new WaitCommand(250),
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 25).withTimeout(2000),
+                new TrajectoryCommand(scoreFourthSample, drivetrain)
+            ),
+            new ElevatorGoTo(elevator, 18).withTimeout(2000),
+            new OpenClaw(claw),
+            new ParallelCommandGroup(
+                new ElevatorGoTo(elevator, 0).withTimeout(1000),
+                new TrajectoryCommand(driveToPark, drivetrain)
+            )
         ));
     }
 }

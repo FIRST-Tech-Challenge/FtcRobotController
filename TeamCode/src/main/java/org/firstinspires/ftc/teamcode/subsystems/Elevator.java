@@ -10,8 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Elevator extends SubsystemBase {
     private static final double TICKS_PER_MM = 0.335;
-    private static final double KP = 0.01;
-    private static final double KF = 0.07;
+    private static final double KP = 0.012;
+    private static final double KF = 0.1;
     private Motor elevatorLeft;
     private Motor elevatorRight;
     private DigitalChannel limitSwitch;
@@ -39,10 +39,13 @@ public class Elevator extends SubsystemBase {
 //        }
         elevatorLeft.set(this.elevatorPower + KF);
 
+        int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
+        double currentPosMM = currentPos * TICKS_PER_MM;
 
         telemetry.addData("Pos", (this.elevatorLeft.getCurrentPosition() * TICKS_PER_MM) / 25.4 );
         telemetry.addData("Elevator Power", this.elevatorPower);
         telemetry.addData("Elevator Target", this.target);
+        telemetry.addData("Elevator Error", this.target - currentPosMM);
     }
 
     public void setTarget(double target) {
@@ -72,12 +75,8 @@ public class Elevator extends SubsystemBase {
         int currentPos = this.elevatorLeft.getCurrentPosition(); //Right
         double currentPosMM = currentPos * TICKS_PER_MM;
         //  target + 5 > currentPosMM && target - 5 < currentPosMM
-        if (currentPosMM < target + 10 &&
-            currentPosMM > target - 10) {
-            return true;
-        }
-
-        return false;
+        return currentPosMM < target + 10 &&
+            currentPosMM > target - 10;
 
     }
 
