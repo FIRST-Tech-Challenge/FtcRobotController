@@ -389,7 +389,7 @@ public class Main extends LinearOpMode {
         rightBackDrive  = hardwareMap.dcMotor.get("right_back");
         liftMotor       = hardwareMap.dcMotor.get("lift_motor");
         armMotor        = hardwareMap.get(DcMotor.class, "dc_arm"); //the arm motor
-        otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        otos = hardwareMap.get(SparkFunOTOS.class, "otos");
 
 
        /*
@@ -446,13 +446,13 @@ public class Main extends LinearOpMode {
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
     }
     public void output(){
         /* send telemetry to the driver of the arm's current position and target position */
-        telemetry.addLine("Version: 1");
+        telemetry.addLine("Version: 2");
         telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
         telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
         telemetry.addData("lift variable", liftPosition);
@@ -462,6 +462,11 @@ public class Main extends LinearOpMode {
         telemetry.addData("Lift Target Position",liftMotor.getTargetPosition());
         telemetry.addData("lift current position", liftMotor.getCurrentPosition());
         telemetry.addData("liftMotor Current:",((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+//        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+//        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+        telemetry.addData("X coordinate", pos.x);
+        telemetry.addData("Y coordinate", pos.y);
+        telemetry.addData("Heading angle", pos.h);
         telemetry.update();
     }
     public void liftScoreInLow() {
@@ -607,6 +612,8 @@ public class Main extends LinearOpMode {
         SparkFunOTOS.Version hwVersion = new SparkFunOTOS.Version();
         SparkFunOTOS.Version fwVersion = new SparkFunOTOS.Version();
         otos.getVersionInfo(hwVersion, fwVersion);
+
+        pos = otos.getPosition();
 
         telemetry.addLine("OTOS configured! Press start to get position data!");
         telemetry.addLine();
