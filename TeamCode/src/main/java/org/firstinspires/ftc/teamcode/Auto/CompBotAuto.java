@@ -19,26 +19,42 @@ import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 
-@Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
+@Autonomous(name = "Comp Bot Auto")
 public class CompBotAuto extends LinearOpMode {
 
   Mekanism mek;
 
+  AutoSwerve driveBase;
+
+  GoBildaPinpointDriver odometry;
 
   @Override
   public void runOpMode() throws InterruptedException {
     initRobot(this);
-    waitForStart();
 
-    var odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
-    odometry.setOffsets(110, 30);
-    odometry.setEncoderResolution(goBILDA_4_BAR_POD);
-    odometry.setEncoderDirections(FORWARD, FORWARD);
-    odometry.resetHeading(Rotation2d.fromDegrees(120));
+    waitForStart();
+    mek.homeArm();
+    telem();
+    driveBase.alignWheels();
+    sleep(1000);
+    driveBase.forward(1);
+    sleep(1000);
+    driveBase.forward(0);
+    for(int i = 0;i<50;i++) {
+      sleep(500);
+      telem();
+    }
   }
 
   public void initRobot(LinearOpMode opMode){
+    odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+    odometry.setOffsets(110, 30);
+    odometry.setEncoderResolution(goBILDA_4_BAR_POD);
+    odometry.setEncoderDirections(FORWARD, FORWARD);
+    //odometry.resetHeading(Rotation2d.fromDegrees(120));
+
     mek = new Mekanism(opMode);
+    driveBase = new AutoSwerve(this,odometry);
   }
 
   public void telem() {
@@ -46,6 +62,13 @@ public class CompBotAuto extends LinearOpMode {
     telemetry.addData("slide goal: ", mek.slide.getTargetPosition());
     telemetry.addData("pivot current: ", mek.pivot.getCurrentPosition());
     telemetry.addData("pivot goal: ", mek.pivot.getTargetPosition());
+    telemetry.addData("odometry x: ",odometry.getPosX());
+    telemetry.addData("odometry y: ",odometry.getPosY());
+    telemetry.addData("odometry yaw: ",odometry.getHeading());
+    telemetry.addData("ServoFR voltage: ",driveBase.servoInputFR.getVoltage());
+    telemetry.addData("servoFL voltage: ",driveBase.servoInputFL.getVoltage());
+    telemetry.addData("ServoBR voltage: ",driveBase.servoInputBR.getVoltage());
+    telemetry.addData("servoBL voltage: ",driveBase.servoInputBL.getVoltage());
     telemetry.update();
   }
 }
