@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+@TeleOp
 public class TestKalmanOdometry extends LinearOpMode {
     SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
     OdometrySpark odometry = new OdometrySpark(otos);
     @Override
     public void runOpMode() throws InterruptedException {
+        waitForStart();
         while (opModeIsActive()) {
             telemetry.addLine("x: " + odometry.sparkUpdateFiltered().x);
             telemetry.addLine("y: " + odometry.sparkUpdateFiltered().y);

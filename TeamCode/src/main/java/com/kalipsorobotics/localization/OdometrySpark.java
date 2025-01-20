@@ -26,6 +26,8 @@ public class OdometrySpark {
 
     public OdometrySpark(SparkFunOTOS myOtos) {
         this.myOtos = myOtos;
+        double[][] newdouble = ;
+        kalmanFilter = new KalmanFilter(,0,0,0);
         kalmanFilter.init(new org.opencv.core.Point(0, 0));
 //        wheelResetData();
 //        sparkResetData(true, 0.0);
