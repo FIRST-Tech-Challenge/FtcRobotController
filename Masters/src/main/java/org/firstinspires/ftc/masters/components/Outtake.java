@@ -16,7 +16,7 @@ public class Outtake implements Component{
     private PIDController controller;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    public static double p = 0.002, i = 0, d = 0;
+    public static double p = 0.0024, i = 0.0002, d = 0.00001;
     public static double f = 0.09;
 
     public int target = 0;
@@ -61,13 +61,13 @@ public class Outtake implements Component{
 
 
         WallToFront_lift(300),
-        WallToFront_move(650),
+        WallToFront_move(350),
         WallToFront3 (200),
 
-        SpecimenToWall_MoveBack(600),
+        SpecimenToWall_MoveBack(1500),
         SpecimenToWall_Final(100),
 
-        Front(0);
+        Front(300);
 
         private final long time;
 
@@ -137,6 +137,7 @@ public class Outtake implements Component{
         if (status==Status.ScoreSpecimen) {
             target = ITDCons.intermediateTarget;
             wrist.setPosition(ITDCons.wristBack);
+            openClaw();
 
             position.setPosition(ITDCons.positionBack);
             setAngleServoToMiddle();
@@ -187,8 +188,13 @@ public class Outtake implements Component{
 
 //frontRight
         int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
+
+        telemetry.addData("rotatePos",rotatePos);
         double pid = controller.calculate(rotatePos, target);
-        double lift = pid + f;
+        double lift=pid;
+       // double lift = pid + f;
+
+        telemetry.addData("lift", lift);
 
         outtakeSlideLeft.setPower(lift);
         outtakeSlideRight.setPower(lift);
@@ -215,10 +221,12 @@ public class Outtake implements Component{
 
     public void updateOuttake(){
 
+        telemetry.addData("status", status);
+
         switch (status){
             case WallToFront_lift:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                    position.setPosition(ITDCons.positionFront);
+                    //
                    setAngleServoToMiddle();
                     elapsedTime = new ElapsedTime();
                     status = Status.WallToFront_move;
@@ -226,16 +234,24 @@ public class Outtake implements Component{
                 break;
             case WallToFront_move:
                 if (elapsedTime!=null && elapsedTime.milliseconds()> status.getTime()){
-                    wrist.setPosition(ITDCons.wristFront);
-                    setAngleServoScore();
+                    position.setPosition(ITDCons.positionFront);
+
                     elapsedTime = new ElapsedTime();
                     status = Status.WallToFront3;
                 }
                 break;
             case WallToFront3:
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
-                    elapsedTime = null;
+                    wrist.setPosition(ITDCons.wristFront);
+                    setAngleServoScore();
+                    elapsedTime = new ElapsedTime();
                     status = Status.Front;
+                }
+                break;
+            case Front:
+                if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
+                    elapsedTime=null;
+                    status= Status.ScoreSpecimen;
                 }
                 break;
             case TransferToBucket_CloseClaw:
@@ -286,7 +302,7 @@ public class Outtake implements Component{
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime() && outtakeSlideEncoder.getCurrentPosition()<ITDCons.intermediateTarget+500) {
                     target = ITDCons.wallPickupTarget;
                     setAngleServoToBack();
-                    status= Status.ScoreSpecimen;
+                    status= Status.Wall;
 
                 }
                 break;

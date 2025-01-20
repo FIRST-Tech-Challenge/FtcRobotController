@@ -16,7 +16,7 @@ public class PidTune extends OpMode {
 
     private PIDController controller;
 
-    public static double p = 0.002, i = 0, d = 0;
+    public static double p = 0.0045, i = 0.007, d = 0.00001;
     public static double f = 0.09;
 
     public static int target = 0;
@@ -34,9 +34,10 @@ public class PidTune extends OpMode {
         rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
-        outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         outtakeSlideLeft= hardwareMap.dcMotor.get("vertSlideLeft");
+        outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 

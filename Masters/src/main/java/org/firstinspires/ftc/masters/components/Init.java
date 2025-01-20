@@ -77,9 +77,10 @@ public class Init {
         intakeRight = hardwareMap.servo.get("intakeRight");
 
         outtakeSlideRight = hardwareMap.dcMotor.get("vertSlideRight");
-        outtakeSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         outtakeSlideLeft = hardwareMap.dcMotor.get("vertSlideLeft");
+        outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ptoRight = hardwareMap.servo.get("ptoRight");
         ptoLeft = hardwareMap.servo.get("ptoLeft");

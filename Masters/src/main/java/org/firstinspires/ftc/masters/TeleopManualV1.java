@@ -121,6 +121,8 @@ public class TeleopManualV1 extends LinearOpMode {
 
 
             telemetry.addData("Slide Target", outtake.getTarget());
+            telemetry.addData("Before", outtake.outtakeSlideEncoder.getCurrentPosition());
+
             telemetry.addData("Slide Position", outtake.getExtensionPos());
             telemetry.addData("Slide Servo Pos", intake.getExtensionPosition());
             telemetry.addData("Diffy Servo1 Pos", servo1pos);
