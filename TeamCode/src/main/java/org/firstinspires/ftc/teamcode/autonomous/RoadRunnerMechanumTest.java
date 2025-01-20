@@ -38,7 +38,7 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
         //Claw claw = new Claw(hardwareMap);
         LiftActions lift = new LiftActions(hardwareMap);
 
-        // vision here that outputs position
+        //TODO - Build Movement Trajectory
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .lineToYSplineHeading(33, Math.toRadians(0))
@@ -67,6 +67,7 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
             telemetry.update();
         }
 
+        // Add Abillty to chose certain trajectory based on sensor input - Not needed right now
         Action trajectoryActionChosen;
         trajectoryActionChosen = tab1.build();
 
