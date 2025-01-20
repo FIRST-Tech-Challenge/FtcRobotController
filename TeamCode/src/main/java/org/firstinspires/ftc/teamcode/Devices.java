@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Devices {
-        final double CLAW_OPEN = .864;
-        final double CLAW_CLOSED = 1.05;
+    final double CLAW_OPEN = 0.864;
+    final double CLAW_CLOSED = 1.05;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
 
@@ -19,7 +19,7 @@ public class Devices {
      *  horizontally.
      */
         final double MAX_HORIZONTAL_SLIDER_TICKS = 2660;
-//        final double MAX_SLIDER_INCHES = 24.25;
+//         final double MAX_SLIDER_INCHES = 24.25;
         final double ARM_ANGLE_TICKS_PER_DEGREE = 39.0;
 
         /** This is the angle that the arm starts each match */

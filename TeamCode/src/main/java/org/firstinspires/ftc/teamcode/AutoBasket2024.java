@@ -13,7 +13,6 @@ public class AutoBasket2024 extends DriveMethods {
         Unstarted,
         RaiseArm,
         StrafeRight,
-        MoveForward,
         ExtendSlider,
         OpenClaw
     }
@@ -39,25 +38,16 @@ public class AutoBasket2024 extends DriveMethods {
             case StrafeRight:
                 omniDrive(0, 0.25, 0);
 
-                if (getStateTime() >= 0.5) {
+                if (getStateTime() >= 1.5) {
                     omniDrive(0, 0, 0);
 
-                    changeState(State.MoveForward);
+                    changeState(State.RaiseArm);
                 }
                 break;
-//            case MoveForward:
-//                omniDrive(0.5, 0, 0);
-//
-//                if (getStateTime() >= 0.7) {
-//                    omniDrive(0, 0, 0);
-//
-//                    changeState(State.RaiseArm);
-//                }
-//                break;
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
-                if (robot.wormGearAngle() >= 50) {
+                if (robot.wormGearAngle() >= 68.91) {
                     robot.wormGear.setPower(0);
 
                     changeState(State.ExtendSlider);
@@ -68,7 +58,7 @@ public class AutoBasket2024 extends DriveMethods {
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
 
-                if (robot.sliderMotor.getCurrentPosition() >= 2000) {
+                if (robot.sliderMotor.getCurrentPosition() >= 2200) {
                     changeState(State.OpenClaw);
                 }
                 break;
@@ -101,4 +91,14 @@ public class AutoBasket2024 extends DriveMethods {
 //                omniDrive(0, 0, 0);
 //            }
 //        }
+
+    //            case MoveForward:
+//                omniDrive(0.5, 0, 0);
+//
+//                if (getStateTime() >= 0.7) {
+//                    omniDrive(0, 0, 0);
+//
+//                    changeState(State.RaiseArm);
+//                }
+//                break;
     }
