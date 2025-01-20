@@ -26,6 +26,11 @@ public class ElevatorGoTo extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        elevator.stop();
+    }
+
+    @Override
     public boolean isFinished() {
         return elevator.atTarget();
     }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,10 +13,10 @@ public class Elevator extends SubsystemBase {
     private static final double TICKS_PER_MM = 0.335;
     private static final double KP = 0.012;
     private static final double KF = 0.1;
-    private Motor elevatorLeft;
+    private final Motor elevatorLeft;
     private Motor elevatorRight;
-    private DigitalChannel limitSwitch;
-    private Telemetry telemetry;
+    private final DigitalChannel limitSwitch;
+    private final Telemetry telemetry;
 
     private double elevatorPower;
     private double target;
@@ -27,6 +28,9 @@ public class Elevator extends SubsystemBase {
         this.telemetry = telemetry;
         this.elevatorLeft.setInverted(false);
         this.elevatorLeft.encoder.setDirection(Motor.Direction.FORWARD);
+
+        // Zero encoder when at the limit switch
+        new Trigger(this::atLimitSwitch).whenActive(this::stopAndReset);
 
     }
 
@@ -46,6 +50,19 @@ public class Elevator extends SubsystemBase {
         telemetry.addData("Elevator Power", this.elevatorPower);
         telemetry.addData("Elevator Target", this.target);
         telemetry.addData("Elevator Error", this.target - currentPosMM);
+    }
+
+    public boolean atLimitSwitch() {
+        return !this.limitSwitch.getState();
+    }
+
+    public void stopAndReset() {
+        this.elevatorPower = 0;
+        this.elevatorLeft.resetEncoder();
+    }
+
+    public void stop() {
+        this.elevatorPower = 0;
     }
 
     public void setTarget(double target) {
