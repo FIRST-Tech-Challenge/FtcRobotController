@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class MotorIdentifierTeleop extends DriveMethods {
@@ -25,6 +26,7 @@ public class MotorIdentifierTeleop extends DriveMethods {
         }
 
         DcMotorEx motor;
+        Servo servo;
         String name;
 
         if (testingMotor == 0) {
@@ -42,6 +44,9 @@ public class MotorIdentifierTeleop extends DriveMethods {
         } else if (testingMotor == 4) {
             motor = robot.sliderMotor;
             name = "sliderMotor";
+        } else if (testingMotor == 5) {
+            servo = robot.clawServo;
+            name = "claw";
         } else {
             name = "wormGear";
             motor = robot.wormGear;
