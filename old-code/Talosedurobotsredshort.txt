@@ -1,0 +1,62 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
+
+@Autonomous(name = "Talosedurobotsredshort")
+public class Talosedurobotsredshort extends LinearOpMode {
+
+    private DcMotor leftDrive;
+    private DcMotor rightDrive;
+  
+    private int leftPos;
+    private int rightPos;
+    private ElapsedTime timer;
+    private ElapsedTime              runtime = new ElapsedTime();
+   
+    @Override
+    public void runOpMode() {
+        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      
+    //leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+   
+        leftPos = 0;
+        rightPos = 0; 
+  
+        waitForStart();
+        
+        drive(230, 230, 0.5);
+        //drive(2400, 2400, 0.5);
+        drive(555, -555, 0.15);
+        while  (runtime.seconds()  <= 4.0);
+        drive(2000, 2000, 0.3);
+  
+      } 
+      private void drive(int LeftTarget, int rightTarget, double speed){
+          leftPos += LeftTarget;
+          rightPos += rightTarget;
+      
+          leftDrive.setTargetPosition(leftPos);
+          rightDrive.setTargetPosition(rightPos);
+      
+          leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+          rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      
+          leftDrive.setPower(speed);
+          rightDrive.setPower(speed);
+    
+          while(opModeIsActive() && leftDrive.isBusy() && rightDrive.isBusy()){
+              idle();
+          }
+      }
+}    

@@ -1,0 +1,43 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+@TeleOp(name = "Gobildatest1", group = "TeleOp")
+public class Gobildatest1 extends OpMode {
+
+    private DcMotor Motor;
+
+    @Override
+    public void init() {
+        // Αρχικοποίηση των κινητήρων από το hardwareMap
+        Motor = hardwareMap.get(DcMotor.class, "Motor");
+        
+        // Ορισμός της κατεύθυνσης των κινητήρων
+        Motor.setDirection(DcMotor.Direction.FORWARD);
+        Motor.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    @Override
+    public void loop() {
+        // Διαβάστε τις τιμές των joysticks
+         if (gamepad1.right_bumper) {
+            Motor.setPower(1);
+            
+        } else if (gamepad1.left_bumper) {
+            Motor.setPower(0);
+            Motor.setPower(-0.8);
+        } else {
+            Motor.setPower(0);
+        }
+    }
+    @Override
+    public void stop() {
+        // Stop all motors
+        Motor.setPower(0);
+    }
+}

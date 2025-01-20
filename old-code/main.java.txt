@@ -33,8 +33,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -93,7 +91,7 @@ public class Main extends LinearOpMode {
     @Override
     public void runOpMode() {
         initializeIO();
-        configureOtos();
+        // configureOtos();
         // Retrieve the IMU from the hardware map
         initializeIMU();
         /* Wait for the game driver to press play */
@@ -102,9 +100,7 @@ public class Main extends LinearOpMode {
         while (opModeIsActive())
         {
             straferMovement();
-            setArmLiftComp();
-            setArmTargetPosition();
-             pos = otos.getPosition();
+            // pos = otos.getPosition();
             /* Here we handle the three buttons that have direct control of the intake speed.
             These control the continuous rotation servo that pulls elements into the robot,
             If the user presses A, it sets the intake power to the final variable that
@@ -155,10 +151,7 @@ public class Main extends LinearOpMode {
             else if (gamepad1.x){
                 /* This is the correct height to score the sample in the HIGH BASKET */
                 armScoreSampleInLow();
-
                 liftScoreInHigh();
-
-
             }
 
             else if (gamepad1.dpad_left) {
@@ -190,8 +183,11 @@ public class Main extends LinearOpMode {
                 wristIn();
             }
 
-
-            runArm();
+            setArmLiftComp();
+            setArmTargetPosition();
+            if (liftMotor.getCurrentPosition() == liftPosition) {
+                runArm();
+            }
             /* Here we set the lift position based on the driver input.
             This is a.... weird, way to set the position of a "closed loop" device. The lift is run
             with encoders. So it knows exactly where it is, and there's a limit to how far in and
@@ -219,8 +215,6 @@ public class Main extends LinearOpMode {
             }
 
             liftNormalization();
-            setLiftTargetPosition();
-//            TimeUnit.SECONDS.sleep(1);
             runLift();
 
             /* Check to see if our arm is over the current limit, and report via telemetry. */
@@ -389,7 +383,7 @@ public class Main extends LinearOpMode {
         rightBackDrive  = hardwareMap.dcMotor.get("right_back");
         liftMotor       = hardwareMap.dcMotor.get("lift_motor");
         armMotor        = hardwareMap.get(DcMotor.class, "dc_arm"); //the arm motor
-        otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        // otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
 
        /*
@@ -452,7 +446,6 @@ public class Main extends LinearOpMode {
     }
     public void output(){
         /* send telemetry to the driver of the arm's current position and target position */
-        telemetry.addLine("Version: 1");
         telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
         telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
         telemetry.addData("lift variable", liftPosition);
@@ -526,10 +519,9 @@ public class Main extends LinearOpMode {
         ((DcMotorEx) armMotor).setVelocity(300); // 300
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void setLiftTargetPosition(){
-        liftMotor.setTargetPosition(liftPosition);
-    }
     public void runLift() {
+        liftMotor.setTargetPosition(liftPosition);
+
         ((DcMotorEx) liftMotor).setVelocity(600); // 2100 velocity of the viper slide 200
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

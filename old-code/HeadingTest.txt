@@ -1,0 +1,31 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+@TeleOp
+public class HeadingTest extends LinearOpMode {
+    private DcMotorEx left,right;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        left = hardwareMap.get(DcMotorEx.class, "leftDrive");
+        right = hardwareMap.get(DcMotorEx.class, "rightDrive");
+
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        waitForStart();
+
+        while(opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Angle:", (left.getCurrentPosition()-right.getCurrentPosition())* 0.08720930232);
+            telemetry.update();
+        }
+    }
+}

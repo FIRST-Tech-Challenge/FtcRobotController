@@ -1,0 +1,44 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+@Autonomous
+
+public class EiriniLessonJava extends LinearOpMode{
+    private DcMotor leftmotor;
+    private DcMotor rightmotor;
+    
+    public void runOpMode(){
+        leftmotor = hardwareMap.get(DcMotor.class,"leftDrive");
+        rightmotor = hardwareMap.get(DcMotor.class,"rightDrive");
+        rightmotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        leftmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightmotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        
+        waitForStart();
+        
+        leftmotor.setTargetPosition(1000);
+        rightmotor.setTargetPosition(1000);
+        
+        leftmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightmotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        leftmotor.setPower(-0.3);
+        rightmotor.setPower(-0.3);
+        
+        
+        while (opModeIsActive() && (leftmotor.isBusy()) && (rightmotor.isBusy())){
+        
+        } 
+        
+    }
+    
+}

@@ -1,0 +1,168 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@TeleOp(name = "TalosEdurobotsFTC2024 (Blocks to Java)")
+public class TalosEdurobotsFTC2024 extends LinearOpMode {
+
+  private DcMotor rightDrive;
+  private DcMotor armRight;
+  private DcMotor armLeft;
+  private DcMotor leftDrive;
+  private Servo wrist;
+  private Servo gripper;
+  
+
+  /**
+   * This function is executed when this OpMode is selected from the Driver Station.
+   */
+  @Override
+  public void runOpMode() {
+    int homearmposition;
+    int armIntakePosition;
+    int armScorePosition;
+    boolean manualMode;
+    double armManualDeadband;
+    int armShutdownThreshold;
+    int armSetpoint;
+    int wristUpPosition;
+    double wristDownPosition;
+    int gripperClosedPosition;
+    double gripperOpenPosition;
+    int running;
+    float manualArmPower;
+
+    rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
+    armRight = hardwareMap.get(DcMotor.class, "armRight");
+    armLeft = hardwareMap.get(DcMotor.class, "armLeft");
+    leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
+    wrist = hardwareMap.get(Servo.class, "wrist");
+    gripper= hardwareMap.get(Servo.class, "gripper");
+
+    homearmposition = 0;
+    armIntakePosition = 10;
+    armScorePosition = 400;
+    manualMode = false;
+    armManualDeadband = 0.03;
+    armShutdownThreshold = 5;
+    armSetpoint = 0;
+    wristUpPosition = 1;
+    wristDownPosition = 0.2;
+    gripperClosedPosition = 1;
+    gripperOpenPosition = 0.2;
+    running = 0;
+    // You will need to reverse one of the drive motors.
+    rightDrive.setDirection(DcMotor.Direction.REVERSE);
+    armRight.setDirection(DcMotor.Direction.REVERSE);
+    armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    armLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    armRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    armLeft.setPower(0);
+    armRight.setPower(0);
+    telemetry.addData("Status", "Initialized");
+    waitForStart();
+    if (opModeIsActive()) {
+      armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      armLeft.setTargetPosition(0);
+      armRight.setTargetPosition(0);
+      armLeft.setPower(1);
+      armRight.setPower(1);
+      armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      while (opModeIsActive()) {
+        // Show the motor's status via telemetry
+        // Split Arcade Drive
+        // Use left stick to drive and right stick to turn!
+        leftDrive.setPower(-gamepad1.left_stick_y + gamepad1.right_stick_x);
+        rightDrive.setPower(-gamepad1.left_stick_y - gamepad1.right_stick_x);
+        // Manual Arm Control
+        manualArmPower = gamepad2.right_trigger - gamepad2.left_trigger;
+        if (Math.abs(manualArmPower) > armManualDeadband) {
+          if (!manualMode) {
+            armLeft.setPower(0);
+            armRight.setPower(0);
+            armLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            manualMode = true;
+            running = 0;
+          }
+          armLeft.setPower(manualArmPower);
+          armRight.setPower(manualArmPower);
+        } else {
+          if (manualMode) {
+            armLeft.setTargetPosition(armLeft.getCurrentPosition());
+            armRight.setTargetPosition(armRight.getCurrentPosition());
+            armLeft.setPower(1);
+            armRight.setPower(1);
+            armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            manualMode = false;
+            running = 1;
+          }
+        }
+        // Arm and Wrist Presets
+        if (gamepad1.a) {
+          armLeft.setTargetPosition(homearmposition);
+          armRight.setTargetPosition(homearmposition);
+          armLeft.setPower(1);
+          armRight.setPower(1);
+          armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+          armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+          wrist.setPosition(wristUpPosition);
+          running = 1;
+        } else if (gamepad1.circle) {
+          armLeft.setTargetPosition(armIntakePosition);
+          armRight.setTargetPosition(armIntakePosition);
+          armLeft.setPower(1);
+          armRight.setPower(1);
+          armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+          armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+          wrist.setPosition(wristDownPosition);
+          running = 1;
+        } else {
+          if (gamepad1.y) {
+            armLeft.setTargetPosition(armScorePosition);
+            armRight.setTargetPosition(armScorePosition);
+            armLeft.setPower(1);
+            armRight.setPower(1);
+            armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wrist.setPosition(wristUpPosition);
+            running = 1;
+          }
+        }
+        // Re-zero Encoder Button
+        if (gamepad1.options) {
+          armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+          armRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+          armLeft.setPower(0);
+          armRight.setPower(0);
+          manualMode = false;
+        }
+        // Watchdog to shut down motor once arm reaches the home position
+        if (!manualMode && running == 1 && armLeft.getTargetPosition() <= armShutdownThreshold && armLeft.getCurrentPosition() <= armShutdownThreshold) {
+          armLeft.setPower(0);
+          armRight.setPower(0);
+          armLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+          armRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+          running = 0;
+        }
+        // Gripper
+        if (gamepad1.left_bumper || gamepad1.right_bumper) {
+          gripper.setPosition(gripperOpenPosition);
+        } else {
+          gripper.setPosition(gripperClosedPosition);
+        }
+       
+        telemetry.update();
+      }
+    }
+  }
+}

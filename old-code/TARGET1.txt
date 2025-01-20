@@ -1,0 +1,55 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+@TeleOp(name = "TARGET1", group = "TeleOp")
+public class TARGET1 extends OpMode {
+
+    private DcMotor Motor;
+
+    @Override
+    public void init() {
+        // Αρχικοποίηση των κινητήρων από το hardwareMap
+        Motor = hardwareMap.get(DcMotor.class, "Motor");
+        
+        // Ορισμός της κατεύθυνσης των κινητήρων
+        Motor.setDirection(DcMotor.Direction.FORWARD);
+        Motor.setDirection(DcMotor.Direction.REVERSE);
+   
+   
+     if (gamepad1.right_bumper) {
+           
+         Motor.setTargetPosition(10);
+        Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION) ;
+         Motor.setPower(0.5); 
+      
+      
+      
+      
+      
+        } else if (gamepad1.left_bumper) {
+            Motor.setPower(0.5);
+            Motor.setTargetPosition(-400);
+             
+        } else {
+            Motor.setPower(0);
+        }
+   
+
+  
+    }
+
+    @Override
+    public void loop() {
+    
+    }
+    @Override
+    public void stop() {
+        // Stop all motors
+        Motor.setPower(0);
+    }
+}

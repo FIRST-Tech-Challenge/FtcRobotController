@@ -1,0 +1,90 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+
+@TeleOp
+
+public class MyrevRobot2023 extends LinearOpMode{
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
+    private DcMotor arm;
+    
+    
+    static final double COUNTS_PER_MOTOR_REV = 20.0;
+    static final double DRIVE_GEAR_REDUCTION = 18.88;
+    static final double WHEEL_CIRCUMFERENCE_MM = 90 * 3.14;
+    
+    static final double COUNTS_PER_WHEEL_REV = COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION;
+    static final double COUNTS_PER_MM = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE_MM;
+    
+    static int leftTarget = (int)(1000 * COUNTS_PER_MM);
+    static int rightTarget = (int)(1000 * COUNTS_PER_MM);
+
+    @Override
+    public void runOpMode(){
+        double x;
+        double y;
+        float speed = 1;
+        
+        arm = hardwareMap.get(DcMotor.class,"armRight");
+        leftMotor = hardwareMap.get(DcMotor.class,"leftDrive");
+        rightMotor = hardwareMap.get(DcMotor.class,"rightDrive");
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        
+        telemetry.addData("Status", "initializer");
+        telemetry.update();
+       /*
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      */
+        waitForStart();
+      /*  
+        rightMotor.setTargetPosition(rightTarget);
+        leftMotor.setTargetPosition(leftTarget);
+        
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        */
+        
+  while (opModeIsActive()){
+    x = -gamepad1.right_stick_x;
+    y = gamepad1.right_stick_y;
+    
+
+    
+    if (gamepad1.dpad_up)
+    {
+      arm.setPower(0.2);
+    }
+    else if (gamepad1.dpad_down)
+    {
+      arm.setPower(-0.2);
+    }
+    else
+    {
+      arm.setPower(0);
+    }
+    /*if (gamepad1.a)
+    {
+      speed = 0.5;
+    }
+    else if (gamepad1.y)
+    {
+      speed = 2;
+    }
+*/
+    telemetry.addData("Status", "Running");
+    telemetry.update();
+    
+    rightMotor.setPower((y-x) * speed);
+    leftMotor.setPower((x+y) * speed);
+  }
+    // todo: write your code here
+}
+}

@@ -1,0 +1,67 @@
+// package org.firstinspires.ftc.teamcode;
+// 
+// import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+// import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+// import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+// import com.qualcomm.robotcore.hardware.DcMotor;
+// import com.qualcomm.robotcore.hardware.DcMotorSimple;
+// import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+// 
+// @TeleOp
+// 
+// public class XristinaLessonJava extends LinearOpMode{
+//     private DcMotor leftMotor;
+//     private DcMotor rightMotor;
+//     private DcMotor arm;
+//     
+//     
+//     @Override
+//     public void runOpMode(){
+//         double x;
+//         double y;
+//         
+//         arm = hardwareMap.get(DcMotor.class,"armLeft");
+//         leftMotor = hardwareMap.get(DcMotor.class,"leftDrive");
+//         rightMotor = hardwareMap.get(DcMotor.class,"rightDrive");
+//         rightMotor.setDirection(DcMotor.Direction.REVERSE);
+// 
+//         telemetry.addData("Status", "Initialized");
+//         telemetry.update();
+//         /*leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//         */
+//         waitForStart();
+//         /*
+//         leftMotor.setTargetPosition(1000);
+//         rightMotor.setTargetPosition(1000);
+//         
+//         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//         */
+//     
+//         while (opModeIsActive()){
+//             /*x = gamepad1.right_stick_x;
+//             y = -gamepad1.right_stick_y;
+//             
+//             
+//             leftMotor.setPower(y-x);
+//             rightMotor.setPower(y+x);
+//             */
+//             if (gamepad1.a){
+//                 arm.setPower(0.2);
+//             }
+//             else if (gamepad1.b){
+//                 arm.setPower(-0.2);
+//             } 
+//             
+//             else {
+//                 arm.setPower(0);
+//             }    
+//             
+//             telemetry.addData("Status", "Running");
+//             telemetry.update();
+//         }
+//         
+//     }
+//     
+// }

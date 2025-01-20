@@ -1,0 +1,82 @@
+// package org.firstinspires.ftc.teamcode;
+// 
+// import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+// import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+// import com.qualcomm.robotcore.hardware.DcMotorEx;
+// import com.qualcomm.robotcore.util.ElapsedTime;
+// import com.qualcomm.robotcore.hardware.DcMotor;
+// import com.qualcomm.robotcore.hardware.DcMotorSimple;
+// 
+// import java.util.Timer;
+// import java.util.concurrent.TimeUnit;
+// 
+// @Autonomous
+// public class Auto_Talos extends LinearOpMode {
+// 
+//     private DcMotorEx left,right;
+//     private double TICKS_PER_ROTATION = 535;
+// 
+//     private ElapsedTime timer;
+// 
+//     private double Kp = 0.1;
+// 
+//  @Override
+//     public void runOpMode() throws InterruptedException {
+//         left = hardwareMap.get(DcMotorEx.class, "leftDrive");
+//         right = hardwareMap.get(DcMotorEx.class, "rightDrive");
+// 
+//         left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//         right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+// 
+//         right.setDirection(DcMotorSimple.Direction.REVERSE);
+// 
+//         timer = new ElapsedTime();
+// 
+//         waitForStart();
+// 
+//         forward(1, 1000);
+//     }
+// 
+// 
+// 
+//     public double differenceToDegrees(double ticks) {
+//         return ticks * 0.08720930232;
+//     }
+// 
+//     public void forward(double speed, double ticks){
+//         while(Math.abs((left.getCurrentPosition() + right.getCurrentPosition())/2) <= ticks){
+//             left.setPower(-speed);
+//             right.setPower(speed);
+//         }
+// 
+//         left.setPower(0);
+//         right.setPower(0);
+//     }
+// 
+//     public void back(double speed, double ticks){
+//         while(Math.abs((left.getCurrentPosition() + right.getCurrentPosition())/2) <= ticks){
+//             left.setPower(speed);
+//             right.setPower(-speed);
+//         }
+// 
+//         left.setPower(0);
+//         right.setPower(0);
+//     }
+// 
+//     public void turn(double angle, double seconds) {
+//         timer.reset();
+// 
+//         double error = 0;
+//         double speed = 0;
+// 
+//         while (timer.time(TimeUnit.SECONDS) <= seconds) {
+//             error = angle - differenceToDegrees(left.getCurrentPosition() - right.getCurrentPosition());
+// 
+//             speed = error * Kp;
+// 
+//             left.setPower(-speed);
+//             right.setPower(-speed);
+//         }
+//     }
+// }
+// 
