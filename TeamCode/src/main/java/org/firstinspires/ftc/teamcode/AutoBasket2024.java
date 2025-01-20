@@ -63,6 +63,15 @@ public class AutoBasket2024 extends DriveMethods {
                     changeState(State.ExtendSlider);
                 }
                 break;
+//            case MoveForward:
+//                omniDrive(0.5, 0, 0);
+//
+//                if (getStateTime() >= 2) {
+//                    omniDrive(0, 0, 0);
+//
+//                    changeState(State.ExtendSlider);
+//                }
+//                break;
             case ExtendSlider:
                 robot.sliderMotor.setPower(1);
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
