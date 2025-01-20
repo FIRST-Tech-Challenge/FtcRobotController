@@ -166,14 +166,12 @@ public class GoBuildaDriveToPoint {
         if (direction == Direction.h) {
             //double hError = (targetPosition.getHeading(AngleUnit.RADIANS) ) - (currentPosition.getHeading(AngleUnit.RADIANS) );
             double hError;
-            if (targetPosition.getHeading(AngleUnit.DEGREES) > currentPosition.getHeading(AngleUnit.DEGREES)
-            && targetPosition.getHeading(AngleUnit.DEGREES) > 90 && currentPosition.getHeading(AngleUnit.DEGREES) < -90)
-            {
-                hError = - (targetPosition.getHeading(AngleUnit.RADIANS) + currentPosition.getHeading(AngleUnit.RADIANS));
-            } else {
-                hError = targetPosition.getHeading(AngleUnit.RADIANS) - currentPosition.getHeading(AngleUnit.RADIANS);
+            hError = targetPosition.getHeading(AngleUnit.RADIANS) - currentPosition.getHeading(AngleUnit.RADIANS);
+            if (hError < -Math.PI) {
+                hError += Math.PI * 2;
+            } else if (hError > Math.PI) {
+                hError -= Math.PI * 2;
             }
-
             return hPID.calculateAxisPID(hError, yawPGain, yawDGain, yawAccel, PIDTimer.seconds());
         }
         return 0;
@@ -182,8 +180,13 @@ public class GoBuildaDriveToPoint {
     private InBounds inBounds(Pose2D currPose, Pose2D trgtPose) {
         boolean xInBounds = currPose.getX(MM) > (trgtPose.getX(MM) - xyTolerance) && currPose.getX(MM) < (trgtPose.getX(MM) + xyTolerance);
         boolean yInBounds = currPose.getY(MM) > (trgtPose.getY(MM) - xyTolerance) && currPose.getY(MM) < (trgtPose.getY(MM) + xyTolerance);
-        boolean hInBounds = currPose.getHeading(RADIANS) > (trgtPose.getHeading(RADIANS) - yawTolerance) &&
-                currPose.getHeading(RADIANS) < (trgtPose.getHeading(RADIANS) + yawTolerance);
+        double hError = trgtPose.getHeading(AngleUnit.RADIANS) - currPose.getHeading(AngleUnit.RADIANS);
+        if (hError < -Math.PI) {
+            hError += Math.PI * 2;
+        } else if (hError > Math.PI) {
+            hError -= Math.PI * 2;
+        }
+        boolean hInBounds = (Math.abs(hError) < yawTolerance);
 
         if (xInBounds && yInBounds && hInBounds) {
             return InBounds.IN_BOUNDS;

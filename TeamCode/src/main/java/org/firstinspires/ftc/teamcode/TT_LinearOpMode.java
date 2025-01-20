@@ -16,18 +16,22 @@ public class TT_LinearOpMode extends LinearOpMode {
     static final Pose2D START_POSITION = new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.DEGREES, 0);
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         robot.init();
         waitForStart();
+        robot.extension.setTargetPosition(.9);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if (gamepad1.dpad_left) {
-                robot.odo.update();
-                robot.nav.driveTo(robot.odo.getPosition(),START_POSITION,0.7,3);
-                robot.setDrivePower(robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_FRONT), robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_FRONT),
-                        robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_BACK), robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_BACK));
+                if (robot.targetPosition != null) {
+                    robot.odo.update();
+                    robot.nav.driveTo(robot.odo.getPosition(), robot.targetPosition, 0.7, 3);
+                    robot.setDrivePower(robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_FRONT), robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_FRONT),
+                            robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.LEFT_BACK), robot.nav.getMotorPower(GoBuildaDriveToPoint.DriveMotor.RIGHT_BACK));
+                }
             } else {
+                robot.savePosition();
                 robot.driveRobot();
                 robot.drivelift();
                 robot.moveLiftArm();

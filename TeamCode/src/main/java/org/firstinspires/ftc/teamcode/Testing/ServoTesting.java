@@ -54,6 +54,8 @@ public class ServoTesting extends LinearOpMode {
     public Servo extensionSpin = null;
     public Servo liftArm = null;
     public Servo light = null;
+    public Servo test = null;
+    public Servo gripper = null;
     //DigitalChannel button;
     double servo_position;
 
@@ -63,6 +65,8 @@ public class ServoTesting extends LinearOpMode {
         EXTENSION,
         EXTENSION_ARM,
         EXTENSION_SPIN,
+        GRIPPER,
+        TEST,
         BUTTON
     }
     boolean dpadPressed = false;
@@ -77,6 +81,9 @@ public class ServoTesting extends LinearOpMode {
         extensionSpin = hardwareMap.get(Servo.class, "Extension Spin");
         liftArm = hardwareMap.get(Servo.class, "Lift Arm");
         light = hardwareMap.get(Servo.class, "Light");
+        gripper = hardwareMap.get(Servo.class, "Extension Gripper");
+        test = hardwareMap.get(Servo.class, "test");
+
         servo = liftArm;
         servo_position = servo.getPosition();
 
@@ -110,6 +117,16 @@ public class ServoTesting extends LinearOpMode {
                             servo_position = extensionSpin.getPosition();
                             break;
                         case EXTENSION_SPIN:
+                            stateMachine = StateMachine.GRIPPER;
+                            servo = gripper;
+                            servo_position = gripper.getPosition();
+                            break;
+                        case GRIPPER:
+                            stateMachine = StateMachine.TEST;
+                            servo = test;
+                            servo_position = test.getPosition();
+                            break;
+                        case TEST:
                             stateMachine = StateMachine.LIFT_ARM;
                             servo = liftArm;
                             servo_position = liftArm.getPosition();
@@ -136,7 +153,7 @@ public class ServoTesting extends LinearOpMode {
                 }
                 dpadPressed = false;
             }
-           // servo.setPosition(servo_position);
+            servo.setPosition(servo_position);
 
             // Display the current value
 
