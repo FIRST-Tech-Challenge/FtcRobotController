@@ -58,6 +58,10 @@ public class IntakeSlidesV1 {
     public boolean isIn(){
         return getCurrentPosition() == 135;
     }
+    public boolean isAllTheWayIn(){
+        return getCurrentPosition() == 40;
+    }
+
     public boolean isOut(){
         return getCurrentPosition() == 850;
     }

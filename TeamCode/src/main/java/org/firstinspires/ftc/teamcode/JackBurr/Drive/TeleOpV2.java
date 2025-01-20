@@ -492,10 +492,18 @@ public class TeleOpV2 extends OpMode {
                 deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LEVEL_TWO_ASCENT, 0.8);
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 break;
-
             case LEVEL_TWO_ASCENT:
-                deliverySlides.runLeftSlideToPosition(0, 0.8);
-                deliverySlides.runRightSlideToPosition(0, 0.8);
+                if(deliverySlides.getLeftSlidePosition() != 0 || deliverySlides.getRightSlidePosition() != 0) {
+                    deliverySlides.runLeftSlideToPosition(0, 0.8);
+                    deliverySlides.runRightSlideToPosition(0, 0.8);
+                }
+                else if(deliverySlides.getLeftSlidePosition() != 0 && deliverySlides.getRightSlidePosition() != 0){
+                    deliverySlides.runLeftSlideToPosition(0, 0.8);
+                    deliverySlides.runRightSlideToPosition(0, 0.8);
+                }
+                if(!intakeSlides.isAllTheWayIn()) {
+                    intakeSlides.intakeAllTheWayIn();
+                }
                 break;
 
             case UNDER_LOW_BAR:
