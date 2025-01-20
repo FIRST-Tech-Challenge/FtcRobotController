@@ -1,22 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous
-public class AutoBasket2024 extends DriveMethods {
-
-    double stateStartTime = -1;
+public class AutoHang2025 extends DriveMethods {
 
     enum State {
-        Finished,
         Unstarted,
-        RaiseArm,
-        StrafeRight,
         MoveForward,
+        RaiseArm,
         ExtendSlider,
-        OpenClaw
+        ExtraArm,
+        ExtraSlider,
+        OpenClaw,
+        Finished
     }
+    double stateStartTime = -1;
+
     State currentState = State.Unstarted;
 
     @Override
@@ -28,39 +27,30 @@ public class AutoBasket2024 extends DriveMethods {
     public void loop() {
         telemetry.addData("code", "running");
         telemetry.addData("time", "%.1f", getRuntime());
-        telemetry.addData("sliderLength","%.1f", (double) robot.sliderMotor.getCurrentPosition());
+        telemetry.addData("sliderLength", "%.1f", (double) robot.sliderMotor.getCurrentPosition());
         telemetry.addData("imu", "%.1f", robot.imu.getRobotYawPitchRollAngles().getYaw());
 
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
-                changeState(State.StrafeRight);
+                changeState(State.MoveForward);
                 break;
-            case StrafeRight:
-                omniDrive(0, 0.25, 0);
+            case MoveForward:
+                omniDrive(0.5, 0, 0);
 
-                if (getStateTime() >= 0.5) {
+                if (getStateTime() >= 0.7) {
                     omniDrive(0, 0, 0);
 
-                    changeState(State.MoveForward);
+                    changeState(State.RaiseArm);
                 }
                 break;
-//            case MoveForward:
-//                omniDrive(0.5, 0, 0);
-//
-//                if (getStateTime() >= 0.7) {
-//                    omniDrive(0, 0, 0);
-//
-//                    changeState(State.RaiseArm);
-//                }
-//                break;
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
                 if (robot.wormGearAngle() >= 50) {
                     robot.wormGear.setPower(0);
 
-                    changeState(State.ExtendSlider);
+                    changeState(AutoHang2025.State.ExtendSlider);
                 }
                 break;
             case ExtendSlider:
@@ -69,36 +59,35 @@ public class AutoBasket2024 extends DriveMethods {
                 setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
 
                 if (robot.sliderMotor.getCurrentPosition() >= 2000) {
-                    changeState(State.OpenClaw);
+                    changeState(State.ExtraArm);
                 }
+                break;
+            case ExtraArm:
+                robot.wormGear.setPower(-0.15);
+
+                if (robot.wormGearAngle() <= 45) {
+                    robot.wormGear.setPower(0);
+
+                    changeState(AutoHang2025.State.ExtraSlider);
+                }
+                break;
+            case ExtraSlider:
+                changeState(State.OpenClaw);
                 break;
             case OpenClaw:
                 robot.clawServo.setPosition(robot.CLAW_OPEN);
-                changeState(State.Finished);
+                changeState(AutoHang2025.State.Finished);
                 break;
             case Finished:
                 omniDrive(0, 0, 0);
                 break;
         }
-
     }
-    void changeState(State nextState) {
+    void changeState(AutoHang2025.State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();
     }
-
     double getStateTime() {
-       return getRuntime() - stateStartTime;
+        return getRuntime() - stateStartTime;
     }
-
-
-//        if (getRuntime() < 2) {
-//            omniDrive(0, 1, 0);
-//        } else if (getRuntime() < 4) {
-//            omniDrive(0, 0, 1);
-//        }
-//        else {
-//                omniDrive(0, 0, 0);
-//            }
-//        }
-    }
+}
