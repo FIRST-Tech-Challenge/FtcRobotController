@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
@@ -97,6 +100,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
         // Initialization Code Goes Here
 
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
+        //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+        odo.setPosition(new Pose2d(31, 61.875, Math.toRadians(180)));
 
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
@@ -117,9 +124,10 @@ public class MainTeleOpQ2 extends LinearOpMode{
         //Where the start button is clicked, put some starting commands after
         waitForStart();
         arm.MoveToHome();
-
+        odo.setPosition(new Pose2d(31, 61.875, Math.toRadians(180)));
+        telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         while(opModeIsActive()){ //while loop for when program is active
-
+            odo.update();
 
             //Drive code
             drivetrain.Drive();
@@ -256,14 +264,14 @@ public class MainTeleOpQ2 extends LinearOpMode{
 
             //Pose2d pos = odo.getPositionRR();
             //String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
-            //telemetry.update("Position", ()-> getPinpoint(odoGetPositionRR()));
+
 
             telemetry.update();
 
         }
 
     }
-    private String getPinpoint(Pose2d pos) {
-        return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+    private String getPinpoint(Pose2D pos) {
+        return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), (pos.getHeading(AngleUnit.DEGREES)));
     }
 }

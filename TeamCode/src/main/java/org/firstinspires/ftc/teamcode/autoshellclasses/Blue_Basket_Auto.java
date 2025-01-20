@@ -7,12 +7,15 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+
+import java.util.Locale;
 
 
 @Config
@@ -51,6 +54,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
         double rotation_speed = Math.toRadians(0.5);
 
+        GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
         Action driveToDrop1, driveToDrop2, driveToDrop3, driveToDrop4, samplePickup1, samplePickup2, samplePickup3, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
 
         driveToDrop1 = drive.actionBuilder(drive.pose)
@@ -260,8 +264,16 @@ public class Blue_Basket_Auto extends LinearOpMode {
 //                        driveToPark
                         )
         );
+        odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
+        //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
         while(opModeIsActive()) {
             // _leftFront.setPower(0.3);
+            odo.update();
+            Pose2d pos = odo.getPositionRR();
+            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+
             telemetry.update();
         }
     }
