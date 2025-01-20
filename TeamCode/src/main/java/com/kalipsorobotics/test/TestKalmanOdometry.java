@@ -28,7 +28,7 @@ public class TestKalmanOdometry extends LinearOpMode {
             // Filter the measurement
             Point filteredPoint = kalmanFilter.update(noisyMeasurement);
 
-            // Display data
+            telemetry.addLine("x: " + noisyMeasurement.x + "y: " + noisyMeasurement.y);
             telemetry.addLine("x: " + filteredPoint.x + "y: " + filteredPoint.y);
             telemetry.update();
         }
