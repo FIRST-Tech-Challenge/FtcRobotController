@@ -40,11 +40,8 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public boolean clawOpen = false;
+    public Pause easeTransfer = new Pause(0);
 
-    // boolean that controls whether wheel movements are flipped for making backwards movement easier
-    public boolean whyAgney = false;
-    public static boolean automaticallyPushSampleDuringTransfer = true;
     /**
      * Core robot class that manages hardware initialization and basic
      * functionality.
@@ -124,11 +121,10 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        int flipMovement = whyAgney ? -1 : 1;
-        double frontLeft = (drivePower + strafePower) * flipMovement + rotation;
-        double frontRight = (drivePower - strafePower) * flipMovement - rotation;
-        double rearLeft = (drivePower - strafePower) * flipMovement + rotation;
-        double rearRight = (drivePower + strafePower) * flipMovement - rotation;
+        double frontLeft = (drivePower + strafePower) * Settings.Movement.flip_movement + rotation;
+        double frontRight = (drivePower - strafePower) * Settings.Movement.flip_movement - rotation;
+        double rearLeft = (drivePower - strafePower) * Settings.Movement.flip_movement + rotation;
+        double rearRight = (drivePower + strafePower) * Settings.Movement.flip_movement - rotation;
 
         logger.update("FRONT LEFT", String.valueOf(frontLeft));
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
@@ -226,12 +222,15 @@ public class BaseRobot {
             }
 
             if (contextualActions.justToggleClaw) {
-                if (outtake.claw.opened && automaticallyPushSampleDuringTransfer) {
+                if (outtake.claw.opened && Settings.Movement.easeTransfer) {
                     intake.geckoWheels.outtake();
-                    pause(30);
-                    intake.geckoWheels.stop();
+                    easeTransfer = new Pause(30);
                 }
                 outtake.claw.toggle();
+            }
+
+            if (easeTransfer.shouldResume()) {
+                intake.geckoWheels.stop();
             }
 
             if (contextualActions.justShoulderUp) {
@@ -240,7 +239,7 @@ public class BaseRobot {
 
 
             if (contextualActions.justFlipMovement) {
-                whyAgney = !whyAgney;
+                Settings.Movement.flip_movement *= -1;
             }
 
         }
@@ -288,11 +287,17 @@ public class BaseRobot {
         }
     }
 
-    private void pause(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    private class Pause {
+        ElapsedTime timestamp;
+        long pauseTime;
+
+        Pause(long ms) {
+            timestamp = new ElapsedTime();
+            pauseTime = ms;
+        }
+
+        public boolean shouldResume() {
+            return pauseTime >= timestamp.milliseconds();
         }
     }
 }

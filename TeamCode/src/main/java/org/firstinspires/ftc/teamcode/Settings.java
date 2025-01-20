@@ -27,6 +27,10 @@ public class Settings {
         public static final double tileLengthFeet = 2;
         /** Default speed for autonomous movements */
         public static double default_autonomous_speed = 0.38;
+        /** Flips movement to make movement easier while the robot is backwards **/
+        public static int flip_movement = 1;
+        /** Determines if the gecko wheels outtake a little when closing the claw to ease transfer **/
+        public static boolean easeTransfer = true;
     }
 
     @Config
@@ -125,6 +129,8 @@ public class Settings {
             public static double MOVEMENT_POWER = 0.9;
 
             public static double FREAKY_MOVEMENT_POWER = 20;
+
+            public static boolean ENABLE_LOWER_LIMIT = true;
         }
 
         @Config

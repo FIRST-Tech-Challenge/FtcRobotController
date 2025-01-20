@@ -78,9 +78,9 @@ public class VerticalSlide implements ViperSlide {
 
     @Override
     public void decrement() {
-//        if (encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
+        if (!Settings.Hardware.VerticalSlide.ENABLE_LOWER_LIMIT || encoderTarget > VerticalPosition.TRANSFER.getValue() - 50) {
             encoderTarget -= Settings.Hardware.VerticalSlide.FREAKY_MOVEMENT_POWER;
-//        }
+        }
         setPosition(encoderTarget);
     }
 }
