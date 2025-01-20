@@ -25,94 +25,6 @@ import org.firstinspires.ftc.teamcode.subsystems.drivetrain.MecanumDrive;
 @Autonomous(name = "RoadRunnerMechanumTest")
 public class RoadRunnerMechanumTest extends LinearOpMode {
 
-    public class Lift {
-        private DcMotorEx lift;
-
-        public Lift(HardwareMap hardwareMap) {
-            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
-            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
-
-        public class LiftUp implements Action {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    lift.setPower(0.8);
-                    initialized = true;
-                }
-
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos < 3000) {
-                    return true;
-                } else {
-                    lift.setPower(0);
-                    return false;
-                }
-            }
-        }
-        public Action liftUp() {
-            return new LiftUp();
-        }
-
-        public class LiftDown implements Action {
-            private boolean initialized = false;
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                if (!initialized) {
-                    lift.setPower(-0.8);
-                    initialized = true;
-                }
-
-                double pos = lift.getCurrentPosition();
-                packet.put("liftPos", pos);
-                if (pos > 100.0) {
-                    return true;
-                } else {
-                    lift.setPower(0);
-                    return false;
-                }
-            }
-        }
-        public Action liftDown(){
-            return new LiftDown();
-        }
-    }
-
-    public class Claw {
-        private Servo claw;
-
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
-        }
-
-        public class CloseClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.55);
-                return false;
-            }
-        }
-        public Action closeClaw() {
-            return new CloseClaw();
-        }
-
-        public class OpenClaw implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(1.0);
-                return false;
-            }
-        }
-        public Action openClaw() {
-            return new OpenClaw();
-        }
-    }
-
 
     /* #################################################################
                         Actual Op Mode Running Phase
@@ -123,11 +35,10 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        Claw claw = new Claw(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
+        //Claw claw = new Claw(hardwareMap);
+        LiftActions lift = new LiftActions(hardwareMap);
 
         // vision here that outputs position
-        int visionOutputPosition = 1;
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .lineToYSplineHeading(33, Math.toRadians(0))
@@ -147,17 +58,14 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
                 .strafeTo(new Vector2d(48, 12))
                 .build();
 
-        // actions that need to happen on init; for instance, a claw tightening.
-        Actions.runBlocking(claw.closeClaw());
+        // TODO actions that need to happen on init; for instance, a claw tightening.
+        //Actions.runBlocking(claw.closeClaw());
 
 
         while (!isStopRequested() && !opModeIsActive()) {
-            telemetry.addData("Position during Init", visionOutputPosition);
+            telemetry.addData("Starting Position", initialPose);
             telemetry.update();
         }
-
-        telemetry.addData("Starting Position", visionOutputPosition);
-        telemetry.update();
 
         Action trajectoryActionChosen;
         trajectoryActionChosen = tab1.build();
@@ -166,15 +74,11 @@ public class RoadRunnerMechanumTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-
-
-
         Actions.runBlocking(
                 new SequentialAction(
                         trajectoryActionChosen,
                         new ParallelAction(
-                                lift.liftUp(),
-                                claw.openClaw()),
+                                lift.liftUp()),// TODO add actions to perform and also build trajectories
                         lift.liftDown(),
                         trajectoryActionCloseOut
                 )

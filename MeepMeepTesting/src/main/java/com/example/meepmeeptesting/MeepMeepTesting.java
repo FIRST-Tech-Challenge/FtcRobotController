@@ -9,6 +9,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -20,39 +21,17 @@ public class MeepMeepTesting {
                 .setDriveTrainType(DriveTrainType.MECANUM)
                 .build();
 
-        Pose2d initialPose = new Pose2d(56, -52, Math.toRadians(90));
+
+        Pose2d initialPose = new Pose2d(24, -61, Math.toRadians(90));
 
         // vision here that outputs position
         int visionOutputPosition = 1;
 
         TrajectoryActionBuilder tab1Traj = myBot.getDrive().actionBuilder(initialPose)
-                .waitSeconds(1)
-                .lineToYSplineHeading(-36, Math.toRadians(0))
-                .setTangent(Math.toRadians(90))
-                .setTangent(Math.toRadians(0))
-                .lineToX(32)
-                .strafeTo(new Vector2d(44.5, 30))
-                .turn(Math.toRadians(180))
-                .lineToX(47.5);
+                .waitSeconds(3)
+                .strafeTo(new Vector2d(57, -37));
 
         Action tab1 = tab1Traj.build();
-
-        Action tab2 = myBot.getDrive().actionBuilder(initialPose)
-                .lineToY(37)
-                .setTangent(Math.toRadians(0))
-                .lineToX(18)
-                .waitSeconds(3)
-                .setTangent(Math.toRadians(0))
-                .lineToXSplineHeading(46, Math.toRadians(180))
-                .waitSeconds(3)
-                .build();
-
-        Action tab3 = myBot.getDrive().actionBuilder(initialPose)
-                .lineToYSplineHeading(33, Math.toRadians(180))
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(46, 30))
-                .waitSeconds(3)
-                .build();
 
         Action trajectoryActionCloseOut = tab1Traj.fresh()
                 .strafeTo(initialPose.component1()).build();
