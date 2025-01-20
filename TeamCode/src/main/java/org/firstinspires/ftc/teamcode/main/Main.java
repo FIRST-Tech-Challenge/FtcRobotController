@@ -87,7 +87,7 @@ public class Main extends LinearOpMode {
     double oldTime = 0;
     int armLiftComp = 0;
     IMU imu;
-
+    boolean retractLift;
     SparkFunOTOS.Pose2D pos;
 
     @Override
@@ -103,8 +103,8 @@ public class Main extends LinearOpMode {
         {
             straferMovement();
             setArmLiftComp();
-            setArmTargetPosition();
-             pos = otos.getPosition();
+
+            pos = otos.getPosition();
             /* Here we handle the three buttons that have direct control of the intake speed.
             These control the continuous rotation servo that pulls elements into the robot,
             If the user presses A, it sets the intake power to the final variable that
@@ -190,8 +190,10 @@ public class Main extends LinearOpMode {
                 wristIn();
             }
 
-
+            setArmTargetPosition();
             runArm();
+
+
             /* Here we set the lift position based on the driver input.
             This is a.... weird, way to set the position of a "closed loop" device. The lift is run
             with encoders. So it knows exactly where it is, and there's a limit to how far in and
@@ -363,6 +365,7 @@ public class Main extends LinearOpMode {
     }
     public void armScoreSampleInLow() {
         armPosition = armDegreesToTicks(110);
+        retractLift = true;
     } // 90
     public void armAttachHangingHook() {
         armPosition = armDegreesToTicks(110);
@@ -528,8 +531,17 @@ public class Main extends LinearOpMode {
         armMotor.setTargetPosition(armPosition + armPositionFudgeFactor + armLiftComp);
     }
     public void runArm() {
-        ((DcMotorEx) armMotor).setVelocity(300); // 300
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // here we check if the lift should be retracted.
+        if (retractLift) {
+            liftCollapsed(); // we set the lift position to be collapsed
+            setLiftTargetPosition(); // set the position
+            runLift(); // run the motor
+            retractLift = false; // we set the retract lift variable to false
+        }
+        if (!liftMotor.isBusy()){ // if the lift motor is not busy retracting
+            ((DcMotorEx) armMotor).setVelocity(300);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // we finally run the arm motor
+        }
     }
     public void setLiftTargetPosition(){
         liftMotor.setTargetPosition(liftPosition);
