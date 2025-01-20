@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 /**
  * Command to recalibrate the odometry of the robot.
  */
-public class recalibrateOdometry extends CommandBase {
+public class RecalibrateOdometry extends CommandBase {
 
     // Constants for the Red and Blue Alliance wall positions and angles
     private static final double redAllianceXwall = -150.0;
@@ -46,7 +46,7 @@ public class recalibrateOdometry extends CommandBase {
      * Constructor for the recalibrateOdometry command.
      * Adds the odometry subsystem as a requirement.
      */
-    public recalibrateOdometry() {
+    public RecalibrateOdometry() {
         addRequirements(RobotContainer.odometry);
     }
 

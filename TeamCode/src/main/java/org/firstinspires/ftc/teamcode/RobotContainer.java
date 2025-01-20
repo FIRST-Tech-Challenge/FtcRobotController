@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Drive.ManualDrive;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
 import org.firstinspires.ftc.teamcode.Commands.SelectCommandOnMode;
-import org.firstinspires.ftc.teamcode.Commands.recalibrateOdometry;
+import org.firstinspires.ftc.teamcode.Commands.RecalibrateOdometry;
 import org.firstinspires.ftc.teamcode.Commands.resetLift;
 import org.firstinspires.ftc.teamcode.Subsystems.Blinkin;
 import org.firstinspires.ftc.teamcode.Subsystems.FrontTouch;
@@ -189,7 +189,7 @@ public class RobotContainer {
 
 
         // Bind a command to the front Touch Trigger
-        frontTouchTrigger.whenActive(new recalibrateOdometry());
+        frontTouchTrigger.whenActive(new RecalibrateOdometry());
 
 
 
@@ -231,7 +231,7 @@ public class RobotContainer {
 
         // perform any autonomous-specific initialization here
         // Bind a command to the front Touch Trigger
-        frontTouchTrigger.whenActive(new recalibrateOdometry());
+        frontTouchTrigger.whenActive(new RecalibrateOdometry());
 
     }
 
