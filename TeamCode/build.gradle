@@ -25,10 +25,28 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
-                                                                                                                                      //Lonan was here :D
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java']
+    }
+    test {
+        java.srcDirs = ['src/test/java']
+    }
+}
+
+
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'com.google.ar:core:1.45.0'
+    testImplementation 'junit:junit:4.12'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.ftclib.ftclib:core:2.1.1'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.withType(Test) {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
