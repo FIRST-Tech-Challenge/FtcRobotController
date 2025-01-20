@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Devices {
-        final double CLAW_OPEN = .864;
-        final double CLAW_CLOSED = 1.05;
+        final double CLAW_OPEN = 0.5;
+        final double CLAW_CLOSED = 0.75;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
 
