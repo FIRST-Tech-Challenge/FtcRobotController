@@ -49,6 +49,9 @@ public class ElevatorVertical {
                     case PUTSPECIMEN:
                         wantedPos = ElevatorVerticalConstants.PutSpecimenPos;
                         break;
+                    case DEPLETE:
+                        wantedPos = ElevatorVerticalConstants.DepletePos;
+                        break;
                 }
                 lastWantedState = wantedState;
             }

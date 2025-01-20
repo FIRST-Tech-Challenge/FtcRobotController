@@ -15,8 +15,6 @@ public class Intake {
     public static void init(HardwareMap hardwareMap) {
         rightIntakeServo = hardwareMap.servo.get("rightIntakeServo");
         leftIntakeServo = hardwareMap.servo.get("leftIntakeServo");
-        //rightWristServo = hardwareMap.servo.get("rightWristServo");
-        //leftWristServo = hardwareMap.servo.get("leftWristServo");
     }
 
     public static void operate(IntakeState state) {

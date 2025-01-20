@@ -16,7 +16,7 @@ public class ElevatorHorizontical {
         elevatorMotor = hardwareMap.get(DcMotor.class,"horElevator");
     }
 
-    public static void opreate(ElevatorHorizonticalState elevatorHorizonticalState, final float rightJoyStick, Telemetry telemetry){
+    public static void opreate(ElevatorHorizonticalState elevatorHorizonticalState, float rightJoyStick, Telemetry telemetry){
                 switch(elevatorHorizonticalState){
                     case OPEN:
                         wantedPos = ElevatorHorizonticalConstants.openPos;

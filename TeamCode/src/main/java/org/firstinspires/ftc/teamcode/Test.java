@@ -46,8 +46,6 @@ ElevatorHorizonticalState elevatorHorizonticalState = ElevatorHorizonticalState.
         if (gamepad1.a) {wristState = wristState.TRANSFER;}
         if (gamepad1.b) {wristState = wristState.INTAKE;}
         if (gamepad1.y) {wristState = wristState.DEPLETE;}
-        if (gamepad1.left_bumper) {Arm.open(telemetry);}
-        if (gamepad1.right_bumper) {Arm.close(telemetry);}
         telemetry.addData("arm position",armServo.getPosition());
 
 //        if (gamepad1.dpad_down) {elevatorState = ElevatorState.INTAKE;}

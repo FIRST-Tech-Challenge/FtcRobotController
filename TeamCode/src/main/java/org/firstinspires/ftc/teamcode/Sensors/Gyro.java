@@ -1,7 +1,15 @@
 package org.firstinspires.ftc.teamcode.Sensors;
 
 import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class Gyro {
     public static BHI260IMU imu;
@@ -10,26 +18,35 @@ public class Gyro {
 
 
 
-    public static void init(HardwareMap hardwareMap) {/*
-        BHI260IMU.Parameters parameters = new BHI260IMU.Parameters();
-        parameters.angleUnit = BHI260IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BHI260IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BHI260IMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    public static void init(HardwareMap hardwareMap) {
+        BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP
+        ));
+        /*
+        BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(new RevHubOrientationOnRobot(
+                new Orientation(
+                        AxesReference.INTRINSIC,
+                        AxesOrder.ZYX,
+                        AngleUnit.DEGREES,
+                        90,
+                        0,
+                        90,
+                        0  // acquisitionTime, not used
+                )
+        ));
+         */
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         imu.initialize(parameters);
-        */
+
     }
 
     public static void resetGyro(){
-        //resetAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        resetAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
     public static double getAngle() {
-//        telemetry.addData("angle", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - lastAngle );
-        //return imu.getAngularOrientation(AxesReference.INTRINSIC , AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - resetAngle;\
-        return 0;
+        return imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle - resetAngle;
+
     }
 
 
