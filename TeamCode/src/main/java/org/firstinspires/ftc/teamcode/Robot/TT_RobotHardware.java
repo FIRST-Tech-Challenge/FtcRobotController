@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -57,6 +58,7 @@ public class TT_RobotHardware {
 
     public GoBuildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public GoBuildaDriveToPoint nav; //OpMode member for the point-to-point navigation class
+    public Pose2D targetPosition;
     public double MaxPowerAdjustment = 1;
 
     public DigitalChannel liftSafetyButton = null;
@@ -75,6 +77,9 @@ public class TT_RobotHardware {
     private boolean liftArmUp = true;
     private boolean liftArmButtonPress = false;
 
+    private boolean pickupGestureInitiated = false;
+    private ElapsedTime gestureTimer = new ElapsedTime();
+
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO = 0.5;
     public static final double HAND_SPEED = 0.02;  // sets rate to move servo
@@ -82,9 +87,10 @@ public class TT_RobotHardware {
     public static final double ARM_DOWN_POWER = -0.45;
     private boolean liftEnabled = false;
     public int liftHeight = 0;
-    public int liftHeightMax = 1300;
+    public int liftHeightMax = 1250;
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
+    public int liftOffset = 0;
     public double effectivePower = 0;
     public double liftPowerMax = 1;
 
@@ -160,7 +166,8 @@ public class TT_RobotHardware {
         extension.setTargetPosition(1.0);
         extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension Spin", .85, 0.95);
         extensionSpin.setTargetPosition(0.5);
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension Arm", 0.66, 0.9);
+        // Extension Arm - higher value is extended.
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension Arm", 0.72, 1);
         extensionArm.setTargetPosition(0);
         extensionGripper = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Gripper"), "Extension Gripper", 0.55, .85);
         extensionGripper.setTargetPosition(1);
@@ -172,7 +179,11 @@ public class TT_RobotHardware {
         myOpMode.telemetry.update();
         light.setTargetPosition(.5);
     }
-
+    public void savePosition() {
+        if (myOpMode.gamepad1.left_stick_button) {
+            targetPosition = odo.getPosition();
+        }
+    }
     public void moveLiftArm() {
         if (myOpMode.gamepad1.right_stick_button) {
             if (!liftArmButtonPress) {
@@ -193,37 +204,36 @@ public class TT_RobotHardware {
     public void moveExtensionArm() {
         if (myOpMode.gamepad1.b) {
             // positioned over blocks for easy viewing
-            extensionArm.setTargetPosition(.9);
+            extensionArm.setTargetPosition(.6);
+            extensionGripper.setTargetPosition(.5);
         } else if (myOpMode.gamepad1.a) {
             // pickup the block
-            extensionArm.setTargetPosition(1);
+            if (pickupGestureInitiated == false) {
+                pickupGestureInitiated = true;
+                gestureTimer.reset();
+                extensionArm.setTargetPosition(1);
+            }
         } else if (myOpMode.gamepad1.x) {
             // bring arm back for returning block.
             extensionArm.setTargetPosition(0);
         }
-        /*
-            if (!extensionArmButtonPress) {
-                light.setTargetPosition(.38);
-                if (extensionArmUp) {
-                    extensionArm.setTargetPosition(1);
-                } else {
-                    extensionArm.setTargetPosition(0);
-                }
-                extensionArmUp = !extensionArmUp;
+        if (pickupGestureInitiated) {
+            if (gestureTimer.seconds() > .2) {
+                extensionGripper.setTargetPosition(0);
             }
-            extensionArmButtonPress = true;
-        } else {
-            extensionArmButtonPress = false;
+            if (gestureTimer.seconds() > .3) {
+                extensionArm.setTargetPosition(0.6);
+                pickupGestureInitiated = false;
+            }
         }
-        */
     }
 
     public void moveExtension() {
 
         if (myOpMode.gamepad1.right_trigger > 0) {
-            extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 20));
+            extension.setTargetPosition(extension.getPosition() - (myOpMode.gamepad1.right_trigger / 30));
         } else if (myOpMode.gamepad1.left_trigger > 0) {
-            extension.setTargetPosition(extension.getPosition() + (myOpMode.gamepad1.left_trigger / 20));
+            extension.setTargetPosition(extension.getPosition() + (myOpMode.gamepad1.left_trigger / 30));
         } else {
             extension.setTargetPosition(extension.getPosition());
         }
@@ -256,6 +266,7 @@ public class TT_RobotHardware {
             if (myOpMode.gamepad1.dpad_down) {
                 light.setTargetPosition(.6);
                 setLiftPosition(liftHeightMin);
+
                 //raiseLift();
             } else if (myOpMode.gamepad1.dpad_up) {
                 light.setTargetPosition(.6);
@@ -266,8 +277,13 @@ public class TT_RobotHardware {
                 setLiftPosition(750);
                 //lowerLift();
             }
+
+            if (leftLift.getCurrentPosition() < 25 && leftLift.getTargetPosition() < 25) {
+                leftLift.setPower(0);
+                rightLift.setPower(0);
+            }
+
         }
-        //setLiftPosition((int)myOpMode.gamepad1.right_trigger * liftHeightMax );
     }
 
     // Lift
@@ -287,8 +303,15 @@ public class TT_RobotHardware {
         int liftSafetyCheck = 0;
 
         // Height Limits Check
+        if (liftSafetyButton.getState() == false)
+        {
+            liftHeightMin = leftLift.getCurrentPosition();
+            liftOffset = leftLift.getCurrentPosition() - rightLift.getCurrentPosition();
+        }
+
         if (position > liftHeightMax) position = liftHeightMax;
         else if (position < liftHeightMin) position = liftHeightMin;
+
 
         // Height Limit approaching - Power Check
         liftSafetyCheck = liftHeightMax - leftLift.getCurrentPosition();
@@ -311,7 +334,7 @@ public class TT_RobotHardware {
         leftLift.setPower(effectivePower);
         rightLift.setPower(effectivePower);
         leftLift.setTargetPosition(position);
-        rightLift.setTargetPosition(position);
+        rightLift.setTargetPosition(position-liftOffset);
 
 
         return position;
@@ -375,7 +398,8 @@ public class TT_RobotHardware {
 
     public void displayTelemetry() {
         try {
-            myOpMode.telemetry.addData("Lift", "Lift Height: %4d", liftHeight);
+            myOpMode.telemetry.addData("Lift", "Left Lift: %4d Right Lift: %4d Power %1.2f", leftLift.getCurrentPosition(), rightLift.getCurrentPosition(), leftLift.getPower());
+            myOpMode.telemetry.addData("Lift Safety", "Button Pressed, %s", liftSafetyButton.getState());
             Pose2D pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             myOpMode.telemetry.addData("Position", data);

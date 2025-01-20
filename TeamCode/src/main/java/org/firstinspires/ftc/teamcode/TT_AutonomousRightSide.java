@@ -39,22 +39,22 @@ public class TT_AutonomousRightSide extends LinearOpMode {
     }
 
     // REMEMBER TO ADD 50 DISTANCE TO Y AXIS MOVING RIGHT
-    int MAX_FORWARD_POSITION = 1250;
+    int MAX_FORWARD_POSITION = 1200;
     final Pose2D TARGET_SPECIMEN_DROP_PREPARE = new Pose2D(DistanceUnit.MM, calcXCoordinate(-300), 0, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_DROP = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), 0, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_DROP_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), -100, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_DROP_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), -200, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_DROP_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), -300, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-675), 655, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-625), 500, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-200)), 655, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 850, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 925, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-200)), 900, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 925, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-500)), 900, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_7 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1100, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_8 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 1150, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-200)), 1100, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_8 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 1150, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-500)), 1100, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_10 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1340, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_11 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 1340, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_11 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 1340, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_PREPARE = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 728, AngleUnit.DEGREES, 180);
     final Pose2D TARGET_SPECIMEN_PICKUP = new Pose2D(DistanceUnit.MM, calcXCoordinate(0), 728, AngleUnit.DEGREES, 180);
     final Pose2D TARGET_50 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-100), 0, AngleUnit.DEGREES, 0);
@@ -64,11 +64,11 @@ public class TT_AutonomousRightSide extends LinearOpMode {
         robot.init();
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
-
         // Wait for the game to start (driver presses START)
         waitForStart();
         resetRuntime();
 
+        robot.extensionArm.setTargetPosition(.25);
         while (opModeIsActive()) {
             robot.odo.update();
 
@@ -77,7 +77,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     //the first step in the autonomous
                     stateMachine = StateMachine.DRIVE_TO_DROP_PREPARE_1;
                     robot.setLiftPosition(robot.liftHeightMax);
-                    sleep(250);
+                    sleep(150);
                     break;
                 case DRIVE_TO_DROP_PREPARE_1:
                     robot.setLiftPosition(robot.liftHeightMax);
@@ -130,7 +130,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     }
                     break;
                 case DRIVE_TO_TARGET_4:
-                    autonomousPower = .7;
+                    autonomousPower = 1;
                     if (driveToTarget(TARGET_4, 0, "Move Right to first block")) {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_5;
                     }
@@ -148,7 +148,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     break;
 
                 case DRIVE_TO_TARGET_7:
-                    autonomousPower = .7;
+                    autonomousPower = 1;
                     if (driveToTarget(TARGET_7, 0, "Move Right to second block")) {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_8;
                     }
@@ -166,7 +166,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     break;
 
                 case DRIVE_TO_TARGET_10:
-                    autonomousPower = .7;
+                    autonomousPower = 1;
                     if (driveToTarget(TARGET_10, 0, "Move Right to third block")) {
                         stateMachine = StateMachine.DRIVE_TO_TARGET_11;
                     }
@@ -179,7 +179,7 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     }
                     break;
                 case DRIVE_TO_SPECIMEN_PREPARE_1:
-                    if (driveToTarget(TARGET_SPECIMEN_PREPARE, 0.2, "Prepare for Specimen Pickup")) {
+                    if (driveToTarget(TARGET_SPECIMEN_PREPARE, 0, "Prepare for Specimen Pickup")) {
                         stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_1;
                     }
                     break;
@@ -213,9 +213,9 @@ public class TT_AutonomousRightSide extends LinearOpMode {
         dropCount = dropCount + 1;
         robot.liftPowerMax = .4;
         robot.setLiftPosition(robot.liftHeightMax - 600);
-        sleep(300);
-        robot.setLiftPosition(0);
-        robot.liftPowerMax = 1;
+        sleep(250);
+        robot.setLiftPosition(10);
+        robot.liftPowerMax = .4;
     }
 
     private boolean driveToTarget(Pose2D target, double holdTime, String message) {
