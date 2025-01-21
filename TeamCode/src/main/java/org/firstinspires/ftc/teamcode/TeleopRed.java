@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 /**
  * TeleOp for RED alliance
  */
-@TeleOp(name="Teleop-Red", group="7592")
+@TeleOp(name="Teleop", group="7592")
 //@Disabled
 public class TeleopRed extends Teleop {
 

@@ -54,8 +54,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_90        = 0.90;    //
     static final double  TURN_SPEED_100       = 1.00;    //
     static final double STRAFE_MULTIPLIER = 1.5;
-    static final double MIN_SPIN_RATE      = 0.06;    // Minimum power to turn the robot
-    static final double MIN_DRIVE_POW      = 0.06;    // Minimum speed to move the robot
+    static final double MIN_SPIN_RATE      = 0.04;    // Minimum power to turn the robot
+    static final double MIN_DRIVE_POW      = 0.02;    // Minimum speed to move the robot
     static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
 
     // NOTE: Initializing the odometry global X-Y and ANGLE to 0-0 and 0deg means the frame of reference for all movements is
@@ -1140,7 +1140,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                                 double speedMax, int driveType) {
 
         // Convert from cm to inches
-        double errorMultiplier = 0.037;
+        double errorMultiplier = 0.044;  // ramp down from 100% starting at 22" from target
         double speedMin = MIN_DRIVE_MAGNITUDE;
         double allowedError = (driveType == DRIVE_THRU) ? 2.50 : 0.5;
 

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
-@Autonomous(name="Autonomous Left-Red", group="7592", preselectTeleOp = "Teleop-Red")
+@Autonomous(name="Autonomous Left 1+3", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
 public class AutonomousLeftRed extends AutonomousBase {
 
@@ -77,14 +77,14 @@ public class AutonomousLeftRed extends AutonomousBase {
         // UNIT TEST: The following methods verify our basic robot actions.
         // Comment them out when not being tested.
 //      testGyroDrive();
-//      unitTestOdometryDrive();
+        unitTestOdometryDrive();
 //      timeArmMovement();
         //---------------------------------------------------------------------------------
 
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
         // Comment it out if running one of the unit tests above.
-        mainAutonomous();
+//      mainAutonomous();
         //---------------------------------------------------------------------------------
 
         telemetry.addData("Program", "Complete");
@@ -106,6 +106,21 @@ public class AutonomousLeftRed extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     // TEST CODE: Verify odometry-based motion functions against a tape measure
     private void unitTestOdometryDrive() {
+        telemetry.addData("Target", "x=24.0, y=0.0f, 0.00 deg (100%)");
+        // reset our timer and drive forward 20"
+        autonomousTimer.reset();
+        driveToPosition( 24.0, 0.0, 0.0, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_TO );
+        double driveTime = autonomousTimer.milliseconds() / 1000.0;
+        performEveryLoop();  // ensure our odometry is updated
+        telemetry.addData("Odometry", "x=%.2f, y=%.2f, %.2f deg", robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, Math.toDegrees(robotOrientationRadians) );
+        telemetry.addData("Drive Time", "%.3f sec", driveTime );
+        telemetry.update();
+        sleep(30000);
+/*
+        telemetry.addData("Target", "x=%.2f, y=%.2f, %.2f deg (100%)", pos_x, pos_y, pos_angle );
+*/
+
+/*
         // Drive forward 12"
         driveToPosition( 12.0, 0.0, 0.0, DRIVE_SPEED_20, TURN_SPEED_20, DRIVE_TO );
         // Strafe right 12"
@@ -117,6 +132,7 @@ public class AutonomousLeftRed extends AutonomousBase {
                 robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, toDegrees(robotOrientationRadians) );
         telemetry.update();
         sleep( 7000 );
+ */
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
