@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomus;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,34 +7,30 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.ConstsForTeleskope;
+import org.firstinspires.ftc.teamcode.Camera.Detector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.io.File;
-import java.util.ArrayList;
 
 
 @Disabled
 @Autonomous
-public class AutoMethods extends LinearOpMode implements Inter{
+public class AutoMethods extends LinearOpMode implements ConstsForTeleskope {
     int a = 1;
     double d = 1.6564;
 
@@ -92,7 +87,6 @@ public class AutoMethods extends LinearOpMode implements Inter{
 
         s5 = op.hardwareMap.get(Servo.class, "s5");
 
-        s5.setPosition(OPEN);
 
         EnX1 = op.hardwareMap.get(DcMotor.class, "En1");
         EnY2 = op.hardwareMap.get(DcMotor.class, "En2");
@@ -419,14 +413,14 @@ public class AutoMethods extends LinearOpMode implements Inter{
 //    }
 
     public void close(){
-        s5.setPosition(CLOSE);
+
     }
 
 
 
     public void open(){
 
-        s5.setPosition(OPEN);
+
     }
 
 

@@ -2,11 +2,9 @@ package org.firstinspires.ftc.teamcode.Camera.Childrens.PipeLines;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Camera.Parents.Pipeline;
-import org.firstinspires.ftc.teamcode.Xolodilnik;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 
