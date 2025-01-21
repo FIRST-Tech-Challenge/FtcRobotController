@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-
+//spider
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Devices {
-    final double CLAW_OPEN = 0.864;
+    final double CLAW_OPEN = 0.750;
     final double CLAW_CLOSED = 1.05;
 
         final double MIN_SLIDER_TICKS = 10; // chosen just to be safe
