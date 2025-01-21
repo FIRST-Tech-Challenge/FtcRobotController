@@ -12,6 +12,8 @@ public class GetSlidesEncoderPos extends OpMode {
     public void init() {
         leftSlides = hardwareMap.get(DcMotor.class, "deliverySlideL");
         rightSlides = hardwareMap.get(DcMotor.class, "deliverySlideR");
+        leftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

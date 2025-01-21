@@ -494,12 +494,12 @@ public class TeleOpV2 extends OpMode {
                 break;
             case LEVEL_TWO_ASCENT:
                 if(deliverySlides.getLeftSlidePosition() != 0 || deliverySlides.getRightSlidePosition() != 0) {
-                    deliverySlides.runLeftSlideToPosition(0, 0.8);
-                    deliverySlides.runRightSlideToPosition(0, 0.8);
+                    deliverySlides.runLeftSlideToPosition(0, 1);
+                    deliverySlides.runRightSlideToPosition(0, 1);
                 }
                 else if(deliverySlides.getLeftSlidePosition() != 0 && deliverySlides.getRightSlidePosition() != 0){
-                    deliverySlides.runLeftSlideToPosition(0, 0.8);
-                    deliverySlides.runRightSlideToPosition(0, 0.8);
+                    deliverySlides.runLeftSlideToPosition(0, 1);
+                    deliverySlides.runRightSlideToPosition(0, 1);
                 }
                 if(!intakeSlides.isAllTheWayIn()) {
                     intakeSlides.intakeAllTheWayIn();
@@ -670,7 +670,7 @@ public class TeleOpV2 extends OpMode {
             case HOLD_SAMPLE_OUT:
                 return SystemStatesV1.START;
             case HOVER_OVER_SAMPLE:
-                return SystemStatesV1.HOVER_LOW;
+                return SystemStatesV1.DOWN_ON_SAMPLE;
             case HOVER_LOW:
                 return SystemStatesV1.DOWN_ON_SAMPLE;
             case DOWN_ON_SAMPLE:
