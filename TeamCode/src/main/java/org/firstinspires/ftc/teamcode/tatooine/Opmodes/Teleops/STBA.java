@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 
 import java.util.ArrayList;
 import java.util.List;
-@Disabled
 @TeleOp
 public class STBA extends LinearOpMode {
 
@@ -68,7 +67,7 @@ public class STBA extends LinearOpMode {
                 lockWrist = !lockWrist;
             }
             if (!lockWrist){
-                wrist.setPosAng(gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)- gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+                wrist.setPosAng(-gamepadEx2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) + gamepadEx2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)+0.5);
             }
             if (gamepadEx2.getButton(GamepadKeys.Button.CROSS)) {
                 wrist.home();
@@ -80,7 +79,7 @@ public class STBA extends LinearOpMode {
                 wrist.scoreSample();
             }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)){
-               wrist.open();
+               wrist.stright();
             }
             if (gamepadEx2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 intake.setPowerFun(1);

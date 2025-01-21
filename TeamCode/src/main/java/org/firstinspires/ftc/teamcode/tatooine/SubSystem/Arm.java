@@ -27,8 +27,8 @@ public class Arm {
     private static final String SUBSYSTEM_NAME = "Arm";
 
     // PID Tolerances
-    public static double ANGLE_TOLERANCE = 2.5;// degrees
-    private static final double EXTEND_TOLERANCE = 2;   // centimeters or appropriate unit
+    public static double ANGLE_TOLERANCE = 3;// degrees
+    private static final double EXTEND_TOLERANCE = 3;   // centimeters or appropriate unit
 
     // Encoder Counts Per Revolution (CPR)
     private static final double ANGLE_CPR = 28.0 * 70.0 * (34.0/16.0); // Arm angle motor
@@ -36,7 +36,7 @@ public class Arm {
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
-    private static final double ANGLE_OFFSET = -8;  // degrees, initial offset
+    private static double ANGLE_OFFSET = 30;  // degrees, initial offset
 
     //PID
 
@@ -55,6 +55,7 @@ public class Arm {
 
     private final static double MIN_EXTEND = 37;
 
+
     // ---------------------------------------------------------------------------------------------
     // Hardware Components
     // ---------------------------------------------------------------------------------------------
@@ -68,12 +69,11 @@ public class Arm {
     // PID Controllers
     // ---------------------------------------------------------------------------------------------
     public static PIDFController anglePID = new PIDFController(0.021, 0, 0, 0);
-    private final PIDFController extendPID = new PIDFController(0.2, 0, 0, 0);
+    private final PIDFController extendPID = new PIDFController(0.1, 0, 0.0001, 0);
 
     // ---------------------------------------------------------------------------------------------
     // State Variables
     // ---------------------------------------------------------------------------------------------
-    public static double EXTENDTIMEOUT = 5;
     private final boolean isDebugMode;
     // ---------------------------------------------------------------------------------------------
     // Telemetry
@@ -93,7 +93,7 @@ public class Arm {
         this.telemetry = opMode.telemetry;
         this.isDebugMode = isDebugMode;
 
-        // Retrieve motors from hardware map
+        // Retrieve motors from harare map
         this.angleLeft = opMode.hardwareMap.get(DcMotorEx.class, "AL");
         this.angleRight = opMode.hardwareMap.get(DcMotorEx.class, "AR");
         this.extendLeft = opMode.hardwareMap.get(DcMotorEx.class, "EL");
@@ -141,7 +141,7 @@ public class Arm {
         // Configure PID tolerances
         anglePID.setTolerance(ANGLE_TOLERANCE);
         extendPID.setTolerance(EXTEND_TOLERANCE);
-        extendPID.setTimeout(EXTENDTIMEOUT);
+        extendPID.setTimeout(5);
 
         // Reset encoders at initialization
         resetEncoders();
@@ -214,11 +214,19 @@ public class Arm {
      * @return the arm angle in degrees (average of both motors)
      */
     public double getAngle() {
-        double angle = getLeftAngle();
+        double angle = (getLeftAngle());
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Get Angle (Average)", angle);
 
         return angle;
+    }
+
+    public static double getAngleOffset() {
+        return ANGLE_OFFSET;
+    }
+
+    public static void setAngleOffset(double angleOffset) {
+        ANGLE_OFFSET = angleOffset;
     }
 
     /**
@@ -407,8 +415,7 @@ public class Arm {
      * Inner class representing an Action to move the arm extension to a specific setpoint.
      */
     public class MoveExtension implements Action {
-        private final double goal;
-
+        private double goal;
         public MoveExtension(double goal) {
             this.goal = goal;
             extendPID.reset();
@@ -416,12 +423,8 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//            if (isDebugMode){
-//                extendPID.setP(KP);
-//                extendPID.setI(KI);
-//                extendPID.setD(KD);
-//            }
-            double power = extendPID.calculate(getExtend(), goal);
+            extendPID.setSetPoint(goal);
+            double power = extendPID.calculate(getExtend());
             setPowerExtend(power);
 
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
@@ -446,11 +449,6 @@ public class Arm {
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             double angle = getAngle();
             double pidPower = anglePID.calculate(angle);
-            //limits power for robot to not flip
-            if (pidPower>0.5 && angle >70){
-                pidPower = 0.3;
-            }
-            // If we're moving downward (pidPower < 0), set feedforward to zero
             double feedforward = calculateF();
             setPowerAngle(pidPower + feedforward);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
@@ -473,7 +471,7 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            anglePID.setSetPoint(goal);
+            anglePID.setSetPoint(this.goal);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", goal);
             return !anglePID.atSetPoint();
         }

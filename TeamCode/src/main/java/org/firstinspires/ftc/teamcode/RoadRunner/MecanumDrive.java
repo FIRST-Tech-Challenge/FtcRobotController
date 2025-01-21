@@ -221,17 +221,17 @@ public final class MecanumDrive {
         //public double inPerTick = 0.0029493101;
         // public double inPerTick = UnitConverter.convert(319.3, unit.CM,unit.INCHES);
 
-        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) / 233549;
-        public double lateralInPerTick = 0.00037820542457487835;
+        public double inPerTick = UnitConverter.convert(315, unit.CM, unit.INCHES) / 233353;
+        public double lateralInPerTick = 0.0002968932740733096;
 
 
         //public double trackWidthTicks = 4537.917767677472;
-        public double trackWidthTicks = 26758.093029505824;
+        public double trackWidthTicks = 28193.156296462217;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.3568357562763138;
-        public double kV = 0.00010730205596792616;
-        public double kA = 0.00003;
+        public double kS = 1.2511917602452831;
+        public double kV = 0.00010423882014137047;
+        public double kA = 0.00004;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 60;
@@ -243,14 +243,14 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0;
-        public double lateralGain = 0;
-        public double headingGain = 0; // shared with turn
+        public double axialGain = 5;
+        public double lateralGain = 5.5;
+        public double headingGain = 5; // shared with turn
 
-        public double axialVelGain = 0;
+        public double axialVelGain = 1;
 
-        public double lateralVelGain = 0;
-        public double headingVelGain = 0; // shared with turn
+        public double lateralVelGain = 1;
+        public double headingVelGain = 1; // shared with turn
     }
 
     public class DriveLocalizer implements Localizer {

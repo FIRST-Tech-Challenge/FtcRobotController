@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -58,9 +59,9 @@ public class StupidActionTeleOp extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        arm = new Arm(this, true);
+        arm = new Arm(this, false);
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        wrist = new Wrist(this, true);
+        wrist = new Wrist(this, false);
         wrist.setPosAng(0.5);
         intake = new Intake(this, isRed, false);
         camera = new Camera(this, true, true);
@@ -88,7 +89,7 @@ public class StupidActionTeleOp extends LinearOpMode {
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.setAngle(0));
-                wrist.home();
+                wrist.stright();
                 doOne = false;
             }
             drive.fieldDrive(new Pose2d(
@@ -127,20 +128,21 @@ public class StupidActionTeleOp extends LinearOpMode {
                 intaking = true;
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(new SequentialAction(arm.setAngle(15 * ((arm.getMinExtend() + arm.getExtend())) / arm.getMinExtend()), new InstantAction(() -> wrist.openMin()), intake.intake(), new SleepAction(2), arm.setAngle(-8), new SleepAction(2), intake.setPowerAction(0)));
+                runningActions.add(new SequentialAction(arm.setAngle(20), new InstantAction(() -> wrist.openMin()), intake.intake(), new SleepAction(2), arm.setAngle(-8), new SleepAction(2), intake.setPowerAction(0)));
             }   else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_UP)){
                 lockAngle = true;
                 lockExtend = true;
                 scoreSample = true;
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(new SequentialAction(arm.setAngle(90), new InstantAction(()-> wrist.openMin()), new SleepAction(1), arm.setExtension(Arm.getMaxExtend()), new InstantAction(()-> wrist.scoreSample()), intake.outtake()));
+                runningActions.add(new SequentialAction(new ParallelAction(arm.setAngle(90), arm.setExtension(Arm.getMaxExtend())), new InstantAction(()-> wrist.scoreSample()), intake.outtake()));
                 }
             else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN) && intaking) {
                 lockAngle = true;
                 lockExtend = true;
                 intaking = false;
                 runningActions.clear();
+                runningActions.add(intake.setPowerAction(0));
                 runningActions.add(arm.moveAngle());
                 runningActions.add(new SequentialAction(arm.setAngle(15), new InstantAction(()->wrist.stright()),new InstantAction(()-> wrist.moveToAngle(60)),  arm.setExtension(0) , new InstantAction(()-> wrist.home()), arm.setAngle(0)));
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.DPAD_DOWN) && scoreSample) {
