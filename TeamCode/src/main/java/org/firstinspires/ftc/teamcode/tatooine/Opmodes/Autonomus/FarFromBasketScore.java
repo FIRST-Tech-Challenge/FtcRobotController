@@ -30,6 +30,7 @@ public class FarFromBasketScore extends LinearOpMode {
         wrist.setPosAng(0.5);
         Arm arm = new Arm(this, false);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
+
                 .stopAndAdd(new InstantAction(wrist::stright))
                 .afterTime(0, new ParallelAction(arm.setAngle(90), arm.setExtension(5)))
                 .splineToLinearHeading(new Pose2d(4, -24-9, Math.toRadians(90)), Math.toRadians(90))
