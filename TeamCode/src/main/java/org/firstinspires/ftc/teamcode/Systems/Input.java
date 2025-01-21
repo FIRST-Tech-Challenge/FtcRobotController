@@ -127,28 +127,19 @@ public class Input {
 
 
             //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
-
-            double realPower;
-            if ((motors.getUpArmPosition() <= 0) && ( power <= 0) && (motors.getArmPosition() > 520)) {
-                realPower = 0;
-            }
-            else{
-            if ((motors.getUpArmPosition() <= 0.2*motors.getReachingUpArmPosition()) && ( power <= 0) && (motors.getArmPosition() < 350)) {
-                realPower = 0;
-            }
-            else{
-            if ((motors.getUpArmPosition() <= motors.getReachingUpArmPosition()) && ( power <= 0)) {
-                realPower = 0;
-            }
-            else
-            {
+//up 1435 to 1030
+            double realPower = 0;
+            if (((motors.getArmPosition() < 1400) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
                 realPower = power;
-                //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(power, thing));
-                //realPower = Math.max(motors.getRestingUpArmPosition(), Math.min(realPower, motors.getReachingUpArmPosition()));
-            }}}
-        motors.MoveMotor(Motors.Type.UpArm, realPower);
+            }
+            else {
+                realPower = 0;
+            }
+
+            motors.MoveMotor(Motors.Type.UpArm, realPower);
 
             BotTelemetry.addData("real Power" , realPower);
+            BotTelemetry.addData("upArm Pos", motors.getUpArmPosition());
     }
 
 
@@ -189,9 +180,9 @@ public class Input {
         double output = proportional + Constants.KI * integral + Constants.KD * derivative;
 
         // Apply the motor power
-        output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range and make it so that it will more slowly go to its target position
+        output = Math.max(Math.min(output, 100), -100);  // Clamp output to motor range and make it so that it will more slowly go to its target position
 
-        if((motors.getArmPosition() == motors.getArmRestingPosition()) && (gamepad== 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
+        if((motors.getArmPosition() == motors.getArmRestingPosition()) && (gamepad == 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
             motors.MoveMotor(Motors.Type.Arm,0);                                // This can prevent the motor from overheating like it was doing earlier
         }
         else {
@@ -220,7 +211,7 @@ public class Input {
 
 
     public void calculatePosition() {
-        heading = Math.toRadians(imu.getAngle('y'));
+        heading = imu.getAngle('y');
 
         // Read encoder values
         double flTicks = motors.getLeftFrontPosition();

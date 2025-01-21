@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
 
     //Arm Reaching Positions
-    public static int ARM_MAX_POSITION_OFFSET = 1145;
+    public static int ARM_MAX_POSITION_OFFSET = 2650;
     public static int UP_ARM_MAX_POSITION_OFFSET = -11550;
 
     // PID variables
@@ -20,7 +20,7 @@ public class Constants {
 
     //Constants to find distances
     private static final double WHEEL_DIAMETER = 104; // Wheel diameter in inches
-    public static double TICKS_PER_REVOLUTION = 535.7;
+    public static double TICKS_PER_REVOLUTION = 537.7;
     public static double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
     public static double FRICTION_PERCENT = 0.95;
