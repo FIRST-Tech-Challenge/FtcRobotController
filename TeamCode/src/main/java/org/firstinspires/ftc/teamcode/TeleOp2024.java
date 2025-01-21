@@ -67,11 +67,16 @@ public class TeleOp2024 extends DriveMethods {
 
         robot.wormGear.setPower(wormGearPower);
 
-        sliderPosition = sliderPosition + 10.0 * opRightStickY;
+        // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
+//        if (!operator.x) {
+            sliderPosition = sliderPosition + 10.0 * opRightStickY;
+//        } else {
+//            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
+//        }
+
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
         telemetry.addData("Lift","%.1f", opLeftStickY);
-//Lift means wormrote variable, which refers to the rotation of the worm gear
 
         // let the next frame know if the toggle was pressed
         wasClawTogglePressed = isClawTogglePressed;

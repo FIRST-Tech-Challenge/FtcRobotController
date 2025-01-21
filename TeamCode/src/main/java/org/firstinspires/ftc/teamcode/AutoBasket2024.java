@@ -14,6 +14,7 @@ public class AutoBasket2024 extends DriveMethods {
         RaiseArm,
         StrafeRight,
         ExtendSlider,
+        MoveForward,
         OpenClaw
     }
     State currentState = State.Unstarted;
@@ -38,7 +39,7 @@ public class AutoBasket2024 extends DriveMethods {
             case StrafeRight:
                 omniDrive(0, 0.25, 0);
 
-                if (getStateTime() >= 1.5) {
+                if (getStateTime() >= 1) {
                     omniDrive(0, 0, 0);
 
                     changeState(State.RaiseArm);
@@ -58,7 +59,15 @@ public class AutoBasket2024 extends DriveMethods {
                 robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 setSliderAndReturnConstraint(robot.MAX_HORIZONTAL_SLIDER_TICKS);
 
-                if (robot.sliderMotor.getCurrentPosition() >= 2200) {
+                if (robot.sliderMotor.getCurrentPosition() >= 2500) {
+                    changeState(State.MoveForward);
+                }
+                break;
+            case MoveForward:
+                omniDrive(0.15, 0, 0);
+
+                if (getStateTime() >= 1.7) {
+                    omniDrive(0, 0, 0 );
                     changeState(State.OpenClaw);
                 }
                 break;
