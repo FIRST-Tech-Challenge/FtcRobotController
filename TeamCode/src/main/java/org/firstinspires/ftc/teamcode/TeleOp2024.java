@@ -26,6 +26,7 @@ public class TeleOp2024 extends DriveMethods {
         Gamepad driver = gamepad1;
         Gamepad operator = gamepad2;
 
+
         boolean isClawTogglePressed = operator.b;
         if (isClawTogglePressed && !wasClawTogglePressed) {
             if (isClawOpen) {
@@ -82,3 +83,4 @@ public class TeleOp2024 extends DriveMethods {
         wasClawTogglePressed = isClawTogglePressed;
     }
 }
+
