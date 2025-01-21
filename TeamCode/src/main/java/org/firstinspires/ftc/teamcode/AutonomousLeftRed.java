@@ -77,14 +77,14 @@ public class AutonomousLeftRed extends AutonomousBase {
         // UNIT TEST: The following methods verify our basic robot actions.
         // Comment them out when not being tested.
 //      testGyroDrive();
-        unitTestOdometryDrive();
+//      unitTestOdometryDrive();
 //      timeArmMovement();
         //---------------------------------------------------------------------------------
 
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
         // Comment it out if running one of the unit tests above.
-//      mainAutonomous();
+        mainAutonomous();
         //---------------------------------------------------------------------------------
 
         telemetry.addData("Program", "Complete");
@@ -231,7 +231,7 @@ public class AutonomousLeftRed extends AutonomousBase {
             telemetry.addData("Motion", "Move to submersible");
             telemetry.update();
             // Move away from field wall (viper slide motor will hit field wall if we tilt up too soon!)
-              driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
+            driveToPosition( 3.00, 0.00, 0.00, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
             // Start tilting and extending the arm, and positioning the specimen
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_SPECIMEN1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO1);
@@ -357,9 +357,9 @@ public class AutonomousLeftRed extends AutonomousBase {
         // drive partway there while we wait for arm to lift (before extending viper)
         if( scorePreloadSpecimen || (samplesScored > 0) ){
             driveToPosition( 11.0, -33.5, -46.6, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
-            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET);
         } else {
-            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
+            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET);
             driveToPosition( 9.5, -20.0, -23.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
