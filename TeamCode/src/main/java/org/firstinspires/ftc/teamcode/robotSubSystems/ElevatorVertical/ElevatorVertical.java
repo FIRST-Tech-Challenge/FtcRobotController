@@ -37,7 +37,7 @@ public class ElevatorVertical {
     public static final int MAX_OPEN_POS = 1800;
     private static double power = 0;
     private static ElevatorVerticalState lastWantedState = ElevatorVerticalState.INTAKE;
-    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, double secondGamepad, Telemetry telemetry) {
+    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, Telemetry telemetry) {
             if (gamepadVal == 0 && wantedState != lastWantedState) {
                 switch (wantedState) {
                     case INTAKE:
@@ -54,11 +54,14 @@ public class ElevatorVertical {
                         break;
                 }
                 lastWantedState = wantedState;
+            }else {
+                wantedPos += (int) gamepadVal * 25;
             }
+            /*
             if (wantedState != ElevatorVerticalState.INTAKE) {
-                wantedPos -= (int) gamepadVal * 25;
-
+                wantedPos += (int) gamepadVal * 25;
             }
+             */
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
             wantedPos = limiter(wantedPos, 0, MAX_OPEN_POS);
             changeLevelPID.setWanted(wantedPos);
@@ -67,16 +70,8 @@ public class ElevatorVertical {
             power = changeLevelPID.update(getElevatorPos());
             telemetry.addData("power",power);
 
-
-            if (secondGamepad == 0) {
-                leftMotor.setPower(power);
-                rightMotor.setPower(power);
-            } else {
-                leftMotor.setPower(0.5 * secondGamepad);
-                rightMotor.setPower(0.5 * secondGamepad);
-            }
-
-
+            leftMotor.setPower(power);
+            rightMotor.setPower(power);
     }
     private static int encoderResetVal = 0;
     private static int encoderResetValL = 0;

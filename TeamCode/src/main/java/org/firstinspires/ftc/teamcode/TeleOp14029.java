@@ -54,11 +54,11 @@ public class TeleOp14029 extends OpMode {
         if (gamepad1.dpad_right) {elevatorHorizonticalState = ElevatorHorizonticalState.OPEN;}
         if (gamepad1.dpad_left) {elevatorHorizonticalState = ElevatorHorizonticalState.CLOSE;}
         if (gamepad1.right_stick_x != 0) {elevatorHorizonticalState = ElevatorHorizonticalState.OVERRIDE;}
-        //TODO: add reset to horizontal elves
+        //TODO: add reset to horizontal elevs
         //general----------------------------------------------------------------------------
         if (gamepad1.right_bumper) {systemsState = SubSystemsState.INTAKE;}
         if (gamepad1.left_bumper) {systemsState = SubSystemsState.TRAVEL;}
-
+        //TODO: set arm Servo
         if (gamepad1.dpad_down) {armState = ArmState.INTAKE;}
         if (gamepad1.dpad_up) {armState = ArmState.DEPLETE;}
 
@@ -83,7 +83,7 @@ public class TeleOp14029 extends OpMode {
 
         //TODO: add encoder limiters
         ElevatorHorizontical.opreate(elevatorHorizonticalState,gamepad1.right_stick_x,telemetry);
-        ElevatorVertical.operate( elevatorState, -gamepad1.right_stick_y, -gamepad2.right_stick_y,telemetry);
+        ElevatorVertical.operate( elevatorState, -gamepad1.right_stick_y,telemetry);
         Intake.operate(intakeState);
         Arm.operate(armState);
         Wrist.operate(wristState);

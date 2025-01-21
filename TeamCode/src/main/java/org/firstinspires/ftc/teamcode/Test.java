@@ -54,7 +54,7 @@ ElevatorHorizonticalState elevatorHorizonticalState = ElevatorHorizonticalState.
         if (gamepad1.right_stick_y != 0) {elevatorState = elevatorState.MANUAL;}
         if (gamepad1.start) {ElevatorVertical.resetEncoder();}
 //        ElevatorHorizontical.opreate(elevatorHorizonticalState,gamepad1.right_stick_x,telemetry);
-        ElevatorVertical.operate( elevatorState, gamepad1.right_stick_y, -gamepad1.right_stick_y,telemetry);
+        ElevatorVertical.operate( elevatorState, gamepad1.right_stick_y, telemetry);
         Intake.operate(intakeState);
         Wrist.operate(wristState);
         Drivetrain.drive(new Vector(-gamepad1.left_stick_x, -gamepad1.left_stick_y), -gamepad1.right_trigger + gamepad1.left_trigger);
