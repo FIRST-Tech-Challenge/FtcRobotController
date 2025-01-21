@@ -24,7 +24,7 @@ public class RightAutoV2 extends LinearOpMode {
     public boolean traj1Followed = false;
     public boolean deliveryGrippersOpen = false;
     public ElapsedTime timerStep01 = new ElapsedTime();
-    public ElapsedTime timerStep02 = new ElapsedTime();
+    public ElapsedTime timerStep03 = new ElapsedTime();
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -49,9 +49,13 @@ public class RightAutoV2 extends LinearOpMode {
                 .build();
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .back(10)
+                .build();
+
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
                 .strafeTo(new Vector2d(60, 64))
                 .addDisplacementMarker(()->{
-                    timerStep02.reset();
+                    timerStep03.reset();
                 })
                 .build();
 
@@ -71,7 +75,7 @@ public class RightAutoV2 extends LinearOpMode {
                     deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR_AUTO, 1);
                 }
                 if(isLeftInRange(constants.LEFT_SLIDE_HIGH_BAR_AUTO, 10) && isRightInRange(constants.RIGHT_SLIDE_HIGH_BAR_AUTO, 10) && timerStep01.seconds() > 5){
-                    timerStep02.reset();
+                    timerStep03.reset();
                     step = 2;
                 }
             }
@@ -80,7 +84,7 @@ public class RightAutoV2 extends LinearOpMode {
                     drive.followTrajectory(traj1);
                     traj1Followed = true;
                 }
-                else if(traj1Followed && timerStep02.seconds() > 2){
+                else if(traj1Followed && timerStep03.seconds() > 2){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                     deliveryGrippersOpen = true;
                 }
@@ -91,6 +95,10 @@ public class RightAutoV2 extends LinearOpMode {
             else if(step == 3) {
                 drive.followTrajectory(traj2);
                 step = 4;
+            }
+            else if(step == 4) {
+                drive.followTrajectory(traj3);
+                step = 5;
             }
         }
 
