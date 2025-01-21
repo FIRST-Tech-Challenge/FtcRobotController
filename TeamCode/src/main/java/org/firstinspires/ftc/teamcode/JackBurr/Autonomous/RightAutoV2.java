@@ -25,6 +25,8 @@ public class RightAutoV2 extends LinearOpMode {
     public boolean deliveryGrippersOpen = false;
     public ElapsedTime timerStep01 = new ElapsedTime();
     public ElapsedTime timerStep03 = new ElapsedTime();
+    public int leftSlideTarget = 0;
+    public int rightSlideTarget = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -32,6 +34,8 @@ public class RightAutoV2 extends LinearOpMode {
         deliveryAxon.init(hardwareMap);
         deliverySlides.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
+        leftSlideTarget = constants.LEFT_SLIDE_HIGH_BAR_AUTO;
+        rightSlideTarget = constants.RIGHT_SLIDE_HIGH_BAR_AUTO;
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -68,13 +72,13 @@ public class RightAutoV2 extends LinearOpMode {
                     deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
                     deliveryAxonSet01 = true;
                 }
-                if(!isRightInRange(constants.RIGHT_SLIDE_HIGH_BAR, 10)){
-                    deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR_AUTO, 1);
+                if(!isRightInRange(rightSlideTarget, 10)){
+                    deliverySlides.runRightSlideToPosition(rightSlideTarget, 1);
                 }
-                if(!isLeftInRange(constants.LEFT_SLIDE_HIGH_BAR_AUTO, 10)){
-                    deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR_AUTO, 1);
+                if(!isLeftInRange(leftSlideTarget, 10)){
+                    deliverySlides.runLeftSlideToPosition(leftSlideTarget, 1);
                 }
-                if(isLeftInRange(constants.LEFT_SLIDE_HIGH_BAR_AUTO, 10) && isRightInRange(constants.RIGHT_SLIDE_HIGH_BAR_AUTO, 10) && timerStep01.seconds() > 5){
+                if(isLeftInRange(leftSlideTarget, 10) && isRightInRange(rightSlideTarget, 10) && timerStep01.seconds() > 5){
                     timerStep03.reset();
                     step = 2;
                 }
