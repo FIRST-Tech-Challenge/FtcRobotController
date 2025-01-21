@@ -25,6 +25,11 @@ public class Input {
     private double y = 0.0; // Y position (forward/backward) in inches
     private double heading = 0.0; // Robot's current heading in radians
 
+
+    private boolean isMove = false;
+    private boolean isStrafe = false;
+    private boolean isSpin = false;
+
     //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
 
@@ -46,13 +51,19 @@ public class Input {
 
     public void move(double power) {
 
+            if (!isSpin) {
+                motors.MoveMotor(Motors.Type.LeftBack, -power);
+                motors.MoveMotor(Motors.Type.LeftFront, -power);
+                motors.MoveMotor(Motors.Type.RightFront, -power);
+                motors.MoveMotor(Motors.Type.RightBack, -power);
+            }
 
-            motors.MoveMotor(Motors.Type.LeftBack, -power);
-            motors.MoveMotor(Motors.Type.LeftFront, -power);
-            motors.MoveMotor(Motors.Type.RightFront, -power);
-            motors.MoveMotor(Motors.Type.RightBack, -power);
-
-
+            if (power != 0) {
+                isMove = true;
+            }
+            else {
+                isMove = false;
+            }
     }
 
     public void strafe(double power) {
@@ -64,17 +75,42 @@ public class Input {
             motors.MoveMotor(Motors.Type.LeftBack, -power); // left back
             motors.MoveMotor(Motors.Type.RightBack, power); // right back
 
+            if (power != 0) {
+                isStrafe = true;
+            }
+            else {
+                isStrafe = false;
+            }
     }
 
     public void spin(double power) {
 
+            if(!isMove) {
+                motors.MoveMotor(Motors.Type.LeftFront, power); // left front
+                motors.MoveMotor(Motors.Type.LeftBack, power); // left back
 
-            motors.MoveMotor(Motors.Type.LeftFront, power); // left front
-            motors.MoveMotor(Motors.Type.LeftBack, power); // left back
+                motors.MoveMotor(Motors.Type.RightFront, -power); // right front
+                motors.MoveMotor(Motors.Type.RightBack, -power); // right back
+            }
 
-            motors.MoveMotor(Motors.Type.RightFront, -power); // right front
-            motors.MoveMotor(Motors.Type.RightBack, -power); // right back
+            if (power != 0) {
+                isSpin = true;
+            }
+            else {
+                isSpin = false;
+            }
+    }
 
+    public boolean isMove() {
+        return isMove;
+    }
+
+    public boolean isStrafe() {
+        return isStrafe;
+    }
+
+    public boolean isSpin() {
+        return isSpin;
     }
 
     public void claw(boolean grabButton, boolean releaseButton) {
