@@ -69,6 +69,7 @@ public class RightAutoV2 extends LinearOpMode {
             if (isStopRequested()) return;
             if (step == 1) {
                 if(!deliveryAxonSet01){
+                    deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_GRAB);
                     deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
                     deliveryAxonSet01 = true;
                 }
