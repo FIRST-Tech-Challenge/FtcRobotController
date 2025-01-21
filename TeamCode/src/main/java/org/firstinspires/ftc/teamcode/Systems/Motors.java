@@ -54,29 +54,28 @@ public class Motors {
         motors[Type.Arm.getValue()].setDirection(DcMotor.Direction.REVERSE);
         motors[Type.UpArm.getValue()].setDirection(DcMotor.Direction.FORWARD);
 
-//
-//        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-//        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+       motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+       motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-////
-//        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
-//        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
 
-        //motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
-        //  motors[Type.UpArm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
 
 
         restingArmPosition = getArmPosition();
