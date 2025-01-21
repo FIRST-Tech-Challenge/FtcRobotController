@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -43,60 +45,66 @@ public class Outtake {
     }
 
     public Action sampleCollect() {
-        return new Action() {
-            @Override
-            public boolean run(@NonNull TelemetryPacket Packet) {
-                shoulderLeft.setPosition(shoulderDown);
-                shoulderRight.setPosition(shoulderDown);
-                wristPitch.setPosition(wristPitchDown);
-                wristRoll.setPosition(wristRollNormal);
-                linkageLeft.setPosition(linkageMid);
-                linkageRight.setPosition(linkageMid);
-                return false;
-            }
-        };
+        return new SequentialAction(
+            new InstantAction(() -> shoulderLeft.setPosition(shoulderDown)),
+            new SleepAction(0),
+            new InstantAction(() -> shoulderRight.setPosition(shoulderDown)),
+            new SleepAction(0),
+            new InstantAction(() -> wristPitch.setPosition(wristPitchDown)),
+            new SleepAction(0),
+            new InstantAction(() -> wristRoll.setPosition(wristRollNormal)),
+            new SleepAction(0),
+            new InstantAction(() -> linkageLeft.setPosition(linkageMid)),
+            new SleepAction(0),
+            new InstantAction(() -> linkageRight.setPosition(linkageMid))
+                    );
     }
 
     public Action sampleDeposit() {
-        return new Action() {
-            @Override
-            public boolean run(@NonNull TelemetryPacket Packet) {
-                shoulderLeft.setPosition(shoulderUp);
-                shoulderRight.setPosition(shoulderUp);
-                wristPitch.setPosition(wristPitchUp);
-                wristRoll.setPosition(wristRollNormal);
-                linkageLeft.setPosition(linkageBack);
-                linkageRight.setPosition(linkageBack);
-                return false;
-            }
-        };
+        return new SequentialAction(
+                new InstantAction(()->shoulderLeft.setPosition(shoulderUp)),
+                new SleepAction(0),
+                new InstantAction(()->shoulderRight.setPosition(shoulderUp)),
+                new SleepAction(0),
+                new InstantAction(()->wristPitch.setPosition(wristPitchUp)),
+                new SleepAction(0),
+                new InstantAction(()->wristRoll.setPosition(wristRollNormal)),
+                new SleepAction(0),
+                new InstantAction(()->linkageLeft.setPosition(linkageBack)),
+                new SleepAction(0),
+                new InstantAction(()->linkageRight.setPosition(linkageBack))
+        );
     }
 
     public Action specimenCollect() {
-        return new Action() {
-            public boolean run(@NonNull TelemetryPacket Packet) {
-                shoulderLeft.setPosition(shoulderFront);
-                shoulderRight.setPosition(shoulderFront);
-                wristPitch.setPosition(wristPitchMid);
-                wristRoll.setPosition(wristRollNormal);
-                linkageLeft.setPosition(linkageFront);
-                linkageRight.setPosition(linkageFront);
-                return false;
-            }
-        };
+        return new SequentialAction(
+                new InstantAction(()->shoulderLeft.setPosition(shoulderFront)),
+                new SleepAction(0),
+                new InstantAction(()->shoulderRight.setPosition(shoulderFront)),
+                new SleepAction(0),
+                new InstantAction(()->wristPitch.setPosition(wristPitchMid)),
+                new SleepAction(0),
+                new InstantAction(()->wristRoll.setPosition(wristRollNormal)),
+                new SleepAction(0),
+                new InstantAction(()->linkageLeft.setPosition(linkageFront)),
+                new SleepAction(0),
+                new InstantAction(()->linkageRight.setPosition(linkageFront))
+        );
     }
 
     public Action specimenDeposit() {
-        return new Action() {
-            public boolean run(@NonNull TelemetryPacket Packet) {
-                shoulderLeft.setPosition(shoulderBack);
-                shoulderRight.setPosition(shoulderBack);
-                wristPitch.setPosition(wristPitchMid);
-                wristRoll.setPosition(wristRollReverse);
-                linkageLeft.setPosition(linkageBack);
-                linkageRight.setPosition(linkageBack);
-                return false;
-            }
-        };
+        return new SequentialAction(
+                new InstantAction(()->shoulderLeft.setPosition(shoulderBack)),
+                new SleepAction(0),
+                new InstantAction(()->shoulderRight.setPosition(shoulderBack)),
+                new SleepAction(0),
+                new InstantAction(()->wristPitch.setPosition(wristPitchMid)),
+                new SleepAction(0),
+                new InstantAction(()->wristRoll.setPosition(wristRollReverse)),
+                new SleepAction(0),
+                new InstantAction(()->linkageLeft.setPosition(linkageBack)),
+                new SleepAction(0),
+                new InstantAction(()->linkageRight.setPosition(linkageBack))
+        );
     }
 }
