@@ -33,7 +33,7 @@ public class IMU {
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
 
-        double yaw   = robotOrientation.getYaw(AngleUnit.DEGREES);
+        double yaw   = robotOrientation.getYaw(AngleUnit.RADIANS);
 //        double pitch = robotOrientation.getPitch(AngleUnit.DEGREES);
         //double roll  = robotOrientation.getRoll(AngleUnit.DEGREES); // robot will most likely not flip over
 

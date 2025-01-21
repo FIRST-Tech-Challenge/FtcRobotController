@@ -17,19 +17,21 @@ import org.firstinspires.ftc.teamcode.Systems.Servos;
 
 public class TeleMain extends LinearOpMode {
 
+    Input input;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
         BotTelemetry.setTelemetry(telemetry, dashboardTelemetry);
 
-        waitForStart();
+
 
         //Servos servos = new Servos(hardwareMap);
         //Motors motors = new Motors(hardwareMap);
-        Input input = new Input(hardwareMap);
+        input = new Input(hardwareMap);
 
-
+        waitForStart();
 
         while (opModeIsActive())
         {
@@ -39,28 +41,28 @@ public class TeleMain extends LinearOpMode {
             double strafe = gamepad1.left_stick_x * 100;
             double intake = gamepad2.left_stick_y * 100;
 
-            double armRaise = gamepad2.left_stick_y * 100;
-            double arm = gamepad2.right_stick_y;
+            double armRaise = gamepad2.right_stick_y * 100;
+            double arm = gamepad2.left_stick_y;
 
             input.move(move);
             input.spin(spin);
             input.strafe(strafe);
-            input.claw(gamepad2.b, gamepad2.a);
+            input.claw(gamepad2.a, gamepad2.b);
             input.upArm(armRaise);
 
             input.arm(arm);
 
-
+            //input.calculatePosition();
 
             BotTelemetry.addData("MOVE:",  move);
             BotTelemetry.addData("SPIN:",  spin);
             BotTelemetry.addData("STRAFE:",  strafe);
             BotTelemetry.addData("ARM:", intake);
-            BotTelemetry.addData("ARM position:", motors.getArmPosition());
-            BotTelemetry.addData("UPARM:", motors.getUpArmPosition());
+            //BotTelemetry.addData("ARM position:", motors.getArmPosition());
+            //BotTelemetry.addData("UPARM:", motors.getUpArmPosition());
             BotTelemetry.addData("UPARM_POWER:", armRaise);
 
-            BotTelemetry.addData("Servo position:", servos.getServoPosition(Servos.Type.Claw));
+            //BotTelemetry.addData("Servo position:", servos.getServoPosition(Servos.Type.Claw));
 
             BotTelemetry.update(); // telemtryy
 

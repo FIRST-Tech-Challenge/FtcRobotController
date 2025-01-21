@@ -29,8 +29,8 @@ public class Motors {
 
     private final int restingArmPosition;
     private final int reachingArmPosition;
-    private int restingUpArmPosition;
-    private int reachingUpArmPosition;
+    private final int restingUpArmPosition;
+    private final int reachingUpArmPosition;
 
 
     public Motors(HardwareMap hardwareMap) {
@@ -54,28 +54,28 @@ public class Motors {
         motors[Type.Arm.getValue()].setDirection(DcMotor.Direction.REVERSE);
         motors[Type.UpArm.getValue()].setDirection(DcMotor.Direction.FORWARD);
 
-
-        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+////
+//        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
 
-        motors[Type.LeftBack.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motors[Type.RightBack.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
+        //motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
         //  motors[Type.UpArm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
@@ -89,6 +89,10 @@ public class Motors {
     public void MoveMotor(Type motorNumber, double power) { //choose motor to move with type and move with power is 0-100
 
         double actualPower = power / 100;
+        if(motorNumber == Type.LeftFront) {
+            BotTelemetry.addData("input", power);
+            BotTelemetry.addData("Output", actualPower);
+        }
 
         motors[motorNumber.getValue()].setPower(actualPower);
     }
@@ -112,16 +116,20 @@ public class Motors {
     }
 
     public int getLeftFrontPosition() {
+        BotTelemetry.addData("leftFrontposition", motors[Type.RightFront.getValue()].getCurrentPosition());
         return motors[Type.LeftFront.getValue()].getCurrentPosition();
     }
 
     public int getLeftBackPosition() {
+        BotTelemetry.addData("leftBackPosition", motors[Type.LeftBack.getValue()].getCurrentPosition());
         return motors[Type.LeftBack.getValue()].getCurrentPosition();
     }
     public int getRightFrontPosition() {
+        BotTelemetry.addData("rightFrontPosition", motors[Type.RightFront.getValue()].getCurrentPosition());
         return motors[Type.RightFront.getValue()].getCurrentPosition();
     }
     public int getRightBackPosition() {
+        BotTelemetry.addData("rightBackPosition", motors[Type.RightBack.getValue()].getCurrentPosition());
         return motors[Type.RightBack.getValue()].getCurrentPosition();
     }
 
