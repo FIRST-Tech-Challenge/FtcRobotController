@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Mechanisms.Utils.Planners.MotionProfile;
+
 public class Intake {
     DcMotorEx motor;
     HardwareMap hardwareMap;
@@ -43,7 +45,6 @@ public class Intake {
             }
         };
     }
-
 
 //    public void intakeIn(){
 //        motor.setPower(0.5);

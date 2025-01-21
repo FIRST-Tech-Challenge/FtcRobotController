@@ -66,25 +66,21 @@ public class RedSample extends LinearOpMode {
                         claw.servoClaw(Claw.clawState.CLOSE),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
-                        lift.moveToHeight(24),
-                        new SleepAction(1),
+                        //lift.moveToHeight(24),
+                        //new SleepAction(1),
                         arm.armExtend(),
-                        new SleepAction(0.3),
+                        new SleepAction(1),
                         claw.servoClaw(Claw.clawState.OPEN),
                         new SleepAction(0.3),
                         arm.armNeutral(),
-                        lift.moveToHeight(0),
                         new ParallelAction(
                             robot.intakeDown(),
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0)),
                             arm.armNeutral()
                         ),
                         drivetrain.goToPose(Utils.makePoseVector(-49.5,-23.5,0)),
-                        new SleepAction(0.3),
-                        new ParallelAction(
-                            claw.servoClaw(Claw.clawState.OPEN),
-                            robot.intakeUp()
-                        ),
+                        new SleepAction(1),
+                        robot.intakeUp(),
                         new SleepAction(0.5),
                         arm.armRetract(),
                         new SleepAction(0.3),
@@ -92,16 +88,15 @@ public class RedSample extends LinearOpMode {
                         new SleepAction(0.3),
                         arm.armNeutral(),
                         arm.armExtend(),
-                        new SleepAction(0.3),
+                        new SleepAction(1),
                         //lift,
-                        claw.servoClaw(Claw.clawState.OPEN),
                         drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
+                        claw.servoClaw(Claw.clawState.OPEN),
                         drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
                         robot.intakeDown(),
                         drivetrain.goToPose(Utils.makePoseVector(-49.5,-13.5,0)),
                         new SleepAction(1),
                         robot.intakeUp(),
-                        claw.servoClaw(Claw.clawState.OPEN),
                         arm.armNeutral(),
                         new SleepAction(0.5),
                         arm.armRetract(),
@@ -111,7 +106,11 @@ public class RedSample extends LinearOpMode {
                         arm.armExtend(),
                         //lift,
                         claw.servoClaw(Claw.clawState.OPEN),
-                        arm.armExtend()
+                        arm.armExtend(),
+                        new SleepAction(1),
+                        //lift,
+                        drivetrain.goToPose(Utils.makePoseVector(-61, -16.5,-45)),
+                        claw.servoClaw(Claw.clawState.OPEN)
                 )
         );
     }
