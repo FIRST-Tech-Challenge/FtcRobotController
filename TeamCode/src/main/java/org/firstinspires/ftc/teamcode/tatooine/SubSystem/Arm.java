@@ -36,7 +36,7 @@ public class Arm {
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
-    private static double ANGLE_OFFSET = 30;  // degrees, initial offset
+    private static double ANGLE_OFFSET = 38.4;  // degrees, initial offset
 
     //PID
 
@@ -447,9 +447,13 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
             double angle = getAngle();
             double pidPower = anglePID.calculate(angle);
             double feedforward = calculateF();
+            if (pidPower >0.1 && angle >70){
+                pidPower = 0.1;
+            }
             setPowerAngle(pidPower + feedforward);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle PID Power", pidPower);

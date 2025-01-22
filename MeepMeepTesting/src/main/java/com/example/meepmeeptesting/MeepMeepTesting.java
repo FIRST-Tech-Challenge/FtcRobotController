@@ -19,9 +19,21 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 18)
                 .setDimensions(18, 18)
                 .build();
+        RoadRunnerBotEntity myBot2 = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180),18)
+                .setDimensions(18, 18)
+                .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0), -(72-(18.0/2.0)), Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(4, -24-9, Math.toRadians(90)), Math.toRadians(90))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0) -30, -(72-(18.0/2.0)), Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(0, -24-9, Math.toRadians(90)), Math.toRadians(90))
+                .waitSeconds(2)
+                .lineToY(-33)
+                .splineToLinearHeading(new Pose2d(0, -26-9, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-55,-55, Math.toRadians(45)), Math.toRadians(-90))
+                .build());
+        myBot2.runAction(myBot.getDrive().actionBuilder(new Pose2d(6+(18.0/2.0), -(72-(18.0/2.0)), Math.toRadians(90)))
+                        .splineToLinearHeading(new Pose2d(0, -20-9, Math.toRadians(90)), Math.toRadians(90))
                 //armActions
 //                .splineToLinearHeading(new Pose2d(22, -45, Math.toRadians(45)), Math.toRadians(90))
 //                //extend
@@ -66,11 +78,11 @@ public class MeepMeepTesting {
 //                //outtake
 //                .splineToLinearHeading(new Pose2d(60,-60, Math.toRadians(-45)), Math.toRadians(0))
                 .build());
-
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
+//                .addEntity(myBot2)
                 .start();
     }
 }

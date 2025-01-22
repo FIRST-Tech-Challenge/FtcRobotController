@@ -30,54 +30,10 @@ public class FarFromBasketScore extends LinearOpMode {
         wrist.setPosAng(0.5);
         Arm arm = new Arm(this, false);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
-
                 .stopAndAdd(new InstantAction(wrist::stright))
-                .afterTime(0, new ParallelAction(arm.setAngle(90), arm.setExtension(5)))
-                .splineToLinearHeading(new Pose2d(4, -24-9, Math.toRadians(90)), Math.toRadians(90))
-                .stopAndAdd(arm.setAngle(50))
-                //armActions
-//                .splineToLinearHeading(new Pose2d(22, -45, Math.toRadians(45)), Math.toRadians(90))
-//                //extend
-//                .turnTo(Math.toRadians(345))
-//                //arm up little
-//                .splineToLinearHeading(new Pose2d(32, -42, Math.toRadians(45)), Math.toRadians(-90))
-//                //arm down
-//                .turnTo(Math.toRadians(345))
-//                //arm up little
-//                .splineToLinearHeading(new Pose2d(40, -42, Math.toRadians(45)), Math.toRadians(-90))
-//                //arm down
-//                .turnTo(345)
-//                .turnTo(Math.toRadians(-90))
-//                //arm up
-//                //extend less maybe
-//                //intake
-//                .waitSeconds(3)
-//                .splineToLinearHeading(new Pose2d(6, -42, Math.toRadians(90)), Math.toRadians(0))
-//                //arm up
-//                //extend
-//                //outtake
-//                .strafeTo(new Vector2d(6, -43))
-//                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(-90)), Math.toRadians(0))
-//                //arm up
-//                //extend
-//                //intake
-//                .waitSeconds(1)
-//                .splineToLinearHeading(new Pose2d(6, -40, Math.toRadians(90)), Math.toRadians(0))
-//                //arm up
-//                //extend
-//                //outtake
-//                .strafeTo(new Vector2d(6, -43))
-//                .splineToLinearHeading(new Pose2d(40, -45, Math.toRadians(-90)), Math.toRadians(0))
-//                //arm up
-//                //extend
-//                //intake
-//                .waitSeconds(1)
-//                .strafeTo(new Vector2d(6,-43))
-//                .splineToLinearHeading(new Pose2d(6, -40, Math.toRadians(90)), Math.toRadians(0))
-//                //arm up
-//                //extend
-//                //outtake
-//                .splineToLinearHeading(new Pose2d(60,-60, Math.toRadians(-45)), Math.toRadians(0))
+                .afterTime(0, new ParallelAction(arm.setAngle(90), arm.setExtension(7)))
+                .splineToLinearHeading(new Pose2d(-40, -37, Math.toRadians(90)), Math.toRadians(-270))
+                .stopAndAdd(arm.setAngle(40))
         ;
         TrajectoryActionBuilder trajectoryBlue = drive.actionBuilder(beginPose);
 
