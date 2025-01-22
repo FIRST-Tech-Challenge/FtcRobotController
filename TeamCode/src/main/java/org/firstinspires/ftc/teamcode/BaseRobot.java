@@ -47,6 +47,8 @@ public class BaseRobot {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     /**
      * Core robot class that manages hardware initialization and basic
      * functionality.
@@ -105,6 +107,10 @@ public class BaseRobot {
         if (Settings.Deploy.LED) {
             led = hardwareMap.get(PWMOutput.class, Settings.Hardware.IDs.LED);
         }
+    }
+
+    public void scheduleTask(Runnable task, long delayMillis) {
+        scheduler.schedule(task, delayMillis, TimeUnit.MILLISECONDS);
     }
 
     public void shutDown() {
@@ -231,10 +237,6 @@ public class BaseRobot {
                     scheduleTask(() -> intake.geckoWheels.stop(), 30);
                 }
                 outtake.claw.toggle();
-            }
-
-            if (easeTransfer.shouldResume()) {
-                intake.geckoWheels.stop();
             }
 
             if (contextualActions.justShoulderUp) {
