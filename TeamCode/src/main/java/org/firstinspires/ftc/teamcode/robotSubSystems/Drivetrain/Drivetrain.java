@@ -51,7 +51,7 @@ public class Drivetrain {
     }
 
     private static Vector fieldCentric(Vector gamepad) {
-        gamepad = gamepad.rotate(-Math.toRadians(Angle.wrapAngle0_360(Gyro.getAngle())));
+        gamepad = gamepad.rotate(-Math.toRadians(Angle.wrapAngle0_360(-Gyro.getAngle())));
         return gamepad;
     }
 

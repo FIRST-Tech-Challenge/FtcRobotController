@@ -11,21 +11,23 @@ public class ElevatorHorizontical {
     private static PID pid = new PID(ElevatorHorizonticalConstants.Kp,ElevatorHorizonticalConstants.Ki,ElevatorHorizonticalConstants.Kd,ElevatorHorizonticalConstants.Kf,ElevatorHorizonticalConstants.iZone,ElevatorHorizonticalConstants.maxSpeed,ElevatorHorizonticalConstants.minSpeed);
 
     private static float wantedPos;
+    private static int resetVal = 0;
 
     public static void init(HardwareMap hardwareMap){
         elevatorMotor = hardwareMap.get(DcMotor.class,"horElevator");
+        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public static void opreate(ElevatorHorizonticalState elevatorHorizonticalState, float rightJoyStick, Telemetry telemetry){
                 switch(elevatorHorizonticalState){
                     case OPEN:
                         wantedPos = ElevatorHorizonticalConstants.openPos;
-
                         break;
                     case CLOSE:
                         wantedPos = ElevatorHorizonticalConstants.closedPos;
-
                         break;
+                    case ALMOST:
+                        wantedPos = ElevatorHorizonticalConstants.almostPos;
                     case OVERRIDE:
                         wantedPos += ElevatorHorizonticalConstants.overrideFactor * -rightJoyStick;
 
@@ -38,5 +40,6 @@ public class ElevatorHorizontical {
                 pid.setWanted(wantedPos);
                 elevatorMotor.setPower(pid.update(getPos()));
     }
-    public static double getPos() {return elevatorMotor.getCurrentPosition();}
+    public static double getPos() {return elevatorMotor.getCurrentPosition() - resetVal;}
+    public static void resetEncoder() {resetVal = elevatorMotor.getCurrentPosition();}
 }

@@ -17,6 +17,9 @@ public class Arm {
             case DEPLETE:
                 armServo.setPosition(0.75);
                 break;
+            case HALF:
+                armServo.setPosition(0.4);
+                break;
         }
     }
 }
