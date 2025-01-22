@@ -60,8 +60,8 @@ public class SpecimenSlider extends SonicSubsystemBase {
     }
 
     public void Hold() {
-        this.servo1.setPower(0.1);
-        this.servo2.setPower(0.1);
+        this.servo1.setPower(0.07);
+        this.servo2.setPower(0.07);
     }
 
     public void AutoExpand() {

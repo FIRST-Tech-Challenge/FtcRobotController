@@ -8,10 +8,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.AlignDriveTrainToSpecimenDelivery;
 
 @Autonomous
-public class AlignTest extends CommandAutoOpMode {
+public class SpecimanAuto extends CommandAutoOpMode {
 
     @Override
     protected Command createCommand() {
@@ -30,18 +29,21 @@ public class AlignTest extends CommandAutoOpMode {
                                 commandFactory.extendSpecimenSlider(6000),
                                 new SequentialCommandGroup(
                                         commandFactory.driveToTarget(580, 0, 0, .05, .4, 30, 2000),
-                                        commandFactory.sleep(200),
+                                        commandFactory.sleep(50),
                                         commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery, 1500)
                                 )
                         ),
 
                         // Drop
-                        commandFactory.collapseSpecimenSlider(500),
+                        commandFactory.collapseSpecimenSlider(1500),
                         commandFactory.openSpecimenClaw(),
 
-                        new ParallelRaceGroup(
-                                commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(300, -950, 0, .05, .8, 100)
+                        new ParallelCommandGroup(
+                                commandFactory.collapseSpecimenSlider(4000),
+                                new SequentialCommandGroup(
+                                        commandFactory.driveToTarget(480,0,0,0.05,0.4,50,2000),
+                                        commandFactory.driveToTarget(480, -950, 0, .05, .8, 30)
+                                )
                         ),
 
                         //push sample 1 to human player
