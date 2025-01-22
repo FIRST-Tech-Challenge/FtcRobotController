@@ -22,7 +22,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
     private double rightFz1, rightBz2, leftBz3, leftFz4, teleskopeZ5;
 
     private boolean switchA, switchB, switchY, switchX, switchDPadUp;
-    private boolean isKorzinaOpen, isPovorotTakingPos, isKleshniOpen, isdPadUp;
+    private boolean isKorzinaOpen=false, isPovorotTakingPos=false, isKleshniOpen=false, isdPadUp;
 
     int dpadUp = 1;
     private double accel;
@@ -123,7 +123,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 
                         //Коэффицент скорости робота
                         if(gamepad1.left_trigger < 0.5){
-                            accel = 0.6;
+                            accel = 0.8;
                         }
                         else if(gamepad1.left_trigger > 0.5){
                             accel = 10;
@@ -150,7 +150,7 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                             leftFz4 = 0;
                         }
 
-                        teleskopeZ5 = Range.clip(leftStickY2, -1,1);
+                        teleskopeZ5 = Range.clip(-leftStickY2, -1,1);
                         if(teleskopeZ5 > -0.05 && teleskopeZ5 < 0.05){
                             teleskopeZ5 = 0;
                         }
@@ -171,9 +171,11 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
                             switchB = false;
                         }
 
-                        if(gamepad2.y && !switchY && !gamepad2.start){
+                        if(gamepad2.y && !switchY && !gamepad2.start) {
                             isKorzinaOpen = !isKorzinaOpen;
                             switchY = true;
+                            SLEEP(500);
+
                         }
                         if(!gamepad2.y && switchY){
                             switchY = false;
@@ -246,12 +248,12 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 
             if(dpadUp == 1){
                 _20kg.setPosition(CLOSE_20KG_POS);
-            } else if (dpadUp == 2) {
-                _20kg.setPosition(CLOSE_20KG_POS - 0.1);
-            }else if(dpadUp == 3){
-                _20kg.setPosition(CLOSE_20KG_POS - 0.2);
-            } else if (dpadUp == 4) {
-                _20kg.setPosition(CLOSE_20KG_POS - 0.3);
+//            } else if (dpadUp == 2) {
+//                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.08, OPEN_20KG_POS,CLOSE_20KG_POS));
+//            }else if(dpadUp == 3){
+//                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.16, OPEN_20KG_POS,CLOSE_20KG_POS));
+//            } else if (dpadUp == 4) {
+//                _20kg.setPosition(Range.clip(CLOSE_20KG_POS - 0.34, OPEN_20KG_POS,CLOSE_20KG_POS));
             }else {
                 _20kg.setPosition(OPEN_20KG_POS);
             }
@@ -266,5 +268,10 @@ public class TeleOpPop extends LinearOpMode implements ConstsForTeleskope {
 
             telemetry.update();
         };
+    }
+    public void SLEEP(double time){
+        while (runtime.milliseconds() < time){
+
+        }
     }
 }
