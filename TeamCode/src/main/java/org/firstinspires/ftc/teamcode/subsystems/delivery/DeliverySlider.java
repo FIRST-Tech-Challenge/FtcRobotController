@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.delivery;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.function.Supplier;
 
+@Config
 public class DeliverySlider extends SonicSubsystemBase {
 
     public enum Direction {
@@ -47,7 +49,12 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private int currentTarget = 0;
 
-    SonicPIDFController pidController;
+    public static double pid_p = 0.005;
+    public static double pid_i = 0;
+    public static double pid_d = 0;
+    public static double pid_f = 0.05;
+
+    public static SonicPIDFController pidController = new SonicPIDFController(pid_p, pid_i, pid_d, pid_f);
 
     private boolean isTeleop = true;
 
@@ -71,7 +78,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
         //MoveToTransferPosition();
 
-        pidController = new SonicPIDFController(0.005, 0, 0, 0.05);
+        pidController = new SonicPIDFController(pid_p, pid_i, pid_d, pid_f);
     }
 
     private void SetTelop() {
@@ -144,7 +151,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = false;
+        boolean addTelemetry = true;
         if(addTelemetry) {
             telemetry.addData("slider target", currentTarget);
             telemetry.addData("slider current", position);
@@ -152,8 +159,9 @@ public class DeliverySlider extends SonicSubsystemBase {
         }
 
         if(!isTeleop) {
-            double power = pidController.calculatePIDAlgorithm(currentTarget - position);
 
+            double power = pidController.calculatePIDAlgorithm(currentTarget - position);
+            telemetry.addData("slider pid output", power);
             if(Math.abs(currentTarget - position) < 30) {
                 motor.set(0);
                 motor2.set(0);
@@ -184,9 +192,9 @@ public class DeliverySlider extends SonicSubsystemBase {
             //Log.i("armControl", "low enough? " + pivotLowEnoughSupplier == null ? "null" : (pivotLowEnoughSupplier.get() ? "yes" : "no"));
 
             if(addTelemetry) {
-                telemetry.addData("slider", position);
+                telemetry.addData("slider position", position);
                 //telemetry.addData("pivot supplier", pivotLowEnoughSupplier.get());
-                telemetry.addData("motor", motor.get());
+                telemetry.addData("slider motor power", motor.get());
             }
 
 
@@ -261,6 +269,12 @@ public class DeliverySlider extends SonicSubsystemBase {
     }
 
     public SonicPIDFController getPidController() {
+        if (pidController.getKp() != pid_p ||
+                pidController.getKi() != pid_i ||
+                pidController.getKd() != pid_d ||
+                pidController.getKf() != pid_f) {
+            pidController = new SonicPIDFController(pid_p, pid_i, pid_d, pid_f);
+        }
         return pidController;
     }
 
