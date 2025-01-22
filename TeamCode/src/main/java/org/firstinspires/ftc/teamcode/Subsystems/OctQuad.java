@@ -67,10 +67,25 @@ public class OctQuad extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        // change to bulk read to reduce overall processing time
+        // and improve cycle frequency - Jan 16/2025.
+
         // Read encoder values
-        OdometryRightEncoder = octoquad.readSinglePosition(0);
-        OdometryLeftEncoder = octoquad.readSinglePosition(1);
-        OdometryFrontEncoder = octoquad.readSinglePosition(2);
+        // OdometryRightEncoder = octoquad.readSinglePosition(0);
+        // OdometryLeftEncoder = octoquad.readSinglePosition(1);
+        // OdometryFrontEncoder = octoquad.readSinglePosition(2);
+
+        // perform bulk read of all octoquad values
+        // ensure returned array has at least three elements in it
+        int[] positions = octoquad.readAllPositions();
+        if (positions.length >= 3)
+        {
+            // go ahead and read values
+            OdometryRightEncoder = positions[0];
+            OdometryLeftEncoder = positions[1];
+            OdometryFrontEncoder = positions[2];
+        }
+
     }
 
     /**
