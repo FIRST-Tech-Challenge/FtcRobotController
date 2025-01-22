@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 10000;
+    public static double ms_needed_to_park = 2000; // TODO: TIME THIS SO WE DON'T WASTE TIME
 
     // Movement settings
     @Config
@@ -27,6 +27,10 @@ public class Settings {
         public static final double tileLengthFeet = 2;
         /** Default speed for autonomous movements */
         public static double default_autonomous_speed = 0.38;
+        /** Flips movement to make movement easier while the robot is backwards **/
+        public static int flip_movement = 1;
+        /** Determines if the gecko wheels outtake a little when closing the claw to ease transfer **/
+        public static boolean easeTransfer = true;
     }
 
     @Config
@@ -60,15 +64,18 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                public static double[] HORIZONTAL_POSITION = {0.72, 1.0} ;
+                // At the moment, the right servo is messed up, so only the left positions are being used
+                // TODO: TUNE WHEN RIGHT SERVO IS PHYSICALLY REPOSITIONED
+                public static double[] HORIZONTAL_POSITION = {0.72, 1.0};
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0, 0.1};
+                public static double[] VERTICAL_POSITION = {0.26, 0.1};
             }
             @Config
             public static class Linkage {
-                public static double TRANSFER_POSITION = 0.0;
-                public static double PLACE_FORWARD_POSITION = 0.3;
-                public static double PLACE_BACKWARD_POSITION = 1.0;
+                // TODO: TUNE WHEN NEW SERVO GOES IN
+                public static double TRANSFER_POSITION = 0.14;
+                public static double PLACE_FORWARD_POSITION = 0.25;
+                public static double PLACE_BACKWARD_POSITION = 1;
 
             }
         }
@@ -115,11 +122,15 @@ public class Settings {
             public static int LOW_RUNG = 0; // TODO TUNE
             public static int LOW_BASKET = 1430; // TODO TUNE
 
-            public static int HIGH_RUNG = 1600; // TODO TUNE
+            public static int HIGH_RUNG = 1800; // TODO TUNE
             public static int HIGH_BASKET = 3190;
 
             // Motor power settings
-            public static double MOVEMENT_POWER = 0.5;
+            public static double MOVEMENT_POWER = 0.9;
+
+            public static double FREAKY_MOVEMENT_POWER = 20;
+
+            public static boolean ENABLE_LOWER_LIMIT = true;
         }
 
         @Config
@@ -133,6 +144,7 @@ public class Settings {
 
             // Motor power settings
             public static double MOVEMENT_POWER = 0.7;
+            public static double FREAKY_MOVEMENT_POWER = 15;
         }
 
         @Config
@@ -165,21 +177,31 @@ public class Settings {
 
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-5, -30, Math.toRadians(90));
-            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(5, -33, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE_2 = new Pose2d(2, -32, Math.toRadians(90));
+//            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
-            public static Pose2d HP_POSE = new Pose2d(36, -55.0, Math.toRadians(315));
+            public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
 
-            public static Vector2d PARK_MIDDLEMAN = new Vector2d(-38.5, -30);
+            public static Vector2d PARK_MIDDLEMAN = new Vector2d(-45, -30);
 
             public static Pose2d LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
-            public static Pose2d RIGHT_PARK_POSE = new Pose2d(-26, -10, Math.toRadians(180));
-            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(38.5, -34.3, Math.toRadians(90));
-            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(38.5, -10.5, Math.toRadians(90));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(48, -7, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(58, -7, Math.toRadians(90));
+            public static Pose2d RIGHT_PARK_POSE = new Pose2d(55, -54, Math.toRadians(180));
+            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(45, -36, Math.toRadians(90));
+            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(65, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(65, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_PUSH = new Pose2d(65, -55, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(70, -5, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_PUSH = new Pose2d(70, -55, Math.toRadians(90));
+
+            // I added this to help transition between placing position and collecting samples to place in basket or chamber
+            public static Vector2d RED_RIGHT_SAMPLE_MIDDLEMAN = new Vector2d(40, -40);
+
+            // I am adding this to push samples into human player zone
+            public static Pose2d RED_SAMPLE_PUSH_POSE_1 = new Pose2d(50, -5, Math.toRadians(90));
+            public static Pose2d RED_SAMPLE_PUSH_POSE_2 = new Pose2d(60, -5, Math.toRadians(90));
         }
 
         @Config
@@ -208,7 +230,7 @@ public class Settings {
         public double stick_deadzone = 0.05;
 
         /** Sensitivity multiplier for right stick input */
-        public double right_stick_sensitivity = 0.5;
+        public double right_stick_sensitivity = 0.7;
 
         /** Bumper rotation speed */
         public double bumper_rotation_speed = 0.8;
@@ -226,7 +248,7 @@ public class Settings {
 
         public boolean use_absolute_positioning = false;
 
-        public boolean freaky_horizontal = false;
+        public boolean freaky_horizontal = true;
         public boolean freaky_vertical = true;
 
         public final ButtonMapping buttonMapping;
@@ -249,8 +271,8 @@ public class Settings {
 
     public static class ButtonMapping {
         // Extensor controls
-        public GamepadButton extendHorizontal = GamepadButton.B;
-        public GamepadButton retractHorizontal = GamepadButton.X;
+        public GamepadButton extendHorizontal = GamepadButton.X;
+        public GamepadButton retractHorizontal = GamepadButton.B;
         public final GamepadButton retractVertical = GamepadButton.LEFT_BUMPER;
         public final GamepadButton extendVertical = GamepadButton.RIGHT_BUMPER;
 
@@ -258,21 +280,22 @@ public class Settings {
         public final GamepadAxis moveForward = GamepadAxis.LEFT_STICK_Y;
         public final GamepadAxis moveSideways = GamepadAxis.LEFT_STICK_X;
         public final GamepadAxis rotate = GamepadAxis.RIGHT_STICK_X;
+        public final GamepadButton flipMovement = GamepadButton.A;
 
         public GamepadButton rotateRight = GamepadButton.A;
         public GamepadButton rotateLeft = GamepadButton.X;
 
         // Claw controls
-        public final GamepadButton intakeIn = GamepadButton.RIGHT_TRIGGER;
-        public final GamepadButton intakeOut = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeIn = GamepadButton.LEFT_TRIGGER;
+        public final GamepadButton intakeOut = GamepadButton.RIGHT_TRIGGER;
         public final GamepadButton intakeStop = GamepadButton.OPTIONS;
         public final GamepadButton clawIn = GamepadButton.OPTIONS;
         public final GamepadButton clawOut = GamepadButton.START;
         public final GamepadButton clawToggle = GamepadButton.RIGHT_STICK_BUTTON;
 
         // Wrist controls
-        public GamepadButton wristUp = GamepadButton.DPAD_RIGHT;
-        public GamepadButton wristDown = GamepadButton.DPAD_LEFT;
+        public GamepadButton wristUp = GamepadButton.DPAD_LEFT;
+        public GamepadButton wristDown = GamepadButton.DPAD_RIGHT;
 
         // Ascend extensor controls
         public final GamepadButton ascendExtensorExtend = GamepadButton.DPAD_RIGHT;
@@ -327,6 +350,8 @@ public class Settings {
         RIGHT_STICK_X, RIGHT_STICK_Y
     }
 
+
+
     // Deploy flags
     @Config
     public static class Deploy {
@@ -345,7 +370,8 @@ public class Settings {
         // Special Features
         public static final boolean VICTORY = false;
 
-        public static AutonomousMode AUTONOMOUS_MODE = AutonomousMode.CHAMBER;
+        public static AutonomousMode AUTONOMOUS_MODE_LEFT = AutonomousMode.BASKET;
+        public static AutonomousMode AUTONOMOUS_MODE_RIGHT = AutonomousMode.CHAMBER;
 
         public enum AutonomousMode {
             JUST_PARK, JUST_PLACE, CHAMBER, BASKET

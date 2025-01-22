@@ -18,6 +18,9 @@ import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /** @noinspection FieldCanBeLocal, unused, RedundantSuppression */
 public class BaseRobot {
@@ -40,7 +43,8 @@ public class BaseRobot {
     public Outtake outtake;
     public LinearActuator linearActuator;
     public Odometry odometry;
-    public boolean clawOpen = false;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     /**
      * Core robot class that manages hardware initialization and basic
@@ -102,8 +106,13 @@ public class BaseRobot {
         }
     }
 
+    public void scheduleTask(Runnable task, long delayMillis) {
+        scheduler.schedule(task, delayMillis, TimeUnit.MILLISECONDS);
+    }
+
     public void shutDown() {
         logger.stop();
+        scheduler.shutdown();
     }
 
     public void driveGamepads() {
@@ -121,10 +130,10 @@ public class BaseRobot {
     public void mecanumDrive(double drivePower, double strafePower, double rotation) {
         // Adjust the values for strafing and rotation
         strafePower *= Settings.Movement.strafe_power_coefficient;
-        double frontLeft = drivePower + strafePower + rotation;
-        double frontRight = drivePower - strafePower - rotation;
-        double rearLeft = drivePower - strafePower + rotation;
-        double rearRight = drivePower + strafePower - rotation;
+        double frontLeft = (drivePower + strafePower) * Settings.Movement.flip_movement + rotation;
+        double frontRight = (drivePower - strafePower) * Settings.Movement.flip_movement - rotation;
+        double rearLeft = (drivePower - strafePower) * Settings.Movement.flip_movement + rotation;
+        double rearRight = (drivePower + strafePower) * Settings.Movement.flip_movement - rotation;
 
         logger.update("FRONT LEFT", String.valueOf(frontLeft));
         logger.update("FRONT RIGHT", String.valueOf(frontRight));
@@ -190,8 +199,7 @@ public class BaseRobot {
             if (input.subSettings.freaky_horizontal) {
                 if (contextualActions.extendHorizontal) {
                     intake.horizontalSlide.increment();
-                }
-                else if (contextualActions.retractHorizontal) {
+                } else if (contextualActions.retractHorizontal) {
                     intake.horizontalSlide.decrement();
                 }
             } else {
@@ -208,8 +216,7 @@ public class BaseRobot {
             if (input.mainSettings.freaky_vertical) {
                 if (contextualActions.extendVertical) {
                     outtake.verticalSlide.increment();
-                }
-                else if (contextualActions.retractVertical) {
+                } else if (contextualActions.retractVertical) {
                     outtake.verticalSlide.decrement();
                 }
             } else {
@@ -222,17 +229,19 @@ public class BaseRobot {
             }
 
             if (contextualActions.justToggleClaw) {
-                if (clawOpen) {
-                    outtake.claw.close();
-                    clawOpen = false;
-                } else {
-                    outtake.claw.open();
-                    clawOpen = true;
+                if (outtake.claw.opened && Settings.Movement.easeTransfer) {
+                    intake.geckoWheels.outtake();
+                    scheduleTask(() -> intake.geckoWheels.stop(), 30);
                 }
+                outtake.claw.toggle();
             }
 
             if (contextualActions.justShoulderUp) {
                 outtake.linkage.cyclePosition();
+            }
+
+            if (contextualActions.justFlipMovement) {
+                Settings.Movement.flip_movement *= -1;
             }
 
         }

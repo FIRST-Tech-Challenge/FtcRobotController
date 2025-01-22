@@ -23,7 +23,7 @@ public class TestingSuite extends LinearOpMode {
             Settings.Hardware.IDs.FRONT_RIGHT_MOTOR,
             Settings.Hardware.IDs.REAR_LEFT_MOTOR,
             Settings.Hardware.IDs.REAR_RIGHT_MOTOR,
-            Settings.Hardware.IDs.LINEAR_ACTUATOR,
+//            Settings.Hardware.IDs.LINEAR_ACTUATOR,
             Settings.Hardware.IDs.SLIDE_VERTICAL,
             Settings.Hardware.IDs.SLIDE_HORIZONTAL,
     };
@@ -50,7 +50,7 @@ public class TestingSuite extends LinearOpMode {
         AtomicBoolean isMotor = new AtomicBoolean(true);
         AtomicBoolean continuousMode = new AtomicBoolean(false);
 
-        while (opModeIsActive() || (!isStarted() && !isStopRequested())) {
+        while (opModeIsActive() || !isStopRequested()) {
             telemetry.addLine("=== Motor/Servo Testing Selection ===");
 
             if (!listConfirmed.get()) {

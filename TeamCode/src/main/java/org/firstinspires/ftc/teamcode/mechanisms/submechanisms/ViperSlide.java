@@ -8,7 +8,7 @@ public interface ViperSlide {
     enum HorizontalPosition {
         COLLAPSED(Settings.Hardware.HorizontalSlide.COLLAPSED),
         LEVEL_1(Settings.Hardware.HorizontalSlide.LEVEL_1),
-        LEVEL_2(Settings.Hardware.HorizontalSlide.LEVEL_2),
+//        LEVEL_2(Settings.Hardware.HorizontalSlide.LEVEL_2),
         EXPANDED(Settings.Hardware.HorizontalSlide.EXPANDED);
 
         private final int value;

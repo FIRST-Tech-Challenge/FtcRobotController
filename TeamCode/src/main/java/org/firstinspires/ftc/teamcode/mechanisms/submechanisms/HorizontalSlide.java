@@ -69,13 +69,13 @@ public class HorizontalSlide implements ViperSlide {
 
     @Override
     public void increment() {
-        encoderTarget += 10;
+        encoderTarget += Settings.Hardware.HorizontalSlide.FREAKY_MOVEMENT_POWER;
         setPosition(encoderTarget);
     }
 
     @Override
     public void decrement() {
-        encoderTarget -= 10;
+        encoderTarget -= Settings.Hardware.HorizontalSlide.FREAKY_MOVEMENT_POWER;
         setPosition(encoderTarget);
     }
 }

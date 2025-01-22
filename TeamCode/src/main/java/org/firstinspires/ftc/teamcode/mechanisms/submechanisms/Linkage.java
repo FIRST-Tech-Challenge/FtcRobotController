@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.Settings;
 public class Linkage {
     public static double position = 0;
     public final Servo linkageServo;
-    public final double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
-    public final double placeForwardPos = Settings.Hardware.Servo.Linkage.PLACE_FORWARD_POSITION;
-    public final double placeBackwardPos = Settings.Hardware.Servo.Linkage.PLACE_BACKWARD_POSITION;
+    public static double transferPos = Settings.Hardware.Servo.Linkage.TRANSFER_POSITION;
+    public static double placeForwardPos = Settings.Hardware.Servo.Linkage.PLACE_FORWARD_POSITION;
+    public static double placeBackwardPos = Settings.Hardware.Servo.Linkage.PLACE_BACKWARD_POSITION;
     private final BaseRobot baseRobot;
     private final HardwareMap hardwareMap;
 
