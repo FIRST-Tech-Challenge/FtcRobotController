@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.google.common.util.concurrent.Uninterruptibles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
 
 import java.util.concurrent.TimeUnit;
 
+@Config
 public class DriveToTargetCommand extends SounderBotCommandBase {
 
     private static final String LOG_TAG = DriveToTargetCommand.class.getSimpleName();
@@ -27,11 +29,26 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     Telemetry telemetry;
     double targetX, targetY, targetHeading;
 
-    SonicPIDFController xPid = new SonicPIDFController(0.0010, 0, 0, 0.005);
+    public static double xPid_p = 0.0010;
+    public static double xPid_i = 0;
+    public static double xPid_d = 0;
+    public static double xPid_f = 0.005;
 
-    SonicPIDFController yPid = new SonicPIDFController(-0.0033, 0, 0, 0.02);
+    public static double yPid_p = -0.0033;
+    public static double yPid_i = 0;
+    public static double yPid_d = 0;
+    public static double yPid_f = 0.02;
 
-    SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
+    public static double hPid_p = 1;
+    public static double hPid_i = 0;
+    public static double hPid_d = 0;
+    public static double hPid_f = 0;
+
+    SonicPIDFController xPid;
+
+    SonicPIDFController yPid;
+
+    SonicPIDFController hPid;
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
@@ -53,6 +70,10 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         this.minPower = minPower;
         this.maxPower = maxPower;
         this.distanceTolerance = distanceTolerance;
+
+        xPid = new SonicPIDFController(xPid_p, xPid_i, xPid_d, xPid_f);
+        yPid = new SonicPIDFController(yPid_p, yPid_i, yPid_d, yPid_f);
+        hPid = new SonicPIDFController(hPid_p, hPid_i, hPid_d, hPid_f);
 
         addRequirements(driveTrain);
     }
@@ -98,6 +119,10 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         double x = xPid.calculatePIDAlgorithm(targetX - odo.getPosX());
         double y = yPid.calculatePIDAlgorithm(targetY - odo.getPosY());
         double h = hPid.calculatePIDAlgorithm(targetHeading - odo.getHeading());
+
+        telemetry.addData("drive to target xPid output", x);
+        telemetry.addData("drive to target yPid output", y);
+        telemetry.addData("drive to target hPid output", h);
 
         double botHeading = odo.getHeading();
 
