@@ -116,6 +116,16 @@ public class RightAutoV2 extends LinearOpMode {
                 drive.followTrajectory(traj3);
                 step = 5;
             }
+            else if(step = 5){
+                if(slides.getLeftSlidePosition() !=0 || slides.getRightSlidePosition() !=0) {
+                        slides.runLeftSlideToPosition(0, 0.9);
+                        slides.runRightSlideToPosition(0, 0.9);
+                 }
+                 else if(slides.getRightSlidePosition() !=0 && slides.getLeftSlidePosition() !=0) {
+                        slides.runLeftSlideToPosition(0, 0.9);
+                        slides.runRightSlideToPosition(0, 0.9);
+                    }
+                  }
         }
 
         //       y->
