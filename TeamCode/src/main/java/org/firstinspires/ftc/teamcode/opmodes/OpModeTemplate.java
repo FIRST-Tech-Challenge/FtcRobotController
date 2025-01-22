@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -9,11 +11,14 @@ public abstract class OpModeTemplate extends CommandOpMode {
     protected GamepadEx driverGamepad;
     protected GamepadEx operatorGamepad;
 
+
     @Override
     public void initialize() {
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
-
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        dashboard.setTelemetryTransmissionInterval(200);
          // update telemetry every loop
 //        schedule(new RunCommand(telemetry::update));
     }
