@@ -21,7 +21,7 @@ public class nematocyst {
     double pivotPower;
 //    private static final int degreesToTicks = 1425 /360;
 //    private static final double inchesToDegrees =  1/2.067;
-    private static final double ticksPerInch = (double) 8192/(Math.PI * 2 * 2.4 / 2.54 ); // TODO: wtf???
+    private static final double ticksPerInch = (double) 1425/(Math.PI * 3.75); // TODO: wtf???
     private static final double Max_Extension = 22 * ticksPerInch; // Horizontal Max Ticks
     private static final double degPerTick = (double) 360 /752;
     // PID constants
@@ -81,15 +81,17 @@ public class nematocyst {
             goOut(45.0);
         }
         if (opMode.gamepad1.dpad_up) {
-            wristOut();
+            slideMotor.setPower(1);
         } else if (opMode.gamepad1.dpad_down) {
-            wristIn();
+            slideMotor.setPower(-1);
         } else if (opMode.gamepad1.dpad_right) {
             grab();
         } else if (opMode.gamepad1.dpad_left) {
             release();
         } else if (opMode.gamepad1.left_bumper) {
             wristDown();
+        } else {
+            slideMotor.setPower(0);
         }
         targPivotPos = Math.min(0, Math.max(targPivotPos, maxPivotPos));
         // Ensure the motor does not exceed max forward extension
@@ -99,7 +101,7 @@ public class nematocyst {
 
         slidePID.setPIDF(P, I, D,0);
 
-        slideMotor.setPower(out);
+//        slideMotor.setPower(out);
         pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
         pivot.setPower(pivotPower); // use updatdePID to fix this
     }
@@ -151,10 +153,10 @@ public class nematocyst {
     }
     // Initialize motor
     public void manualOut() {
-        targetSlidePosition += 1;
+        targetSlidePosition += 10;
     }
     public void manualIn() {
-        targetSlidePosition -= 1;
+        targetSlidePosition -= 10;
     }
     public void manualUp() { targPivotPos++;}
     public void manualDown() { targPivotPos--;}

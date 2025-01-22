@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -39,10 +40,10 @@ public class splineTest extends OpMode {
     TrajectorySequence trajSequence;
     ElapsedTime velocityTimer;
     SwerveDrive drive;
-    public static double tP = .22;
+    public static double tP = 0;
     public static double tI = 0;
-    public static double tD = 0.0001;
-    public static double rP = .075;
+    public static double tD = 0;
+    public static double rP = 0;
     public static double rI = 0;
     public static double rD = 0;
     public static double kV = 0.05; // Velocity constant
@@ -132,6 +133,20 @@ public class splineTest extends OpMode {
         // If the time exceeds the total duration, return the end pose
         return trajectorySequence.end();
     }
+//    public MotionState getVelocityAtTime(TrajectorySequence trajectorySequence, double time) {
+//        double accumulatedTime = 0.0;
+//        for (int i = 0; i < trajectorySequence.size(); i++) {
+//            TrajectorySegment segment = (TrajectorySegment) trajectorySequence.get(i);
+//            double segmentDuration = segment.getDuration();
+//            if (accumulatedTime + segmentDuration >= time) {
+//                double timeInSegment = time - accumulatedTime;
+//                return segment.getMotionState(timeInSegment);
+//            }
+//            accumulatedTime += segmentDuration;
+//        }
+//        // If the time exceeds the total duration, return the end velocity
+//        return trajectorySequence.end().velocity();
+//    }
     @Override
     public void init_loop() {
         drive.init_loop();
@@ -155,14 +170,16 @@ public class splineTest extends OpMode {
         trajPose = getPoseAtTime(trajSequence, trajTimer.seconds());
         // Get the current pose of the robot
         now = rotateFTCLibPose(drive.nowPose);
-        // V and A from profile
-        double desiredVelocityX = (trajPose.getX() - previousPosX) / velocityTimer.seconds();
-        double desiredVelocityY = (trajPose.getY() - previousPosY) / velocityTimer.seconds();
-        double desiredAccelerationX = (desiredVelocityX - prevVelX) / velocityTimer.seconds();
-        double desiredAccelerationY = (desiredVelocityY - prevVelY) / velocityTimer.seconds();
 
-        actualVelX = (now.getX() - prevRobotX) / velocityTimer.seconds();
-        actualVelY = (now.getY() - prevRobotY) / velocityTimer.seconds();
+        double time = velocityTimer.seconds();
+        // V and A from profile
+        double desiredVelocityX = (trajPose.getX() - previousPosX) / time;
+        double desiredVelocityY = (trajPose.getY() - previousPosY) / time;
+        double desiredAccelerationX = (desiredVelocityX - prevVelX) / time;
+        double desiredAccelerationY = (desiredVelocityY - prevVelY) / time;
+
+        actualVelX = (now.getX() - prevRobotX) / time;
+        actualVelY = (now.getY() - prevRobotY)/ time;
 
         // Calculate feedforward terms
         double feedforwardX = kV * desiredVelocityX + kA * desiredAccelerationX + kStatic;
@@ -190,6 +207,8 @@ public class splineTest extends OpMode {
         previousPosX = trajPose.getX();
         prevVelX = desiredVelocityX;
         prevVelY = desiredVelocityY;
+        prevRobotX = now.getX();
+        prevRobotY = now.getY();
         velocityTimer.reset();
     }
     public void doTelemetry(Telemetry t) {
@@ -197,6 +216,9 @@ public class splineTest extends OpMode {
         t.addData("targ Vel Y", prevVelY);
         t.addData("Actual Vel X", actualVelX);
         t.addData("Actual Vel Y", actualVelY);
+        t.addData("veln timer", velocityTimer.seconds());
+        t.addData("Traj Pose X", trajPose.getX());
+        t.addData("Traj pose y", trajPose.getY());
 
 
 //        drive.getTelemetry(t);
