@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.runs;
 
-import android.util.Log;
-
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.LogCatCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.CommandFactory;
+import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
+import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliverySlider;
 
 @Autonomous
 public class SampleAuto extends CommandAutoOpMode {
@@ -19,10 +17,33 @@ public class SampleAuto extends CommandAutoOpMode {
     boolean hold1End = false;
     boolean hold2End = false;
     boolean hold3End = false;
+
+    boolean inMatch = false;
+
+    @Config
+    public static class Sample3Config {
+        public static int beforeExtendSlider_tragetX = 230;
+        public static int beforeExtendSlider_tragetY = 550;
+        public static int beforeExtendSlider_heading = 15;
+        public static double beforeExtendSlider_minPower = 0.13;
+        public static double beforeExtendSlider_maxPower = .5;
+        public static int beforeExtendSlider_distanceTolerance = 5;
+        public static double elbowIntakePosition = .85;
+        public static int sliderIntakePosition = 450;
+        public static int pivotIntakePosition = -1300;
+    }
+
+    private boolean tryGetDevBoolean(boolean val) {
+        return inMatch ? false : val;
+    }
+
     @Override
     protected Command createCommand() {
-        return new SequentialCommandGroup(
+        boolean skipOuttakePreloaded = tryGetDevBoolean(true);
+        boolean skipIntakeSample1 = tryGetDevBoolean(true);
+        boolean skipIntakeSample2 = tryGetDevBoolean(true);
 
+        return new SequentialCommandGroup(
 
                 //region preloaded sample
                 // drive to bucket, pivot the arm and extend slider
@@ -36,8 +57,9 @@ public class SampleAuto extends CommandAutoOpMode {
                 // ?
                 commandFactory.driveToTarget(-10, 430, -45, 0.15, .8, 50),
 
+
                 // deliver preloaded sample
-                commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
+                skipOuttakePreloaded ? commandFactory.doNothing() : commandFactory.outtake().andThen(new InstantCommand(() -> hold1End = true)),
                 //endregion
 
                 //region sample #1
@@ -49,8 +71,8 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.elbowToIntakePosition()
                 ),
 
-                commandFactory.intakeFromGround2(1500),
-                commandFactory.inCaseSampleIntakeFailed("Sample 1", new SequentialCommandGroup(
+                skipIntakeSample1 ? commandFactory.doNothing() : commandFactory.intakeFromGround2(1500),
+                skipIntakeSample1 ? commandFactory.doNothing() : commandFactory.inCaseSampleIntakeFailed("Sample 1", new SequentialCommandGroup(
                     commandFactory.pivotToIntakeRetry(),
                         commandFactory.pivotToGroundInTakeBegin(),
                         commandFactory.intakeFromGround2(2000)
@@ -66,7 +88,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 commandFactory.driveToTarget(10, 450, -45, 0.13, .5, 10),
 
                 // Sample #1
-                commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
+                skipIntakeSample1 ? commandFactory.doNothing() : commandFactory.outtake().andThen(new InstantCommand(() -> hold2End = true),
                 //endregion for sample #1
 
                 //region sample #2
@@ -78,9 +100,9 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.elbowToIntakePosition()
                 ),
 
-                commandFactory.intakeFromGround2(1500),
+                skipIntakeSample2 ? commandFactory.doNothing() : commandFactory.intakeFromGround2(1500),
 
-                commandFactory.inCaseSampleIntakeFailed("Sample 2", new SequentialCommandGroup(
+                skipIntakeSample2 ? commandFactory.doNothing() : commandFactory.inCaseSampleIntakeFailed("Sample 2", new SequentialCommandGroup(
                         commandFactory.pivotToIntakeRetry(),
                         commandFactory.pivotToGroundInTakeBegin(),
                         commandFactory.intakeFromGround2(2000)
@@ -97,20 +119,20 @@ public class SampleAuto extends CommandAutoOpMode {
 
 
                 // Sample #2
-                commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
+                skipIntakeSample2 ? commandFactory.doNothing() : commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
                 //endregion sample #2
 
                 //region sample #3
-//                commandFactory.driveToTarget(230, 550, 15, 0.13, .5, 5),
-//                commandFactory.collapseSlider(),
-//                new ParallelCommandGroup(
-//                    commandFactory.pivotToGroundInTakeBegin()
-//
-//                ),
-//                commandFactory.elbowToIntakePositionForSample3(),
-//                commandFactory.extendSliderToIntakeSample3(),
-//                commandFactory.sleep(300),
-//                commandFactory.intakeFromGroundForSample3(4000),
+                commandFactory.driveToTarget(Sample3Config.beforeExtendSlider_tragetX, Sample3Config.beforeExtendSlider_tragetY, Sample3Config.beforeExtendSlider_heading, Sample3Config.beforeExtendSlider_minPower, Sample3Config.beforeExtendSlider_maxPower, Sample3Config.beforeExtendSlider_distanceTolerance),
+                commandFactory.collapseSlider(),
+                new ParallelCommandGroup(
+                    commandFactory.pivotTo(Sample3Config.pivotIntakePosition)
+
+                ),
+                commandFactory.elbowToPosition(Sample3Config.elbowIntakePosition),
+                commandFactory.extendSlider(Sample3Config.sliderIntakePosition),
+                commandFactory.sleep(300),
+                commandFactory.intakeFromGroundForSample3(4000),
 
 //                commandFactory.inCaseSampleIntakeFailed("Sample 3", new SequentialCommandGroup(
 //                        commandFactory.pivotToIntakeRetry(),
@@ -118,20 +140,20 @@ public class SampleAuto extends CommandAutoOpMode {
 //                        commandFactory.intakeFromGroundForSample3(6000)
 //                )),
 
-//                new ParallelCommandGroup(
-//                    commandFactory.elbowToSpecimenPosition(),
-//                    commandFactory.pivotToDelivery()
-//
-//                ),
-//
-//                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 10),
-//                commandFactory.extendSlider(),
-//                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 10),
-//
-//
-//                // Sample #3
-//                commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
-//                commandFactory.driveToTarget(300, 420, 0, 0.13, .8, 10),
+                new ParallelCommandGroup(
+                    commandFactory.elbowToSpecimenPosition(),
+                    commandFactory.pivotToDelivery()
+
+                ),
+
+                commandFactory.driveToTarget(300, 400, 0, 0.13, .8, 10),
+                commandFactory.extendSlider(),
+                commandFactory.driveToTarget(80, 440, -45, 0.13, .8, 10),
+
+
+                // Sample #3
+                commandFactory.outtake().andThen(new InstantCommand(() -> hold3End = true)),
+                commandFactory.driveToTarget(300, 420, 0, 0.13, .8, 10),
                 //endregion sample #3
 
 //                new ParallelCommandGroup(

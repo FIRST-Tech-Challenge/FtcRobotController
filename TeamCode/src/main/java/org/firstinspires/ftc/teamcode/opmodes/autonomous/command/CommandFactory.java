@@ -142,6 +142,10 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 180, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
+    public MoveSliderCommand extendSlider(int position) {
+        return new MoveSliderCommand(slider, telemetry, position, false, DeliverySlider.Direction.EXPANDING, 1500);
+    }
+
     public MoveSliderCommand collapseSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
     }
@@ -162,8 +166,13 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
     }
 
+
     public MovePivotCommand pivotToGroundInTakeSample3Begin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 230);
+    }
+
+    public MovePivotCommand pivotTo(int position) {
+        return new MovePivotCommand(pivot, telemetry, position);
     }
 
     public MovePivotCommand pivotToIntakeRetry() {
@@ -186,6 +195,10 @@ public class CommandFactory {
 
     public SingleRunCommand elbowToIntakePosition() {
         return new SingleRunCommand(intake::SetElbowInIntakePosition);
+    }
+
+    public Command elbowToPosition(double position) {
+        return new SingleRunCommand(() -> intake.setElbowToPosition(position));
     }
 
     public SingleRunCommand elbowToIntakePositionForSample3() {
