@@ -25,6 +25,8 @@ public class Odometry extends SubsystemBase {
     private double fieldY = 0.0;
     private double fieldAngle = 0.0;
 
+    private int updateDashboardCounter=0;
+
     // variables used for displaying paths on dashboard field widget
     // arrays hold x and y points of currently shown path(s)
     // arrays are set to null if no path to be shown
@@ -46,7 +48,7 @@ public class Odometry extends SubsystemBase {
         // only update odometry if op mode is not about to shut down
         // this prevents possible error in calculation cycle
         if (!RobotContainer.ActiveOpMode.isStopRequested()) {
-
+            updateDashboardCounter += 1;
             double leftPos;
             double rightPos;
             double frontPos;
@@ -89,13 +91,14 @@ public class Odometry extends SubsystemBase {
             fieldAngle = IMUHeading;
 
             // only update dashboard and controller telemetry if opmode not about to be shut down
-            if (!RobotContainer.ActiveOpMode.isStopRequested()) {
-                RobotContainer.ActiveOpMode.telemetry.addData("fieldX", fieldX);
-                RobotContainer.ActiveOpMode.telemetry.addData("fieldY", fieldY);
-                RobotContainer.ActiveOpMode.telemetry.addData("Yaw", Math.toDegrees(fieldAngle));
+            if (!RobotContainer.ActiveOpMode.isStopRequested() && updateDashboardCounter >= 15) {
+                //RobotContainer.ActiveOpMode.telemetry.addData("fieldX", fieldX);
+                //RobotContainer.ActiveOpMode.telemetry.addData("fieldY", fieldY);
+                //RobotContainer.ActiveOpMode.telemetry.addData("Yaw", Math.toDegrees(fieldAngle));
 
                 // update FTC dashboard with latest odometry info - in separate function below for clarity
                 UpdateDashBoard();
+                updateDashboardCounter = 0;
             }
 
             // save position to data store, in case op mode ends

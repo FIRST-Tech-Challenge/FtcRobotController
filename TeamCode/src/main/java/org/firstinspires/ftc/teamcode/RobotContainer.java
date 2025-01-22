@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -10,6 +12,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
@@ -46,6 +49,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Arm.Shoulder.ShoulderJoint;
 import org.firstinspires.ftc.teamcode.Subsystems.LinearSlide.SlideTargetHeight;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
 
+import java.util.List;
+
 
 public class RobotContainer {
 
@@ -70,12 +75,10 @@ public class RobotContainer {
 
     // create pointers to robot subsystems
     public static DriveTrain drivesystem;
-    //public static VirtualDriveTrain drivesystem;
     public static Gyro gyro;
     public static OctQuad odometryPod;
     public static Odometry odometry;
     public static Camera clawCamera;
-    //public static VirtualOdometry odometry;
     public static LinearSlide linearSlide;
     //public static Camera frontCamera;
     public static PivotingWrist wristRotateServo;
@@ -98,7 +101,9 @@ public class RobotContainer {
     public static double RedStartAngle = 90;
     public static double BlueStartAngle = -90;
 
-    //
+    // List of robot control and expansion hubs - used for caching of I/O
+    static List<LynxModule> allHubs;
+
 
     // Robot initialization for teleop - Run this once at start of teleop
     // mode - current opmode that is being run
@@ -237,8 +242,16 @@ public class RobotContainer {
 
     // robot initialization - common to both auto and teleop
     private static void Init(CommandOpMode mode) {
+
         // save pointer to active OpMode
         ActiveOpMode = mode;
+
+        // create list of robot control and expansion hubs
+        // set each for manual caching - cache updated in periodic()
+        allHubs = ActiveOpMode.hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
         // create and reset timer
         timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -263,8 +276,6 @@ public class RobotContainer {
         odometryPod = new OctQuad();
         odometry = new Odometry();
         drivesystem = new DriveTrain();
-        //odometry = new VirtualOdometry();
-        //drivesystem = new VirtualDriveTrain();
         //frontCamera = new Camera("CamyCamy");
         clawCamera = new Camera("ClawCamera");//"TagCamera"
         linearSlide = new LinearSlide();
@@ -301,6 +312,12 @@ public class RobotContainer {
 
     // call this function periodically to operate scheduler
     public static void Periodic() {
+
+        // clear I/O cache for robot control and expansion hubs
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+
         try {
             piece_angle = (int) Math.round( clawCamera.GetBlobDetections().get(0).getBoxFit().angle);
             if (clawCamera.GetBlobDetections().get(0).getBoxFit().size.width<clawCamera.GetBlobDetections().get(0).getBoxFit().size.height){
@@ -308,8 +325,6 @@ public class RobotContainer {
             }
             piece_center_X = clawCamera.GetBlobDetections().get(0).getBoxFit().center.x;
             piece_center_Y = clawCamera.GetBlobDetections().get(0).getBoxFit().center.y;
-
-            //new ConvertAngleForWristRotate();
 
         } catch (Exception e) {
         }
@@ -333,6 +348,12 @@ public class RobotContainer {
 
             // run scheduler
             CommandScheduler.getInstance().run();
+
+            // report robot odometry on robot controller
+            Pose2d position = odometry.getCurrentPos();
+            RCTelemetry.addData("fieldX", position.getX());
+            RCTelemetry.addData("fieldY", position.getY());
+            RCTelemetry.addData("Yaw", position.getRotation().getDegrees());
 
             // report time interval on robot controller
             RCTelemetry.addData("interval time(ms)", intervaltime);
