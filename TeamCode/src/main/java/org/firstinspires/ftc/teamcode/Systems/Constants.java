@@ -20,7 +20,7 @@ public class Constants {
 
     //Constants to find distances
     private static final double WHEEL_DIAMETER = 104; // Wheel diameter in millimeters
-    public static double TICKS_PER_REVOLUTION = 537.7;
+    public static double COUNT_PER_REVOLUTION = 537.7 ;
     public static double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
     public static double FRICTION_PERCENT = 0.95;
