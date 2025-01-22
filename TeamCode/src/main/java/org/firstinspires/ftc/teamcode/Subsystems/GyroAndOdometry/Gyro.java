@@ -11,6 +11,8 @@ public class Gyro extends SubsystemBase {
     // robot gyroscope
     private IMU gyro;
 
+    private double YawAngle;
+
     // gyro offset
     private double YawAngleOffset;
 
@@ -28,13 +30,12 @@ public class Gyro extends SubsystemBase {
     @Override
     public void periodic() {
         //RobotContainer.ActiveOpMode.telemetry.addData("Gyro", JavaUtil.formatNumber(getYawAngle(), 2));
+        YawAngle = gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+YawAngleOffset;
     }
 
     /** get gyro angle - returns angle in deg between -180 and 180 */
     public double getYawAngle() {
-
-        // positive for 'Tiny' robot
-        return (gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES))+YawAngleOffset;
+        return YawAngle;
     }
 
     // resets gyro and offset value
