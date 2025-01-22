@@ -56,6 +56,7 @@ public class Input {
                 motors.MoveMotor(Motors.Type.LeftFront, -power);
                 motors.MoveMotor(Motors.Type.RightFront, -power);
                 motors.MoveMotor(Motors.Type.RightBack, -power);
+                //prob fix movement forward
             }
 
             if (power != 0) {
@@ -144,9 +145,9 @@ public class Input {
 
 
 
-    public void arm(double gamepad) {
+    public void arm(int targetPos) {
 
-        setPoint += (int) (-gamepad * 35);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+        setPoint += (int) (-targetPos * 35);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
 
         // Clamp setPoint between resting and reaching positions
         setPoint = Math.max(motors.getArmRestingPosition(), Math.min(setPoint, motors.getArmReachingPosition()));
@@ -182,7 +183,7 @@ public class Input {
         // Apply the motor power
         output = Math.max(Math.min(output, 100), -100);  // Clamp output to motor range and make it so that it will more slowly go to its target position
 
-        if((motors.getArmPosition() == motors.getArmRestingPosition()) && (gamepad == 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
+        if((motors.getArmPosition() == motors.getArmRestingPosition()) && (targetPos == 0)) { // Allows the arm to not be powered when it is in its resting position and no inputs are given
             motors.MoveMotor(Motors.Type.Arm,0);                                // This can prevent the motor from overheating like it was doing earlier
         }
         else {
@@ -210,35 +211,64 @@ public class Input {
     }
 
 
-    public void calculatePosition() {
-        heading = imu.getAngle('y');
+//    public void calculatePosition() {
+//        heading = imu.getAngle('y');
+//
+//        // Read encoder values
+//        double flTicks = motors.getLeftFrontPosition();
+//        double frTicks = motors.getLeftBackPosition();
+//        double blTicks = motors.getRightFrontPosition();
+//        double brTicks = motors.getRightBackPosition();
+//
+//        // Convert encoder ticks to distances
+//        double flDistance = (flTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+//        double frDistance = (frTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+//        double blDistance = (blTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+//        double brDistance = (brTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+//
+//        // Calculate movement in robot-centric coordinates
+//        double forward = (flDistance + frDistance + blDistance + brDistance) / 4.0;
+//        double strafe = (-flDistance + frDistance + blDistance - brDistance) / 4.0;
+//
+//        // Transform robot-centric motion to field-centric motion
+//        double deltaX = forward * Math.sin(heading) + strafe * Math.cos(heading);
+//        double deltaY = forward * Math.cos(heading) - strafe * Math.sin(heading);
+//
+//        // Update robot's position
+//        x += deltaX;
+//        y += deltaY;
+//
+//        BotTelemetry.drawPosition(x, y, heading);
+//        // Pause briefly
+//        //sleep(50); // 50ms delay for smoother updates
+//    }
 
-        // Read encoder values
-        double flTicks = motors.getLeftFrontPosition();
-        double frTicks = motors.getLeftBackPosition();
-        double blTicks = motors.getRightFrontPosition();
-        double brTicks = motors.getRightBackPosition();
+    public double getDistance() {
+        double leftBackPosition = motors.getLeftFrontPosition();
+        double rightBackPosition = motors.getRightFrontPosition();
 
-        // Convert encoder ticks to distances
-        double flDistance = (flTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-        double frDistance = (frTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-        double blDistance = (blTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-        double brDistance = (brTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
+        // Get the current position of the motor
 
-        // Calculate movement in robot-centric coordinates
-        double forward = (flDistance + frDistance + blDistance + brDistance) / 4.0;
-        double strafe = (-flDistance + frDistance + blDistance - brDistance) / 4.0;
+        double lbrevolutions = leftBackPosition / Constants.COUNT_PER_REVOLUTION;
+        double lbangle = lbrevolutions * 360;
+        //double lbangleNormalized = lbangle % 360;
 
-        // Transform robot-centric motion to field-centric motion
-        double deltaX = forward * Math.sin(heading) + strafe * Math.cos(heading);
-        double deltaY = forward * Math.cos(heading) - strafe * Math.sin(heading);
+        double rbrevolutions = rightBackPosition / Constants.COUNT_PER_REVOLUTION;
+        double rbangle = rbrevolutions * 360;
+        //double rbangleNormalized = rbangle % 360;
 
-        // Update robot's position
-        x += deltaX;
-        y += deltaY;
 
-        BotTelemetry.drawPosition(x, y, heading);
-        // Pause briefly
-        //sleep(50); // 50ms delay for smoother updates
+        double rbdistance = Constants.WHEEL_CIRCUMFERENCE * rbrevolutions * Constants.FRICTION_PERCENT;
+        double lbdistance = Constants.WHEEL_CIRCUMFERENCE * lbrevolutions * Constants.FRICTION_PERCENT;
+
+        double distance;
+
+
+        if(!isSpin()) {
+            return distance = (Math.floor(((lbdistance + rbdistance))/2))  / 25.4;
+        }
+        else {
+            return distance = ((lbdistance - rbdistance)/2)  / 25.4;
+        }
     }
 }

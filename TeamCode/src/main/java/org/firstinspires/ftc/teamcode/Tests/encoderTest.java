@@ -52,10 +52,10 @@ public class encoderTest extends LinearOpMode {
             double distance;
 
             if(!input.isSpin()) {
-                distance = Math.floor((lbdistance + rbdistance));
+                distance = Math.floor(((lbdistance + rbdistance))/2);
             }
             else {
-                distance = lbdistance - rbdistance;
+                distance = (lbdistance - rbdistance)/2;
             }
 
 

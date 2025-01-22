@@ -42,7 +42,7 @@ public class TeleMain extends LinearOpMode {
             double intake = gamepad2.left_stick_y * 100;
 
             double armRaise = gamepad2.right_stick_y * 100;
-            double arm = gamepad2.left_stick_y;
+            int arm = 0;
 
             input.move(move);
             input.spin(spin);
@@ -50,10 +50,11 @@ public class TeleMain extends LinearOpMode {
             input.claw(gamepad2.a, gamepad2.b);
             input.upArm(armRaise);
 
+            arm += (int) (-gamepad2.left_stick_y * 35);
+
             input.arm(arm);
 
             //input.calculatePosition();
-
             BotTelemetry.addData("MOVE:",  move);
             BotTelemetry.addData("SPIN:",  spin);
             BotTelemetry.addData("STRAFE:",  strafe);
