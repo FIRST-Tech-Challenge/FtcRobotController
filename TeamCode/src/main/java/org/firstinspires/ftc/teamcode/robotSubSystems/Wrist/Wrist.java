@@ -17,7 +17,7 @@ public class Wrist {
     public static void operate(WristState state) {
         switch (state) {
             case TRANSFER:
-                leftWristServo.setPosition(0.01);
+                leftWristServo.setPosition(0.03);
                 //rightWristServo.setPosition(0);
                 break;
             case INTAKE:

@@ -33,8 +33,6 @@ public class ElevatorVertical {
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         resetEncoder();
     }
-
-    public static final int MAX_OPEN_POS = 1800;
     private static double power = 0;
     private static ElevatorVerticalState lastWantedState = ElevatorVerticalState.INTAKE;
     public static void operate(ElevatorVerticalState wantedState, double gamepadVal, Telemetry telemetry) {
@@ -63,7 +61,7 @@ public class ElevatorVertical {
             }
              */
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
-            wantedPos = limiter(wantedPos, 0, MAX_OPEN_POS);
+            wantedPos = limiter(wantedPos, 0, ElevatorVerticalConstants.MAX_OPEN_POS);
             changeLevelPID.setWanted(wantedPos);
             telemetry.addData("wantedPos",wantedPos);
             telemetry.addData("elevatorpos",getElevatorPos());

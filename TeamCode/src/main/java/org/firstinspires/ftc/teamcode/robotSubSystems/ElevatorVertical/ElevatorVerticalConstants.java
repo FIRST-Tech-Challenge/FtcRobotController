@@ -18,5 +18,7 @@ public class ElevatorVerticalConstants {
     public static int PutSpecimenPos = 1600;
     public static int DepletePos = 2000;
 
+    public static final int MAX_OPEN_POS = 2400;
+
 
 }

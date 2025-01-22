@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utils.Vector;
@@ -21,10 +20,7 @@ import org.firstinspires.ftc.teamcode.robotSubSystems.Wrist.WristState;
 
 @TeleOp(name = "TeleOp")
 public class TeleOp14029 extends OpMode {
-    public  static Servo armServo;
-
     SubSystemsState systemsState = SubSystemsState.TRAVEL;
-
     IntakeState intakeState = IntakeState.OFF;
     WristState wristState = WristState.TRANSFER;
     ArmState armState = ArmState.INTAKE;
@@ -56,32 +52,14 @@ public class TeleOp14029 extends OpMode {
         if (gamepad1.right_stick_x != 0) {elevatorHorizonticalState = ElevatorHorizonticalState.OVERRIDE;}
         //TODO: add reset to horizontal elevs
         //general----------------------------------------------------------------------------
-        if (gamepad1.right_bumper) {systemsState = SubSystemsState.INTAKE;}
-        if (gamepad1.left_bumper) {systemsState = SubSystemsState.TRAVEL;}
-        //TODO: set arm Servo
+        if (gamepad1.right_bumper) {wristState = WristState.INTAKE; intakeState = IntakeState.IN;}
+        if (gamepad1.left_bumper) {wristState = WristState.TRANSFER; intakeState = IntakeState.OFF;}
+
         if (gamepad1.dpad_down) {armState = ArmState.INTAKE;}
         if (gamepad1.dpad_up) {armState = ArmState.DEPLETE;}
 
 
-        switch (systemsState) {
-            case TRAVEL:
-                wristState = WristState.TRANSFER;
-                intakeState = IntakeState.IN;
-            case INTAKE:
-                wristState = WristState.INTAKE;
-                intakeState = IntakeState.IN;
-            case DEPLETESPECIMEN:
-                wristState = WristState.DEPLETE;
-                intakeState = IntakeState.OUT;
-            case DEPLETE:
-                wristState = WristState.TRANSFER;
-                intakeState = IntakeState.OFF;
-        }
-
-
-
-
-        //TODO: add encoder limiters
+        //TODO: add encoder limiters for horizontal
         ElevatorHorizontical.opreate(elevatorHorizonticalState,gamepad1.right_stick_x,telemetry);
         ElevatorVertical.operate( elevatorState, -gamepad1.right_stick_y,telemetry);
         Intake.operate(intakeState);
