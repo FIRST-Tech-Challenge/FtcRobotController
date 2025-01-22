@@ -12,6 +12,7 @@ public class SampleDetection {
     public double angle;
     public double x;
     public double y;
+    public int id;
     public enum SampleRotation {
         HORIZONTAL,
         VERTICAL
@@ -19,8 +20,9 @@ public class SampleDetection {
     public SampleRotation sampleRotation;
     public RotatedRect boxFit;
     public boolean exists = true;
-    public SampleDetection (ColorRange colorRange, RotatedRect rotatedRect, boolean exists){
+    public SampleDetection (int id, ColorRange colorRange, RotatedRect rotatedRect, boolean exists){
         this.color = colorRange;
+        this.id = id;
         this.width = rotatedRect.size.width;
         this.height = rotatedRect.size.height;
         this.angle = rotatedRect.angle;

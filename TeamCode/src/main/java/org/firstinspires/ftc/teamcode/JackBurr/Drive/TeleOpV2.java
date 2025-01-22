@@ -97,6 +97,12 @@ public class TeleOpV2 extends OpMode {
     public boolean sampleTransferred = false;
     //VARIABLES=================================================================================================================
     public double timeNeeded = 0;
+    public int leftSlideHighBar = constants.LEFT_SLIDE_HIGH_BAR;
+    public int rightSlideHighBar = constants.RIGHT_SLIDE_HIGH_BAR;
+    public int leftSlideHighBasket = constants.LEFT_SLIDE_HIGH_BASKET;
+    public int rightSlideHighBasket = constants.RIGHT_SLIDE_HIGH_BASKET;
+    public int leftSlideDown = 0;
+    public int rightSlideDown = 0;
     @Override
     public void init() {
         //Motors =====================================================================================================
@@ -192,11 +198,21 @@ public class TeleOpV2 extends OpMode {
                 deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_OPEN);
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 wrist.setPosition(constants.WRIST_CENTER);
-                if(deliverySlides.getLeftSlidePosition() != 0) {
-                    deliverySlides.runLeftSlideToPosition(0, 1);
+                if(gamepad1.dpad_up && buttonTimer.seconds() > 0.2){
+                    leftSlideDown = leftSlideDown - 20;
+                    rightSlideDown = rightSlideDown + 20;
+                    buttonTimer.reset();
                 }
-                if(deliverySlides.getRightSlidePosition()!= 0) {
-                    deliverySlides.runRightSlideToPosition(0, 1);
+                else if(gamepad1.dpad_down && buttonTimer.seconds() > 0.3){
+                    leftSlideDown = leftSlideDown + 20;
+                    rightSlideDown = rightSlideDown - 20;
+                    buttonTimer.reset();
+                }
+                if(deliverySlides.getLeftSlidePosition() != leftSlideDown) {
+                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                }
+                if(deliverySlides.getRightSlidePosition()!= rightSlideDown) {
+                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
                 }
                 if(slidesResetTimer.seconds() > 1){
                     intakeSlides.intakeIn();
@@ -229,8 +245,8 @@ public class TeleOpV2 extends OpMode {
                 deliveryAxon.setPosition(constants.DELIVERY_WALL_PICKUP);
                 break;
             case LIFT_FROM_WALL:
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR, 0);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR, 0);
+                deliverySlides.runLeftSlideToPosition(leftSlideHighBar, 0.5);
+                deliverySlides.runRightSlideToPosition(rightSlideHighBar, 0.5);
                 if(gamepad1.y && buttonTimer.seconds() > 0.3){
                     state = SystemStatesV1.GRAB_OFF_WALL;
                     buttonTimer.reset();
@@ -242,15 +258,25 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BAR, 0.8);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BAR, 0.8);
+                deliverySlides.runLeftSlideToPosition(leftSlideHighBar, 0.8);
+                deliverySlides.runRightSlideToPosition(rightSlideHighBar, 0.8);
                 deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
-                if(gamepad1.dpad_up && buttonTimer.seconds() > 0.3){
+                if(gamepad1.dpad_right && buttonTimer.seconds() > 0.3){
                     deliveryAxon.setPosition(deliveryAxon.getPosition() + 0.05);
                     buttonTimer.reset();
                 }
-                else if(gamepad1.dpad_down && buttonTimer.seconds() > 0.3){
+                else if(gamepad1.dpad_left && buttonTimer.seconds() > 0.2){
                     deliveryAxon.setPosition(deliveryAxon.getPosition() - 0.05);
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_up && buttonTimer.seconds() > 0.2){
+                    leftSlideHighBar = leftSlideHighBar - 20;
+                    rightSlideHighBar = rightSlideHighBar + 20;
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_down && buttonTimer.seconds() > 0.3){
+                    leftSlideHighBar = leftSlideHighBar + 20;
+                    rightSlideHighBar = rightSlideHighBar - 20;
                     buttonTimer.reset();
                 }
                 break;
@@ -449,9 +475,27 @@ public class TeleOpV2 extends OpMode {
                     state = SystemStatesV1.START;
                     buttonTimer.reset();
                 }
+                else if(gamepad1.dpad_up && buttonTimer.seconds() > 0.2){
+                    leftSlideHighBasket = leftSlideHighBasket - 20;
+                    rightSlideHighBasket = rightSlideHighBasket + 20;
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_down && buttonTimer.seconds() > 0.3){
+                    leftSlideHighBasket = leftSlideHighBasket + 20;
+                    rightSlideHighBasket = rightSlideHighBasket- 20;
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_right && buttonTimer.seconds() > 0.3){
+                    deliveryAxon.setPosition(deliveryAxon.getPosition() + 0.05);
+                    buttonTimer.reset();
+                }
+                else if(gamepad1.dpad_left && buttonTimer.seconds() > 0.2){
+                    deliveryAxon.setPosition(deliveryAxon.getPosition() - 0.05);
+                    buttonTimer.reset();
+                }
 
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_HIGH_BASKET, 0.8);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_HIGH_BASKET, 0.8);
+                deliverySlides.runLeftSlideToPosition(leftSlideHighBasket, 0.8);
+                deliverySlides.runRightSlideToPosition(rightSlideHighBasket, 0.8);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -493,13 +537,13 @@ public class TeleOpV2 extends OpMode {
                 deliveryAxon.setPosition(constants.DELIVERY_GRAB);
                 break;
             case LEVEL_TWO_ASCENT:
-                if(deliverySlides.getLeftSlidePosition() != 0 || deliverySlides.getRightSlidePosition() != 0) {
-                    deliverySlides.runLeftSlideToPosition(0, 1);
-                    deliverySlides.runRightSlideToPosition(0, 1);
+                if(deliverySlides.getLeftSlidePosition() != leftSlideDown || deliverySlides.getRightSlidePosition() != leftSlideDown) {
+                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
                 }
                 else if(deliverySlides.getLeftSlidePosition() != 0 && deliverySlides.getRightSlidePosition() != 0){
-                    deliverySlides.runLeftSlideToPosition(0, 1);
-                    deliverySlides.runRightSlideToPosition(0, 1);
+                    deliverySlides.runLeftSlideToPosition(leftSlideDown, 1);
+                    deliverySlides.runRightSlideToPosition(rightSlideDown, 1);
                 }
                 if(!intakeSlides.isAllTheWayIn()) {
                     intakeSlides.intakeAllTheWayIn();
@@ -623,8 +667,10 @@ public class TeleOpV2 extends OpMode {
         telemetry.addLine("\t Intake slides power: " + intakeSlides.getPower());
         telemetry.addLine("\t Intake slides position: " + intakeSlides.getCurrentPosition());
         telemetry.addLine("\t Delivery Grippers Timer 02: " + deliveryGrippersTimer2.seconds());
-        telemetry.addLine("\t Left Delivery SLide: " +  deliverySlides.getLeftSlidePosition());
-        telemetry.addLine("\t Right Delivery SLide: " +  deliverySlides.getRightSlidePosition());
+        telemetry.addLine("\t Left Delivery Slide: " +  deliverySlides.getLeftSlidePosition());
+        telemetry.addLine("\t Right Delivery Slide: " +  deliverySlides.getRightSlidePosition());
+        telemetry.addLine("\t Left Delivery Slide Down Position: " +  leftSlideDown);
+        telemetry.addLine("\t Right Delivery Slide Down Position: " +  rightSlideDown);
 
 
     }

@@ -12,9 +12,8 @@ import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-//TODO: PUSH FIRST THING
 @Autonomous
-public class RightAutoV2 extends LinearOpMode {
+public class RightAutoV3 extends LinearOpMode {
     public int step = 1;
     public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();
     public DeliverySlidesV1 deliverySlides = new DeliverySlidesV1();
@@ -115,6 +114,14 @@ public class RightAutoV2 extends LinearOpMode {
             else if(step == 4) {
                 drive.followTrajectory(traj3);
                 step = 5;
+            }
+            else if(step == 5){
+                drive.followTrajectory(traj4);
+                step = 6;
+            }
+            else if(step == 6){
+                drive.turn(90);
+                step = 7;
             }
         }
 
