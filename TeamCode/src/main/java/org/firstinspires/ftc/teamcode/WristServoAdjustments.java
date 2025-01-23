@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Wrist Servo Adjustments", group="Linear OpMode")
+@TeleOp(name="Servo Adjustments", group="Linear OpMode")
 public class WristServoAdjustments extends LinearOpMode {
 
     // This chunk controls our claw

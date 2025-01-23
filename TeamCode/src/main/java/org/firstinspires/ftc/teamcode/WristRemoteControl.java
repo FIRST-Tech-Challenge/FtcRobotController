@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-@TeleOp(name="Wrist Remote Control", group="Linear OpMode")
+@TeleOp(name="Remote Control", group="Linear OpMode")
 public class WristRemoteControl extends LinearOpMode {
     // Initialize all variables for the program below:
     // This chunk controls our wheels
