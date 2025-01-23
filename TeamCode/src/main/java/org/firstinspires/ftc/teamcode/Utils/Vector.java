@@ -58,7 +58,7 @@ public final class Vector {
         final double sinTheta = Math.sin(theta);
         final double cosTheta = Math.cos(theta);
 
-        final double newX = x * cosTheta - y * sinTheta;
+        final double newX = -x * cosTheta + y * sinTheta; // changed from x - y to y-x
         final double newY = x * sinTheta + y * cosTheta;
 
         return new Vector(newX, newY);

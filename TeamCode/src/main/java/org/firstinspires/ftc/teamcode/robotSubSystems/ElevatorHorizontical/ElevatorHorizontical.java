@@ -28,15 +28,14 @@ public class ElevatorHorizontical {
                         break;
                     case ALMOST:
                         wantedPos = ElevatorHorizonticalConstants.almostPos;
+                        break;
+                    case HALF:
+                        wantedPos = ElevatorHorizonticalConstants.halfpos;
+                        break;
                     case OVERRIDE:
                         wantedPos += ElevatorHorizonticalConstants.overrideFactor * -rightJoyStick;
-
                         break;
                 }
-                telemetry.addData("wantedPos",wantedPos);
-                telemetry.addData("getPos",getPos());
-                telemetry.addData("pid getPos",pid.update(getPos()));
-
                 pid.setWanted(wantedPos);
                 elevatorMotor.setPower(pid.update(getPos()));
     }
