@@ -22,7 +22,7 @@ public class ArmStowHigh extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(120)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(122)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),

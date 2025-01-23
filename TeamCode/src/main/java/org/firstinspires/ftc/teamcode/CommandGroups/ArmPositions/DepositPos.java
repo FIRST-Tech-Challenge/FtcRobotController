@@ -18,7 +18,7 @@ public class DepositPos extends SequentialCommandGroup {
         addCommands (
 
                 // lifts the shoulder up 90+-60 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(118)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(120)),
 
                 // folds the elbow in 10
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(200)),

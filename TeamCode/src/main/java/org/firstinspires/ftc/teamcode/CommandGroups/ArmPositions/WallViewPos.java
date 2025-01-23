@@ -18,7 +18,7 @@ public class WallViewPos extends SequentialCommandGroup {
         addCommands (
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(43)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(45)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(266)),
