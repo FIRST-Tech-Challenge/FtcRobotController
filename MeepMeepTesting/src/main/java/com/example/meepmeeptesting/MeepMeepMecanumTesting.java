@@ -6,17 +6,17 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTesting {
+public class MeepMeepMecanumTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(100, 100, Math.toRadians(180), Math.toRadians(180), 17)
+                .setConstraints(50, 50, Math.PI, Math.PI, 15.5)
                 .build();
 
         // Alliance Push Samples
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(9.5, -61.25, Math.toRadians(270)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(9.5, -61.25, -Math.PI / 2 ))
                 .lineToY(-34)
                 .setTangent(0)
                 .lineToX(36)

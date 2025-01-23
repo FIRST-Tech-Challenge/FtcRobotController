@@ -67,16 +67,16 @@ public final class TankDrive {
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
 
         // drive model parameters
-        public double inPerTick = 0;
-        public double trackWidthTicks = 0;
+        public double inPerTick = 11.87 / 537.6;
+        public double trackWidthTicks = 15.75 * 45.45 * Math.PI;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 0.0;
+        public double kV = 0.0041;
+        public double kA = 0.001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -88,8 +88,8 @@ public final class TankDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double ramseteZeta = 0.7; // in the range (0, 1)
-        public double ramseteBBar = 2.0; // positive
+        public double ramseteZeta = 0.45; // in the range (0, 1)
+        public double ramseteBBar = 1.75; // positive
 
         // turn controller gains
         public double turnGain = 0.0;
@@ -152,7 +152,7 @@ public final class TankDrive {
             }
 
             // TODO: reverse encoder directions if needed
-            //   leftEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+               rightEncs.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
 
             this.pose = pose;
         }
@@ -246,7 +246,7 @@ public final class TankDrive {
         }
 
         // TODO: reverse motor directions if needed
-        //   leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+        rightMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
