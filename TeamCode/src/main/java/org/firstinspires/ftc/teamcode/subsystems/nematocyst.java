@@ -23,16 +23,16 @@ public class nematocyst {
 //    private static final double inchesToDegrees =  1/2.067;
     private static final double ticksPerInch = (double) 1425/(Math.PI * 3.75); // TODO: wtf???
     private static final double Max_Extension = 22 * ticksPerInch; // Horizontal Max Ticks
-    private static final double degPerTick = (double) 360 /752;
+    private static final double degPerTick = (double) 360/1425;
     // PID constants
     public double sP = 0.0009;
     public double sI = 0.000;
     public double sD = 0.00;
-    public double pP = 0.00625;
+    public double pP = 0.004;
     public double pI = 0;
-    public double pD = 8e-6;
-    public double pCos = 0.35;
-    public double pExt = 1.5e-4;
+    public double pD = 0.00002;
+    public double pCos = 0.325;
+    public double pExt = 0.000075;
     boolean isTargAngDown = false;
     PIDFController slidePID;
 //    ElapsedTime pidTimer;
@@ -43,7 +43,7 @@ public class nematocyst {
     private int targetSlidePosition = (int) (targSlideHeight * ticksPerInch);  // Starting at initial position (adjust)
     private int targPivotPos;
     private int maxSlidePos;
-    private int maxPivotPos = -195;
+    private int maxPivotPos = -350;
     ElapsedTime pivotTimer;
     OpMode opMode;
     public nematocyst(OpMode OM) {
@@ -115,7 +115,7 @@ public class nematocyst {
 //        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
 //
         targetSlidePosition = 3600;
-        targPivotPos = -80;
+        targPivotPos = -150;
     }
     public void goSpecimen(double inches) {
 //        isTargAngDown = false;
@@ -123,8 +123,8 @@ public class nematocyst {
 //        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
 //        targPivotPos = (int) (-5 - (pivAng * 105/190));
 //        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
-        targPivotPos = -20;
-        targetSlidePosition = 1800;
+        targPivotPos = -80;
+        targetSlidePosition = 2000;
     }
     public void goSpecimenDown(double inches) {
 //        isTargAngDown = false;
@@ -132,12 +132,12 @@ public class nematocyst {
 //        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
 //        targPivotPos = (int) (-5 - (pivAng * 105/190));
 //        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
-        targPivotPos = -20;
-        targetSlidePosition = 1600;
+        targPivotPos = -80;
+        targetSlidePosition = 1800;
     }
     public void goGround(double inches) {
 
-        targPivotPos = -170;
+        targPivotPos = -345;
         targetSlidePosition = 1500;
         isTargAngDown = true;
         wristOut();
@@ -215,9 +215,9 @@ public class nematocyst {
         double ff;
         double output;
         if (isTargAngDown) {
-            if (pivot.getCurrentPosition() >= -165) {
+            if (pivot.getCurrentPosition() >= -335) {
                 ff = ((pExt * slideMotor.getCurrentPosition()) - pCos * Math.cos(Math.toRadians(85 - (current * degPerTick))));
-                output = (error * 0.003) + ff;
+                output = (error * 0.0015) + ff;
             } else {
              output = 0;
             }

@@ -16,11 +16,11 @@ public class teleOp extends OpMode {
     public double sP = 0.0009;
     public double sI = 0.000;
     public double sD = 0.00;
-    public double angP = 0.00625;
+    public double angP = 0.004;
     public double angI = 0;
-    public double angD = 8e-6;
-    public double angCos = 0.35;
-    public double angExt = 1.5e-4;
+    public double angD = 0.00002;
+    public double angCos = 0.325;
+    public double angExt = 0.000075;
     nematocyst slide;
     org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDrive SwerveDrive;
     Telemetry telemetry2;
@@ -63,21 +63,21 @@ public class teleOp extends OpMode {
     @Override
     public void loop() {
         double[] xAndY = fieldCentricXandY(
-                SwerveDrive.imu.getRobotYawPitchRollAngles().getYaw(), gamepad1.left_stick_x, gamepad1.left_stick_y);
-        SwerveDrive.loop(xAndY[0], xAndY[1], gamepad2.right_stick_x);
+                SwerveDrive.imu.getRobotYawPitchRollAngles().getYaw(), -gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        SwerveDrive.loop(xAndY[0], xAndY[1], gamepad2.right_stick_x + gamepad1.right_stick_x);
         // trying to separate field centricity into the opmode level
 //        SwerveDrive.setPID(P, I, D);
         SwerveDrive.getTelemetry(telemetry2);
         telemetry.update();
         telemetry2.update();
         if (gamepad1.a) { SwerveDrive.resetIMU();}
-        if (gamepad2.a) {
+        if (gamepad2.a || gamepad2.cross) {
             slide.goUp(0);
-        } else if (gamepad2.x) {
+        } else if (gamepad2.x || gamepad2.square) {
             slide.goGround(13.0);
-        } else if (gamepad2.b) {
+        } else if (gamepad2.b || gamepad2.circle) {
             slide.goSpecimen(28);
-        } else if (gamepad2.y) {
+        } else if (gamepad2.y || gamepad2.triangle) {
             slide.goOut(36.0);
         } else if (gamepad2.right_trigger > 0.5) {
             slide.goSpecimenDown(2);

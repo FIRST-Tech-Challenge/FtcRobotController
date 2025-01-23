@@ -17,11 +17,11 @@ public class slideTest extends OpMode {
     public static double sP = 0.0009;
     public static double sI = 0.000;
     public static double sD = 0.00;
-    public static double angP = 0.00625;
+    public static double angP = 0.00375;
     public static double angI = 0;
-    public static double angD = 8e-6;
-    public static double angCos = 0.35;
-    public static double angExt = 1.5e-4;
+    public static double angD = 0.00006;
+    public static double angCos = 0.345;
+    public static double angExt = 0.000075;
     @Override
     public void init() {
         slide = new nematocyst(this);
