@@ -25,14 +25,15 @@ public class nematocyst {
     private static final double Max_Extension = 22 * ticksPerInch; // Horizontal Max Ticks
     private static final double degPerTick = (double) 360 /752;
     // PID constants
-    public double sP = 0;
+    public double sP = 0.0009;
     public double sI = 0.000;
     public double sD = 0.00;
-    public double pP = 0.00425;
+    public double pP = 0.00625;
     public double pI = 0;
     public double pD = 8e-6;
-    public double pCos = 0.3375;
-    public double pExt = 1e-7;
+    public double pCos = 0.35;
+    public double pExt = 1.5e-4;
+    boolean isTargAngDown = false;
     PIDFController slidePID;
 //    ElapsedTime pidTimer;
     // PID variables
@@ -71,43 +72,23 @@ public class nematocyst {
     }
 
     public void loop(double P, double I, double D) {
-        if (opMode.gamepad1.a) {
-            goUp(0);
-        } else if (opMode.gamepad1.x) {
-            goGround(13.0);
-        } else if (opMode.gamepad1.b) {
-            goOut(28);
-        } else if (opMode.gamepad1.y) {
-            goOut(45.0);
-        }
-        if (opMode.gamepad1.dpad_up) {
-            slideMotor.setPower(1);
-        } else if (opMode.gamepad1.dpad_down) {
-            slideMotor.setPower(-1);
-        } else if (opMode.gamepad1.dpad_right) {
-            grab();
-        } else if (opMode.gamepad1.dpad_left) {
-            release();
-        } else if (opMode.gamepad1.left_bumper) {
-            wristDown();
-        } else {
-            slideMotor.setPower(0);
-        }
         targPivotPos = Math.min(0, Math.max(targPivotPos, maxPivotPos));
         // Ensure the motor does not exceed max forward extension
         double out = slidePID.calculate(slideMotor.getCurrentPosition(), targetSlidePosition);
 //        SlewRateLimiter slideLimiter = new SlewRateLimiter(0.5); //TODO: Tune this
-
-
         slidePID.setPIDF(P, I, D,0);
-
-//        slideMotor.setPower(out);
+        slideMotor.setPower(out);
         pivotPower = calculatePID(targPivotPos, pivot.getCurrentPosition());
         pivot.setPower(pivotPower); // use updatdePID to fix this
     }
     public double getHypotenuseMax(double height) {
         double in_inch;
         in_inch=Math.sqrt(height*height+22*22);
+        return in_inch*ticksPerInch;
+    }
+    public double getHypotenuseSpecimen(double height) {
+        double in_inch;
+        in_inch=Math.sqrt(height*height+10*10);
         return in_inch*ticksPerInch;
     }
     public void updatePID(double aP, double aI, double aD, double aCos, double aExt) {
@@ -121,21 +102,45 @@ public class nematocyst {
         slidePID.setPIDF(P, I, D, 0);
     }
     public void goUp(double inches) {
+        isTargAngDown = false;
         targPivotPos = -15;
         targSlideHeight = inches;
         targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
     }
     public void goOut(double inches) {
-        targSlideHeight = (1/ticksPerInch) * getHypotenuseMax(inches);
-        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
-        targPivotPos = (int) (-5 - (pivAng * 105/190));
-        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
+//        isTargAngDown = false;
+//        targSlideHeight = (1/ticksPerInch) * getHypotenuseMax(inches);
+//        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
+//        targPivotPos = (int) (-5 - (pivAng * 105/190));
+//        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
+//
+        targetSlidePosition = 3600;
+        targPivotPos = -80;
+    }
+    public void goSpecimen(double inches) {
+//        isTargAngDown = false;
+//        targSlideHeight = (1/ticksPerInch) * getHypotenuseSpecimen(inches);
+//        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
+//        targPivotPos = (int) (-5 - (pivAng * 105/190));
+//        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
+        targPivotPos = -20;
+        targetSlidePosition = 1800;
+    }
+    public void goSpecimenDown(double inches) {
+//        isTargAngDown = false;
+//        targSlideHeight = (1/ticksPerInch) * getHypotenuseSpecimen(inches);
+//        double pivAng = 15 + 90 - Math.asin(inches/targSlideHeight);
+//        targPivotPos = (int) (-5 - (pivAng * 105/190));
+//        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
+        targPivotPos = -20;
+        targetSlidePosition = 1600;
     }
     public void goGround(double inches) {
-        targSlideHeight = inches;
-        targPivotPos = -168;
-        targetSlidePosition = (int) (targSlideHeight * ticksPerInch);
-        targetSlidePosition = Math.max(0, Math.min(targetSlidePosition, maxSlidePos));
+
+        targPivotPos = -170;
+        targetSlidePosition = 1500;
+        isTargAngDown = true;
+        wristOut();
     }
     public boolean isAtTargetHeight() {
         if (Math.abs(slideMotor.getCurrentPosition()/ticksPerInch - targSlideHeight) < 2) {
@@ -162,9 +167,9 @@ public class nematocyst {
     public void manualDown() { targPivotPos--;}
     public void grab() { claw.setPosition(0); }
     public void release() {claw.setPosition(0.12);}
-    public void wristOut() {wrist.setPosition(0);}
-    public void wristIn() {wrist.setPosition(.75);}
-    public void wristDown() {wrist.setPosition(.25);}
+    public void wristOut() {wrist.setPosition(.25);}
+    public void wristIn() {wrist.setPosition(.9);}
+    public void wristDown() {wrist.setPosition(.5);}
 
 
 
@@ -207,8 +212,20 @@ public class nematocyst {
         double derivative = ((error - lastError)/pivotTimer.seconds());
         lastError = error;
         // PID output
-        double ff = ((pExt * slideMotor.getCurrentPosition())-pCos*Math.cos(Math.toRadians(85-(current * degPerTick))));
-        double output = (error * pP) + (integral * pI) + (derivative * pD) + (ff);
+        double ff;
+        double output;
+        if (isTargAngDown) {
+            if (pivot.getCurrentPosition() >= -165) {
+                ff = ((pExt * slideMotor.getCurrentPosition()) - pCos * Math.cos(Math.toRadians(85 - (current * degPerTick))));
+                output = (error * 0.003) + ff;
+            } else {
+             output = 0;
+            }
+        } else {
+            ff = ((pExt * slideMotor.getCurrentPosition()) - pCos * Math.cos(Math.toRadians(85 - (current * degPerTick))));
+            output = (error * pP) + (integral * pI) + (derivative * pD) + (ff);
+        }
+
         pivotTimer.reset();
         // Limit the output to motor range [-1, 1]
         output = Math.max(-1, Math.min(output, 1));
