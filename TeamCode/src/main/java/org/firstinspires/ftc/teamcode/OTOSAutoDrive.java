@@ -36,7 +36,7 @@ public class OTOSAutoDrive extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 1720;
+    final int VERTICAL_MAX = 1820;
     final int VERTICAL_DEFAULT_SPEED = 3000;
 
     // This chunk controls our viper slide

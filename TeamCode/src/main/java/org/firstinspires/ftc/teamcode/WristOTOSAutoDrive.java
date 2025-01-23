@@ -47,17 +47,17 @@ public class WristOTOSAutoDrive extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.2;           // Claw is closed
-    final double CLAW_MAX = 0.54;          // Claw is open - Og non-wrist value was 0.8
+    final double CLAW_MIN = 0.9;           // Claw is closed
+    final double CLAW_MAX = 0.4;          // Claw is open - Og non-wrist value was 0.8
 
-    // This chunk controls our wrist (todo: update values)
+    // This chunk controls our wrist
     Servo wrist = null;
-    final double WRIST_MIN = 0.2;           // Wrist is in intake position (picking up)
-    final double WRIST_MAX = 0.8;          // Wrist is in outtake position (dropping in basket)
+    final double WRIST_PICKUP = 0.2;           // Wrist is in intake position (picking up)
+    final double WRIST_DROPOFF = 0.8;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
-    final double ASCENT_MIN = 0.17;          // Stick is down
-    final double ASCENT_MAX = 0.43;         // Stick is up
+    final double ASCENT_MIN = 0.2;          // Stick is down
+    final double ASCENT_MAX = 0.49;         // Stick is up
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -67,7 +67,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "01/15/2025, 11:18 am"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/22/2025, 12:38 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -80,7 +80,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         setVertical(VERTICAL_MAX);                                  // Raising Arm
         setViper(VIPER_MAX);                                        // Extending Viper
         sleep(2000);
-        setWrist(WRIST_MAX);
+        setWrist(WRIST_DROPOFF);
         setClaw(CLAW_MAX);                                          // Drop the block
         sleep(5000);
  /*
@@ -363,7 +363,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
         wrist = hardwareMap.get(Servo.class, "wrist");
         wrist.setDirection(Servo.Direction.REVERSE);
-        wrist.setPosition(WRIST_MAX);
+        wrist.setPosition(WRIST_DROPOFF);
 
         ascentStick = hardwareMap.get(Servo.class, "ascentStick");
         ascentStick.setDirection(Servo.Direction.REVERSE);

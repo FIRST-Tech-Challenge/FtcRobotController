@@ -50,9 +50,9 @@ public class OTOSRemoteControlTuner extends LinearOpMode {
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
+    final int VIPER_MIN = 0;
     final int VIPER_MAX_WIDE = 2000;
     final int VIPER_MAX_TALL = 3200;
-    final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
     // This chunk controls our claw
