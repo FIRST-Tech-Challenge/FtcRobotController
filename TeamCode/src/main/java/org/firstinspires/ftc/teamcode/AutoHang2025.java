@@ -9,8 +9,8 @@ public class AutoHang2025 extends DriveMethods {
         MoveForward,
         RaiseArm,
         ExtendSlider,
+        ExtraMove,
         ExtraArm,
-        ExtraSlider,
         OpenClaw,
         Finished
     }
@@ -62,17 +62,17 @@ public class AutoHang2025 extends DriveMethods {
                     changeState(State.ExtraArm);
                 }
                 break;
+            case ExtraMove:
+                omniDrive(0.15, 0, 0);
+                break;
             case ExtraArm:
                 robot.wormGear.setPower(-0.15);
 
                 if (robot.wormGearAngle() <= 45) {
                     robot.wormGear.setPower(0);
 
-                    changeState(AutoHang2025.State.ExtraSlider);
+                    changeState(State.OpenClaw);
                 }
-                break;
-            case ExtraSlider:
-                changeState(State.OpenClaw);
                 break;
             case OpenClaw:
                 robot.clawServo.setPosition(robot.CLAW_OPEN);
