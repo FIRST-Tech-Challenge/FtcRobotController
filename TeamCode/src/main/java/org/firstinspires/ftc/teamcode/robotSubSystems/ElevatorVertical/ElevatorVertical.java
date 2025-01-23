@@ -53,7 +53,7 @@ public class ElevatorVertical {
                 }
                 lastWantedState = wantedState;
             }else {
-                wantedPos += (int) gamepadVal * 25;
+                wantedPos += (int) gamepadVal * 35;
             }
             /*
             if (wantedState != ElevatorVerticalState.INTAKE) {
@@ -61,7 +61,7 @@ public class ElevatorVertical {
             }
              */
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
-            wantedPos = limiter(wantedPos, 0, ElevatorVerticalConstants.MAX_OPEN_POS);
+            //wantedPos = limiter(wantedPos, 0, ElevatorVerticalConstants.MAX_OPEN_POS);
             changeLevelPID.setWanted(wantedPos);
             power = changeLevelPID.update(getElevatorPos());
 

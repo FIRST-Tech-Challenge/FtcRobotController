@@ -10,7 +10,7 @@ public class Wrist {
 
 
     public static void init(HardwareMap hardwareMap) {
-        //rightWristServo = hardwareMap.servo.get("rightWristServo");
+        rightWristServo = hardwareMap.servo.get("rightWristServo");
         leftWristServo = hardwareMap.servo.get("leftWristServo");
     }
 
@@ -18,15 +18,15 @@ public class Wrist {
         switch (state) {
             case TRANSFER:
                 leftWristServo.setPosition(0.02);
-                //rightWristServo.setPosition(0);
+                rightWristServo.setPosition(1);
                 break;
             case INTAKE:
-                leftWristServo.setPosition(0.73);
-                //rightWristServo.setPosition(0.6);
+                leftWristServo.setPosition(0.75);
+                rightWristServo.setPosition(0.24);
                 break;
             case DEPLETE:
                 leftWristServo.setPosition(0.67);
-                //rightWristServo.setPosition(0.5);
+                rightWristServo.setPosition(0.35);
         }
     }
 }
