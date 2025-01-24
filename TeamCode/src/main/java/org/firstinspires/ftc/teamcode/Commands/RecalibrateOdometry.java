@@ -14,24 +14,24 @@ public class RecalibrateOdometry extends CommandBase {
     // Constants for the Red and Blue Alliance wall positions and angles
     private static final double redAllianceXsub = -0.77;
     private static final double redAllianceYsub = -0.5;
-    private static final double blueAllianceXsub = 0.77;
-    private static final double blueAllianceYsub = 0.5;
+    private static final double blueAllianceXsub = 0.5;
+    private static final double blueAllianceYsub = 0.77;
 
     // Tolerance values for position and angle
-    private static final double positionTolerance = 0.1;
+    private static final double positionTolerance = 0.2;
     private static final double angleTolerance = 0.0;
 
     // Maximum X and Y values for the Red and Blue Alliance
     private static final double redAllianceMaxX = -0.77;
     private static final double redAllianceMaxY = -0.5;
-    private static final double blueAllianceMaxX = 0.77;
-    private static final double blueAllianceMaxY = 0.5;
+    private static final double blueAllianceMaxX = 0.5;
+    private static final double blueAllianceMaxY = 0.77;
 
     // Angles the robot should be facing the wall
     private static final double redAllianceXsubAngle = RobotContainer.RedStartAngle;
     private static final double redAllianceYsubAngle = 0.0;
-    private static final double blueAllianceXsubAngle = RobotContainer.BlueStartAngle;
-    private static final double blueAllianceYsubAngle = 180;
+    private static final double blueAllianceXsubAngle = 180;
+    private static final double blueAllianceYsubAngle = RobotContainer.BlueStartAngle;
 
     // Determine if the robot is on the Red Alliance
     private static final boolean isRedAlliance = RobotContainer.isRedAlliance();
@@ -58,6 +58,8 @@ public class RecalibrateOdometry extends CommandBase {
     public void initialize() {
         currentPos = RobotContainer.odometry.getCurrentPos();
         updatePosition();
+        RobotContainer.DBTelemetry.addData("Pressed","Depressed");
+        RobotContainer.DBTelemetry.update();
     }
 
     /**
@@ -95,6 +97,8 @@ public class RecalibrateOdometry extends CommandBase {
         if (inSubZone()) {
             // Facing X Wall
             if (facingXWall()) {
+               RobotContainer.DBTelemetry.addData("Fasing X Wall","Yes");
+               RobotContainer.DBTelemetry.update();
                 if (isRedAlliance) {
                     RobotContainer.DBTelemetry.addData("Y position set to ", redAllianceXsub);
                     RobotContainer.DBTelemetry.update();
@@ -108,6 +112,8 @@ public class RecalibrateOdometry extends CommandBase {
 
             // Facing Y Wall
             if (facingYWall()) {
+                RobotContainer.DBTelemetry.addData("Fasing Y Wall","Yes");
+                RobotContainer.DBTelemetry.update();
                 if (isRedAlliance) {
                     RobotContainer.DBTelemetry.addData("X position set to ", redAllianceYsub);
                     RobotContainer.DBTelemetry.update();
