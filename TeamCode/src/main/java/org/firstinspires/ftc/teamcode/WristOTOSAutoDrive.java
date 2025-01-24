@@ -52,7 +52,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
     // This chunk controls our wrist
     Servo wrist = null;
-    final double WRIST_PICKUP = 0.2;           // Wrist is in intake position (picking up)
+    final double WRIST_PICKUP = 0.15;           // Wrist is in intake position (picking up)
     final double WRIST_DROPOFF = 0.8;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
