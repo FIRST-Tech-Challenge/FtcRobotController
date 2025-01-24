@@ -1,11 +1,33 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
+import org.firstinspires.ftc.teamcode.Systems.Input;
+import org.firstinspires.ftc.teamcode.Systems.Motors;
+
 public class Actions {
+
+ static Input input;
+
+ static boolean opModeisActive;
+
+ public static void setupActions(Input localInput) {
+   input = localInput;
+ }
+
+ public static void opModeIsActive (boolean localOpModeisActive){
+   opModeisActive = localOpModeisActive;
+ }
 
    int SPECIMEN_OFFSET = 20;
 
 
     public static void driveToBarFromInitialPositionForSpecimen(int specimen) {
+
+
+     while ((input.getTravelledDistance() < 17) && opModeisActive)  { //inches
+       input.move(-20);
+     }
+     input.move(0);
         // 1. define and hardcode initial position (eg A1)
         // 2. define and hardcode bar location (eg A5)
         // 3. measure distance between initial position and bar location
@@ -16,6 +38,43 @@ public class Actions {
     }
 
     public static void hangAndReleaseSpecimen() {
+
+     //while (input.getArmPos() < 1065 && opModeisActive) {
+      input.arm(1465);
+     //}
+//
+//     //uparm until -2750
+     while (input.getArmPos() >= 1465) {
+      while (input.getUpArmPos() > -2550 && opModeisActive) {
+       input.upArm(-50);
+      }
+
+      input.upArm(0);
+     }
+
+//     while (input.getUpArmPos() <= -2550 && input.getArmPos() < 1439 && opModeisActive) {
+ //     input.arm(1439);
+//     }
+//
+//     while (input.getUpArmPos() < -2070 && opModeisActive) {
+//      input.upArm(50);
+//     }
+//     input.upArm(0);
+
+
+     //wait a bit
+     //then arm 1548
+     //wait a bit
+     //up arm -1675
+     //wait a bit
+//     //let go
+//     //reverse everything
+//     input.claw(true,false);
+//
+//
+//     BotTelemetry.addData("armPosition", input.getArmPos());
+   BotTelemetry.update();
+
         // 1. robot.lower.arm and press down to hang
         // 2. robot.release claw
         // 3. robot.retract.arm
@@ -60,4 +119,6 @@ public class Actions {
     public static void levelOneAsension () {
         //arm touches bar
     }
+
+
 }

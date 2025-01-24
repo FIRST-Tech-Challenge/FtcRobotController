@@ -33,7 +33,7 @@ public class Motors {
     private final int reachingUpArmPosition;
 
 
-    public Motors(HardwareMap hardwareMap) {
+    public Motors(HardwareMap hardwareMap, boolean isAutonomous) {
 
         motors = new DcMotor[Type.values().length];
 
@@ -74,6 +74,12 @@ public class Motors {
         motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[Type.UpArm.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        if(isAutonomous) {
+            motors[Type.RightFront.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motors[Type.LeftBack.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motors[Type.LeftFront.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motors[Type.RightBack.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
 
@@ -88,10 +94,6 @@ public class Motors {
     public void MoveMotor(Type motorNumber, double power) { //choose motor to move with type and move with power is 0-100
 
         double actualPower = power / 100;
-        if(motorNumber == Type.LeftFront) {
-            BotTelemetry.addData("input", power);
-            BotTelemetry.addData("Output", actualPower);
-        }
 
         motors[motorNumber.getValue()].setPower(actualPower);
     }

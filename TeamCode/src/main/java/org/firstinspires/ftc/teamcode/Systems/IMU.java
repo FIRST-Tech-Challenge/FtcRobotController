@@ -28,24 +28,13 @@ public class IMU {
         imu.resetYaw();
     }
 
-    public double getAngle(char angle) {
+    public double getAngle() {
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
 
-        double yaw   = robotOrientation.getYaw(AngleUnit.RADIANS);
-//        double pitch = robotOrientation.getPitch(AngleUnit.DEGREES);
-        //double roll  = robotOrientation.getRoll(AngleUnit.DEGREES); // robot will most likely not flip over
 
-        if(angle == 'y')
-            return yaw;
-//        if(angle == 'p')
-//            return pitch;
-//        if(angle == 'r')   //robot is probably not flipping over so no need for roll or pitch
-//            return roll;
-        else
-            return 0;
-
+        return robotOrientation.getYaw(AngleUnit.RADIANS);
     }
 
     public float getAngularVelocity(char angle) {

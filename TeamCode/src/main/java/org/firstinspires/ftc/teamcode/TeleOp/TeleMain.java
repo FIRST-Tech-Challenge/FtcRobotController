@@ -29,9 +29,11 @@ public class TeleMain extends LinearOpMode {
 
         //Servos servos = new Servos(hardwareMap);
         //Motors motors = new Motors(hardwareMap);
-        input = new Input(hardwareMap);
+        input = new Input(hardwareMap, false);
 
         waitForStart();
+
+        int arm = 0;
 
         while (opModeIsActive())
         {
@@ -42,7 +44,7 @@ public class TeleMain extends LinearOpMode {
             double intake = gamepad2.left_stick_y * 100;
 
             double armRaise = gamepad2.right_stick_y * 100;
-            int arm = 0;
+
 
             input.move(move);
             input.spin(spin);
@@ -50,6 +52,7 @@ public class TeleMain extends LinearOpMode {
             input.claw(gamepad2.a, gamepad2.b);
             input.upArm(armRaise);
 
+            // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
             arm += (int) (-gamepad2.left_stick_y * 35);
 
             input.arm(arm);
@@ -58,7 +61,7 @@ public class TeleMain extends LinearOpMode {
             BotTelemetry.addData("MOVE:",  move);
             BotTelemetry.addData("SPIN:",  spin);
             BotTelemetry.addData("STRAFE:",  strafe);
-            BotTelemetry.addData("ARM:", intake);
+            BotTelemetry.addData("ARM:", arm);
           
 //            BotTelemetry.addData("ARM position:", motors.getArmPosition());
 //            BotTelemetry.addData("UPARM:", motors.getUpArmPosition());
