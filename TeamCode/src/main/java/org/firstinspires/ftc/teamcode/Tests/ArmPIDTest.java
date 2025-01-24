@@ -41,7 +41,7 @@ public class ArmPIDTest extends LinearOpMode {
         Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
         BotTelemetry.setTelemetry(telemetry, dashboardTelemetry);
 
-        motors = new Motors(hardwareMap);
+        motors = new Motors(hardwareMap, false);
         elapsedTime = new ElapsedTime();
 
         setPoint = motors.getArmPosition(); // init it as arm position because if it was for example 0, the arm could slam into the ground and break

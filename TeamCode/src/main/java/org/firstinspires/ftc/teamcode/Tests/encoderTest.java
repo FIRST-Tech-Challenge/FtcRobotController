@@ -13,8 +13,8 @@ public class encoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Find a motor in the hardware map named "Arm Motor"
-        Input input = new Input(hardwareMap);
-        Motors motors = new Motors(hardwareMap);
+        Input input = new Input(hardwareMap, false);
+        Motors motors = new Motors(hardwareMap, false);
         IMU imu = new IMU(hardwareMap);
 
 
@@ -27,7 +27,7 @@ public class encoderTest extends LinearOpMode {
             input.move(gamepad1.left_stick_y * 100);
             input.spin(gamepad1.right_stick_x * 100);
 
-            double yaw = imu.getAngle('y');
+            double yaw = imu.getAngle();
 
             double leftBackPosition = motors.getLeftFrontPosition();
             double rightBackPosition = motors.getRightFrontPosition();

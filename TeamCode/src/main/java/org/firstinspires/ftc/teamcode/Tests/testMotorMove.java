@@ -14,8 +14,8 @@ public class testMotorMove extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motors = new Motors(hardwareMap);
-        input = new Input(hardwareMap);
+        motors = new Motors(hardwareMap, false);
+        input = new Input(hardwareMap, false);
 
         waitForStart();
 

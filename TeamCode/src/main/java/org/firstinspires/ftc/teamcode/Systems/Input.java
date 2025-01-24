@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,8 +32,8 @@ public class Input {
     //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
 
-    public Input(HardwareMap hardwareMap) {
-        motors = new Motors(hardwareMap);
+    public Input(HardwareMap hardwareMap, Boolean isAutonomous) {
+        motors = new Motors(hardwareMap, isAutonomous);
         servos = new Servos(hardwareMap);
         imu = new IMU(hardwareMap);
 
@@ -52,8 +51,8 @@ public class Input {
     public void move(double power) {
 
             if (!isSpin) {
-                motors.MoveMotor(Motors.Type.LeftBack, -power);
-                motors.MoveMotor(Motors.Type.LeftFront, -power);
+                motors.MoveMotor(Motors.Type.LeftBack, -power*0.95);
+                motors.MoveMotor(Motors.Type.LeftFront, -power*0.95);
                 motors.MoveMotor(Motors.Type.RightFront, -power);
                 motors.MoveMotor(Motors.Type.RightBack, -power);
                 //prob fix movement forward
@@ -130,7 +129,7 @@ public class Input {
             //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 //up 1435 to 1030
             double realPower = 0;
-            if (((motors.getArmPosition() < 1400) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
+            if (((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
                 realPower = power;
             }
             else {
@@ -147,7 +146,7 @@ public class Input {
 
     public void arm(int targetPos) {
 
-        setPoint += (int) (-targetPos * 35);    // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+        setPoint = targetPos;
 
         // Clamp setPoint between resting and reaching positions
         setPoint = Math.max(motors.getArmRestingPosition(), Math.min(setPoint, motors.getArmReachingPosition()));
@@ -210,40 +209,7 @@ public class Input {
 
     }
 
-
-//    public void calculatePosition() {
-//        heading = imu.getAngle('y');
-//
-//        // Read encoder values
-//        double flTicks = motors.getLeftFrontPosition();
-//        double frTicks = motors.getLeftBackPosition();
-//        double blTicks = motors.getRightFrontPosition();
-//        double brTicks = motors.getRightBackPosition();
-//
-//        // Convert encoder ticks to distances
-//        double flDistance = (flTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-//        double frDistance = (frTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-//        double blDistance = (blTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-//        double brDistance = (brTicks / Constants.TICKS_PER_REVOLUTION) * Constants.WHEEL_CIRCUMFERENCE;
-//
-//        // Calculate movement in robot-centric coordinates
-//        double forward = (flDistance + frDistance + blDistance + brDistance) / 4.0;
-//        double strafe = (-flDistance + frDistance + blDistance - brDistance) / 4.0;
-//
-//        // Transform robot-centric motion to field-centric motion
-//        double deltaX = forward * Math.sin(heading) + strafe * Math.cos(heading);
-//        double deltaY = forward * Math.cos(heading) - strafe * Math.sin(heading);
-//
-//        // Update robot's position
-//        x += deltaX;
-//        y += deltaY;
-//
-//        BotTelemetry.drawPosition(x, y, heading);
-//        // Pause briefly
-//        //sleep(50); // 50ms delay for smoother updates
-//    }
-
-    public double getDistance() {
+    public double getTravelledDistance() {
         double leftBackPosition = motors.getLeftFrontPosition();
         double rightBackPosition = motors.getRightFrontPosition();
 
@@ -270,5 +236,13 @@ public class Input {
         else {
             return distance = ((lbdistance - rbdistance)/2)  / 25.4;
         }
+    }
+
+    public int getArmPos() {
+        return motors.getArmPosition();
+    }
+
+    public int getUpArmPos () {
+        return  motors.getUpArmPosition();
     }
 }

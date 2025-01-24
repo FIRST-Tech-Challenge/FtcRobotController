@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
 
     //Arm Reaching Positions
-    public static int ARM_MAX_POSITION_OFFSET = 2650;
+    public static int ARM_MAX_POSITION_OFFSET = 3000;
     public static int UP_ARM_MAX_POSITION_OFFSET = -11550;
 
     // PID variables
@@ -15,8 +15,8 @@ public class Constants {
     public static float KD = 0.03F;  // Derivative gain
 
     //servo positions
-    public static int SERVO_CLOSED = 270;
-    public static int SERVO_OPEN = 110;
+    public static int SERVO_CLOSED = 50;
+    public static int SERVO_OPEN = 130;
 
     //Constants to find distances
     private static final double WHEEL_DIAMETER = 104; // Wheel diameter in millimeters
