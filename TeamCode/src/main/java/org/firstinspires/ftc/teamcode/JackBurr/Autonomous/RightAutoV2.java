@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 //TODO: PUSH FIRST THING
 @Autonomous
+@Disabled
 public class RightAutoV2 extends LinearOpMode {
     public int step = 1;
     public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();
@@ -116,14 +118,14 @@ public class RightAutoV2 extends LinearOpMode {
                 drive.followTrajectory(traj3);
                 step = 5;
             }
-            else if(step = 5){
-                if(slides.getLeftSlidePosition() !=0 || slides.getRightSlidePosition() !=0) {
-                        slides.runLeftSlideToPosition(0, 0.9);
-                        slides.runRightSlideToPosition(0, 0.9);
+            else if(step == 5){
+                if(deliverySlides.getLeftSlidePosition() !=0 || deliverySlides.getRightSlidePosition() !=0) {
+                    deliverySlides.runLeftSlideToPosition(0, 0.9);
+                    deliverySlides.runRightSlideToPosition(0, 0.9);
                  }
-                 else if(slides.getRightSlidePosition() !=0 && slides.getLeftSlidePosition() !=0) {
-                        slides.runLeftSlideToPosition(0, 0.9);
-                        slides.runRightSlideToPosition(0, 0.9);
+                 else if(deliverySlides.getRightSlidePosition() !=0 && deliverySlides.getLeftSlidePosition() !=0) {
+                    deliverySlides.runLeftSlideToPosition(0, 0.9);
+                    deliverySlides.runRightSlideToPosition(0, 0.9);
                     }
                   }
         }
