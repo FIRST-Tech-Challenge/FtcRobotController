@@ -34,8 +34,8 @@ public class WristOTOSAutoDrive extends LinearOpMode {
     // This chunk controls our vertical
     DcMotor vertical = null;
     final int VERTICAL_MIN = 0;
-    final int VERTICAL_MAX = 2245;
-    final int VERTICAL_DEFAULT_SPEED = 3000;
+    final int VERTICAL_MAX = 2100;
+    final int VERTICAL_DEFAULT_SPEED = 2000;
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
@@ -47,12 +47,13 @@ public class WristOTOSAutoDrive extends LinearOpMode {
     // This chunk controls our claw
     //Callie
     Servo claw = null;
-    final double CLAW_MIN = 0.9;           // Claw is closed
-    final double CLAW_MAX = 0.4;          // Claw is open - Og non-wrist value was 0.8
+    final double CLAW_MIN = 0.17;           // Claw is closed
+    final double CLAW_MAX = 0.5;          // Claw is open - Og non-wrist value was 0.8
 
     // This chunk controls our wrist
     Servo wrist = null;
     final double WRIST_PICKUP = 0.15;           // Wrist is in intake position (picking up)
+    final double WRIST_MID = 0.4;              // Wrist is out of the way
     final double WRIST_DROPOFF = 0.8;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
@@ -67,7 +68,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "01/22/2025, 12:38 pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/24/2025, 12:50 pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -75,38 +76,46 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         configureOtos();
 
         // First Sample ///////////////////////////////////////////////////////////////
-        driveToLoc(-14.5, 11.6, -45, 1);  // Go to basket
+        driveToLoc(-4, -10, 0, 1);  // Go to basket
         sleep(200);
-        setVertical(VERTICAL_MAX);                                  // Raising Arm
+        setWrist(WRIST_MID);
+        setVertical(VERTICAL_MAX, 1000);                                  // Raising Arm
         setViper(VIPER_MAX);                                        // Extending Viper
-        sleep(2000);
+        sleep(1000);
         setWrist(WRIST_DROPOFF);
+        sleep(800);
         setClaw(CLAW_MAX);                                          // Drop the block
-        sleep(5000);
- /*
+        sleep(400);
+
         // Second Sample ///////////////////////////////////////////////////////////////
         RobotLog.vv("Rockin'", "Get Sample 2");
-        driveToLoc(15, 12, -10, 4);
+        setWrist(WRIST_PICKUP);
+        turnLeft(0.4, 80);
+        driveToLoc(-21, -18, 80, 1); // Get in approximate position
         setViper(VIPER_GROUND);
-        sleep(300);
-        setVertical(VERTICAL_MIN);
-        driveToLoc(25, -3, -25, 1);
-        driveToLoc(26, 2, -25, 0.5);  // Move forward to get block
-        sleep(100);
+        setVertical(120);
+        sleep(1300);
+        driveToLoc(-21, -14, 70, 1);  // Turn to get block
+        RobotLog.vv("Rockin'", "Ready to grab sample 2");
+        sleep(200);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(200);
-        setVertical(VERTICAL_MAX);
+        setWrist(WRIST_MID);
+        setVertical(VERTICAL_MAX, 1000);
         setViper(VIPER_MAX);
-        driveToLoc(9, 12, 45, 1);  // Go to basket
+        setWrist(WRIST_DROPOFF);
+        driveToLoc(-4, -10, 0, 1.5);  // Go to basket
         sleep(500);
         setClaw(CLAW_MAX);                                          // Drop second block
 
         // Third Sample ///////////////////////////////////////////////////////////////
         RobotLog.vv("Rockin'", "Get Sample 3");
-        driveToLoc(16, 10, -10, 4);
+        driveToLoc(-21, -14, 80, 1);
         setViper(VIPER_GROUND);
         sleep(300);
         setVertical(VERTICAL_MIN);
+        sleep(5000);/*
+
         driveToLoc(25, 7, -20, 0.5);
         driveToLoc(26, 11, -20, 0.5);  // Move forward to get block
         sleep(100);
@@ -189,7 +198,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
     public void setWrist(double position) {
         RobotLog.vv("Rockin' Robots", "setWrist() position: %4.2f, current: %4.2f", position, wrist.getPosition());
         wrist.setPosition(position);
-        sleep(400);
+        RobotLog.vv("Rockin' Robots", "setWrist() done: current: %4.2f", wrist.getPosition());
     }
 
     private void moveForward(double speed, long msDuration) {
@@ -208,6 +217,22 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         rightFrontDrive.setPower(-speed);
         leftBackDrive.setPower(speed);
         rightBackDrive.setPower(-speed);
+        getPosition();
+        while(hLoc < target -2 || hLoc > target + 2) {
+            sleep(10);
+            getPosition();
+            if(hLoc > 180) hLoc -= 360;
+            if(hLoc < -180) hLoc += 360;
+        }
+        stopMoving();
+    }
+
+    private void turnLeft(double speed, double target) {
+        RobotLog.vv("Rockin' Robots", "turnLeft() speed: %4.2f, target: %4.2f, current: %4.2f", speed, target, hLoc);
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftBackDrive.setPower(-speed);
+        rightBackDrive.setPower(speed);
         getPosition();
         while(hLoc < target -2 || hLoc > target + 2) {
             sleep(10);
@@ -289,10 +314,10 @@ public class WristOTOSAutoDrive extends LinearOpMode {
                 leftBackPower /= max;
                 rightBackPower /= max;
             }
-            leftFrontPower *= 0.7;
-            rightFrontPower *= 0.7;
-            leftBackPower *= 0.7;
-            rightBackPower *= 0.7;
+            leftFrontPower *= 0.5;
+            rightFrontPower *= 0.5;
+            leftBackPower *= 0.5;
+            rightBackPower *= 0.5;
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
@@ -307,9 +332,9 @@ public class WristOTOSAutoDrive extends LinearOpMode {
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
-            RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
-                    "leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
-                    xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+            //RobotLog.vv("Rockin' Robots", "xDist: %.2f, yDist: %.2f, hDist: %.2f, " +
+            //        "leftFrontPower: %.2f, rightFrontPower: %.2f, leftBackPower: %.2f, rightBackPower: %.2f",
+            //        xDistance, yDistance, hDistance, leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
             getPosition();
             xDistance = xTarget - xLoc;
@@ -358,7 +383,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         viperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setDirection(Servo.Direction.REVERSE);
+        //claw.setDirection(Servo.Direction.REVERSE);
         claw.setPosition(CLAW_MIN);
 
         wrist = hardwareMap.get(Servo.class, "wrist");
