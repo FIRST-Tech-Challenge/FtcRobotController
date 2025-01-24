@@ -32,9 +32,9 @@ public class DeliveryPivot extends SonicSubsystemBase {
     // 384.5 / 537.7 = 0.715
     private int StartPositionFromCalibration = scale(2800, .715);
 
-    public static int DeliveryPositionFromStart = scale(1250, .715); //CHANGED
+    public static int DeliveryPositionFromStart = scale(1290, .715); //CHANGED
 
-    public static int IntakePositionFromStart = scale(-1825, .715);
+    public static int IntakePositionFromStart = scale(-1875, .715);
 
     private int SampleIntakePositionFromStart = scale(-1490, .715);
 

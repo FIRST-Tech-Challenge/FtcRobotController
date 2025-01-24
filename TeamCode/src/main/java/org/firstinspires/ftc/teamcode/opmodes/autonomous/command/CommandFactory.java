@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.LogCatCommand;
@@ -63,6 +64,10 @@ public class CommandFactory {
         this.slider = slider;
         this.specimenSlider = specimenSlider;
         this.specimenSliderClaw = specimenSliderClaw;
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        if (dashboard.isEnabled()) {
+
+        }
     }
 
     public TelemetryCommand WriteTelemetry() {
