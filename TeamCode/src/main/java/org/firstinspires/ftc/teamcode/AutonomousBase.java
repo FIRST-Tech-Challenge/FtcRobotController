@@ -8,6 +8,7 @@ import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -303,6 +304,34 @@ public abstract class AutonomousBase extends LinearOpMode {
         // ensure viper encoder is reset after motion
         robot.resetEncoders();
     } // ensureViperArmFullyRetracted
+
+    public void ensureSnorkelFullyRetracted(boolean leftSide){
+        DcMotorEx snorkleMotor = leftSide ? robot.snorkleLMotor : robot.snorkleRMotor;
+        int startSnorkelMotorPos, endSnorkelMotorPos, deltaSnorkelMotorPos;
+
+        for( int i=0; i<10; i++) {
+            // Retract snorkels at low power for 1 second
+            startSnorkelMotorPos = leftSide ? robot.snorkleLMotorPos : robot.snorkleRMotorPos;;
+            snorkleMotor.setPower(-0.10);
+            sleep(1000);
+            snorkleMotor.setPower(0.0);
+            sleep(100); //give motor time to stop
+
+            // update our encoder readings
+            performEveryLoop();
+            // Did anything change??
+            endSnorkelMotorPos = leftSide ? robot.snorkleLMotorPos : robot.snorkleRMotorPos;
+
+            deltaSnorkelMotorPos = Math.abs(endSnorkelMotorPos - startSnorkelMotorPos);
+
+            telemetry.addData("deltaViperMotorPos", "%d counts", deltaSnorkelMotorPos);
+            telemetry.update();
+            // Check if the count has decreased more than a bit then we need to check again
+            if (deltaSnorkelMotorPos < 10) break;
+        }
+        // ensure viper encoder is reset after motion
+        robot.resetEncoders();
+    } // ensureSnorkelFullyRetracted
 
     /*--------------------------------------------------------------------------------------------*/
     // Resets odometry starting position and angle to zero accumulated encoder counts
