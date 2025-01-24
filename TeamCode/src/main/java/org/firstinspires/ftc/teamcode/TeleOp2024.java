@@ -18,7 +18,9 @@ public class TeleOp2024 extends DriveMethods {
         robot.sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.clawServo.setPosition(robot.CLAW_CLOSED);
 
-
+if (robot.clawServo.getPosition() >= 1.05) {
+    isClawOpen = false;
+}
     }
 
     @Override

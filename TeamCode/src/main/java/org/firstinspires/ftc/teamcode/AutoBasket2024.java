@@ -11,8 +11,9 @@ public class AutoBasket2024 extends DriveMethods {
     enum State {
         Finished,
         Unstarted,
-        RaiseArm,
+        TightenClaw,
         StrafeRight,
+        RaiseArm,
         ExtendSlider,
         MoveForward,
         OpenClaw
@@ -34,8 +35,12 @@ public class AutoBasket2024 extends DriveMethods {
         telemetry.addData("state", currentState);
         switch (currentState) {
             case Unstarted:
-                changeState(State.StrafeRight);
+                changeState(State.TightenClaw);
                 break;
+            case TightenClaw:
+                robot.clawServo.setPosition(1.20);
+              changeState(State.StrafeRight);
+              break;
             case StrafeRight:
                 omniDrive(0, 0.25, 0);
 
@@ -48,7 +53,7 @@ public class AutoBasket2024 extends DriveMethods {
             case RaiseArm:
                 robot.wormGear.setPower(0.5);
 
-                if (robot.wormGearAngle() >= 80) {
+                if (robot.wormGearAngle() >= 70) {
                     robot.wormGear.setPower(0);
 
                     changeState(State.ExtendSlider);
