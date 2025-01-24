@@ -125,23 +125,23 @@ public class ChassisSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-//        motor_BL.set(bl);
-//        motor_FL.set(fl);
-//        motor_BR.set(br);
-//        motor_FR.set(fr);
+        motor_BL.set(bl);
+        motor_FL.set(bl);
+        motor_BR.set(bl);
+        motor_FR.set(bl);
 
-        m_rotationpid.setPID(rkp,rki,rkd);
-        m_pidY.setPID(Ykp,Yki,Ykd);
-        m_pidY.setIntegratorRange(-yMaxIntegral,yMaxIntegral);
-        m_rotationpid.setTolerance(tolerance);
-        m_pidY.setIzone(YiZone);
-        m_pidY.setTolerance(ytolerance);
-        m_pidX.setIzone(XiZone);
-        m_pidY.setTolerance(xtolerance);
-        m_rotationpid.setIzone(rotIzone);
-//        odometry.updatePose();//todo: uncomment when starting to use odometry
-        m_pidX.setPID(Xkp,Xki,Xkd);
-        m_pidX.setConstraints(new TrapezoidProfile.Constraints(SpeedsAndAcc.maxVelocityX,SpeedsAndAcc.maxAccelerationX));
+//        m_rotationpid.setPID(rkp,rki,rkd);
+//        m_pidY.setPID(Ykp,Yki,Ykd);
+//        m_pidY.setIntegratorRange(-yMaxIntegral,yMaxIntegral);
+//        m_rotationpid.setTolerance(tolerance);
+//        m_pidY.setIzone(YiZone);
+//        m_pidY.setTolerance(ytolerance);
+//        m_pidX.setIzone(XiZone);
+//        m_pidY.setTolerance(xtolerance);
+//        m_rotationpid.setIzone(rotIzone);
+////        odometry.updatePose();//todo: uncomment when starting to use odometry
+//        m_pidX.setPID(Xkp,Xki,Xkd);
+//        m_pidX.setConstraints(new TrapezoidProfile.Constraints(SpeedsAndAcc.maxVelocityX,SpeedsAndAcc.maxAccelerationX));
 
         updateTelemetry();
         updateValues();
@@ -172,7 +172,7 @@ public class ChassisSubsystem extends SubsystemBase {
 
             BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
-            drive(rotated.getY(), rotated.getX(),  rotation.getAsDouble());
+            drive(-rotated.getY(), -rotated.getX(),  rotation.getAsDouble());
         }, this);
     }
 

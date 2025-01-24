@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.utils.BT.BTCommand;
 import org.firstinspires.ftc.teamcode.utils.PID.ProfiledPIDController;
 import org.firstinspires.ftc.teamcode.utils.PID.TrapezoidProfile;
 
@@ -42,7 +43,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         extension2 =  new MotorEx(map,"frontExtension");//hibur tbd
         extensionEncoder1 = extension1.encoder;
         extensionEncoder2 = extension2.encoder;
-        currentArmLength = extensionEncoder1.getRevolutions();
+        currentArmLength = extensionEncoder2.getRevolutions();
         m_extensionPID = new ProfiledPIDController(eKP,eKI,eKD,new TrapezoidProfile.Constraints(eMaxV,eMaxA));
         extensionEncoder1.reset();
 
@@ -64,7 +65,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
     private void updateValues() {
-        currentArmLength = extensionEncoder1.getRevolutions();
+        currentArmLength = extensionEncoder2.getRevolutions();
         m_extensionPID.setPID(eKP,eKI,eKD);
         m_extensionPID.setConstraints(new TrapezoidProfile.Constraints(vConstraint,aConstraint));
         m_extensionPID.setTolerance(eTolerance);
@@ -74,7 +75,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
     private void updateTelemetry() {
-        dashboardTelemetry.addData("encoder1 rev", extensionEncoder1.getRevolutions());
+        dashboardTelemetry.addData("encoder2 rev", extensionEncoder2.getRevolutions());
         dashboardTelemetry.addData("armLength ",currentArmLength);
         dashboardTelemetry.addData("pid value", m_extensionPID.calculate(currentArmLength));
         dashboardTelemetry.addData("motorCurrent", extension1.motorEx.getCurrent(CurrentUnit.AMPS));
@@ -96,8 +97,8 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
 
-    public Command setExtension(double setpoint){
-        return new InstantCommand(()-> m_extensionPID.setGoal(setpoint));
+    public BTCommand setExtension(double setpoint){
+        return new InstantCommand(()-> m_extensionPID.setGoal(setpoint)).;
     }
     public Command setNegative(){
         return new InstantCommand(()-> setMotors(-0.2));

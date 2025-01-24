@@ -63,7 +63,7 @@ public class BTRecordingController extends BTController{
                 buttons[i]=m_buttonsSuppliers[i].getAsBoolean();
             }
         }catch (NullPointerException e){
-            dashboardTelemetry.addData("error null poirnter",i+"\n"+e.toString());
+            dashboardTelemetry.addData("error null pointer",i+"\n"+e.toString());
         }
 
         buttonsLines.add(buttons.clone());

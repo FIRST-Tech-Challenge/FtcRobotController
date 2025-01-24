@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmConstants.extensi
 import static org.firstinspires.ftc.teamcode.utils.BT.BTController.Buttons.*;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -30,7 +29,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
 
     public RobotContainer(HardwareMap map, BTController gamepad1){
         m_extension = new ExtensionSubsystem(map);
-        //m_gripper = new GripperSubsystem(map);
+        m_gripper = new GripperSubsystem(map);
         m_chassis = new ChassisSubsystem(map);
         m_pivot = new PivotSubsystem(map, m_extension::getArmLength);
 
@@ -50,6 +49,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
         m_controller.assignCommand(setIdle(), false,BUTTON_UP);
         m_controller.assignCommand(setPickup(), false,BUTTON_LEFT);
+        m_controller.assignCommand(m_gripper.toggleClaw(),false,BUTTON_DOWN);
 //        m_controller.assignCommand(m_extension.setNegative(), false,BUTTON_DOWN);
 //        m_controller.assignCommand(m_gripper.CloseGripper(),false,BUTTON_RIGHT);
 //        m_controller.assignCommand(m_gripper.OpenGripper(),false,BUTTON_LEFT);
@@ -60,14 +60,16 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_chassis.gyro.reset();
     }
 
+
+
     public Command setScore(){
-        return new ParallelCommandGroup(m_extension.setExtension(extended),m_pivot.set(score));
+        return new SequentialCommandGroup(m_extension.setExtension(extended),m_pivot.set(score),m_gripper.setScore());
     }
     public Command setIdle(){
-        return new ParallelCommandGroup(m_extension.setExtension(closed),m_pivot.set(idle));
+        return new SequentialCommandGroup(m_extension.setExtension(closed),m_pivot.set(idle));
     }
     public Command setPickup(){
-        return new SequentialCommandGroup(m_pivot.set(closed), m_extension.setExtension(extended));
+        return new SequentialCommandGroup(m_pivot.set(pickup),m_extension.setExtension(extended),m_gripper.setPickup());
     }
 
     public void period(){

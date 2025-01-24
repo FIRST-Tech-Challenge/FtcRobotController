@@ -14,33 +14,31 @@ public class GripperSubsystem extends SubsystemBase {
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
     Servo servoClaw;
     Servo servo2;
-    Servo servo1;
+    Servo rotServo;
     public boolean isOpen;
     public boolean isPickup;
     public GripperSubsystem(HardwareMap map){
-        servo1 = map.servo.get("servoClaw");
-        servo2 = map.servo.get("servo2");
-        servoClaw = map.servo.get("servo1");
+        rotServo = map.servo.get("rotServo");
+        servoClaw = map.servo.get("servoClaw");
         register();
+        rotServo.getController().pwmEnable();
         servoClaw.getController().pwmEnable();
-        servo2.getController().pwmEnable();
-        servoClaw.getController().pwmEnable();
-        isOpen = false;
 
+        isOpen = false;
     }
     public void periodic() {
-        servo1.setPosition(isOpen?openClaw:closeClaw);
-        servoClaw.setPosition(isPickup?pickupAngle:0);
-        servo2.setPosition(isPickup?pickupAngle:0);
+        servoClaw.setPosition(isOpen?openClaw:closeClaw);
         dashboard.addData("gripperOpen: ", isOpen);
     }
-    public Command CloseGripper(){
-        return new InstantCommand(()->isOpen = false);
-    }
-    public Command OpenGripper(){
-        return new InstantCommand(()->isOpen = true);
-    }
+
     public Command setPickup(){
-        return new InstantCommand(()->isPickup = true);
+        return new InstantCommand(()->rotServo.setPosition(score));
+    }
+    public Command setScore(){
+        return new InstantCommand(()->rotServo.setPosition(pickup));
+    }
+
+    public Command toggleClaw() {
+        return new InstantCommand(()-> isOpen = !isOpen);
     }
 }

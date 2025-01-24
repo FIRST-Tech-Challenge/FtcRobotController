@@ -11,6 +11,7 @@ public class CloseGripper extends BTCommand {
     }
 
     public void execute(){
+
         m_subsystem.isOpen = false;
     }
 }
