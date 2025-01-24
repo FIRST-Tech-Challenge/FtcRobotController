@@ -85,6 +85,7 @@ public class Hardware2025Bot
     public double       snorkleLMotorAmpsPk = 0.0;     // peak power draw (Amps)
     public double       snorkleLMotorSetPwr = 0.0;     // requested power setting
     public double       snorkleLMotorPwr    = 0.0;     // current power setting
+    public boolean      snorkleLMotorBusy   = false;
 
     protected DcMotorEx snorkleRMotor = null;
     public int          snorkleRMotorTgt    = 0;       // RUN_TO_POSITION target encoder count
@@ -94,13 +95,17 @@ public class Hardware2025Bot
     public double       snorkleRMotorAmpsPk = 0.0;     // peak power draw (Amps)
     public double       snorkleRMotorSetPwr = 0.0;     // requested power setting
     public double       snorkleRMotorPwr    = 0.0;     // current power setting
+    public boolean      snorkleRMotorBusy   = false;
 
-    public double       SNORKLE_HW_MAX      = 3328.0;  // encoder for max possible extension RIGHT
-    public double       SNORKLE_LEVEL3A     = 2750.0;  // encoder for snorkle above the bar
-    public double       SNORKLE_TOUCH       = 2400.0;  // encoder for robot of the floor (against lower barrier)
-    public double       SNORKLE_LEVEL3B     = 1650.0;  // encoder for robot of the floor (against lower barrier)
-    public double       SNORKLE_SLOW        = 500.0;   // encoder for almost reset to 0
-    public double       SNORKLE_HW_MIN      = 0.0;     // encoder angles at maximum rotation LEFT
+    public ElapsedTime  snorkleTimer        = new ElapsedTime();
+
+    public final static int       SNORKLE_HW_MAX         = 3328;  // encoder for max possible extension RIGHT
+    public final static int       SNORKLE_LEVEL3A        = 2750;  // encoder for snorkle above the bar
+    public final static int       SNORKLE_TOUCH          = 2400;  // encoder for robot of the floor (against lower barrier)
+    public final static int       SNORKLE_LEVEL3B        = 1650;  // encoder for robot of the floor (against lower barrier)
+    public final static int       SNORKLE_LEVEL3C        = 1200;  // encoder for robot above lower submersible bar (above lower barrier)
+    public final static int       SNORKLE_SLOW           = 500;   // encoder for almost reset to 0
+    public final static int       SNORKLE_HW_MIN         = 0;     // encoder position at maximum rotation LEFT
 
     //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx wormTiltMotor       = null;
@@ -125,13 +130,18 @@ public class Hardware2025Bot
     //                  94.4 deg 5 encoder counts
     //                  94.5 deg 3896 encoder counts range
     public final static double ENCODER_COUNTS_PER_DEG  = 3896.0 / 94.5;
+//  public final static double GOBILDA_435_MOTOR_REV = 537.7; // Ticks per revolution for a GOBILDA 435 RPM motor
+//  public final static double SUPER_DUTY_WORM_GEAR_REDUCTION = 28.0; // Gear reduction for the super duty worm gear from ardufruit
+//  public final static double ENCODER_COUNTS_PER_REV  = (GOBILDA_435_MOTOR_REV * SUPER_DUTY_WORM_GEAR_REDUCTION); // The number of counts it takes to complete one revolution
+//  public final static double ENCODER_COUNTS_PER_DEG = ENCODER_COUNTS_PER_REV / 360.0; // The number of counts it takes to tilt one degree
 
     public final static double TILT_ANGLE_HW_MAX_DEG      = 94.00; // Arm at maximum rotation UP/BACK (horizontal = -200)
     public final static double TILT_ANGLE_BASKET_DEG      = 90.00; // Arm at rotation back to the basket for scoring
     public final static double TILT_ANGLE_AUTO_PRE_DEG    = 83.00; // Arm almost at  basket (start to slow; avoid wobble)
     public final static double TILT_ANGLE_SUBMERSIBLE_DEG = 10.00; // Arm at rotation back to the submersible for collecting
-    public final static double TILT_ANGLE_ASCENT1_DEG     = 94.00; // Arm at rotation back to the low bar for ascent level 1 or 2
-    public final static double TILT_ANGLE_ASCENT2_DEG     = 75.00; // Arm at rotation back to the low bar for ascent level 2
+    public final static double TILT_ANGLE_ASCENT1_DEG     = 58.00; // Arm at rotation back to the low bar for ascent level 1 or 2
+    public final static double TILT_ANGLE_ASCENT2_DEG     = 64.25; // Arm at rotation back to the low bar for ascent level 2
+    public final static double TILT_ANGLE_ASCENT3_DEG     = 56.50; // Arm at rotation back to the low bar for ascent level 2
     public final static double TILT_ANGLE_PARK_DEG        = 33.80; // Arm at rotation back to the low bar for park in auto
     public final static double TILE_ANGLE_BASKET_SAFE_DEG = 90.00; // Arm safe to rotate intake from basket
     public final static double TILT_ANGLE_VERTICAL_DEG    = 54.50; // Straight up vertical (safe to start retracting viper)
@@ -179,9 +189,10 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO_READY  = 1600;    // extend for collecting during auto
     public final static int    VIPER_EXTEND_AUTO_COLLECT = 1600;    // extend for collecting during auto
     public final static int    VIPER_EXTEND_SAMPLE3  = 1500;  // extend for collecting during auto (3rd sample along wall)
-    public final static int    VIPER_EXTEND_HANG1 = 1250;   // extend to this to prepare for level 2 ascent
+    public final static int    VIPER_EXTEND_HANG1 = 3000;   // extend to this to prepare for level 2 ascent
     public final static int    VIPER_EXTEND_PARK = 3410;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_HANG2 =  640;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG2 =  4000;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG3 =  3450;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
@@ -258,7 +269,7 @@ public class Hardware2025Bot
     public final static double WRIST_SERVO_WALL1 = 0.519;        // AUTO: grab specimen off wall (lift off)
     public final static double WRIST_SERVO_WALL1_ANGLE = 173.0;
     public final static double WRIST_SERVO_CLIP = 0.350;        // AAUTO: clip specimen on bar by just driving forward
-
+    public final static double WRIST_SERVO_ASCENT = 0.620;        // TELE: ascend level 2 position
     // horizontal = 0.440
     // straight down = 0.710
 
@@ -596,7 +607,8 @@ public class Hardware2025Bot
 //      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
 //      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
 //      viperMotorAmps      = viperMotor.getCurrent(MILLIAMPS);
-//      snorkleLMotorAmps    = snorkleLMotor.getCurrent(MILLIAMPS);
+//      snorkleLMotorAmps   = snorkleLMotor.getCurrent(MILLIAMPS);
+//      snorkleRMotorAmps   = snorkleRMotor.getCurrent(MILLIAMPS);
 //      wormTiltMotorAmps   = wormTiltMotor.getCurrent(MILLIAMPS);
     } // readBulkData
 
@@ -615,6 +627,8 @@ public class Hardware2025Bot
         snorkleLMotorAmps = snorkleLMotor.getCurrent(CurrentUnit.AMPS);
         if( snorkleLMotorAmps > snorkleLMotorAmpsPk ) snorkleLMotorAmpsPk = snorkleLMotorAmps;
 
+        snorkleRMotorAmps = snorkleRMotor.getCurrent(CurrentUnit.AMPS);
+        if( snorkleRMotorAmps > snorkleRMotorAmpsPk ) snorkleRMotorAmpsPk = snorkleRMotorAmps;
     } // updateAscendMotorAmps
 
     /*--------------------------------------------------------------------------------------------*/
@@ -851,6 +865,54 @@ public class Hardware2025Bot
            viperMotorBusy = false;
         }
     } // abortViperSlideExtension
+
+    public void startSnorkleExtension(int targetEncoderCount)
+    {
+        // Range-check the target
+        if( targetEncoderCount < SNORKLE_HW_MIN ) targetEncoderCount = SNORKLE_HW_MIN;
+        if( targetEncoderCount > SNORKLE_HW_MAX ) targetEncoderCount = SNORKLE_HW_MAX;
+        // Configure target encoder count
+        snorkleLMotor.setTargetPosition( targetEncoderCount );
+        snorkleRMotor.setTargetPosition( targetEncoderCount );
+        // Enable RUN_TO_POSITION mode
+        snorkleLMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        snorkleRMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+
+        snorkleLMotor.setPower( 1.0 );
+        snorkleRMotor.setPower( 1.0 );
+        // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
+        snorkleLMotorBusy = true;
+        snorkleRMotorBusy = true;
+        snorkleTimer.reset();
+    } // startSnorkleExtension
+
+    public void processSnorkleExtension()
+    {
+        if (!snorkleLMotor.isBusy() && !snorkleRMotor.isBusy()) {
+            snorkleLMotorBusy = false;
+            snorkleRMotorBusy = false;
+            // Timeout reaching destination.
+        } else if (snorkleTimer.milliseconds() > 5000) {
+            snorkleLMotorBusy = false;
+            snorkleRMotorBusy = false;
+            //telemetry.addData("processViperSlideExtension", "Movement timed out.");
+            //telemetry.addData("processViperSlideExtension", "Position: %d", viperMotor.getCurrentPosition());
+            //telemetry.update();
+            //telemetrySleep();
+        }
+    } // processSnorkleExtension
+
+    public void abortSnorkleExtension()
+    {
+        // turn off the auto-movement power, but don't go to ZERO POWER or
+        // the weight of the lift will immediately drop it back down.
+        snorkleLMotor.setMode(  DcMotor.RunMode.RUN_USING_ENCODER );
+        snorkleRMotor.setPower( 0.0 );
+//         liftMoveState = LiftMoveActivity.IDLE;
+//         liftStoreState = LiftStoreActivity.IDLE;
+        snorkleLMotorBusy = false;
+        snorkleRMotorBusy = false;
+    } // abortSnorkleExtension
 
     /*--------------------------------------------------------------------------------------------*/
 

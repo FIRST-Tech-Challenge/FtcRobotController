@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * TeleOp Diffy Wrist Servo Test Program
  */
 @TeleOp(name="Teleop-DiffyTest", group="Test")
-//@Disabled
+@Disabled
 public class TeleopDiffyWrist extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  //
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  //

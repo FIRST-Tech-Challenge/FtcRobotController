@@ -109,6 +109,9 @@ public abstract class AutonomousBase extends LinearOpMode {
     ElapsedTime autoViperMotorTimer = new ElapsedTime();
     ElapsedTime autoTiltMotorTimer  = new ElapsedTime();
     ElapsedTime autoPanMotorTimer   = new ElapsedTime();
+    ElapsedTime autoElbowServoTimer = new ElapsedTime();
+    ElapsedTime autoWristServoTimer = new ElapsedTime();
+    ElapsedTime autoClawServoTimer  = new ElapsedTime();
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -350,6 +353,117 @@ public abstract class AutonomousBase extends LinearOpMode {
     }
 
     /*---------------------------------------------------------------------------------*/
+    // Auto Elbow Movements
+    // Call this function instead of simply setting position. Resets the servo timer.
+    void autoElbowMoveToPosition(double targetElbowPosition){
+       robot.elbowServo.setPosition(targetElbowPosition);
+       autoElbowServoTimer.reset();
+    }
+    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    boolean elbowReachedDestination(double targetElbowPosition){
+        boolean reachedDestination = false;
+        if(Math.abs(robot.elbowServo.getPosition() - targetElbowPosition) < 0.01) reachedDestination = true;
+        return reachedDestination;
+    }
+    // Returns true if servo is moving. Passes in targetPosition and a specified timeout.
+    boolean autoElbowMoving(double targetElbowPosition, double timeout){
+        boolean elbowMoving = false;
+        if( elbowReachedDestination(targetElbowPosition)) {
+            elbowMoving = false;
+        }
+        // Did we timeout?
+        else if( autoElbowServoTimer.milliseconds() > timeout ) {
+            elbowMoving = false;
+        }
+        return elbowMoving;
+    }
+    // Returns true if servo is moving. Passes in targetPosition with a predefined timeout of 2000.
+    boolean autoElbowMoving(double targetElbowPosition){
+        boolean elbowMoving = false;
+        if( elbowReachedDestination(targetElbowPosition)) {
+            elbowMoving = false;
+        }
+        // Did we timeout?
+        else if( autoElbowServoTimer.milliseconds() > 2000 ) {
+            elbowMoving = false;
+        }
+        return elbowMoving;
+    }
+
+    // Auto Wrist Movements
+    // Call this function instead of simply setting position. Resets the servo timer.
+    void autoWristMoveToPosition(double targetWristPosition){
+        robot.wristServo.setPosition(targetWristPosition);
+        autoWristServoTimer.reset();
+    }
+    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    boolean wristReachedDestination(double targetWristPosition){
+        boolean reachedDestination = false;
+        if(Math.abs(robot.wristServo.getPosition() - targetWristPosition) < 0.01) reachedDestination = true;
+        return reachedDestination;
+    }
+    // Returns true if servo is moving. Passes in targetPosition and a specified timeout.
+    boolean autoWristMoving(double targetWristPosition, double timeout){
+        boolean wristMoving = false;
+        if( wristReachedDestination(targetWristPosition)) {
+            wristMoving = false;
+        }
+        // Did we timeout?
+        else if( autoWristServoTimer.milliseconds() > timeout ) {
+            wristMoving = false;
+        }
+        return wristMoving;
+    }
+    // Returns true if servo is moving. Passes in targetPosition with a predefined timeout of 2000.
+    boolean autoWristMoving(double targetWristPosition){
+        boolean wristMoving = false;
+        if( wristReachedDestination(targetWristPosition)) {
+            wristMoving = false;
+        }
+        // Did we timeout?
+        else if( autoWristServoTimer.milliseconds() > 2000 ) {
+            wristMoving = false;
+        }
+        return wristMoving;
+    }
+    // Auto Claw Movements
+    // Call this function instead of simply setting position. Resets the servo timer.
+    void autoClawMoveToPosition(double targetClawPosition){
+        robot.clawServo.setPosition(targetClawPosition);
+        autoClawServoTimer.reset();
+    }
+    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    boolean clawReachedDestination(double targetClawPosition){
+        boolean reachedDestination = false;
+        if(Math.abs(robot.clawServo.getPosition() - targetClawPosition) < 0.01) reachedDestination = true;
+        return reachedDestination;
+    }
+    // Returns true if servo is moving. Passes in targetPosition and a specified timeout.
+    boolean autoClawMoving(double targetClawPosition, double timeout){
+        boolean clawMoving = false;
+        if( clawReachedDestination(targetClawPosition)) {
+            clawMoving = false;
+        }
+        // Did we timeout?
+        else if( autoClawServoTimer.milliseconds() > timeout ) {
+            clawMoving = false;
+        }
+        return clawMoving;
+    }
+    // Returns true if servo is moving. Passes in targetPosition with a predefined timeout of 2000.
+    boolean autoClawMoving(double targetClawPosition){
+        boolean clawMoving = false;
+        if( clawReachedDestination(targetClawPosition)) {
+            clawMoving = false;
+        }
+        // Did we timeout?
+        else if( autoClawServoTimer.milliseconds() > 2000 ) {
+            clawMoving = false;
+        }
+        return clawMoving;
+    }
+
+    /*---------------------------------------------------------------------------------*/
     void autoViperMotorMoveToTarget(int targetEncoderCount )
     {
         autoViperMotorMoveToTarget(targetEncoderCount, 1.0);
@@ -362,27 +476,76 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.viperMotor.setTargetPosition( targetEncoderCount );
         // Enable RUN_TO_POSITION mode
         robot.viperMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
-        // Are we raising or lowering the lift?
-        boolean directionUpward = (targetEncoderCount > robot.viperMotorPos)? true : false;
+        // Are we retracting to the zero position?
+        boolean targetCloseToZero = (targetEncoderCount < 200)? true : false;
         // Set the power used to get there (NOTE: for RUN_TO_POSITION, always use a POSITIVE
         // power setting, no matter which way the motor must rotate to achieve that target.
-        double motorPower = (directionUpward)? power : power / 2.0;
+        double motorPower = (targetCloseToZero)? (power/2.0): power;
         // Begin our timer and start the movement
         autoViperMotorTimer.reset();
         robot.viperMotor.setPower( motorPower );
     } // autoViperMotorMoveToTarget
 
+    // Checks to see if viper reached its destination with a �10.0 encoder count tolerance
+    boolean viperReachedDestination( int targetExtension ){
+        boolean reachedDestination = false;
+        // if within tolerance set reachedDestination to true
+        if(Math.abs(robot.viperMotor.getCurrentPosition() - targetExtension) < 10.0) {
+            reachedDestination = true;
+        }
+        return reachedDestination;
+    }
+    // Returns true if the viper motor is moving. Passes in the targetEncoderCount and specified timeout
+    boolean autoViperMotorMoving(int targetEncoderCount, double timeout) {
+        boolean viperMoving = true;
+        // Did the movement finish?
+        if( !robot.viperMotor.isBusy() || viperReachedDestination(targetEncoderCount)) {
+            viperMoving = false;
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        // Did we timeout?
+        else if( autoViperMotorTimer.milliseconds() > timeout ) {
+            viperMoving = false;
+           robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        else {
+            // wait a little longer
+        }
+        return viperMoving;
+    } // autoViperMotorMoving
+
+    // Returns true if the viper motor is moving. Passes in the targetEncoderCount and sets the timeout to 3000
+    boolean autoViperMotorMoving(int targetEncoderCount) {
+        boolean viperMoving = true;
+        // Did the movement finish?
+        if( !robot.viperMotor.isBusy() || viperReachedDestination(targetEncoderCount)) {
+            viperMoving = false;
+            robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        // Did we timeout?
+        else if( autoViperMotorTimer.milliseconds() > 3000 ) {
+            viperMoving = false;
+            robot.viperMotor.setPower( 0.001 );   // hold
+        }
+        else {
+            // wait a little longer
+        }
+        return viperMoving;
+    } // autoViperMotorMoving
+
+    // (OLD) Returns true if the viper motor is moving.
+    // No parameters (meaning it does not call viperReachedDestination and sets the timeout to 3000)
     boolean autoViperMotorMoving() {
         boolean viperMoving = true;
         // Did the movement finish?
         if( !robot.viperMotor.isBusy() ) {
             viperMoving = false;
-           robot.viperMotor.setPower( 0.001 );   // hold
+            robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
         else if( autoViperMotorTimer.milliseconds() > 3000 ) {
             viperMoving = false;
-           robot.viperMotor.setPower( 0.001 );   // hold
+            robot.viperMotor.setPower( 0.001 );   // hold
         }
         else {
             // wait a little longer
@@ -409,6 +572,56 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.wormTiltMotor.setPower( power );
     } // autoTiltMotorMoveToTarget
 
+    // Checks to see if tilt reached its destination with a �1.5 degree tolerance
+    boolean tiltReachedDestination( double targetAngle){
+        boolean reachedDestination = false;
+        // if within tolerance we set reachedDestination to true
+        if(Math.abs(robot.armTiltAngle - targetAngle) < 1.5) {
+            reachedDestination = true;
+        }
+        return reachedDestination;
+    }
+
+    // Returns true if the tilt motor is moving. Passes in the targetTiltAngle and a specified timeout
+    boolean autoTiltMotorMoving(double targetTiltAngle, double timeout) {
+        boolean tiltMoving = true;
+        // Did the movement finish?
+        if( !robot.wormTiltMotor.isBusy() || tiltReachedDestination(targetTiltAngle)) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoTiltMotorTimer.milliseconds() > timeout ) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return tiltMoving;
+    } // autoTiltMotorMoving
+
+    // Returns true if the tilt motor is moving. Passes in the targetEncoderCount and sets the timeout to 4000
+    boolean autoTiltMotorMoving(double targetTiltAngle) {
+        boolean tiltMoving = true;
+        // Did the movement finish?
+        if( !robot.wormTiltMotor.isBusy() || tiltReachedDestination(targetTiltAngle)) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        // Did we timeout?
+        else if( autoTiltMotorTimer.milliseconds() > 4000 ) {
+            tiltMoving = false;
+            robot.wormTiltMotor.setPower( 0.0 );
+        }
+        else {
+            // wait a little longer
+        }
+        return tiltMoving;
+    } // autoTiltMotorMoving
+
+    // (OLD) Returns true if the tilt motor is moving.
+    // No parameters (meaning it does not call tiltReachedDestination and sets the timeout to 4000)
     boolean autoTiltMotorMoving() {
         boolean tiltMoving = true;
         // Did the movement finish?

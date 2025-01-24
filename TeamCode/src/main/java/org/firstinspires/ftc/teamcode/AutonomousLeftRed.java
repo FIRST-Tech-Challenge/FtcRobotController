@@ -357,9 +357,9 @@ public class AutonomousLeftRed extends AutonomousBase {
         // drive partway there while we wait for arm to lift (before extending viper)
         if( scorePreloadSpecimen || (samplesScored > 0) ){
             driveToPosition( 11.0, -33.5, -46.6, DRIVE_SPEED_100, TURN_SPEED_30, DRIVE_THRU );
-            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET);
+            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
         } else {
-            autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_BASKET);
+            robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_BASKET );
             driveToPosition( 9.5, -20.0, -23.0, DRIVE_SPEED_30, TURN_SPEED_30, DRIVE_THRU );
             robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
             robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);

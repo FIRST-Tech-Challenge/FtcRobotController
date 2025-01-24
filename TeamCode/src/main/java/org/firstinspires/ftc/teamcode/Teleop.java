@@ -91,6 +91,9 @@ public abstract class Teleop extends LinearOpMode {
     final int   ASCENT_STATE_MOVING = 2;
     final int   ASCENT_STATE_READY  = 3;
     final int   ASCENT_STATE_LEVEL2 = 4;
+    final int   ASCENT_STATE_LIFT   = 5;
+    final int   ASCENT_STATE_MOVING2 = 6;
+    final int   ASCENT_STATE_RETRACT = 7;
 
     int         ascent2state = ASCENT_STATE_IDLE;
 	boolean     ascent2telem = false;
@@ -230,9 +233,9 @@ public abstract class Teleop extends LinearOpMode {
             processTiltControls();
             ProcessViperLiftControls();
             processClaw();
-            processLevel2Ascent();
             processSnorkleControls();
             performEveryLoopTeleop();
+            processLevel2Ascent();
 
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
@@ -255,6 +258,7 @@ public abstract class Teleop extends LinearOpMode {
 //          telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);
 //          telemetry.addData("Secure Arm State", secureArmState);
 //          telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
+            telemetry.addData("Snorkle Ascent State", ascent2state);
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
             telemetry.update();
 
@@ -286,7 +290,7 @@ public abstract class Teleop extends LinearOpMode {
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
         gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
         gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
-//      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
+        gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -301,7 +305,7 @@ public abstract class Teleop extends LinearOpMode {
         gamepad2_dpad_right_last = gamepad2_dpad_right_now;  gamepad2_dpad_right_now = gamepad2.dpad_right;
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
-//      gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
+        gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
 //      gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
     } // captureGamepad2Buttons
 
@@ -674,6 +678,7 @@ public abstract class Teleop extends LinearOpMode {
             startHoverArm();
             grabLState = 2;
             grabRState = 2;
+            submersibleCollectState = 2; // forgot to update this state
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
@@ -793,6 +798,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.viperMotor.setPower( 0.0 );
             robot.wormTiltMotor.setPower( 0.0 );
             robot.snorkleLMotor.setPower( 0.0 );
+            robot.snorkleRMotor.setPower( 0.0 );
             ascent2state = ASCENT_STATE_IDLE;
 			ascent2telem = false;
         }
@@ -808,32 +814,62 @@ public abstract class Teleop extends LinearOpMode {
                 }
                 break;
             case ASCENT_STATE_SETUP:
+                // Send Snorkle motor to raise position
+                robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3A);
                 // Send TILT motor to hang position
                 robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT1_DEG);
                 // Send LIFT motor to hang position
                 robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG1 );
-                robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
+                robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );
+                robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_ASCENT);
                 robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
                 ascent2state = ASCENT_STATE_MOVING;
                 break;
+
             case ASCENT_STATE_MOVING :
-                if( !robot.viperMotorBusy && !robot.wormTiltMotorBusy ) {
+                robot.processSnorkleExtension();
+                if( !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy && !robot.viperMotorBusy && !robot.wormTiltMotorBusy ) {
                     // Ready for phase 2
                     gamepad2.runRumbleEffect(rumbleAscentReady);
                     ascent2state = ASCENT_STATE_READY;
                 }
                 break;
+
             case ASCENT_STATE_READY :
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
-                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );  // we accidentally open the claw
-                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, robot.VIPER_RAISE_POWER, robot.VIPER_RAISE_POWER );
+                    // Send Snorkle motor to lift position
+                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3B);
+                    robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );  // we accidentally open the claw
+                    robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, 1.0, 1.0 );
                     ascent2state = ASCENT_STATE_LEVEL2;
                 }
                 break;
 
             case ASCENT_STATE_LEVEL2 :
-                if( !robot.viperMotorBusy  ) {
+                robot.processSnorkleExtension();
+                if( !robot.viperMotorBusy && !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy ) {
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
+                    ascent2state = ASCENT_STATE_RETRACT;
+                }
+                break;
+
+            case ASCENT_STATE_RETRACT :
+                if( !robot.wormTiltMotorBusy) {
+                    robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG3, 1.0, 1.0);
+                    ascent2state = ASCENT_STATE_LIFT;
+                }
+                break;
+
+            case ASCENT_STATE_LIFT :
+                if( !robot.viperMotorBusy) {
+                    robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT3_DEG);
+                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3C);
+                    ascent2state = ASCENT_STATE_MOVING2;
+                }
+                break;
+            case ASCENT_STATE_MOVING2:
+                robot.processSnorkleExtension();
+                if( !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy  && !robot.wormTiltMotorBusy ) {
                     ascent2state = ASCENT_STATE_IDLE;
                 }
                 break;
