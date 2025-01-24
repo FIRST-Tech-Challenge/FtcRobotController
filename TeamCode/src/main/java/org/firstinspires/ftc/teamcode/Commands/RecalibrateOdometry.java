@@ -12,26 +12,26 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 public class RecalibrateOdometry extends CommandBase {
 
     // Constants for the Red and Blue Alliance wall positions and angles
-    private static final double redAllianceXwall = -150.0;
-    private static final double redAllianceYwall = -150.0;
-    private static final double blueAllianceXwall = 150.0;
-    private static final double blueAllianceYwall = 150.0;
+    private static final double redAllianceXsub = -0.77;
+    private static final double redAllianceYsub = -0.5;
+    private static final double blueAllianceXsub = 0.77;
+    private static final double blueAllianceYsub = 0.5;
 
     // Tolerance values for position and angle
     private static final double positionTolerance = 0.1;
     private static final double angleTolerance = 0.0;
 
     // Maximum X and Y values for the Red and Blue Alliance
-    private static final double redAllianceMaxX = -150.0;
-    private static final double redAllianceMaxY = -150.0;
-    private static final double blueAllianceMaxX = 150.0;
-    private static final double blueAllianceMaxY = 150.0;
+    private static final double redAllianceMaxX = -0.77;
+    private static final double redAllianceMaxY = -0.5;
+    private static final double blueAllianceMaxX = 0.77;
+    private static final double blueAllianceMaxY = 0.5;
 
     // Angles the robot should be facing the wall
-    private static final double redAllianceXwallAngle = 0.0;
-    private static final double redAllianceYwallAngle = 90.0;
-    private static final double blueAllianceXwallAngle = 180.0;
-    private static final double blueAllianceYwallAngle = -90.0;
+    private static final double redAllianceXsubAngle = RobotContainer.RedStartAngle;
+    private static final double redAllianceYsubAngle = 0.0;
+    private static final double blueAllianceXsubAngle = RobotContainer.BlueStartAngle;
+    private static final double blueAllianceYsubAngle = 180;
 
     // Determine if the robot is on the Red Alliance
     private static final boolean isRedAlliance = RobotContainer.isRedAlliance();
@@ -92,22 +92,30 @@ public class RecalibrateOdometry extends CommandBase {
      * Updates the robot's position based on its current position and alliance color.
      */
     private void updatePosition() {
-        if (inNetZone()) {
+        if (inSubZone()) {
             // Facing X Wall
             if (facingXWall()) {
                 if (isRedAlliance) {
-                    RobotContainer.odometry.setCurrentPos(new Pose2d(redAllianceXwall, currentPos.getY(), new Rotation2d(redAllianceXwallAngle)));
+                    RobotContainer.DBTelemetry.addData("Y position set to ", redAllianceXsub);
+                    RobotContainer.DBTelemetry.update();
+                    RobotContainer.odometry.setCurrentPos(new Pose2d(redAllianceXsub, currentPos.getY(), new Rotation2d(redAllianceXsubAngle)));
                 } else {
-                    RobotContainer.odometry.setCurrentPos(new Pose2d(blueAllianceXwall, currentPos.getY(), new Rotation2d(blueAllianceXwallAngle)));
+                    RobotContainer.DBTelemetry.addData("Y position set to ", blueAllianceXsub);
+                    RobotContainer.DBTelemetry.update();
+                    RobotContainer.odometry.setCurrentPos(new Pose2d(blueAllianceXsub, currentPos.getY(), new Rotation2d(blueAllianceXsubAngle)));
                 }
             }
 
             // Facing Y Wall
             if (facingYWall()) {
                 if (isRedAlliance) {
-                    RobotContainer.odometry.setCurrentPos(new Pose2d(currentPos.getX(), redAllianceYwall, new Rotation2d(redAllianceYwallAngle)));
+                    RobotContainer.DBTelemetry.addData("X position set to ", redAllianceYsub);
+                    RobotContainer.DBTelemetry.update();
+                    RobotContainer.odometry.setCurrentPos(new Pose2d(currentPos.getX(), redAllianceYsub, new Rotation2d(redAllianceYsubAngle)));
                 } else {
-                    RobotContainer.odometry.setCurrentPos(new Pose2d(currentPos.getX(), blueAllianceYwall, new Rotation2d(blueAllianceYwallAngle)));
+                    RobotContainer.DBTelemetry.addData("X position set to ", blueAllianceYsub);
+                    RobotContainer.DBTelemetry.update();
+                    RobotContainer.odometry.setCurrentPos(new Pose2d(currentPos.getX(), blueAllianceYsub, new Rotation2d(blueAllianceYsubAngle)));
                 }
             }
         }
@@ -122,9 +130,9 @@ public class RecalibrateOdometry extends CommandBase {
     private boolean facingXWall() {
         double angle = currentPos.getHeading();
         if (isRedAlliance) {
-            return Math.abs(angle - redAllianceXwallAngle) <= angleTolerance;
+            return Math.abs(angle - redAllianceXsubAngle) <= angleTolerance;
         } else {
-            return Math.abs(angle - blueAllianceXwallAngle) <= angleTolerance;
+            return Math.abs(angle - blueAllianceXsubAngle) <= angleTolerance;
         }
     }
 
@@ -136,9 +144,9 @@ public class RecalibrateOdometry extends CommandBase {
     private boolean facingYWall() {
         double angle = currentPos.getHeading();
         if (isRedAlliance) {
-            return Math.abs(angle - redAllianceYwallAngle) <= angleTolerance;
+            return Math.abs(angle - redAllianceYsubAngle) <= angleTolerance;
         } else {
-            return Math.abs(angle - blueAllianceYwallAngle) <= angleTolerance;
+            return Math.abs(angle - blueAllianceYsubAngle) <= angleTolerance;
         }
     }
 
@@ -147,16 +155,17 @@ public class RecalibrateOdometry extends CommandBase {
      *
      * @return true if the robot is in the NetZone, false otherwise.
      */
-    private boolean inNetZone() {
+    private boolean inSubZone() {
         boolean inTheZone = false;
         // Check if we are in the NetZone
         if (isRedAlliance) {
             // Check if we are in the Red Alliance NetZone
-            inTheZone = Math.abs(currentPos.getX() - redAllianceMaxX) <= positionTolerance && Math.abs(currentPos.getY() - redAllianceMaxY) <= positionTolerance;
+            inTheZone = Math.abs(currentPos.getX() - redAllianceMaxX) <= positionTolerance || Math.abs(currentPos.getY() - redAllianceMaxY) <= positionTolerance;
         } else {
             // Check if we are in the Blue Alliance NetZone
-            inTheZone = Math.abs(currentPos.getX() - blueAllianceMaxX) <= positionTolerance && Math.abs(currentPos.getY() - blueAllianceMaxY) <= positionTolerance;
+            inTheZone = Math.abs(currentPos.getX() - blueAllianceMaxX) <= positionTolerance || Math.abs(currentPos.getY() - blueAllianceMaxY) <= positionTolerance;
         }
         return inTheZone;
+        //return true;
     }
 }
