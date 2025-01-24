@@ -233,6 +233,10 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .07);
     }
 
+    public MovePivotCommand AutoToGroundForSample(double target, int waitTime) {
+        return new MovePivotCommand(pivot, telemetry, target, 100, waitTime,  .02);
+    }
+
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .07);
     }
@@ -248,6 +252,13 @@ public class CommandFactory {
         return new ParallelRaceGroup(
                 intake(),
                 AutoToGroundForSample3(waitTime)
+        );
+    }
+
+    public Command intakeFromGround(double groundTarget, int waitTime) {
+        return new ParallelRaceGroup(
+                intake(),
+                sleep(300).andThen(AutoToGroundForSample(groundTarget, waitTime))
         );
     }
 
