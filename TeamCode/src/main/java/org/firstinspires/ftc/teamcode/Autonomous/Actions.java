@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
+import org.firstinspires.ftc.teamcode.Systems.IMU;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 
@@ -12,16 +13,21 @@ import java.util.concurrent.Executors;
 public class Actions {
 
  static Input input;
+ static IMU imu;
+ static Action1 a1;
 
  static boolean opModeisActive;
 
- public static void setupActions(Input localInput) {
+ public static void setupActions(Input localInput, Action1 actions1, IMU inertialMeasurementUnit) {
    input = localInput;
+   a1 = actions1;
+   imu = inertialMeasurementUnit;
  }
 
  public static void opModeIsActive (boolean localOpModeisActive){
    opModeisActive = localOpModeisActive;
  }
+
 
    int SPECIMEN_OFFSET = 20;
 
@@ -44,13 +50,32 @@ public class Actions {
 
     public static void hangAndReleaseSpecimen() {
 
+     int pos =  1265;
+
+     a1.setPos(pos);
+
+     a1.extendArm(-2550, 0);
+
+     pos = 1639;
+     a1.setPos(pos);
+
+     a1.retractArm(-1500, 1639);
+
+     input.claw(true,false);
+
+     pos = 0;
+     a1.setPos(pos);
+
+     a1.retractArm(-120, 0);
+
+
 //     while (input.getArmPos() < 1465) {
 //      input.arm(1465);
 //     }
 
 //     ExecutorService executor = Executors.newSingleThreadExecutor();
     // ExecutorService executor1 = Executors.newSingleThreadExecutor();
-     boolean step1Done = false;
+//     boolean step1Done = false;
 
      //while (opModeisActive && !step1Done) {
       //input.arm(1265);
@@ -58,7 +83,7 @@ public class Actions {
 //      while (input.getUpArmPos() > -2550 && opModeisActive) {
 //       input.upArm(-50);
 //      }
-       input.upArm(0);
+//       input.upArm(0);
       //}
     // }
 //
@@ -72,11 +97,11 @@ public class Actions {
 //
 //        //uparm until -2750
 //
-      while (input.getUpArmPos() < -1550 && opModeisActive) {
-       input.upArm(50);
-      }
-
-      input.upArm(0);
+//      while (input.getUpArmPos() < -1550 && opModeisActive) {
+//       input.upArm(50);
+//      }
+//
+//      input.upArm(0);
 //
 //
 //     //future.thenAccept(result -> System.out.println(result));
@@ -165,7 +190,27 @@ public class Actions {
     }
 
     public static void park () {
-        //drive to park place
+        //drive to observation zone from the bars
+
+     //this way (turn right, move, turn right) or turn like 45 or 60 degrees then just move forward will reach same destination
+     while (imu.getAngle() > 88 && imu.getAngle() < 92) { //turn 90 degrees (right) without a pid loop which would be more precise so just turn until in a range
+       input.spin(20);
+     }
+
+     while ((input.getTravelledDistance() < 25) && opModeisActive)  { //inches
+      input.move(20);
+     }
+
+     while (imu.getAngle() > 88 && imu.getAngle() < 92) { //turn 90 degrees (right)
+      input.spin(20);
+     }
+
+     while ((input.getTravelledDistance() < 25) && opModeisActive)  { //inches
+      input.move(20);
+     }
+
+     // done!
+
     }
 
 

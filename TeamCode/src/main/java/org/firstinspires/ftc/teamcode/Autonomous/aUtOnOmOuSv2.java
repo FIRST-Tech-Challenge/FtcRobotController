@@ -34,7 +34,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
         waitForStart();
 
         imu.SetYaw();
-        Actions.setupActions(input);
+
         input.claw(false,true);
 
         BotTelemetry.addData("After Start", 0);
@@ -42,6 +42,9 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
 
         Action1 a1 = new Action1(input);
+
+        Actions.setupActions(input, a1, imu);
+
         a1.start();
 
         int pos =  1265;
@@ -56,24 +59,25 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
                 Actions.opModeIsActive(opModeIsActive());
 
-                a1.setPos(pos);
+//                a1.setPos(pos);
 
 
-                //Actions.hangAndReleaseSpecimen();
-                a1.extendArm(-2550, 0);
-
-
-                pos = 1639;
-                a1.setPos(pos);
-
-                a1.retractArm(-1500, 1639);
+//                Actions.hangAndReleaseSpecimen();
+//                a1.extendArm(-2550, 0);
+//
+//
+//                pos = 1639;
+//                a1.setPos(pos);
+//
+//                a1.retractArm(-1500, 1639);
 
 
                 //a1.stop();
 
-                // Step 1
-                //Actions.driveToBarFromInitialPositionForSpecimen(0);
-                // Actions.hangAndReleaseSpecimen();
+                /** Step 1 */
+                Actions.driveToBarFromInitialPositionForSpecimen(0);
+                 Actions.hangAndReleaseSpecimen();
+
 //
 //            // Step 2
 //            Actions.driveBehindSampleFromLocation(1, "bar");
@@ -110,7 +114,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 //            Actions.hangAndReleaseSpecimen();
 //
 //            //Step 9
-//            Actions.park();
+            Actions.park();
 
 
 //            Actions.driveBehindSampleFromLocation(1, "human player");
@@ -118,7 +122,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
                 end = true;
             }
-
+            a1.stop();
         }
 
 

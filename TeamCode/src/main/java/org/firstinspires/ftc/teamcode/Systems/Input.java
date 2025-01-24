@@ -116,12 +116,12 @@ public class Input {
         return isSpin;
     }
 
-    public void claw(boolean grabButton, boolean releaseButton) {
+    public void claw(boolean releaseButton, boolean grabButton) {
 
-        if (releaseButton) {
+        if (grabButton) {
             servos.moveServo(Servos.Type.Claw, Constants.SERVO_OPEN);
         }
-        else if (grabButton) {
+        else if (releaseButton) {
             servos.moveServo(Servos.Type.Claw, Constants.SERVO_CLOSED);
         }
     }
