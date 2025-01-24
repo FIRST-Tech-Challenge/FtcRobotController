@@ -33,15 +33,17 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
 
     SonicPIDFController hPid = new SonicPIDFController(1, 0, 0, 0);
 
+    boolean turnOffMotorAtEnd = true;
+
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower) {
         this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
 
     public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance) {
-        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance,  1800);
+        this(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, 1800, true);
     }
 
-    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
+    public DriveToTargetCommand(AutoMecanumDriveTrain driveTrain, Telemetry telemetry, double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
         super(timeOut);
 
         this.driveTrain = driveTrain;
@@ -53,6 +55,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         this.minPower = minPower;
         this.maxPower = maxPower;
         this.distanceTolerance = distanceTolerance;
+        this.turnOffMotorAtEnd = turnOffMotorAtEnd;
 
         addRequirements(driveTrain);
     }
@@ -153,6 +156,9 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        driveTrain.stop();
+
+        if(turnOffMotorAtEnd) {
+            driveTrain.stop();
+        }
     }
 }

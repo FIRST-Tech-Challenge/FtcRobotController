@@ -16,7 +16,7 @@ public class AlignTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
 
-                double deliveryDistance = 97;
+                double deliveryDistance = 85;
                 double minDelivery = 70;
                 double intakeDistance = 60;
                 double minIntake = 45;
@@ -41,16 +41,16 @@ public class AlignTest extends CommandAutoOpMode {
 
                         new ParallelRaceGroup(
                                 commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(300, -950, 0, .05, .8, 100)
+                                commandFactory.driveToTarget(250, -700, 0, .05, .8, 100)
                         ),
 
                         //push sample 1 to human player
 
-                        commandFactory.driveToTarget(1300, -950, 0, .05, .8, 100, 2000),
-                        commandFactory.driveToTarget(1300, -1150, 0, .05, .8, 100, 2000),
-                        commandFactory.driveToTarget(300, -1150, 0, .05, .8, 100, 2000),
+                        commandFactory.driveToTarget(1300, -950, 0, .05, 1, 100, 2000, true),
+                        commandFactory.driveToTarget(1300, -1150, 0, .05, 1, 150, 2000, false),
+                        commandFactory.driveToTarget(300, -1150, 0, .05, 1, 150, 2000, false),
 
-                        commandFactory.driveToTarget(500, -1150, 180, .05, .8, 100, 2000),
+                        //commandFactory.driveToTarget(400, -1150, 180, .05, .8, 100, 2000, false),
 
                         commandFactory.driveToTarget(200, -1150, 180, .05, .8, 100),
 
@@ -68,7 +68,7 @@ public class AlignTest extends CommandAutoOpMode {
                         ),
 
                         new ParallelRaceGroup(
-                                commandFactory.driveToTarget(600, -50, 0, .05, .9, 50, 3000),
+                                commandFactory.driveToTarget(600, -50, 0, .05, .9, 100, 3000),
                                 commandFactory.extendSpecimenSlider(6000)
                         ),
 
@@ -76,7 +76,7 @@ public class AlignTest extends CommandAutoOpMode {
                                 commandFactory.checkForwardDistance(deliveryDistance, minDelivery, 5000),
                                 commandFactory.extendSpecimenSlider(6000),
                                 new SequentialCommandGroup(
-                                        commandFactory.sleep(500),
+                                        //commandFactory.sleep(500),
                                         commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery,3000)
                                 )
                         ),
@@ -111,7 +111,7 @@ public class AlignTest extends CommandAutoOpMode {
                                 commandFactory.checkForwardDistance(deliveryDistance, minDelivery,5000),
                                 commandFactory.extendSpecimenSlider(6000),
                                 new SequentialCommandGroup(
-                                        commandFactory.sleep(500),
+                                        //commandFactory.sleep(500),
                                         commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery, 3000)
                                 )
                         ),

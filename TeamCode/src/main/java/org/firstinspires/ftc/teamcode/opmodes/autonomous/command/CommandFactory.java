@@ -82,7 +82,11 @@ public class CommandFactory {
     }
 
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut) {
-        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut);
+        return driveToTarget(targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut, true);
+    }
+
+    public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower, double maxPower, double distanceTolerance, long timeOut, boolean turnOffMotorAtEnd) {
+        return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, maxPower, distanceTolerance, timeOut,  turnOffMotorAtEnd);
     }
 
     public ForwardDistanceCommand checkForwardDistance(double expectedDistance, double minDistance, long timeOut) {

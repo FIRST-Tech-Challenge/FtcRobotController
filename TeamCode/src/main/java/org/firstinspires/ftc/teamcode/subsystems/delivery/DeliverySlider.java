@@ -147,7 +147,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
         double expectedPivotAngle = Math.toDegrees(Math.asin(7.25 / (14.5 + position * 0.0329)));
         double sliderLength = position * 0.0329;
         int extraTicks = (int)((30 - expectedPivotAngle) * -3);
