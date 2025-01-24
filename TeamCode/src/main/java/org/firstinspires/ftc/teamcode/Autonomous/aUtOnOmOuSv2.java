@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Systems.Motors;
 public class aUtOnOmOuSv2 extends LinearOpMode {
 
 
+    private boolean end;
 
     public void runOpMode() throws InterruptedException {
         Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
@@ -27,20 +28,52 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
+        BotTelemetry.addData("Before Start", 0);
+        BotTelemetry.update();
+
         waitForStart();
 
         imu.SetYaw();
         Actions.setupActions(input);
         input.claw(false,true);
 
+        BotTelemetry.addData("After Start", 0);
+        BotTelemetry.update();
+
+
+        Action1 a1 = new Action1(input);
+        a1.start();
+
+        int pos =  1265;
+
         while (opModeIsActive()) {
+            
+            while (!end) {
+
+                BotTelemetry.addData("Active", 0);
+                BotTelemetry.update();
 
 
-            Actions.opModeIsActive(opModeIsActive());
+                Actions.opModeIsActive(opModeIsActive());
 
-            // Step 1
-            Actions.driveToBarFromInitialPositionForSpecimen(0);
-            Actions.hangAndReleaseSpecimen();
+                a1.setPos(pos);
+
+
+                //Actions.hangAndReleaseSpecimen();
+                a1.extendArm(-2550, 0);
+
+
+                pos = 1639;
+                a1.setPos(pos);
+
+                a1.retractArm(-1500, 1639);
+
+
+                //a1.stop();
+
+                // Step 1
+                //Actions.driveToBarFromInitialPositionForSpecimen(0);
+                // Actions.hangAndReleaseSpecimen();
 //
 //            // Step 2
 //            Actions.driveBehindSampleFromLocation(1, "bar");
@@ -77,19 +110,14 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 //            Actions.hangAndReleaseSpecimen();
 //
 //            //Step 9
-//            Actions.levelOneAsension();
+//            Actions.park();
 
 
-
-            Actions.driveBehindSampleFromLocation(1, "human player");
-
+//            Actions.driveBehindSampleFromLocation(1, "human player");
 
 
-
-
-
-
-
+                end = true;
+            }
 
         }
 

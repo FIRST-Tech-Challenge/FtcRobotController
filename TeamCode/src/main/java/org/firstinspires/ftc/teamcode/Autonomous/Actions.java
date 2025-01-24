@@ -4,6 +4,11 @@ import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Actions {
 
  static Input input;
@@ -39,27 +44,70 @@ public class Actions {
 
     public static void hangAndReleaseSpecimen() {
 
-     //while (input.getArmPos() < 1065 && opModeisActive) {
-      input.arm(1465);
-     //}
+//     while (input.getArmPos() < 1465) {
+//      input.arm(1465);
+//     }
+
+//     ExecutorService executor = Executors.newSingleThreadExecutor();
+    // ExecutorService executor1 = Executors.newSingleThreadExecutor();
+     boolean step1Done = false;
+
+     //while (opModeisActive && !step1Done) {
+      //input.arm(1265);
+
+//      while (input.getUpArmPos() > -2550 && opModeisActive) {
+//       input.upArm(-50);
+//      }
+       input.upArm(0);
+      //}
+    // }
 //
-//     //uparm until -2750
-     while (input.getArmPos() >= 1465) {
-      while (input.getUpArmPos() > -2550 && opModeisActive) {
-       input.upArm(-50);
+//     CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+//          while (opModeisActive) {
+//           input.arm(1265);
+//          }
+//
+//          return "Hello from the future!";
+//     }, executor);
+//
+//        //uparm until -2750
+//
+      while (input.getUpArmPos() < -1550 && opModeisActive) {
+       input.upArm(50);
       }
 
       input.upArm(0);
-     }
-
-//     while (input.getUpArmPos() <= -2550 && input.getArmPos() < 1439 && opModeisActive) {
- //     input.arm(1439);
-//     }
 //
+//
+//     //future.thenAccept(result -> System.out.println(result));
+//     executor.shutdownNow();
+//        try {
+//            future.get();
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        executor.shutdown();
+
+
+//     CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+//         while (opModeisActive) {
+//          input.arm(1439);
+//         }
+//
+//      return "Hello from the future!";
+//     }, executor1);
+//
+//     future1.thenAccept(result -> System.out.println(result));
+//     executor1.shutdown();
+
 //     while (input.getUpArmPos() < -2070 && opModeisActive) {
 //      input.upArm(50);
 //     }
 //     input.upArm(0);
+
+
 
 
      //wait a bit
@@ -73,7 +121,7 @@ public class Actions {
 //
 //
 //     BotTelemetry.addData("armPosition", input.getArmPos());
-   BotTelemetry.update();
+  // BotTelemetry.update();
 
         // 1. robot.lower.arm and press down to hang
         // 2. robot.release claw
@@ -116,8 +164,8 @@ public class Actions {
         //drive back
     }
 
-    public static void levelOneAsension () {
-        //arm touches bar
+    public static void park () {
+        //drive to park place
     }
 
 
