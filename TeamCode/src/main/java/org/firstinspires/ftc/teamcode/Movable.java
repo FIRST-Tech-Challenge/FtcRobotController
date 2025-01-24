@@ -15,6 +15,12 @@ abstract class Movable extends LinearOpMode {
     static protected DcMotor BLScissorLift;
     static protected Servo SlideR;
     static protected Servo SlideL;
+    static protected Servo rotatingServoR;
+    static protected Servo rotatingServoL;
+    static protected Servo outtakeR;
+    static protected Servo outtakeL;
+    static protected Servo intake;
+
     static protected boolean inverse = false;
     static protected boolean stop = false;
 
@@ -30,20 +36,24 @@ abstract class Movable extends LinearOpMode {
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
         SlideR = hardwareMap.get(Servo.class, "SlideR");
         SlideL = hardwareMap.get(Servo.class, "SlideL");
-
+        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
+        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
+        outtakeR = hardwareMap.get(Servo.class, "outtakeR"); // change if needed
+        outtakeL = hardwareMap.get(Servo.class, "outtakeL");
+        intake = hardwareMap.get(Servo.class, "intake"); // change if needed
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
 
     // front right wheel is the only one WRONG
-    public void powerWheels(int miliseconds, String direction) {
+    public void powerWheels(int milliseconds, String direction) {
         switch (direction) {
             case "forward":
                 FLW.setPower(0.3);
                 BLW.setPower(0.3);
                 FRW.setPower(-0.3);
                 BRW.setPower(-0.3);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
             case "backward":
@@ -51,7 +61,7 @@ abstract class Movable extends LinearOpMode {
                 BLW.setPower(-0.3);
                 FRW.setPower(0.3);
                 BRW.setPower(0.3);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
             case "right":
@@ -59,7 +69,7 @@ abstract class Movable extends LinearOpMode {
                 BLW.setPower(-0.7);
                 FRW.setPower(0.7);
                 BRW.setPower(-0.7);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
             case "left":
@@ -67,20 +77,20 @@ abstract class Movable extends LinearOpMode {
                 BLW.setPower(0.7);
                 FRW.setPower(-0.7);
                 BRW.setPower(0.7);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
         }
     }
 
-    public void turnRobot(int miliseconds, String direction) {
+    public void turnRobot(int milliseconds, String direction) {
         switch (direction) {
             case "left":
                 FLW.setPower(-0.3);
                 BLW.setPower(-0.3);
                 FRW.setPower(-0.3);
                 BRW.setPower(-0.3);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
             case "right":
@@ -88,7 +98,7 @@ abstract class Movable extends LinearOpMode {
                 BLW.setPower(0.3);
                 FRW.setPower(0.3);
                 BRW.setPower(0.3);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disablePower();
                 break;
         }
@@ -108,14 +118,14 @@ abstract class Movable extends LinearOpMode {
     }
     // 0 right
     // 5 left
-    public void powerScissorLift(int miliseconds, String direction) {
+    public void powerScissorLift(int milliseconds, String direction) {
         switch (direction) {
             case "up":
                 FRScissorLift.setPower(.9);
                 FLScissorLift.setPower(1);
                 BRScissorLift.setPower(-.9);
                 BLScissorLift.setPower(-1);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disableScissorPower();
                 break;
             case "down":
@@ -123,9 +133,45 @@ abstract class Movable extends LinearOpMode {
                 FLScissorLift.setPower(-1);
                 BRScissorLift.setPower(.9);
                 BLScissorLift.setPower(1);
-                sleep(miliseconds);
+                sleep(milliseconds);
                 disableScissorPower();
                 break;
+        }
+    }
+
+    // change values if needed
+    public void outtakeGrab(String toggle) {
+        switch (toggle) {
+            case "constriction":
+                outtakeR.setPosition(1);
+                outtakeL.setPosition(1);
+                break;
+            case "liberation":
+                outtakeR.setPosition(0);
+                outtakeL.setPosition(0);
+                break;
+        }
+        try {
+            wait(500);
+        } catch (Exception e) {
+
+        }
+    }
+
+    // change values if needed
+    public void inttakeGrab(String toggle) {
+        switch (toggle) {
+            case "constriction":
+                intake.setPosition(1);
+                break;
+            case "liberation":
+                intake.setPosition(0);
+                break;
+        }
+        try {
+            wait(500);
+        } catch (Exception e) {
+            
         }
     }
 
@@ -152,6 +198,26 @@ abstract class Movable extends LinearOpMode {
         try {
             inverse = !inverse;
             wait(50);
+        } catch (Exception e) {
+
+        }
+    }
+
+    // change values if needed
+    public void turnRotatingServos(String toggle) {
+        rotatingServoL.setDirection(Servo.Direction.REVERSE);
+        switch (toggle) {
+            case "rollUp":
+                SlideR.setPosition(1);
+                SlideL.setPosition(1);
+                break;
+            case "rollDown":
+                SlideR.setPosition(0);
+                SlideL.setPosition(0);
+                break;
+        }
+        try {
+            wait(500);
         } catch (Exception e) {
 
         }

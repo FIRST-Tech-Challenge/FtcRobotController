@@ -12,7 +12,6 @@ public class DetestmentAndWoeEVAN extends Movable{
         // second one would be pushed forward but not all the way, needed to be successfully scored through tele-op
         // if needed for right side of the alliance, change all "left" arguments to "right"
 
-     //  powerScissorLift(2000,"up");
         powerWheels(600, "left");
         powerWheels(600, "right");
         powerWheels(3200, "forward");
