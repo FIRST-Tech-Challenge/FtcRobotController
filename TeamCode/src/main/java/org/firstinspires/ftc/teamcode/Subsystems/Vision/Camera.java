@@ -21,6 +21,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -112,17 +113,17 @@ public class Camera extends SubsystemBase {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, -1.0))
-                .setBlurSize(4)
-                .setErodeSize(4)
-                .setDilateSize(4)
+                .setBlurSize(1)
+                .setErodeSize(3)
+                .setDilateSize(1)
                 .setDrawContours(true)
                 .build();
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 6000, 40000));
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.0, 2.0));
         yellowBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
         yellowBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
 
         // Build the camera vision portal
@@ -298,7 +299,7 @@ public class Camera extends SubsystemBase {
         //ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
-
+        blobs = Collections.singletonList(blobs.get(0));
         return blobs;
     }
 
