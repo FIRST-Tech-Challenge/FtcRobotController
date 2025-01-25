@@ -17,6 +17,7 @@ public class AutoHome extends LinearOpMode {
 
     drivebase.initGyro();
 
+
     waitForStart();
     arm.homeArm();
   }

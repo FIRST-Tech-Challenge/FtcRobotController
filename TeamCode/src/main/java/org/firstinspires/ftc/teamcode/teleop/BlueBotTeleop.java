@@ -24,6 +24,7 @@ public class BlueBotTeleop extends LinearOpMode {
     var mek = new Mekanism(this);
 
     boolean bPressed = false;
+    boolean Tdebug = true;// must be set in program t/f
     waitForStart();
     mek.homeArm();
     double lastTime = Utils.getTimeSeconds();
@@ -36,6 +37,7 @@ public class BlueBotTeleop extends LinearOpMode {
       // 2. Moves the robot based on user input
       swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
       swerve.periodic();
+
 
 
       // 1. Sets the target position of the slide, limits set in Mekansim class
@@ -82,7 +84,14 @@ public class BlueBotTeleop extends LinearOpMode {
       mek.autoClip();
       mek.setSlide((int) mek.slideTarget);
 
-      telemetry.update();
+      // debug data
+      if(Tdebug) {
+        telemetry.addLine(String.format("odo X %1$2.2f odo Y %2$2.2f odo D %2$2.0f",
+                swerve.getPose().getX(),
+                swerve.getPose().getY(),
+                swerve.getPose().getRotation().getDegrees()));
+        telemetry.update();
+      }
       lastTime = currentTime;
 
     }

@@ -9,8 +9,10 @@ import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Utils;
 
-@TeleOp(name = "GreyBot", group = "grey")
-public class TeleGrey extends LinearOpMode {
+//@TeleOp(name = "GreyBot", group = "grey")
+//@Disable
+public class
+TeleGrey extends LinearOpMode {
 
   @Override
   public void runOpMode() {
