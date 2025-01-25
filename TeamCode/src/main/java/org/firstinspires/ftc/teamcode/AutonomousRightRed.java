@@ -35,6 +35,10 @@ public class AutonomousRightRed extends AutonomousBase {
         // Ensure viper arm is fully retracted before we start
         ensureViperArmFullyRetracted();
 
+        // Ensure snrokels are fully retracted before we start
+        ensureSnorkelFullyRetracted(true);
+        ensureSnorkelFullyRetracted(false);
+
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         redAlliance  = true;
         scorePreloadSpecimen = true;

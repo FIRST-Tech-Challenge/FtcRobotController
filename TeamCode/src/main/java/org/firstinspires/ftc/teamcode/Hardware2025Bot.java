@@ -99,13 +99,13 @@ public class Hardware2025Bot
 
     public ElapsedTime  snorkleTimer        = new ElapsedTime();
 
-    public final static int       SNORKLE_HW_MAX         = 3328;  // encoder for max possible extension RIGHT
-    public final static int       SNORKLE_LEVEL3A        = 2750;  // encoder for snorkle above the bar
-    public final static int       SNORKLE_TOUCH          = 2400;  // encoder for robot of the floor (against lower barrier)
-    public final static int       SNORKLE_LEVEL3B        = 1650;  // encoder for robot of the floor (against lower barrier)
-    public final static int       SNORKLE_LEVEL3C        = 1200;  // encoder for robot above lower submersible bar (above lower barrier)
-    public final static int       SNORKLE_SLOW           = 500;   // encoder for almost reset to 0
-    public final static int       SNORKLE_HW_MIN         = 0;     // encoder position at maximum rotation LEFT
+    public final static int   SNORKLE_HW_MAX   = 3328;  // encoder for max possible extension RIGHT
+    public final static int   SNORKLE_LEVEL3A  = 2750;  // encoder for snorkle above the bar
+    public final static int   SNORKLE_TOUCH    = 2400;  // encoder for robot of the floor (against lower barrier)
+    public final static int   SNORKLE_LEVEL3B  = 1650;  // encoder for robot of the floor (against lower barrier)
+    public final static int   SNORKLE_LEVEL3C  = 900;   // encoder for final ascent2 position (above the lower barrier)
+    public final static int   SNORKLE_SLOW     = 500;   // encoder for almost reset to 0
+    public final static int   SNORKLE_HW_MIN   = 0;     // encoder position at maximum rotation LEFT
 
     //====== Worm gear tilt MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx wormTiltMotor       = null;
@@ -188,11 +188,11 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_ZERO  = 0;      // fully retracted (may need to be adjustable??)
     public final static int    VIPER_EXTEND_AUTO_READY  = 1600;    // extend for collecting during auto
     public final static int    VIPER_EXTEND_AUTO_COLLECT = 1600;    // extend for collecting during auto
-    public final static int    VIPER_EXTEND_SAMPLE3  = 1500;  // extend for collecting during auto (3rd sample along wall)
+    public final static int    VIPER_EXTEND_SAMPLE3 = 1500;  // extend for collecting during auto (3rd sample along wall)
     public final static int    VIPER_EXTEND_HANG1 = 3000;   // extend to this to prepare for level 2 ascent
-    public final static int    VIPER_EXTEND_PARK = 3410;   // extend to this to park in auto
-    public final static int    VIPER_EXTEND_HANG2 =  4000;   // retract to this extension during level 2 ascent
-    public final static int    VIPER_EXTEND_HANG3 =  3450;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_PARK  = 3410;   // extend to this to park in auto
+    public final static int    VIPER_EXTEND_HANG2 = 4000;   // retract to this extension during level 2 ascent
+    public final static int    VIPER_EXTEND_HANG3 = 3400;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
     public final static int    VIPER_EXTEND_SECURE=  490;   // Intake is tucked into robot to be safe
     public final static int    VIPER_EXTEND_SAFE  = 1100;   // Intake is far enough out to safely rotate down and rotate up
@@ -866,7 +866,7 @@ public class Hardware2025Bot
         }
     } // abortViperSlideExtension
 
-    public void startSnorkleExtension(int targetEncoderCount)
+    public void startSnorkleExtension(int targetEncoderCount, double motorPower )
     {
         // Range-check the target
         if( targetEncoderCount < SNORKLE_HW_MIN ) targetEncoderCount = SNORKLE_HW_MIN;
@@ -878,8 +878,8 @@ public class Hardware2025Bot
         snorkleLMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
         snorkleRMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
-        snorkleLMotor.setPower( 1.0 );
-        snorkleRMotor.setPower( 1.0 );
+        snorkleLMotor.setPower( motorPower );
+        snorkleRMotor.setPower( motorPower );
         // Note that we've started a RUN_TO_POSITION and need to reset to RUN_USING_ENCODER
         snorkleLMotorBusy = true;
         snorkleRMotorBusy = true;

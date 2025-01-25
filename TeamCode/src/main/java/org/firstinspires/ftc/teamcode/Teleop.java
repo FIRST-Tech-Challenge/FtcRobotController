@@ -815,7 +815,7 @@ public abstract class Teleop extends LinearOpMode {
                 break;
             case ASCENT_STATE_SETUP:
                 // Send Snorkle motor to raise position
-                robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3A);
+                robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3A, 1.0 );
                 // Send TILT motor to hang position
                 robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT1_DEG);
                 // Send LIFT motor to hang position
@@ -838,7 +838,7 @@ public abstract class Teleop extends LinearOpMode {
             case ASCENT_STATE_READY :
                 if( gamepad2_l_bumper_now && gamepad2_r_bumper_now ) {
                     // Send Snorkle motor to lift position
-                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3B);
+                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3B, 1.0 );
                     robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_OPEN_WIDE );  // we accidentally open the claw
                     robot.startViperSlideExtension( Hardware2025Bot.VIPER_EXTEND_HANG2, 1.0, 1.0 );
                     ascent2state = ASCENT_STATE_LEVEL2;
@@ -848,6 +848,7 @@ public abstract class Teleop extends LinearOpMode {
             case ASCENT_STATE_LEVEL2 :
                 robot.processSnorkleExtension();
                 if( !robot.viperMotorBusy && !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy ) {
+                    // Once viper is extended and snorkle has lifted us, rotate up to bar
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG);
                     ascent2state = ASCENT_STATE_RETRACT;
                 }
@@ -855,6 +856,7 @@ public abstract class Teleop extends LinearOpMode {
 
             case ASCENT_STATE_RETRACT :
                 if( !robot.wormTiltMotorBusy) {
+                    // Once arm is up against the bar, retract the hook
                     robot.startViperSlideExtension(Hardware2025Bot.VIPER_EXTEND_HANG3, 1.0, 1.0);
                     ascent2state = ASCENT_STATE_LIFT;
                 }
@@ -862,14 +864,17 @@ public abstract class Teleop extends LinearOpMode {
 
             case ASCENT_STATE_LIFT :
                 if( !robot.viperMotorBusy) {
+                    // Once hooked, tilt down to reduce stress on tilt-angle worm gear
                     robot.startWormTilt(Hardware2025Bot.TILT_ANGLE_ASCENT3_DEG);
-                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3C);
+                    robot.startSnorkleExtension(Hardware2025Bot.SNORKLE_LEVEL3C, 0.7 );
                     ascent2state = ASCENT_STATE_MOVING2;
                 }
                 break;
+
             case ASCENT_STATE_MOVING2:
                 robot.processSnorkleExtension();
                 if( !robot.snorkleLMotorBusy && !robot.snorkleRMotorBusy  && !robot.wormTiltMotorBusy ) {
+                    // Once snorkel is retracted and tilt has finished, we're done!
                     ascent2state = ASCENT_STATE_IDLE;
                 }
                 break;
@@ -882,8 +887,9 @@ public abstract class Teleop extends LinearOpMode {
                robot.viperMotorAmps, robot.viperMotorAmpsPk );
             telemetry.addData("Tilt Motor", "%.1f Amp (%.1f peak)",
                robot.wormTiltMotorAmps, robot.wormTiltMotorAmpsPk );
-            telemetry.addData("Pan Motor", "%.1f Amp (%.1f peak)", 
-               robot.snorkleLMotorAmps, robot.snorkleLMotorAmpsPk );
+            telemetry.addData("Snorkel Motors", "%.1f %.1f Amp (%.1f %.1f peak)",
+               robot.snorkleLMotorAmps, robot.snorkleLMotorAmpsPk,
+               robot.snorkleRMotorAmps, robot.snorkleRMotorAmpsPk );
         } // ascent2started
 
     }  // processLevel2Ascent
