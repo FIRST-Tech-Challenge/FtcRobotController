@@ -54,8 +54,8 @@ public class Input {
     public void move(double power) {
 
             if (!isSpin) {
-                motors.MoveMotor(Motors.Type.LeftBack, -power*0.95);
-                motors.MoveMotor(Motors.Type.LeftFront, -power*0.95);
+                motors.MoveMotor(Motors.Type.LeftBack, -power);
+                motors.MoveMotor(Motors.Type.LeftFront, -power);
                 motors.MoveMotor(Motors.Type.RightFront, -power);
                 motors.MoveMotor(Motors.Type.RightBack, -power);
                 //prob fix movement forward
@@ -134,6 +134,11 @@ public class Input {
             double realPower = 0;
             if (((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
                 realPower = power;
+                if (motors.getArmPosition() > 2250) {
+                    if (motors.getUpArmPosition() <= -2400) {
+                        realPower = 0;
+                    }
+                }
             }
             else {
                 realPower = 0;

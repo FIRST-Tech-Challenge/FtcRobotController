@@ -35,8 +35,8 @@ public class Actions {
     public static void driveToBarFromInitialPositionForSpecimen(int specimen) {
 
 
-     while ((input.getTravelledDistance() < 17) && opModeisActive)  { //inches
-       input.move(-20);
+     while ((input.getTravelledDistance() < 19) && opModeisActive)  { //inches
+       input.move(-30);
      }
      input.move(0);
         // 1. define and hardcode initial position (eg A1)
@@ -50,16 +50,28 @@ public class Actions {
 
     public static void hangAndReleaseSpecimen() {
 
-     int pos =  1265;
+     int pos =  1300;
 
      a1.setPos(pos);
 
-     a1.extendArm(-2550, 0);
+     a1.extendArm(-2600, 0);
 
-     pos = 1639;
+     pos = 1385;
      a1.setPos(pos);
 
-     a1.retractArm(-1500, 1639);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        a1.retractArm(-1000, pos);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
      input.claw(true,false);
 
