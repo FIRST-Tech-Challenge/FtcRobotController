@@ -1,6 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -9,15 +14,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftActions;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Config
 @TeleOp(name = "PrimaryOpMode")
 public class PrimaryOpMode extends LinearOpMode {
+
+    private FtcDashboard dash = FtcDashboard.getInstance();
+    private List<Action> runningActions = new ArrayList<>();
 
 
     public static class Params {
@@ -35,6 +45,7 @@ public class PrimaryOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        TelemetryPacket packet = new TelemetryPacket();
 
 
         CRServo rightClawArmServo = hardwareMap.get(CRServo.class, "rightClawArmServo");
@@ -85,7 +96,9 @@ public class PrimaryOpMode extends LinearOpMode {
         imu.resetYaw();
 
         PIDController pid = new PIDController(PARAMS.kP, PARAMS.kI, PARAMS.kD);
-        Elevator elevator = new Elevator(hardwareMap.dcMotor.get("armLeft"), hardwareMap.dcMotor.get("armRight"));
+
+        LiftActions lift = new LiftActions(hardwareMap);
+
 
         waitForStart();
 
@@ -160,11 +173,9 @@ public class PrimaryOpMode extends LinearOpMode {
 
             //controls the elevator
             if (gamepad1.left_bumper)
-                elevator.ChangePower(1);
+                runningActions.add(lift.liftDown());
             else if (gamepad1.right_bumper)
-                elevator.ChangePower(-1);
-            else
-                elevator.ChangePower(0);
+                runningActions.add(lift.liftUp());
 
             boolean isClawArmDown = false;
             boolean isClawClosed = false;
@@ -190,6 +201,23 @@ public class PrimaryOpMode extends LinearOpMode {
                     isClawClosed = !isClawClosed;
                 }
             }
+
+/*           ######################################################
+                     Runs Autonomous Actions in TeleOp
+             ###################################################### */
+
+
+            // update running actions
+            List<Action> newActions = new ArrayList<>();
+            for (Action action : runningActions) {
+                action.preview(packet.fieldOverlay());
+                if (action.run(packet)) {
+                    newActions.add(action);
+                }
+            }
+            runningActions = newActions;
+
+            dash.sendTelemetryPacket(packet);
 
 
 

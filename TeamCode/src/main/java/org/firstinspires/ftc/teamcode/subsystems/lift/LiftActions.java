@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.subsystems.lift;
 
 import androidx.annotation.NonNull;
 
@@ -30,14 +30,6 @@ public class LiftActions {
         rightStartingPos = rightDrive.getCurrentPosition();
         leftStartingPos = leftDrive.getCurrentPosition();
 
-        rightDrive.setPower(1);
-        leftDrive.setPower(1);
-
-        rightDrive.setTargetPosition(rightStartingPos);
-        leftDrive.setTargetPosition(leftStartingPos);
-
-        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public class LiftUp implements Action {
@@ -46,15 +38,19 @@ public class LiftActions {
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized){
+            if (!initialized) {
+                leftDrive.setPower(1);
+                rightDrive.setPower(1);
+
                 leftDrive.setTargetPosition(ticks);
                 rightDrive.setTargetPosition(ticks);
+
+                rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 initialized = true;
             }
-            if (!rightDrive.isBusy() && !leftDrive.isBusy()){
-                return false;
-            }
-            else return true;
+            return rightDrive.isBusy() || leftDrive.isBusy();
         }
     }
 
@@ -64,19 +60,24 @@ public class LiftActions {
 
     public class LiftDown implements Action {
         private boolean initialized = false;
-        private int ticks = 50;
+        private int ticksSafeZone = 50;
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized){
-                leftDrive.setTargetPosition(ticks);
-                rightDrive.setTargetPosition(ticks);
+            if (!initialized) {
+                leftDrive.setPower(1);
+                rightDrive.setPower(1);
+
+                leftDrive.setTargetPosition(ticksSafeZone + leftStartingPos);
+                rightDrive.setTargetPosition(ticksSafeZone + rightStartingPos);
+
+                rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 initialized = true;
             }
-            if (!rightDrive.isBusy() && !leftDrive.isBusy()){
-                return false;
-            }
-            else return true;
+            // returns if the motors are still moving
+            return rightDrive.isBusy() || leftDrive.isBusy();
         }
     }
 

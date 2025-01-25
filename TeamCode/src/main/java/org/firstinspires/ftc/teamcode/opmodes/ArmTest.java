@@ -25,7 +25,7 @@ public class ArmTest extends LinearOpMode {
 
         DcMotor spinner  = hardwareMap.get(DcMotor.class, "spinner");
 
-        CRServo slideServo = hardwareMap.get(CRServo.class, "slideServo");
+//        CRServo slideServo = hardwareMap.get(CRServo.class, "slideServo");
 
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,7 +59,7 @@ public class ArmTest extends LinearOpMode {
 
             // Pre-run
             while (opModeIsActive()) {
-//                // Extend / Retract
+                // Extend / Retract
                 if (gamepad1.right_bumper) {
                     rightDrive.setPower(PARAMS.power);
                     leftDrive.setPower(PARAMS.power);
