@@ -18,9 +18,9 @@ class JoystickController {
         // Forward/backward movement is controlled by the left stick Y-axis (inverted)
         double forward = -gamepad.left_stick_y;  // Reverse because pushing stick forward gives a negative value
         // Left/right strafing is controlled by the left stick X-axis
-        double strafe = -gamepad.right_stick_x;
+        double strafe = -gamepad.left_stick_x;
         // Rotation is controlled by the right stick X-axis
-        double rotate = -gamepad.left_stick_x;
+        double rotate = -gamepad.right_stick_x;
         // Drive the robot based on the joystick inputs
         mecanumDrive.drive(forward, strafe, rotate);
         System.out.println(String.format("Joystick update - Forward: %2.2f, Strafe: %2.2f, Rotate: %2.2f", forward, strafe, rotate));

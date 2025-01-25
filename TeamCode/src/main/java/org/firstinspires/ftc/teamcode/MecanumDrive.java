@@ -33,10 +33,10 @@ class MecanumDrive {
     // Method to drive the robot using mecanum wheels
     public void drive(double forward, double strafe, double rotate) {
         // Calculate power for each wheel based on forward, strafe, and rotate inputs
-        double frontLeftPower = forward + strafe + rotate;
-        double frontRightPower = forward - strafe - rotate;
-        double backLeftPower = forward - strafe + rotate;
-        double backRightPower = forward + strafe - rotate;
+        double frontLeftPower = -forward + strafe - rotate;
+        double frontRightPower = forward + strafe - rotate;
+        double backLeftPower = -forward - strafe - rotate;
+        double backRightPower = -forward + strafe + rotate;
 
         // Normalize the wheel powers if any power is greater than 1.0
         double maxPower = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),

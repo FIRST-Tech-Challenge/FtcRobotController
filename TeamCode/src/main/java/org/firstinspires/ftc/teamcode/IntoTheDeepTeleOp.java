@@ -10,6 +10,9 @@ public class IntoTheDeepTeleOp extends OpMode {
     private JoystickController joystickController;
     private Robot robot;
     private Intake intake;
+    private boolean dpadRightPressed = false;
+    private boolean dpadLeftPressed = false;
+    private boolean leftBumperPressed = false;
 
     @Override
     public void init() {
@@ -22,7 +25,7 @@ public class IntoTheDeepTeleOp extends OpMode {
         // Initialize subsystems
         mecanumDrive = new MecanumDrive(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
         joystickController = new JoystickController(gamepad1, mecanumDrive);
-        intake = new Intake(hardwareMap, "intake_motor");
+        intake = new Intake(hardwareMap, "intake_slide");
 
         // Initialize the complete robot
         robot = new Robot(mecanumDrive, joystickController);
@@ -30,17 +33,29 @@ public class IntoTheDeepTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        // Update joystick control to drive the robot
-        robot.updateJoystickControl();
-
-        // Control intake with D-pad
+        // Update joystick controls
+        joystickController.update();
+        
+        // Intake controls
         if (gamepad1.dpad_up) {
-            intake.in();
+            intake.forward();
         } else if (gamepad1.dpad_down) {
-            intake.out();
+            intake.backward();
         } else {
             intake.stop();
         }
+        
+        // Existing intake controls
+        if (gamepad1.dpad_right) {
+            intake.out(true);
+        } else if (gamepad1.dpad_left) {
+            intake.in();
+        } else if (gamepad1.left_bumper) {
+            intake.out(false);
+        }
+        
+        // Update telemetry
+        telemetry.update();
     }
 }
 

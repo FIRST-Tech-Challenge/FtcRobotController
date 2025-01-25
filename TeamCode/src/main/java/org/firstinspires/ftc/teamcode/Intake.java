@@ -11,15 +11,15 @@ public class Intake {
     private Flywheel flywheel;
     private ElapsedTime timer;
     private boolean isOut = false; // Tracks whether intake is out (false = in, true = out)
-    private static final double INTAKE_POWER = 0.2;  // Adjust this value for desired speed
-    private static final double SERVO_UP_POSITION = 0.0;    // Servo position for intake up
+    private static final double INTAKE_POWER = 0.5;  // Adjust this value for desired speed
+    private static final double SERVO_UP_POSITION = 0.3;    // Servo position for intake up
     private static final double SERVO_DOWN_POSITION = 1.0;  // Servo position for intake down (180 degrees)
     private static final double MOTOR_RUN_TIME_MS = 1000;  // Time to run motor in milliseconds
     
     public Intake(HardwareMap hardwareMap, String motorName) {
         intakeMotor = hardwareMap.get(DcMotor.class, motorName);
-        intakeServo = hardwareMap.get(Servo.class, "intake_servo");
-        flywheel = new Flywheel(hardwareMap, "flywheel_servo");
+        intakeServo = hardwareMap.get(Servo.class, "intake_wrist");
+        flywheel = new Flywheel(hardwareMap, "flywheel");
         timer = new ElapsedTime();
         stop(); // Initialize in stopped position
         raiseIntake(); // Start with intake raised
@@ -28,12 +28,12 @@ public class Intake {
     
     // Move the intake forwards
     public void forward() {
-        intakeMotor.setPower(INTAKE_POWER);
+        intakeMotor.setPower(-INTAKE_POWER);
     }
     
     // Move the intake backwards
     public void backward() {
-        intakeMotor.setPower(-INTAKE_POWER);
+        intakeMotor.setPower(INTAKE_POWER);
     }
     
     // Stop the intake
