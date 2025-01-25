@@ -1,4 +1,4 @@
-package com.kalipsorobotics.intoTheDeep;
+package com.kalipsorobotics.intoTheDeep.unusedAutos;
 
 import com.kalipsorobotics.actions.SpecimenSweepingRoundTrip;
 import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
@@ -8,8 +8,6 @@ import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
 import com.kalipsorobotics.actions.intake.IntakeTransferReady;
-import com.kalipsorobotics.actions.intake.SampleIntakeAction;
-import com.kalipsorobotics.actions.intake.SampleIntakeReady;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
@@ -18,11 +16,9 @@ import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
-import com.kalipsorobotics.modules.Intake;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
