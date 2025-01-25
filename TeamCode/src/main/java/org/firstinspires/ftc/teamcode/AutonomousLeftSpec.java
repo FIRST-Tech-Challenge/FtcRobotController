@@ -33,7 +33,7 @@ public class AutonomousLeftSpec extends AutonomousBase {
         // Ensure viper arm is fully retracted before we start
         ensureViperArmFullyRetracted();
 
-        // Ensure snrokels are fully retracted before we start
+        // Ensure snorkels are fully retracted before we start
         ensureSnorkelFullyRetracted(true);
         ensureSnorkelFullyRetracted(false);
 
@@ -57,7 +57,7 @@ public class AutonomousLeftSpec extends AutonomousBase {
                 }
             } //  gamepad1_r_bumper
             // Do we need to change any of the other autonomous options?
-            processAutonomousInitMenu();
+            processAutonomousInitMenu(false);
             // Pause briefly before looping
             idle();
         } // !isStarted
@@ -328,7 +328,7 @@ public class AutonomousLeftSpec extends AutonomousBase {
             case 1:
                 // Drive forward toward the wall
                 driveToPosition( 20.9, -32.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(1000);  // viper should already be in position
+                sleep(50);  // viper should already be in position
                 break;
             case 2:
                 driveToPosition( 20.9, -43.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
@@ -392,7 +392,9 @@ public class AutonomousLeftSpec extends AutonomousBase {
         }
         else{
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG, 1.0);
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_SAFE);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_PARK1);
+            robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_INIT);
+            robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_INIT);
         }
     } // scoreSample
 
@@ -409,7 +411,7 @@ public class AutonomousLeftSpec extends AutonomousBase {
             driveToPosition(44.0, -20.00, -70.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_THRU);
             // Extend to level1 ascent position
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_PARK_DEG, 1.0);
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_PARK);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_PARK2);
             // Drive forward into rung
             driveToPosition(50.0, -17.00, -70.0, DRIVE_SPEED_70, TURN_SPEED_50, DRIVE_TO);
         } // opModeIsActive

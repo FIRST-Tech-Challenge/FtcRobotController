@@ -55,8 +55,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  TURN_SPEED_90        = 0.90;    //
     static final double  TURN_SPEED_100       = 1.00;    //
     static final double STRAFE_MULTIPLIER = 1.5;
-    static final double MIN_SPIN_RATE      = 0.04;    // Minimum power to turn the robot
-    static final double MIN_DRIVE_POW      = 0.02;    // Minimum speed to move the robot
+    static final double MIN_SPIN_RATE      = 0.06;    // Minimum power to turn the robot
+    static final double MIN_DRIVE_POW      = 0.06;    // Minimum speed to move the robot
     static final double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_POW*MIN_DRIVE_POW+MIN_DRIVE_POW*MIN_DRIVE_POW);
 
     // NOTE: Initializing the odometry global X-Y and ANGLE to 0-0 and 0deg means the frame of reference for all movements is
@@ -136,7 +136,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
     } // captureGamepad1Buttons
 
-    protected void processAutonomousInitMenu() {
+    protected void processAutonomousInitMenu(boolean auto5) {
         boolean nextEntry = (gamepad1_dpad_down_now  && !gamepad1_dpad_down_last);
         boolean prevEntry = (gamepad1_dpad_up_now    && !gamepad1_dpad_up_last);
         boolean nextValue = (gamepad1_dpad_right_now && !gamepad1_dpad_right_last);
@@ -145,8 +145,13 @@ public abstract class AutonomousBase extends LinearOpMode {
         boolean needToTiltLower, needToTiltHigher;
 
         // Automatically position the tilt angle during INIT for autonomous
-        needToTiltLower  = (startTiltAngle > Hardware2025Bot.TILT_ANGLE_WALL_DEG);
-        needToTiltHigher = (startTiltAngle < Hardware2025Bot.TILT_ANGLE_START_DEG);
+        if(auto5){
+            needToTiltLower = (startTiltAngle > Hardware2025Bot.TILT_ANGLE_AUTO_5_DEG);
+            needToTiltHigher = (startTiltAngle < Hardware2025Bot.TILT_ANGLE_AUTO_5_DEG - 1.0);
+        } else {
+            needToTiltLower = (startTiltAngle > Hardware2025Bot.TILT_ANGLE_WALL_DEG);
+            needToTiltHigher = (startTiltAngle < Hardware2025Bot.TILT_ANGLE_START_DEG);
+        }
         if( needToTiltLower ) {
             robot.wormTiltMotor.setPower( -0.08 );   // LOWER tilt angle
             tiltAdjusted = true;
@@ -572,7 +577,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
-        else if( autoViperMotorTimer.milliseconds() > 3000 ) {
+        else if( autoViperMotorTimer.milliseconds() > 5000 ) {
             viperMoving = false;
             robot.viperMotor.setPower( 0.001 );   // hold
         }

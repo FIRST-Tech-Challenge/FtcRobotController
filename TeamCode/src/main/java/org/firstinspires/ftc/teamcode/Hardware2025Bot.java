@@ -159,6 +159,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
     public final static double TILT_ANGLE_WALL0_DEG       = 21.50; // AUTO: grab specimen off wall (on approach)
     public final static double TILT_ANGLE_WALL1_DEG       = 33.00; // AUTO: grab specimen off wall (lift off)
+    public final static double TILT_ANGLE_AUTO_5_DEG      = 22.00; // AUTO: initial tilt for sample 5 auto
 
     //====== Viper slide MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx viperMotor       = null;
@@ -190,7 +191,8 @@ public class Hardware2025Bot
     public final static int    VIPER_EXTEND_AUTO_COLLECT = 1600;    // extend for collecting during auto
     public final static int    VIPER_EXTEND_SAMPLE3 = 1500;  // extend for collecting during auto (3rd sample along wall)
     public final static int    VIPER_EXTEND_HANG1 = 3000;   // extend to this to prepare for level 2 ascent
-    public final static int    VIPER_EXTEND_PARK  = 3410;   // extend to this to park in auto
+    public final static int    VIPER_EXTEND_PARK2 = 3410;   // extend to this to park in auto
+    public final static int    VIPER_EXTEND_PARK1  = 2200;   // extend to this to park in auto
     public final static int    VIPER_EXTEND_HANG2 = 4000;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_HANG3 = 3400;   // retract to this extension during level 2 ascent
     public final static int    VIPER_EXTEND_GRAB  = 1600;   // extend for collection from submersible
