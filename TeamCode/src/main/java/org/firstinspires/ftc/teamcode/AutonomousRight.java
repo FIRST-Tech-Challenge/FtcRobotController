@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  */
 @Autonomous(name="Autonomous Right", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
-public class AutonomousRightRed extends AutonomousBase {
+public class AutonomousRight extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -377,4 +377,4 @@ public class AutonomousRightRed extends AutonomousBase {
         }
     } // parkInObservation
 
-} /* AutonomousRightRed */
+} /* AutonomousRight */

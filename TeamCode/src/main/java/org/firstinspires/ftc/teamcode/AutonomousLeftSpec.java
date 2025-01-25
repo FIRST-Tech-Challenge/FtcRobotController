@@ -2,15 +2,13 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Math.toDegrees;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  */
 @Autonomous(name="Autonomous Left 1+3", group="7592", preselectTeleOp = "Teleop")
 //@Disabled
-public class AutonomousLeftRed extends AutonomousBase {
+public class AutonomousLeftSpec extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
@@ -418,4 +416,4 @@ public class AutonomousLeftRed extends AutonomousBase {
 
     } // level1Ascent
 
-} /* AutonomousLeftRed */
+} /* AutonomousLeftSpec */
