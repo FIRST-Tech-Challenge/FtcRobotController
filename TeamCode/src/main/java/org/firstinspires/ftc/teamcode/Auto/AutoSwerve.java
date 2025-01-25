@@ -44,6 +44,8 @@ public class AutoSwerve {
 
   //odo.getPosX is forward on robot
   public void forward(double distance){
+    //double initialPos = odo.getPosY();
+    //double wantedPos = initialPos+1000;
     motorBL.setPower(distance);
     motorBR.setPower(distance);
     motorFL.setPower(distance);

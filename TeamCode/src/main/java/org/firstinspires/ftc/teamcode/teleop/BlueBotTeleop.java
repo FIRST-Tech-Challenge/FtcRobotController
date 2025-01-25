@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.Utils;
 public class BlueBotTeleop extends LinearOpMode {
 
   double slideSpeed = 100;
-  double pivotSpeed = 100;
 
   @Override
   public void runOpMode() throws InterruptedException {
