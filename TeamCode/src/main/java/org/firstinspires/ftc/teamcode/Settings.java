@@ -26,7 +26,7 @@ public class Settings {
         /** Standard FTC field tile length in feet */
         public static final double tileLengthFeet = 2;
         /** Default speed for autonomous movements */
-        public static double default_autonomous_speed = 0.38;
+        public static double default_autonomous_speed = 0.6;
         /** Flips movement to make movement easier while the robot is backwards **/
         public static int flip_movement = 1;
         /** Determines if the gecko wheels outtake a little when closing the claw to ease transfer **/
