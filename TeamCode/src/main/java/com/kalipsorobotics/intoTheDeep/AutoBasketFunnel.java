@@ -93,7 +93,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         intakeFunnelReady1.setName("intakeFunnelReady1");
         intakeFunnelReady1.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(intakeFunnelReady1);
-        //===============end of first specimen===============
+        //=================end of first specimen=================
 
 
 

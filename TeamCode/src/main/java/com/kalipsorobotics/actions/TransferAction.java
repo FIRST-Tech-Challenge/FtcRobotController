@@ -7,9 +7,15 @@ import com.kalipsorobotics.modules.Outtake;
 
 public class TransferAction extends KActionSet{
     public TransferAction(IntakeClaw intakeClaw, Outtake outtake) {
+        KServoAutoAction lockRatchet = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
+        lockRatchet.setName("lockRatchet");
+        this.addAction(lockRatchet);
+
+
         KServoAutoAction closeOuttakeClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
         closeOuttakeClaw.setName("closeOuttakeClaw");
         this.addAction(closeOuttakeClaw);
+        setDependentActions(lockRatchet);
 
         WaitAction wait = new WaitAction(50);
         wait.setName("wait");

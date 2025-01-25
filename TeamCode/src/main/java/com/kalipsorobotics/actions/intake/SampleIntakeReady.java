@@ -34,10 +34,12 @@ public class SampleIntakeReady extends KActionSet{
             intakeArmBigSweep.setName("intakeArmBigSweep");
             this.addAction(intakeArmBigSweep);
 
-           KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), intakeSmallSweepServoPos);
-           moveSmallSweep.setName("moveSmallSweep");
-           moveSmallSweep.setDependentActions(moveBigPivot, moveSmallPivot);
-           this.addAction(moveSmallSweep);
+            KServoAutoAction moveSmallSweep = new KServoAutoAction(intake.getIntakeSmallSweepServo(), intakeSmallSweepServoPos);
+            moveSmallSweep.setName("moveSmallSweep");
+            moveSmallSweep.setDependentActions(moveBigPivot, moveSmallPivot);
+            this.addAction(moveSmallSweep);
+
+            KServoAutoAction pushRatchet = new KServoAutoAction()
 
             KServoAutoAction moveIntakeLSOut = new KServoAutoAction(intake.getIntakeLinkageServo(), intakeLinkageServoPos);
             moveIntakeLSOut.setName("moveIntakeLSOut");

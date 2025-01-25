@@ -17,6 +17,8 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
+    public static final double INTAKE_RATCHET_PUSH_POS = 0.135;
+
     //INTAKE SAMPLE IN FUNNEL
 
     public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0.1;
@@ -38,6 +40,8 @@ public class IntakeClaw {
     public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.19;     //decrease to pivot back of the robot, increase to pivot to front
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.46;
+
+    public static final double INTAKE_RATCHET_LOCK_POS = 0.273;
 
     //INTAKE ACTION
 
@@ -64,6 +68,8 @@ public class IntakeClaw {
     private KServo intakeSmallSweepServo;
 
     private KServo intakeClawServo;
+
+    private KServo intakeRatchetServo;
 
 
     public static final double INTAKE_CLAW_CLOSE = 0.35;
@@ -126,6 +132,9 @@ public class IntakeClaw {
         intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.25,     //mini axon
                 255,
                 0, false);
+        intakeClaw.intakeRatchetServo = new KServo(hardwareMap.servo.get("intakeRatchet"), 45/1,
+                180,
+                0, false);
     }
 
     public void init() {
@@ -135,6 +144,8 @@ public class IntakeClaw {
         getIntakeSmallPivotServo().setPosition(IntakeClaw.INTAKE_SMALL_PIVOT_RETRACT_POS);
         getIntakeSmallSweepServo().setPosition(IntakeClaw.INTAKE_SMALL_SWEEP_RETRACT_POS);
         getIntakeClawServo().setPosition(IntakeClaw.INTAKE_CLAW_OPEN);
+        getIntakeRatchetServo().setPosition(IntakeClaw.INTAKE_RATCHET_LOCK_POS);
+
     }
 
 
@@ -167,4 +178,7 @@ public class IntakeClaw {
         return intakeClawServo;
     }
 
+    public KServo getIntakeRatchetServo() {
+        return intakeRatchetServo;
+    }
 }

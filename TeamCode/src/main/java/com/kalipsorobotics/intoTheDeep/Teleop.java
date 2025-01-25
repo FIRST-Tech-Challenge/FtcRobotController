@@ -636,9 +636,9 @@ public class Teleop extends LinearOpMode {
 
             // Capture pictures from webcam every 500 milliseconds if holding dpad right with gamepad 1
             //DO NOT USE ALL HOLD FOR TOO LONG it will take up to much space.
-            if (gamepad1.dpad_right) {
-                cameraCapture.capture();
-            }
+//            if (gamepad1.dpad_right) {
+//                cameraCapture.capture();
+//            }
 
 
 //            if(maintainLS != null && MoveOuttakeLSAction.getNeedMaintenance()) {
