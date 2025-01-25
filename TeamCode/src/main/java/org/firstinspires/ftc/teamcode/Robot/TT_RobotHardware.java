@@ -64,6 +64,12 @@ public class TT_RobotHardware {
     public DigitalChannel liftSafetyButton = null;
     public ScaledServo extension = null;
     public ScaledServo extensionArm = null;
+    public double EXT_ArmPickupReadyHeight = 0.6;
+    public double EXT_ArmPickupHeight = 1;
+    public double EXT_ArmDropHeight = 0;
+    public double EXT_ArmMidHeight = 0.3;
+
+    public double extArmPickupReadyHeight = 0.6;
     public ScaledServo extensionGripper = null;
     public ScaledServo extensionSpin = null;
     public ScaledServo liftArm = null;
@@ -78,21 +84,27 @@ public class TT_RobotHardware {
     private boolean liftArmButtonPress = false;
 
     private boolean pickupGestureInitiated = false;
-    private ElapsedTime gestureTimer = new ElapsedTime();
+    private ElapsedTime pickupGestureTimer = new ElapsedTime();
+    private boolean dropSampleGestureInitatied = false;
+    private ElapsedTime dropSampleGestureTimer = new ElapsedTime();
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-    public static final double MID_SERVO = 0.5;
-    public static final double HAND_SPEED = 0.02;  // sets rate to move servo
-    public static final double ARM_UP_POWER = 0.45;
+    public  final double LIFT_ARM_UP = 0;
+    public final double LIFT_ARM_DOWN = 1;  // sets rate to move servo
+    public final double ARM_UP_POWER = 0.45;
     public static final double ARM_DOWN_POWER = -0.45;
     private boolean liftEnabled = false;
     public int liftHeight = 0;
-    public int liftHeightMax = 1250;
+    public int liftHeightSpecimenDrop = 1250;
+    public int liftHeightMax = 1650;
+
     public int liftHeightMin = 0;
     public int liftSafetyThreshold = 50;
     public int liftOffset = 0;
     public double effectivePower = 0;
     public double liftPowerMax = 1;
+    public double LIGHT_RED = 0.279;
+    public double LIGHT_GREEN = 0.5;
 
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public TT_RobotHardware(LinearOpMode opmode) {
@@ -167,31 +179,40 @@ public class TT_RobotHardware {
         extensionSpin = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Spin"), "Extension Spin", .85, 0.95);
         extensionSpin.setTargetPosition(0.5);
         // Extension Arm - higher value is extended.
-        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension Arm", 0.72, 1);
-        extensionArm.setTargetPosition(0);
+        extensionArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Arm"), "Extension Arm", 0.73, 1);
+        extensionArm.setTargetPosition(EXT_ArmMidHeight);
         extensionGripper = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Extension Gripper"), "Extension Gripper", 0.55, .85);
         extensionGripper.setTargetPosition(1);
         light = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Light"), "Light", 0.0, 1.0);
-        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Lift Arm", 0.35, .6);
-        //extension.setTargetPosition(.9);
+        // Lift Arm - lower is high height
+        liftArm = new ScaledServo(myOpMode.hardwareMap.get(Servo.class, "Lift Arm"), "Lift Arm", 0.4, 1);
+        liftArm.setTargetPosition(LIFT_ARM_DOWN);
 
-        myOpMode.telemetry.addData(">", "Hardware Initialized");
-        myOpMode.telemetry.update();
-        light.setTargetPosition(.5);
+
+        displayTelemetry();
     }
+
+    public void checkLiftPosition() {
+        if (liftSafetyButton.getState()) {
+            light.setTargetPosition(LIGHT_RED);
+        } else {
+            light.setTargetPosition(LIGHT_GREEN);
+        }
+    }
+
     public void savePosition() {
         if (myOpMode.gamepad1.left_stick_button) {
             targetPosition = odo.getPosition();
         }
     }
+
     public void moveLiftArm() {
         if (myOpMode.gamepad1.right_stick_button) {
             if (!liftArmButtonPress) {
-                light.setTargetPosition(.300);
                 if (liftArmUp) {
-                    liftArm.setTargetPosition(1);
+                    liftArm.setTargetPosition(LIFT_ARM_DOWN);
                 } else {
-                    liftArm.setTargetPosition(0);
+                    liftArm.setTargetPosition(LIFT_ARM_UP);
                 }
                 liftArmUp = !liftArmUp;
             }
@@ -204,26 +225,59 @@ public class TT_RobotHardware {
     public void moveExtensionArm() {
         if (myOpMode.gamepad1.b) {
             // positioned over blocks for easy viewing
-            extensionArm.setTargetPosition(.6);
+            extensionArm.setTargetPosition(EXT_ArmPickupReadyHeight);
             extensionGripper.setTargetPosition(.5);
         } else if (myOpMode.gamepad1.a) {
             // pickup the block
             if (pickupGestureInitiated == false) {
                 pickupGestureInitiated = true;
-                gestureTimer.reset();
-                extensionArm.setTargetPosition(1);
+                pickupGestureTimer.reset();
+                extensionArm.setTargetPosition(EXT_ArmPickupHeight);
             }
         } else if (myOpMode.gamepad1.x) {
             // bring arm back for returning block.
-            extensionArm.setTargetPosition(0);
+            //transferGestureInitiated = true;
+            //transferGestureTimer.reset();
+            extensionArm.setTargetPosition(EXT_ArmDropHeight);
+            extensionSpin.setTargetPosition(.5);
+            extension.setTargetPosition(.7);
+        } else if (myOpMode.gamepad1.y) {
+
+            // Open Gripper - Drop block into Transfer box
+            extensionGripper.setTargetPosition(.5);
+            dropSampleGestureInitatied = true;
+            dropSampleGestureTimer.reset();
+
+
         }
         if (pickupGestureInitiated) {
-            if (gestureTimer.seconds() > .2) {
+            if (pickupGestureTimer.seconds() > .2) {
                 extensionGripper.setTargetPosition(0);
             }
-            if (gestureTimer.seconds() > .3) {
+            if (pickupGestureTimer.seconds() > .3) {
                 extensionArm.setTargetPosition(0.6);
                 pickupGestureInitiated = false;
+            }
+        } else if (dropSampleGestureInitatied) {
+            if (dropSampleGestureTimer.milliseconds() > 300) {
+                // Lower arm to prepare for pickup and bring extension in
+                // raise lift in preparation for dropping into scoring box
+                extensionArm.setTargetPosition(EXT_ArmPickupReadyHeight);
+                extension.setTargetPosition(1);
+                setLiftPosition(liftHeightMax);
+            }
+            if (dropSampleGestureTimer.milliseconds() > 2500) {
+                liftArm.setTargetPosition(LIFT_ARM_UP);
+            }
+            if (dropSampleGestureTimer.milliseconds() > 2750) {
+                liftArm.setTargetPosition(LIFT_ARM_DOWN);
+            }
+            if (dropSampleGestureTimer.milliseconds() > 3000) {
+                liftPowerMax = 0.8;
+                setLiftPosition(liftHeightMin);
+                extensionArm.setTargetPosition(EXT_ArmPickupReadyHeight);
+                extensionGripper.setTargetPosition(.5);
+                dropSampleGestureInitatied = false;
             }
         }
     }
@@ -237,6 +291,9 @@ public class TT_RobotHardware {
         } else {
             extension.setTargetPosition(extension.getPosition());
         }
+        if (extension.getTargetPosition() > .7 && extensionArm.getTargetPosition() < 0.4) {
+            extensionArm.setTargetPosition(Math.abs(.7 - extension.getTargetPosition()));
+        }
     }
 
     public void moveExtensionSpin() {
@@ -249,40 +306,15 @@ public class TT_RobotHardware {
         }
     }
 
-    public void moveExtensionGripper() {
-        if (myOpMode.gamepad1.y) {
-            if (extensionGripperOpen) {
-                extensionGripperOpen = false;
-                extensionGripper.setTargetPosition(1);
-            } else {
-                extensionGripperOpen = true;
-                extensionGripper.setTargetPosition(0);
-            }
-        }
-    }
-
     public void drivelift() {
         if (liftEnabled || !liftEnabled) {
             if (myOpMode.gamepad1.dpad_down) {
-                light.setTargetPosition(.6);
                 setLiftPosition(liftHeightMin);
-
-                //raiseLift();
             } else if (myOpMode.gamepad1.dpad_up) {
-                light.setTargetPosition(.6);
                 setLiftPosition(liftHeightMax);
-                //lowerLift();
             } else if (myOpMode.gamepad1.dpad_right) {
-                light.setTargetPosition(.6);
-                setLiftPosition(750);
-                //lowerLift();
+                setLiftPosition(liftHeightSpecimenDrop);
             }
-
-            if (leftLift.getCurrentPosition() < 25 && leftLift.getTargetPosition() < 25) {
-                leftLift.setPower(0);
-                rightLift.setPower(0);
-            }
-
         }
     }
 
@@ -303,15 +335,21 @@ public class TT_RobotHardware {
         int liftSafetyCheck = 0;
 
         // Height Limits Check
-        if (liftSafetyButton.getState() == false)
-        {
+        if (liftSafetyButton.getState() == false) {
+            int liftHeightChange = 0;
+            liftHeightChange = leftLift.getCurrentPosition() - liftHeightMin;
             liftHeightMin = leftLift.getCurrentPosition();
-            liftOffset = leftLift.getCurrentPosition() - rightLift.getCurrentPosition();
+            liftHeightMax = liftHeightMax + liftHeightChange;
+            liftHeightSpecimenDrop = liftHeightSpecimenDrop + liftHeightChange;
+            if (leftLift.getCurrentPosition() > rightLift.getCurrentPosition()) {
+                liftOffset = leftLift.getCurrentPosition() - rightLift.getCurrentPosition();
+            } else {
+                liftOffset = leftLift.getCurrentPosition() - rightLift.getCurrentPosition();
+            }
         }
 
         if (position > liftHeightMax) position = liftHeightMax;
         else if (position < liftHeightMin) position = liftHeightMin;
-
 
         // Height Limit approaching - Power Check
         liftSafetyCheck = liftHeightMax - leftLift.getCurrentPosition();
@@ -326,7 +364,7 @@ public class TT_RobotHardware {
             liftSafetyOverride = false;
         }
 
-        if (Math.abs(liftSafetyPowerOverride) < .15) liftSafetyPowerOverride = .15;
+        if (Math.abs(liftSafetyPowerOverride) < .25) liftSafetyPowerOverride = .25;
 
         if (liftSafetyOverride) effectivePower = liftSafetyPowerOverride;
         else effectivePower = liftPowerMax;
@@ -334,11 +372,14 @@ public class TT_RobotHardware {
         leftLift.setPower(effectivePower);
         rightLift.setPower(effectivePower);
         leftLift.setTargetPosition(position);
-        rightLift.setTargetPosition(position-liftOffset);
+        rightLift.setTargetPosition(position ); //- liftOffset
 
-
+        // Save battery power, but not pulling down when not needed.
+        if (leftLift.getCurrentPosition() < (liftHeightMin + 25) && leftLift.getTargetPosition() < (liftHeightMin + 25)) {
+            leftLift.setPower(0);
+            rightLift.setPower(0);
+        }
         return position;
-
     }
 
     public void driveRobot() {
@@ -380,7 +421,8 @@ public class TT_RobotHardware {
 
     }
 
-    public void setDrivePower(double leftFront, double rightFront, double leftBack, double rightBack) {
+    public void setDrivePower(double leftFront, double rightFront, double leftBack,
+                              double rightBack) {
         // Output the values to the motor drives.
         leftFrontDrive.setPower(leftFront);
         rightFrontDrive.setPower(rightFront);
@@ -398,15 +440,18 @@ public class TT_RobotHardware {
 
     public void displayTelemetry() {
         try {
-            myOpMode.telemetry.addData("Lift", "Left Lift: %4d Right Lift: %4d Power %1.2f", leftLift.getCurrentPosition(), rightLift.getCurrentPosition(), leftLift.getPower());
-            myOpMode.telemetry.addData("Lift Safety", "Button Pressed, %s", liftSafetyButton.getState());
+            myOpMode.telemetry.addData("Lift Current", "Left Lift: %4d Right Lift: %4d Power %1.2f", leftLift.getCurrentPosition(), rightLift.getCurrentPosition(), leftLift.getPower());
+            myOpMode.telemetry.addData("Lift Target ", "Left Lift: %4d Right Lift: %4d Offset %3d", leftLift.getTargetPosition(), rightLift.getTargetPosition(), liftOffset);
+            myOpMode.telemetry.addData("Lift Safety ", "Min: %4d  mMax: %4d Button On %s", liftHeightMin, liftHeightMax, !liftSafetyButton.getState());
             Pose2D pos = odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             myOpMode.telemetry.addData("Position", data);
-            myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            myOpMode.telemetry.addData("Drive Train", "LF %4d LB %4d RF %4d RB %4d Power Adj: ", leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition(), MaxPowerAdjustment);
             myOpMode.telemetry.addData("Lift", "Left %3d  Right %3d  Arm %1.1f", leftLift.getCurrentPosition(), rightLift.getCurrentPosition(), liftArm.getPosition());
             myOpMode.telemetry.addData("Extension", "Ext %1.1f  Arm %1.1f  Spin %1.1f  Gripper %1.1f", extension.getPosition(), extensionArm.getPosition(), extensionSpin.getPosition(), extensionGripper.getPosition());
+
             myOpMode.telemetry.update();
+            checkLiftPosition();
         } catch (Exception ex) {
             myOpMode.telemetry.addData("Error", "%s", ex.getMessage());
             myOpMode.telemetry.update();

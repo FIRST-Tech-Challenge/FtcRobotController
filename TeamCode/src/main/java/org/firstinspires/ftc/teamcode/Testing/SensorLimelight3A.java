@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -72,12 +73,9 @@ public class SensorLimelight3A extends LinearOpMode {
     private Limelight3A limelight;
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         limelight = hardwareMap.get(Limelight3A.class, "Camera");
-
         telemetry.setMsTransmissionInterval(11);
-
         limelight.pipelineSwitch(0);
 
         /*
@@ -93,7 +91,7 @@ public class SensorLimelight3A extends LinearOpMode {
             LLStatus status = limelight.getStatus();
             //telemetry.addData("Name", "%s",status.getName());
             telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                    status.getTemp(), status.getCpu(),(int)status.getFps());
+                    status.getTemp(), status.getCpu(), (int) status.getFps());
             telemetry.addData("Pipeline", "Index: %d, Type: %s",
                     status.getPipelineIndex(), status.getPipelineType());
             LLResult result = limelight.getLatestResult();
@@ -106,7 +104,7 @@ public class SensorLimelight3A extends LinearOpMode {
                 //telemetry.addData("LL Latency", captureLatency + targetingLatency);
                 //telemetry.addData("Parse Latency", parseLatency);
                 //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
-                
+
                 if (result.isValid()) {
 
                     telemetry.addData("Camera", "Centered %4.2f  Elevation %4.2f", result.getTx(), result.getTy());//telemetry.addData("txnc", result.getTxNC());
@@ -134,14 +132,23 @@ public class SensorLimelight3A extends LinearOpMode {
                     // Access fiducial results
                     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                        telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(),fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                        telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
                     }
 
                     // Access color results
                     List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
                     for (LLResultTypes.ColorResult cr : colorResults) {
+
                         telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
-                        //telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetCorners(), cr.getTargetYDegrees());
+                        if (cr.getTargetCorners().isEmpty()) {
+                            telemetry.addLine("corners is null");
+                        } else {
+                            Iterator listOfLists = cr.getTargetCorners().iterator();
+                            while (listOfLists.hasNext()) {
+                                List<Double> list = (List<Double>) listOfLists.next();
+                                telemetry.addData("Corners", "X: %f, Y: %f", list.get(0), list.get(1));
+                            }
+                        }
                     }
                 }
             } else {

@@ -16,10 +16,13 @@ public class TT_LinearOpMode extends LinearOpMode {
     static final Pose2D START_POSITION = new Pose2D(DistanceUnit.MM, 0, 0, AngleUnit.DEGREES, 0);
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode()  {
         robot.init();
+        robot.MaxPowerAdjustment = 1.5;
+
         waitForStart();
-        robot.extension.setTargetPosition(.9);
+
+        //robot.extension.setTargetPosition(.9);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -38,7 +41,7 @@ public class TT_LinearOpMode extends LinearOpMode {
                 robot.moveExtension();
                 robot.moveExtensionArm();
                 robot.moveExtensionSpin();
-                robot.moveExtensionGripper();
+                //robot.moveExtensionGripper();
             }
             robot.displayTelemetry();
         }

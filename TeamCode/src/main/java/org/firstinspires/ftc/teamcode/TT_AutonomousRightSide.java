@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot.TT_RobotHardware;
 
 import java.util.Locale;
 
-@Autonomous(name = "Right Side Auto", group = "Techtonics")
+@Autonomous(name = "Auto: Right Side", group = "Techtonics")
 //@Disabled
 
 public class TT_AutonomousRightSide extends LinearOpMode {
@@ -18,11 +18,12 @@ public class TT_AutonomousRightSide extends LinearOpMode {
     double autonomousPower = 1;
     double startingPoint = 0;   // just right of Center
     int dropCount = 0;
+    boolean Four_Specimans = false;
 
     enum StateMachine {
         WAITING_FOR_START,
-        DRIVE_TO_DROP_PREPARE_1,
-        DRIVE_TO_DROP_1,
+        DRIVE_TO_SPECIMEN_DROP_PREP,
+        DRIVE_TO_SPECIMEN_DROP,
         DRIVE_TO_TARGET_2,
         DRIVE_TO_TARGET_3,
         DRIVE_TO_TARGET_4,
@@ -33,8 +34,8 @@ public class TT_AutonomousRightSide extends LinearOpMode {
         DRIVE_TO_TARGET_9,
         DRIVE_TO_TARGET_10,
         DRIVE_TO_TARGET_11,
-        DRIVE_TO_SPECIMEN_PREPARE_1,
-        DRIVE_TO_SPECIMEN_PICKUP_1,
+        DRIVE_TO_SPECIMEN_PICKUP_PREP,
+        DRIVE_TO_SPECIMEN_PICKUP,
         DRIVE_TO_PARKING,
     }
 
@@ -46,21 +47,26 @@ public class TT_AutonomousRightSide extends LinearOpMode {
     final Pose2D TARGET_SPECIMEN_DROP_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), -200, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_SPECIMEN_DROP_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-726), -300, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-625), 500, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-200)), 655, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION - 200)), 655, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 850, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 925, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-500)), 900, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_6 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION - 500)), 900, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_7 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1100, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_8 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 1150, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION-500)), 1100, AngleUnit.DEGREES, 0);
+    final Pose2D TARGET_9 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-(MAX_FORWARD_POSITION - 500)), 1100, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_10 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-MAX_FORWARD_POSITION), 1340, AngleUnit.DEGREES, 0);
     final Pose2D TARGET_11 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-450), 1340, AngleUnit.DEGREES, 0);
-    final Pose2D TARGET_SPECIMEN_PREPARE = new Pose2D(DistanceUnit.MM, calcXCoordinate(-350), 728, AngleUnit.DEGREES, 180);
+    final Pose2D TARGET_SPECIMEN_PREPARE = new Pose2D(DistanceUnit.MM, calcXCoordinate(-200), 728, AngleUnit.DEGREES, 180);
     final Pose2D TARGET_SPECIMEN_PICKUP = new Pose2D(DistanceUnit.MM, calcXCoordinate(0), 728, AngleUnit.DEGREES, 180);
     final Pose2D TARGET_50 = new Pose2D(DistanceUnit.MM, calcXCoordinate(-100), 0, AngleUnit.DEGREES, 0);
 
     @Override
     public void runOpMode() {
+        runGeneralOpMode();
+    }
+
+    public void runGeneralOpMode() {
+        telemetry.addData("auto:", "4 specimens %s",Four_Specimans);
         robot.init();
         StateMachine stateMachine;
         stateMachine = StateMachine.WAITING_FOR_START;
@@ -68,25 +74,24 @@ public class TT_AutonomousRightSide extends LinearOpMode {
         waitForStart();
         resetRuntime();
 
-        robot.extensionArm.setTargetPosition(.25);
+        robot.extensionArm.setTargetPosition(.20);
         while (opModeIsActive()) {
             robot.odo.update();
 
             switch (stateMachine) {
                 case WAITING_FOR_START:
                     //the first step in the autonomous
-                    stateMachine = StateMachine.DRIVE_TO_DROP_PREPARE_1;
-                    robot.setLiftPosition(robot.liftHeightMax);
-                    sleep(150);
+                    stateMachine = StateMachine.DRIVE_TO_SPECIMEN_DROP_PREP;
+                    robot.setLiftPosition(robot.liftHeightSpecimenDrop);
                     break;
-                case DRIVE_TO_DROP_PREPARE_1:
-                    robot.setLiftPosition(robot.liftHeightMax);
+                case DRIVE_TO_SPECIMEN_DROP_PREP:
+                    robot.setLiftPosition(robot.liftHeightSpecimenDrop);
                     autonomousPower = 1;
                     if ((driveToTarget(TARGET_SPECIMEN_DROP_PREPARE, 0, "Prepare for Drop of Specimen"))) {
-                        stateMachine = StateMachine.DRIVE_TO_DROP_1;
+                        stateMachine = StateMachine.DRIVE_TO_SPECIMEN_DROP;
                     }
                     break;
-                case DRIVE_TO_DROP_1:
+                case DRIVE_TO_SPECIMEN_DROP:
                     /*
                     drive the robot to the first target, the nav.driveTo function will return true once
                     the robot has reached the target, and has been there for (holdTime) seconds.
@@ -103,17 +108,17 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                     } else if (dropCount == 1) {
                         if (driveToTarget(TARGET_SPECIMEN_DROP_2, 0.3, "Driving to Drop Position 2")) {
                             dropSpecimen();
-                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PREPARE_1;
+                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_PREP;
                         }
                     } else if (dropCount == 2) {
                         if (driveToTarget(TARGET_SPECIMEN_DROP_3, 0.3, "Driving to Drop Position 3")) {
                             dropSpecimen();
-                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PREPARE_1;
+                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_PREP;
                         }
                     } else if (dropCount == 3) {
                         if (driveToTarget(TARGET_SPECIMEN_DROP_4, 0.3, "Driving to Drop Position 4")) {
                             dropSpecimen();
-                            stateMachine = StateMachine.DRIVE_TO_PARKING;
+                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_PREP;
                         }
                     }
                     break;
@@ -156,7 +161,12 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                 case DRIVE_TO_TARGET_8:
                     autonomousPower = 1;
                     if (driveToTarget(TARGET_8, 0, "Move back with second block")) {
-                        stateMachine = StateMachine.DRIVE_TO_TARGET_9;
+                        if (Four_Specimans) {
+                            // Skip last block and instead go for putting on 3 more specimens.
+                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_PREP;
+                        } else {
+                            stateMachine = StateMachine.DRIVE_TO_TARGET_9;
+                        }
                     }
                     break;
                 case DRIVE_TO_TARGET_9:
@@ -175,18 +185,22 @@ public class TT_AutonomousRightSide extends LinearOpMode {
                 case DRIVE_TO_TARGET_11:
                     autonomousPower = 1;
                     if (driveToTarget(TARGET_11, 0, "Move back with third block")) {
-                        stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PREPARE_1;
+                        stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_PREP;
                     }
                     break;
-                case DRIVE_TO_SPECIMEN_PREPARE_1:
-                    if (driveToTarget(TARGET_SPECIMEN_PREPARE, 0, "Prepare for Specimen Pickup")) {
-                        stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP_1;
+                case DRIVE_TO_SPECIMEN_PICKUP_PREP:
+                    autonomousPower = 1;
+                    if (driveToTarget(TARGET_SPECIMEN_PREPARE, 0.3, "Prepare for Specimen Pickup")) {
+                        stateMachine = StateMachine.DRIVE_TO_SPECIMEN_PICKUP;
                     }
                     break;
-                case DRIVE_TO_SPECIMEN_PICKUP_1:
+                case DRIVE_TO_SPECIMEN_PICKUP:
                     autonomousPower = 0.4;
                     if (driveToTarget(TARGET_SPECIMEN_PICKUP, 0.1, "Pickup Specimen from wall")) {
-                        stateMachine = StateMachine.DRIVE_TO_DROP_PREPARE_1;
+                        if (Four_Specimans || (dropCount < 3)) {
+                            stateMachine = StateMachine.DRIVE_TO_SPECIMEN_DROP_PREP;
+                        }
+                        // ELSE this is the end of the program.   Don't drop any more and just park here.
                     }
                     break;
 
@@ -204,17 +218,16 @@ public class TT_AutonomousRightSide extends LinearOpMode {
             Pose2D pos = robot.odo.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
-            telemetry.update();
-
+            robot.displayTelemetry();
         }
     }
 
     private void dropSpecimen() {
         dropCount = dropCount + 1;
         robot.liftPowerMax = .4;
-        robot.setLiftPosition(robot.liftHeightMax - 600);
+        robot.setLiftPosition(robot.liftHeightSpecimenDrop - 600);
         sleep(250);
-        robot.setLiftPosition(10);
+        robot.setLiftPosition(0);
         robot.liftPowerMax = .4;
     }
 
