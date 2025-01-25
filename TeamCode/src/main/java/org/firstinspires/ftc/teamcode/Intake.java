@@ -11,7 +11,7 @@ public class Intake {
     private Flywheel flywheel;
     private ElapsedTime timer;
     private boolean isOut = false; // Tracks whether intake is out (false = in, true = out)
-    private static final double INTAKE_POWER = 0.5;  // Adjust this value for desired speed
+    private static final double INTAKE_POWER = 0.35;  // Adjust this value for desired speed
     private static final double SERVO_UP_POSITION = 0.3;    // Servo position for intake up
     private static final double SERVO_DOWN_POSITION = 1.0;  // Servo position for intake down (180 degrees)
     private static final double MOTOR_RUN_TIME_MS = 1000;  // Time to run motor in milliseconds
