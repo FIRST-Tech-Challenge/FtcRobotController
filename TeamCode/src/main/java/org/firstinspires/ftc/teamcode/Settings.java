@@ -68,14 +68,14 @@ public class Settings {
                 // TODO: TUNE WHEN RIGHT SERVO IS PHYSICALLY REPOSITIONED
                 public static double[] HORIZONTAL_POSITION = {0.72, 1.0};
                 public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0.26, 0.1};
+                public static double[] VERTICAL_POSITION = {0.36, 0.1};
             }
             @Config
             public static class Linkage {
                 // TODO: TUNE WHEN NEW SERVO GOES IN
-                public static double TRANSFER_POSITION = 0.14;
+                public static double TRANSFER_POSITION = 1;
                 public static double PLACE_FORWARD_POSITION = 0.25;
-                public static double PLACE_BACKWARD_POSITION = 1;
+                public static double PLACE_BACKWARD_POSITION = 0;
 
             }
         }
@@ -177,7 +177,7 @@ public class Settings {
 
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(5, -33, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-6, -31, Math.toRadians(90));
             public static Pose2d RIGHT_CHAMBER_POSE_2 = new Pose2d(2, -32, Math.toRadians(90));
 //            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
@@ -197,11 +197,11 @@ public class Settings {
             public static Pose2d SECOND_PRESET_SAMPLE_PUSH = new Pose2d(70, -55, Math.toRadians(90));
 
             // I added this to help transition between placing position and collecting samples to place in basket or chamber
-            public static Vector2d RED_RIGHT_SAMPLE_MIDDLEMAN = new Vector2d(40, -40);
+            public static Vector2d RED_RIGHT_SAMPLE_MIDDLEMAN = new Vector2d(34, -40);
 
             // I am adding this to push samples into human player zone
-            public static Pose2d RED_SAMPLE_PUSH_POSE_1 = new Pose2d(50, -5, Math.toRadians(90));
-            public static Pose2d RED_SAMPLE_PUSH_POSE_2 = new Pose2d(60, -5, Math.toRadians(90));
+            public static Pose2d RED_SAMPLE_PUSH_POSE_1 = new Pose2d(60, -10, Math.toRadians(90));
+            public static Pose2d RED_SAMPLE_PUSH_POSE_2 = new Pose2d(73, -10, Math.toRadians(90));
         }
 
         @Config
