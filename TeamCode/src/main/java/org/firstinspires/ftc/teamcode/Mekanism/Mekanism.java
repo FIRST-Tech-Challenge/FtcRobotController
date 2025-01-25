@@ -19,23 +19,30 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Mekanism {
 
+  LinearOpMode myOp;
+
   public final DcMotorEx pivot;
   public final DcMotorEx slide, slide2;
-  public final int limitSlide = 4200;
-  public final double limitPivot = 3000;
-  public final double countsPerDegree = 15; // TODO: This needs to be found
-  public final double countsPerInch = 100; // TODO: This needs to be found
+
   private final DigitalChannel limitSwitch;
+
   private final Servo intakeServo, intakeServo2;
   private final Servo wrist;
+
   private final Servo ramp1, ramp2;
-  private final Telemetry telemetry;
+
+  public final int limitSlide = 4200;
+  public final double limitPivot = 3000;
+  public final double countsPerDegree = 41;
+  public final double countsPerInch = 120.88;
+
   public double slideTarget = 0;
-  public int clipStep = 0;
-  LinearOpMode myOp;
-  ElapsedTime pivotTimer = new ElapsedTime();
-  ElapsedTime clipTimer = new ElapsedTime();
+
   private boolean wristMoved = false;
+
+  private final Telemetry telemetry;
+
+  ElapsedTime pivotTimer = new ElapsedTime();
 
 
   public Mekanism(LinearOpMode opMode) {
@@ -104,6 +111,41 @@ public class Mekanism {
   }
 
 
+  // To extend arm, input from game pad 2 straight in
+  public void setSlide(int x) {
+
+    telemetry.addData("slide current pos", slide.getCurrentPosition());
+
+    //angle measure thing
+    double maxLength = limitSlide * Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree));
+    if(maxLength<2500)
+      maxLength = 2500;
+    if(maxLength>limitSlide)
+      maxLength = limitSlide;
+    if(x>maxLength)
+      x = (int) maxLength;
+    if(x<0)
+      x = 0;
+    slideTarget = x;
+
+    slide.setTargetPosition(x);
+    slide2.setTargetPosition(x);
+  }
+
+
+  public void setPivot(double x, boolean raiseLimit) {
+    if (pivot.getCurrentPosition() >= (raiseLimit ? limitPivot : limitPivot + 500) && x > 0) {
+      x = 0;
+    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
+      x = 0;
+    }
+    telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
+
+    x *= .5;
+    pivot.setPower(x);
+  }
+
+
   public void homeArm() {
     pivotTimer.reset();
 
@@ -143,38 +185,6 @@ public class Mekanism {
   }
 
 
-  // To extend arm, input from game pad 2 straight in
-  public void setSlide(int x) {
-
-    telemetry.addData("slide current pos", slide.getCurrentPosition());
-
-    //angle measure thing
-    double maxLength = limitSlide * Math.sin(pivot.getCurrentPosition() * countsPerDegree);
-    if (maxLength < limitSlide)
-      maxLength = limitSlide;
-    if (x > maxLength)
-      x = (int) maxLength;
-    if (x < 0)
-      x = 0;
-
-    slide.setTargetPosition(x);
-    slide2.setTargetPosition(x);
-  }
-
-
-  public void setPivot(double x, boolean raiseLimit) {
-    if (pivot.getCurrentPosition() >= (raiseLimit ? limitPivot : limitPivot + 500) && x > 0) {
-      x = 0;
-    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
-      x = 0;
-    }
-    telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
-
-    x *= .5;
-    pivot.setPower(x);
-  }
-
-
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
@@ -202,31 +212,29 @@ public class Mekanism {
 
 
   public void autoClip() {
-    telemetry.addData("Clip Step: ", clipStep);
-
-    switch (clipStep) {
-      case 1:
-        unclamp();
+    telemetry.addData("pivot current pos", pivot.getCurrentPosition());
+    telemetry.addData("slide current pos", slide.getCurrentPosition());
+    if (slide.getCurrentPosition() > 150) {
+      unclamp();
+      slide.setPower(-1);
+      wrist.setPosition(0.1);
+    } else {
+      clamp();
+      slide.setPower(0);
+      if (pivot.getCurrentPosition() < 2200) {
         wrist.setPosition(0.1);
-        slideTarget = 500;
-        pivot.setTargetPosition(1500);
-
-        if (!slide.isBusy() && !pivot.isBusy()) {
-          clipStep++;
-          clipTimer.reset();
+        pivot.setPower(1);
+      } else {
+        wrist.setPosition(0);
+        slide.setPower(-1);
+        if (pivot.getCurrentPosition() < 2500) {
+          pivot.setPower(1);
+        } else {
+          pivot.setPower(0);
         }
-        break;
-
-      case 2:
-        runIntake(false, true);
-
-        if (clipTimer.seconds() >= 1) clipStep++;
-        break;
-
-      case 3:
-        slideTarget = 50;
-        break;
+      }
     }
+    wristMoved = true;
   }
 
 
@@ -238,5 +246,10 @@ public class Mekanism {
       wrist.setPosition(0.65);
       wristMoved = false;
     }
+  }
+
+  public void topSpecimenRung() {
+    // setPivot();
+    // setSlide();
   }
 }
