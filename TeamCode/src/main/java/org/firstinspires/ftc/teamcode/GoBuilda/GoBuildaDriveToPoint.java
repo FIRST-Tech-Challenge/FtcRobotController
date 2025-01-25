@@ -37,8 +37,8 @@ public class GoBuildaDriveToPoint {
         IN_BOUNDS
     }
 
-    private static double xyTolerance = 20;
-    private static double yawTolerance = 0.0349066;
+    private static double xyTolerance = 25; //20;
+    private static double yawTolerance = 0.04; //0.0349066;
 
     private static double pGain = 0.008;
     private static double dGain = 0.00001;
