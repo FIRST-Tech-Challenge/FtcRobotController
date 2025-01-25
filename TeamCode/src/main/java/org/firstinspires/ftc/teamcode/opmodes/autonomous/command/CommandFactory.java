@@ -142,6 +142,10 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition + 180, false, DeliverySlider.Direction.EXPANDING, 1500);
     }
 
+    public MoveSliderCommand extendSlider(int position) {
+        return new MoveSliderCommand(slider, telemetry, position, false, DeliverySlider.Direction.EXPANDING, 1500);
+    }
+
     public MoveSliderCommand collapseSlider() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.CollapsedPosition, true, DeliverySlider.Direction.COLLAPSE);
     }
@@ -162,8 +166,13 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 200);
     }
 
+
     public MovePivotCommand pivotToGroundInTakeSample3Begin() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 230);
+    }
+
+    public MovePivotCommand pivotTo(int position) {
+        return new MovePivotCommand(pivot, telemetry, position);
     }
 
     public MovePivotCommand pivotToIntakeRetry() {
@@ -186,6 +195,10 @@ public class CommandFactory {
 
     public SingleRunCommand elbowToIntakePosition() {
         return new SingleRunCommand(intake::SetElbowInIntakePosition);
+    }
+
+    public Command elbowToPosition(double position) {
+        return new SingleRunCommand(() -> intake.setElbowToPosition(position));
     }
 
     public SingleRunCommand elbowToIntakePositionForSample3() {
@@ -220,6 +233,10 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(650, 0.715), 100, waitTime,  .07);
     }
 
+    public MovePivotCommand AutoToGroundForSample(double target, int waitTime) {
+        return new MovePivotCommand(pivot, telemetry, target, 300, waitTime,  .02);
+    }
+
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart - scale(680, 0.715), 100, waitTime,  .07);
     }
@@ -235,6 +252,13 @@ public class CommandFactory {
         return new ParallelRaceGroup(
                 intake(),
                 AutoToGroundForSample3(waitTime)
+        );
+    }
+
+    public Command intakeFromGround(double groundTarget, int waitTime) {
+        return new ParallelRaceGroup(
+                intake(),
+                AutoToGroundForSample(groundTarget, waitTime)
         );
     }
 
