@@ -24,11 +24,11 @@ public class BlueBotTeleop extends LinearOpMode {
     var mek = new Mekanism(this);
 
     boolean bPressed = false;
-    boolean Tdebug = true;// must be set in program t/f
     waitForStart();
     mek.homeArm();
     double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
+
 
       // 1. Calculates deltaTime
       double currentTime = Utils.getTimeSeconds();
@@ -39,61 +39,47 @@ public class BlueBotTeleop extends LinearOpMode {
       swerve.periodic();
 
 
-
-      // 1. Sets the target position of the slide, limits set in Mekansim class
-      mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
-      if (mek.slideTarget < 0) mek.slideTarget = 0;
-      if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
-
-      // 1.5 Moves the slide all the way down if right bumper is pressed
-      if (gamepad2.right_bumper) {
-        mek.setSlide(0);
-        mek.slideTarget = 0;
-        sleep(1000);
-      }
-
-      // 2. Set the pivot power
-      mek.setPivot(-gamepad2.right_stick_y, gamepad2.left_bumper);
-
-      // 3. Intake/Outtake control
-      mek.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
-      if (gamepad2.b && !bPressed) {
-        mek.toggleWrist();
-      }
-      bPressed = gamepad2.b;
-
-      // 4. Clamps/unclamps the claw
-      if (gamepad2.x) {
-        mek.clamp();
-      } else if (gamepad2.y) {
-        mek.unclamp();
-      }
-      
-      // 5. Starts auto clip
       if (gamepad2.a) {
-        mek.clipStep = 1;
+        mek.autoClip();
+
+      } else {
+
+        // 1. Sets the target position of the slide, limits set in Mekansim class
+        mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
+        if (mek.slideTarget < 0) mek.slideTarget = 0;
+        if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
+        telemetry.addData("Slide target position: ", mek.slideTarget);
+
+        // 1.5 Moves the slide all the way down if right bumper is pressed
+        if (gamepad2.right_bumper) {
+          mek.setSlide(0);
+          mek.slideTarget = 0;
+          sleep(1000);
+        }
+
+        // 2. Set the pivot power
+        mek.setPivot(-gamepad2.right_stick_y, gamepad2.right_bumper);
+
+        // 3. Intake/Outtake control
+        mek.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
+        if (gamepad2.b && !bPressed) {
+          mek.toggleWrist();
+        }
+        bPressed = gamepad2.b;
+
+        // 4. clamp/unclamp
+        if (gamepad2.x) {
+          mek.clamp();
+        } else if (gamepad2.y) {
+          mek.unclamp();
+        }
       }
 
-
-      // 6. Safeties
-      if (!gamepad2.atRest()) {
-        mek.clipStep = 0;
-      }
-
-      // 7. Updates the target position of the slide
-      mek.autoClip();
+      // 5. Updates the target position of the slide
       mek.setSlide((int) mek.slideTarget);
 
-      // debug data
-      if(Tdebug) {
-        telemetry.addLine(String.format("odo X %1$2.2f odo Y %2$2.2f odo D %2$2.0f",
-                swerve.getPose().getX(),
-                swerve.getPose().getY(),
-                swerve.getPose().getRotation().getDegrees()));
-        telemetry.update();
-      }
+      telemetry.update();
       lastTime = currentTime;
-
     }
   }
 }
