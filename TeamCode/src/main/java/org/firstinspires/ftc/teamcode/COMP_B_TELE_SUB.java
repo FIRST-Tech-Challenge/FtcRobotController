@@ -1,3 +1,25 @@
+/*   MIT License
+ *   Copyright (c) [2024] [Base 10 Assets, LLC]
+ *
+ *   Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+
+ *   The above copyright notice and this permission notice shall be included in all
+ *   copies or substantial portions of the Software.
+
+ *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *   SOFTWARE.
+ */
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -14,41 +36,41 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /*
- * This is (mostly) the OpMode used in the goBILDA Robot in 3 Days for the 24-25 Into The Deep FTC Season.
- * https://youtube.com/playlist?list=PLpytbFEB5mLcWxf6rOHqbmYjDi9BbK00p&si=NyQLwyIkcZvZEirP (playlist of videos)
- * I've gone through and added comments for clarity. But most of the code remains the same.
- * This is very much based on the code for the Starter Kit Robot for the 24-25 season. Those resources can be found here:
- * https://www.gobilda.com/ftc-starter-bot-resource-guide-into-the-deep/
- *
- * There are three main additions to the starter kit bot code, mecanum drive, a linear slide for reaching
- * into the submersible, and a linear slide to hang (which we didn't end up using)
- *
- * the drive system is all 5203-2402-0019 (312 RPM Yellow Jacket Motors) and it is based on a Strafer chassis
- * The arm shoulder takes the design from the starter kit robot. So it uses the same 117rpm motor with an
- * external 5:1 reduction
- *
- * The drivetrain is set up as "field centric" with the internal control hub IMU. This means
- * when you push the stick forward, regardless of robot orientation, the robot drives away from you.
- * We "took inspiration" (copy-pasted) the drive code from this GM0 page
- * (PS GM0 is a world class resource, if you've got 5 mins and nothing to do, read some GM0!)
- * https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
- *
+* This is (mostly) the OpMode used in the goBILDA Robot in 3 Days for the 24-25 Into The Deep FTC Season.
+* https://youtube.com/playlist?list=PLpytbFEB5mLcWxf6rOHqbmYjDi9BbK00p&si=NyQLwyIkcZvZEirP (playlist of videos)
+* I've gone through and added comments for clarity. But most of the code remains the same.
+* This is very much based on the code for the Starter Kit Robot for the 24-25 season. Those resources can be found here:
+* https://www.gobilda.com/ftc-starter-bot-resource-guide-into-the-deep/
+*
+* There are three main additions to the starter kit bot code, mecanum drive, a linear slide for reaching
+* into the submersible, and a linear slide to hang (which we didn't end up using)
+*
+* the drive system is all 5203-2402-0019 (312 RPM Yellow Jacket Motors) and it is based on a Strafer chassis
+* The arm shoulder takes the design from the starter kit robot. So it uses the same 117rpm motor with an
+* external 5:1 reduction
+*
+* The drivetrain is set up as "field centric" with the internal control hub IMU. This means
+* when you push the stick forward, regardless of robot orientation, the robot drives away from you.
+* We "took inspiration" (copy-pasted) the drive code from this GM0 page
+* (PS GM0 is a world class resource, if you've got 5 mins and nothing to do, read some GM0!)
+* https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
+*
  */
 
 
-@TeleOp(name="TELEOP_base", group="Robot")
+@TeleOp
 //@Disabled
-public class TELEOP_base extends LinearOpMode {
+public class COMP_B_TELE_SUB extends LinearOpMode {
 
     /* Declare OpMode members. */
-    public DcMotor leftFrontDrive = null; //the left drivetrain motor
-    public DcMotor rightFrontDrive = null; //the right drivetrain motor
-    public DcMotor leftBackDrive = null;
-    public DcMotor rightBackDrive = null;
-    public DcMotor armMotor = null; //the arm motor
-    public DcMotor liftMotor = null; //
-    public CRServo intake = null; //the active intake servo
-    public Servo wrist = null; //the wrist servo
+    public DcMotor  leftFrontDrive   = null; //the left drivetrain motor
+    public DcMotor  rightFrontDrive  = null; //the right drivetrain motor
+    public DcMotor  leftBackDrive    = null;
+    public DcMotor  rightBackDrive   = null;
+    public DcMotor  armMotor         = null; //the arm motor
+    public DcMotor  liftMotor        = null; //
+    public CRServo  intake           = null; //the active intake servo
+    public Servo    wrist            = null; //the wrist servo
 
 
     /* This constant is the number of encoder ticks for each degree of rotation of the arm.
@@ -64,7 +86,7 @@ public class TELEOP_base extends LinearOpMode {
             28 // number of encoder ticks per rotation of the bare motor
                     * 250047.0 / 4913.0 // This is the exact gear ratio of the 50.9:1 Yellow Jacket gearbox
                     * 100.0 / 20.0 // This is the external gear reduction, a 20T pinion gear that drives a 100T hub-mount gear
-                    * 1 / 360.0; // we want ticks per degree, not per rotation
+                    * 1/360.0; // we want ticks per degree, not per rotation
 
 
     /* These constants hold the position that the arm is commanded to run to.
@@ -78,28 +100,28 @@ public class TELEOP_base extends LinearOpMode {
     If you'd like it to move further, increase that number. If you'd like it to not move
     as far from the starting position, decrease it. */
 
-    final double ARM_COLLAPSED_INTO_ROBOT = 0;
-    final double ARM_COLLECT = 0 * ARM_TICKS_PER_DEGREE;
-    final double ARM_CLEAR_BARRIER = 15 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SPECIMEN = 90 * ARM_TICKS_PER_DEGREE;
-    final double ARM_SCORE_SAMPLE_IN_LOW = 95 * ARM_TICKS_PER_DEGREE;
-    final double ARM_ATTACH_HANGING_HOOK = 130 * ARM_TICKS_PER_DEGREE;
-    final double ARM_WINCH_ROBOT = 10 * ARM_TICKS_PER_DEGREE;
+    final double ARM_COLLAPSED_INTO_ROBOT  = 0;
+    final double ARM_COLLECT               = 0 * ARM_TICKS_PER_DEGREE;
+    final double ARM_CLEAR_BARRIER         = 15 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SPECIMEN        = 90 * ARM_TICKS_PER_DEGREE;
+    final double ARM_SCORE_SAMPLE_IN_LOW   = 95 * ARM_TICKS_PER_DEGREE;
+    final double ARM_ATTACH_HANGING_HOOK   = 130 * ARM_TICKS_PER_DEGREE;
+    final double ARM_WINCH_ROBOT           = 10  * ARM_TICKS_PER_DEGREE;
 
     /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
-    final double INTAKE_COLLECT = -1.0;
-    final double INTAKE_OFF = 0.0;
-    final double INTAKE_DEPOSIT = 0.5;
+    final double INTAKE_COLLECT    = -1.0;
+    final double INTAKE_OFF        =  0.0;
+    final double INTAKE_DEPOSIT    =  0.5;
 
     /* Variables to store the positions that the wrist should be set to when folding in, or folding out. */
-    final double WRIST_FOLDED_IN = 0.1667;
-    final double WRIST_FOLDED_OUT = 0.67;
+    final double WRIST_FOLDED_IN   = 0.2267;
+    final double WRIST_FOLDED_OUT  = 0.54;
 
     /* A number in degrees that the triggers can adjust the arm position by */
-    final double FUDGE_FACTOR = 15 * ARM_TICKS_PER_DEGREE;
+    final double manuelArm = 3 * ARM_TICKS_PER_DEGREE;
 
     /* Variables that are used to set the arm to a specific position */
-    double armPosition = (int) ARM_COLLAPSED_INTO_ROBOT;
+    double armPosition = (int)ARM_COLLAPSED_INTO_ROBOT;
     double armPositionFudgeFactor;
 
     final double LIFT_TICKS_PER_MM = (111132.0 / 289.0) / 120.0;
@@ -107,7 +129,7 @@ public class TELEOP_base extends LinearOpMode {
     final double LIFT_COLLAPSED = 0 * LIFT_TICKS_PER_MM;
     final double LIFT_SCORING_IN_LOW_BASKET = 0 * LIFT_TICKS_PER_MM;
     final double LIFT_SCORING_IN_HIGH_BASKET = 455 * LIFT_TICKS_PER_MM;
-    final double LIFT_BELOW45 = 310 * LIFT_TICKS_PER_MM;
+    final double LIFT_BELOW45 = 310*LIFT_TICKS_PER_MM;
 
     double liftPosition = LIFT_COLLAPSED;
 
@@ -131,12 +153,12 @@ public class TELEOP_base extends LinearOpMode {
 
 
         /* Define and Initialize Motors */
-        leftFrontDrive = hardwareMap.dcMotor.get("frontLeftMotor");
-        leftBackDrive = hardwareMap.dcMotor.get("backLeftMotor");
+        leftFrontDrive  = hardwareMap.dcMotor.get("frontLeftMotor");
+        leftBackDrive   = hardwareMap.dcMotor.get("backLeftMotor");
         rightFrontDrive = hardwareMap.dcMotor.get("frontRightMotor");
-        rightBackDrive = hardwareMap.dcMotor.get("backRightMotor");
-        liftMotor = hardwareMap.dcMotor.get("slideMotor");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor"); //the arm motor
+        rightBackDrive  = hardwareMap.dcMotor.get("backRightMotor");
+        liftMotor       = hardwareMap.dcMotor.get("slideMotor");
+        armMotor        = hardwareMap.get(DcMotor.class, "armMotor"); //the arm motor
 
 
        /*
@@ -147,7 +169,7 @@ public class TELEOP_base extends LinearOpMode {
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         liftMotor.setDirection(DcMotor.Direction.REVERSE);
-
+        
         /* Setting zeroPowerBehavior to BRAKE enables a "brake mode". This causes the motor to slow down
         much faster when it is coasting. This creates a much more controllable drivetrain. As the robot
         stops much quicker. */
@@ -159,9 +181,9 @@ public class TELEOP_base extends LinearOpMode {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /*This sets the maximum current that the control hub will apply to the arm before throwing a flag */
-        ((DcMotorEx) armMotor).setCurrentAlert(5, CurrentUnit.AMPS);
-
-        ((DcMotorEx) liftMotor).setCurrentAlert(5, CurrentUnit.AMPS);
+        ((DcMotorEx) armMotor).setCurrentAlert(5,CurrentUnit.AMPS);
+        
+        ((DcMotorEx) liftMotor).setCurrentAlert(5,CurrentUnit.AMPS);
 
 
         /* Before starting the armMotor. We'll make sure the TargetPosition is set to 0.
@@ -178,12 +200,12 @@ public class TELEOP_base extends LinearOpMode {
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake");
-        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist  = hardwareMap.get(Servo.class, "wrist");
 
         /* Make sure that the intake is off, and the wrist is folded in. */
         intake.setPower(INTAKE_OFF);
-
-
+        
+        
         /* Send telemetry message to signify robot waiting */
         telemetry.addLine("Robot Ready.");
         telemetry.update();
@@ -197,49 +219,60 @@ public class TELEOP_base extends LinearOpMode {
         imu.initialize(parameters);
         /* Wait for the game driver to press play */
         waitForStart();
-
-        armPosition = ARM_CLEAR_BARRIER;
+        
+        armPosition =ARM_CLEAR_BARRIER;
         ((DcMotorEx) armMotor).setVelocity(1500);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wrist.setPosition(WRIST_FOLDED_OUT);
-
-
-
+        
+        
+        
         /* Run until the driver presses stop */
-        while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+       while (opModeIsActive())
 
-            // This button choice was made so that it is hard to hit on accident,
-            // it can be freely changed based on preference.
-            // The equivalent button is start on Xbox-style controllers.
-            if (gamepad1.options) {
-                imu.resetYaw();
-            }
+       {  double y = -gamepad1.left_stick_y;
+           double x = gamepad1.left_stick_x;
+           double rx = gamepad1.right_stick_x;
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+           // This button choice was made so that it is hard to hit on accident,
+           // it can be freely changed based on preference.
+           // The equivalent button is start on Xbox-style controllers.
+           if (gamepad2.start) {
+               imu.resetYaw();
+               armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+               liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+           }
 
-            // Rotate the movement direction counter to the bot's rotation
-            //double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            //double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+           double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            //rotX = rotX * 1.1;  // Counteract imperfect strafing
+           // Rotate the movement direction counter to the bot's rotation
+           //double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+           //double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+           //rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-            leftFrontDrive.setPower(frontLeftPower);
-            leftBackDrive.setPower(backLeftPower);
-            rightFrontDrive.setPower(frontRightPower);
-            rightBackDrive.setPower(backRightPower);
+           // Denominator is the largest motor power (absolute value) or 1
+           // This ensures all the powers maintain the same ratio,
+           // but only if at least one is out of the range [-1, 1]
+           double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+           double frontLeftPower = (y + x + rx) / denominator;
+           double backLeftPower = (y - x + rx) / denominator;
+           double frontRightPower = (y - x - rx) / denominator;
+           double backRightPower = (y + x - rx) / denominator;
 
+        if (armPosition > 90 * ARM_TICKS_PER_DEGREE && armPosition < 129 * ARM_TICKS_PER_DEGREE) { 
+               leftFrontDrive.setPower(frontLeftPower * 0.10);
+           leftBackDrive.setPower(backLeftPower * 0.10);
+           rightFrontDrive.setPower(frontRightPower * 0.10);
+           rightBackDrive.setPower(backRightPower * 0.10);
+           } 
+
+          else {
+              leftFrontDrive.setPower(frontLeftPower);
+           leftBackDrive.setPower(backLeftPower);
+           rightFrontDrive.setPower(frontRightPower);
+           rightBackDrive.setPower(backRightPower);
+          }
 
             /* Here we handle the three buttons that have direct control of the intake speed.
             These control the continuous rotation servo that pulls elements into the robot,
@@ -257,9 +290,11 @@ public class TELEOP_base extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
                 intake.setPower(INTAKE_COLLECT);
-            } else if (gamepad2.dpad_down) {
+            }
+            else if (gamepad2.dpad_down) {
                 intake.setPower(INTAKE_OFF);
-            } else if (gamepad2.y) {
+            }
+            else if (gamepad2.y) {
                 intake.setPower(INTAKE_DEPOSIT);
             }
 
@@ -272,7 +307,7 @@ public class TELEOP_base extends LinearOpMode {
             than the other, it "wins out". This variable is then multiplied by our FUDGE_FACTOR.
             The FUDGE_FACTOR is the number of degrees that we can adjust the arm by with this function. */
 
-            armPositionFudgeFactor = FUDGE_FACTOR * (gamepad2.right_trigger + (-gamepad2.left_trigger));
+            armPosition += manuelArm * (gamepad2.right_trigger + (-gamepad2.left_trigger));
 
 
             /* Here we implement a set of if else statements to set our arm to different scoring positions.
@@ -282,49 +317,65 @@ public class TELEOP_base extends LinearOpMode {
             it folds out the wrist to make sure it is in the correct orientation to intake, and it
             turns the intake on to the COLLECT mode.*/
 
-            if (gamepad2.a) {
+            if(gamepad2.a){
                 /* This is the intaking/collecting arm position */
                 armPosition = ARM_COLLECT;
                 //liftPosition = LIFT_COLLAPSED;
                 wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
-            } else if (gamepad2.b) {
+                }
+
+                else if (gamepad2.b){
                     /* This is about 20° up from the collecting position to clear the barrier
                     Note here that we don't set the wrist position or the intake power when we
                     select this "mode", this means that the intake and wrist will continue what
                     they were doing before we clicked left bumper. */
-                armPosition = ARM_CLEAR_BARRIER;
-            } else if (gamepad2.x) {
-                /* This is the correct height to score the sample in the HIGH BASKET */
-                armPosition = ARM_SCORE_SAMPLE_IN_LOW;
-                //liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
-            } else if (gamepad2.dpad_left) {
-                wrist.setPosition(0.3);
+                    armPosition = ARM_CLEAR_BARRIER;
+                }
 
-            } else if (gamepad2.dpad_right) {
-                wrist.setPosition(WRIST_FOLDED_OUT);
+                else if (gamepad2.x){
+                    /* This is the correct height to score the sample in the HIGH BASKET */
+                    armPosition = ARM_SCORE_SAMPLE_IN_LOW;
+                    //liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
+                }
+                
+                else if (gamepad2.dpad_left) {
+                    wrist.setPosition(WRIST_FOLDED_IN);
+                    
+                }
+                
+                else if (gamepad2.dpad_right) {
+                    wrist.setPosition(WRIST_FOLDED_OUT);
+                    
+                }
 
-            } else if (gamepad1.x) {
+                else if (gamepad1.x) {
                     /* This turns off the intake, folds in the wrist, and moves the arm
                     back to folded inside the robot. This is also the starting configuration */
-                armPosition = ARM_COLLAPSED_INTO_ROBOT;
-                //liftPosition = LIFT_COLLAPSED;
-                intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
-            } else if (gamepad1.b) {
-                /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
-                armPosition = ARM_SCORE_SPECIMEN;
-                wrist.setPosition(WRIST_FOLDED_IN);
-            } else if (gamepad1.y) {
-                /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
-                armPosition = ARM_ATTACH_HANGING_HOOK;
-                intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
-            } else if (gamepad1.a) {
-                /* this moves the arm down to lift the robot up once it has been hooked */
-                armPosition = ARM_WINCH_ROBOT;
-                intake.setPower(INTAKE_OFF);
-                wrist.setPosition(WRIST_FOLDED_IN);
+                    armPosition = ARM_COLLAPSED_INTO_ROBOT;
+                    //liftPosition = LIFT_COLLAPSED;
+                    intake.setPower(INTAKE_OFF);
+                    wrist.setPosition(WRIST_FOLDED_IN);
+                }
+
+                else if (gamepad1.b){
+                    /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
+                    armPosition = ARM_SCORE_SPECIMEN;
+                    wrist.setPosition(WRIST_FOLDED_IN);
+                }
+
+                else if (gamepad1.y){
+                    /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
+                    armPosition = ARM_ATTACH_HANGING_HOOK;
+                    intake.setPower(INTAKE_OFF);
+                    wrist.setPosition(WRIST_FOLDED_IN);
+                }
+
+                else if (gamepad1.a){
+                    /* this moves the arm down to lift the robot up once it has been hooked */
+                    armPosition = ARM_WINCH_ROBOT;
+                    intake.setPower(INTAKE_OFF);
+                    wrist.setPosition(WRIST_FOLDED_IN);
             }
 
             /*
@@ -342,31 +393,28 @@ public class TELEOP_base extends LinearOpMode {
             to a value.
              */
 
-            if (armPosition < 45 * ARM_TICKS_PER_DEGREE) {
-                armLiftComp = (0.25568 * liftPosition);
-                if (liftPosition > LIFT_BELOW45) {
-                    liftPosition = LIFT_BELOW45;
-                } else {
-                    armLiftComp = 0;
-                }
-
-                if (armPosition == ARM_SCORE_SAMPLE_IN_LOW) {
-                    leftFrontDrive.setPower(frontLeftPower * 0.25);
-                    leftBackDrive.setPower(backLeftPower * 0.25);
-                    rightFrontDrive.setPower(frontRightPower * 0.25);
-                    rightBackDrive.setPower(backRightPower * 0.25);
-                }
-
+           if (armPosition < 45 * ARM_TICKS_PER_DEGREE){
+               armLiftComp = (0.25568 * liftPosition);
+               if(liftPosition > LIFT_BELOW45){
+                liftPosition = LIFT_BELOW45;
+               }
+               
+           }
+           else{
+               armLiftComp = 0;
+           }
+           
+           
 
            /* Here we set the target position of our arm to match the variable that was selected
             by the driver. We add the armPosition Variable to our armPositionFudgeFactor, before adding
             our armLiftComp, which adjusts the arm height for different lift extensions.
             We also set the target velocity (speed) the motor runs at, and use setMode to run it.*/
 
-                armMotor.setTargetPosition((int) (armPosition + armPositionFudgeFactor + armLiftComp));
+            armMotor.setTargetPosition((int) (armPosition  + armLiftComp));
 
-                ((DcMotorEx) armMotor).setVelocity(1500);
-                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            ((DcMotorEx) armMotor).setVelocity(1500);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             /* Here we set the lift position based on the driver input.
@@ -388,43 +436,44 @@ public class TELEOP_base extends LinearOpMode {
             we are only incrementing it a small amount each cycle.
              */
 
-                if (gamepad2.right_bumper) {
-                    liftPosition += 2800 * cycletime;
-                } else if (gamepad2.left_bumper) {
-                    liftPosition -= 2800 * cycletime;
-                }
-                /*here we check to see if the lift is trying to go higher than the maximum extension.
-                 *if it is, we set the variable to the max.
-                 */
-                if (liftPosition > LIFT_SCORING_IN_HIGH_BASKET) {
-                    liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
-                }
+            if (gamepad2.right_bumper){
+                liftPosition += 2800 * cycletime;
+            }
+            else if (gamepad2.left_bumper){
+                liftPosition -= 2800 * cycletime;
+            }
+            /*here we check to see if the lift is trying to go higher than the maximum extension.
+           *if it is, we set the variable to the max.
+            */
+            if (liftPosition > LIFT_SCORING_IN_HIGH_BASKET){
+                   liftPosition = LIFT_SCORING_IN_HIGH_BASKET;
+            }
+            
+            
+            //same as above, we see if the lift is trying to go below 0, and if it is, we set it to 0.
+           if (liftPosition < 0){
+                   liftPosition = 0;
+            }
+
+           liftMotor.setTargetPosition((int) (liftPosition));
+
+           ((DcMotorEx) liftMotor).setVelocity(1000);
+           liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-                //same as above, we see if the lift is trying to go below 0, and if it is, we set it to 0.
-                if (liftPosition < 0) {
-                    liftPosition = 0;
-                }
+            /* Check to see if our arm is over the current limit, and report via telemetry. */
+            if (((DcMotorEx) armMotor).isOverCurrent()){
+                telemetry.addLine("ARMMOTOR EXCEEDED CURRENT LIMIT!");
+            }
+            
+            if (((DcMotorEx) liftMotor).isOverCurrent()){
+                telemetry.addLine("LIFTMOTOR EXCEEDED CURRENT LIMIT!");
+            }
 
-                liftMotor.setTargetPosition((int) (liftPosition));
-
-                ((DcMotorEx) liftMotor).setVelocity(1000);
-                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-                /* Check to see if our arm is over the current limit, and report via telemetry. */
-                if (((DcMotorEx) armMotor).isOverCurrent()) {
-                    telemetry.addLine("ARMMOTOR EXCEEDED CURRENT LIMIT!");
-                }
-
-                if (((DcMotorEx) liftMotor).isOverCurrent()) {
-                    telemetry.addLine("LIFTMOTOR EXCEEDED CURRENT LIMIT!");
-                }
-
-                /* at the very end of the stream, we added a linear actuator kit to try to hang the robot on.
-                 * it didn't end up working... But here's the code we run it with. It just sets the motor
-                 * power to match the inverse of the left stick y.
-                 */
+            /* at the very end of the stream, we added a linear actuator kit to try to hang the robot on.
+            * it didn't end up working... But here's the code we run it with. It just sets the motor
+            * power to match the inverse of the left stick y.
+            */
 
             /* This is how we check our loop time. We create three variables:
             looptime is the current time when we hit this part of the code
@@ -437,20 +486,23 @@ public class TELEOP_base extends LinearOpMode {
             with just the difference, 0.1 seconds.
 
              */
-                looptime = getRuntime();
-                cycletime = looptime - oldtime;
-                oldtime = looptime;
+            looptime = getRuntime();
+            cycletime = looptime-oldtime;
+            oldtime = looptime;
 
 
-                /* send telemetry to the driver of the arm's current position and target position */
-                telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
-                telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
-                telemetry.addData("lift variable", liftPosition);
-                telemetry.addData("Lift Target Position", liftMotor.getTargetPosition());
-                telemetry.addData("lift current position", liftMotor.getCurrentPosition());
-                telemetry.addData("liftMotor Current:", ((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
-                telemetry.update();
-            }
-        }
+           /* send telemetry to the driver of the arm's current position and target position */
+           telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
+           telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
+           telemetry.addData("lift variable", liftPosition);
+           telemetry.addData("Lift Target Position",liftMotor.getTargetPosition());
+           telemetry.addData("lift current position", liftMotor.getCurrentPosition());
+           telemetry.addData("liftMotor Current:",((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+           telemetry.update();
+
+
+
+      
     }
+}
 }
