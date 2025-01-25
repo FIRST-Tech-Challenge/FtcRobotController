@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 @Config
 @Autonomous(name = "Red Sample", group = "Autonomous")
 public class RedSample extends LinearOpMode {
-
     // Use FTCDashboard
     FtcDashboard dashboard;
     Robot robot;
@@ -59,13 +58,12 @@ public class RedSample extends LinearOpMode {
         waitForStart();
         looptime.reset();
         Actions.runBlocking(
-
                 new SequentialAction(
                         robot.intakeUp(),
                         claw.servoClaw(Claw.clawState.CLOSE),
                         arm.armNeutral(),
                         drivetrain.goToPose(Utils.makePoseVector(-57, -36,0)),
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-46.5)),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                         lift.moveToHeight(28),
                         new SleepAction(1),
                         arm.armExtend(),
@@ -79,14 +77,14 @@ public class RedSample extends LinearOpMode {
                             robot.intakeDown(),
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0))
                         ),
-                        drivetrain.goToPose(Utils.makePoseVector(-49,-23.5,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-47,-23.5,0)),
                         new SleepAction(0.85),
                         robot.intakeUp(),
                         new SleepAction(0.5),
                         arm.armRetract(),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -19,-43)),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                         lift.moveToHeight(28),
                         new SleepAction(1),
                         arm.armExtend(),
@@ -98,14 +96,14 @@ public class RedSample extends LinearOpMode {
                         lift.moveToHeight(0),
                         drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
                         robot.intakeDown(),
-                        drivetrain.goToPose(Utils.makePoseVector(-49.5,-13.5,0)),
+                        drivetrain.goToPose(Utils.makePoseVector(-47,-13.5,0)),
                         new SleepAction(1),
                         robot.intakeUp(),
                         new SleepAction(0.5),
                         arm.armRetract(),
                         new SleepAction(0.3),
                         claw.servoClaw(Claw.clawState.CLOSE),
-                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-46.5)),
+                        drivetrain.goToPose(Utils.makePoseVector(-57, -17,-43)),
                         lift.moveToHeight(28),
                         new SleepAction(1),
                         arm.armExtend(),
