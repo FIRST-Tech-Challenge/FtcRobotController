@@ -24,12 +24,14 @@ public class CompBotAuto extends LinearOpMode {
 
   GoBildaPinpointDriver odometry;
 
-  private void center_wheel_steering(AnalogInput analogInput, Servo servo)
+  private void center_wheel_steering(AnalogInput analogInput, Servo servo, double desired_normalized_angle)
   {
     double pot_voltage = analogInput.getVoltage();
     double max_voltage = 3.326;
     double normalized_voltage = pot_voltage / max_voltage;
-    double delta_to_reference = 0.5 - normalized_voltage;
+
+    // 0.5 here is the desired angle
+    double delta_to_reference = desired_normalized_angle - normalized_voltage;
 
     telemetry.addData("Norm:  ", normalized_voltage);
     telemetry.addData("Delta: ", delta_to_reference);
@@ -59,10 +61,10 @@ public class CompBotAuto extends LinearOpMode {
 
     while(true)
     {
-      center_wheel_steering(driveBase.servoInputFL, driveBase.servoFL);
-      center_wheel_steering(driveBase.servoInputFR, driveBase.servoFR);
-      center_wheel_steering(driveBase.servoInputBL, driveBase.servoBL);
-      center_wheel_steering(driveBase.servoInputBR, driveBase.servoBR);
+      center_wheel_steering(driveBase.servoInputFL, driveBase.servoFL, 0.4);
+      center_wheel_steering(driveBase.servoInputFR, driveBase.servoFR, 0.4);
+      center_wheel_steering(driveBase.servoInputBL, driveBase.servoBL, 0.4);
+      center_wheel_steering(driveBase.servoInputBR, driveBase.servoBR, 0.4);
     }
 
 //    mek.homeArm();
