@@ -80,7 +80,7 @@ public class RedSample extends LinearOpMode {
                             drivetrain.goToPose(Utils.makePoseVector(-51,-23.5,0))
                         ),
                         drivetrain.goToPose(Utils.makePoseVector(-49,-23.5,0)),
-                        new SleepAction(1),
+                        new SleepAction(0.85),
                         robot.intakeUp(),
                         new SleepAction(0.5),
                         arm.armRetract(),
@@ -96,10 +96,8 @@ public class RedSample extends LinearOpMode {
                         arm.armNeutral(),
                         new SleepAction(0.3),
                         lift.moveToHeight(0),
-                        new ParallelAction(
-                                drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
-                                robot.intakeDown()
-                        ),
+                        drivetrain.goToPose(Utils.makePoseVector(-51,-13.5,0)),
+                        robot.intakeDown(),
                         drivetrain.goToPose(Utils.makePoseVector(-49.5,-13.5,0)),
                         new SleepAction(1),
                         robot.intakeUp(),
