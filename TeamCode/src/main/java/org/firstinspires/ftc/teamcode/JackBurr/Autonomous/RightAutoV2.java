@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 //TODO: PUSH FIRST THING
 @Autonomous
-@Disabled
 public class RightAutoV2 extends LinearOpMode {
     public int step = 1;
     public DeliveryAxonV1 deliveryAxon = new DeliveryAxonV1();

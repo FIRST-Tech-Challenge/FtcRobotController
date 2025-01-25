@@ -31,7 +31,7 @@ public class RobotConstantsV1 {
     public double DELIVERY_LEVEL_ONE_ASCENT = 0.51;
     public double DELIVERY_UP = 0.61;
     public double DELIVERY_DROP = 0.64;
-    public double DELIVERY_HIGH_BAR = 0.67;
+    public double DELIVERY_HIGH_BAR = 0.63;
     public double DELIVERY_WALL_PICKUP = 0.81;
     public double WRIST_CENTER = 0.48;
     //MOTORS=========================================================================================================
