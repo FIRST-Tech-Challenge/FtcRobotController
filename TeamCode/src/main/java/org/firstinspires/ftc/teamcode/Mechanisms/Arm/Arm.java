@@ -89,6 +89,7 @@ public class Arm {
             public boolean run(@NonNull TelemetryPacket Packet){
                 servoArmLeft.setPosition(armNeutral);
                 servoArmRight.setPosition(armNeutral);
+                servoWrist.setPosition(wristRetract);
                 return false;
             }
         };
