@@ -234,7 +234,7 @@ public class CommandFactory {
     }
 
     public MovePivotCommand AutoToGroundForSample(double target, int waitTime) {
-        return new MovePivotCommand(pivot, telemetry, target, 100, waitTime,  .02);
+        return new MovePivotCommand(pivot, telemetry, target, 300, waitTime,  .02);
     }
 
     public MovePivotCommand AutoToGroundForSample3(int waitTime) {
@@ -258,7 +258,7 @@ public class CommandFactory {
     public Command intakeFromGround(double groundTarget, int waitTime) {
         return new ParallelRaceGroup(
                 intake(),
-                sleep(300).andThen(AutoToGroundForSample(groundTarget, waitTime))
+                AutoToGroundForSample(groundTarget, waitTime)
         );
     }
 

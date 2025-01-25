@@ -16,7 +16,7 @@ public class SampleAuto extends CommandAutoOpMode {
     boolean hold2End = false;
     boolean hold3End = false;
 
-    boolean inMatch = false;
+    boolean inMatch = true;
 
     @Config
     public static class Sample3Config {
@@ -28,7 +28,7 @@ public class SampleAuto extends CommandAutoOpMode {
         public static double beforeIntakeDrive_maxPower = .5;
         public static int beforeIntakeDrive_distanceTolerance = 5;
         public static double elbowIntakePosition = .75;
-        public static int sliderIntakePosition = 450;
+        public static int sliderIntakePosition = 300;
         public static int pivotIntakePosition = -1400;
         public static int pivotToGroundPosition = -2200;
         public static int IntakeFromGroundTimeout = 5000;
