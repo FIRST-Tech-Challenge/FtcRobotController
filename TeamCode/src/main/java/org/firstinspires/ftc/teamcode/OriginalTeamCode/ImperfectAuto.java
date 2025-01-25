@@ -26,7 +26,7 @@ public class ImperfectAuto extends LinearOpMode {
     DcMotor armRotate = null;
     DcMotor linearActuator = null;
     //servos
-    ServoImplEx wrist = null;
+    Servo wrist = null;
     Servo grabber = null;
 
 
@@ -78,7 +78,7 @@ public class ImperfectAuto extends LinearOpMode {
         armLifterRight = hardwareMap.dcMotor.get("armLifterRight");
         armRotate = hardwareMap.dcMotor.get("armRotate");
         linearActuator = hardwareMap.dcMotor.get("linearActuator");
-        wrist = hardwareMap.get(ServoImplEx.class, "wrist");
+        wrist = hardwareMap.get(Servo.class, "wrist");
         grabber = hardwareMap.servo.get("grabber");
 
         grabber.setDirection(Servo.Direction.FORWARD);
@@ -232,7 +232,7 @@ public class ImperfectAuto extends LinearOpMode {
 
 
 
-
+sleep(2000);
         /***** end of manual code running or initiation or whatever *****/
     }
 
