@@ -36,11 +36,11 @@ abstract class Movable extends LinearOpMode {
         BLScissorLift = hardwareMap.get(DcMotor.class, "BLScissorLift");
         SlideR = hardwareMap.get(Servo.class, "SlideR");
         SlideL = hardwareMap.get(Servo.class, "SlideL");
-        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
-        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
-        outtakeR = hardwareMap.get(Servo.class, "outtakeR"); // change if needed
-        outtakeL = hardwareMap.get(Servo.class, "outtakeL");
-        intake = hardwareMap.get(Servo.class, "intake"); // change if needed
+//        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
+//        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
+//        outtakeR = hardwareMap.get(Servo.class, "outtakeR"); // change if needed
+//        outtakeL = hardwareMap.get(Servo.class, "outtakeL");
+//        intake = hardwareMap.get(Servo.class, "intake"); // change if needed
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
@@ -121,17 +121,17 @@ abstract class Movable extends LinearOpMode {
     public void powerScissorLift(int milliseconds, String direction) {
         switch (direction) {
             case "up":
-                FRScissorLift.setPower(.9);
+                FRScissorLift.setPower(1);
                 FLScissorLift.setPower(1);
-                BRScissorLift.setPower(-.9);
+                BRScissorLift.setPower(-1);
                 BLScissorLift.setPower(-1);
                 sleep(milliseconds);
                 disableScissorPower();
                 break;
             case "down":
-                FRScissorLift.setPower(-.9);
+                FRScissorLift.setPower(-1);
                 FLScissorLift.setPower(-1);
-                BRScissorLift.setPower(.9);
+                BRScissorLift.setPower(1);
                 BLScissorLift.setPower(1);
                 sleep(milliseconds);
                 disableScissorPower();
@@ -208,12 +208,12 @@ abstract class Movable extends LinearOpMode {
         rotatingServoL.setDirection(Servo.Direction.REVERSE);
         switch (toggle) {
             case "rollUp":
-                SlideR.setPosition(1);
-                SlideL.setPosition(1);
+                rotatingServoR.setPosition(1);
+                rotatingServoL.setPosition(1);
                 break;
             case "rollDown":
-                SlideR.setPosition(0);
-                SlideL.setPosition(0);
+                rotatingServoR.setPosition(0);
+                rotatingServoL.setPosition(0);
                 break;
         }
         try {
@@ -228,7 +228,7 @@ abstract class Movable extends LinearOpMode {
     }
 
     public void turn90(String direction) {
-        turnRobot(2940/2,direction);
+        turnRobot(2940/2, direction);
     }
 
     abstract void updatePhoneConsole();
