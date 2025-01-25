@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Utils;
 
 public class AutoSwerve {
 
-  AnalogInput servoInputFL,servoInputFR,servoInputBR,servoInputBL;
-  Servo servoFL,servoFR,servoBR,servoBL;
+  public AnalogInput servoInputFL,servoInputFR,servoInputBR,servoInputBL;
+  public Servo servoFL,servoFR,servoBR,servoBL;
   DcMotor motorFL,motorFR,motorBR,motorBL;
   LinearOpMode opMode;
   static double countsPerRevolution = 537.7;
@@ -152,10 +152,16 @@ public void driveDist(double dist, double mSpd){
       FRkp = 0.5 + FRkd / servoCmd;
       BLkp = 0.5 + BLkd / servoCmd;
       BRkp = 0.5 + BRkd / servoCmd;
-      if(FLkd < 0.05) servoFL.setPosition(.5); else servoFL.setPosition(FLkp);
-      if(FRkd < 0.05) servoFR.setPosition(.5); else servoFR.setPosition(FRkp);
-      if(BLkd < 0.05) servoBL.setPosition(.5); else servoBL.setPosition(BLkp);
-      if(BRkd < 0.05) servoBR.setPosition(.5); else servoBR.setPosition(BRkp);
+
+      servoFL.setPosition(FLkp);
+      servoFR.setPosition(FRkp);
+      servoBL.setPosition(BLkp);
+      servoBR.setPosition(BRkp);
+
+//      if(FLkd < 0.05) servoFL.setPosition(.5); else servoFL.setPosition(FLkp);
+//      if(FRkd < 0.05) servoFR.setPosition(.5); else servoFR.setPosition(FRkp);
+//      if(BLkd < 0.05) servoBL.setPosition(.5); else servoBL.setPosition(BLkp);
+//      if(BRkd < 0.05) servoBR.setPosition(.5); else servoBR.setPosition(BRkp);
     }
     opMode.telemetry.addData("servoCmd", servoCmd );
     opMode.telemetry.addData("FL error", servoCmd - FLstate);
