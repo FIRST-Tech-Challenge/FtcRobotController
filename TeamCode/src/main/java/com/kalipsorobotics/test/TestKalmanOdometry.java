@@ -22,14 +22,14 @@ public class TestKalmanOdometry extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // Example measurement (replace with real sensor data)
             Point noisyMeasurement = new Point(odometrySpark.sparkUpdateData().getX(),odometrySpark.sparkUpdateData().getY());
 
             // Filter the measurement
             Point filteredPoint = kalmanFilter.update(noisyMeasurement);
-
-            telemetry.addLine("x: " + noisyMeasurement.x + "y: " + noisyMeasurement.y);
-            telemetry.addLine("x: " + filteredPoint.x + "y: " + filteredPoint.y);
+            telemetry.addLine("Noisy data");
+            telemetry.addLine("x: " + noisyMeasurement.x + " y: " + noisyMeasurement.y);
+            telemetry.addLine("filtered data");
+            telemetry.addLine("x: " + filteredPoint.x + " y: " + filteredPoint.y);
             telemetry.update();
         }
     }
