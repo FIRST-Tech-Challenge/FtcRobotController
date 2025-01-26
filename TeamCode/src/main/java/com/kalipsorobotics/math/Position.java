@@ -13,9 +13,9 @@ public class Position {
     final private double y;
     final private double theta;
 
-    private PidNav pidX = PurePursuitAction.PID_X;
-    private PidNav pidY = PurePursuitAction.PID_Y;
-    private PidNav pidAngle = PurePursuitAction.PID_ANGLE;
+    private PidNav pidX = new PidNav(PurePursuitAction.P_XY, 0, 0);
+    private PidNav pidY = new PidNav(PurePursuitAction.P_XY, 0, 0);
+    private PidNav pidAngle = new PidNav(PurePursuitAction.P_ANGLE, 0, 0);
 
     public Position (double x, double y, double theta) {
         this.x = x;
@@ -23,13 +23,13 @@ public class Position {
         this.theta = theta;
     }
 
-    public Position (double x, double y, double theta, PidNav pidX, PidNav pidY, PidNav pidAngle) {
+    public Position (double x, double y, double theta, double pXY, double pAngle) {
         this.x = x;
         this.y = y;
         this.theta = theta;
-        this.pidX = pidX;
-        this.pidY = pidY;
-        this.pidAngle = pidAngle;
+        this.pidX.setP(pXY);
+        this.pidY.setP(pXY);
+        this.pidAngle.setP(pAngle);
     }
 
     //add point to vector

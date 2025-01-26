@@ -22,9 +22,8 @@ import java.util.Optional;
 
 public class PurePursuitAction extends Action {
 
-    public static final PidNav PID_X = new PidNav(1.0/600.0, 0, 0);
-    public static final PidNav PID_Y = new PidNav(1.0/600.0, 0, 0);
-    public static final PidNav PID_ANGLE = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+    public static final double P_XY = 1.0/600.0;
+    public static final double P_ANGLE = 0.7 * 1.0 / Math.toRadians(90);
 
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
@@ -73,9 +72,9 @@ public class PurePursuitAction extends Action {
         this.driveTrain = driveTrain;
         //this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
-        this.pidX = PID_X;
-        this.pidY = PID_Y;
-        this.pidAngle = PID_ANGLE;
+        this.pidX = new PidNav(P_XY, 0, 0);
+        this.pidY = new PidNav(P_XY, 0, 0);
+        this.pidAngle = new PidNav(P_ANGLE, 0, 0);
 
         this.timeoutTimer = new ElapsedTime();
 
@@ -92,7 +91,7 @@ public class PurePursuitAction extends Action {
         this.wheelOdometry = wheelOdometry;
         this.pidX = new PidNav(pidXY, 0, 0);
         this.pidY = new PidNav(pidXY, 0, 0);
-        this.pidAngle = PID_ANGLE;
+        this.pidAngle = new PidNav(P_ANGLE, 0, 0);
 
         this.timeoutTimer = new ElapsedTime();
 
@@ -105,6 +104,11 @@ public class PurePursuitAction extends Action {
 
     public void addPoint(double x, double y, double headingDeg) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg)));
+        Log.d("purepursaction", "added point " + x + ", " + y);
+    }
+
+    public void addPoint(double x, double y, double headingDeg, double pXY, double pAngle) {
+        pathPoints.add(new Position(x, y, Math.toRadians(headingDeg), pXY, pAngle));
         Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
