@@ -1,5 +1,10 @@
 package com.kalipsorobotics.math;
 
+import com.kalipsorobotics.PID.PidNav;
+import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
+
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,11 +13,25 @@ public class Position {
     final private double y;
     final private double theta;
 
+    private PidNav pidX = PurePursuitAction.PID_X;
+    private PidNav pidY = PurePursuitAction.PID_Y;
+    private PidNav pidAngle = PurePursuitAction.PID_ANGLE;
+
     public Position (double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
     }
+
+    public Position (double x, double y, double theta, PidNav pidX, PidNav pidY, PidNav pidAngle) {
+        this.x = x;
+        this.y = y;
+        this.theta = theta;
+        this.pidX = pidX;
+        this.pidY = pidY;
+        this.pidAngle = pidAngle;
+    }
+
     //add point to vector
     public Position add(Velocity velocity) {
         double theta = this.theta + velocity.getTheta();
@@ -73,5 +92,17 @@ public class Position {
 
     public double getTheta() {
         return theta;
+    }
+
+    public PidNav getPidX() {
+        return pidX;
+    }
+
+    public PidNav getPidY() {
+        return pidY;
+    }
+
+    public PidNav getPidAngle() {
+        return pidAngle;
     }
 }

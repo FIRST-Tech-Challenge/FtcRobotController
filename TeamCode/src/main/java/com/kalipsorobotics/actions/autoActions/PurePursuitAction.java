@@ -22,6 +22,10 @@ import java.util.Optional;
 
 public class PurePursuitAction extends Action {
 
+    public static final PidNav PID_X = new PidNav(1.0/600.0, 0, 0);
+    public static final PidNav PID_Y = new PidNav(1.0/600.0, 0, 0);
+    public static final PidNav PID_ANGLE = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;
     WheelOdometry wheelOdometry;
@@ -69,9 +73,9 @@ public class PurePursuitAction extends Action {
         this.driveTrain = driveTrain;
         //this.sparkfunOdometry = sparkfunOdometry;
         this.wheelOdometry = wheelOdometry;
-        this.pidX = new PidNav(1.0/600.0, 0, 0);
-        this.pidY = new PidNav(1.0/600.0, 0, 0);
-        this.pidAngle = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+        this.pidX = PID_X;
+        this.pidY = PID_Y;
+        this.pidAngle = PID_ANGLE;
 
         this.timeoutTimer = new ElapsedTime();
 
@@ -88,7 +92,7 @@ public class PurePursuitAction extends Action {
         this.wheelOdometry = wheelOdometry;
         this.pidX = new PidNav(pidXY, 0, 0);
         this.pidY = new PidNav(pidXY, 0, 0);
-        this.pidAngle = new PidNav(0.7 * (1.0 / Math.toRadians(90)), 0, 0);
+        this.pidAngle = PID_ANGLE;
 
         this.timeoutTimer = new ElapsedTime();
 
@@ -121,9 +125,9 @@ public class PurePursuitAction extends Action {
         double xError = Math.cos(directionError) * distanceToTarget;
         double yError = Math.sin(directionError) * distanceToTarget;
 
-        double powerAngle = pidAngle.getPower(angleError);
-        double powerX = pidX.getPower(xError);
-        double powerY = pidY.getPower(yError);
+        double powerAngle = target.getPidAngle().getPower(angleError);
+        double powerX = target.getPidX().getPower(xError);
+        double powerY = target.getPidY().getPower(yError);
 
         Log.d("directionalpower", String.format("power x=%.4f, power y=%.5f, powertheta=%.6f", powerX, powerY,
                 powerAngle));
