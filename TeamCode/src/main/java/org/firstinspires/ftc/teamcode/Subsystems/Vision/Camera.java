@@ -69,17 +69,17 @@ public class Camera extends SubsystemBase {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, -1.0))
-                .setBlurSize(4)
-                .setErodeSize(4)
-                .setDilateSize(4)
+                .setBlurSize(1)
+                .setErodeSize(3)
+                .setDilateSize(1)
                 .setDrawContours(true)
                 .build();
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 6000, 40000));
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.0, 2.0));
         redBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
         redBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
 
         // Build the BLUE blob vision processor
@@ -91,17 +91,17 @@ public class Camera extends SubsystemBase {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
                 //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, -1.0))
-                .setBlurSize(4)
-                .setErodeSize(4)
-                .setDilateSize(4)
+                .setBlurSize(2)
+                .setErodeSize(3)
+                .setDilateSize(2)
                 .setDrawContours(true)
                 .build();
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 300, 300000));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 6000, 40000));
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.25, 2.75));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.0, 2.0));
         blueBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.7, 1.0));
+                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
         blueBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
 
         // Build the yellow blob vision processor
@@ -296,7 +296,7 @@ public class Camera extends SubsystemBase {
         //ColorBlobLocatorProcessor.Util.filterByAspectRatio(0.1, 10.0, blobs);
 
         // available sorting functions
-        //ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
+        ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
         blobs = Collections.singletonList(blobs.get(0));
