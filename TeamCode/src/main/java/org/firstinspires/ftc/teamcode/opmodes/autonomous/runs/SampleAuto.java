@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.runs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -46,7 +45,7 @@ public class SampleAuto extends CommandAutoOpMode {
 
     @Config
     public static class Sample2Config {
-        public static boolean skipIntake = false;
+        public static boolean skipIntake = true;
 
         public static int toSample_x = 490;
         public static int toSample_y = 520;
@@ -66,8 +65,6 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int beforeIntakeDrive_targetX = 230;
         public static int beforeIntakeDrive_targetY = 550;
         public static int beforeIntakeDrive_heading = 15;
-        public static double beforeIntakeDrive_minPower = 0.13;
-        public static double beforeIntakeDrive_maxPower = .5;
         public static int beforeIntakeDrive_distanceTolerance = 5;
         public static double elbowIntakePosition = .75;
         public static int sliderIntakePosition = 280;
@@ -79,14 +76,10 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int ToDeliveryDrive_TargetX = 300;
         public static int ToDeliveryDrive_TargetY = 400;
         public static int ToDeliveryDrive_TargetHeading = 0;
-        public static double ToDeliveryDrive_MinPower = 0.13;
-        public static double ToDeliveryDrive_MaxPower = .8;
         public static int ToDeliveryDrive_DistanceTolerance = 10;
         public static int AfterDeliveryExtendDrive_TargetX = 80;
         public static int AfterDeliveryExtendDrive_TargetY = 440;
         public static int AfterDeliveryExtendDrive_TargetHeading = -45;
-        public static double AfterDeliveryExtendDrive_MinPower = 0.13;
-        public static double AfterDeliveryExtendDrive_MaxPower = .8;
         public static int AfterDeliveryExtendDrive_DistanceTolerance = 10;
     }
 
@@ -176,7 +169,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion sample #2
 
                 //region sample #3
-                commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, Sample3Config.beforeIntakeDrive_minPower, Sample3Config.beforeIntakeDrive_maxPower, Sample3Config.beforeIntakeDrive_distanceTolerance)),
+                commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, 0.13, .5, Sample3Config.beforeIntakeDrive_distanceTolerance)),
                 commandFactory.collapseSlider(),
                 commandFactory.pivotTo(Sample3Config.pivotIntakePosition),
                 commandFactory.elbowToPosition(Sample3Config.elbowIntakePosition),
@@ -196,9 +189,9 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 ),
 
-                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, Sample3Config.ToDeliveryDrive_MinPower, Sample3Config.ToDeliveryDrive_MaxPower, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
+                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
                 commandFactory.logDebug("sample 3 extend for delivery").andThen(commandFactory.extendSlider()),
-                commandFactory.logDebug("sample 3 approach to basket").andThen(commandFactory.driveToTarget(Sample3Config.AfterDeliveryExtendDrive_TargetX, Sample3Config.AfterDeliveryExtendDrive_TargetY, Sample3Config.AfterDeliveryExtendDrive_TargetHeading, Sample3Config.AfterDeliveryExtendDrive_MinPower, Sample3Config.AfterDeliveryExtendDrive_MaxPower, Sample3Config.AfterDeliveryExtendDrive_DistanceTolerance)),
+                commandFactory.logDebug("sample 3 approach to basket").andThen(commandFactory.driveToTarget(Sample3Config.AfterDeliveryExtendDrive_TargetX, Sample3Config.AfterDeliveryExtendDrive_TargetY, Sample3Config.AfterDeliveryExtendDrive_TargetHeading, 0.13, .8, Sample3Config.AfterDeliveryExtendDrive_DistanceTolerance)),
 
 
                 // Sample #3
