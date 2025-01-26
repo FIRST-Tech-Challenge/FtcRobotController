@@ -12,10 +12,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.HorizontalSlide;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Linkage;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.ViperSlide;
 import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.Wrist;
-import org.firstinspires.ftc.teamcode.mechanisms.submechanisms.HorizontalSlide;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.systems.DynamicInput;
 import org.firstinspires.ftc.teamcode.systems.Logger;
@@ -41,7 +41,7 @@ public class UltimateAutonomous extends LinearOpMode {
     public AdaptiveCalibration adaptiveCalibration;
 
     public static Settings.Deploy.AutonomousMode autonomousMode =
-            Settings.Deploy.AUTONOMOUS_MODE_RIGHT;;
+            Settings.Deploy.AUTONOMOUS_MODE_RIGHT;
 
     @Override
     public void runOpMode() {
@@ -157,12 +157,11 @@ public class UltimateAutonomous extends LinearOpMode {
         TrajectoryActionBuilder sampleTrajectory = pushSamples(sp, placingTrajectory);
 
 
-        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG);
+        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
 
         Actions.runBlocking(
                 new SequentialAction(
                         new ParallelAction(
-                                doWhatIWant(),
                                 chamberSet(),
                                 placingTrajectory.build()
                         ),
@@ -308,19 +307,6 @@ public class UltimateAutonomous extends LinearOpMode {
         return placingTrajectory;
     }
 
-    public class Placeholder implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-            pause(500);
-            baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
-            return false;
-        }
-    }
-    public Action doWhatIWant() {
-        return new Placeholder();
-    }
-
     public TrajectoryActionBuilder placeNextSampleInBasket(StartingPosition sp,
             TrajectoryActionBuilder previousTrajectory, PlacementHeight placementHeight) {
         TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, previousTrajectory);
@@ -447,24 +433,19 @@ public class UltimateAutonomous extends LinearOpMode {
     }
 
     private TrajectoryActionBuilder pushSamples(StartingPosition sp, TrajectoryActionBuilder previousTrajectory){
-        switch (sp) {
-            case LEFT:
-            case RIGHT:
-                return previousTrajectory.endTrajectory().fresh()
-                        // gets in front of the first on field sample and pushes it back
-                        .setTangent(Math.toRadians(90))
-                        .strafeTo(Settings.Autonomous.FieldPositions.RED_RIGHT_SAMPLE_MIDDLEMAN)
-                        .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_1.position,
-                                Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_1.heading), Math.toRadians(270))
-                        .lineToY(Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_1.position.y-50)
-                        // this is the same thing for the second sample
-                        .setTangent(Math.toRadians(90))
-                        .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_2.position,
-                                Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_2.heading), Math.toRadians(270))
-                        .lineToY(Settings.Autonomous.FieldPositions.RED_SAMPLE_PUSH_POSE_2.position.y-50);
-            default:
-                return previousTrajectory.endTrajectory().fresh();
-        }
+        return previousTrajectory.endTrajectory().fresh()
+                // gets in front of the first on field sample and pushes it back
+                .setTangent(Math.toRadians(90))
+                .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 20)
+                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN)
+                .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
+                        Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
+                .lineToY(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position.y - 50)
+                // this is the same thing for the second sample
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position,
+                        Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
+                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 50);
     }
 
     // Define an enum for starting positions

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import java.lang.reflect.Field;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+
+import java.lang.reflect.Field;
 
 @Config
 /** @noinspection unused */
@@ -13,7 +13,7 @@ public class Settings {
      * Time in milliseconds needed to ensure safe parking -
      * if there is more time than this, the robot will try to score more points.
      */
-    public static double ms_needed_to_park = 2000; // TODO: TIME THIS SO WE DON'T WASTE TIME
+    public static double ms_needed_to_park = 5000; // TODO: TIME THIS SO WE DON'T WASTE TIME
 
     // Movement settings
     @Config
@@ -189,19 +189,12 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(55, -54, Math.toRadians(180));
-            public static Pose2d PRESET_MIDDLEMAN_1 = new Pose2d(45, -36, Math.toRadians(90));
-            public static Pose2d PRESET_MIDDLEMAN_2 = new Pose2d(65, -5, Math.toRadians(90));
             public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(65, -5, Math.toRadians(90));
-            public static Pose2d FIRST_PRESET_SAMPLE_PUSH = new Pose2d(65, -55, Math.toRadians(90));
             public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(70, -5, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_PUSH = new Pose2d(70, -55, Math.toRadians(90));
-
-            // I added this to help transition between placing position and collecting samples to place in basket or chamber
-            public static Vector2d RED_RIGHT_SAMPLE_MIDDLEMAN = new Vector2d(34, -40);
+            public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(34, -40);
 
             // I am adding this to push samples into human player zone
-            public static Pose2d RED_SAMPLE_PUSH_POSE_1 = new Pose2d(60, -10, Math.toRadians(90));
-            public static Pose2d RED_SAMPLE_PUSH_POSE_2 = new Pose2d(73, -10, Math.toRadians(90));
+            // ^ thanks for the comment deepak have you tried USING YOUR EYES
         }
 
         @Config
