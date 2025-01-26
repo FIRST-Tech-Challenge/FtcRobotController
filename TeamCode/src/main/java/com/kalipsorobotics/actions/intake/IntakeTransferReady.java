@@ -11,7 +11,11 @@ import org.checkerframework.checker.units.qual.K;
 
 public class IntakeTransferReady extends KActionSet {
 
-    public IntakeTransferReady(IntakeClaw intake){
+    public IntakeTransferReady(IntakeClaw intake) {
+
+        KServoAutoAction lockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
+        lockRatchet.setName("lockRatchet");
+        this.addAction(lockRatchet);
 
         KServoAutoAction closeClaw = new KServoAutoAction(intake.getIntakeClawServo(), IntakeClaw.INTAKE_CLAW_CLOSE);
         closeClaw.setName("closeClaw");

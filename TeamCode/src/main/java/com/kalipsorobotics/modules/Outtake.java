@@ -38,7 +38,8 @@ public class Outtake {
     public static final double OUTTAKE_PIVOT_PARKING_READY_POS = 0.8;
     public static final double OUTTAKE_PIVOT_DOWN_POS = 0.16;
 
-    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.40;         //increase to go pivot up, decrease
+    public static final double OUTTAKE_PIVOT_TRANSFER_READY_POS = 0.43; //0.4         //increase to go pivot up,
+    // decrease
     // to pivot down
 
     public static final double OUTTAKE_PIVOT_SPECIMEN_HANG_READY_POS = 1;

@@ -11,9 +11,10 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
-    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.67;       //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.65; //0.65       //increase to go down, decrease to
+    // go up
 
-    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.77;
+    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.9;
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
@@ -35,9 +36,11 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.48;
 
-    public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.5;       //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.48;  // 0.5     //increase to go down, decrease
+    // to go up
 
-    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.19;     //decrease to pivot back of the robot, increase to pivot to front
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.27; //0.25     //decrease to pivot back of the
+    // robot, increase to pivot to front
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.46;
 
@@ -49,7 +52,8 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.9; //0.85    //increase to go down, decrease to go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.73;   //decrease to move forward, increase to move back
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.8;   // 0.73 //decrease to move forward, increase
+    // to move back
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS = 0.455;
 
