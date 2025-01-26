@@ -35,7 +35,7 @@ public class Actions {
     public static void driveToBarFromInitialPositionForSpecimen(int specimen) {
 
 
-     while ((input.getTravelledDistance() < 19) && opModeisActive)  { //inches
+     while ((input.getTravelledDistance() < 21) && opModeisActive)  { //inches
        input.move(-30);
      }
      input.move(0);
@@ -65,7 +65,7 @@ public class Actions {
             throw new RuntimeException(e);
         }
 
-        a1.retractArm(-1000, pos);
+        a1.retractArm(-850, pos);
 
         try {
             Thread.sleep(1000);
@@ -81,79 +81,14 @@ public class Actions {
      a1.retractArm(-120, 0);
 
 
-//     while (input.getArmPos() < 1465) {
-//      input.arm(1465);
-//     }
-
-//     ExecutorService executor = Executors.newSingleThreadExecutor();
-    // ExecutorService executor1 = Executors.newSingleThreadExecutor();
-//     boolean step1Done = false;
-
-     //while (opModeisActive && !step1Done) {
-      //input.arm(1265);
-
-//      while (input.getUpArmPos() > -2550 && opModeisActive) {
-//       input.upArm(-50);
-//      }
-//       input.upArm(0);
-      //}
-    // }
-//
-//     CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-//          while (opModeisActive) {
-//           input.arm(1265);
-//          }
-//
-//          return "Hello from the future!";
-//     }, executor);
-//
-//        //uparm until -2750
-//
-//      while (input.getUpArmPos() < -1550 && opModeisActive) {
-//       input.upArm(50);
-//      }
-//
-//      input.upArm(0);
-//
-//
-//     //future.thenAccept(result -> System.out.println(result));
-//     executor.shutdownNow();
-//        try {
-//            future.get();
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        executor.shutdown();
-
-
-//     CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
-//         while (opModeisActive) {
-//          input.arm(1439);
-//         }
-//
-//      return "Hello from the future!";
-//     }, executor1);
-//
-//     future1.thenAccept(result -> System.out.println(result));
-//     executor1.shutdown();
-
-//     while (input.getUpArmPos() < -2070 && opModeisActive) {
-//      input.upArm(50);
-//     }
-//     input.upArm(0);
-
-
-
 
      //wait a bit
      //then arm 1548
      //wait a bit
      //up arm -1675
      //wait a bit
-//     //let go
-//     //reverse everything
+//     let go
+//     reverse everything
 //     input.claw(true,false);
 //
 //

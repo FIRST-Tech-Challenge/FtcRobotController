@@ -15,8 +15,8 @@ public class Constants {
     public static float KD = 0.03F;  // Derivative gain
 
     //servo positions
-    public static int SERVO_CLOSED = 50;
-    public static int SERVO_OPEN = 130;
+    public static int SERVO_CLOSED  = 270;
+    public static int SERVO_OPEN = 120;
 
     //Constants to find distances
     private static final double WHEEL_DIAMETER = 104; // Wheel diameter in millimeters

@@ -48,7 +48,6 @@ public class Input {
 
         setPoint = motors.getArmRestingPosition();
         prevTime = elapsedTime.milliseconds();
-
     }
 
     public void move(double power) {
@@ -70,7 +69,6 @@ public class Input {
     }
 
     public void strafe(double power) {
-
 
             motors.MoveMotor(Motors.Type.LeftFront, power); // left front
             motors.MoveMotor(Motors.Type.RightFront, -power); // right front
@@ -116,12 +114,12 @@ public class Input {
         return isSpin;
     }
 
-    public void claw(boolean releaseButton, boolean grabButton) {
+    public void claw(boolean openClaw, boolean closeClaw) {
 
-        if (grabButton) {
+        if (closeClaw) {
             servos.moveServo(Servos.Type.Claw, Constants.SERVO_OPEN);
         }
-        else if (releaseButton) {
+        else if (openClaw) {
             servos.moveServo(Servos.Type.Claw, Constants.SERVO_CLOSED);
         }
     }
@@ -135,7 +133,7 @@ public class Input {
             if (((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
                 realPower = power;
                 if (motors.getArmPosition() > 2250) {
-                    if (motors.getUpArmPosition() <= -2400) {
+                    if ((motors.getUpArmPosition() <= -2400) && (power > 0)) {
                         realPower = 0;
                     }
                 }
