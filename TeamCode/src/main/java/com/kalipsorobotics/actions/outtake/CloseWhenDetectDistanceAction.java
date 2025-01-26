@@ -8,6 +8,7 @@ import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.modules.RevDistance;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,16 +17,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class CloseWhenDetectDistanceAction extends KActionSet {
 
     PurePursuitAction purePursuitAction;
-    WheelOdometry wheelOdometry;
-    Outtake outtake;
-    RevDistance revDistance;
+    Rev2mDistanceSensor revDistance;
     double targetDistance;
 
+//    public CloseWhenDetectDistanceAction(RevDistance  revDistance, double targetDistance) {
+//        this(null, null, null, revDistance, targetDistance);
+//
+//    }
 
-    public CloseWhenDetectDistanceAction(Outtake outtake, PurePursuitAction purePursuitAction, WheelOdometry wheelOdometry, RevDistance revDistance, double targetDistance) {
-       this.purePursuitAction = purePursuitAction;
-       this.wheelOdometry = wheelOdometry;
-       this.outtake = outtake;
+    public CloseWhenDetectDistanceAction(Rev2mDistanceSensor revDistance, double targetDistance) {
        this.revDistance = revDistance;
        this.targetDistance = targetDistance;
     }
@@ -40,7 +40,7 @@ public class CloseWhenDetectDistanceAction extends KActionSet {
             return true;
         }
 
-        return purePursuitAction.getHasStarted() && checkDistance();
+        return checkDistance();
     }
 
     @Override

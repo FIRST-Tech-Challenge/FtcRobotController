@@ -4,6 +4,7 @@ import static com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip.SP
 
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
+import com.kalipsorobotics.actions.outtake.CloseWhenDetectDistanceAction;
 import com.kalipsorobotics.actions.outtake.MoveLSAction;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
@@ -11,6 +12,8 @@ import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.Outtake;
+import com.kalipsorobotics.modules.RevDistance;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
@@ -19,19 +22,23 @@ public class WallToBarHangRoundTrip extends KActionSet {
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
     //ASSUME ROBOT AT WALL READY FOR SPECIMEN
-    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, int hangPosY) {
+    public WallToBarHangRoundTrip(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revDistance, int hangPosY) {
 
-        WaitAction waitAtWall = new WaitAction(100);
-        waitAtWall.setName("waitAtWall");
-        this.addAction(waitAtWall);
+//        WaitAction waitAtWall = new WaitAction(100);
+//        waitAtWall.setName("waitAtWall");
+//        this.addAction(waitAtWall);
 
         WaitAction waitAtWallPurePursuit = new WaitAction(300);
         waitAtWallPurePursuit.setName("waitAtWallPurePursuit");
         this.addAction(waitAtWallPurePursuit);
 
+        CloseWhenDetectDistanceAction closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 44);
+        closeWhenDetectAction.setName("closeWhenDetectAction");
+        this.addAction(closeWhenDetectAction);
+
         KServoAutoAction closeOuttakeForSpecimen = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
         closeOuttakeForSpecimen.setName("closeOuttakeForSpecimen");
-        closeOuttakeForSpecimen.setDependentActions(waitAtWall);
+        closeOuttakeForSpecimen.setDependentActions(closeWhenDetectAction);
         this.addAction(closeOuttakeForSpecimen);
 
         PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/300.0); // Chunking pure pursuit
@@ -43,7 +50,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
 
         MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
         raiseSpecimen.setName("raiseSpecimen");
-        raiseSpecimen.setDependentActions(waitAtWall, closeOuttakeForSpecimen);
+        raiseSpecimen.setDependentActions(closeOuttakeForSpecimen);
         this.addAction(raiseSpecimen);
 
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake, 30);
