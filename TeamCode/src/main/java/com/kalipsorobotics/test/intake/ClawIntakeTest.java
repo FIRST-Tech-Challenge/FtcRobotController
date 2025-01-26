@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoController;
 
-@Disabled
+@TeleOp
 public class ClawIntakeTest extends LinearOpMode {
 
     @Override
@@ -43,33 +43,33 @@ public class ClawIntakeTest extends LinearOpMode {
             if (gamepad1.x) {
                 //close
                 intakeClawPos = intakeClawPos + 0.001;
-                intakeClaw.getIntakeClawServo().setPosition(0.365);
+                //intakeClaw.getIntakeClawServo().setPosition(0.365);
             } else if (gamepad1.b) {
                 //open
                 intakeClawPos = intakeClawPos - 0.001;
-                intakeClaw.getIntakeClawServo().setPosition(0.05);
+                //intakeClaw.getIntakeClawServo().setPosition(0.05);
             }
 
 
-            if (-gamepad1.right_stick_y != 0) {
-                intakeLinkagePos += 0.001 * gamepad1.right_stick_y;
-                if (intakeLinkagePos < 0.57) {
-                    intakeLinkagePos = 0.57;
-                }
-                if (intakeLinkagePos > 0.95) {
-                    intakeLinkagePos = 0.95;
-                }
-                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
-            }
+//            if (-gamepad1.right_stick_y != 0) {
+//                intakeLinkagePos += 0.001 * gamepad1.right_stick_y;
+//                if (intakeLinkagePos < 0.57) {
+//                    intakeLinkagePos = 0.57;
+//                }
+//                if (intakeLinkagePos > 0.95) {
+//                    intakeLinkagePos = 0.95;
+//                }
+//                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
+//            }
 
             if (-gamepad1.right_stick_y > 0.5) {
                 //extend
                 intakeLinkagePos += 0.001;
-                intakeClaw.getIntakeLinkageServo().setPosition(0.57);
+                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
             } else if (-gamepad1.right_stick_y < -0.5) {
                 //retract
                 intakeLinkagePos -= 0.001;
-                intakeClaw.getIntakeLinkageServo().setPosition(0.95);
+                intakeClaw.getIntakeLinkageServo().setPosition(intakeLinkagePos);
 
             }
 
@@ -108,10 +108,10 @@ public class ClawIntakeTest extends LinearOpMode {
 
             if (gamepad1.dpad_left) {
                 outtakeClawPos += 0.001;
-                outtake.getOuttakeClaw().setPosition(outtakeClawPos);
+                //outtake.getOuttakeClaw().setPosition(outtakeClawPos);
             } else if (gamepad1.dpad_right) {
                 outtakeClawPos -= 0.001;
-                outtake.getOuttakeClaw().setPosition(outtakeClawPos);
+                //outtake.getOuttakeClaw().setPosition(outtakeClawPos);
             }
 
             if (gamepad1.left_stick_y > 0.3) {
@@ -122,10 +122,11 @@ public class ClawIntakeTest extends LinearOpMode {
             telemetry.addData("outtakeClawPos", outtakeClawPos);
             telemetry.addData("intakeClawPos", intakeClawPos);
             telemetry.addData("intakeLinkagePos", intakeLinkagePos);
+            telemetry.addData("intakeBigPivot", intakeBigPivotPos);
+            telemetry.addData("intakeSmallPivot", intakeSmallPivotPos);
             telemetry.update();
         }
 
-        servoController.pwmDisable();
 
     }
 

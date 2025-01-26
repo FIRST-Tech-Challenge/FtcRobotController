@@ -7,6 +7,7 @@ import com.kalipsorobotics.actions.Action;
 import com.kalipsorobotics.actions.AutoRobotHangAction;
 import com.kalipsorobotics.actions.Init;
 import com.kalipsorobotics.actions.SampleEndToEndSequence;
+import com.kalipsorobotics.actions.SpecimenEndToEndSequence;
 import com.kalipsorobotics.actions.TransferAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.drivetrain.AngleLockTeleOp;
@@ -90,7 +91,7 @@ public class Teleop extends LinearOpMode {
         BasketReadyAction basketReadyAction = null;
         OuttakeTransferReady outtakeTransferReady = null;
         SampleEndToEndSequence sampleEndToEndSequence = null;
-        SampleEndToEndSequence specimenEndToEndSequence = null;
+        SpecimenEndToEndSequence specimenEndToEndSequence = null;
         SpecimenHang specimenHang = null;
         FunnelEndToEndAction intakeFunnelEndToEndAction = null;
         KServoAutoAction hangHook1Move = null;
@@ -626,7 +627,7 @@ public class Teleop extends LinearOpMode {
             if(specimenEndToEndSequencePressed) {
                 Log.d("backButton", " " + specimenEndToEndSequencePressed);
                 if(specimenEndToEndSequence == null || specimenEndToEndSequence.getIsDone()){
-                    specimenEndToEndSequence = new SampleEndToEndSequence(intakeClaw, outtake, Outtake.LS_DOWN_POS);
+                    specimenEndToEndSequence = new SpecimenEndToEndSequence(intakeClaw, outtake);
                     specimenEndToEndSequence.setName("specimenEndToEndSequence");
                     Log.d("backButton", "Creating sequence " + specimenEndToEndSequence);
 

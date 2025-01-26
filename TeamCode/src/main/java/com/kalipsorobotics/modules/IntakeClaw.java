@@ -6,15 +6,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class IntakeClaw {
     private static IntakeClaw single_instance = null;
-
+//0.0018
     //INTAKE READY
 
     public static final double INTAKE_BIG_SWEEP_PARALLEL_TO_ROBOT = 0.5;
 
-    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.65; //0.65       //increase to go down, decrease to
+    public static final double INTAKE_BIG_PIVOT_INTAKE_READY_POS = 0.597; //0.65   //increase to go down, decrease to
     // go up
 
-    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.9;
+    public static final double INTAKE_SMALL_PIVOT_INTAKE_READY_POS = 0.882;
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
@@ -22,13 +22,13 @@ public class IntakeClaw {
 
     //INTAKE SAMPLE IN FUNNEL
 
-    public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0.1;
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_READY_POS = 0.127;
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.075; //decrease to pivot back to the robot more
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_READY_POS = 0.3; //decrease to pivot back to the robot more
 
-    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.14;
+    public static final double INTAKE_SMALL_PIVOT_FUNNEL_GRAB_POS = 0.173;
 
-    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.01;
+    public static final double INTAKE_BIG_PIVOT_FUNNEL_GRAB_POS = 0.229;
 
     public static final double INTAKE_LINKAGE_EXTEND_POS = 0.62; //increase to retract more
 
@@ -36,10 +36,10 @@ public class IntakeClaw {
 
     public static final double INTAKE_BIG_SWEEP_TRANSFER_READY_POS = 0.48;
 
-    public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.48;  // 0.5     //increase to go down, decrease
+    public static final double INTAKE_BIG_PIVOT_TRANSFER_READY_POS = 0.495;  // 0.5     //increase to go down, decrease
     // to go up
 
-    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.27; //0.25     //decrease to pivot back of the
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_READY_POS = 0.19; //0.25     //decrease to pivot back of the
     // robot, increase to pivot to front
 
     public static final double INTAKE_SMALL_SWEEP_TRANSFER_READY_POS = 0.46;
@@ -50,10 +50,13 @@ public class IntakeClaw {
 
     public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.77; //increase to move more horizontal, decrease to move more vertical
 
-    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.9; //0.85    //increase to go down, decrease to go up
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.728; //0.85    //increase to go down, decrease to
+    // go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.8;   // 0.73 //decrease to move forward, increase
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.75;   // 0.73 //decrease to move forward, increase
     // to move back
+
+    public static final double INTAKE_SMALL_PIVOT_MIDDLE_TRANSFER_READY_POS = 0.002;
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS = 0.455;
 
@@ -114,31 +117,25 @@ public class IntakeClaw {
 
     private static void resetHardwareMap(HardwareMap hardwareMap, IntakeClaw intakeClaw) {
         intakeClaw.intakeLinkageServo = new KServo(hardwareMap.servo.get("intakeLinkage"), 45/1,
-                130,
-                0, false);
+                130, 0, false);
 
         intakeClaw.intakeBigSweepServo = new KServo(hardwareMap.servo.get("intakeBigSweep"), 60/0.25,
-                300,
-                0, false);
+                300, 0, false);
 
         intakeClaw.intakeBigPivotServo = new KServo(hardwareMap.servo.get("intakeBigPivot"), 60/0.11,
-                130,
-                0, false);
+                255, 0, false);
 
         intakeClaw.intakeSmallPivotServo = new KServo(hardwareMap.servo.get("intakeSmallPivot"), 60/0.11,
-                255,
-                0, false);
+                255, 0, false);
 
         intakeClaw.intakeSmallSweepServo = new KServo(hardwareMap.servo.get("intakeSmallSweep"), 60/0.25,
-                300,
-                0, false);
+                300, 0, false);
 
         intakeClaw.intakeClawServo = new KServo(hardwareMap.servo.get("intakeClaw"), 60/0.25,     //mini axon
-                255,
-                0, false);
+                255, 0, false);
+
         intakeClaw.intakeRatchetServo = new KServo(hardwareMap.servo.get("intakeRatchet"), 45/1,
-                180,
-                0, false);
+                180, 0, false);
     }
 
     public void init() {
