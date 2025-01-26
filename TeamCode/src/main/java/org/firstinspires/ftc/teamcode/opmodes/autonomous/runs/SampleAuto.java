@@ -9,13 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
 
 @Autonomous
+@SuppressWarnings("unused")
 public class SampleAuto extends CommandAutoOpMode {
 
-    boolean hold1End = false;
-    boolean hold2End = false;
-    boolean hold3End = false;
-
-    boolean inMatch = false;
+    boolean inMatch = true;
 
     @Config
     public static class PreloadConfig {
@@ -128,7 +125,6 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-
                 commandFactory.elbowToIntakePosition().andThen(commandFactory.sleep(400)).andThen(commandFactory.collapseSlider()).andThen(commandFactory.pivotToStart()),
 
                 commandFactory.pivotToInTake()
@@ -206,15 +202,7 @@ public class SampleAuto extends CommandAutoOpMode {
                         commandFactory.logDebug("sample 3 drive to sample pile step 1").andThen(commandFactory.driveToTarget(ToEndPositionConfig.stage1_x, ToEndPositionConfig.stage1_y, ToEndPositionConfig.stage1_heading, 0.13, .8, ToEndPositionConfig.stage1_tolerance, ToEndPositionConfig.stage1_timeout))
                 ),
 
-//                new ParallelCommandGroup(
-//                        commandFactory.sleep(300).andThen(commandFactory.collapseSlider()).andThen(commandFactory.pivotToStart()),
-//                        commandFactory.logDebug("sample 3 drive to sample pile step 2").andThen(commandFactory.driveToTarget(2300, 0, -90, .5, 1, 10)),
-//                        commandFactory.elbowToStartPosition()
-//                ),
-//
                 commandFactory.logDebug("sample 3 drive to sample pile step 2").andThen(commandFactory.driveToTarget(ToEndPositionConfig.stage2_x, ToEndPositionConfig.stage2_y, ToEndPositionConfig.stage2_heading, .2, .5, ToEndPositionConfig.stage2_tolerance, ToEndPositionConfig.stage2_timeout))
-                        //.alongWith(commandFactory.elbowToIntakePosition()).andThen(commandFactory.pivotToInTake()
-//                commandFactory.driveToTarget(2000, -120, -90, .13, 1, 10)
         );
     }
 }
