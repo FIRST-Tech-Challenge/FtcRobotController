@@ -74,6 +74,14 @@ public class CommandFactory {
         return  new TelemetryCommand(driveTrain, telemetry);
     }
 
+    public Command log(String tag, String msg) {
+        return new InstantCommand(() -> Log.i(tag, msg));
+    }
+
+    public Command logDebug(String msg) {
+        return log(CommonConstants.DEBUG_TAG, msg);
+    }
+
     public DriveToTargetCommand driveToTarget(double targetX, double targetY, double targetHeading, double minPower) {
         return new DriveToTargetCommand(driveTrain, telemetry, targetX, targetY, targetHeading, minPower, 1.0, 20);
     }
