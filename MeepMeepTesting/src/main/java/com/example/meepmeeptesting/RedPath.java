@@ -23,8 +23,6 @@ public class RedPath {
 
         Pose2d initialPose = new Pose2d(24, -61, Math.toRadians(90));
 
-        // vision here that outputs position
-        int visionOutputPosition = 1;
 
         TrajectoryActionBuilder tab1Traj = myBot.getDrive().actionBuilder(initialPose)
                 .waitSeconds(3)

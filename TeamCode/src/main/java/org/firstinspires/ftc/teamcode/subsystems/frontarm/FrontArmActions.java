@@ -31,9 +31,7 @@ public class FrontArmActions {
         frontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         startingPos = frontDrive.getCurrentPosition();
-        frontDrive.setPower(1);
-        frontDrive.setTargetPosition(startingPos);
-        frontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public class ExtendArm implements Action {
@@ -44,7 +42,7 @@ public class FrontArmActions {
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized){
                 frontDrive.setPower(1);
-                frontDrive.setTargetPosition(startingPos);
+                frontDrive.setTargetPosition(ticks);
                 frontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 initialized = true;
@@ -60,24 +58,24 @@ public class FrontArmActions {
     /*TODO Add retract arm Action
     *  Add servo control for each to align the spinner and slope*/
 
-//
-//    public class LiftDown implements Action {
-//        private boolean initialized = false;
-//        private int ticks = 50;
-//
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            if (!initialized){
-//                leftDrive.setTargetPosition(ticks);
-//                rightDrive.setTargetPosition(ticks);
-//                initialized = true;
-//            }
-//            // returns if the motors are still moving
-//            return rightDrive.isBusy() || leftDrive.isBusy();
-//        }
-//    }
-//
-//    public Action liftDown() {
-//        return new LiftActions.LiftDown();
-//    }
+    public class RetractArm implements Action {
+        private boolean initialized = false;
+        private int ticksSafeZone = 50; // TODO Record Tick Amount 1000 is place holder
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized){
+                frontDrive.setPower(1);
+                frontDrive.setTargetPosition(ticksSafeZone + startingPos);
+                frontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                initialized = true;
+            }
+            return frontDrive.isBusy();
+        }
+    }
+
+    public Action retractArm() {
+        return new RetractArm();
+    }
 }
