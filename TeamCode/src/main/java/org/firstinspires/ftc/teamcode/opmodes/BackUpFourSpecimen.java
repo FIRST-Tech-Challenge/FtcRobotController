@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@Autonomous(name = "Four Specimen Auto")
-public class FourSpecimenAuto extends CommandOpMode {
+@Autonomous(name = "BackUp Four Specimen Auto")
+public class BackUpFourSpecimen extends CommandOpMode {
 
     private Drivetrain drivetrain;
     private Claw claw;
@@ -129,7 +129,7 @@ public class FourSpecimenAuto extends CommandOpMode {
                 new TrajectoryCommand(goToThirdSample, drivetrain)
             ),
 //            new ExtendIntake(intake),
-            new PivotIntake(Intake.IntakeState.COLLECT, intake),
+//            new PivotIntake(Intake.IntakeState.COLLECT, intake),
             //new WaitCommand(100),
             new ParallelRaceGroup(
                 new TrajectoryCommand(pushThirdSample, drivetrain),

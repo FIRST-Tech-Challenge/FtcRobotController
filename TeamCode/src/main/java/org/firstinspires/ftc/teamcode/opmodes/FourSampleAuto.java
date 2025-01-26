@@ -92,7 +92,7 @@ public class FourSampleAuto extends CommandOpMode {
             new SetArmPosition(arm, Arm.ArmState.SCORE).withTimeout(1500),
             new SetArmPosition(arm, Arm.ArmState.INTAKE).withTimeout(250),
             new ParallelCommandGroup(
-                new ElevatorGoTo(elevator,0).withTimeout(500),
+                new ElevatorGoTo(elevator,0).withTimeout(1500),
                 new TrajectoryCommand(pickUpFirstSample, drivetrain)
             ),
             new SequentialCommandGroup(
