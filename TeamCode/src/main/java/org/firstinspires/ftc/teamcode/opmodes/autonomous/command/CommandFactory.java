@@ -75,7 +75,7 @@ public class CommandFactory {
     }
 
     public Command log(String tag, String msg) {
-        return new InstantCommand(() -> Log.i(tag, msg));
+        return new LogCommand(tag, msg);
     }
 
     public Command logDebug(String msg) {

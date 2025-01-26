@@ -49,7 +49,8 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         SpecimenSliderClaw  specimenSliderClaw = barebone ? null : new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
 
         commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, null, pivot,slider, specimenSlider, specimenSliderClaw);
-        Command finalGroup = new ParallelRaceGroup(commandFactory.sleep(29000), createCommand())
+        // sleep 30s after createCommand is a fill gap command to avoid IndexOutOfBoundException
+        Command finalGroup = new ParallelRaceGroup(commandFactory.sleep(29000), createCommand().andThen(commandFactory.sleep(30000)))
                 .andThen(new ParallelCommandGroup(
                         commandFactory.pivotToStart(),
                         commandFactory.sleep(200).andThen(commandFactory.collapseSlider()),

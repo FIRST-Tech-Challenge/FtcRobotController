@@ -151,7 +151,7 @@ public class DeliverySlider extends SonicSubsystemBase {
         recordedPosition = position;
         Log.i("armControl", "slider position = " + position + ", action: " + (motor.get() > 0 ? "extend" : (motor.get() < 0 ? "Collapse" : "Stop")) );
 
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
         if(addTelemetry) {
             telemetry.addData("slider target", currentTarget);
             telemetry.addData("slider current", position);

@@ -76,4 +76,10 @@ public abstract class SounderBotCommandBase extends CommandBase {
     protected boolean isDebugging() {
         return false;
     }
+
+    protected void onFlagEnabled(boolean flag, Runnable runnable) {
+        if (flag) {
+            runnable.run();
+        }
+    }
 }
