@@ -1,22 +1,29 @@
 package com.kalipsorobotics.test;
 
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.modules.IntakeClaw;
+import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.modules.RevDistance;
+import com.kalipsorobotics.utilities.KServo;
+import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp
 public class RevDistanceSensorTest extends LinearOpMode {
-    Rev2mDistanceSensor revDistance;
     @Override
     public void runOpMode() throws InterruptedException {
-        revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "Rev Distance");
+        Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance");
+        OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
+        Outtake outtake = Outtake.getInstance(opModeUtilities);
+
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addLine(revDistance.getDistance(DistanceUnit.MM) + "");
-            if (revDistance.getDistance(DistanceUnit.MM) < 40) {
+            if ((revDistance.getDistance(DistanceUnit.MM) < 45)) {
+                outtake.getOuttakeClaw().setPosition(Outtake.OUTTAKE_CLAW_CLOSE);
                 telemetry.addLine("sample grabbed");
             }
             telemetry.update();
