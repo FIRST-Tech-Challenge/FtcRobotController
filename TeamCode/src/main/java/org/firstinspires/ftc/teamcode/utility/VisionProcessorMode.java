@@ -8,5 +8,7 @@ public enum VisionProcessorMode {
     YELLOW_BLOB_ONLY,
     YELLOW_AND_RED_BLOB,
     YELLOW_AND_BLUE_BLOB,
+    RED_WALLPICKUP_BLOB,
+    BLUE_WALLPICKUP_BLOB,
     NONE
 }

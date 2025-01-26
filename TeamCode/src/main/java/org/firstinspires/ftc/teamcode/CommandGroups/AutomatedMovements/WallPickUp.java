@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.CommandGroups.ArmPositions.ArmStowHigh;
 import org.firstinspires.ftc.teamcode.Commands.Claw.CloseClaw;
 import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToPose;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToWallPickup;
 import org.firstinspires.ftc.teamcode.Commands.Pause;
 import org.firstinspires.ftc.teamcode.RobotContainer;
 import org.firstinspires.ftc.teamcode.utility.AutoFunctions;
@@ -49,13 +50,13 @@ public class WallPickUp extends SequentialCommandGroup {
 
                 // lifts the shoulder up 90+-60 degrees
                 // lifts the shoulder up to 135 degrees
-                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(46)),
+                new InstantCommand(() ->RobotContainer.shoulderJoint.RotateTo(38)),
 
                 // folds the elbow in 270
                 new InstantCommand(() ->RobotContainer.elbowJoint.RotateTo(270)),
 
                 // folds the wrist in 0
-                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(103)),
+                new InstantCommand(() -> RobotContainer.flappyFlappyWrist.RotateTo(95)),
 
                 // powers the wrist and moves it to straight position
                 new InstantCommand(() -> RobotContainer.wristRotateServo.RotateTo(0)),
@@ -90,11 +91,16 @@ public class WallPickUp extends SequentialCommandGroup {
 //                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(90.0)))),
 //                        AutoFunctions.redVsBlue(new Rotation2d(Math.toRadians(-90.0)))),
 
-                new MoveToPose(
-                        0.3,
-                        1.0,
-                        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(-90.0))))
-                ),
+                // perform a guided approach in to pick up specimen from wall
+                // new function Jan26/2025 - replaced previous unguided MoveToPose
+                new MoveToWallPickup(),
+
+                //new MoveToPose(
+                //        0.3,
+                //        1.0,
+                //        AutoFunctions.redVsBlue(new Pose2d(-1.2, 1.45, new Rotation2d(Math.toRadians(-90.0))))
+                //),
+
 //                // Zoe: This could likely be a good case for a simple MoveToPose()
 //                // This might allow Lonan to have an easier time to predict the robot's approach on pickup.
 //                new MoveToPose(

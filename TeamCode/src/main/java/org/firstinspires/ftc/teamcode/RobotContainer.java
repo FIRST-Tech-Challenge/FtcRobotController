@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Commands.Claw.OpenClaw;
 import org.firstinspires.ftc.teamcode.Commands.Drive.GoToNextDropOff;
 import org.firstinspires.ftc.teamcode.Commands.Drive.ManualDrive;
 import org.firstinspires.ftc.teamcode.Commands.Claw.ToggleClaw;
+import org.firstinspires.ftc.teamcode.Commands.Drive.MoveToWallPickup;
 import org.firstinspires.ftc.teamcode.Commands.SelectCommandOnMode;
 import org.firstinspires.ftc.teamcode.Commands.TemplateCommand;
 import org.firstinspires.ftc.teamcode.Commands.resetLift;

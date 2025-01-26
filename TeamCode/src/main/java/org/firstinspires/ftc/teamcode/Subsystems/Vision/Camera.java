@@ -39,6 +39,8 @@ public class Camera extends SubsystemBase {
     private volatile ColorBlobLocatorProcessor redBlobProcessor;
     private volatile ColorBlobLocatorProcessor blueBlobProcessor;
     private volatile ColorBlobLocatorProcessor yellowBlobProcessor;
+    private volatile ColorBlobLocatorProcessor redWallBlobProcessor;
+    private volatile ColorBlobLocatorProcessor blueWallBlobProcessor;
 
     // current selected vision mode
     private VisionProcessorMode currentMode = VisionProcessorMode.NONE;
@@ -126,12 +128,56 @@ public class Camera extends SubsystemBase {
                 ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
         yellowBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
 
+        // Build the wall pickup RED blob vision processor
+        redWallBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.RED)
+                //.setTargetColorRange(new ColorRange(ColorSpace.YCrCb,
+                //                    new Scalar(19.8, 164.0, 68.0),
+                //                    new Scalar(171.4, 200.0, 120.0)))
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, -1.0))
+                .setBlurSize(1)
+                .setErodeSize(3)
+                .setDilateSize(1)
+                .setDrawContours(true)
+                .build();
+        redWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 6000, 40000));
+        redWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.0, 2.0));
+        redWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
+        redWallBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
+
+        // Build the wall pickup BLUE blob vision processor
+        blueWallBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.BLUE)
+                //.setTargetColorRange(new ColorRange(ColorSpace.YCrCb,
+                //                    new Scalar(55.3, 90.7, 141.7),
+                //                    new Scalar(181.3, 182.8, 255.0)))
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+                //.setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, 0.0))
+                .setBlurSize(2)
+                .setErodeSize(3)
+                .setDilateSize(2)
+                .setDrawContours(true)
+                .build();
+        blueWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, 2000, 40000));
+        //blueWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+        //        ColorBlobLocatorProcessor.BlobCriteria.BY_ASPECT_RATIO, 1.0, 2.0));
+        blueWallBlobProcessor.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_DENSITY, 0.8, 1.0));
+        blueWallBlobProcessor.setSort(new ColorBlobLocatorProcessor.BlobSort(ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA, SortOrder.DESCENDING));
+
         // Build the camera vision portal
         visionPortal = new VisionPortal.Builder()
                 .setCamera(RobotContainer.ActiveOpMode.hardwareMap.get(WebcamName.class, cameraName))
                 .setCameraResolution(new Size(640, 480))
                 //.setCameraResolution(new Size(1280,720)) if have an HD camera
-                .addProcessors(aprilTagProcessor, redBlobProcessor, blueBlobProcessor, yellowBlobProcessor)
+                .addProcessors(aprilTagProcessor, redBlobProcessor, blueBlobProcessor, yellowBlobProcessor, redWallBlobProcessor, blueWallBlobProcessor)
                 .enableLiveView(false)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
@@ -146,7 +192,6 @@ public class Camera extends SubsystemBase {
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-
     }
 
     // use this function to set vision processing mode of the camera
@@ -165,7 +210,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, false);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
-
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             case RED_BLOB_ONLY:
                 currentMode = VisionProcessorMode.RED_BLOB_ONLY;
@@ -175,6 +221,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, true);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             case BLUE_BLOB_ONLY:
                 currentMode = VisionProcessorMode.BLUE_BLOB_ONLY;
@@ -184,6 +232,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, false);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, true);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             case YELLOW_BLOB_ONLY:
                 currentMode = VisionProcessorMode.YELLOW_BLOB_ONLY;
@@ -193,6 +243,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, false);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             case YELLOW_AND_RED_BLOB:
                 currentMode = VisionProcessorMode.YELLOW_AND_RED_BLOB;
@@ -202,6 +254,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, true);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             case YELLOW_AND_BLUE_BLOB:
                 currentMode = VisionProcessorMode.YELLOW_AND_BLUE_BLOB;
@@ -211,6 +265,30 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, false);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, true);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, true);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
+                break;
+            case RED_WALLPICKUP_BLOB:
+                currentMode = VisionProcessorMode.RED_WALLPICKUP_BLOB;
+                //setCameraExposure(60, 350);
+                // SetAutoCameraExposure();
+                visionPortal.setProcessorEnabled(aprilTagProcessor, false);
+                visionPortal.setProcessorEnabled(redBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueBlobProcessor, false);
+                visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, true);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
+                break;
+            case BLUE_WALLPICKUP_BLOB:
+                currentMode = VisionProcessorMode.BLUE_WALLPICKUP_BLOB;
+                //setCameraExposure(60, 350);
+                // SetAutoCameraExposure();
+                visionPortal.setProcessorEnabled(aprilTagProcessor, false);
+                visionPortal.setProcessorEnabled(redBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueBlobProcessor, false);
+                visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, true);
                 break;
             case NONE:
                 currentMode = VisionProcessorMode.NONE;
@@ -219,6 +297,8 @@ public class Camera extends SubsystemBase {
                 visionPortal.setProcessorEnabled(redBlobProcessor, false);
                 visionPortal.setProcessorEnabled(blueBlobProcessor, false);
                 visionPortal.setProcessorEnabled(yellowBlobProcessor, false);
+                visionPortal.setProcessorEnabled(redWallBlobProcessor, false);
+                visionPortal.setProcessorEnabled(blueWallBlobProcessor, false);
                 break;
             default:
                 // don't change anything
@@ -283,9 +363,17 @@ public class Camera extends SubsystemBase {
             case YELLOW_AND_RED_BLOB:
                 blobs = yellowBlobProcessor.getBlobs();
                 blobs.addAll(redBlobProcessor.getBlobs());
+                break;
             case YELLOW_AND_BLUE_BLOB:
                 blobs = yellowBlobProcessor.getBlobs();
                 blobs.addAll(blueBlobProcessor.getBlobs());
+                break;
+            case RED_WALLPICKUP_BLOB:
+                blobs = redWallBlobProcessor.getBlobs();
+                break;
+            case BLUE_WALLPICKUP_BLOB:
+                blobs = blueWallBlobProcessor.getBlobs();
+                break;
             default:
                 blobs = new ArrayList<>();
         }
@@ -299,7 +387,7 @@ public class Camera extends SubsystemBase {
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
         //ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
-        blobs = Collections.singletonList(blobs.get(0));
+        //blobs = Collections.singletonList(blobs.get(0));
         return blobs;
     }
 
