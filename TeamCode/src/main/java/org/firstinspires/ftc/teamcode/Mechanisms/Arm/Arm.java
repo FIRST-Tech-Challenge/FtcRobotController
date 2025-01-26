@@ -19,7 +19,7 @@ public class Arm {
     public static double armSpecimenExtend = 0;
     public static double wristExtend = 1;
     public static double wristRetract = 0.55;
-    public static double wristSpecimenExtend = 0.7q;
+    public static double wristSpecimenExtend = 0.7;
     public static double armNeutral = 0.75;
     public ElapsedTime timer = new ElapsedTime();
     public Arm(HardwareMap hardwareMap) {
