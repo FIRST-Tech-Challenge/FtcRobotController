@@ -61,6 +61,7 @@ public class SampleAuto extends CommandAutoOpMode {
     }
     @Config
     public static class Sample3Config {
+        public static boolean skipIntake = true;
 
         public static int beforeIntakeDrive_targetX = 230;
         public static int beforeIntakeDrive_targetY = 550;
@@ -73,14 +74,10 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int IntakeFromGroundTimeout = 5000;
 
 
-        public static int ToDeliveryDrive_TargetX = 300;
-        public static int ToDeliveryDrive_TargetY = 400;
-        public static int ToDeliveryDrive_TargetHeading = 0;
+        public static int ToDeliveryDrive_TargetX = -10;
+        public static int ToDeliveryDrive_TargetY = 450;
+        public static int ToDeliveryDrive_TargetHeading = -45;
         public static int ToDeliveryDrive_DistanceTolerance = 10;
-        public static int AfterDeliveryExtendDrive_TargetX = 80;
-        public static int AfterDeliveryExtendDrive_TargetY = 440;
-        public static int AfterDeliveryExtendDrive_TargetHeading = -45;
-        public static int AfterDeliveryExtendDrive_DistanceTolerance = 10;
     }
 
     private boolean tryGetDevBoolean(boolean val) {
@@ -92,7 +89,7 @@ public class SampleAuto extends CommandAutoOpMode {
         boolean skipOuttakePreloaded = tryGetDevBoolean(PreloadConfig.skipOuttake);
         boolean skipIntakeSample1 = tryGetDevBoolean(Sample1Config.skipIntake);
         boolean skipIntakeSample2 = tryGetDevBoolean(Sample2Config.skipIntake);
-        boolean skipIntakeSample3 = tryGetDevBoolean(true);
+        boolean skipIntakeSample3 = tryGetDevBoolean(Sample3Config.skipIntake);
 
         telemetry.addData("skip out take preloaded", skipOuttakePreloaded);
         telemetry.addData("skip intake sample 1", skipIntakeSample1);
@@ -177,34 +174,19 @@ public class SampleAuto extends CommandAutoOpMode {
                 commandFactory.sleep(300),
                 skipIntakeSample3 ? commandFactory.doNothing() : commandFactory.intakeFromGround(Sample3Config.pivotToGroundPosition, Sample3Config.IntakeFromGroundTimeout),
 
-//                commandFactory.inCaseSampleIntakeFailed("Sample 3", new SequentialCommandGroup(
-//                        commandFactory.pivotToIntakeRetry(),
-//                        commandFactory.pivotToGroundInTakeBegin(),
-//                        commandFactory.intakeFromGroundForSample3(6000)
-//                )),
-
                 new ParallelCommandGroup(
                     commandFactory.elbowToSpecimenPosition(),
                     commandFactory.pivotToDelivery()
 
                 ),
 
-                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
                 commandFactory.logDebug("sample 3 extend for delivery").andThen(commandFactory.extendSlider()),
-                commandFactory.logDebug("sample 3 approach to basket").andThen(commandFactory.driveToTarget(Sample3Config.AfterDeliveryExtendDrive_TargetX, Sample3Config.AfterDeliveryExtendDrive_TargetY, Sample3Config.AfterDeliveryExtendDrive_TargetHeading, 0.13, .8, Sample3Config.AfterDeliveryExtendDrive_DistanceTolerance)),
-
+                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
 
                 // Sample #3
                 skipIntakeSample3 ? commandFactory.doNothing() : commandFactory.outtake(),//.andThen(new InstantCommand(() -> hold3End = true)),
                 commandFactory.logDebug("sample 3 drive to sample pile step 1").andThen(commandFactory.driveToTarget(300, 420, 0, 0.13, .8, 10)),
                 //endregion sample #3
-
-//                new ParallelCommandGroup(
-//                    commandFactory.pivotToStart(),
-//                    commandFactory.collapseSlider(),
-//                    commandFactory.driveToTarget(2600, -290, -120, .13, 1, 10),
-//                    commandFactory.elbowToStartPosition()
-//                )
 
                 new ParallelCommandGroup(
                         commandFactory.sleep(300).andThen(commandFactory.collapseSlider()).andThen(commandFactory.pivotToStart()),
