@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         // Note for FTC Teams: Do not modify this yourself.
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.0'
     }
 }
 
@@ -21,9 +21,17 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        maven { url = 'https://maven.firstinspires.org/' }
     }
 }
 
 repositories {
     mavenCentral()
+}
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
