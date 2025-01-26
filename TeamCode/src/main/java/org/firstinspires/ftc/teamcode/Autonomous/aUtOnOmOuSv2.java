@@ -114,7 +114,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 //            Actions.hangAndReleaseSpecimen();
 //
 //            //Step 9
-            Actions.park();
+            //Actions.park();
 
 
 //            Actions.driveBehindSampleFromLocation(1, "human player");

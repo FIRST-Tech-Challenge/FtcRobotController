@@ -49,7 +49,7 @@ public class TeleMain extends LinearOpMode {
             input.move(move);
             input.spin(spin);
             input.strafe(strafe);
-            input.claw(gamepad2.a, gamepad2.b);
+            input.claw(gamepad2.b, gamepad2.a);
             input.upArm(armRaise);
 
             // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
