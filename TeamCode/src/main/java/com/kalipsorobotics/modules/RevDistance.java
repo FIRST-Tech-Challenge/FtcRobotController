@@ -1,13 +1,16 @@
 package com.kalipsorobotics.modules;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class RevDistance {
-    RevDistance revDistance;
-    public RevDistance (HardwareMap hardwareMap) {
-        revDistance = hardwareMap.get(RevDistance.class, "Rev Distance");
+    Rev2mDistanceSensor revDistance;
+    public RevDistance (Rev2mDistanceSensor revDistance1) {
+        revDistance = revDistance1;
     }
-    public double getDistance () {
-        return revDistance.getDistance();
+    public double getDistance (DistanceUnit distanceUnit) {
+        return revDistance.getDistance(distanceUnit);
     }
 }
