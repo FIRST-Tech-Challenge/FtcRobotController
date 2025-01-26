@@ -38,7 +38,7 @@ public class MoveToPickup extends CommandBase {
     @Override
     public void execute() {
         double Target_X = 280.0; // was (double) (315 + 330) / 2 before flip // 269.0
-        double Target_Y = 240.0; // was (double) (325 + 315) / 2 before flip // 355.0
+        double Target_Y = 320.0; // was (double) (325 + 315) / 2 before flip // 355.0
         xError = Target_X - RobotContainer.piece_center_X;
         yError = Target_Y - RobotContainer.piece_center_Y;
 
