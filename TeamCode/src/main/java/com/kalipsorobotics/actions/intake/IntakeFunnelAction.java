@@ -3,11 +3,8 @@ package com.kalipsorobotics.actions.intake;
 import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
-import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
-
-import org.checkerframework.checker.units.qual.K;
 
 public class IntakeFunnelAction extends KActionSet {
 
@@ -29,6 +26,23 @@ public class IntakeFunnelAction extends KActionSet {
         closeClaw.setName("closeClaw");
         closeClaw.setDependentActions(funnelMoveBigPivot, funnelMoveSmallPivot, wait);
         this.addAction(closeClaw);
+
+        KServoAutoAction funnelMoveSmallPivot2 = new KServoAutoAction(intake.getIntakeSmallPivotServo(),
+                IntakeClaw.INTAKE_SMALL_PIVOT_FUNNEL_READY_POS);
+        funnelMoveSmallPivot2.setName("funnelMoveSmallPivot2");
+        this.addAction(funnelMoveSmallPivot2);
+        funnelMoveSmallPivot2.setDependentActions(closeClaw);
+
+//        KServoAutoAction unlockRatchet = new KServoAutoAction(intake.getIntakeRatchetServo(),
+//                IntakeClaw.INTAKE_RATCHET_UNLOCK_POS);
+//        unlockRatchet.setName("unlockRatchet");
+//        this.addAction(unlockRatchet);
+//
+//        KServoAutoAction extendLinkageTransfer = new KServoAutoAction(intake.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_SAMPLE_TRANSFER_READY_HALF_POS);
+//        extendLinkageTransfer.setName("extendLinkageTransfer");
+//        this.addAction(extendLinkageTransfer);
+//        extendLinkageTransfer.setDependentActions(closeClaw);
+
 
 //        KServoAutoAction moveBigPivot2 = new KServoAutoAction(intake.getIntakeBigPivotServo(), IntakeClaw.INTAKE_BIG_PIVOT_TRANSFER_READY_POS);
 //        moveBigPivot2.setName("moveBigPivot");
