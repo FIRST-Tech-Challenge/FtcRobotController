@@ -47,7 +47,7 @@ public class ITDCons {
     public static int BucketTarget = 50000;
     public static int SpecimenTarget = 28000;
     public static int ReleaseTarget = 26000;
-    public static int intermediateTarget = 26000;
+    public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
 
