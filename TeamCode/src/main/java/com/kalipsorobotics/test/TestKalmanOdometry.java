@@ -5,10 +5,8 @@ package com.kalipsorobotics.test;
 import com.kalipsorobotics.localization.KalmanFilter;
 import com.kalipsorobotics.localization.OdometrySpark;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.kalipsorobotics.localization.OdometrySpark;
 
 import org.opencv.core.Point;
 
