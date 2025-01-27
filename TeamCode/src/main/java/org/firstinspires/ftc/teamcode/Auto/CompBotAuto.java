@@ -24,61 +24,23 @@ public class CompBotAuto extends LinearOpMode {
 
   GoBildaPinpointDriver odometry;
 
-  private void center_wheel_steering(AnalogInput analogInput, Servo servo, double desired_normalized_angle)
-  {
-    double pot_voltage = analogInput.getVoltage();
-    double max_voltage = 3.326;
-    double normalized_voltage = pot_voltage / max_voltage;
 
-    // 0.5 here is the desired angle
-    double delta_to_reference = desired_normalized_angle - normalized_voltage;
-
-    telemetry.addData("Norm:  ", normalized_voltage);
-    telemetry.addData("Delta: ", delta_to_reference);
-    telemetry.update();
-
-    double tolerance = 0.01;
-
-    if (delta_to_reference < (-1*tolerance))
-    {
-      servo.setPosition(0.55);
-    }
-    else if (delta_to_reference > tolerance)
-    {
-      servo.setPosition(0.45);
-    }
-    else
-    {
-      servo.setPosition(0.5);
-    }
-  }
 
   @Override
   public void runOpMode() throws InterruptedException {
     initRobot(this);
 
     waitForStart();
+    mek.homeArm();
+    driveBase.alginWheels();
 
     while(true)
     {
-      center_wheel_steering(driveBase.servoInputFL, driveBase.servoFL, 0.4);
-      center_wheel_steering(driveBase.servoInputFR, driveBase.servoFR, 0.4);
-      center_wheel_steering(driveBase.servoInputBL, driveBase.servoBL, 0.4);
-      center_wheel_steering(driveBase.servoInputBR, driveBase.servoBR, 0.4);
+      driveBase.set_Servo_Angle(driveBase.servoInputFL, driveBase.servoFL, 0.4);
+      driveBase.set_Servo_Angle(driveBase.servoInputFR, driveBase.servoFR, 0.4);
+      driveBase.set_Servo_Angle(driveBase.servoInputBL, driveBase.servoBL, 0.4);
+      driveBase.set_Servo_Angle(driveBase.servoInputBR, driveBase.servoBR, 0.4);
     }
-
-//    mek.homeArm();
-//    //driveBase.wheelAngle = 180;;
-//    if(opModeIsActive()) {
-//      //double drvAng = driveBase.wheelAngle;
-//      double drvAng = 180;
-//      // alignWheels locks the wheels in transit
-//      // In auto change angle as require
-//      driveBase.alignWheels(drvAng);
-//
-//
-//      //driveBase.driveDist(2.0, .5);// alignWheels is called within driveDist
-//    }
   }// end runOpMode
 
   public void initRobot(LinearOpMode opMode){

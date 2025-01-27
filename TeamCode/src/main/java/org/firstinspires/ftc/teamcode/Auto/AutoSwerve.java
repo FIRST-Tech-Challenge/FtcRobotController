@@ -69,6 +69,7 @@ public class AutoSwerve {
   // distance to drive by encoder
   // turns on motor for a drive distance
   // dist in meters
+  //TODO: revise to use new code
 public void driveDist(double dist, double mSpd){
     if(mSpd < .3)mSpd = 0.3;
     if(mSpd > 1.0)mSpd = 1.0;
@@ -86,8 +87,8 @@ public void driveDist(double dist, double mSpd){
             motorFR.isBusy()&&motorBL.isBusy()&&motorBR.isBusy())){
       alignWheels(wheelAngle);// compensate for drift
     }
-    stopMotor();
-}
+    forward(0);
+  }
 
   //odo.getPosX is forward on robot
   public void forward(double pwr){
@@ -96,15 +97,65 @@ public void driveDist(double dist, double mSpd){
     motorFL.setPower(pwr);
     motorFR.setPower(pwr);
   }
-  public void stopMotor(){
-    double mpwr = 0.0;
-    motorBL.setPower(mpwr);
-    motorBR.setPower(mpwr);
-    motorFL.setPower(mpwr);
-    motorFR.setPower(mpwr);
+
+  public void alginWheels(){
+    double delta=1;
+    AnalogInput tempInput = servoInputFL;
+    Servo temp = servoFL;
+    for(int i = 0;i<4;i++){
+      if(i==1){
+        tempInput = servoInputFR;
+        temp = servoFR;
+      }
+      else if(i==2){
+        tempInput = servoInputBL;
+        temp = servoBL;
+      }
+      else if(i==3){
+        tempInput = servoInputBR;
+        temp = servoBR;
+      }
+      while(delta!=.0){
+        set_Servo_Angle(tempInput,temp,0.5);
+      }
+    }
   }
+
+  //TODO: Incorporate other code to use this method
+  public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
+    double pot_voltage = analogInput.getVoltage();
+    double max_voltage = 3.326;
+    double normalized_voltage = pot_voltage / max_voltage;
+
+    // 0.5 here is the desired angle
+    double delta_to_reference = desired_normalized_angle - normalized_voltage;
+
+    opMode.telemetry.addData("Norm:  ", normalized_voltage);
+    opMode.telemetry.addData("Delta: ", delta_to_reference);
+    opMode.telemetry.update();
+
+    double tolerance = 0.01;
+
+    if (delta_to_reference < (-1*tolerance))
+    {
+      servo.setPosition(0.55);
+      return -1;
+    }
+    else if (delta_to_reference > tolerance)
+    {
+      servo.setPosition(0.45);
+      return 1;
+    }
+    else
+    {
+      servo.setPosition(0.5);
+      return 0;
+    }
+  }
+
   // align wheels has a angle always set where alignwheels is
   // constantly checking for the turn error and eventually compensating
+  //TODO: decide on whether to delete this because of new code added above
   public void alignWheels(double wang){
     if(wang > 359.0) wang = 359.0;
     if(wang < 0.0) wang = 0.0;
