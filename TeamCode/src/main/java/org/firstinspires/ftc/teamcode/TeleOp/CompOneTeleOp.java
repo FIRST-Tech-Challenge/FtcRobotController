@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Libs.AR.AR_Arm;
-import org.firstinspires.ftc.teamcode.Libs.AR.MecanumDrive2;
+import org.firstinspires.ftc.teamcode.Libs.AR.MecanumDriveCompOne;
 
 @TeleOp(name = "CompOne TeleOp", group = "TeleOp")
 public class CompOneTeleOp extends LinearOpMode
 {
-    private MecanumDrive2 mecanumDrive;
+    private MecanumDriveCompOne mecanumDrive;
 
     private AR_Arm arm;
 
@@ -17,7 +17,7 @@ public class CompOneTeleOp extends LinearOpMode
     public void runOpMode()
     {
         // Initialize the drivetrain
-        mecanumDrive = new MecanumDrive2(this);
+        mecanumDrive = new MecanumDriveCompOne(this);
         arm = new AR_Arm(this);
 
         waitForStart();
