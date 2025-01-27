@@ -46,8 +46,7 @@ public class AutoSpecimen extends LinearOpMode {
         sleep(1000);
 
         Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance");
-
-
+        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
@@ -74,7 +73,7 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, 190);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, revDistance2,190);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoSpecimen.addAction(wallToBarHangAction);

@@ -16,16 +16,24 @@ public class RevDistanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Rev2mDistanceSensor revDistance = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance");
+        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = Outtake.getInstance(opModeUtilities);
 
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addLine(revDistance.getDistance(DistanceUnit.MM) + "");
+            telemetry.addLine(revDistance2.getDistance(DistanceUnit.MM) + "");
             if ((revDistance.getDistance(DistanceUnit.MM) < 45)) {
                 outtake.getOuttakeClaw().setPosition(Outtake.OUTTAKE_CLAW_CLOSE);
                 telemetry.addLine("sample grabbed");
             }
+
+            else if ((revDistance2.getDistance(DistanceUnit.MM) < 100)) {
+                outtake.getOuttakeClaw().setPosition(Outtake.OUTTAKE_CLAW_CLOSE);
+                telemetry.addLine("specimen ready");
+            }
+
             telemetry.update();
         }
     }

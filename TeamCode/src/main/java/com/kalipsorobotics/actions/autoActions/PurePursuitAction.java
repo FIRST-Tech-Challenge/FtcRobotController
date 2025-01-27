@@ -170,7 +170,13 @@ public class PurePursuitAction extends Action {
     public boolean checkDoneCondition() {
         return isDone;
     }
-
+        @Override
+        public void setIsDone(boolean isDone) {
+            this.isDone = isDone;
+            if (isDone) {
+                driveTrain.setPower(0);
+            }
+        }
     @Override
     public void update() {
         if (isDone) {

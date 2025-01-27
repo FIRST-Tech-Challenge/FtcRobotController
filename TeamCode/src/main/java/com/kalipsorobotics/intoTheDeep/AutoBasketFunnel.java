@@ -26,6 +26,7 @@ import com.kalipsorobotics.modules.IMUModule;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -51,6 +52,8 @@ public class AutoBasketFunnel extends LinearOpMode {
         IMUModule.setInstanceNull();
         IMUModule imuModule = IMUModule.getInstance(opModeUtilities);
         sleep(1000);
+
+        Rev2mDistanceSensor revDistance2 = hardwareMap.get(Rev2mDistanceSensor.class, "revDistance2");
 
         WheelOdometry.setInstanceNull();
         WheelOdometry wheelOdometry = WheelOdometry.getInstance(opModeUtilities, driveTrain, imuModule, 0, 0, 0);
@@ -78,7 +81,7 @@ public class AutoBasketFunnel extends LinearOpMode {
         redAutoBasket.addAction(delayBeforeStart);
 
         //================begin of first specimen====================
-        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, -190);
+        WallToBarHangAction wallToBarHangAction = new WallToBarHangAction(driveTrain, wheelOdometry, outtake, revDistance2,-190);
         wallToBarHangAction.setName("wallToBarHangAction");
         wallToBarHangAction.setDependentActions(delayBeforeStart);
         redAutoBasket.addAction(wallToBarHangAction);
