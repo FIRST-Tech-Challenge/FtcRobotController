@@ -32,14 +32,8 @@ public class PinpointDrive extends MecanumDrive {
          */
         //These are tuned for 3110-0002-0001 Product Insight #1
         // RR localizer note: These units are inches, presets are converted from mm (which is why they are inexact)
-//        public double xOffset = -3.3071;
-//        public double yOffset = -6.6142;
-//        public double xOffset = .4511;
-//        public double yOffset = -.0288; //5.25;
-//          public double xOffset = 0.0288;
-//          public double yOffset = -0.4511; //5.25;
-        public double xOffset = 0.2163536055238626;
-        public double yOffset = -1.0117115597703905;
+        public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
+        public double yOffset = -1.2229245167313665;
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -58,7 +52,7 @@ public class PinpointDrive extends MecanumDrive {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-        public GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
+        public GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         public GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
     }
 
