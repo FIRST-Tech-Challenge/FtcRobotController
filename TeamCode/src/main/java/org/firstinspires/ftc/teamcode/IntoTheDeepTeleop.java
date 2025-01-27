@@ -18,7 +18,6 @@ public class IntoTheDeepTeleop extends OpMode {
     private TouchSensor intakeTouchSensor;
 
     private static final double BACK_WHEEL_RATIO = 2.0 / 3.0; // 3:2 sprocket ratio
-    int tiltNum = 0;
 
     boolean liftHoldingTrigger = false; // flag to determine if lift trigger is being held
     boolean posUpdated = true; // flag to determine if lift position has been updated
