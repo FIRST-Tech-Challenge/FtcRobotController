@@ -5,8 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.TeleOp.TeleOp_5518;
 
-public class MecanumDriveCompOne {
+public class MecanumDrive_5518 {
     private double y; //value of y on joystick
     private double x; //value of x on joystick
     private double rx; //rotation value
@@ -24,6 +25,7 @@ public class MecanumDriveCompOne {
 
     private double boost = 0.5;
 
+
     private DcMotor frontLeft, frontRight, backLeft, backRight;
 
     // ToDo: Remove this commented code once we know the GoBilda IMU is working
@@ -33,9 +35,9 @@ public class MecanumDriveCompOne {
     IMU imu;
 
     LinearOpMode bot;
-    CompTwoTeleOp secondbot;
+    TeleOp_5518 secondbot;
 
-    public MecanumDriveCompOne(LinearOpMode iBot)
+    public MecanumDrive_5518(LinearOpMode iBot)
     {
         bot = iBot;
         frontLeft = iBot.hardwareMap.dcMotor.get("left_front_mtr");
