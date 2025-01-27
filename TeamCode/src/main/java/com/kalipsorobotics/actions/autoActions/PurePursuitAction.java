@@ -103,13 +103,30 @@ public class PurePursuitAction extends Action {
     }
 
     public void addPoint(double x, double y, double headingDeg) {
-        pathPoints.add(new Position(x, y, Math.toRadians(headingDeg)));
+        double headingRad = Math.toRadians(headingDeg);
+        double[] adaptiveP = calcAdaptiveP(x, y, headingRad);
+        pathPoints.add(new Position(x, y, headingRad, adaptiveP[0], adaptiveP[1]));
         Log.d("purepursaction", "added point " + x + ", " + y);
     }
 
     public void addPoint(double x, double y, double headingDeg, double pXY, double pAngle) {
         pathPoints.add(new Position(x, y, Math.toRadians(headingDeg), pXY, pAngle));
         Log.d("purepursaction", "added point " + x + ", " + y);
+    }
+
+    public double[] calcAdaptiveP(double x, double y, double theta) {
+        // basically what I'm trying to do here is add to P_XY and P_ANGLE for the specific point depending on how far we move & turn,
+        // so it doesn't yet correct for overshooting small distances
+        // (if something broke auto it was probably this)
+        Position pos = pathPoints.isEmpty() ? new Position(0, 0, 0) : pathPoints.get(pathPoints.size() - 1);
+        double actionDistance = pos.distanceTo(new Position(x, y, theta));
+        double headingDelta = Math.abs(pos.getTheta() - theta);
+        double adaptiveXY = P_XY + actionDistance / 1e6;
+        double adaptiveTheta = P_ANGLE * (1 + headingDelta / 10);
+
+        Log.d("purepursaction_adaptiveP", String.format("action distance %f, P increased from %f to %f", actionDistance, P_XY, adaptiveXY));
+        Log.d("purepursaction_adaptiveP", String.format("heading delta %f, P increased from %f to %f", headingDelta, P_ANGLE, adaptiveTheta));
+        return new double[]{adaptiveXY, adaptiveTheta};
     }
 
     public void setPAngle(double p) {
@@ -181,9 +198,6 @@ public class PurePursuitAction extends Action {
         currentLookAheadRadius = LOOK_AHEAD_RADIUS_MM;
 
         Position lastPoint = path.getLastPoint();
-//        if (lastPoint.distanceTo(wheelOdometry.getCurrentPosition()) > threshold) {  // for small distances
-//            currentLookAheadRadius = LAST_RADIUS_MM;
-//        }
 
         if (prevFollow.isPresent() && (path.findIndex(prevFollow.get()) > (path.numPoints() - 2))) {
             currentLookAheadRadius = LAST_RADIUS_MM;
