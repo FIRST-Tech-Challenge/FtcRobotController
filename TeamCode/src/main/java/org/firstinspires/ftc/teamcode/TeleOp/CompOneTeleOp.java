@@ -19,7 +19,6 @@ public class CompOneTeleOp extends LinearOpMode
         // Initialize the drivetrain
         mecanumDrive = new MecanumDriveCompOne(this);
         arm = new AR_Arm(this);
-
         waitForStart();
         if (isStopRequested()) return;
 
