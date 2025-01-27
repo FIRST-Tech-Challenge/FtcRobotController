@@ -14,9 +14,31 @@ public class spline {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(23.6, 20, Math.toRadians(180), Math.toRadians(180), 11)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(0,0,0))
-                        .splineTo(new Vector2d(30, 30), 0)
-                        .build());
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(12,-66,Math.PI/2))
+                                .addDisplacementMarker(() -> {
+//                                    n.goSpecimen(2);
+                                })
+                                .forward(18)
+                                .addDisplacementMarker(() -> {
+//                                    n.goSpecimenDown(1);
+//                                    while (!n.isAtTargetHeight()) {
+//                                        if (n.isAtTargetHeight()) {
+//                                            n.release();
+//                                        }
+//                                    }
+                                })
+                                .strafeRight(24)
+                                .forward(42)
+                                .strafeRight(5)
+                                .turn(Math.toRadians(-90))
+                                .strafeRight(48)
+                                .strafeLeft(48)
+                                .forward(12)
+                                .strafeRight(48)
+                                .strafeLeft(48)
+                                .forward(10)
+                                .strafeRight(48)
+                                .build());
 
         myBot.setDimensions(17,17);
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)

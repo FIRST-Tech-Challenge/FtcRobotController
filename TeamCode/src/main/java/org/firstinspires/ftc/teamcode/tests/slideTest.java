@@ -48,9 +48,9 @@ public class slideTest extends OpMode {
         } else if (gamepad2.dpad_down) {
             slide.wristIn();
         } else if (gamepad2.left_bumper) {
-            slide.grab();
+            slide.claw.setPosition(slide.claw.getPosition()+0.005);
         } else if (gamepad2.right_bumper) {
-            slide.release();
+            slide.claw.setPosition(slide.claw.getPosition()-0.005);
         } else if (gamepad2.dpad_left) {
             slide.wristDown();
         }

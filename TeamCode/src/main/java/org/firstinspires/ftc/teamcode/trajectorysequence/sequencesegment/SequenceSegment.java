@@ -38,4 +38,5 @@ public abstract class SequenceSegment {
     public List<TrajectoryMarker> getMarkers() {
         return markers;
     }
+
 }

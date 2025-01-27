@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.nematocyst;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDrive;
 @TeleOp
 @Config
 
-public class teleOp extends OpMode {
+public class teleOpResetEncoders extends OpMode {
     public static double sP = 0.001;
     public static double sI = 0.000;
     public static double sD = 0.00;
@@ -54,6 +55,8 @@ public class teleOp extends OpMode {
         telemetry2 = dash.getTelemetry();
         slide = new nematocyst(this);
         slide.init("pivot", "slide", "wrist", "claw");
+        slide.pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     @Override
     public void init_loop () {

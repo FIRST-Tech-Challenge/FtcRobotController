@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import java.util.Collections;
@@ -20,6 +21,9 @@ public final class TrajectorySegment extends SequenceSegment {
     }
     public Pose2d getPoseAtTime(double time) {
         return trajectory.get(time);
+    }
+    public MotionState getMotionState(double time) {
+        return trajectory.getProfile().get(time);
     }
 }
 
