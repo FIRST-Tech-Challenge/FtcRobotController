@@ -40,6 +40,7 @@ public class LeftAuto extends LinearOpMode {
     public static final Motion.Calibrate CALIBRATION = new Motion.Calibrate(1.0, 1.0, 1.0); // Calibration factors for strafe, forward, and turn.
     private static final RuntimeException NOT_IMPLEMENTED = new RuntimeException("This operation is not implemented");
     final Pose SCORE_HIGH_BASKET = new Pose(10.6286797, 17.3713203, Math.toRadians(-45));
+    final Pose PARK_BAD = new Pose(10.6286797, 17.3713203, Math.toRadians(0));
     final Pose PARK1 = new Pose(57.5, 0, Math.toRadians(0));
     final Pose PARK2 = new Pose(55.5, -11, Math.toRadians(0));
     final Pose START = new Pose(0, 4.66, Math.toRadians(0));
@@ -127,7 +128,7 @@ public class LeftAuto extends LinearOpMode {
                         .then(hClawProxy.aSetFlip(Hardware.FLIP_DOWN))
                         .then(await(200))
                         .then(hClawProxy.aSetClaw(Hardware.FRONT_CLOSE))
-                        .then(await(200))
+                        .then(await(300))
                         .then(run(() -> hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT)))
                         .then(await(200))
         );
@@ -140,7 +141,7 @@ public class LeftAuto extends LinearOpMode {
     private ITask scoreHighBasket() {
         return groupOf(inner -> inner.add(groupOf(a -> {
                             // all of these:
-                            a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 10, 2.0));
+                            a.add(vLiftProxy.moveTo(Hardware.VLIFT_SCORE_HIGH, 10, 1.2));
                             a.add(run(() -> hardware.arm.setTargetPosition(222)));
                             a.add(await(250)); // minimum duration
                         }))
@@ -220,22 +221,22 @@ public class LeftAuto extends LinearOpMode {
                 .then(fourthYellow())
                 .then(moveTo(SCORE_HIGH_BASKET))
                 .then(scoreHighBasket())
-                .then(moveTo(PARK1))
-//                .then(moveTo(PARK2))
-                .then(run(() -> {
-                    hardware.frontLeft.setPower(0.6);
-                    hardware.frontRight.setPower(-0.6);
-                    hardware.backLeft.setPower(-0.6);
-                    hardware.backRight.setPower(0.6);
-                }))
-                .then(wait(0.5))
-                .then(run(() -> {
-                    hardware.frontLeft.setPower(0.3);
-                    hardware.frontRight.setPower(-0.3);
-                    hardware.backLeft.setPower(-0.3);
-                    hardware.backRight.setPower(0.3);
-                }))
-                .then(wait(0.5))
+                .then(moveTo(PARK_BAD))
+////                .then(moveTo(PARK2))
+//                .then(run(() -> {
+//                    hardware.frontLeft.setPower(0.6);
+//                    hardware.frontRight.setPower(-0.6);
+//                    hardware.backLeft.setPower(-0.6);
+//                    hardware.backRight.setPower(0.6);
+//                }))
+//                .then(wait(0.5))
+//                .then(run(() -> {
+//                    hardware.frontLeft.setPower(0.3);
+//                    hardware.frontRight.setPower(-0.3);
+//                    hardware.backLeft.setPower(-0.3);
+//                    hardware.backRight.setPower(0.3);
+//                }))
+//                .then(wait(0.5))
                 .then(run(() -> hardware.driveMotors.setAll(0)));
 //                .then(moveTo(scheduler,
 //                        new Pose(65, -12, Math.toRadians(0))))*/

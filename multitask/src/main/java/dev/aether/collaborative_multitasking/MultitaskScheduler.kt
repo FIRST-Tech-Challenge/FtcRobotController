@@ -65,13 +65,13 @@ open class MultitaskScheduler
                     it.transition(State.Starting)
                     // acquire locks
                     for (lock in it.requirements()) {
-                        println("$it acquired $lock")
+//                        println("$it acquired $lock")
                         if (locks[lock.id] != null) {
                             println("WARN: uhh we're gonna make ${tasks[locks[lock.id]]} crash when it finishes")
                         }
                         locks[lock.id] = it.myId
                         lockIdName[lock.id] = lock
-                        println("locks: $locks")
+//                        println("locks: $locks")
                     }
                 }
             }
@@ -144,7 +144,7 @@ open class MultitaskScheduler
                 else println("ERROR!!! $task (which just finished) does not own lock $lock that it is supposed to own")
             }
             locks[lock.id] = null
-            println("$task released $lock")
+//            println("$task released $lock")
         }
     }
 
@@ -364,7 +364,7 @@ open class MultitaskScheduler
             val dropped = tasks.filterInPlace { k, v ->
                 !(v.state == State.NotStarted && predicate(v))
             }
-            println("dropped ${dropped.size} tasks: ${dropped.joinToString(", ")}")
+//            println("dropped ${dropped.size} tasks: ${dropped.joinToString(", ")}")
         }
     }
 

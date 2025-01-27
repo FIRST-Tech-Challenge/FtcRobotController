@@ -118,10 +118,9 @@ public class Hardware extends HardwareMapper implements TriOdoProvider {
 
     public Lift verticalLift;
 
-    @HardwareName("verticalSlides")
+    @EncoderFor("verticalSlides")
     @AutoClearEncoder
-    @Deprecated
-    public DcMotor encoderVerticalSlide;
+    public Encoder encoderVerticalSlide;
 
     @HardwareName("arm")
     @ZeroPower(DcMotor.ZeroPowerBehavior.BRAKE)

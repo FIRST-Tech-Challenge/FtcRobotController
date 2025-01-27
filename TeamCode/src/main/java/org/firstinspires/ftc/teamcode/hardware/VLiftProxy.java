@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware;
@@ -93,11 +95,13 @@ public class VLiftProxy extends TaskTemplate {
 
             @Override
             public boolean invokeIsCompleted() {
+                int pos = lift.getCurrentPosition();
                 if (t.time() >= maxDuration) {
+                    Log.w("VLiftProxy", String.format("giving up, at %d, target %d +- %d", pos, target, range));
                     setResult(false);
                     return true;
                 }
-                if (Math.abs(lift.getCurrentPosition() - target) < range) {
+                if (Math.abs(pos - target) < range) {
                     setResult(true);
                     return true;
                 }
