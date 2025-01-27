@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Utils.PID;
 
 public class ElevatorVertical {
@@ -35,7 +34,7 @@ public class ElevatorVertical {
     }
     private static double power = 0;
     private static ElevatorVerticalState lastWantedState = ElevatorVerticalState.INTAKE;
-    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, Telemetry telemetry) {
+    public static void operate(ElevatorVerticalState wantedState, double gamepadVal, double secondGamepadVal) {
             if (gamepadVal == 0 && wantedState != lastWantedState) {
                 switch (wantedState) {
                     case INTAKE:
@@ -61,7 +60,9 @@ public class ElevatorVertical {
             }
              */
 //            if(wantedPos > 2235) { wantedPos = 2235; } else if(wantedPos < 0) { wantedPos = 0; }
-            //wantedPos = limiter(wantedPos, 0, ElevatorVerticalConstants.MAX_OPEN_POS);
+            if (secondGamepadVal == 0) {
+                wantedPos = limiter(wantedPos, 0, ElevatorVerticalConstants.MAX_OPEN_POS);
+            }
             changeLevelPID.setWanted(wantedPos);
             power = changeLevelPID.update(getElevatorPos());
 

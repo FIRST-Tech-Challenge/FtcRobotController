@@ -18,7 +18,7 @@ public class Arm {
                 armServo.setPosition(0.75);
                 break;
             case HALF:
-                armServo.setPosition(0.3);
+                armServo.setPosition(0.37);
                 break;
         }
     }

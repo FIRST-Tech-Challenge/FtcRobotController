@@ -10,7 +10,7 @@ public class ElevatorHorizonticalConstants {
     public static final float minSpeed = 0;
 
     public static final float closedPos = 0;
-    public static final float almostPos = 50;
+    public static final float almostPos = 20;
     public static final float halfpos = 160;
     public static final float openPos = 350;
     public static final float overrideFactor = 35;
