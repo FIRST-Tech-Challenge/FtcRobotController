@@ -123,6 +123,14 @@ public class FixStuffTeleOp extends LinearOpMode {
                 transfer();
             }
 
+            if (gamepad1.right_bumper){
+                FourthSample();
+            }
+
+            if (gamepad1.left_bumper){
+                FourthSample2();
+            }
+
             telemetry.addData("slidePos", hardware.horizontalLeft.getPosition());
             telemetry.addData("slidePos2", hardware.horizontalSlide.getPosition());
             telemetry.update();
@@ -216,5 +224,28 @@ public class FixStuffTeleOp extends LinearOpMode {
         sleep(500);
         hardware.wrist.setPosition(Hardware.WRIST_BACK);
         sleep(500);
+    }
+
+    public void FourthSample2() {
+        hardware.clawFront.setPosition(Hardware.FRONT_OPEN);
+        sleep(500);
+        hardware.clawFlip.setPosition(Hardware.FLIP_DOWN);
+        sleep(500);
+        //clawTwist at 90 degrees
+        hardware.clawTwist.setPosition(0.8133);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_OUT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_OUT);
+        sleep(600);
+        hardware.clawFront.setPosition(Hardware.FRONT_CLOSE);
+        sleep(500);
+        hardware.clawTwist.setPosition(Hardware.CLAW_TWIST_INIT);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(Hardware.SLIDE_OVERSHOOT);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.SLIDE_OVERSHOOT);
+        sleep(500);
+        hardware.horizontalSlide.setPosition(Hardware.RIGHT_SLIDE_IN);
+        hardware.horizontalLeft.setPosition(1.05 - Hardware.RIGHT_SLIDE_IN);
+        sleep(500);
+        hardware.clawFlip.setPosition(Hardware.FLIP_UP);
     }
 }
