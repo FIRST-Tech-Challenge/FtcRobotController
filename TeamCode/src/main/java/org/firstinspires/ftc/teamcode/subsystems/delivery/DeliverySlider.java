@@ -62,6 +62,8 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private Supplier<Boolean> pivotLowEnoughSupplier;
 
+    public static final double MAX_POWER = .6;
+
     public DeliverySlider(HardwareMap hardwareMap, GamepadEx gamepad, Telemetry telemetry, DriverFeedback feedback) {
         /* instantiate motors */
         this.motor  = new Motor(hardwareMap, "Slider1");
@@ -174,7 +176,7 @@ public class DeliverySlider extends SonicSubsystemBase {
                 }
 
                 if(Math.abs(power) > 1) {
-                    power = Math.signum(power);
+                    power = Math.signum(power) * MAX_POWER;
                 }
 
                 double slowFactor = 1;
@@ -184,6 +186,7 @@ public class DeliverySlider extends SonicSubsystemBase {
                 }
 
                 power = power * slowFactor;
+
 
                 motor.set(-power);
                 motor2.set(power);

@@ -61,7 +61,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
         double d = GetDepth();
 
-        boolean addData = false;
+        boolean addData = true;
 
         if(addData) {
             telemetry.addData("distance", d);

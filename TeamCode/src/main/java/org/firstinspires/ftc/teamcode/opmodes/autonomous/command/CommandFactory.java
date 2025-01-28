@@ -130,9 +130,13 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, DeliverySlider.Direction.EXPANDING);
     }
 
-    public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
-        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
+    public MoveSliderCommand extendSliderForOuttake() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, DeliverySlider.Direction.EXPANDING).withExpandHoldPower(-.2);
     }
+
+//    public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
+//        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
+//    }
 
     public MoveSliderCommand extendSliderToSpecimen() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);

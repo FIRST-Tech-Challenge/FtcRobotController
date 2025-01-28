@@ -51,6 +51,8 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     DeliverySlider.Direction direction;
 
+    private double expandHoldPower = -.1;
+
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, DeliverySlider.Direction direction) {
         this(slider, telemetry, target, false, direction);
     }
@@ -72,6 +74,11 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
         Log.i(LOG_TAG, "Target set to: " + target + ", direction = " + direction.name());
         addRequirements(slider);
+    }
+
+    public MoveSliderCommand withExpandHoldPower(double expandHoldPower) {
+        this.expandHoldPower = expandHoldPower;
+        return this;
     }
 
     public MoveSliderCommand withEndAction(EndAction endAction) {
@@ -145,7 +152,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
     @Override
     public void end(boolean interrupted) {
         if (DeliverySlider.Direction.EXPANDING == direction) {
-            slider.setMotors(-.1);
+            slider.setMotors(expandHoldPower);
         } else {
             slider.setMotors(0);
         }

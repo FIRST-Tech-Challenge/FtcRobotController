@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.runs;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -12,12 +13,13 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
 @SuppressWarnings("unused")
 public class SampleAuto extends CommandAutoOpMode {
 
-    boolean inMatch = true;
+    public static boolean inMatch = true;
 
     @Config
     public static class PreloadConfig {
-        public static boolean skipOuttake = true;
+        public static boolean skipOuttake = false;
 
+        public static String someTextField = "placeholder";
         public static double toBucket_x = 300;
         public static double toBucket_y = 490;
         public static double toBucket_heading = -45;
@@ -27,10 +29,10 @@ public class SampleAuto extends CommandAutoOpMode {
 
     @Config
     public static class Sample1Config {
-        public static boolean skipIntake = true;
+        public static boolean skipIntake = false;
 
-        public static int toSample_x = 480;
-        public static int toSample_y = 200;
+        public static int toSample_x = 500;
+        public static int toSample_y = 260;
         public static int toSample_tolerance = 5;
         public static long toSample_timeout = 1000;
         public static int toBucket_x = 10;
@@ -42,7 +44,7 @@ public class SampleAuto extends CommandAutoOpMode {
 
     @Config
     public static class Sample2Config {
-        public static boolean skipIntake = true;
+        public static boolean skipIntake = false;
 
         public static int toSample_x = 490;
         public static int toSample_y = 520;
@@ -58,14 +60,14 @@ public class SampleAuto extends CommandAutoOpMode {
     }
     @Config
     public static class Sample3Config {
-        public static boolean skipIntake = true;
+        public static boolean skipIntake = false;
 
         public static int beforeIntakeDrive_targetX = 230;
         public static int beforeIntakeDrive_targetY = 550;
         public static int beforeIntakeDrive_heading = 15;
         public static int beforeIntakeDrive_distanceTolerance = 5;
         public static double elbowIntakePosition = .75;
-        public static int sliderIntakePosition = 280;
+        public static int sliderIntakePosition = 337;
         public static int pivotIntakePosition = -1400;
         public static int pivotToGroundPosition = -2200;
         public static int IntakeFromGroundTimeout = 5000;
@@ -87,7 +89,7 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int stage1_timeout = 2000;
 
         public static int stage2_x = 2100;
-        public static int stage2_y = -450;
+        public static int stage2_y = -500;
         public static int stage2_heading = -90;
         public static int stage2_tolerance = 10;
         public static int stage2_timeout = 1000;
@@ -117,7 +119,7 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.logDebug("preload drive to basket").andThen(commandFactory.driveToTarget(PreloadConfig.toBucket_x, PreloadConfig.toBucket_y, PreloadConfig.toBucket_heading, .13, .7, PreloadConfig.toBucket_tolerance, PreloadConfig.toBucket_timeout)),
                     commandFactory.pivotToDelivery(),
                     commandFactory.elbowToSpecimenPosition(),
-                    commandFactory.logDebug("preload extend slider").andThen(commandFactory.extendSlider())
+                    commandFactory.logDebug("preload extend slider").andThen(commandFactory.extendSliderForOuttake())
                 ),
 
                 // deliver preloaded sample
@@ -125,7 +127,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 //endregion
 
                 //region sample #1
-                commandFactory.elbowToIntakePosition().andThen(commandFactory.sleep(400)).andThen(commandFactory.collapseSlider()).andThen(commandFactory.pivotToStart()),
+                commandFactory.elbowToIntakePosition().andThen(commandFactory.sleep(400)).andThen(commandFactory.collapseSlider()),
 
                 commandFactory.pivotToInTake()
                         .alongWith(commandFactory.logDebug("Sample 1 drive to sample").andThen(commandFactory.driveToTarget(Sample1Config.toSample_x, Sample1Config.toSample_y, 0, 0.13, .7, Sample1Config.toSample_tolerance, Sample1Config.toSample_timeout))),
@@ -143,7 +145,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 ),
 
                 commandFactory.logDebug("sample 1 drive to basket").andThen(commandFactory.driveToTarget(Sample1Config.toBucket_x, Sample1Config.toBucket_y, Sample1Config.toBucket_heading, 0.13, .5, Sample1Config.toBucket_tolerance, Sample1Config.toBucket_timeout))
-                        .alongWith(commandFactory.logDebug("sample 1 extend for delivery").andThen(commandFactory.sleep(100)).andThen(commandFactory.extendSlider())),
+                        .alongWith(commandFactory.logDebug("sample 1 extend for delivery").andThen(commandFactory.sleep(100)).andThen(commandFactory.extendSliderForOuttake())),
 
                 // Sample #1
                 skipIntakeSample1 ? commandFactory.doNothing() : commandFactory.outtake(),//.andThen(new InstantCommand(() -> hold2End = true),
@@ -168,15 +170,21 @@ public class SampleAuto extends CommandAutoOpMode {
                     commandFactory.pivotToDelivery()
                 ),
 
-                commandFactory.logDebug("sample 2 drive to basket").andThen(commandFactory.driveToTarget(Sample2Config.toBucket_x, Sample2Config.toBucket_y, Sample2Config.toBucket_heading, 0.13, .8, Sample2Config.toBucket_tolerance, Sample2Config.toBucket_timeout)),
-                commandFactory.logDebug("sample 2 extend for delivery").andThen(commandFactory.extendSlider()),
+                commandFactory.logDebug("sample 2 drive to basket").andThen(commandFactory.driveToTarget(Sample2Config.toBucket_x, Sample2Config.toBucket_y, Sample2Config.toBucket_heading, 0.13, .8, Sample2Config.toBucket_tolerance, Sample2Config.toBucket_timeout))
+                        .alongWith(commandFactory.sleep(300).andThen(commandFactory.logDebug("sample 2 extend for delivery")).andThen(commandFactory.extendSliderForOuttake())),
+//                commandFactory.logDebug("sample 2 extend for delivery").andThen(commandFactory.extendSlider()),
 
                 // Sample #2
                 skipIntakeSample2 ? commandFactory.doNothing() : commandFactory.outtake(),//.andThen(new InstantCommand(() -> hold3End = true)),
                 //endregion sample #2
 
                 //region sample #3
-                commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, 0.13, .5, Sample3Config.beforeIntakeDrive_distanceTolerance)),
+                new ParallelCommandGroup(
+                        new ParallelRaceGroup(
+                                commandFactory.sleep(300),
+                                commandFactory.extendSlider()),
+                        commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, 0.13, .5, Sample3Config.beforeIntakeDrive_distanceTolerance))
+                ),
                 commandFactory.collapseSlider(),
                 commandFactory.pivotTo(Sample3Config.pivotIntakePosition),
                 commandFactory.elbowToPosition(Sample3Config.elbowIntakePosition),
@@ -190,7 +198,7 @@ public class SampleAuto extends CommandAutoOpMode {
 
                 ),
 
-                commandFactory.logDebug("sample 3 extend for delivery").andThen(commandFactory.extendSlider()),
+                commandFactory.logDebug("sample 3 extend for delivery").andThen(commandFactory.extendSliderForOuttake()),
                 commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
 
                 // Sample #3

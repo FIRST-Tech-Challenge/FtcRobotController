@@ -83,7 +83,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     public void doExecute() {
         odo.update();
 
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
 
         if(addTelemetry) {
             telemetry.addData("DriveToTarget tx: ", targetX);
