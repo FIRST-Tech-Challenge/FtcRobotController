@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.Utils;
 
 public class AutoSwerve {
 
-  public AnalogInput servoInputFL,servoInputFR,servoInputBR,servoInputBL;
-  public Servo servoFL,servoFR,servoBR,servoBL;
-  DcMotor motorFL,motorFR,motorBR,motorBL;
+  public AnalogInput servoInputFL, servoInputFR, servoInputBR, servoInputBL;
+  public Servo servoFL, servoFR, servoBR, servoBL;
+  DcMotor motorFL, motorFR, motorBR, motorBL;
   LinearOpMode opMode;
   static double countsPerRevolution = 537.7;
   static double gearRatio = 1.1;
@@ -35,7 +35,8 @@ public class AutoSwerve {
   }
 
   GoBildaPinpointDriver odo;
-  public AutoSwerve(LinearOpMode opMode,GoBildaPinpointDriver odo){
+
+  public AutoSwerve(LinearOpMode opMode, GoBildaPinpointDriver odo) {
     this.opMode = opMode;
     this.odo = odo;
     //FL
@@ -67,25 +68,23 @@ public class AutoSwerve {
     max_voltage = servoInputBL.getMaxVoltage();
   }
 
-  public void alignWheels(){
-    double delta=1;
+  public void alignWheels() {
+    double delta = 1;
     AnalogInput tempInput = servoInputFL;
     Servo temp = servoFL;
-    for(int i = 0;i<4;i++){
-      if(i==1){
+    for (int i = 0; i < 4; i++) {
+      if (i == 1) {
         tempInput = servoInputFR;
         temp = servoFR;
-      }
-      else if(i==2){
+      } else if (i == 2) {
         tempInput = servoInputBL;
         temp = servoBL;
-      }
-      else if(i==3){
+      } else if (i == 3) {
         tempInput = servoInputBR;
         temp = servoBR;
       }
-      while(delta!=.0){
-        set_Servo_Angle(tempInput,temp,0.5);
+      while (delta != .0) {
+        set_Servo_Angle(tempInput, temp, 0.5);
       }
     }
   }
@@ -95,23 +94,23 @@ public class AutoSwerve {
   // keeps servos aligned in current direction
   // dist in meters
   //TODO: revise to use new code
-public void driveDist(double dist, double mSpd){
-    if(mSpd < .3)mSpd = 0.3;
-    if(mSpd > 1.0)mSpd = 1.0;
+  public void driveDist(double dist, double mSpd) {
+    if (mSpd < .3) mSpd = 0.3;
+    if (mSpd > 1.0) mSpd = 1.0;
     double encCt = wheelCircumferenceMeters * dist;
-    motorFL.setTargetPosition(motorFL.getCurrentPosition() + (int)(dist * encCt));
+    motorFL.setTargetPosition(motorFL.getCurrentPosition() + (int) (dist * encCt));
     motorFL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    motorFR.setTargetPosition(motorFR.getCurrentPosition() + (int)(dist * encCt));
+    motorFR.setTargetPosition(motorFR.getCurrentPosition() + (int) (dist * encCt));
     motorFR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    motorBL.setTargetPosition(motorBL.getCurrentPosition() + (int)(dist * encCt));
+    motorBL.setTargetPosition(motorBL.getCurrentPosition() + (int) (dist * encCt));
     motorBL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    motorBR.setTargetPosition(motorBR.getCurrentPosition() + (int)(dist * encCt));
+    motorBR.setTargetPosition(motorBR.getCurrentPosition() + (int) (dist * encCt));
     motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    forward(mSpd);
-    forward(0);
+    setMotors(mSpd);
+    setMotors(0);
   }
 
-  public void stopServo(){
+  public void stopServo() {
     servoFL.setPosition(.5);
     servoFR.setPosition(.5);
     servoBL.setPosition(.5);
@@ -119,32 +118,30 @@ public void driveDist(double dist, double mSpd){
   }
 
   //odo.getPosX is forward on robot
-  public void forward(double pwr){
+  public void setMotors(double pwr) {
     motorBL.setPower(pwr);
     motorBR.setPower(pwr);
     motorFL.setPower(pwr);
     motorFR.setPower(pwr);
   }
 
-  public void alginWheels(){
-    double delta=1;
+  public void alginWheels() {
+    double delta = 1;
     AnalogInput tempInput = servoInputFL;
     Servo temp = servoFL;
-    for(int i = 0;i<4;i++){
-      if(i==1){
+    for (int i = 0; i < 4; i++) {
+      if (i == 1) {
         tempInput = servoInputFR;
         temp = servoFR;
-      }
-      else if(i==2){
+      } else if (i == 2) {
         tempInput = servoInputBL;
         temp = servoBL;
-      }
-      else if(i==3){
+      } else if (i == 3) {
         tempInput = servoInputBR;
         temp = servoBR;
       }
-      while(delta!=.0){
-        set_Servo_Angle(tempInput,temp,0.5);
+      while (delta != .0) {
+        set_Servo_Angle(tempInput, temp, 0.5);
       }
     }
   }
@@ -163,18 +160,13 @@ public void driveDist(double dist, double mSpd){
 
     double tolerance = 0.01;
 
-    if (delta_to_reference < (-1*tolerance))
-    {
+    if (delta_to_reference < (-1 * tolerance)) {
       servo.setPosition(0.55);
       return -1;
-    }
-    else if (delta_to_reference > tolerance)
-    {
+    } else if (delta_to_reference > tolerance) {
       servo.setPosition(0.45);
       return 1;
-    }
-    else
-    {
+    } else {
       servo.setPosition(0.5);
       return 0;
     }
@@ -183,10 +175,10 @@ public void driveDist(double dist, double mSpd){
   // align wheels has a angle always set where alignWheels is
   // constantly checking for the turn error and eventually compensating
   //TODO: decide on whether to delete this because of new code added above
-  public void alignWheels(double wang){
-    if(wang > 359.0) wang = 359.0;
-    if(wang < 0.0) wang = 0.0;
-    double servoCmd = wang/110.095;// finds the reference voltage of Servo Potentiometer
+  public void alignWheels(double wang) {
+    if (wang > 359.0) wang = 359.0;
+    if (wang < 0.0) wang = 0.0;
+    double servoCmd = wang / 110.095;// finds the reference voltage of Servo Potentiometer
 
     // set direction of motors
     motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -210,7 +202,7 @@ public void driveDist(double dist, double mSpd){
     double FRkd = 0.0;
     double BLkd = 0.0;
     double BRkd = 0.0;
-    while(opMode.opModeIsActive() && FLkd < 0.05 || FRkd < 0.05 || BLkd < 0.05 || BRkd < 0.05){
+    while (opMode.opModeIsActive() && FLkd < 0.05 || FRkd < 0.05 || BLkd < 0.05 || BRkd < 0.05) {
       // State of servos
       FLstate = servoInputFL.getVoltage();
       FRstate = servoInputFR.getVoltage();
@@ -226,7 +218,7 @@ public void driveDist(double dist, double mSpd){
       FRkd = servoCmd - FRstate;
       BLkd = servoCmd - BLstate;
       BRkd = servoCmd - BRstate;
-      FLkp = 0.5 + FLkd/ servoCmd;
+      FLkp = 0.5 + FLkd / servoCmd;
       FRkp = 0.5 + FRkd / servoCmd;
       BLkp = 0.5 + BLkd / servoCmd;
       BRkp = 0.5 + BRkd / servoCmd;
@@ -241,24 +233,24 @@ public void driveDist(double dist, double mSpd){
 //      if(BLkd < 0.05) servoBL.setPosition(.5); else servoBL.setPosition(BLkp);
 //      if(BRkd < 0.05) servoBR.setPosition(.5); else servoBR.setPosition(BRkp);
     }
-    opMode.telemetry.addData("servoCmd", servoCmd );
+    opMode.telemetry.addData("servoCmd", servoCmd);
     opMode.telemetry.addData("FL error", servoCmd - FLstate);
     opMode.telemetry.addData("FR error", servoCmd - FRstate);
-    opMode.telemetry.addData("BL error",servoCmd - BLstate);
-    opMode.telemetry.addData("BR error",servoCmd - BRstate);
-    opMode.telemetry.addData("FL kp: ",0.5+(servoCmd-FLstate)/servoCmd);
-    opMode.telemetry.addData("FR kp: ",0.5+(servoCmd-FRstate)/servoCmd);
-    opMode.telemetry.addData("BL kp: ",0.5+(servoCmd-BLstate)/servoCmd);
-    opMode.telemetry.addData("BR kp: ",0.5+(servoCmd-BRstate)/servoCmd);
+    opMode.telemetry.addData("BL error", servoCmd - BLstate);
+    opMode.telemetry.addData("BR error", servoCmd - BRstate);
+    opMode.telemetry.addData("FL kp: ", 0.5 + (servoCmd - FLstate) / servoCmd);
+    opMode.telemetry.addData("FR kp: ", 0.5 + (servoCmd - FRstate) / servoCmd);
+    opMode.telemetry.addData("BL kp: ", 0.5 + (servoCmd - BLstate) / servoCmd);
+    opMode.telemetry.addData("BR kp: ", 0.5 + (servoCmd - BRstate) / servoCmd);
     telem();
     opMode.sleep(5000);
   }
 
-  public void telem(){
-    opMode.telemetry.addData("ServoFR voltage: ",servoInputFR.getVoltage());
-    opMode.telemetry.addData("servoFL voltage: ",servoInputFL.getVoltage());
-    opMode.telemetry.addData("ServoBR voltage: ",servoInputBR.getVoltage());
-    opMode.telemetry.addData("servoBL voltage: ",servoInputBL.getVoltage());
+  public void telem() {
+    opMode.telemetry.addData("ServoFR voltage: ", servoInputFR.getVoltage());
+    opMode.telemetry.addData("servoFL voltage: ", servoInputFL.getVoltage());
+    opMode.telemetry.addData("ServoBR voltage: ", servoInputBR.getVoltage());
+    opMode.telemetry.addData("servoBL voltage: ", servoInputBL.getVoltage());
     opMode.telemetry.update();
   }
 

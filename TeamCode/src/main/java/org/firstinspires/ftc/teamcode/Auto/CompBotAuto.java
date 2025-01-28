@@ -71,10 +71,10 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   public void checkMotorDirAndServoVolt(){
-    driveBase.forward(.5);
+    driveBase.setMotors(.5);
     telem();
     sleep(5000);
-    driveBase.forward(-.5);
+    driveBase.setMotors(-.5);
     telem();
     sleep(5000);
   }
