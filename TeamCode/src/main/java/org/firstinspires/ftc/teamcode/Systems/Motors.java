@@ -134,5 +134,11 @@ public class Motors {
         return motors[Type.RightBack.getValue()].getCurrentPosition();
     }
 
+    public void resetDistance() {
+        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 }

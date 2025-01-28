@@ -235,13 +235,17 @@ public class Input {
 
         double distance;
 
-
+        //reset motors after calculations;
         if(!isSpin()) {
             return distance = (Math.floor(((lbdistance + rbdistance))/2))  / 25.4;
         }
         else {
             return distance = ((lbdistance - rbdistance)/2)  / 25.4;
         }
+    }
+
+    public void resetDistance() {
+        motors.resetDistance();
     }
 
     public int getArmPos() {
