@@ -76,15 +76,15 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
                 /** Step 1 */
                 Actions.driveToBarFromInitialPositionForSpecimen(0);
-                 Actions.hangAndReleaseSpecimen();
+                //Actions.hangAndReleaseSpecimen();
 
 //
-//            // Step 2
-//            Actions.driveBehindSampleFromLocation(1, "bar");
-//            Actions.pushOrReverseSampleToHumanPlayer(1, "push");
+                /** Step 2 */
+                Actions.driveBehindSampleFromLocation(1, "bar");
+                Actions.pushOrReverseSampleToHumanPlayer(1, "push");
 //
 //            // Step 3
-//            Actions.pushOrReverseSampleToHumanPlayer(1, "reverse");
+                Actions.pushOrReverseSampleToHumanPlayer(1, "reverse");
 //            Actions.driveRightUntilBehindSample(2);
 //
 //            // Step 4
@@ -124,7 +124,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
             }
             a1.stop();
         }
-
+        a1.stop();
 
     }
 }
