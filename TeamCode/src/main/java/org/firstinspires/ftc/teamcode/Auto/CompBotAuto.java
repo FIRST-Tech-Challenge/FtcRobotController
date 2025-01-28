@@ -32,7 +32,7 @@ public class CompBotAuto extends LinearOpMode {
 
     waitForStart();
     mek.homeArm();
-    driveBase.alginWheels();
+    driveBase.alignWheels();
 
     while(true)
     {

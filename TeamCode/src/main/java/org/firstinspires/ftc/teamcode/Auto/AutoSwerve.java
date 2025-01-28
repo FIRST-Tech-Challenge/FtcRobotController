@@ -90,7 +90,7 @@ public void driveDist(double dist, double mSpd){
     motorFR.setPower(pwr);
   }
 
-  public void alginWheels(){
+  public void alignWheels(){
     double delta=1;
     AnalogInput tempInput = servoInputFL;
     Servo temp = servoFL;
