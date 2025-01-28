@@ -26,6 +26,7 @@ public class RightAutoV2 extends LinearOpMode {
     public boolean deliveryGrippersOpen = false;
     public ElapsedTime timerStep01 = new ElapsedTime();
     public ElapsedTime timerStep03 = new ElapsedTime();
+    public ElapsedTime timerStep04 = new ElapsedTime();
     public int leftSlideTarget = 0;
     public int rightSlideTarget = 0;
     @Override
@@ -110,12 +111,18 @@ public class RightAutoV2 extends LinearOpMode {
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
                     drive.followTrajectory(traj2);
+                    timerStep04.reset();
                     step = 4;
                 }
             }
             else if(step == 4) {
-                drive.followTrajectory(traj3);
-                step = 5;
+                if(timerStep04.seconds() < 2) {
+                    deliveryAxon.setPosition(constants.DELIVERY_GRAB);
+                }
+                else {
+                    drive.followTrajectory(traj3);
+                    step = 5;
+                }
             }
             else if(step == 5){
                 if(deliverySlides.getLeftSlidePosition() !=0 || deliverySlides.getRightSlidePosition() !=0) {
