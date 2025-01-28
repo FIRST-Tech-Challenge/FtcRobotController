@@ -13,13 +13,13 @@ public class ArmSubsystem {
     Telemetry telemetry;
 
     final double ARM_COLLECT = 0;
-    final double ARM_CLEAR_BARRIER = 14;
+    final double ARM_CLEAR_BARRIER = 25;
     final double ARM_SCORE_SPECIMEN = 90;
     final double ARM_SCORE_SAMPLE_IN_LOW = 90;
     final double ARM_ATTACH_HANGING_HOOK = 110;
-    final double ARM_MAX_HEIGHT = 120;
+    final double ARM_MAX_HEIGHT = 125;
     double comp = 0;
-    final double ARM_SCORE_SAMPLE_IN_HIGH = 115;
+    final double ARM_SCORE_SAMPLE_IN_HIGH = 120;
     double armPosition = ARM_COLLECT;
 
     private final DcMotor armMotor;

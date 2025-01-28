@@ -31,7 +31,7 @@ public class DriveSubsystem {
 
         runForAllMotors(motor -> motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE));
 
-        runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER));
+        runForAllMotors(motor -> motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER));
 
     }
 
@@ -63,6 +63,16 @@ public class DriveSubsystem {
     }
 
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2, IMU imu) {
+        double[] controls = readControls(gamepad1, gamepad2);
+        double x = controls[0];
+        double y = controls[1];
+        double turn = controls[2];
+        runWithControls(x, y, turn, imu);
+    }
+    public void runWithControls(double x, double y, double turn, IMU imu) {
+        setDrivePower(x, y, turn);
+    }
+    private double[] readControls(Gamepad gamepad1, Gamepad gamepad2) {
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
@@ -70,9 +80,8 @@ public class DriveSubsystem {
         if (gamepad1.dpad_down) y -= 0.2;
         if (gamepad1.dpad_right) x += 0.2;
         if (gamepad1.dpad_left) x -= 0.2;
-        setDrivePower(x, y, turn);
+        return new double[] {x, y, turn};
     }
-
     private void setDrivePower(double speed, double strafe, double turn) {
         double normalizedSlidePosition = (Common.slidePosition - 800)/800;
         double normalizedArmPosition = (Common.armPosition - 1400)/1000;
