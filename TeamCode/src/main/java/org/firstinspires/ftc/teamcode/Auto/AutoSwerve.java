@@ -83,7 +83,7 @@ public class AutoSwerve {
         tempInput = servoInputBR;
         temp = servoBR;
       }
-      while (delta != .0) {
+      while (delta <= .01 && delta >=-.01) {
         set_Servo_Angle(tempInput, temp, 0.5);
       }
     }
@@ -123,27 +123,6 @@ public class AutoSwerve {
     motorBR.setPower(pwr);
     motorFL.setPower(pwr);
     motorFR.setPower(pwr);
-  }
-
-  public void alginWheels() {
-    double delta = 1;
-    AnalogInput tempInput = servoInputFL;
-    Servo temp = servoFL;
-    for (int i = 0; i < 4; i++) {
-      if (i == 1) {
-        tempInput = servoInputFR;
-        temp = servoFR;
-      } else if (i == 2) {
-        tempInput = servoInputBL;
-        temp = servoBL;
-      } else if (i == 3) {
-        tempInput = servoInputBR;
-        temp = servoBR;
-      }
-      while (delta != .0) {
-        set_Servo_Angle(tempInput, temp, 0.5);
-      }
-    }
   }
 
   //TODO: Incorporate other code to use this method

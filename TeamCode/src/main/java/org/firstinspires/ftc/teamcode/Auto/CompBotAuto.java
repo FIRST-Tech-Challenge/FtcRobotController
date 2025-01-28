@@ -34,6 +34,7 @@ public class CompBotAuto extends LinearOpMode {
     mek = new Mekanism(opMode);
     driveBase = new AutoSwerve(this,odometry);
   }
+
   // ... Main ... runOpMode
   @Override
   public void runOpMode() throws InterruptedException {
@@ -48,6 +49,7 @@ public class CompBotAuto extends LinearOpMode {
 // set direction
     if (opModeIsActive()) {
       PushPush();
+      driveBase.alignWheels();
       //driveBase.stopServo();
       // driveBase.alignWheels(driveAngle);
 // drive to bar
