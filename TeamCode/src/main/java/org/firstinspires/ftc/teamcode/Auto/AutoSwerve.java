@@ -55,11 +55,34 @@ public class AutoSwerve {
     max_voltage = servoInputBL.getMaxVoltage();
   }
 
+  public void alignWheels(){
+    double delta=1;
+    AnalogInput tempInput = servoInputFL;
+    Servo temp = servoFL;
+    for(int i = 0;i<4;i++){
+      if(i==1){
+        tempInput = servoInputFR;
+        temp = servoFR;
+      }
+      else if(i==2){
+        tempInput = servoInputBL;
+        temp = servoBL;
+      }
+      else if(i==3){
+        tempInput = servoInputBR;
+        temp = servoBR;
+      }
+      while(delta!=.0){
+        set_Servo_Angle(tempInput,temp,0.5);
+      }
+    }
+  }
+
   // distance to drive by encoder
   // turns on motor for a drive distance
-  //Keeps servos aligned in current direction
+  // keeps servos aligned in current direction
   // dist in meters
-public void driveDist(double dist, double mSpd){
+  public void driveDist(double dist, double mSpd){
     if(mSpd < .3)mSpd = 0.3;
     if(mSpd > 1.0)mSpd = 1.0;
     double encCt = wheelCircumferenceMeters * dist;
@@ -90,30 +113,6 @@ public void driveDist(double dist, double mSpd){
     motorFR.setPower(pwr);
   }
 
-  public void alignWheels(){
-    double delta=1;
-    AnalogInput tempInput = servoInputFL;
-    Servo temp = servoFL;
-    for(int i = 0;i<4;i++){
-      if(i==1){
-        tempInput = servoInputFR;
-        temp = servoFR;
-      }
-      else if(i==2){
-        tempInput = servoInputBL;
-        temp = servoBL;
-      }
-      else if(i==3){
-        tempInput = servoInputBR;
-        temp = servoBR;
-      }
-      while(delta!=.0){
-        set_Servo_Angle(tempInput,temp,0.5);
-      }
-    }
-  }
-
-  //TODO: Incorporate other code to use this method
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
     double pot_voltage = analogInput.getVoltage();
     double normalized_voltage = pot_voltage / max_voltage;
@@ -144,7 +143,7 @@ public void driveDist(double dist, double mSpd){
     }
   }
 
-  // align wheels has a angle always set where alignwheels is
+  // align wheels has a angle always set where alignWheels is
   // constantly checking for the turn error and eventually compensating
   //TODO: decide on whether to delete this because of new code added above
   public void alignWheels(double wang){
