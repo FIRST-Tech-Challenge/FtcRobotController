@@ -68,7 +68,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "01/27/2025, 7:40pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/27/2025, 7:47pm"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
