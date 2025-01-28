@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class GripperConstants {
 
-    public static double openClaw = 0.35;
+    public static double openClaw = 0.3;
     public static double closeClaw = 0;
     public static double pickup = 1;
     public static double score = 0;

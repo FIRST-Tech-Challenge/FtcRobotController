@@ -15,10 +15,12 @@ public class GripperSubsystem extends SubsystemBase {
     Servo servoClaw;
     Servo servo2;
     Servo rotServo;
+    Servo rotServo2;
     public boolean isOpen;
     public boolean isPickup;
     public GripperSubsystem(HardwareMap map){
         rotServo = map.servo.get("rotServo");
+        rotServo2 = map.servo.get("servoRot");
         servoClaw = map.servo.get("servoClaw");
         register();
         rotServo.getController().pwmEnable();
@@ -32,13 +34,21 @@ public class GripperSubsystem extends SubsystemBase {
     }
 
     public Command setPickup(){
-        return new InstantCommand(()->rotServo.setPosition(score));
+        return new InstantCommand(()->rotServo2.setPosition(pickup));
     }
     public Command setScore(){
-        return new InstantCommand(()->rotServo.setPosition(pickup));
+        return new InstantCommand(()->rotServo2.setPosition(score));
     }
 
     public Command toggleClaw() {
         return new InstantCommand(()-> isOpen = !isOpen);
     }
+    public Command openClaw() {
+        return new InstantCommand(()-> isOpen = true);
+    }
+    public Command closeClaw() {
+        return new InstantCommand(()-> isOpen = false);
+    }
+
+
 }

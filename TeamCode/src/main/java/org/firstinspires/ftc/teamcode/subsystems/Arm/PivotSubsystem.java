@@ -31,9 +31,8 @@ public class PivotSubsystem extends SubsystemBase {
     public Motor.Encoder rightEncoder;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     private Telemetry dashboardTelemetry = dashboard.getTelemetry();
-    public
-    ProfiledPIDController m_pivotPID;
-
+    public ProfiledPIDController m_pivotPID;
+    public boolean isPickup = true;
 
 
     public PivotSubsystem(HardwareMap map, DoubleSupplier armLength){
@@ -70,7 +69,7 @@ public class PivotSubsystem extends SubsystemBase {
         calcArmAngle();
         m_pivotPID.setPID(pKP,pKI,pKD);
         m_pivotPID.setConstraints(new TrapezoidProfile.Constraints(vConstraint,aConstraint));
-        m_pivotPID.setTolerance(pTolerance);
+        m_pivotPID.setTolerance(pGoalTolerance);
         m_pivotPID.setGoalTolerance(pGoalTolerance, pGoalVelocityTolerance);
         m_pivotPID.m_controller.setAccumilatorResetTolerance(pGoalTolerance);//TODO:look at this
         m_pivotPID.setIzone(pIzone);
@@ -145,6 +144,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
 
-
-
+    public Command toggle() {
+        return new InstantCommand(()->isPickup = !isPickup);
+    }
 }

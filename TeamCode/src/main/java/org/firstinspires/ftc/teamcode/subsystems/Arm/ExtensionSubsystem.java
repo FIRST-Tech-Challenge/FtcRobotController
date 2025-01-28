@@ -14,6 +14,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -97,8 +98,8 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
 
-    public BTCommand setExtension(double setpoint){
-        return new InstantCommand(()-> m_extensionPID.setGoal(setpoint)).;
+    public Command setExtension(double setpoint){
+        return new InstantCommand(()-> m_extensionPID.setGoal(setpoint)).alongWith(new WaitUntilCommand(m_extensionPID::atGoal));
     }
     public Command setNegative(){
         return new InstantCommand(()-> setMotors(-0.2));

@@ -34,6 +34,7 @@ import java.util.function.DoubleSupplier;
 public class ChassisSubsystem extends SubsystemBase {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
+    public boolean slowDriver = false;
     public ProfiledPIDController m_pidY;
     public ProfiledPIDController m_pidX;
     public ProfiledPIDController m_rotationpid;
@@ -94,10 +95,11 @@ public class ChassisSubsystem extends SubsystemBase {
 
     public void setMotors(double FL, double FR, double BL, double BR) {
         double compensation = 12.0 / voltageSensor.getVoltage();
-        motor_FR.set(compensation * applyFeedForward(ks, kv, FR));
-        motor_FL.set(compensation * applyFeedForward(ks, kv, FL));
-        motor_BR.set(compensation * applyFeedForward(ks, kv, BR));
-        motor_BL.set(compensation * applyFeedForward(ks, kv, BL));
+        motor_BL.set(slowDriver?0.5*compensation * applyFeedForward(ks, kv, FR):compensation * applyFeedForward(ks, kv, FR));
+        motor_FL.set(slowDriver?0.5*compensation * applyFeedForward(ks, kv, FR):compensation * applyFeedForward(ks, kv, FR));
+        motor_FR.set(slowDriver?0.5*compensation * applyFeedForward(ks, kv, FR):compensation * applyFeedForward(ks, kv, FR));
+        motor_BR.set(slowDriver?0.5*compensation * applyFeedForward(ks, kv, FR):compensation * applyFeedForward(ks, kv, FR));
+
         dashboardTelemetry.addData("compensation", compensation);
     }
     public double applyFeedForward(double ks, double kv, double velocity){
@@ -125,23 +127,23 @@ public class ChassisSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        motor_BL.set(bl);
-        motor_FL.set(bl);
-        motor_BR.set(bl);
-        motor_FR.set(bl);
+//        motor_BL.set(bl);
+//        motor_FL.set(bl);
+//        motor_BR.set(bl);
+//        motor_FR.set(bl);
 
-//        m_rotationpid.setPID(rkp,rki,rkd);
-//        m_pidY.setPID(Ykp,Yki,Ykd);
-//        m_pidY.setIntegratorRange(-yMaxIntegral,yMaxIntegral);
-//        m_rotationpid.setTolerance(tolerance);
-//        m_pidY.setIzone(YiZone);
-//        m_pidY.setTolerance(ytolerance);
-//        m_pidX.setIzone(XiZone);
-//        m_pidY.setTolerance(xtolerance);
-//        m_rotationpid.setIzone(rotIzone);
-////        odometry.updatePose();//todo: uncomment when starting to use odometry
-//        m_pidX.setPID(Xkp,Xki,Xkd);
-//        m_pidX.setConstraints(new TrapezoidProfile.Constraints(SpeedsAndAcc.maxVelocityX,SpeedsAndAcc.maxAccelerationX));
+        m_rotationpid.setPID(rkp,rki,rkd);
+        m_pidY.setPID(Ykp,Yki,Ykd);
+        m_pidY.setIntegratorRange(-yMaxIntegral,yMaxIntegral);
+        m_rotationpid.setTolerance(tolerance);
+        m_pidY.setIzone(YiZone);
+        m_pidY.setTolerance(ytolerance);
+        m_pidX.setIzone(XiZone);
+        m_pidY.setTolerance(xtolerance);
+        m_rotationpid.setIzone(rotIzone);
+//        odometry.updatePose();//todo: uncomment when starting to use odometry
+        m_pidX.setPID(Xkp,Xki,Xkd);
+        m_pidX.setConstraints(new TrapezoidProfile.Constraints(SpeedsAndAcc.maxVelocityX,SpeedsAndAcc.maxAccelerationX));
 
         updateTelemetry();
         updateValues();
@@ -183,4 +185,10 @@ public class ChassisSubsystem extends SubsystemBase {
         });
     }
 
+    public Command slowDriving(){
+        return new InstantCommand(()->slowDriver = true);
+    }
+    public Command stopSlowDriving(){
+        return new InstantCommand(()->slowDriver = false);
+    }
 }
