@@ -89,22 +89,27 @@ public class DriveSubsystem {
         double normalizedSlidePosition = (Common.slidePosition - 800) / 800;
         double normalizedArmPosition = (Common.armPosition - 1400) / 1000;
         double limiter = normalizedArmPosition * normalizedSlidePosition * 0.4;
+
         double frontLeftPower = speed + strafe + turn;
         double frontRightPower = speed - strafe + turn;
         double backLeftPower = speed - strafe - turn;
         double backRightPower = speed + strafe - turn;
 
-        telemetry.addData("frontLeftPower", frontLeftPower / limiter);
-        telemetry.addData("frontRightPower", frontRightPower / limiter);
-        telemetry.addData("backLeftPower", backLeftPower / limiter);
-        telemetry.addData("backRightPower", backRightPower / limiter);
+        frontLeftPower /= 1+limiter;
+        frontRightPower /= 1+limiter;
+        backLeftPower /= 1+limiter;
+        backRightPower /= 1+limiter;
 
-        frontLeftDrive.setPower(frontLeftPower / limiter);
-        frontRightDrive.setPower(frontRightPower / limiter);
-        backLeftDrive.setPower(backLeftPower / limiter);
-        backRightDrive.setPower(backRightPower / limiter);
+        telemetry.addData("frontLeftPower", frontLeftPower);
+        telemetry.addData("frontRightPower", frontRightPower);
+        telemetry.addData("backLeftPower", backLeftPower);
+        telemetry.addData("backRightPower", backRightPower);
+
+        frontLeftDrive.setPower(frontLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backLeftDrive.setPower(backLeftPower);
+        backRightDrive.setPower(backRightPower);
     }
-
     private void runForAllMotors(Consumer<DcMotor> f) {
         f.accept(frontLeftDrive);
         f.accept(frontRightDrive);
