@@ -50,6 +50,7 @@ public class ChassisConstants {
 
     @Config
     public static class PIDConstants {
+        public static double slowDriver = 1;
         public static double Xkp = 3;
         public static double Xki = 0.05;
         public static double Xkd = 0.5;

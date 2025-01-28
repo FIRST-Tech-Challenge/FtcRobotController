@@ -82,9 +82,9 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return m_pivot.set(idle)
                 .andThen(m_gripper.setScore())
                 .andThen(new WaitCommand(600))
-                .andThen(
-                        new SequentialCommandGroup(m_extension.setExtension(closed)
-                        )
+                .andThen(m_extension.setExtension(closed)
+                .andThen(m_chassis.stopSlowDriving())
+
                 );
     }
     public Command setMidpoint(){

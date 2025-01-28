@@ -34,7 +34,6 @@ import java.util.function.DoubleSupplier;
 public class ChassisSubsystem extends SubsystemBase {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
-    public boolean slowDriver = false;
     public ProfiledPIDController m_pidY;
     public ProfiledPIDController m_pidX;
     public ProfiledPIDController m_rotationpid;
@@ -95,7 +94,7 @@ public class ChassisSubsystem extends SubsystemBase {
 
     public void setMotors(double FL, double FR, double BL, double BR) {
         double compensation = 12.0 / voltageSensor.getVoltage();
-        motor_FR.set(slowDriver?0.5*compensation * applyFeedForward(ks, kv, FR):compensation * applyFeedForward(ks, kv, FR));
+        motor_FR.set(compensation * applyFeedForward(ks, kv, FR));
         motor_FL.set(compensation * applyFeedForward(ks, kv, FL));
         motor_BR.set(compensation * applyFeedForward(ks, kv, BR));
         motor_BL.set(compensation * applyFeedForward(ks, kv, BL));
@@ -173,7 +172,7 @@ public class ChassisSubsystem extends SubsystemBase {
 
             BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
-            drive(-rotated.getY(), -rotated.getX(),  rotation.getAsDouble());
+            drive(-rotated.getY()*slowDriver, -rotated.getX()*slowDriver,  rotation.getAsDouble()*slowDriver);
         }, this);
     }
 
@@ -185,9 +184,9 @@ public class ChassisSubsystem extends SubsystemBase {
     }
 
     public Command slowDriving(){
-        return new InstantCommand(()->slowDriver = true);
+        return new InstantCommand(()->slowDriver = 0.5);
     }
     public Command stopSlowDriving(){
-        return new InstantCommand(()->slowDriver = false);
+        return new InstantCommand(()->slowDriver = 1);
     }
 }
