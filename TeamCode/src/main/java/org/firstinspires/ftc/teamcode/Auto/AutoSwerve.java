@@ -20,19 +20,7 @@ public class AutoSwerve {
   static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
   static double maxMotorVelocity = 436.0 / 60.0;
   double wheelAngle = 180; // direction wheels are pointing
-
-  private static final double conversionFactor;
-
-  static final double maxDriveSpeedMetersPerSec;
-  static final double maxSteerSpeedRadPerSec;
-
-  static {
-    conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
-    maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
-
-    double maxSpeedSecondsPer60Degrees = .14 * .863;
-    maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
-  }
+  private static double max_voltage;
 
   GoBildaPinpointDriver odo;
   public AutoSwerve(LinearOpMode opMode,GoBildaPinpointDriver odo){
@@ -64,12 +52,13 @@ public class AutoSwerve {
 
     double currentTime = Utils.getTimeSeconds();
     double lastTime = currentTime;
+    max_voltage = servoInputBL.getMaxVoltage();
   }
 
   // distance to drive by encoder
   // turns on motor for a drive distance
+  //Keeps servos aligned in current direction
   // dist in meters
-  //TODO: revise to use new code
 public void driveDist(double dist, double mSpd){
     if(mSpd < .3)mSpd = 0.3;
     if(mSpd > 1.0)mSpd = 1.0;
@@ -83,9 +72,12 @@ public void driveDist(double dist, double mSpd){
     motorBR.setTargetPosition(motorBR.getCurrentPosition() + (int)(dist * encCt));
     motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     forward(mSpd);
-    while(opMode.opModeIsActive()&& (motorFL.isBusy() &&
-            motorFR.isBusy()&&motorBL.isBusy()&&motorBR.isBusy())){
-      alignWheels(wheelAngle);// compensate for drift
+    while(opMode.opModeIsActive()&& (motorFL.isBusy() && motorFR.isBusy()&&motorBL.isBusy()&&motorBR.isBusy())){
+      // compensate for drift
+      set_Servo_Angle(servoInputBL,servoBL,servoInputBL.getVoltage()/max_voltage);
+      set_Servo_Angle(servoInputBR,servoBR,servoInputBR.getVoltage()/max_voltage);
+      set_Servo_Angle(servoInputFL,servoFL,servoInputFL.getVoltage()/max_voltage);
+      set_Servo_Angle(servoInputFR,servoFR,servoInputFR.getVoltage()/max_voltage);
     }
     forward(0);
   }
@@ -124,7 +116,6 @@ public void driveDist(double dist, double mSpd){
   //TODO: Incorporate other code to use this method
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
     double pot_voltage = analogInput.getVoltage();
-    double max_voltage = 3.326;
     double normalized_voltage = pot_voltage / max_voltage;
 
     // 0.5 here is the desired angle
