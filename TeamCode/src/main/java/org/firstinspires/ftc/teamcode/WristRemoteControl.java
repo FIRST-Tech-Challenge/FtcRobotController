@@ -52,13 +52,13 @@ public class WristRemoteControl extends LinearOpMode {
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.2;        // Claw is closed
-    final double CLAW_MAX = 0.6;       // Claw is open - Og non-wrist value was 0.8
+    final double CLAW_MIN = 0.18;        // Claw is closed
+    final double CLAW_MAX = 0.36;       // Claw is open - Og non-wrist value was 0.8
     double claw_position = CLAW_MAX;
 
     // This chunk controls our wrist (todo: update values)
     Servo wrist = null;
-    final double WRIST_PICKUP = 0.2;       // Wrist is in intake position (picking up)
+    final double WRIST_PICKUP = 0.15;       // Wrist is in intake position (picking up)
     final double WRIST_DROPOFF = 0.8;      // Wrist is in outtake position (dropping in basket)
     double wrist_position = WRIST_DROPOFF;
 
@@ -252,10 +252,10 @@ public class WristRemoteControl extends LinearOpMode {
     }
 
     private void setWheelPower(){
-        leftFrontPower = (axial + lateral + yaw) / 2;
-        rightFrontPower = (axial - lateral - yaw) / 2;
-        leftBackPower = (axial - lateral + yaw) / 2;
-        rightBackPower = (axial + lateral - yaw) / 2;
+        leftFrontPower = (axial + lateral + yaw) * 0.75;
+        rightFrontPower = (axial - lateral - yaw) * 0.75;
+        leftBackPower = (axial - lateral + yaw) * 0.75;
+        rightBackPower = (axial + lateral - yaw) * 0.75;
 
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
@@ -288,7 +288,7 @@ public class WristRemoteControl extends LinearOpMode {
             RobotLog.vv("Rockin' Robots", "1");
             setViper(VIPER_MIN, 4000);
         }
-        setVertical(200, 3000);
+        setVertical(250, 3000);
         while (vertical.getCurrentPosition() > 500) {
             RobotLog.vv("Rockin' Robots", "2");
             setVertical(200, 3000);

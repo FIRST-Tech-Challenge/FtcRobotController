@@ -67,14 +67,11 @@ public class WristServoAdjustments extends LinearOpMode {
 
     private void initializeHardwareVariables() {
         claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(0);
 
         wrist = hardwareMap.get(Servo.class, "wrist");
         wrist.setDirection(Servo.Direction.REVERSE);
-        wrist.setPosition(0);
         ascentStick = hardwareMap.get(Servo.class, "ascentStick");
         ascentStick.setDirection(Servo.Direction.REVERSE);
-        ascentStick.setPosition(0);
     }
 
 

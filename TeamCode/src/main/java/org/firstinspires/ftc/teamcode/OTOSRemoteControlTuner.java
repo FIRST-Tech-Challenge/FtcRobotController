@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 // All the things that we use and borrow
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="OTOSRemoteControlTuner", group="Linear OpMode")
+@Disabled
 public class OTOSRemoteControlTuner extends LinearOpMode {
     // Initialize all variables for the program below:
     // Hardware variables
