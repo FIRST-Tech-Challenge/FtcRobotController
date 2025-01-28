@@ -15,11 +15,7 @@ public class AutoSwerve {
   public Servo servoFL,servoFR,servoBR,servoBL;
   DcMotor motorFL,motorFR,motorBR,motorBL;
   LinearOpMode opMode;
-  static double countsPerRevolution = 537.7;
-  static double gearRatio = 1.1;
   static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
-  static double maxMotorVelocity = 436.0 / 60.0;
-  double wheelAngle = 180; // direction wheels are pointing
   private static double max_voltage;
 
   GoBildaPinpointDriver odo;
