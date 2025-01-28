@@ -44,21 +44,26 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.Servos;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "bucket no servo no servo, no work", group = "Autonomous")
-public class Bucketnoservo extends LinearOpMode {
+@Autonomous(name = "trying to go square", group = "Autonomous")
+public class GoStraight extends LinearOpMode {
 
 
     @Override public void runOpMode(){
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = Positions.clipsInitialPos;
+        Pose2d initialPose = new Pose2d(-50,-50,Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Servos servos = new Servos(hardwareMap);
 
         //test path
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
-                .lineToY(-40);
+                .splineToConstantHeading(new Vector2d(-40,-40),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-40,40),Math.toRadians(90))
+                .strafeTo(new Vector2d(40,40))
+                .lineToYConstantHeading(-40)
+                //.lineToY(-40)
+                .strafeTo(new Vector2d(-40,-40));
 
 
         // vision here that outputs position

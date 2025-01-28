@@ -29,8 +29,8 @@ public class testServos extends LinearOpMode {
         clawOffset1 = MID_SERVO;
         clawOffset2 = MID_SERVO;
         // Define and initialize ALL installed servos.
-        servo1  = hardwareMap.get(Servo.class, "6");
-        servo2 = hardwareMap.get(Servo.class, "7");
+        servo1  = hardwareMap.get(Servo.class, "0");
+        servo2 = hardwareMap.get(Servo.class, "1");
         servo1.setPosition(MID_SERVO);
         servo2.setPosition(MID_SERVO);
         //servo1.setPosition(MID_SERVO);
