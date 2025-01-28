@@ -102,6 +102,10 @@ public class CompBotAuto extends LinearOpMode {
     telemetry.addData("servoFL center: ",driveBase.servoInputFL.getMaxVoltage()/2.0);
     telemetry.addData("ServoBR center: ",driveBase.servoInputBR.getMaxVoltage()/2.0);
     telemetry.addData("servoBL center: ",driveBase.servoInputBL.getMaxVoltage()/2/0);
+    telemetry.addData("ServoFR max voltage: ",driveBase.servoInputFR.getMaxVoltage());
+    telemetry.addData("servoFL max voltage: ",driveBase.servoInputFL.getMaxVoltage());
+    telemetry.addData("ServoBR max voltage: ",driveBase.servoInputBR.getMaxVoltage());
+    telemetry.addData("servoBL max voltage: ",driveBase.servoInputBL.getMaxVoltage());
 
     telemetry.update();
   }

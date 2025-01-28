@@ -130,7 +130,6 @@ public class AutoSwerve {
     double pot_voltage = analogInput.getVoltage();
     double normalized_voltage = pot_voltage / max_voltage;
 
-    // 0.5 here is the desired angle
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
 
     opMode.telemetry.addData("Norm:  ", normalized_voltage);
@@ -233,4 +232,10 @@ public class AutoSwerve {
     opMode.telemetry.update();
   }
 
+  public double pid(double current,double wanted){
+    //TODO: fill out
+
+
+    return 0.;
+  }
 }
