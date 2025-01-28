@@ -15,8 +15,24 @@ public class AutoSwerve {
   public Servo servoFL,servoFR,servoBR,servoBL;
   DcMotor motorFL,motorFR,motorBR,motorBL;
   LinearOpMode opMode;
+  static double countsPerRevolution = 537.7;
+  static double gearRatio = 1.1;
   static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
   private static double max_voltage;
+  static double maxMotorVelocity = 436.0 / 60.0;
+  double wheelAngle = 180; // direction wheels are pointing
+
+  private static final double conversionFactor;
+
+  static final double maxDriveSpeedMetersPerSec;
+  static final double maxSteerSpeedRadPerSec;
+
+  static {
+    conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
+    maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
+    double maxSpeedSecondsPer60Degrees = .14 * .863;
+    maxSteerSpeedRadPerSec = (2 * Math.PI) / (maxSpeedSecondsPer60Degrees * 6);
+  }
 
   GoBildaPinpointDriver odo;
   public AutoSwerve(LinearOpMode opMode,GoBildaPinpointDriver odo){
@@ -78,7 +94,8 @@ public class AutoSwerve {
   // turns on motor for a drive distance
   // keeps servos aligned in current direction
   // dist in meters
-  public void driveDist(double dist, double mSpd){
+  //TODO: revise to use new code
+public void driveDist(double dist, double mSpd){
     if(mSpd < .3)mSpd = 0.3;
     if(mSpd > 1.0)mSpd = 1.0;
     double encCt = wheelCircumferenceMeters * dist;
@@ -91,14 +108,15 @@ public class AutoSwerve {
     motorBR.setTargetPosition(motorBR.getCurrentPosition() + (int)(dist * encCt));
     motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     forward(mSpd);
-    while(opMode.opModeIsActive()&& (motorFL.isBusy() && motorFR.isBusy()&&motorBL.isBusy()&&motorBR.isBusy())){
-      // compensate for drift
-      set_Servo_Angle(servoInputBL,servoBL,servoInputBL.getVoltage()/max_voltage);
-      set_Servo_Angle(servoInputBR,servoBR,servoInputBR.getVoltage()/max_voltage);
-      set_Servo_Angle(servoInputFL,servoFL,servoInputFL.getVoltage()/max_voltage);
-      set_Servo_Angle(servoInputFR,servoFR,servoInputFR.getVoltage()/max_voltage);
     }
     forward(0);
+  }
+
+  public void stopServo(){
+    servoFL.setPosition(.5);
+    servoFR.setPosition(.5);
+    servoBL.setPosition(.5);
+    servoBR.setPosition(.5);
   }
 
   //odo.getPosX is forward on robot
@@ -109,6 +127,30 @@ public class AutoSwerve {
     motorFR.setPower(pwr);
   }
 
+  public void alginWheels(){
+    double delta=1;
+    AnalogInput tempInput = servoInputFL;
+    Servo temp = servoFL;
+    for(int i = 0;i<4;i++){
+      if(i==1){
+        tempInput = servoInputFR;
+        temp = servoFR;
+      }
+      else if(i==2){
+        tempInput = servoInputBL;
+        temp = servoBL;
+      }
+      else if(i==3){
+        tempInput = servoInputBR;
+        temp = servoBR;
+      }
+      while(delta!=.0){
+        set_Servo_Angle(tempInput,temp,0.5);
+      }
+    }
+  }
+
+  //TODO: Incorporate other code to use this method
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
     double pot_voltage = analogInput.getVoltage();
     double normalized_voltage = pot_voltage / max_voltage;

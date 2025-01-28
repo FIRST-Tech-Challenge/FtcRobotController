@@ -148,19 +148,19 @@ public class Mekanism {
 
   public void homeArm() {
     pivotTimer.reset();
-
     pivot.setMode(RUN_USING_ENCODER);
     slide.setMode(RUN_USING_ENCODER);
     slide2.setMode(RUN_USING_ENCODER);
-
-    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500 && myOp.opModeIsActive()) {
-      pivot.setPower(-.75);
-      slide.setPower(-0.5);
-      slide2.setPower(-0.25);
+      if(!limitSwitch.getState()) {
+      while (limitSwitch.getState() && pivotTimer.milliseconds() < 1500 && myOp.opModeIsActive()) {
+        pivot.setPower(-.55);
+        slide.setPower(-0.5);
+        slide2.setPower(-0.25);
+      }
+    }// Already at limit?
 
       telemetry.addData("Pivot Pos: ", pivot.getCurrentPosition());
       telemetry.update();
-    }
 
     pivot.setPower(0.0);
     slide.setPower(0.0);
@@ -236,7 +236,6 @@ public class Mekanism {
     }
     wristMoved = true;
   }
-
 
   public void toggleWrist() {
     if (!wristMoved) {

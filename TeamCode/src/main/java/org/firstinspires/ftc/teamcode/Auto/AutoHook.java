@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.kinematics.ChassisSpeeds;
 
 
-@Autonomous(name = "Auto Hook Specimen")
+@Autonomous(name = "Auto Hook")
 public class AutoHook extends LinearOpMode {
   private Swerve drivebase;
 
@@ -34,6 +34,7 @@ public class AutoHook extends LinearOpMode {
     sleep(2000);
     target = new Pose2d(0,2,new Rotation2d(0));
     driveWithOdo(target,1);
+    // raise arm and lower to clip back up, then park
   }
 
 
@@ -89,9 +90,6 @@ public class AutoHook extends LinearOpMode {
 
       // 7. Update speeds for the robot
       drivebase.drive(speeds, deltaTime);
-
-
-
       /*
       // 8. Telemetry - Telemetry causes a null exception for some reason
       telemetry.addData("Current X",0);
