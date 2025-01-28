@@ -108,7 +108,6 @@ public void driveDist(double dist, double mSpd){
     motorBR.setTargetPosition(motorBR.getCurrentPosition() + (int)(dist * encCt));
     motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     forward(mSpd);
-    }
     forward(0);
   }
 

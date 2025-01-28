@@ -74,7 +74,7 @@ public class CompBotAuto extends LinearOpMode {
     driveBase.forward(.5);
     telem();
     sleep(5000);
-    driveBase.reverse(.5);
+    driveBase.forward(-.5);
     telem();
     sleep(5000);
   }
