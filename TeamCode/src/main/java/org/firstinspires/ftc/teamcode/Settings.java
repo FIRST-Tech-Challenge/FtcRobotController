@@ -64,18 +64,17 @@ public class Settings {
 
             @Config
             public static class Wrist {
-                // At the moment, the right servo is messed up, so only the left positions are being used
-                // TODO: TUNE WHEN RIGHT SERVO IS PHYSICALLY REPOSITIONED
-                public static double[] HORIZONTAL_POSITION = {0.72, 1.0};
-                public static double[] CHAMBER_POSITION = {0.3, 0.43};
-                public static double[] VERTICAL_POSITION = {0.36, 0.1};
+                // we removed the right servo so just change the left value lol
+                public static double[] HORIZONTAL_POSITION = {0.45, 0.0};
+                public static double[] CHAMBER_POSITION = {0.3, 0.0};
+                public static double[] VERTICAL_POSITION = {0.85, 0.0};
             }
             @Config
             public static class Linkage {
                 // TODO: TUNE WHEN NEW SERVO GOES IN
-                public static double TRANSFER_POSITION = 1;
-                public static double PLACE_FORWARD_POSITION = 0.25;
-                public static double PLACE_BACKWARD_POSITION = 0;
+                public static double TRANSFER_POSITION = 0.86;
+                public static double PLACE_FORWARD_POSITION = 0.75;
+                public static double PLACE_BACKWARD_POSITION = 0.0;
 
             }
         }
@@ -168,18 +167,17 @@ public class Settings {
         @Config
         public static class FieldPositions {
             // Updated poses for initial robot positions based on IdealLoop
-            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -70, Math.toRadians(90));
-            public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -70, Math.toRadians(90));
+            public static Pose2d LEFT_INITIAL_POSE = new Pose2d(-11.5, -62.5, Math.toRadians(90));
+            public static Pose2d RIGHT_INITIAL_POSE = new Pose2d(11.5, -62.5, Math.toRadians(90));
 
             // Updated parked positions for each starting position
             public static Vector2d LEFT_JUST_PARK_VEC = new Vector2d(45, -58);
             public static Vector2d RIGHT_JUST_PARK_VEC = new Vector2d(55, -58);
 
             // place positions for each starting position
-            public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(5, -30, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(-6, -31, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE_2 = new Pose2d(2, -32, Math.toRadians(90));
-//            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
+            public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(-4.5, -27.4, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(4.5, -27.4, Math.toRadians(90));
+            public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
 
@@ -188,10 +186,10 @@ public class Settings {
             public static Pose2d LEFT_BEFORE_PARK_POSE = new Pose2d(-45, 14, Math.toRadians(90));
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
-            public static Pose2d RIGHT_PARK_POSE = new Pose2d(55, -54, Math.toRadians(180));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(65, -5, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(70, -5, Math.toRadians(90));
-            public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(34, -40);
+            public static Pose2d RIGHT_PARK_POSE = new Pose2d(60, -60, Math.toRadians(180));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(48.1, -5.3, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(58.3, -5, Math.toRadians(90));
+            public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(35.0, -34.3);
 
             // I am adding this to push samples into human player zone
             // ^ thanks for the comment deepak have you tried USING YOUR EYES
