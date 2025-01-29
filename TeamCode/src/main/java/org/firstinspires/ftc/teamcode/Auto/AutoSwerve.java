@@ -131,6 +131,11 @@ public class AutoSwerve {
     double normalized_voltage = pot_voltage / max_voltage;
 
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
+    double servo_speed = 0.05;
+    if(delta_to_reference>0.05)
+      servo_speed = delta_to_reference;
+    if(servo_speed > .25)
+      servo_speed = .25;
 
     opMode.telemetry.addData("Norm:  ", normalized_voltage);
     opMode.telemetry.addData("Delta: ", delta_to_reference);
@@ -139,10 +144,10 @@ public class AutoSwerve {
     double tolerance = 0.01;
 
     if (delta_to_reference < (-1 * tolerance)) {
-      servo.setPosition(0.55);
+      servo.setPosition(0.5 + servo_speed);
       return -1;
     } else if (delta_to_reference > tolerance) {
-      servo.setPosition(0.45);
+      servo.setPosition(0.5 - servo_speed);
       return 1;
     } else {
       servo.setPosition(0.5);
@@ -230,12 +235,5 @@ public class AutoSwerve {
     opMode.telemetry.addData("ServoBR voltage: ", servoInputBR.getVoltage());
     opMode.telemetry.addData("servoBL voltage: ", servoInputBL.getVoltage());
     opMode.telemetry.update();
-  }
-
-  public double pid(double current,double wanted){
-    //TODO: fill out
-
-
-    return 0.;
   }
 }

@@ -39,19 +39,14 @@ public class CompBotAuto extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     initRobot(this);
-    // zero degrees is unstable do not use 360 or 0 degrees
-    // use 180 and reverse motors
-    int driveAngle = 180;
     waitForStart();
-// initialize arm
     mek.homeArm();
 
 // set direction
     if (opModeIsActive()) {
-      PushPush();
       driveBase.alignWheels();
-      //driveBase.stopServo();
-      // driveBase.alignWheels(driveAngle);
+      driveBase.stopServo();
+      checkMotorDirAndServoVolt();
 // drive to bar
       // driveBase.driveDist(1.3, .5, driveAngle);// alignWheels is called within driveDist
 // raise arm
@@ -79,6 +74,8 @@ public class CompBotAuto extends LinearOpMode {
     driveBase.setMotors(-.5);
     telem();
     sleep(5000);
+    driveBase.setMotors(0);
+    telem();
   }
   // this is debug information
   public void telem() {
