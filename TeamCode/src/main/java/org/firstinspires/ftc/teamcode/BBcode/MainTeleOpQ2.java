@@ -120,7 +120,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
         waitForStart();
         arm.MoveToHome();
         odo.setPosition(new Pose2d(31, 61.875, Math.toRadians(180)));
-        odo.setPosition(BlueBasket.pose_basket_init);
+        odo.setPosition(BlueBasket.pose_basket_init_old);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         while(opModeIsActive()){ //while loop for when program is active

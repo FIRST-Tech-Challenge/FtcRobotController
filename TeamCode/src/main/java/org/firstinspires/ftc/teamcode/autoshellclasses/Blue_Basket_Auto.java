@@ -23,13 +23,13 @@ import java.util.Locale;
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
     //Pull in the values from the class that both TeamCode and MeepMeep can access and in a way that the values can be modified in FTCDesktop
-    private static Pose2d pose_init = BlueBasket.pose_basket_init;
-    public static double pose_init_x = BlueBasket.pose_basket_init.position.x;
-    public static double pose_init_y = BlueBasket.pose_basket_init.position.y;
+    private static Pose2d pose_init = BlueBasket.pose_init;
+    public static double pose_init_x = BlueBasket.pose_init.position.x;
+    public static double pose_init_y = BlueBasket.pose_init.position.y;
     public static double pose_init_h_deg = Math.toDegrees(pose_init.heading.toDouble());
-    private static Pose2d pose_drop = BlueBasket.pose_basket_drop;
-    public static double pose_drop_x = BlueBasket.pose_basket_drop.position.x;
-    public static double pose_drop_y = BlueBasket.pose_basket_drop.position.y;
+    private static Pose2d pose_drop = BlueBasket.pose_drop;
+    public static double pose_drop_x = BlueBasket.pose_drop.position.x;
+    public static double pose_drop_y = BlueBasket.pose_drop.position.y;
     public static double pose_drop_h_deg = Math.toDegrees(pose_drop.heading.toDouble());
 
     @Override
@@ -64,30 +64,28 @@ public class Blue_Basket_Auto extends LinearOpMode {
         double rotation_speed = Math.toRadians(0.5);
 
         GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
-        Action driveToDrop1, driveToDrop2, driveToDrop3, driveToDrop4, samplePickup1, samplePickup2, samplePickup3, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
+        Action driveToDropFromOgStart, driveToDropFromStart, driveToDrop, driveToDrop3, driveToDrop4, samplePickupInner, samplePickupMiddle, samplePickupOuter, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
 
-        driveToDrop1 = drive.actionBuilder(drive.pose)
+        driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
                 .setTangent(-45)
                 .splineToLinearHeading(pose_drop, 0)
                 .build();
-        driveToDrop2 = drive.actionBuilder(new Pose2d(inner_sample_pickup_position, inner_sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
+        driveToDropFromStart = drive.actionBuilder(pose_init)
+
+                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
-        driveToDrop3 = drive.actionBuilder(new Pose2d(middle_sample_pickup_position, sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
-                .build();
-        driveToDrop4 = drive.actionBuilder(new Pose2d(outer_sample_pickup_position, sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
+        driveToDrop = drive.actionBuilder(drive.pose)
+                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        samplePickup1 = drive.actionBuilder(pose_drop)
+        samplePickupInner = drive.actionBuilder(drive.pose)
                 .turnTo(new Rotation2d(rotation_speed, inner_sample_pickup_heading))
                 .build();
-        samplePickup2 = drive.actionBuilder(pose_drop)
+        samplePickupMiddle = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(rotation_speed, sample_pickup_heading))
                 .build();
-        samplePickup3 = drive.actionBuilder(pose_drop)
-                .turnTo(new Rotation2d(rotation_speed, sample_pickup_heading))
+        samplePickupOuter = drive.actionBuilder(drive.pose)
+                .strafeToLinearHeading(BlueBasket.pose_outer_sample.position, BlueBasket.pose_outer_sample.heading)
                 .build();
 
         driveToPark = drive.actionBuilder(pose_drop)
@@ -135,7 +133,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .build();
 
         viperDownWait1 = drive.actionBuilder(drive.pose)
-                .waitSeconds(0.5)
+                .waitSeconds(5)
                 .build();
         viperDownWait2 = drive.actionBuilder(drive.pose)
                 .waitSeconds(0.5)
@@ -204,7 +202,12 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         // JOSHUANOTE: This is where you put the final set of actions.
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
                        // test
-                        driveToDrop1
+                        driveToDropFromStart,
+                        drive.actionBuilder(drive.pose).waitSeconds(5).build(),
+                        samplePickupOuter,
+                        drive.actionBuilder(drive.pose).waitSeconds(5).build(),
+                        driveToDrop
+
 //                        _ViperArmActions.MoveArmToHighBasket(),
 //                        armUpWait1,
 //                        _ViperArmActions.MoveViperToHighBasket(),

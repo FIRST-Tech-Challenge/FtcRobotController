@@ -52,11 +52,12 @@ public class ActionBuilder {
         double sample_pickup_heading = Math.toRadians(-90);
 
         //Pose2d startPose = BlueBasket.startPose;
-        TrajectoryActionBuilder builder = builderFunction.apply(BlueBasket.pose_basket_init);
+        TrajectoryActionBuilder builder = builderFunction.apply(BlueBasket.pose_init);
         return builder
 
-                .setTangent(-45)
-                .splineToLinearHeading(BlueBasket.pose_basket_drop, 0)
+//                .setTangent(-45)
+//                .splineToLinearHeading(BlueBasket.pose_drop, 0)
+                .strafeToLinearHeading(BlueBasket.pose_drop.position, BlueBasket.pose_drop.heading)
 
                 //.waitSeconds(3)//bring up arm
 
