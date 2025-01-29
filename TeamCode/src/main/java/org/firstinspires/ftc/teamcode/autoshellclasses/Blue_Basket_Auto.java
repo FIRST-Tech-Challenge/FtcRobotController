@@ -24,12 +24,10 @@ import java.util.Locale;
 public class Blue_Basket_Auto extends LinearOpMode {
     //Pull in the values from the class that both TeamCode and MeepMeep can access and in a way that the values can be modified in FTCDesktop
     private static Pose2d pose_init = BlueBasket.pose_basket_init;
-    //public static Vector2d initialPos = initialPose.position;
     public static double pose_init_x = BlueBasket.pose_basket_init.position.x;
     public static double pose_init_y = BlueBasket.pose_basket_init.position.y;
     public static double pose_init_h_deg = Math.toDegrees(pose_init.heading.toDouble());
     private static Pose2d pose_drop = BlueBasket.pose_basket_drop;
-    //public static Vector2d drop_position = BlueBasket.drop_pose.position;
     public static double pose_drop_x = BlueBasket.pose_basket_drop.position.x;
     public static double pose_drop_y = BlueBasket.pose_basket_drop.position.y;
     public static double pose_drop_h_deg = Math.toDegrees(pose_drop.heading.toDouble());
