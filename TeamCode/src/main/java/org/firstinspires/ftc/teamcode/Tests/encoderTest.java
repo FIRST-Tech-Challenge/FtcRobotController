@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Systems.IMU;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Motors;
 
-@TeleOp
+//@TeleOp
 public class encoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -34,7 +34,7 @@ public class IMU {
         robotOrientation = imu.getRobotYawPitchRollAngles();
 
 
-        return robotOrientation.getYaw(AngleUnit.RADIANS);
+        return robotOrientation.getYaw(AngleUnit.DEGREES);
     }
 
     public float getAngularVelocity(char angle) {

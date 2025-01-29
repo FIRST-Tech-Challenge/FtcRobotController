@@ -22,7 +22,7 @@ public class TeleMain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
+        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
         BotTelemetry.setTelemetry(telemetry, dashboardTelemetry);
 
 
@@ -33,6 +33,7 @@ public class TeleMain extends LinearOpMode {
 
         waitForStart();
 
+        input.resetWrist();
         int arm = 0;
 
         while (opModeIsActive())
@@ -51,9 +52,11 @@ public class TeleMain extends LinearOpMode {
             input.strafe(strafe);
             input.claw(gamepad2.b, gamepad2.a);
             input.upArm(armRaise);
+            input.automaticallyMoveWrist(gamepad2.right_trigger != 0);
 
-            // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work
+            // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work turning game pad input into a position
             arm += (int) (-gamepad2.left_stick_y * 35);
+            arm = Math.max(0, Math.min(arm, Constants.ARM_MAX_POSITION_OFFSET));
 
             input.arm(arm);
 

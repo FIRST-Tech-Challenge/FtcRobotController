@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
@@ -75,7 +73,7 @@ public class ArmPIDTest extends LinearOpMode {
             }
 
             // Calculate PID terms
-            double proportional = Constants.KP * errorValue;
+            double proportional = Constants.ARM_KP * errorValue;
 
             integral += errorValue * dt;  // Integrate the error over time
             // Anti-windup: Limit the integral term to prevent it from growing too large
@@ -84,7 +82,7 @@ public class ArmPIDTest extends LinearOpMode {
             double derivative = (errorValue - prevError) / dt;
 
             // Compute the final PID output
-            double output = proportional + Constants.KI * integral + Constants.KD * derivative;
+            double output = proportional + Constants.ARM_KI * integral + Constants.ARM_KD * derivative;
 
             // Apply the motor power
             output = Math.max(Math.min(output, 50), -50);  // Clamp output to motor range and make it so that it will more slowly go to its target position
@@ -105,9 +103,9 @@ public class ArmPIDTest extends LinearOpMode {
 
             BotTelemetry.addData("Set Point", setPoint);
             BotTelemetry.addData("Process Value", processValue);
-            BotTelemetry.addData("Proportional Gain", Constants.KP);
-            BotTelemetry.addData("Integral Gain", Constants.KI);
-            BotTelemetry.addData("Derivative Gain", Constants.KD);
+            BotTelemetry.addData("Proportional Gain", Constants.ARM_KP);
+            BotTelemetry.addData("Integral Gain", Constants.ARM_KI);
+            BotTelemetry.addData("Derivative Gain", Constants.ARM_KD);
             BotTelemetry.addData("Proportional", proportional);
             BotTelemetry.addData("Integral", integral);
             BotTelemetry.addData("Derivative", derivative);
