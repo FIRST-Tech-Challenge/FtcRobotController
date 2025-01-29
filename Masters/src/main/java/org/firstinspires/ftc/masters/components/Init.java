@@ -23,7 +23,7 @@ public class Init {
 
     private final Servo led, claw;
     private final Servo wrist, angleLeft, angleRight, position;
-    private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
+//    private final Servo ptoRight, ptoLeft, hangLeft, hangRight;
     private IMU imu;
 
     public Telemetry telemetry;
@@ -82,10 +82,10 @@ public class Init {
         outtakeSlideLeft = hardwareMap.dcMotor.get("vertSlideLeft");
         outtakeSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        ptoRight = hardwareMap.servo.get("ptoRight");
-        ptoLeft = hardwareMap.servo.get("ptoLeft");
-        hangLeft = hardwareMap.servo.get("hangLeft");
-        hangRight = hardwareMap.servo.get("hangRight");
+//        ptoRight = hardwareMap.servo.get("ptoRight");
+//        ptoLeft = hardwareMap.servo.get("ptoLeft");
+//        hangLeft = hardwareMap.servo.get("hangLeft");
+//        hangRight = hardwareMap.servo.get("hangRight");
 
         led = hardwareMap.servo.get("led");
 
@@ -144,11 +144,11 @@ public class Init {
         return position;
     }
 
-    public Servo getPtoRight() {return ptoRight;}
-
-    public Servo getPtoLeft(){ return  ptoLeft;}
-     public Servo getHangLeft() {return hangLeft;}
-    public Servo getHangRight() {return hangRight;}
+//    public Servo getPtoRight() {return ptoRight;}
+//
+//    public Servo getPtoLeft(){ return  ptoLeft;}
+//     public Servo getHangLeft() {return hangLeft;}
+//    public Servo getHangRight() {return hangRight;}
 
     public Telemetry getTelemetry() {
         return telemetry;

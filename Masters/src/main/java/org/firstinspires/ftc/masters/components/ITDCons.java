@@ -22,7 +22,7 @@ public class ITDCons {
     public static double close = 0.75;
 
     public static double wristFront= 0.2;
-    public static double wristBack = 0.8;
+    public static double wristBack = 0.77;
 
     public static double positionBack = 0;
     public static double positionTransfer = 0.5;
@@ -33,7 +33,7 @@ public class ITDCons {
     public static double angleMiddle = 0.5;
     public static double angleScore = 0.6;
 
-    public static int wallPickupTarget = 2000;
+    public static int wallPickupTarget = 5500;
     public static int transferPickupTarget = 0;
 
     public static double slideInit = 0.5;
@@ -45,9 +45,9 @@ public class ITDCons {
 
 
     public static int BucketTarget = 50000;
-    public static int SpecimenTarget = 28000;
-    public static int ReleaseTarget = 26000;
-    public static int intermediateTarget = 26000;
+    public static int SpecimenTarget = 20000;
+    public static int ReleaseTarget = 20000;
+    public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
 
