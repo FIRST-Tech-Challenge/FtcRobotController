@@ -9,7 +9,7 @@ public class Servos {
 
     public enum Type {
         Claw (0),
-        upDown (1);
+        Wrist(1);
 
         private final int value;
 
@@ -27,10 +27,10 @@ public class Servos {
         servos = new Servo[Type.values().length];
 
         servos[Type.Claw.getValue()] = hardwareMap.get(Servo.class, "claw");
-        servos[Type.upDown.getValue()] = hardwareMap.get(Servo.class, "drop");
+        servos[Type.Wrist.getValue()] = hardwareMap.get(Servo.class, "drop");
 
     }
-    public void moveServo(Type servoName, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
+    public void setServoPosition(Type servoName, double position) // select a servo and then select a position, you put in 0-360 degrees, and it converts it into 0-1
     {
         double actualPosition = position / 270;
 
@@ -39,7 +39,7 @@ public class Servos {
 
     public double getServoPosition(Type servoName)
     {
-        return servos[servoName.getValue()].getPosition();
+        return servos[servoName.getValue()].getPosition() * 270;
     }
 
 }

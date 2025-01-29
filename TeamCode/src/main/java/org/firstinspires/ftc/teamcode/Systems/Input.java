@@ -28,6 +28,8 @@ public class Input {
     private boolean isStrafe = false;
     private boolean isSpin = false;
 
+    private boolean clawOpen = false;
+
     //    FtcDashboard dashboard;
 //    Telemetry dashboardTelemetry;
 
@@ -114,11 +116,17 @@ public class Input {
     public void claw(boolean openClaw, boolean closeClaw) {
 
         if (closeClaw) {
-            servos.moveServo(Servos.Type.Claw, Constants.SERVO_OPEN);
+            servos.setServoPosition(Servos.Type.Claw, Constants.CLAW_CLOSED);
+            clawOpen = false;
         }
         else if (openClaw) {
-            servos.moveServo(Servos.Type.Claw, Constants.SERVO_CLOSED);
+            servos.setServoPosition(Servos.Type.Claw, Constants.CLAW_OPEN);
+            clawOpen = true;
         }
+    }
+
+    public boolean isClawOpen() {
+        return clawOpen;
     }
 
     public void upArm(double power) {
@@ -305,4 +313,28 @@ public class Input {
         spinPrevTime = time;
     }
 
+    public void resetWrist() {
+        servos.setServoPosition(Servos.Type.Wrist, Constants.WRIST_NORMAL);
+    }
+
+    public void automaticallyMoveWrist(boolean hangButton) {
+        int position;
+        if (getArmPos() < 1435) { // if the arm is vertical
+            if (hangButton && !isClawOpen()) {
+                position = 20;
+            }
+            else {
+                position = 60;
+            }
+        } else {
+            int x = (int) ((double) getArmPos() * 9/143);
+            position = x - (4335/143); // a formula to make the servo always face towards the wall no matter arm position
+        }
+
+        servos.setServoPosition(Servos.Type.Wrist, position);
+
+        BotTelemetry.addData("is Claw Open?", clawOpen);
+        BotTelemetry.addData("Wanted Position", position);
+        BotTelemetry.addData("Wrist Position", servos.getServoPosition(Servos.Type.Wrist));
+    }
 }
