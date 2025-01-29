@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Utils;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class AutoSwerve {
 
   public AnalogInput servoInputFL, servoInputFR, servoInputBR, servoInputBL;
@@ -43,50 +45,52 @@ public class AutoSwerve {
     servoInputFL = opMode.hardwareMap.analogInput.get("FLEncoder");
     servoFL = opMode.hardwareMap.servo.get("FLServo");
     motorFL = opMode.hardwareMap.dcMotor.get("FLMotor");
-    motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
+    motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
 
     //FR
     servoInputFR = opMode.hardwareMap.analogInput.get("FREncoder");
     servoFR = opMode.hardwareMap.servo.get("FRServo");
     motorFR = opMode.hardwareMap.dcMotor.get("FRMotor");
-    motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+    motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
 
     //BR
     servoInputBR = opMode.hardwareMap.analogInput.get("BREncoder");
     servoBR = opMode.hardwareMap.servo.get("BRServo");
     motorBR = opMode.hardwareMap.dcMotor.get("BRMotor");
-    motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
+    motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
 
     //BL
     servoInputBL = opMode.hardwareMap.analogInput.get("BLEncoder");
     servoBL = opMode.hardwareMap.servo.get("BLServo");
     motorBL = opMode.hardwareMap.dcMotor.get("BLMotor");
-    motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+    motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
 
     double currentTime = Utils.getTimeSeconds();
     double lastTime = currentTime;
     max_voltage = servoInputBL.getMaxVoltage();
   }
 
-  public void alignWheels() {
+//  public AtomicInteger wheel_active_count;
+
+  public double set_wheels(double fr, double bl, double br, double fl) {
     double delta = 1;
     AnalogInput tempInput = servoInputFL;
     Servo temp = servoFL;
+    double delta_sum = 0.0;
     for (int i = 0; i < 4; i++) {
       if (i == 1) {
-        tempInput = servoInputFR;
-        temp = servoFR;
+        delta_sum += set_Servo_Angle(servoInputFR, servoFR, fr);
       } else if (i == 2) {
-        tempInput = servoInputBL;
-        temp = servoBL;
+        delta_sum += set_Servo_Angle(servoInputBL, servoBL, bl);
       } else if (i == 3) {
-        tempInput = servoInputBR;
-        temp = servoBR;
+        delta_sum += set_Servo_Angle(servoInputBR, servoBR, br);
       }
-      while (delta <= .005 && delta >=-.005) {
-        delta = set_Servo_Angle(tempInput, temp, 0.5);
+      else {
+        delta_sum += set_Servo_Angle(servoInputFL, servoFL, fl);
       }
     }
+
+    return delta_sum;
   }
 
   // distance to drive by encoder
@@ -124,21 +128,25 @@ public class AutoSwerve {
     motorFR.setPower(pwr);
   }
 
-  //TODO: Incorporate other code to use this method
+  public double getMinMotorSpeed(){
+
+    return 0;
+  }
+
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
     double pot_voltage = analogInput.getVoltage();
     double normalized_voltage = pot_voltage / max_voltage;
 
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
-    double servo_speed = 0.05;
-    if(delta_to_reference>0.05)
-      servo_speed = delta_to_reference;
-    if(servo_speed > .25)
-      servo_speed = .25;
+    double servo_speed = 0.08;
+//    if(delta_to_reference > 0.05)
+//      servo_speed = delta_to_reference;
+//    if(servo_speed > .25)
+//      servo_speed = .25;
 
-    opMode.telemetry.addData("Norm:  ", normalized_voltage);
-    opMode.telemetry.addData("Delta: ", delta_to_reference);
-    opMode.telemetry.update();
+//    opMode.telemetry.addData("Norm:  ", normalized_voltage);
+//    opMode.telemetry.addData("Delta: ", delta_to_reference);
+//    opMode.telemetry.update();
 
     double tolerance = 0.01;
 
@@ -146,9 +154,11 @@ public class AutoSwerve {
       servo.setPosition(0.5 + servo_speed);
     else if (delta_to_reference > tolerance)
       servo.setPosition(0.5 - servo_speed);
-    else
+    else {
       servo.setPosition(0.5);
-    return delta_to_reference;
+      return 0.0;
+    }
+    return Math.abs(delta_to_reference);
   }
 
   // align wheels has a angle always set where alignWheels is
