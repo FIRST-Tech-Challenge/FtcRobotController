@@ -136,10 +136,6 @@ public class AutoSwerve {
 //    if(servo_speed > .25)
 //      servo_speed = .25;
 
-//    opMode.telemetry.addData("Norm:  ", normalized_voltage);
-//    opMode.telemetry.addData("Delta: ", delta_to_reference);
-//    opMode.telemetry.update();
-
     double tolerance = 0.01;
 
     if (delta_to_reference < (-1 * tolerance))

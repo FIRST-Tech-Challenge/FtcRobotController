@@ -56,8 +56,9 @@ public class CompBotAuto extends LinearOpMode {
 
       while (opModeIsActive()) {
 
-        if (driveBase.set_wheels(0.5, 0.49, 0.49, 0.5) == 0.0) {
-          drive_Wheels(0.5);
+        if (driveBase.set_wheels(0.231, 0.24, 0.24, 0.259) == 0.0) {
+          //drive_Wheels(0.5);
+          goToPos(0.5,0.5,0.5);
         }
         telem();
         odometry.update();
@@ -94,9 +95,9 @@ public class CompBotAuto extends LinearOpMode {
       telemetry.addData("Y change: ",change_Y);
       if(driveBase.set_wheels(0.231, 0.24, 0.24, 0.259)==0){
         if(change_Y>0)
-          drive_Wheels(pwr);
-        else
           drive_Wheels(-pwr);
+        else
+          drive_Wheels(pwr);
       }
       odometry.update();
       telem();
