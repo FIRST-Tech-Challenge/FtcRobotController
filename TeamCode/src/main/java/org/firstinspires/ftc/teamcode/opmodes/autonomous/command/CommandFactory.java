@@ -134,6 +134,10 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
     }
 
+    public MoveSliderCommand extendSliderToSweep() {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.ExtendLimit, DeliverySlider.Direction.EXPANDING);
+    }
+
     public MoveSliderCommand extendSliderToSpecimenSecondRounnd() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition - 50, DeliverySlider.Direction.EXPANDING);
     }
@@ -156,6 +160,14 @@ public class CommandFactory {
 
     public MovePivotCommand pivotToInTake() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart);
+    }
+
+    public MovePivotCommand pivotToSweep() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart);
+    }
+
+    public MovePivotCommand pivotToJustAboveSweep() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 500);
     }
 
     public MovePivotCommand pivotToSpecimenInTake() {
@@ -198,6 +210,10 @@ public class CommandFactory {
 
     public SingleRunCommand elbowToDeliveryPosition() {
         return new SingleRunCommand(intake::SetElbowInSampleDeliveryPosition);
+    }
+
+    public SingleRunCommand elbowToSweepPosition() {
+        return new SingleRunCommand(intake::SetElbowInSampleSweepPosition);
     }
 
     public SingleRunCommand elbowToStartPosition() {

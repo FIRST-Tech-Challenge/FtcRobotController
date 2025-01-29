@@ -45,7 +45,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     public static int SpecimenPosition = 145;
 
-    private int ExtendLimit = 420;
+    public static int ExtendLimit = 420;
 
     private int currentTarget = 0;
 

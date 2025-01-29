@@ -36,6 +36,8 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
     public static int IntakePositionFromStart = scale(-1875, .715);
 
+    public static int SweepPositionFromStart = scale(-2900, .715);
+
     private int SampleIntakePositionFromStart = scale(-1490, .715);
 
     private int SliderCheckLimit = 625;

@@ -16,7 +16,7 @@ public class AlignTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
 
-                double deliveryDistance = 97;
+                double deliveryDistance = 83;
                 double minDelivery = 70;
                 double intakeDistance = 60;
                 double minIntake = 45;
@@ -41,83 +41,102 @@ public class AlignTest extends CommandAutoOpMode {
 
                         new ParallelRaceGroup(
                                 commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(300, -950, 0, .05, .8, 100)
+                                commandFactory.driveToTarget(470, -620, -45, .07, .8, 30, 1500)
                         ),
 
-                        //push sample 1 to human player
-
-                        commandFactory.driveToTarget(1300, -950, 0, .05, .8, 100, 2000),
-                        commandFactory.driveToTarget(1300, -1150, 0, .05, .8, 100, 2000),
-                        commandFactory.driveToTarget(300, -1150, 0, .05, .8, 100, 2000),
-
-                        commandFactory.driveToTarget(500, -1150, 180, .05, .8, 100, 2000),
-
-                        commandFactory.driveToTarget(200, -1150, 180, .05, .8, 100),
-
-                        // Intake SECOND Specimen
-                        new ParallelDeadlineGroup(
-                                commandFactory.checkForwardDistance(intakeDistance, minIntake,3000),
-                                commandFactory.alignToSpecimenDelivery(intakeDistance, minIntake,2500)
-                        ),
-                        commandFactory.closeSpecimenClaw(),
-                        commandFactory.sleep(500),
-
-                        new ParallelRaceGroup(
-                                commandFactory.driveToTarget(300, -1100, 180, .05, .9, 140, 1000),
-                                commandFactory.extendSpecimenSlider(6000)
-                        ),
-
-                        new ParallelRaceGroup(
-                                commandFactory.driveToTarget(600, -50, 0, .05, .9, 50, 3000),
-                                commandFactory.extendSpecimenSlider(6000)
-                        ),
-
-                        new ParallelDeadlineGroup(
-                                commandFactory.checkForwardDistance(deliveryDistance, minDelivery, 5000),
-                                commandFactory.extendSpecimenSlider(6000),
-                                new SequentialCommandGroup(
-                                        commandFactory.sleep(500),
-                                        commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery,3000)
-                                )
-                        ),
-
-                        commandFactory.collapseSpecimenSlider(500),
-                        commandFactory.openSpecimenClaw(),
-
-                        // Drive to observation zone
                         new ParallelCommandGroup(
-                                commandFactory.driveToTarget(200, -1200, 180, .05, .9, 100, 3000),
-                                commandFactory.collapseSpecimenSlider(1000)
+                            commandFactory.extendSliderToSweep(),
+                            commandFactory.pivotToSweep(),
+                                commandFactory.elbowToSweepPosition()
                         ),
 
-                        new ParallelDeadlineGroup(
-                                commandFactory.checkForwardDistance(intakeDistance, minIntake,5000),
-                                commandFactory.alignToSpecimenDelivery(intakeDistance,minIntake,3000)
-                        ),
-                        commandFactory.closeSpecimenClaw(),
-                        commandFactory.sleep(500),
+                        commandFactory.driveToTarget(350, -670, -120, .05, .4, 30),
 
-                        new ParallelRaceGroup(
-                                commandFactory.driveToTarget(300, -1100, 180, .05, .9, 150, 1000),
-                                commandFactory.extendSpecimenSlider(6000)
-                        ),
+                        new ParallelCommandGroup(
+                                commandFactory.pivotToJustAboveSweep(),
+                        commandFactory.driveToTarget(600, -670 - 230, -45, .05, .6, 30, 1000)
+                                ),
 
-                        new ParallelRaceGroup(
-                                commandFactory.driveToTarget(600, -100, 0, .05, .9, 150, 3000),
-                                commandFactory.extendSpecimenSlider(6000)
-                        ),
+                        commandFactory.pivotToSweep(),
+                        commandFactory.sleep(200),
 
-                        new ParallelDeadlineGroup(
-                                commandFactory.checkForwardDistance(deliveryDistance, minDelivery,5000),
-                                commandFactory.extendSpecimenSlider(6000),
-                                new SequentialCommandGroup(
-                                        commandFactory.sleep(500),
-                                        commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery, 3000)
-                                )
-                        ),
+                        commandFactory.driveToTarget(350, -670 - 200, -120, .05, .4, 30),
 
-                        commandFactory.collapseSpecimenSlider(500),
-                        commandFactory.openSpecimenClaw(),
+
+//                        //push sample 1 to human player
+//
+//                        commandFactory.driveToTarget(1300, -950, 0, .05, .8, 100, 2000),
+//                        commandFactory.driveToTarget(1300, -1150, 0, .05, .8, 100, 2000),
+//                        commandFactory.driveToTarget(300, -1150, 0, .05, .8, 100, 2000),
+//
+//                        commandFactory.driveToTarget(500, -1150, 180, .05, .8, 100, 2000),
+//
+//                        commandFactory.driveToTarget(200, -1150, 180, .05, .8, 100),
+//
+//                        // Intake SECOND Specimen
+//                        new ParallelDeadlineGroup(
+//                                commandFactory.checkForwardDistance(intakeDistance, minIntake,3000),
+//                                commandFactory.alignToSpecimenDelivery(intakeDistance, minIntake,2500)
+//                        ),
+//                        commandFactory.closeSpecimenClaw(),
+//                        commandFactory.sleep(500),
+//
+//                        new ParallelRaceGroup(
+//                                commandFactory.driveToTarget(300, -1100, 180, .05, .9, 140, 1000),
+//                                commandFactory.extendSpecimenSlider(6000)
+//                        ),
+//
+//                        new ParallelRaceGroup(
+//                                commandFactory.driveToTarget(600, -50, 0, .05, .9, 50, 3000),
+//                                commandFactory.extendSpecimenSlider(6000)
+//                        ),
+//
+//                        new ParallelDeadlineGroup(
+//                                commandFactory.checkForwardDistance(deliveryDistance, minDelivery, 5000),
+//                                commandFactory.extendSpecimenSlider(6000),
+//                                new SequentialCommandGroup(
+//                                        commandFactory.sleep(500),
+//                                        commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery,3000)
+//                                )
+//                        ),
+//
+//                        commandFactory.collapseSpecimenSlider(500),
+//                        commandFactory.openSpecimenClaw(),
+//
+//                        // Drive to observation zone
+//                        new ParallelCommandGroup(
+//                                commandFactory.driveToTarget(200, -1200, 180, .05, .9, 100, 3000),
+//                                commandFactory.collapseSpecimenSlider(1000)
+//                        ),
+//
+//                        new ParallelDeadlineGroup(
+//                                commandFactory.checkForwardDistance(intakeDistance, minIntake,5000),
+//                                commandFactory.alignToSpecimenDelivery(intakeDistance,minIntake,3000)
+//                        ),
+//                        commandFactory.closeSpecimenClaw(),
+//                        commandFactory.sleep(500),
+//
+//                        new ParallelRaceGroup(
+//                                commandFactory.driveToTarget(300, -1100, 180, .05, .9, 150, 1000),
+//                                commandFactory.extendSpecimenSlider(6000)
+//                        ),
+//
+//                        new ParallelRaceGroup(
+//                                commandFactory.driveToTarget(600, -100, 0, .05, .9, 150, 3000),
+//                                commandFactory.extendSpecimenSlider(6000)
+//                        ),
+//
+//                        new ParallelDeadlineGroup(
+//                                commandFactory.checkForwardDistance(deliveryDistance, minDelivery,5000),
+//                                commandFactory.extendSpecimenSlider(6000),
+//                                new SequentialCommandGroup(
+//                                        commandFactory.sleep(500),
+//                                        commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery, 3000)
+//                                )
+//                        ),
+//
+//                        commandFactory.collapseSpecimenSlider(500),
+//                        commandFactory.openSpecimenClaw(),
 
                         commandFactory.sleep(10000)
 
