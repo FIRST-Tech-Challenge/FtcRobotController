@@ -8,9 +8,9 @@ public class calculations {
     public final double WHEEL_CIRC = 3.75 * Math.PI;
     public final double ROBOT_LENGTH = 14;
     public final double ROBOT_WIDTH = 16;
-    public final double ROBOT_HEIGHT = 0;//TODO find robot height
+    public final double ROBOT_HEIGHT = 0;
     public final double TURNING_RADIUS = Math.sqrt( (Math.pow(ROBOT_LENGTH, 2) )+( (Math.pow(ROBOT_WIDTH, 2) ) ) );
-    public final double DISTANCE_TO_BLOCKS = 0;//TODO find distance to blocks
+    public final double DISTANCE_TO_BLOCKS = 0;
     public final double SMIDGEN = 0.1;
     public final double DISTANCE_FROM_WALL = 0.5;
 
