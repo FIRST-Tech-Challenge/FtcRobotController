@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SlideSubsystem;
-
+@SuppressWarnings("unused")
 @Autonomous(name="SyborgsParkAuto")
 public class SyborgsParkAuto extends LinearOpMode {
     DriveSubsystem drive;
@@ -18,7 +18,7 @@ public class SyborgsParkAuto extends LinearOpMode {
     SlideSubsystem lift;
     IntakeAndWristSubsystem intakeAndWrist;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         waitForStart();
         initSubsystems();
         sleep(3000);

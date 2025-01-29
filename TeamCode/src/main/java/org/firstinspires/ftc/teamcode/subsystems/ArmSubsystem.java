@@ -12,14 +12,12 @@ import org.firstinspires.ftc.teamcode.utils.Common;
 public class ArmSubsystem {
     Telemetry telemetry;
 
-    final double ARM_COLLECT = 0;
-    final double ARM_CLEAR_BARRIER = 25;
-    final double ARM_SCORE_SPECIMEN = 90;
-    final double ARM_SCORE_SAMPLE_IN_LOW = 90;
-    final double ARM_ATTACH_HANGING_HOOK = 110;
-    final double ARM_MAX_HEIGHT = 125;
+    public final double ARM_COLLECT = 0;
+    public final double ARM_CLEAR_BARRIER = 25;
+    public final double ARM_SCORE_SAMPLE_IN_LOW = 90;
+    public final double ARM_MAX_HEIGHT = 125;
+    public final double ARM_SCORE_SAMPLE_IN_HIGH = 120;
     double comp = 0;
-    final double ARM_SCORE_SAMPLE_IN_HIGH = 120;
     double armPosition = ARM_COLLECT;
 
     private final DcMotor armMotor;
@@ -27,7 +25,6 @@ public class ArmSubsystem {
     @SuppressWarnings("unused")
     public void handleMovementTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
         readControls(gamepad1, gamepad2);
-
         setPosition();
     }
     private void calculateCompensation() {
@@ -47,6 +44,10 @@ public class ArmSubsystem {
             Common.warnIfOvercurrent(armMotorEx, telemetry, "ArmSubsystem");
         }
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void setPositionAuto(double pos) {
+        armPosition = Math.max(Math.min(pos, ARM_MAX_HEIGHT), 0);
+        setPosition();
     }
 
     public void updateTelemetry() {

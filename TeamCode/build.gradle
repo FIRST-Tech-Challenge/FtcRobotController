@@ -26,3 +26,9 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
