@@ -44,6 +44,8 @@ public class ArmConstants {
     }
     public static class pStates{
         public static double midpoint = 6;
+        public static double scoreMidpoint = 80;
+        public static double up = 8;
         public static double pickup = -1;
         public static double score = 93;
         public static double idle = 23;

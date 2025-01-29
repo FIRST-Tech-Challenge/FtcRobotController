@@ -172,7 +172,12 @@ public class ChassisSubsystem extends SubsystemBase {
 
             BTTranslation2d vector = new BTTranslation2d(sidewayVel.getAsDouble(), frontVel.getAsDouble());
             BTTranslation2d rotated = vector.rotateBy(BTRotation2d.fromDegrees(-gyro.getHeading()));
-            drive(-rotated.getY()*slowDriver, -rotated.getX()*slowDriver,  rotation.getAsDouble()*slowDriver);
+            if(rotated.getNorm()>0.1||Math.abs(rotation.getAsDouble())>0.1) {
+                {
+                    drive(-rotated.getY() * slowDriver, -rotated.getX() * slowDriver, rotation.getAsDouble() * slowDriver);
+                }
+            }
+            else{drive(0,0,0);}
         }, this);
     }
 
@@ -184,7 +189,7 @@ public class ChassisSubsystem extends SubsystemBase {
     }
 
     public Command slowDriving(){
-        return new InstantCommand(()->slowDriver = 0.5);
+        return new InstantCommand(()->slowDriver = 0.4);
     }
     public Command stopSlowDriving(){
         return new InstantCommand(()->slowDriver = 1);

@@ -12,11 +12,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 public class GripperSubsystem extends SubsystemBase {
 
     private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    Servo servoClaw;
+    public Servo servoClaw;
     Servo servo2;
     Servo rotServo;
-    Servo rotServo2;
-    public boolean isOpen;
+    public Servo rotServo2;
+    public boolean isOpen = false;
     public boolean isPickup;
     public GripperSubsystem(HardwareMap map){
         rotServo = map.servo.get("rotServo");
@@ -25,6 +25,9 @@ public class GripperSubsystem extends SubsystemBase {
         register();
         rotServo.getController().pwmEnable();
         servoClaw.getController().pwmEnable();
+        servoClaw.setPosition(isOpen?openClaw:closeClaw);
+        rotServo2.setPosition(score);
+
 
         isOpen = false;
     }

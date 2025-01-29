@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.closeClaw;
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.score;
+
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -13,6 +16,8 @@ public class myOp extends CommandOpMode {
     @Override
     public void initialize() {
         m_robot= new RobotContainer(hardwareMap, new BTController(gamepad1));
+        m_robot.m_gripper.servoClaw.setPosition(closeClaw);
+        m_robot.m_gripper.rotServo2.setPosition(score);
         enable();
 
     }

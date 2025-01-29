@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.autos;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.score;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,12 +20,17 @@ public abstract class Recorder extends PeriodicOpMode {
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
     @Override
     public void initialize() {
+
         final String file_name=file_name();
         final int maxIterations=maxIterations();
         try {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             controller=new BTRecordingController(gamepad1,log,maxIterations);
             m_robot=new RobotContainer(hardwareMap,controller);
+            m_robot.m_gripper.rotServo2.setPosition(score);
+            enable();
+
+
         } catch (IOException e) {
             dashboardTelemetry.addData("error data:" ,e.toString());
         }

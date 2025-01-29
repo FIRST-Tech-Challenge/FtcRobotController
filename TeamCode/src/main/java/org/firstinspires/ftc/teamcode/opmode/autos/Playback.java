@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.autos;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.closeClaw;
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.score;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -30,6 +33,8 @@ public abstract class Playback extends PeriodicOpMode {
             File log = AppUtil.getInstance().getSettingsFile(file_name);
             controller=new BTRecordedController(gamepad1,log,maxIterations);
             m_robot=new RobotContainer(hardwareMap,controller);
+            m_robot.m_gripper.rotServo2.setPosition(score);
+            m_robot.m_gripper.servoClaw.setPosition(closeClaw);
         } catch (IOException e) {
             dashboardTelemetry.addData("error data:",e.toString());
             dashboardTelemetry.update();
