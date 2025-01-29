@@ -249,11 +249,9 @@
 //    public void finalGrabber() {
 //        int collect = 1; // Position to collect block
 //        int release = -1; //Position to release block
-//        //TODO find open and close position
 //        int open = 100; // Position to open the door
 //        int close = 0; // Position to close the door
 //
-//        //TODO find up and down position
 //        int up = 200; // sets position for wrist to go up
 //        int down = -200; // sets position for wrist to go down
 //

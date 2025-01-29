@@ -174,7 +174,7 @@ public class Blue_Autonomous extends LinearOpMode {
     }
 
     private void turnRight(double degrees, double speed) {
-            double turningRadius = 13.0; //TODO: find distance from center to wheel
+            double turningRadius = 13.0;
 
             double turnCircumference = 2 * Math.PI * turningRadius;
             double distancePerWheel = (degrees / 360) * turnCircumference;
@@ -201,7 +201,7 @@ public class Blue_Autonomous extends LinearOpMode {
     }
     private void turnLeft(double degrees, double speed){
 
-            double turningRadius = 13.0; //TODO: find distance from center to wheel
+            double turningRadius = 13.0;
 
             double turnCircumference = 2 * Math.PI * turningRadius;
             double distancePerWheel = (degrees / 360) * turnCircumference;

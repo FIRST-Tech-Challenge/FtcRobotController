@@ -238,7 +238,7 @@ public class Red_Autonomous extends LinearOpMode {
 
     // Turn right by specified degrees
     private void turnRight(double degrees, double speed) {
-        double turningRadius = 13.0; // TODO: Find distance from center to wheel
+        double turningRadius = 13.0;
         double turnCircumference = 2 * Math.PI * turningRadius;
         double distancePerWheel = (degrees / 360) * turnCircumference;
         int targetEncoderCount = (int) (distancePerWheel * COUNTS_PER_INCH);
@@ -261,7 +261,7 @@ public class Red_Autonomous extends LinearOpMode {
 
     // Turn left by specified degrees
     private void turnLeft(double degrees, double speed) {
-        double turningRadius = 13.0; // TODO: Find distance from center to wheel
+        double turningRadius = 13.0;
         double turnCircumference = 2 * Math.PI * turningRadius;
         double distancePerWheel = (degrees / 360) * turnCircumference;
         int targetEncoderCount = (int) (distancePerWheel * COUNTS_PER_INCH);

@@ -17,8 +17,6 @@
 //public class NewAuto extends LinearOpMode implements newAuto_interface {
 //    final hardware hardware = new hardware();
 //    final calculations calculations = new calculations();
-//
-//    //TODO find open and close position
 //    final int open = 200;
 //    final int closed = 0;
 //
@@ -292,7 +290,6 @@
 //                break;
 //        }
 //    }
-//    //TODO redo this code
 //    @Override
 //    public void grabber(mainEnum state){
 //        double power = 0;
@@ -348,7 +345,6 @@
 //                    movement(mainEnum.STRAFE_RIGHT, calculations.SMIDGEN, 0, calculations.DRIVE_SPEED);
 //                }
 //                //Move backwards a set number of inches until you're near blocks
-//                //TODO find set number of inches
 //                movement(mainEnum.BACKWARD, calculations.DISTANCE_TO_BLOCKS, 0, calculations.DRIVE_SPEED);
 //
 //                //Give back data

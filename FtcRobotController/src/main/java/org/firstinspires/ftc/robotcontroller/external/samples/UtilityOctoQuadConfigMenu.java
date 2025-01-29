@@ -124,7 +124,6 @@ public class UtilityOctoQuadConfigMenu extends LinearOpMode
         optionChannelBankConfig = new TelemetryMenu.EnumOption("Channel Bank Modes", OctoQuad.ChannelBankConfig.values(), octoquad.getChannelBankConfig());
 
         menuHwInfo.addChild(new TelemetryMenu.StaticItem("Board Firmware: v" + octoquad.getFirmwareVersion()));
-        //menuHwInfo.addChild(new TelemetryMenu.StaticItem("Board unique ID: FIXME"));
 
         for(int i = 0; i < OctoQuad.NUM_ENCODERS; i++)
         {

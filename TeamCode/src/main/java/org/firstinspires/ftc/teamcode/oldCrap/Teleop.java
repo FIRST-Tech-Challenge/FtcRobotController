@@ -122,17 +122,17 @@ public class Teleop extends LinearOpMode {
 
     // Controls the wrist servos (placeholder)
     private void wrist(int Hpos1, int Hpos2, int Vpos1, int Vpos2) {
-        // TODO: Implement wrist control logic
+
     }
 
     // Controls the claw servo (placeholder)
     private void claw(int open, int close) {
-        // TODO: Implement claw control logic
+
     }
 
     // Controls arm (placeholder)
     public void newArm(double manualArmDeadband, double jointOnePower, double jointTwoPower) {
-        // TODO: Implement arm control logic
+
     }
 
     // This is the previously commented-out arm movement code
