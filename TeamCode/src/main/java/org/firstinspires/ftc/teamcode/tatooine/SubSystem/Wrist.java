@@ -93,7 +93,7 @@ public class Wrist {
     // ---------------------------------------------------------------------------------------------
     public void init() {
         wristLeft.setDirection(Servo.Direction.FORWARD);
-        wristRight.setDirection(Servo.Direction.REVERSE);
+        wristRight.setDirection(Servo.Direction.FORWARD);
         pid.setTolerance(ANGLE_TOLERANCE);
         angleServo.setDirection(Servo.Direction.REVERSE);
 
@@ -237,6 +237,10 @@ public class Wrist {
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Get Should Stay Parallel", shouldStayParallel);
         return shouldStayParallel;
+    }
+
+    public double getState(){
+        return currentPos;
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Disabled
 @TeleOp
 public class ArmTestOff extends LinearOpMode {
     private List<Action> runningActions = new ArrayList<>();
@@ -40,7 +41,7 @@ public class ArmTestOff extends LinearOpMode {
             else  if (gamepad1.circle){
                 runningActions.clear();
                 runningActions.add(arm.moveAngle());
-                runningActions.add(arm.setAngle(60));
+                runningActions.add(arm.setAngle(55));
             }
             else  if (gamepad1.triangle){
                 runningActions.clear();

@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -36,7 +37,7 @@ public class Arm {
 
     // Physical Dimensions
     private static final double SPOOL_DIM = 3.8;  // cm, spool diameter for extension
-    private static double ANGLE_OFFSET = 38.4;  // degrees, initial offset
+    private static double ANGLE_OFFSET = -5;  // degrees, initial offset
 
     //PID
 
@@ -45,7 +46,7 @@ public class Arm {
 
     public static double KD = 0;
     // Feedforward
-    private static final double KF = 0.22;  // feedforward constant
+    public static double KF = 0.13;  // feedforward constant
 
 
     // Current Limit (if applicable; set as needed)
@@ -63,12 +64,13 @@ public class Arm {
     private final DcMotorEx angleRight;
     private final DcMotorEx extendLeft;
     private final DcMotorEx extendRight;
-    private final TouchSensor touchSensor;   // TODO: Initialize if needed
+    private final DigitalChannel touchSensor;   // TODO: Initialize if needed
 
     // ---------------------------------------------------------------------------------------------
     // PID Controllers
     // ---------------------------------------------------------------------------------------------
-    public static PIDFController anglePID = new PIDFController(0.021, 0, 0, 0);
+//    public static PIDFController anglePID = new PIDFController(0.021, 0, 0, 0);
+    public static PIDFController anglePID = new PIDFController(0.09, 0, 0.003, 0);
     private final PIDFController extendPID = new PIDFController(0.1, 0, 0.0001, 0);
 
     // ---------------------------------------------------------------------------------------------
@@ -100,7 +102,8 @@ public class Arm {
         this.extendRight = opMode.hardwareMap.get(DcMotorEx.class, "ER");
 
         // Retrieve touch sensor if present (set to null by default)
-        this.touchSensor = null; // TODO: Initialize if needed
+        this.touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "LS"); // TODO: Initialize if needed
+        this.touchSensor.setMode(DigitalChannel.Mode.INPUT);
 
         // Perform initialization
         init();
@@ -141,7 +144,8 @@ public class Arm {
         // Configure PID tolerances
         anglePID.setTolerance(ANGLE_TOLERANCE);
         extendPID.setTolerance(EXTEND_TOLERANCE);
-        extendPID.setTimeout(5);
+        extendPID.setTimeout(2);
+        anglePID.setTimeout(3);
 
         // Reset encoders at initialization
         resetEncoders();
@@ -198,7 +202,7 @@ public class Arm {
     }
 
     public double getLeftAngle() {
-        return MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition()) + ANGLE_OFFSET;
+        return (MathUtil.convertTicksToDegrees(ANGLE_CPR, angleLeft.getCurrentPosition())) + ANGLE_OFFSET;
     }
 
     public double getRightAngle() {
@@ -242,10 +246,16 @@ public class Arm {
                 "Set Power Angle", power);
     }
     public void setPowerAngleWithF(double power) {
-        if (getAngle() > 75 && power > 0.3){
-            power = 0.3;
+        double FF = calculateF();
+
+        if (touchSensor.getState()){
+            resetAngleEncoder();
+            if (power <= 0){
+                power = 0;
+                FF = 0;
+            }
         }
-        setPowerAngle(power + calculateF());
+        setPowerAngle(power + FF);
 
 
     }
@@ -291,8 +301,8 @@ public class Arm {
      */
     public double getExtend() {
         double leftExtend = getLeftExtention();
-        double rightExtend = getRightExtention();
-        double extend = (leftExtend + rightExtend)/2;
+        double  rightExtend = getRightExtention();
+        double extend = leftExtend;
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Get Extend (Left)", leftExtend);
@@ -315,6 +325,13 @@ public class Arm {
 
         DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                 "Set Power Extend", power);
+    }
+
+    public void setPowerExtendWithLimit(double power,boolean isIntaking){
+        if (isIntaking &&getExtend()> getMaxExtend()-20 && power>0 && getAngle()< 30){
+            power =0;
+        }
+        setPowerExtend(power);
     }
     // ---------------------------------------------------------------------------------------------
     // Actions to Control Arm
@@ -442,23 +459,27 @@ public class Arm {
 
         public MoveAngle() {
             anglePID.reset();
+            anglePID.setSetPoint(getAngle());
         }
 
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (isDebugMode){
+                anglePID.setP(KP);
+                anglePID.setD(KD);
+                anglePID.setI(KI);
+            }
+            if (touchSensor.getState()){
+                resetAngleEncoder();
+            }
+            DebugUtils.logDebug(telemetry,isDebugMode,SUBSYSTEM_NAME,"ts",touchSensor.getState());
 
             double angle = getAngle();
             double pidPower = anglePID.calculate(angle);
-            double feedforward = calculateF();
-            if (pidPower >0.1 && angle >70){
-                pidPower = 0.1;
-            }
-            setPowerAngle(pidPower + feedforward);
+            setPowerAngleWithF(pidPower);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
                     "Move Angle PID Power", pidPower);
-            DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME,
-                    "Move Angle Feedforward", feedforward);
             DebugUtils.logDebug(telemetry, isDebugMode, SUBSYSTEM_NAME, "goal", anglePID.getSetPoint());
             // always return true for the F to update itself always
             return true;

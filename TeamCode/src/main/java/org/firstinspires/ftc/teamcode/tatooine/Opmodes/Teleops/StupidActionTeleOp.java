@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.gamepads.GamepadKeys;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @TeleOp(name = "SAT", group = "TeleOp")
 public class StupidActionTeleOp extends LinearOpMode {
 

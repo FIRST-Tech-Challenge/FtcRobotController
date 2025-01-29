@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 import org.firstinspires.ftc.teamcode.tatooine.utils.Alliance.CheckAlliance;
+@Disabled
 @TeleOp
 
 public class FFBSNew  extends LinearOpMode {

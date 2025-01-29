@@ -9,26 +9,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Arm;
-import org.firstinspires.ftc.teamcode.tatooine.SubSystem.Wrist;
 
 import java.util.ArrayList;
 import java.util.List;
 @Disabled
 @TeleOp
-public class WristTuningTest extends LinearOpMode {
+public class ExtentionTest extends LinearOpMode {
     private List<Action> runningActions = new ArrayList<>();
     private boolean doOne = true;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Arm arm = new Arm(this, false);
-        Wrist wrist = new Wrist(this, true);
-        wrist.setPosAng(0.5);
+        Arm arm = new Arm(this, true);
+        arm.setAngleOffset(-3);
         waitForStart();
         while (opModeIsActive()){
             TelemetryPacket packet = new TelemetryPacket();
-            telemetry.addData("angle", wrist.getAngle());
+            telemetry.addData("extend", arm.getExtend());
             telemetry.addData("extendLeft",arm.getLeftExtention());
             telemetry.addData("extendRight", arm.getRightExtention());
             List<Action> newActions = new ArrayList<>();
@@ -41,29 +39,34 @@ public class WristTuningTest extends LinearOpMode {
             }
             runningActions = newActions;
             if (doOne){
-                runningActions.clear();
                 runningActions.add(arm.moveAngle());
                 runningActions.add(arm.setAngle(90));
-                runningActions.add(arm.setExtension(30));
                 doOne = false;
             }
             if (gamepad1.cross){
-                wrist.home();
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setExtension((0)));
             }
             else if (gamepad1.circle){
-                wrist.stright();
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setExtension((1.0/2.0)*Arm.getMaxExtend()));
+            }
+            else if (gamepad1.triangle){
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setExtension(Arm.getMaxExtend()));
             }
             else if (gamepad1.square){
-                wrist.scoreSample();
-            } else if (gamepad1.triangle) {
-                wrist.openMin();
+                runningActions.clear();
+                runningActions.add(arm.moveAngle());
+                runningActions.add(arm.setExtension(50));
             }
-
-
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
             telemetry.update();
         }
     }
-}
 
+}
