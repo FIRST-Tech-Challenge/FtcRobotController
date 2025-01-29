@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 public class Common {
 
@@ -14,7 +15,7 @@ public class Common {
         final double ARM_TICKS_PER_DEGREE = 28.0 * 250047.0 / 4913.0 * 100.0 / 20.0 / 360.0;
         return degrees * ARM_TICKS_PER_DEGREE;
     }
-    public static double slideservoMMToTicks(double mm) {
+    public static double slideServoMMToTicks(double mm) {
         final double LIFT_TICKS_PER_MM = (111132.0 / 289.0) / 120.0;
         return mm * LIFT_TICKS_PER_MM;
     }
@@ -40,7 +41,7 @@ public class Common {
         cycleTime = loopTime - oldTime;
         oldTime = loopTime;
     }
-
+    public static OptionalDouble yawAngle = OptionalDouble.empty();
     public static double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }

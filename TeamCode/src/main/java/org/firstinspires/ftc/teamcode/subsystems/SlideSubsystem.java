@@ -71,7 +71,7 @@ public class SlideSubsystem {
     }
 
     private void setPosition() {
-        slideMotor.setTargetPosition((int) Common.slideservoMMToTicks(slidePosition));
+        slideMotor.setTargetPosition((int) Common.slideServoMMToTicks(slidePosition));
         if (slideMotorEx != null) {
             slideMotorEx.setVelocity(2100);
             Common.warnIfOvercurrent(slideMotorEx, telemetry, "SlideSubsystem");

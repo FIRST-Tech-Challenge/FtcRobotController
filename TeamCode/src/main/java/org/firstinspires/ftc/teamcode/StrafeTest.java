@@ -32,7 +32,7 @@ public class StrafeTest extends LinearOpMode {
             if (gamepad1.dpad_down) y -= m;
             if (gamepad1.dpad_right) x += m;
             if (gamepad1.dpad_left) x -= m;
-            drive.runWithControls(x, y, gamepad1.right_stick_x, imu);
+            drive.runWithCorrections(x, y, gamepad1.right_stick_x, imu);
 
             telemetry.update();
         }
