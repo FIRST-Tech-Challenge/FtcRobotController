@@ -154,7 +154,6 @@ public class UltimateAutonomous extends LinearOpMode {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
         TrajectoryActionBuilder sampleTrajectory = pushSamples(sp, placingTrajectory);
-
         baseRobot.outtake.claw.close();
         baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() - 200);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
@@ -164,7 +163,10 @@ public class UltimateAutonomous extends LinearOpMode {
                         placingTrajectory.build(),
                         hookChamber(),
                         unhookChamber(),
-                        sampleTrajectory.build()
+                        sampleTrajectory.build(),
+                        grabSpecimenFromHP(),
+                        placingTrajectory.build(),
+                        hookChamber()
                 )
         );
 
@@ -239,8 +241,8 @@ public class UltimateAutonomous extends LinearOpMode {
             pause(300);
             baseRobot.outtake.claw.open();
             pause(300);
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
-            baseRobot.outtake.linkage.setPosition(Linkage.Position.TRANSFER);
+            baseRobot.intake.horizontalSlide.setPosition(HorizontalSlide.HorizontalPosition.COLLAPSED);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             return false;
         }
     }
@@ -370,7 +372,7 @@ public class UltimateAutonomous extends LinearOpMode {
         return previousTrajectory.endTrajectory().fresh()
                 .strafeToLinearHeading(Settings.Autonomous.FieldPositions.HP_POSE.position,
                         Settings.Autonomous.FieldPositions.HP_POSE.heading)
-                .waitSeconds(.5)
+                .waitSeconds(.1)
                 .lineToY(Settings.Autonomous.FieldPositions.HP_POSE.position.y - 19)
                 .waitSeconds(0.5);
     }
@@ -419,18 +421,20 @@ public class UltimateAutonomous extends LinearOpMode {
     private TrajectoryActionBuilder pushSamples(StartingPosition sp, TrajectoryActionBuilder previousTrajectory){
         return previousTrajectory.endTrajectory().fresh()
                 // gets in front of the first on field sample and pushes it back
-                .setTangent(Math.toRadians(90))
-                .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 10)
-                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN)
-                .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN.y + 20))
+                .setTangent(Math.toRadians(0))
+//                .lineToY(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position.y - 10)
+//                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN)
+//                .strafeTo(new Vector2d(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN.x, Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN.y + 20))
+                .strafeTo(new Vector2d(20,-35))
                 .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
                         Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
                 .lineToY(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position.y - 45)
-                .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
-                        Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
+                .setTangent(0)
+//                .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
+//                        Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
                 .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position,
                         Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
-                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 45);
+                .lineToY(Settings.Autonomous.FieldPositions.SECOND_PRESET_SAMPLE_POSE.position.y - 60);
     }
 
     // Define an enum for starting positions
