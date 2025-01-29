@@ -83,15 +83,14 @@ public class AutoSwerve {
         tempInput = servoInputBR;
         temp = servoBR;
       }
-      while (delta <= .01 && delta >=-.01) {
-        set_Servo_Angle(tempInput, temp, 0.5);
+      while (delta <= .005 && delta >=-.005) {
+        delta = set_Servo_Angle(tempInput, temp, 0.5);
       }
     }
   }
 
   // distance to drive by encoder
   // turns on motor for a drive distance
-  // keeps servos aligned in current direction
   // dist in meters
   //TODO: revise to use new code
   public void driveDist(double dist, double mSpd) {
@@ -143,16 +142,13 @@ public class AutoSwerve {
 
     double tolerance = 0.01;
 
-    if (delta_to_reference < (-1 * tolerance)) {
+    if (delta_to_reference < (-1 * tolerance))
       servo.setPosition(0.5 + servo_speed);
-      return -1;
-    } else if (delta_to_reference > tolerance) {
+    else if (delta_to_reference > tolerance)
       servo.setPosition(0.5 - servo_speed);
-      return 1;
-    } else {
+    else
       servo.setPosition(0.5);
-      return 0;
-    }
+    return delta_to_reference;
   }
 
   // align wheels has a angle always set where alignWheels is
