@@ -39,4 +39,10 @@ public class Units {
     public static int scale(int original, double ratio) {
         return Double.valueOf(ratio * original).intValue();
     }
+
+    public static double clap(double in, double min, double max) {
+        assert min < max;
+
+        return Math.max(min, Math.min(in, max));
+    }
 }

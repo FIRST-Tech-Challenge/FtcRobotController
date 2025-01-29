@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous.base;
 import android.content.Intent;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.CommandFactory;
@@ -19,11 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.feedback.DriverFeedback;
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
-import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
-import org.firstinspires.ftc.teamcode.util.SonicPIDFController;
-
-import java.util.Arrays;
-import java.util.Objects;
 
 public abstract class CommandAutoOpMode extends CommandOpMode {
 
@@ -55,10 +49,14 @@ public abstract class CommandAutoOpMode extends CommandOpMode {
         SpecimenSliderClaw  specimenSliderClaw = barebone ? null : new SpecimenSliderClaw(hardwareMap, telemetry, feedback);
 
         commandFactory = new CommandFactory(telemetry, driveTrain, rollingIntake, null, pivot,slider, specimenSlider, specimenSliderClaw);
-        schedule(createCommand());
-        schedule(new InstantCommand(() -> {
-
-        }));
+        // sleep 30s after createCommand is a fill gap command to avoid IndexOutOfBoundException
+        Command finalGroup = new ParallelRaceGroup(commandFactory.sleep(29000), createCommand().andThen(commandFactory.sleep(30000)))
+                .andThen(new ParallelCommandGroup(
+                        commandFactory.pivotToStart(),
+                        commandFactory.sleep(200).andThen(commandFactory.collapseSlider()),
+                        commandFactory.elbowToIntakePosition()
+                ));
+        schedule(finalGroup);
     }
 
     protected abstract Command createCommand();

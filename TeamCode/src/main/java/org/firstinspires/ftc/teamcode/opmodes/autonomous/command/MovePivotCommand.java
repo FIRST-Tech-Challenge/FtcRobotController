@@ -19,6 +19,8 @@ public class MovePivotCommand extends SounderBotCommandBase{
 
     double maxPower = 1;
 
+    boolean startDelayExecuted = false;
+
     public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target) {
         this(pivot,telemetry, target, 0, 0, 1);
     }
@@ -54,12 +56,15 @@ public class MovePivotCommand extends SounderBotCommandBase{
     @Override
     public void initialize() {
         super.initialize();
-
-        sleep(this.startDelayMs);
+        startDelayExecuted = false;
     }
 
     @Override
     public void doExecute() {
+        if (!startDelayExecuted && startDelayMs > 0) {
+            sleep(startDelayMs);
+            startDelayExecuted = true;
+        }
         position = motor.encoder.getPosition();
         double power = pidController.calculatePIDAlgorithm(target - position);
         if (isTargetReached()) {

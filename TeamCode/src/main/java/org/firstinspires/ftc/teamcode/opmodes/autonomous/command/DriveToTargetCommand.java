@@ -86,16 +86,16 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     public void doExecute() {
         odo.update();
 
-        boolean addTelemetry = true;
+        boolean addTelemetry = false;
 
         if(addTelemetry) {
-            telemetry.addData("tx: ", targetX);
-            telemetry.addData("ty: ", targetY);
-            telemetry.addData("th: ", targetHeading);
+            telemetry.addData("DriveToTarget tx: ", targetX);
+            telemetry.addData("DriveToTarget ty: ", targetY);
+            telemetry.addData("DriveToTarget th: ", targetHeading);
 
-            telemetry.addData("x: ", odo.getPosX());
-            telemetry.addData("y: ", odo.getPosY());
-            telemetry.addData("heading: ", Math.toDegrees(odo.getHeading()));
+            telemetry.addData("DriveToTarget x: ", odo.getPosX());
+            telemetry.addData("DriveToTarget y: ", odo.getPosY());
+            telemetry.addData("DriveToTarget heading: ", Math.toDegrees(odo.getHeading()));
         };
 
         Log.i(LOG_TAG, String.format("tx=%f, ty=%f, x=%f, y=%f, heading=%f", targetX, targetY, odo.getPosX(), odo.getPosY(), Math.toDegrees(odo.getHeading())));
@@ -123,9 +123,12 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
         double y = yPid.calculatePIDAlgorithm(targetY - odo.getPosY());
         double h = hPid.calculatePIDAlgorithm(targetHeading - odo.getHeading());
 
-        telemetry.addData("drive to target xPid output", x);
-        telemetry.addData("drive to target yPid output", y);
-        telemetry.addData("drive to target hPid output", h);
+        onFlagEnabled(addTelemetry, () -> {
+            telemetry.addData("drive to target xPid output", x);
+            telemetry.addData("drive to target yPid output", y);
+            telemetry.addData("drive to target hPid output", h);
+        });
+
 
         double botHeading = odo.getHeading();
 
@@ -181,6 +184,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
+        finished = true;
 
         if(turnOffMotorAtEnd) {
             driveTrain.stop();

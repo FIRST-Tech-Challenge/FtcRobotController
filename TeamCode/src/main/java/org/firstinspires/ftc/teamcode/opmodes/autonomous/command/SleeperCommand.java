@@ -4,23 +4,13 @@ import android.util.Log;
 
 public class SleeperCommand extends SounderBotCommandBase {
 
-    private final long timeToSleepMs;
-
-    private boolean slept = false;
-
-
     public SleeperCommand(long timeToSleepMs) {
-        this.timeToSleepMs = timeToSleepMs;
+        super(timeToSleepMs);
     }
+
 
     @Override
-    protected void doExecute() {
-        if (!slept) {
-            sleep(timeToSleepMs);
-            slept = true;
-        }
-        finished = true;
-    }
+    protected void doExecute() {}
 
     @Override
     protected boolean isTargetReached() {

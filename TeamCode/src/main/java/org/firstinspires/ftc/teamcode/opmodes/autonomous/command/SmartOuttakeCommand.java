@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.command;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.subsystems.intake.RollingIntake;
 
 public class SmartOuttakeCommand extends SounderBotCommandBase {
@@ -22,6 +24,8 @@ public class SmartOuttakeCommand extends SounderBotCommandBase {
 
     @Override
     public void doExecute() {
+        Log.i(CommonConstants.DEBUG_TAG, "Out take running");
+        Log.i(CommonConstants.DEBUG_TAG, "Sample taken: " + intake.IsSampleIntaken());
         intake.IntakeInAuto();
         if (isTargetReached()) {
             intake.Hold();

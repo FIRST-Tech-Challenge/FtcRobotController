@@ -47,7 +47,11 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     int timeout = 4000;
 
+    boolean addTelemetry = false;
+
     DeliverySlider.Direction direction;
+
+    private double expandHoldPower = -.1;
 
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, DeliverySlider.Direction direction) {
         this(slider, telemetry, target, false, direction);
@@ -72,6 +76,11 @@ public class MoveSliderCommand extends SounderBotCommandBase {
         addRequirements(slider);
     }
 
+    public MoveSliderCommand withExpandHoldPower(double expandHoldPower) {
+        this.expandHoldPower = expandHoldPower;
+        return this;
+    }
+
     public MoveSliderCommand withEndAction(EndAction endAction) {
         this.endAction = endAction;
         return this;
@@ -89,7 +98,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                 Log.i(LOG_TAG, "no end action");
                 end(false);
                 finished = true;
-                telemetry.addLine("Done");
+                onFlagEnabled(addTelemetry, () -> telemetry.addLine("Done"));
 
                 if(resetEncoder) {
                     this.slider.ResetEncoder();
@@ -104,7 +113,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
                     slider.setMotors(0);
                     finished = true;
                 } else {
-                    telemetry.addLine("holding slider...");
+                    onFlagEnabled(addTelemetry, () -> telemetry.addLine("holding slider..."));
                     if (Math.abs(holdPosition - motor.getCurrentPosition()) < 50) {
                         slider.setMotors(0);
                     } else {
@@ -119,9 +128,13 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
             power = Math.max(minPower, Math.abs(power)) * direction.directionFactor;
 
-            telemetry.addData("slider", position);
-            telemetry.addData("target", target);
-            telemetry.addData("power", power);
+            final double telePower = power;
+            onFlagEnabled(addTelemetry, () -> {
+                telemetry.addData("slider", position);
+                telemetry.addData("target", target);
+                telemetry.addData("power", telePower);
+            });
+
 
 
             Log.i(LOG_TAG, "Power to motor: " + power);
@@ -139,7 +152,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
     @Override
     public void end(boolean interrupted) {
         if (DeliverySlider.Direction.EXPANDING == direction) {
-            slider.setMotors(-.1);
+            slider.setMotors(expandHoldPower);
         } else {
             slider.setMotors(0);
         }

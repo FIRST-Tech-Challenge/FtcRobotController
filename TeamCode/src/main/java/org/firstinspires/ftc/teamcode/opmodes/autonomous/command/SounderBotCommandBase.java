@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public abstract class SounderBotCommandBase extends CommandBase {
     private static final String LOG_TAG = SounderBotCommandBase.class.getSimpleName();
     boolean finished = false;
@@ -52,7 +50,8 @@ public abstract class SounderBotCommandBase extends CommandBase {
     protected abstract void doExecute();
 
     protected void onTimeout() {
-        Log.w(LOG_TAG, String.format("Command (name=%s) reached timeout (timeout=%d seconds)", getClass().getSimpleName(), TIME_OUT_MS / 1000));
+        Log.w(LOG_TAG, String.format("Command (name=%s) reached timeout (timeout=%d seconds or %d ms)", getClass().getSimpleName(), TIME_OUT_MS / 1000, TIME_OUT_MS));
+        Log.w(CommonConstants.DEBUG_TAG, String.format("Command (name=%s) reached timeout (timeout=%d seconds or %d ms)", getClass().getSimpleName(), TIME_OUT_MS / 1000, TIME_OUT_MS));
         finished = true;
         end(true);
     }
@@ -76,5 +75,11 @@ public abstract class SounderBotCommandBase extends CommandBase {
 
     protected boolean isDebugging() {
         return false;
+    }
+
+    protected void onFlagEnabled(boolean flag, Runnable runnable) {
+        if (flag) {
+            runnable.run();
+        }
     }
 }

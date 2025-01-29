@@ -61,7 +61,7 @@ public class RollingIntake extends SonicSubsystemBase {
 
         double d = GetDepth();
 
-        boolean addData = false;
+        boolean addData = true;
 
         if(addData) {
             telemetry.addData("distance", d);
@@ -186,11 +186,15 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInIntakePosition() {
-        this.elbowServo.setPosition(.79);
+        setElbowToPosition(.79);
     }
 
     public void SetElbowInIntakePositionForSample3() {
-        this.elbowServo.setPosition(.55);
+        setElbowToPosition(.85);
+    }
+
+    public void setElbowToPosition(double position) {
+        this.elbowServo.setPosition(position);
     }
 
     public void SetElbowInInStart() {
