@@ -243,14 +243,14 @@ public class Swerve {
 
     Module(OpMode opMode, int id) {
       double kp, ki, kd, ks;
-      // TODO: Fine tune these values to stop servo hunting
+      // TODO: Fine tune these values to stop servo hunting (needs to be redone: add in a frickin ki)
       switch (id) {
         case 0 -> {
           pos = "FL";
-          kp = 1.5;
+          kp = 1.4;
           ki = 0;
-          kd = 0.15;
-          ks = 0.11;
+          kd = 0.14;
+          ks = 0.1;
         }
         case 1 -> {
           pos = "FR";
@@ -261,10 +261,10 @@ public class Swerve {
         }
         case 2 -> {
           pos = "BL";
-          kp = 1.5;
+          kp = 1.29;
           ki = 0;
-          kd = 0.15;
-          ks = 0.1;
+          kd = 0.13;
+          ks = 0.08;
         }
         case 3 -> {
           pos = "BR";
