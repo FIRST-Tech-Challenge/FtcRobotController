@@ -21,8 +21,8 @@ public class AlignTest extends CommandAutoOpMode {
                 double intakeDistance = 60;
                 double minIntake = 45;
 
-                int firstY = -580;
-                int secondY = firstY - 230;
+                int firstY = -700;
+                int secondY = -580 - 230;
 
                 return new SequentialCommandGroup(
                         // FIRST specimen
@@ -43,10 +43,10 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.openSpecimenClaw(),
 
 
-                        //  Find first slider
+                        //  Find first sample
                         new ParallelRaceGroup(
                                 commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(530, firstY, -45, .9, .8, 30, 1500)
+                                commandFactory.driveToTarget(380, firstY, -30, .9, .8, 30, 1500)
                         ),
 
                         new ParallelCommandGroup(
@@ -73,26 +73,32 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.driveToTarget(350, secondY, -120, .05, .4, 30),
 
 
+
                         new ParallelCommandGroup(
-                                commandFactory.collapseSlider(),
-                                commandFactory.elbowToDeliveryPosition(),
-                                commandFactory.pivotToStart()
+                                commandFactory.pivotToStart(),
+
+                                new SequentialCommandGroup(
+                                        commandFactory.sleep(200),
+                                        new ParallelCommandGroup(
+                                            commandFactory.collapseSlider(),
+                                            commandFactory.elbowToDeliveryPosition(),
+                                            commandFactory.driveToTarget(200, -1100, -180, .05, .8, 100, 1500)
+                                        )
+                                )
                         ),
 
-                        commandFactory.driveToTarget(200, -1100, -180, .05, .8, 100, 1000),
-
-                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery),
+                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery, -180),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSpecimenSlider(1000),
-                                commandFactory.driveToTarget(200, -1100, -180, .05, .9, 100, 3000)
+                                commandFactory.driveToTarget(100, -1100, 180, .05, .9, 100, 3000)
                         ),
 
-                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery),
+                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery, 180),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSpecimenSlider(1000),
-                                commandFactory.driveToTarget(200, -1100, 0, .05, 1, 100, 3000)
+                                commandFactory.driveToTarget(100, -1100, 0, .05, 1, 100, 3000)
                         ),
 
 
@@ -176,26 +182,26 @@ public class AlignTest extends CommandAutoOpMode {
                 );
     }
 
-    private SequentialCommandGroup PickupSpecimenAndDrop(double intakeDistance, double minIntake, double deliveryDistance, double minDelivery) {
+    private SequentialCommandGroup PickupSpecimenAndDrop(double intakeDistance, double minIntake, double deliveryDistance, double minDelivery, double pickupHeading) {
         return new SequentialCommandGroup(
 
         // Intake SECOND Specimen
         new ParallelDeadlineGroup(
-                commandFactory.checkForwardDistance(intakeDistance, minIntake,3000),
-                commandFactory.alignToSpecimenDelivery(intakeDistance, minIntake,2500)
+                commandFactory.checkForwardDistance(intakeDistance, minIntake,2000),
+                commandFactory.alignToSpecimenDelivery(intakeDistance, minIntake,2000)
         ),
 
                 commandFactory.closeSpecimenClaw(),
-                commandFactory.sleep(500),
+                commandFactory.sleep(300),
 
 
                 new ParallelRaceGroup(
-                        commandFactory.driveToTarget(300, -1100, -180, .05, .9, 140, 1000),
+                        commandFactory.driveToTarget(300, -1100, pickupHeading, .05, .9, 140, 1000),
                         commandFactory.extendSpecimenSlider(6000)
                 ),
 
                 new ParallelRaceGroup(
-                        commandFactory.driveToTarget(600, -50, 0, .05, .9, 50, 3000),
+                        commandFactory.driveToTarget(600, -50, 0, .05, 1, 50, 1750),
                         commandFactory.extendSpecimenSlider(6000)
                 ),
 
