@@ -6,19 +6,21 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import org.firstinspires.ftc.teamcode.hardware;
 
 public class calculations {
+    public double armSpeed = 0.1;
     private hardware hardware;
 
     //TIME
     public ElapsedTime totalGameTime = new ElapsedTime();
     public ElapsedTime timer = new ElapsedTime();
 
-    public double timeToRotate360 = 2.5;
+    double timeToRotate360 = 3.65;
     double makeSpaceForArm = 5;
-    double timeToLiftArm = 3;
+    double timeToLowerAndLiftMantis = 3;
+    double timeToLowerAndLiftHopper = 3;
 
     //DRIVING
-    double driveSpeed = 0.8;
-    double turnSpeed = 0.55;
+    double driveSpeed = 0.7;
+    double turnSpeed = 0.5;
 
     //MANTIS
     double mantisUp = 1;
@@ -58,4 +60,5 @@ public class calculations {
     double cageDistance = 13;
     double clearCage = 8;
     double smidge = 5;
+    double startDistanceToBlock = 8;
 }
