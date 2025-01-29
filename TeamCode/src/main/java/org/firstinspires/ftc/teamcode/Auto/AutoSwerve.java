@@ -73,20 +73,17 @@ public class AutoSwerve {
 //  public AtomicInteger wheel_active_count;
 
   public double set_wheels(double fr, double bl, double br, double fl) {
-    double delta = 1;
-    AnalogInput tempInput = servoInputFL;
-    Servo temp = servoFL;
     double delta_sum = 0.0;
     for (int i = 0; i < 4; i++) {
       if (i == 1) {
-        delta_sum += set_Servo_Angle(servoInputFR, servoFR, fr);
+        delta_sum += Math.abs(set_Servo_Angle(servoInputFR, servoFR, fr));
       } else if (i == 2) {
-        delta_sum += set_Servo_Angle(servoInputBL, servoBL, bl);
+        delta_sum += Math.abs(set_Servo_Angle(servoInputBL, servoBL, bl));
       } else if (i == 3) {
-        delta_sum += set_Servo_Angle(servoInputBR, servoBR, br);
+        delta_sum += Math.abs(set_Servo_Angle(servoInputBR, servoBR, br));
       }
       else {
-        delta_sum += set_Servo_Angle(servoInputFL, servoFL, fl);
+        delta_sum += Math.abs(set_Servo_Angle(servoInputFL, servoFL, fl));
       }
     }
 
@@ -128,17 +125,12 @@ public class AutoSwerve {
     motorFR.setPower(pwr);
   }
 
-  public double getMinMotorSpeed(){
-
-    return 0;
-  }
-
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
     double pot_voltage = analogInput.getVoltage();
     double normalized_voltage = pot_voltage / max_voltage;
 
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
-    double servo_speed = 0.08;
+    double servo_speed = 0.09;
 //    if(delta_to_reference > 0.05)
 //      servo_speed = delta_to_reference;
 //    if(servo_speed > .25)

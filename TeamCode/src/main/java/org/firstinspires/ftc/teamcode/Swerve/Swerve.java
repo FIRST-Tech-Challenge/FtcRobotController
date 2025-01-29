@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 
 public class Swerve {
 
-  private final GoBildaPinpointDriver odometry;
+  public final GoBildaPinpointDriver odometry;
   private GoBildaPinpointDriver.DeviceStatus odometryStatus;
 
   private final SwerveDriveKinematics kinematics;
