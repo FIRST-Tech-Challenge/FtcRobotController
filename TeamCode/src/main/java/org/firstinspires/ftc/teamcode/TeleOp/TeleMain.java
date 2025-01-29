@@ -22,7 +22,7 @@ public class TeleMain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry(); //AND THIS BEFORE COMPETITION also line 109
+        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
         BotTelemetry.setTelemetry(telemetry, dashboardTelemetry);
 
 

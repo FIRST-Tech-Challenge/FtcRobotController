@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name = "Position Tracking with IMU and Gamepad", group = "Linear Opmode")
+//@TeleOp(name = "Position Tracking with IMU and Gamepad", group = "Linear Opmode")
 public class position extends LinearOpMode {
 
     private DcMotorEx frontLeftMotor;

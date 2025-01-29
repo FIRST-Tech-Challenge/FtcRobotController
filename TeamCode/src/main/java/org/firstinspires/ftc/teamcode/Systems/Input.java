@@ -3,9 +3,6 @@ package org.firstinspires.ftc.teamcode.Systems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -22,10 +19,9 @@ public class Input {
     private double prevError = 0;  // Previous error, used for derivative
     private double prevTime;
 
-    // Robot position
-    private double x = 0.0; // X position (strafe) in inches
-    private double y = 0.0; // Y position (forward/backward) in inches
-    private double heading = 0.0; // Robot's current heading in radians
+    private double spinPrevError = 0;
+    private double spinPrevTime;
+    private double spinIntegralError = 0;
 
 
     private boolean isMove = false;
@@ -48,6 +44,7 @@ public class Input {
 
         setPoint = motors.getArmRestingPosition();
         prevTime = elapsedTime.milliseconds();
+        spinPrevTime = elapsedTime.milliseconds();
     }
 
     public void move(double power) {
@@ -174,7 +171,7 @@ public class Input {
         }
 
         // Calculate PID terms
-        double proportional = Constants.KP * errorValue;
+        double proportional = Constants.ARM_KP * errorValue;
 
         integral += errorValue * dt;  // Integrate the error over time
         // Anti-windup: Limit the integral term to prevent it from growing too large
@@ -183,7 +180,7 @@ public class Input {
         double derivative = (errorValue - prevError) / dt;
 
         // Compute the final PID output
-        double output = proportional + Constants.KI * integral + Constants.KD * derivative;
+        double output = proportional + Constants.ARM_KI * integral + Constants.ARM_KD * derivative;
 
         // Apply the motor power
         output = Math.max(Math.min(output, 100), -100);  // Clamp output to motor range and make it so that it will more slowly go to its target position
@@ -204,9 +201,9 @@ public class Input {
 
         BotTelemetry.addData("Set Point", setPoint);
         BotTelemetry.addData("Process Value", processValue);
-        BotTelemetry.addData("Proportional Gain", Constants.KP);
-        BotTelemetry.addData("Integral Gain", Constants.KI);
-        BotTelemetry.addData("Derivative Gain", Constants.KD);
+        BotTelemetry.addData("Proportional Gain", Constants.ARM_KP);
+        BotTelemetry.addData("Integral Gain", Constants.ARM_KI);
+        BotTelemetry.addData("Derivative Gain", Constants.ARM_KD);
         BotTelemetry.addData("Proportional", proportional);
         BotTelemetry.addData("Integral", integral);
         BotTelemetry.addData("Derivative", derivative);
@@ -256,5 +253,56 @@ public class Input {
         return  motors.getUpArmPosition();
     }
 
+    public void resetIMU() {
+        imu.SetYaw();
+    }
+
+    //A simple proportional controller to spin the robot in a direction
+    public void spinToPosition(double setPoint) {
+
+        double processValue = imu.getAngle();
+        double errorValue = processValue - setPoint;
+
+        // Get current time and arm position
+        double time = elapsedTime.milliseconds();
+
+        // Time difference (dt)
+        double dt = (time - prevTime) / 1000.0;  // Convert to seconds
+
+        if (dt == 0) {
+            dt = 0.1;  // Default small value if no time has passed
+        }
+
+        // Calculate proportional term
+        double proportional = errorValue * Constants.SPIN_KP;
+
+        // Calculate integral term (sum of errors over time)
+        spinIntegralError += errorValue * dt; // Accumulate the error over time
+        double integral = spinIntegralError * Constants.SPIN_KI;
+
+        // Calculate derivative term (change in error over time)
+        double derivative = (errorValue - spinPrevError) / dt * Constants.SPIN_KD;
+
+        // Anti-windup: Clamp the integral term to a maximum value
+        double maxIntegral = 1.0; // Adjust this limit as needed
+        spinIntegralError = Math.max(-maxIntegral, Math.min(spinIntegralError, maxIntegral));
+
+        // Total control output (PID control signal)
+        double controlSignal = proportional + integral + derivative;
+
+        // Spin the robot based on the control signal
+        spin(controlSignal);
+
+        // Update the previous error value for the next loop
+
+
+        BotTelemetry.addData("Set Point", setPoint);
+        BotTelemetry.addData("Process Value", processValue);
+        BotTelemetry.addData("Proportional", proportional);
+        BotTelemetry.addData("Derivative", derivative);
+
+        spinPrevError = errorValue;
+        spinPrevTime = time;
+    }
 
 }
