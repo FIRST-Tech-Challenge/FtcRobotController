@@ -58,56 +58,100 @@ public class CompBotAuto extends LinearOpMode {
 
         if (driveBase.set_wheels(0.231, 0.24, 0.24, 0.259) == 0.0) {
           //drive_Wheels(0.5);
-          goToPos(0.5,0.5,0.5);
+          goToPos(0.4,0.0,0.5);
+          //PushPush();
         }
-        telem();
-        odometry.update();
       }
+
+//      rotate(45,0.5);
+//
+//      sleep(30000);
+//
+//      mek.setPivot(1,false);
+//      sleep(500);
+//      mek.setPivot(0,false);
+//      mek.setSlide(4250);
+//      sleep(5000);
+//      mek.runIntake(false,true);
+//      sleep(1000);
+//      mek.runIntake(false,false);
+//      sleep(500);
+//      mek.setPivot(-1,false);
+//      sleep(500);
+//      mek.setPivot(0,false);
+//      sleep(250);
+//      mek.setSlide(0);
+//      sleep(2500);
+      telem();
+      odometry.update();
     }// end runOpMode
-    drive_Wheels(0);
+    drive_Wheels(0,0);
     driveBase.stopServo();
   }
 
+  public void rotate(double angle,double pwr){
+    double change_Yaw = odometry.getHeading().getDegrees() - angle;
+
+    while(change_Yaw > 0.01 || change_Yaw < -0.01){
+      telem();
+      if(driveBase.set_wheels(0.0,0.5,0.5,0.5) == 0.0){
+        if(change_Yaw>0)
+          drive_Wheels(pwr,2);
+        else
+          drive_Wheels(-pwr,2);
+      }
+      change_Yaw = odometry.getHeading().getDegrees() - angle;
+    }
+    drive_Wheels(0,2);
+  }
+
   public void goToPos(double xPos,double yPos,double pwr){
-    double change_X = 1;
-    double change_Y = 1;
+    double change_X = odometry.getPosX() + xPos;
+    double change_Y = odometry.getPosY() - yPos;
 
     //change x pos
     while(change_X>0.01 || change_X<-0.01){
+      if(xPos==0)
+        break;
       change_X = odometry.getPosX() + xPos;  //get change
       telemetry.addData("X change: ",change_X);
       if(driveBase.set_wheels(0.5, 0.49, 0.49, 0.5)==0){
         if(change_X>0)
-          drive_Wheels(pwr);
+          drive_Wheels(pwr,0);
         else
-          drive_Wheels(-pwr);
+          drive_Wheels(-pwr,0);
       }
       odometry.update();
       telem();
       if(!opModeIsActive())
         return;
     }
-    drive_Wheels(0);
+    drive_Wheels(0,0);
 
     //change y pos
     while(change_Y>0.01 || change_Y<-0.01){
+      if(yPos==0)
+        break;
       change_Y = odometry.getPosY() - yPos;  //get change
       telemetry.addData("Y change: ",change_Y);
       if(driveBase.set_wheels(0.231, 0.24, 0.24, 0.259)==0){
         if(change_Y>0)
-          drive_Wheels(-pwr);
+          drive_Wheels(-pwr,1);
         else
-          drive_Wheels(pwr);
+          drive_Wheels(pwr,1);
       }
       odometry.update();
       telem();
       if(!opModeIsActive())
         return;
     }
-    drive_Wheels(0);
+    drive_Wheels(0,1);
   }
 
-  public void drive_Wheels(double power){
+  public void drive_Wheels(double power,int Switch){
+
+    //Switch is a switch between forward, strafe and rotate power for the motors
+    //                              0   ,    1   and   2
     driveBase.motorFL.setPower(power);
     int referenceSpeed = driveBase.motorFL.getCurrentPosition();
 

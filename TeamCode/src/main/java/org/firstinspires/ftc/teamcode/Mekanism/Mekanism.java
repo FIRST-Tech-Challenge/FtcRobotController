@@ -129,6 +129,9 @@ public class Mekanism {
     slideTarget = x;
 
     slide.setTargetPosition(x);
+
+    if(slide.getCurrentPosition() > slide.getTargetPosition()-5 && slide.getCurrentPosition() < slide.getTargetPosition()+5)
+      x=0;
     slide2.setTargetPosition(x);
   }
 
@@ -188,7 +191,7 @@ public class Mekanism {
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
-      intakeServo2.setPosition(.625);
+      intakeServo2.setPosition(.75);
     } else if (intake) {
       intakeServo.setPosition(0);
       intakeServo2.setPosition(0);
