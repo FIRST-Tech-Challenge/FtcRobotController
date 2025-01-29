@@ -129,7 +129,7 @@ public class Settings {
 
             public static double FREAKY_MOVEMENT_POWER = 20;
 
-            public static boolean ENABLE_LOWER_LIMIT = true;
+            public static boolean ENABLE_LOWER_LIMIT = false;
         }
 
         @Config
