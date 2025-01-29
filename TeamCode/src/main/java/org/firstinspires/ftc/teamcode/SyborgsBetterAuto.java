@@ -26,7 +26,7 @@ public class SyborgsBetterAuto extends LinearOpMode {
 
     }
     public void initSubsystems() {
-        drive = new DriveSubsystem(hardwareMap, telemetry);
+        drive = new DriveSubsystem(hardwareMap, telemetry, imu);
         imu = IMUFactory.initIMU(hardwareMap);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         lift = new SlideSubsystem(hardwareMap, telemetry);

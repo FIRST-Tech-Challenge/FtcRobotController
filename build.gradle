@@ -27,3 +27,6 @@ allprojects {
 repositories {
     mavenCentral()
 }
+tasks.withType(JavaCompile).configureEach {
+    options.deprecation = true
+}
