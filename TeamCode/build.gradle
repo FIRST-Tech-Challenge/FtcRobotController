@@ -36,15 +36,13 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    //implementation "com.acmerobotics.roadrunner:ftc:0.1.14"
-    implementation "com.acmerobotics.roadrunner:core:1.0.0"
-    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
-    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
+    //implementation "com.acmerobotics.roadrunner:ftc:0.1.15"
 
-    implementation "com.acmerobotics.roadrunner:core:1.0.0"
-    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
+    implementation "com.acmerobotics.roadrunner:core:1.0.1"
+    implementation "com.acmerobotics.roadrunner:actions:1.0.1"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
-    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:8e83c17ff7"
+    //implementation "com.github.jdhs-ftc:road-runner-ftc-otos:8e83c17ff7"
+    implementation "com.github.jdhs-ftc:road-runner-ftc-otos:45ff81d" //https://github.com/jdhs-ftc/road-runner-ftc-otos/commits/master/
     implementation project(':RoadRunnerTrajectories')
     testImplementation('junit:junit:4.13.2')
 //

@@ -10,7 +10,8 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.bluebananas.ftc.roadrunneractions.ActionBuilder;
+
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
@@ -21,6 +22,17 @@ import java.util.Locale;
 @Config
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
+    //Pull in the values from the class that both TeamCode and MeepMeep can access and in a way that the values can be modified in FTCDesktop
+    private static Pose2d pose_init = BlueBasket.pose_basket_init;
+    //public static Vector2d initialPos = initialPose.position;
+    public static double pose_init_x = BlueBasket.pose_basket_init.position.x;
+    public static double pose_init_y = BlueBasket.pose_basket_init.position.y;
+    public static double pose_init_h_deg = Math.toDegrees(pose_init.heading.toDouble());
+    private static Pose2d pose_drop = BlueBasket.pose_basket_drop;
+    //public static Vector2d drop_position = BlueBasket.drop_pose.position;
+    public static double pose_drop_x = BlueBasket.pose_basket_drop.position.x;
+    public static double pose_drop_y = BlueBasket.pose_basket_drop.position.y;
+    public static double pose_drop_h_deg = Math.toDegrees(pose_drop.heading.toDouble());
 
     @Override
     public void runOpMode() {
@@ -30,9 +42,11 @@ public class Blue_Basket_Auto extends LinearOpMode {
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
 
+        //Write the public FTCDesktop static fields back into the private static poses so FTCDesktop actually affects the values on restart of op mode
+        pose_init = new Pose2d(pose_init_x, pose_init_y, Math.toRadians(pose_init_h_deg));
+        pose_drop = new Pose2d(pose_drop_x, pose_drop_y, Math.toRadians(pose_drop_h_deg));
         //Initializes Pinpoint
-        Pose2d initialPose = new Pose2d(31, 61.875, Math.toRadians(180));
-        PinpointDrive drive = new PinpointDrive(hardwareMap, initialPose);
+        PinpointDrive drive = new PinpointDrive(hardwareMap, pose_init);
 
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
@@ -42,9 +56,6 @@ public class Blue_Basket_Auto extends LinearOpMode {
     //----------------------------------------------------------------------------------------------
 
         if (isStopRequested()) return;
-
-        Vector2d drop_position = new Vector2d(56.5, 55.875);
-        double drop_heading = Math.toRadians(-135);
 
         Vector2d outer_sample_pickup_position = new Vector2d(46, 43.25);
         Vector2d middle_sample_pickup_position = new Vector2d(56, 43);
@@ -58,29 +69,30 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Action driveToDrop1, driveToDrop2, driveToDrop3, driveToDrop4, samplePickup1, samplePickup2, samplePickup3, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
 
         driveToDrop1 = drive.actionBuilder(drive.pose)
-                .strafeToLinearHeading(drop_position, drop_heading)
+                .setTangent(-45)
+                .splineToLinearHeading(pose_drop, 0)
                 .build();
         driveToDrop2 = drive.actionBuilder(new Pose2d(inner_sample_pickup_position, inner_sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, drop_heading))
+                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
                 .build();
         driveToDrop3 = drive.actionBuilder(new Pose2d(middle_sample_pickup_position, sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, drop_heading))
+                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
                 .build();
         driveToDrop4 = drive.actionBuilder(new Pose2d(outer_sample_pickup_position, sample_pickup_heading))
-                .turnTo(new Rotation2d(rotation_speed, drop_heading))
+                .turnTo(new Rotation2d(rotation_speed, pose_drop_h_deg))
                 .build();
 
-        samplePickup1 = drive.actionBuilder(new Pose2d(drop_position, drop_heading))
+        samplePickup1 = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(rotation_speed, inner_sample_pickup_heading))
                 .build();
-        samplePickup2 = drive.actionBuilder(new Pose2d(drop_position, drop_heading))
+        samplePickup2 = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(rotation_speed, sample_pickup_heading))
                 .build();
-        samplePickup3 = drive.actionBuilder(new Pose2d(drop_position, drop_heading))
+        samplePickup3 = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(rotation_speed, sample_pickup_heading))
                 .build();
 
-        driveToPark = drive.actionBuilder(new Pose2d(drop_position, drop_heading))
+        driveToPark = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(0.75, 180))
                 .lineToXConstantHeading(37.5)
                 .build();

@@ -1,20 +1,11 @@
 package org.firstinspires.ftc.teamcode.BBcode;
 
-
-//import com.acmerobotics.dashboard.FtcDashboard;
-//import com.acmerobotics.dashboard.config.Config;
-//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-//import com.acmerobotics.roadrunner.Action;
-//import com.acmerobotics.roadrunner.Pose2d;
-//import com.acmerobotics.roadrunner.SequentialAction;
-//import com.acmerobotics.roadrunner.ftc.Actions;
-//import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -94,16 +85,20 @@ public class MainTeleOpQ2 extends LinearOpMode{
     }
 
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
-
+    public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
+    public double yOffset = -1.2229245167313665;
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
 
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
-        //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
-        //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        GoBildaPinpointDriver.EncoderDirection xDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+        GoBildaPinpointDriver.EncoderDirection yDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+        double encoderResolution = GoBildaPinpointDriverRR.goBILDA_4_BAR_POD;
+        odo.setOffsets(DistanceUnit.MM.fromInches(xOffset), DistanceUnit.MM.fromInches(yOffset));
+        odo.setEncoderResolution(encoderResolution);
+        odo.setEncoderDirections(xDirection, yDirection);
         odo.resetPosAndIMU();
-        odo.setPosition(new Pose2d(31, 61.875, Math.toRadians(180)));
 
         TelemetryHelper telemetryHelper = new TelemetryHelper(this);
         //Allows for telemetry to be added to without clearing previous data. This allows setting up telemetry functions to be called in the loop or adding telemetry items within a function and not having it cleared on next loop
@@ -125,6 +120,8 @@ public class MainTeleOpQ2 extends LinearOpMode{
         waitForStart();
         arm.MoveToHome();
         odo.setPosition(new Pose2d(31, 61.875, Math.toRadians(180)));
+        odo.setPosition(BlueBasket.pose_basket_init);
+        telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
         while(opModeIsActive()){ //while loop for when program is active
             odo.update();
@@ -273,5 +270,8 @@ public class MainTeleOpQ2 extends LinearOpMode{
     }
     private String getPinpoint(Pose2D pos) {
         return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.INCH), pos.getY(DistanceUnit.INCH), (pos.getHeading(AngleUnit.DEGREES)));
+    }
+    private String getPinpoint(Pose2d pos) {
+        return String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
     }
 }

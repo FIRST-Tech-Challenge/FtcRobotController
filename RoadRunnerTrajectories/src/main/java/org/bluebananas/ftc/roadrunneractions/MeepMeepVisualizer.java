@@ -4,6 +4,7 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedLight;
+import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
@@ -14,11 +15,11 @@ public class MeepMeepVisualizer {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(BlueSpecimen(meepMeep))
+                //.addEntity(BlueSpecimen(meepMeep))
                 .addEntity(BlueLeft(meepMeep))
-                .addEntity(RedRightOption2(meepMeep))
-                .addEntity(RedBasket(meepMeep))
-                .addEntity(RedSpecimen(meepMeep))
+//                .addEntity(RedRightOption2(meepMeep))
+//                .addEntity(RedBasket(meepMeep))
+//                .addEntity(RedSpecimen(meepMeep))
                 .start();
     }
 
@@ -75,10 +76,12 @@ public class MeepMeepVisualizer {
         {
             c = new ColorSchemeBlueLight();
         }
+
         return new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11.924922797318647)
                 .setColorScheme(c)
+                .setDimensions(16.875,14.25)
                 .build();
 
     }
