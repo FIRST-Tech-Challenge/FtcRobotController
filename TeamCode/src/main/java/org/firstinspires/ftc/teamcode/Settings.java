@@ -175,8 +175,8 @@ public class Settings {
             public static Vector2d RIGHT_JUST_PARK_VEC = new Vector2d(55, -58);
 
             // place positions for each starting position
-            public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(-4.5, -27.4, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(4.5, -27.4, Math.toRadians(90));
+            public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
             public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
@@ -187,8 +187,8 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(60, -60, Math.toRadians(180));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(48.1, -5.3, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(58.3, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(49.5, -5.3, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(59.5, -5, Math.toRadians(90));
             public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(35.0, -34.3);
 
             // I am adding this to push samples into human player zone
