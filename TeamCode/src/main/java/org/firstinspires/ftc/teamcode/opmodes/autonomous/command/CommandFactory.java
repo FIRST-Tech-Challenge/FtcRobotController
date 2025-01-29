@@ -179,11 +179,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand pivotToSweep() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart - 100);
     }
 
     public MovePivotCommand pivotToJustAboveSweep() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 500);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 400);
     }
 
     public MovePivotCommand pivotToSpecimenInTake() {

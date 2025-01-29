@@ -16,10 +16,13 @@ public class AlignTest extends CommandAutoOpMode {
     @Override
     protected Command createCommand() {
 
-                double deliveryDistance = 83;
-                double minDelivery = 70;
+                double deliveryDistance = 75;
+                double minDelivery = 65;
                 double intakeDistance = 60;
                 double minIntake = 45;
+
+                int firstY = -580;
+                int secondY = firstY - 230;
 
                 return new SequentialCommandGroup(
                         // FIRST specimen
@@ -39,9 +42,11 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.collapseSpecimenSlider(500),
                         commandFactory.openSpecimenClaw(),
 
+
+                        //  Find first slider
                         new ParallelRaceGroup(
                                 commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(470, -620, -45, .07, .8, 30, 1500)
+                                commandFactory.driveToTarget(530, firstY, -45, .9, .8, 30, 1500)
                         ),
 
                         new ParallelCommandGroup(
@@ -50,17 +55,45 @@ public class AlignTest extends CommandAutoOpMode {
                                 commandFactory.elbowToSweepPosition()
                         ),
 
-                        commandFactory.driveToTarget(350, -670, -120, .05, .4, 30),
+                        commandFactory.sleep(200),
 
+                        // Turn to sweep
+                        commandFactory.driveToTarget(320, firstY, -120, .05, .4, 30),
+
+
+                        // Find next sample
                         new ParallelCommandGroup(
                                 commandFactory.pivotToJustAboveSweep(),
-                        commandFactory.driveToTarget(600, -670 - 230, -45, .05, .6, 30, 1000)
+                        commandFactory.driveToTarget(550, secondY, -45, .09, .6, 30, 1000)
                                 ),
 
                         commandFactory.pivotToSweep(),
                         commandFactory.sleep(200),
 
-                        commandFactory.driveToTarget(350, -670 - 200, -120, .05, .4, 30),
+                        commandFactory.driveToTarget(350, secondY, -120, .05, .4, 30),
+
+
+                        new ParallelCommandGroup(
+                                commandFactory.collapseSlider(),
+                                commandFactory.elbowToDeliveryPosition(),
+                                commandFactory.pivotToStart()
+                        ),
+
+                        commandFactory.driveToTarget(200, -1100, -180, .05, .8, 100, 1000),
+
+                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery),
+
+                        new ParallelCommandGroup(
+                                commandFactory.collapseSpecimenSlider(1000),
+                                commandFactory.driveToTarget(200, -1100, -180, .05, .9, 100, 3000)
+                        ),
+
+                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery),
+
+                        new ParallelCommandGroup(
+                                commandFactory.collapseSpecimenSlider(1000),
+                                commandFactory.driveToTarget(200, -1100, 0, .05, 1, 100, 3000)
+                        ),
 
 
 //                        //push sample 1 to human player
@@ -141,5 +174,42 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.sleep(10000)
 
                 );
+    }
+
+    private SequentialCommandGroup PickupSpecimenAndDrop(double intakeDistance, double minIntake, double deliveryDistance, double minDelivery) {
+        return new SequentialCommandGroup(
+
+        // Intake SECOND Specimen
+        new ParallelDeadlineGroup(
+                commandFactory.checkForwardDistance(intakeDistance, minIntake,3000),
+                commandFactory.alignToSpecimenDelivery(intakeDistance, minIntake,2500)
+        ),
+
+                commandFactory.closeSpecimenClaw(),
+                commandFactory.sleep(500),
+
+
+                new ParallelRaceGroup(
+                        commandFactory.driveToTarget(300, -1100, -180, .05, .9, 140, 1000),
+                        commandFactory.extendSpecimenSlider(6000)
+                ),
+
+                new ParallelRaceGroup(
+                        commandFactory.driveToTarget(600, -50, 0, .05, .9, 50, 3000),
+                        commandFactory.extendSpecimenSlider(6000)
+                ),
+
+                new ParallelDeadlineGroup(
+                        commandFactory.checkForwardDistance(deliveryDistance, minDelivery, 5000),
+                        commandFactory.extendSpecimenSlider(6000),
+                        new SequentialCommandGroup(
+                                commandFactory.sleep(500),
+                                commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery,3000)
+                        )
+                ),
+
+                commandFactory.collapseSpecimenSlider(500),
+                commandFactory.openSpecimenClaw()
+        );
     }
 }
