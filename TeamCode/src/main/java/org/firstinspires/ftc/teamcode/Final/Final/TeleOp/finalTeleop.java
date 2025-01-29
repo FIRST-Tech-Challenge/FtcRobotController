@@ -17,6 +17,8 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
 
     private final Random random = new Random();
     private final String randomPun = hardware.puns[random.nextInt(hardware.puns.length)];
+    boolean lastXPressed = gamepad1.x;
+    boolean lastYPressed = gamepad1.y;
 
     @Override
     public void runOpMode() {
@@ -148,10 +150,10 @@ public class finalTeleop extends LinearOpMode implements teleop_interface {
         double reduction = 0.8;
         double turnReduction = 0.55;
 
-        if (gamepad1.x) {//SLOW
+        if (gamepad1.x && !lastXPressed) {//SLOW
             reduction = 0.4;
             turnReduction = 0.35;
-        } else if (gamepad1.y) {//FAST
+        } else if (gamepad1.y && !lastYPressed){//FAST
             reduction = 1;
             turnReduction = 1;
         } else if ((gamepad1.left_stick_button) || (gamepad1.right_stick_button)) {//BRAKE
