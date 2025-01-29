@@ -64,7 +64,7 @@ public class Outtake implements Component{
         WallToFront_move(350),
         WallToFront3 (200),
 
-        SpecimenToWall_MoveBack(1500),
+        SpecimenToWall_MoveBack(1200),
         SpecimenToWall_Final(100),
 
         Front(300);
