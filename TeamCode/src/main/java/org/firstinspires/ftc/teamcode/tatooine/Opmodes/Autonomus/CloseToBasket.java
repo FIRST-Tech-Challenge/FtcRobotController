@@ -33,6 +33,7 @@ public class CloseToBasket extends LinearOpMode {
         Intake intake = new Intake(this, false, false);
         wrist.setPosAng(0.5);
         Arm arm = new Arm(this, false);
+        arm.setStartAngle(41+5);
         TrajectoryActionBuilder trajectoryRed = drive.actionBuilder(beginPose)
                 //start Wrist
                 .stopAndAdd(new SequentialAction(new InstantAction(wrist::stright),new InstantAction(wrist::stright),new InstantAction(wrist::stright)))
@@ -48,7 +49,7 @@ public class CloseToBasket extends LinearOpMode {
                 //go for intake pos
                 .splineToLinearHeading(new Pose2d(-55, -36 , Math.toRadians(90)), Math.toRadians(90))
 //                arm intake
-                .stopAndAdd(new SequentialAction(new InstantAction (wrist::openMin),new SleepAction(0.5), intake.intake(), arm.setAngle(7),new SleepAction(0.5), intake.setPowerAction(0), arm.setAngle(30), new InstantAction(wrist::stright)))
+                .stopAndAdd(new SequentialAction(new InstantAction (wrist::openMin),new SleepAction(0.5), intake.intake(), arm.setAngle(7),new SleepAction(0.5), intake.setPowerAction(0), arm.setAngle(30)))
                 .strafeTo(new Vector2d(-50, -50))
                 //go for score sample
                 .splineToLinearHeading(new Pose2d(-63,-61, Math.toRadians(45)), Math.toRadians(-90))
