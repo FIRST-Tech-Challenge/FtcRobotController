@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
 import org.firstinspires.ftc.teamcode.Systems.Input;
 
-public class Action1 implements Runnable {
+public class armSynchronous implements Runnable {
     int pos = 0;
     Input input;
     private boolean running;
     private Thread thread;
 
 
-    public Action1 (Input input) {
+    public armSynchronous(Input input) {
         this.thread = new Thread(this);
         this.input = input;
     }
@@ -38,7 +37,7 @@ public class Action1 implements Runnable {
         running = false;
     }
     public void moveArm() {
-        input.arm(pos);
+        input.setArmPosition(pos);
     }
 
     public void extendArm(int upArmPos, int armPos) {

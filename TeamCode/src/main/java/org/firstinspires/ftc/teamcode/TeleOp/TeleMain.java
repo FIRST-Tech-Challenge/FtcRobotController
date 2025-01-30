@@ -58,7 +58,7 @@ public class TeleMain extends LinearOpMode {
             arm += (int) (-gamepad2.left_stick_y * 35);
             arm = Math.max(0, Math.min(arm, Constants.ARM_MAX_POSITION_OFFSET));
 
-            input.arm(arm);
+            input.setArmPosition(arm);
 
             //input.calculatePosition();
             BotTelemetry.addData("MOVE:",  move);
