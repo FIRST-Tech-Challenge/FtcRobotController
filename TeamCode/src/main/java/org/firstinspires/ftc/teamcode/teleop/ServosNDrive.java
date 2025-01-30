@@ -219,9 +219,7 @@ public class ServosNDrive extends LinearOpMode {
                 else if(intakeSlide1.getPosition() != Values.slide1out){
                     slidesOut();
                 }
-                //else{
-                //    slidesIn();
-                //}
+
             }
             if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
                 slideServo(true);
