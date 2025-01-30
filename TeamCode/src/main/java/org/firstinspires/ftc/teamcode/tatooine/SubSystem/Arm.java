@@ -57,14 +57,7 @@ public class Arm {
 
     private double LIMIT_TOLERANCE = 0; // Tolerance for limit switch reading
 
-<<<<<<< Updated upstream
     private final double SPOOL_DIM = 0; // Spool dimensions for extension calculation
-=======
-    private final double MAX_EXTEND = 60;
-
-    private boolean IS_DEBUG_MODE = false;
-    public Arm(OpMode opMode, boolean isDebug){
->>>>>>> Stashed changes
 
     private double lastAngle = 0; // Last recorded angle for force calculation
     private double lastF = 0; // Last recorded force value
@@ -177,12 +170,8 @@ public class Arm {
         return angleLeft.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
-<<<<<<< Updated upstream
     // Get the current current draw (in milliamps) for the right angle motor
     public double getCurrentAngleRight() {
-=======
-    public double getCurrentAngleRight(){
->>>>>>> Stashed changes
         return angleRight.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
@@ -191,12 +180,8 @@ public class Arm {
         return (getCurrentAngleRight() + getCurrentAngleLeft()) / 2;
     }
 
-<<<<<<< Updated upstream
     // Get the current current draw (in milliamps) for the left extension motor
     public double getCurrentExtendLeft() {
-=======
-    public double getCurrentExtendLeft(){
->>>>>>> Stashed changes
         return extendLeft.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
@@ -210,28 +195,12 @@ public class Arm {
         return (getCurrentExtendLeft() + getCurrentExtendRight()) / 2;
     }
 
-<<<<<<< Updated upstream
     // Calculate the force based on the current arm angle
     public double calculateF() {
         double currentAngle = getAngle();
         if (Math.abs(currentAngle - lastAngle) > 0.5) {
             lastF = (Math.cos(Math.toRadians(currentAngle)) * KF) * ((getMIN_EXTEND() + getExtend()) / getMIN_EXTEND());
             lastAngle = currentAngle;
-=======
-    public double calculatrF(){
-        return (Math.cos(Math.toRadians(getAngle())) * KF) * ((getMIN_EXTEND() + getExtend())/ getMIN_EXTEND());
-    }
-
-    public double calculateExtendByAngle(){}
-
-
-
-
-
-    public void setAnglePower(double power){
-        if (getCurrentAngle() >= ANGLE_AMP_LIMIT && power > 0){
-            power = 0;
->>>>>>> Stashed changes
         }
         return lastF;
     }
