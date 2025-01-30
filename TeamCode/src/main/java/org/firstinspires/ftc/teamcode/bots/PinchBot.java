@@ -29,7 +29,7 @@ public class PinchBot extends PivotBot{
     public final double rotateMinPos = 0.13;
 
     public final double pinchOpenPos = 0.85;
-    public final double pinchClosePos = 0.59;
+    public final double pinchClosePos = 0.63;
     public final double pinchWideOpenPos = 0.91;
     private Timer pinchTimer = new Timer();
     private TimerTask pinchTimerTask;

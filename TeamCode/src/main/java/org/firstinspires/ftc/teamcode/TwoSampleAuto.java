@@ -102,7 +102,7 @@ public class TwoSampleAuto extends LinearOpMode {
         robot.driveToCoordinate(-5000,-8000,0,800,1,false);
         robot.waitForCoordinateDrive();
 
-        robot.driveToCoordinate(7850,-12500,0,300,0.3,true);
+        robot.driveToCoordinate(8050,-12500,0,300,0.3,true);
         robot.waitForCoordinateDrive();
 
         //pick up second sample
