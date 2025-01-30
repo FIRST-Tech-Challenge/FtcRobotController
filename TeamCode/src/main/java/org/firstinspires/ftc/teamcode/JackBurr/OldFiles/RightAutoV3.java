@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
+package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+//import com.acmerobotics.roadrunner.geometry.Pose2d;
+//import com.acmerobotics.roadrunner.geometry.Vector2d;
+//import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,7 +31,7 @@ public class RightAutoV3 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        //SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         deliveryAxon.init(hardwareMap);
         deliverySlides.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
@@ -42,33 +42,33 @@ public class RightAutoV3 extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
-        Pose2d startPose = new Pose2d(60, 0, Math.toRadians(0));
-        drive.setPoseEstimate(startPose);
+        //Pose2d startPose = new Pose2d(60, 0, Math.toRadians(0));
+        //drive.setPoseEstimate(startPose);
 
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(0, -50), startPose.getHeading())
-                .addDisplacementMarker(()->{
-                    deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
-                    deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_GRAB);
-                    timerStep01.reset();
-                    timerStep03.reset();
-                })
-                .build();
+        //Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                //.splineToConstantHeading(new Vector2d(0, -50), startPose.getHeading())
+                //.addDisplacementMarker(()->{
+                    //deliveryAxon.setPosition(constants.DELIVERY_HIGH_BAR);
+                    //deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_GRAB);
+                    //timerStep01.reset();
+                    //timerStep03.reset();
+                //})
+                //.build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .forward(10)
-                .build();
+        //Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                //.forward(10)
+                //.build();
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeTo(new Vector2d(40, 14))
-                .addDisplacementMarker(()->{
-                    timerStep03.reset();
-                })
-                .build();
+        //Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+          //      .strafeTo(new Vector2d(40, 14))
+         //       .addDisplacementMarker(()->{
+            //        timerStep03.reset();
+              //  })
+                //.build();
 
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToConstantHeading(new Vector2d(0, -20), traj3.end().getHeading())
-                .build();
+        //Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                //.splineToConstantHeading(new Vector2d(0, -20), traj3.end().getHeading())
+                //.build();
 
 
         waitForStart();
@@ -94,7 +94,7 @@ public class RightAutoV3 extends LinearOpMode {
             else if(step == 2){
                 if(!traj1Followed){
                     deliveryGrippers.setPosition(constants.DELIVERY_GRIPPERS_CLOSE);
-                    drive.followTrajectory(traj1);
+                    //drive.followTrajectory(traj1);
                     traj1Followed = true;
                 }
                 else if(traj1Followed){
@@ -109,20 +109,20 @@ public class RightAutoV3 extends LinearOpMode {
             }
             else if(step == 3) {
                 if(timerStep03.seconds() > 4) {
-                    drive.followTrajectory(traj2);
+                    //drive.followTrajectory(traj2);
                     step = 4;
                 }
             }
             else if(step == 4) {
-                drive.followTrajectory(traj3);
+                //drive.followTrajectory(traj3);
                 step = 5;
             }
             else if(step == 5){
-                drive.followTrajectory(traj4);
+                //drive.followTrajectory(traj4);
                 step = 6;
             }
             else if(step == 6){
-                drive.turn(90);
+                //drive.turn(90);
                 step = 7;
             }
         }
