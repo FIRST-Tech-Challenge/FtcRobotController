@@ -54,9 +54,9 @@ public class RollerIntakeBot extends FourWheelDriveBot {
 
     public void adjustGain(boolean increase, Telemetry telemetry) {
         if (increase) {
-            gain += 0.005f;
+            gain += 0.005;
         } else {
-            gain = Math.max(1f, gain - 0.005f);
+            gain -= 0.005;
         }
         colorSensor.setGain(gain);
         telemetry.addLine()
