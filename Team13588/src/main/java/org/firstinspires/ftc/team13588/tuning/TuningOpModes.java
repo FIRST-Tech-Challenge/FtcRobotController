@@ -1,31 +1,22 @@
-package org.firstinspires.ftc.team00000.tuning;
+package org.firstinspires.ftc.team13588.tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ftc.AngularRampLogger;
-import com.acmerobotics.roadrunner.ftc.DeadWheelDirectionDebugger;
-import com.acmerobotics.roadrunner.ftc.DriveType;
-import com.acmerobotics.roadrunner.ftc.DriveView;
-import com.acmerobotics.roadrunner.ftc.DriveViewFactory;
-import com.acmerobotics.roadrunner.ftc.Encoder;
-import com.acmerobotics.roadrunner.ftc.ForwardPushTest;
-import com.acmerobotics.roadrunner.ftc.ForwardRampLogger;
-import com.acmerobotics.roadrunner.ftc.LateralPushTest;
-import com.acmerobotics.roadrunner.ftc.LateralRampLogger;
-import com.acmerobotics.roadrunner.ftc.ManualFeedforwardTuner;
-import com.acmerobotics.roadrunner.ftc.MecanumMotorDirectionDebugger;
+import com.acmerobotics.roadrunner.ftc.*;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
-
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.team00000.roadrunner.TankDrive;
-import org.firstinspires.ftc.team00000.roadrunner.ThreeDeadWheelLocalizer;
-import org.firstinspires.ftc.team00000.roadrunner.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.team13588.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.team13588.roadrunner.TankDrive;
+import org.firstinspires.ftc.team13588.roadrunner.ThreeDeadWheelLocalizer;
+import org.firstinspires.ftc.team13588.roadrunner.TwoDeadWheelLocalizer;
+import org.firstinspires.ftc.team13588.tuning.LocalizationTest;
+import org.firstinspires.ftc.team13588.tuning.ManualFeedbackTuner;
+import org.firstinspires.ftc.team13588.tuning.SplineTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +24,7 @@ import java.util.List;
 
 public final class TuningOpModes {
     // TODO: change this to TankDrive.class if you're using tank
-    public static final Class<?> DRIVE_CLASS = MecanumDrive.class;
+    public static final Class<?> DRIVE_CLASS = TankDrive.class;
 
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;

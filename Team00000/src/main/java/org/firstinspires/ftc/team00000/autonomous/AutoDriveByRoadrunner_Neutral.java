@@ -1,23 +1,16 @@
 package org.firstinspires.ftc.team00000.autonomous;
 
-import androidx.annotation.NonNull;
-
 // RR-specific imports
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.*;
+        import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
 // Non-RR imports
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.team00000.MecanumDrive;
-import org.firstinspires.ftc.team00000.RobotHardware;
+        import org.firstinspires.ftc.team00000.roadrunner.MecanumDrive;
 
-import java.lang.Math;
+        import java.lang.Math;
 
 @Config
 @Autonomous(name = "Neutral Samples (roadrunner)", group = "Autonomous")
