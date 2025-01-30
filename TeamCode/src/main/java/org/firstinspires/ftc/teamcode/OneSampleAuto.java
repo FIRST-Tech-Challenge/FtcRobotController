@@ -24,6 +24,8 @@ public class OneSampleAuto extends LinearOpMode {
         }
 
         waitForStart();
+        robot.sleep(4000);
+        telemetry.addData("sleeping: ","4 seconds");
 
         robot.readySpecimenPos(true, true); //raise arm
 
@@ -51,9 +53,9 @@ public class OneSampleAuto extends LinearOpMode {
         robot.driveToCoordinate(3500,-5000,0,800,1,false);
         robot.waitForCoordinateDrive();
         //line up for first sample
-        robot.driveToCoordinate(3300,-8000,0,300,0.3,false);
+        robot.driveToCoordinate(3000,-8000,0,150,0.3,false);
         robot.waitForCoordinateDrive();
-        robot.driveToCoordinate(3300,-11200,0,300,0.3,true);
+        robot.driveToCoordinate(3000,-11000,0,150,0.3,true);
         robot.waitForCoordinateDrive();
 
 // Configure robot to score on bucket after picking up sample
@@ -98,14 +100,14 @@ public class OneSampleAuto extends LinearOpMode {
         robot.waitForCoordinateDrive();
         robot.driveToCoordinate(8600,-13500,180,800,1,true);
         robot.waitForCoordinateDrive();
-        robot.driveToCoordinate(8600,-1000,180,800,1,true);
+        robot.driveToCoordinate(8600,-500,180,800,1,true);
         robot.waitForCoordinateDrive();
 
-        robot.driveToCoordinate(8600,-13500,180,800, 1, true);
+        robot.driveToCoordinate(7000,-14500,180,600, 1, true);
         robot.waitForCoordinateDrive();
-        robot.driveToCoordinate(11500,-13500,180,800,1,true);
+        robot.driveToCoordinate(10800,-14500,180,900,1,true);
         robot.waitForCoordinateDrive();
-        robot.driveToCoordinate(11500,-1000,180,800,1,true);
+        robot.driveToCoordinate(10800,-800,180,800,1,true);
         robot.waitForCoordinateDrive();
     }
 }

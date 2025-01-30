@@ -88,7 +88,7 @@ public class TeleOps extends LinearOpMode {
                 robot.alignWithSample(blueAlliance, true, false, telemetry);
             } else {
                 robot.driveByHandFieldCentric(gamepad1.left_stick_x, gamepad1.left_stick_y,
-                        gamepad1.right_stick_x*0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
+                        gamepad1.right_stick_x*-0.7, gamepad1.left_stick_button, gamepad2.left_stick_x,
                         gamepad2.left_stick_y, gamepad2.right_stick_x, gamepad2.left_stick_button);
             }
 //            if (gamepad2.a){
