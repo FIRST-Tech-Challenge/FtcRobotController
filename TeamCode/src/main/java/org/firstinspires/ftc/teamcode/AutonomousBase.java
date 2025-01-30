@@ -574,12 +574,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.viperMotor.isBusy() ) {
             viperMoving = false;
-            robot.viperMotor.setPower( 0.001 );   // hold
+            //robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
         else if( autoViperMotorTimer.milliseconds() > 5000 ) {
             viperMoving = false;
-            robot.viperMotor.setPower( 0.001 );   // hold
+            //robot.viperMotor.setPower( 0.001 );   // hold
         }
         else {
             // wait a little longer
@@ -664,7 +664,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
-        else if( autoTiltMotorTimer.milliseconds() > 4000 ) {
+        else if( autoTiltMotorTimer.milliseconds() > 6000 ) {
             tiltMoving = false;
             robot.wormTiltMotor.setPower( 0.0 );
         }

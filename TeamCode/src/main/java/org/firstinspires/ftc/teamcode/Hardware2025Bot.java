@@ -153,7 +153,7 @@ public class Hardware2025Bot
     public final static double TILT_ANGLE_CLIP_DEG        = 45.00; // AUTO: clip specimen on bar by just driving forward
     public final static double TILT_ANGLE_HW_MIN_DEG      =  0.00; // Arm at maximum rotation DOWN/FWD
     public final static double TILT_ANGLE_COLLECT_DEG     =  4.00; // Arm to collect samples at ground level
-    public final static double TILT_ANGLE_COLLECT1_DEG    =  4.00; // Arm to collect samples at ground level for only the first sample
+    public final static double TILT_ANGLE_COLLECT1_DEG    =  3.80; // Arm to collect samples at ground level for only the first sample
     public final static double TILT_ANGLE_SAMPLE3_DEG     =  4.00; // Arm to collect samples at ground level (3rd one against wall)
     public final static double TILT_ANGLE_START_DEG       = 13.00; // AUTO: starting position LOW
     public final static double TILT_ANGLE_WALL_DEG        = 13.90; // AUTO: starting position HIGH (motor tilted back & touches wall)
@@ -369,6 +369,7 @@ public class Hardware2025Bot
         startingArmTiltAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setPower( 0.0 );
+        wormTiltMotor.setTargetPositionTolerance( 15 );
 
         // Define and initialize the two snorkle motors
         snorkleLMotor = hwMap.get(DcMotorEx.class,"SnorkleL");   // Control Hub port 0
@@ -396,6 +397,7 @@ public class Hardware2025Bot
         viperMotor = hwMap.get(DcMotorEx.class,"viperMotor");  // Expansion Hub port 2
         viperMotor.setDirection(DcMotor.Direction.REVERSE);   // positive motor power extends
         viperMotor.setPower( 0.0 );
+        viperMotor.setTargetPositionTolerance( 20 );
         if( isAutonomous ) {
             viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

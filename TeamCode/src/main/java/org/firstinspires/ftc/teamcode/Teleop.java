@@ -251,8 +251,9 @@ public abstract class Teleop extends LinearOpMode {
 //          telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
 //          telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Snorkel", "L = %d, R = %d counts", robot.snorkleLMotorPos, robot.snorkleRMotorPos );
-            telemetry.addData("Tilt", "%d counts %.1f deg %.1f raw deg", robot.wormTiltMotorPos, robot.armTiltAngle, robot.computeRawAngle(robot.armTiltEncoder.getVoltage()));
-            telemetry.addData("Viper", "%d counts", robot.viperMotorPos );
+            telemetry.addData("Tilt", "%d counts %.1f deg %d tol", robot.wormTiltMotorPos, robot.armTiltAngle, robot.wormTiltMotor.getTargetPositionTolerance());
+            telemetry.addData("Viper", "%d counts %d tol", robot.viperMotorPos, robot.viperMotor.getTargetPositionTolerance() );
+            telemetry.addData("Tilt", "%d counts %d tol", robot.wormTiltMotorPos, robot.wormTiltMotor.getTargetPositionTolerance() );
             telemetry.addData("Elbow", "%.2f (%.1f deg)", robot.getElbowServoPos(), robot.getElbowServoAngle() );
             telemetry.addData("Wrist", "%.2f (%.1f deg)", robot.getWristServoPos(), robot.getElbowServoAngle() );
 //          telemetry.addData("42TiltAngle " , "(%.2f deg)", Hardware2025Bot.TILT_ANGLE_42);

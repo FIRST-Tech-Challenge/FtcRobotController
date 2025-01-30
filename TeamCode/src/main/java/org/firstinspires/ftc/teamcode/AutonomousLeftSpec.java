@@ -328,11 +328,29 @@ public class AutonomousLeftSpec extends AutonomousBase {
             case 1:
                 // Drive forward toward the wall
                 driveToPosition( 20.9, -32.7, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(1000);  // viper should already be in position
+                do {
+                    if( !opModeIsActive() ) break;
+                    // wait for lift/tilt to finish...
+                    sleep( 50 );
+                    // update all our status
+                    performEveryLoop();
+                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+                    telemetry.update();
+                } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // viper should already be in position
                 break;
             case 2:
                 driveToPosition( 20.9, -43.1, 0.0, DRIVE_SPEED_100, TURN_SPEED_20, DRIVE_TO );
-                sleep(1300);  // wait for viper to fully retract
+                do {
+                    if( !opModeIsActive() ) break;
+                    // wait for lift/tilt to finish...
+                    sleep( 50 );
+                    // update all our status
+                    performEveryLoop();
+                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+                    telemetry.update();
+                } while( autoViperMotorMoving() || autoTiltMotorMoving() );  // wait for viper to fully retract
                 break;
             case 3:
                 autoViperMotorMoveToTarget( Hardware2025Bot.VIPER_EXTEND_SAMPLE3);
@@ -340,7 +358,16 @@ public class AutonomousLeftSpec extends AutonomousBase {
                 robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB3);
                 // drive slow because waiting for arm to lower
                 driveToPosition( 24.4, -43.8, 5.0, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
-                sleep(1000); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
+                do {
+                    if( !opModeIsActive() ) break;
+                    // wait for lift/tilt to finish...
+                    sleep( 50 );
+                    // update all our status
+                    performEveryLoop();
+                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+                    telemetry.update();
+                } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
                 driveToPosition( 24.4, -43.8, 32.1, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 break;
             default:
@@ -348,7 +375,7 @@ public class AutonomousLeftSpec extends AutonomousBase {
 
         // Close the claw on this sample
         robot.clawStateSet( Hardware2025Bot.clawStateEnum.CLAW_CLOSED );
-        sleep(900); // wait for claw to close on sample
+        sleep(700); // wait for claw to close on sample
     } // collectSample
 
     //************************************
@@ -388,7 +415,8 @@ public class AutonomousLeftSpec extends AutonomousBase {
         // Don't retract arm if we are going to park
         if(samplesScored < spikeSamples) {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0);
-            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT);
+            autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT , 0.9);
+            //autoViperMotorMoveToTarget( 1550 , 1.0);
         }
         else{
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG, 1.0);
