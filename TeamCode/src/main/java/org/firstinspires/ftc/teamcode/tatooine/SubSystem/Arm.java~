@@ -275,6 +275,18 @@ public class Arm {
 
     // Action class to move the arm angle
     public class MoveAngle implements Action {
+        private static MoveAngle instance;  // Static reference to the single instance
+
+        // Private constructor to prevent external instantiation
+        private MoveAngle() {}
+
+        // Public static method to get the single instance of the class
+        public static synchronized MoveAngle getInstance() {
+            if (instance == null) {
+                instance = new MoveAngle();
+            }
+            return instance;
+        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
