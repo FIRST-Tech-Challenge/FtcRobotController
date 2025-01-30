@@ -195,6 +195,10 @@ public class Arm {
         return (getCurrentExtendLeft() + getCurrentExtendRight()) / 2;
     }
 
+    public void setStartAngle(double startAngle) {
+        this.startAngle = startAngle;
+    }
+
     // Calculate the force based on the current arm angle
     public double calculateF() {
         double currentAngle = getAngle();
