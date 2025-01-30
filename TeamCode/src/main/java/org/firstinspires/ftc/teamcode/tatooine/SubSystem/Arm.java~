@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
+
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,15 +10,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 import org.firstinspires.ftc.teamcode.tatooine.utils.PIDFController;
 import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.UnitConverter;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.unit;
+import org.opencv.core.Mat;
+
 
 public class Arm {
-
     private DcMotorEx angleLeft = null;  // Left motor controlling angle
     private DcMotorEx angleRight = null; // Right motor controlling angle
 
@@ -82,13 +86,11 @@ public class Arm {
 
     // Initialize the arm motors and reset encoders
     public void init() {
-        // Set motor directions for angle and extension motors
         angleLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        angleRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        angleRight.setDirection(DcMotorSimple.Direction.REVERSE);
         extendLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         extendRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        // Set zero power behavior to BRAKE for all motors to hold their position when no power is applied
         angleRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         angleLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,7 +104,8 @@ public class Arm {
 
         resetEncoders(); // Reset encoders for all motors
 
-        // Debug logging for initialization
+        // Debug logging
+
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Arm Initialized");
     }
 
@@ -141,6 +144,10 @@ public class Arm {
     // Get the average angle of the arm
     public double getAngle() {
         return (getRightAngle() + getLeftAngle()) / 2;
+    }
+
+    public double getMIN_EXTEND() {
+        return MIN_EXTEND;
     }
 
     // Get the current extension of the left motor
@@ -188,11 +195,15 @@ public class Arm {
         return (getCurrentExtendLeft() + getCurrentExtendRight()) / 2;
     }
 
+    public void setStartAngle(double startAngle) {
+        this.startAngle = startAngle;
+    }
+
     // Calculate the force based on the current arm angle
     public double calculateF() {
         double currentAngle = getAngle();
         if (Math.abs(currentAngle - lastAngle) > 0.5) {
-            lastF = (Math.cos(Math.toRadians(currentAngle)) * KF) * ((MIN_EXTEND + getExtend()) / MIN_EXTEND);
+            lastF = (Math.cos(Math.toRadians(currentAngle)) * KF) * ((getMIN_EXTEND() + getExtend()) / getMIN_EXTEND());
             lastAngle = currentAngle;
         }
         return lastF;
@@ -200,11 +211,9 @@ public class Arm {
 
     // Set power to the angle motors
     public void setAnglePower(double power) {
-        // Prevent movement if the current angle exceeds the amperage limit
         if (getCurrentAngle() >= ANGLE_AMP_LIMIT && power > 0) {
-            power = 0; // No movement if amperage limit is exceeded
+            power = 0; // Prevent movement if the current angle exceeds the limit
         }
-        // Reset encoders if limit switch is pressed
         if (limitSwitch.getState()) {
             resetAngleEncoders(); // Reset encoders if limit switch is pressed
             if (power < 0) {
@@ -215,20 +224,19 @@ public class Arm {
         angleRight.setPower(power); // Set power for right angle motor
         angleLeft.setPower(power); // Set power for left angle motor
 
-        // Debug logging for angle power
+        // Debug logging
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Angle Power", power);
     }
 
     // Set power to the angle motors with added force compensation
     public void setPowerAngleWithF(double power) {
-        setAnglePower(power + calculateF()); // Apply force compensation to the power
+        setAnglePower(power + calculateF());
     }
 
     // Set power to the extension motors
     public void setPowerExtend(double power) {
-        // Prevent movement if within power limits
         if (getCurrentExtend() >= EXTEND_DOWN_LIMIT_AMPS && getCurrentExtend() <= EXTEND_UP_LIMIT_AMPS && power > 0) {
-            power = 0; // No movement within limits
+            power = 0; // Prevent movement if within power limits
         } else if (getCurrentExtend() >= EXTEND_UP_LIMIT_AMPS) {
             resetExtendEncoders(); // Reset encoders if extension motor reaches upper limit
             if (power < 0) {
@@ -238,35 +246,34 @@ public class Arm {
         extendLeft.setPower(power); // Set power for left extension motor
         extendRight.setPower(power); // Set power for right extension motor
 
-        // Debug logging for extension power
+        // Debug logging
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Extend Power", power);
     }
 
     // Set power to the extension motors with limit checks
     public void setPowerExtendWithLimits(double power) {
-        // Prevent movement if extension exceeds limit
         if ((getExtend() - LIMIT_TOLERANCE >= LIMIT * Math.cos(Math.toRadians(getAngle()))) ||
                 (getExtend() + LIMIT_TOLERANCE >= LIMIT * Math.cos(Math.toRadians(getAngle())))) {
-            power = 0; // No movement if limit is exceeded
+            power = 0; // Prevent movement if extension exceeds limit
         }
         setPowerExtend(power); // Apply the power to the extension motors
     }
 
     // Action to move the arm angle
     public Action moveAngle() {
-        MoveAngle moveAngle = new MoveAngle(); // Create move angle action
+        MoveAngle moveAngle = new MoveAngle();
         return moveAngle;
     }
 
     // Action to check if the angle has reached the setpoint
     public Action atSetPoint(double goal) {
-        AtSetPoint atSetPoint = new AtSetPoint(goal); // Create at setpoint action
+        AtSetPoint atSetPoint = new AtSetPoint(goal);
         return atSetPoint;
     }
 
     // Action to move the arm extension
     public Action moveExtend(double goal) {
-        MoveExtend moveExtend = new MoveExtend(goal); // Create move extend action
+        MoveExtend moveExtend = new MoveExtend(goal);
         return moveExtend;
     }
 
@@ -275,10 +282,9 @@ public class Arm {
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Calculate power using PID and apply with force compensation
-            double PIDPower = anglePID.calculate(getAngle());
-            setPowerAngleWithF(PIDPower);
-            return true; // Continue running
+            double PIDPower = anglePID.calculate(getAngle()); // Calculate power using PID
+            setPowerAngleWithF(PIDPower); // Apply the power with force compensation
+            return true; // Continue moving
         }
     }
 
@@ -287,14 +293,13 @@ public class Arm {
         private double goal = getAngle(); // Goal for the angle
 
         public AtSetPoint(double goal) {
-            this.goal = goal; // Set goal for the angle
+            this.goal = goal; // Set the goal for the angle
             anglePID.setSetPoint(goal); // Update PID setpoint
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Return true if angle is not yet at the setpoint
-            return !anglePID.atSetPoint();
+            return !anglePID.atSetPoint(); // Return true if angle is not yet at the setpoint
         }
     }
 
@@ -303,15 +308,14 @@ public class Arm {
         private double goal = 0; // Goal for the extension
 
         public MoveExtend(double goal) {
-            this.goal = goal; // Set goal for the extension
+            this.goal = goal; // Set the goal for extension
             extendPID.setSetPoint(goal); // Update PID setpoint
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Calculate power using PID and apply with limits
-            double PIDPower = extendPID.calculate(getExtend());
-            setPowerExtendWithLimits(PIDPower);
+            double PIDPower = extendPID.calculate(getExtend()); // Calculate power using PID
+            setPowerExtendWithLimits(PIDPower); // Apply the power with limits
             return !extendPID.atSetPoint(); // Return true if extension is not at setpoint
         }
     }
