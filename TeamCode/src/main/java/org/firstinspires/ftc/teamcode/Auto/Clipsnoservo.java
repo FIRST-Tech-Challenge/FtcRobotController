@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.Auto.HardwareClassesNActions.SlideMotors;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Config
-@Autonomous(name = "strafe to left? park", group = "Autonomous")
+@Autonomous(name = "a field legth", group = "Autonomous")
 public class Clipsnoservo extends LinearOpMode {
 
 
@@ -53,19 +53,21 @@ public class Clipsnoservo extends LinearOpMode {
         //all of these are during init
 
         // instantiate your MecanumDrive at a particular pose.
-        Pose2d initialPose = Positions.bucketInitialPos;
+        Pose2d initialPose = new Pose2d(-62, -61, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Servos servos = new Servos(hardwareMap);
 
         //test path
         TrajectoryActionBuilder initToCLips = drive.actionBuilder(initialPose)
-                .strafeTo(new Vector2d(-60,60));
+                .splineToConstantHeading(new Vector2d(-52,61),Math.toRadians(90));
+
+        waitForStart();
 
         if (isStopRequested()) return;
         Actions.runBlocking(
                 new SequentialAction(
-                        initToCLips.build(),
-                        servos.GrabWaitSequence()
+                        servos.GrabWaitSequence(),
+                        initToCLips.build()
                 )
         );
     }

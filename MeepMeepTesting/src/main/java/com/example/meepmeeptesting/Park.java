@@ -15,12 +15,7 @@ public class Park {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-62, -61, Math.toRadians(90)))
-                        .splineToConstantHeading(new Vector2d(-40,-40),Math.toRadians(90))
-                        .splineToConstantHeading(new Vector2d(-40,40),Math.toRadians(90))
-                        .strafeTo(new Vector2d(40,40))
-                        .lineTo(new Vector2d(40,-40))
-                        .strafeTo(new Vector2d(-40,-40))
-                        //.lineTo(new Vector2d(60,-60))*/
+                        .splineToConstantHeading(new Vector2d(-52,61),Math.toRadians(90))
                         .build());
 
 
