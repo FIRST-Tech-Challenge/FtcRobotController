@@ -15,12 +15,12 @@ public class Wrist {
 
     // Define the subsystem name as a constant
     private static final String SUBSYSTEM_NAME = "Wrist";
-    private boolean IS_DEBUG_MODE; // Instance variable for debug mode
+    private boolean IS_DEBUG_MODE = false; // Instance variable for debug mode
 
     private Servo wristAngle = null;
-    private Servo angleRight;
-    private Servo angleLeft;
-    private OpMode opMode;
+    private Servo angleRight = null;
+    private Servo angleLeft = null;
+    private OpMode opMode = null;
     private AnalogInput angleSensor = null;
 
     private final double FRONT = 0;
@@ -92,37 +92,37 @@ public class Wrist {
     }
 
     // Move wrist to the BACK position
-    public void BACK() {
+    public void back() {
         setPositionWrist(BACK);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to BACK position");
     }
 
     // Move wrist to the FRONT position
-    public void FRONT() {
+    public void front() {
         setPositionWrist(FRONT);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to FRONT position");
     }
 
     // Move wrist to the STRAIGHT position
-    public void STRAIGHT() {
+    public void straight() {
         setPositionWrist(STRAIGHT);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to STRAIGHT position");
     }
 
     // Move wrist to the HOME position
-    public void HOME() {
+    public void home() {
         setPositionWrist(HOME);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to HOME position");
     }
 
     // Move wrist to the INTAKE position
-    public void INTAKE() {
+    public void intake() {
         setPositionWrist(INTAKE);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to INTAKE position");
     }
 
     // Move wrist to the SCORE_SAMPLE position
-    public void SCORE_SAMPLE() {
+    public void scoreSample() {
         setPositionWrist(SCORE_SAMPLE);
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to SCORE_SAMPLE position");
     }

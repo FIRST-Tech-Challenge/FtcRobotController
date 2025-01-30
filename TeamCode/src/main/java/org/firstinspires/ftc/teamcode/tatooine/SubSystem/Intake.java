@@ -5,108 +5,131 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
-import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;  // Import the DebugUtils class for debugging
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.tatooine.utils.DebugUtils;
 
 public class Intake {
 
-    private CRServo intakeRight = null;  // Reference to the right intake servo (continuous rotation servo)
-    private CRServo intakeLeft = null;   // Reference to the left intake servo (continuous rotation servo)
-    private boolean IS_DEBUG_MODE;       // Flag to indicate whether debug logging is enabled or not
+    private CRServo intakeRight = null; // Right intake servo
+    private CRServo intakeLeft = null;  // Left intake servo
+    private boolean IS_DEBUG_MODE = false;      // Debug flag
 
-    // Constants for intake and outtake speeds (range from -1.0 to 1.0)
+    // Intake speeds
     private final double INTAKE_SPEED = 1;
     private final double OUTTAKE_SPEED = -1;
 
-    // Constructor to initialize the intake system with an OpMode and debug flag
-    public Intake(OpMode opMode, boolean isDebugMode) {
-        // Initialize the servos from the hardware map using the names defined in the configuration
-        intakeLeft = opMode.hardwareMap.get(CRServo.class, "IL");
-        intakeRight = opMode.hardwareMap.get(CRServo.class, "IR");
+    private ElapsedTime timer = new ElapsedTime();
+    private ColorSensorOur colorSensor = null;
+    private OpMode opMode = null;
+    private final double OUTTAKE_TIME = 0; // Needs proper value
 
-        // Set the debug flag based on the provided argument
+    // Constructor
+    public Intake(OpMode opMode, boolean isDebugMode) {
+        this.opMode = opMode;
         this.IS_DEBUG_MODE = isDebugMode;
 
-        // Initialize the servo directions and log the initialization
-        init(opMode);  // Pass the OpMode to access telemetry directly
+        // Initialize hardware
+        intakeLeft = opMode.hardwareMap.get(CRServo.class, "IL");
+        intakeRight = opMode.hardwareMap.get(CRServo.class, "IR");
+        colorSensor = new ColorSensorOur(opMode, isDebugMode);
+
+        init();
     }
 
-    // Method to initialize servo directions and set them up properly
-    public void init(OpMode opMode) {
-        // Set the direction for each servo. The left servo should rotate in reverse to match the correct intake direction.
+    // Initialize servo directions
+    public void init() {
         intakeLeft.setDirection(CRServo.Direction.REVERSE);
         intakeRight.setDirection(CRServo.Direction.FORWARD);
 
-        // Log the servo directions if debug mode is enabled
-        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Left Direction: REVERSE");
-        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Right Direction: FORWARD");
+        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Initialized: Left REVERSE, Right FORWARD");
     }
 
-    // Method to set power for both intake servos simultaneously
-    public void setPower(double power, OpMode opMode) {
-        // Set the power for both servos (range from -1.0 to 1.0)
+    // Set power to both servos
+    public void setPower(double power) {
         intakeLeft.setPower(power);
         intakeRight.setPower(power);
 
-        // Log the power setting for both servos if debug mode is enabled
-        DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Left Power", power);
-        DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Right Power", power);
+        DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Power Set", power);
     }
 
-    // Method to return an Action that sets servo power to a specific value
-    public Action setPowerAction(double power, OpMode opMode) {
-        // Create and return a new SetPowerAction with the given power
-        SetPowerAction setPowerAction = new SetPowerAction(power, opMode);
-        return setPowerAction;
+    // Create an action to set servo power
+    public Action setPowerAction(double power) {
+        return new SetPowerAction(power);
     }
 
-    // Method to return an Action to start the intake system (feeding items into the robot)
-    public Action intake(OpMode opMode) {
-        // Log that the intake action is being triggered if debug mode is enabled
+    // Intake action
+    public Action intake() {
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Action: Running Intake");
-        // Return an action that sets the servos to the intake speed
-        return setPowerAction(INTAKE_SPEED, opMode);
+        return setPowerAction(INTAKE_SPEED);
     }
 
-    // Method to return an Action to start the outtake system (expelling items from the robot)
-    public Action outtake(OpMode opMode) {
-        // Log that the outtake action is being triggered if debug mode is enabled
+    // Outtake action
+    public Action outtake() {
         DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Action: Running Outtake");
-        // Return an action that sets the servos to the outtake speed
-        return setPowerAction(OUTTAKE_SPEED, opMode);
+        return setPowerAction(OUTTAKE_SPEED);
     }
 
-    // Method to return an Action to stop the intake system
-    public Action stop(OpMode opMode) {
-        // Log that the stop action is being triggered if debug mode is enabled
-        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Action: Stopping Intake");
-        // Return an action that sets the servos' power to 0 (stopping the servos)
-        return setPowerAction(0, opMode);
+    // Stop action
+    public Action stop() {
+        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Action: Stopping");
+        return setPowerAction(0);
     }
 
-    // Inner class that defines an action for setting the servo power
+    // Intake with color sensor verification
+    public Action intakeByColor(boolean isSpecimen) {
+        return new IntakeByColor(isSpecimen);
+    }
+
+    // Action for setting servo power
     public class SetPowerAction implements Action {
-        private double power;   // The power to be set for the servos
-        private OpMode opMode;  // Reference to the OpMode object to access telemetry
+        private double power;
 
-        // Constructor to initialize the power and OpMode
-        public SetPowerAction(double power, OpMode opMode) {
+        public SetPowerAction(double power) {
             this.power = power;
-            this.opMode = opMode;
         }
 
-        // This method is called to execute the action (i.e., set servo power)
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Set the power for the servos
-            setPower(power, opMode);
-
-            // Log the power setting to telemetry if debug mode is enabled
+            setPower(power);
             DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "Intake", "Set Power", power);
-
-            // Return false to indicate that the action is ongoing and not completed yet
             return false;
+        }
+    }
+
+    // Action for color-based intake control
+    public class IntakeByColor implements Action {
+        private boolean isSpecimen;
+        private boolean finishOuttake = false;
+
+        public IntakeByColor(boolean isSpecimen) {
+            this.isSpecimen = isSpecimen;
+            timer.reset();
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            double currentDistance = colorSensor.getDistance();
+            boolean isCorrectColor = colorSensor.isRightColor(isSpecimen);
+
+            if (currentDistance <= 2) {
+                if (!isCorrectColor && !finishOuttake) {
+                    setPower(OUTTAKE_SPEED);
+                    timer.reset();
+                    finishOuttake = true;
+                } else {
+                    setPower(0);
+                }
+            } else if (!isCorrectColor && timer.seconds() >= OUTTAKE_TIME && finishOuttake) {
+                setPower(INTAKE_SPEED);
+            }
+
+            DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "IntakeByColor", "Distance", currentDistance);
+            DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "IntakeByColor", "IsCorrectColor", isCorrectColor);
+            DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, "IntakeByColor", "FinishOuttake", finishOuttake);
+
+            return !isCorrectColor && currentDistance > 2;
         }
     }
 }
