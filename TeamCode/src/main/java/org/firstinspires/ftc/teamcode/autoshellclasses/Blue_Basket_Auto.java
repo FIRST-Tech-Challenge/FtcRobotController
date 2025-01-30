@@ -43,6 +43,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         //Write the public FTCDesktop static fields back into the private static poses so FTCDesktop actually affects the values on restart of op mode
         pose_init = new Pose2d(pose_init_x, pose_init_y, Math.toRadians(pose_init_h_deg));
         pose_drop = new Pose2d(pose_drop_x, pose_drop_y, Math.toRadians(pose_drop_h_deg));
+
         //Initializes Pinpoint
         PinpointDrive drive = new PinpointDrive(hardwareMap, pose_init);
 
@@ -60,34 +61,43 @@ public class Blue_Basket_Auto extends LinearOpMode {
         double sample_pickup_heading = Math.toRadians(-90);
         Vector2d inner_sample_pickup_position = new Vector2d(57, 37.5);//57, 38.5
         double inner_sample_pickup_heading = Math.toRadians(-50);
-
         double rotation_speed = Math.toRadians(0.5);
 
         GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
-        Action driveToDropFromOgStart, driveToDropFromStart, driveToDrop, driveToDrop3, driveToDrop4, samplePickupInner, samplePickupMiddle, samplePickupOuter, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
-
+        Action driveToDropFromOgStart, driveToDropFromStart, driveToDropFromInnerSample, driveToDropFromMiddleSample, driveToDropFromOuterSample, samplePickupInner, samplePickupMiddle, samplePickupOuter, driveToPark, armUpWait1, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
+        //drive to drop
         driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
                 .setTangent(-45)
                 .splineToLinearHeading(pose_drop, 0)
                 .build();
         driveToDropFromStart = drive.actionBuilder(pose_init)
-
-                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
-                .build();
-        driveToDrop = drive.actionBuilder(drive.pose)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
+        driveToDropFromInnerSample = drive.actionBuilder(drive.pose)
+                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
+                .build();
+
+        driveToDropFromMiddleSample = drive.actionBuilder(drive.pose)
+                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
+                .build();
+
+        driveToDropFromOuterSample = drive.actionBuilder(drive.pose)
+                .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
+                .build();
+
+        //sample pickup
         samplePickupInner = drive.actionBuilder(drive.pose)
-                .turnTo(new Rotation2d(rotation_speed, inner_sample_pickup_heading))
+                .strafeToLinearHeading(BlueBasket.pose_inner_sample.position, BlueBasket.pose_inner_sample.heading)
                 .build();
         samplePickupMiddle = drive.actionBuilder(pose_drop)
-                .turnTo(new Rotation2d(rotation_speed, sample_pickup_heading))
+                .strafeToLinearHeading(BlueBasket.pose_middle_sample.position, BlueBasket.pose_middle_sample.heading)
                 .build();
         samplePickupOuter = drive.actionBuilder(drive.pose)
                 .strafeToLinearHeading(BlueBasket.pose_outer_sample.position, BlueBasket.pose_outer_sample.heading)
                 .build();
 
+        //drive to park
         driveToPark = drive.actionBuilder(pose_drop)
                 .turnTo(new Rotation2d(0.75, 180))
                 .lineToXConstantHeading(37.5)
@@ -203,10 +213,18 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         //ActionBuilder.BlueRightOption1(drive::actionBuilder)
                        // test
                         driveToDropFromStart,
-                        drive.actionBuilder(drive.pose).waitSeconds(5).build(),
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
                         samplePickupOuter,
-                        drive.actionBuilder(drive.pose).waitSeconds(5).build(),
-                        driveToDrop
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        driveToDropFromOuterSample,
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        samplePickupMiddle,
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        driveToDropFromMiddleSample,
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        samplePickupInner,
+                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        driveToDropFromInnerSample
 
 //                        _ViperArmActions.MoveArmToHighBasket(),
 //                        armUpWait1,
