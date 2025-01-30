@@ -82,7 +82,8 @@ public class Motors {
         }
 
         motors[Type.Arm.getValue()].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // doesn't actually stop the motor from moving, just slows it down so it doesn't slam into the ground
-
+        setArmPos(0);
+        
 
         restingArmPosition = getArmPosition();
         reachingArmPosition = getArmPosition() + Constants.ARM_MAX_POSITION_OFFSET;
@@ -140,5 +141,12 @@ public class Motors {
 
         motors[Type.LeftFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[Type.RightFront.getValue()].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void setArmPos(int position){
+        motors[Type.Arm.getValue()].setTargetPosition(position);
+    }
+    public void goTargetPosition() {
+        motors[Type.Arm.getValue()].setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }

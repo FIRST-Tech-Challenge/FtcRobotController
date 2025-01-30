@@ -135,7 +135,7 @@ public class Input {
             //double thing = (-(Math.abs(motors.getArmPosition() - 440)) / 5.6) + 100;
 //up 1435 to 1030
             double realPower = 0;
-            if (((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250) || (power > 0))  {
+            if ((((motors.getArmPosition() < 1650) && (motors.getArmPosition() > 800)) || (motors.getArmPosition() > 2250)) || (power > 0))  {
                 realPower = power;
                 if (motors.getArmPosition() > 2250) {
                     if ((motors.getUpArmPosition() <= -2400) && (power > 0)) {
@@ -334,7 +334,14 @@ public class Input {
         servos.setServoPosition(Servos.Type.Wrist, position);
 
         BotTelemetry.addData("is Claw Open?", clawOpen);
-        BotTelemetry.addData("Wanted Position", position);
+        //BotTelemetry.addData("Wanted Position", position);
         BotTelemetry.addData("Wrist Position", servos.getServoPosition(Servos.Type.Wrist));
+    }
+
+    public void setArmPosition(int position){
+        motors.setArmPos(position);
+        motors.MoveMotor(Motors.Type.Arm, 100);
+        motors.goTargetPosition();
+        BotTelemetry.addData("Arm Position", getArmPos());
     }
 }
