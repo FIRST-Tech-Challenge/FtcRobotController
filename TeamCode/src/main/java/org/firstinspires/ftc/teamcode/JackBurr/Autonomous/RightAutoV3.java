@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
 @Disabled
 @Autonomous
 public class RightAutoV3 extends LinearOpMode {

@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
+package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+//import com.acmerobotics.roadrunner.geometry.Pose2d;
+//import com.acmerobotics.roadrunner.geometry.Vector2d;
+//import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,10 +13,9 @@ import org.firstinspires.ftc.teamcode.JackBurr.Drive.RobotConstantsV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Motors.DeliverySlidesV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
-public class LeftAutoV2 extends LinearOpMode {
+public class LeftAutoV3 extends LinearOpMode {
     public DeliverySlidesV1 slides = new DeliverySlidesV1();
     public DeliveryAxonV1 deliveryAxonV1 = new DeliveryAxonV1();
     public RobotConstantsV1 robotConstantsV1 = new RobotConstantsV1();
@@ -23,10 +24,11 @@ public class LeftAutoV2 extends LinearOpMode {
     public int step = 0;
     public boolean servoSet = false;
     public boolean traj4Followed = false;
+    public boolean traj5Followed = false;
     @Override
     public void runOpMode() throws InterruptedException {
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        //SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         deliveryAxonV1.init(hardwareMap);
         deliveryGrippers.init(hardwareMap, telemetry);
         slides.init(hardwareMap);
@@ -36,27 +38,33 @@ public class LeftAutoV2 extends LinearOpMode {
         telemetry.update();
 
         Pose2d startPose = new Pose2d(60, 0, Math.toRadians(180));
-        drive.setPoseEstimate(startPose);
+        //drive.se(startPose);
 
-        Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .addDisplacementMarker(()->{
-                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
-                    deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
-                })
-                .splineTo(new Vector2d(40, -15), Math.toRadians(135))
-                .build();
+        Trajectory traj1;
+        //traj1 = drive.trajectoryBuilder(startPose)
+                //.addDisplacementMarker(()->{
+                    //deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_CLOSE);
+                    //deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_GRAB);
+                //})
+                //.splineTo(new Vector2d(40, -15), Math.toRadians(135))
+                //.build();
 
-        Trajectory traj4 = drive.trajectoryBuilder(traj1.end())
-                .back(10)
-                .build();
+       // Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                //.back(15)
+                //.build();
 
-        Trajectory traj2 = drive.trajectoryBuilder(traj4.end())
-                .splineTo(new Vector2d(0, -15), Math.toRadians(-60))
-                .build();
+        //Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                //.forward(15)
+                //.build();
 
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .back(50)
-                .build();
+        //Trajectory traj4 = drive.trajectoryBuilder(traj3.path.)
+                //.splineTo(new Vector2d(0, -15), Math.toRadians(-20))
+                //.build();
+
+        //Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                //.back(80)
+                //.build();
+
 
 
 
@@ -65,7 +73,7 @@ public class LeftAutoV2 extends LinearOpMode {
         if (isStopRequested()) return;
         while (opModeIsActive()) {
             if (step == 0) {
-                drive.followTrajectory(traj1);
+                //drive.followTrajectory(traj1);
                 deliveryTimer.reset();
                 step =  1;
             }
@@ -83,10 +91,19 @@ public class LeftAutoV2 extends LinearOpMode {
                 while (deliveryTimer.seconds() < 5){
                     servoSet = false;
                     deliveryAxonV1.setPosition(robotConstantsV1.DELIVERY_UP);
-                    drive.followTrajectory(traj4);
+                    if(!traj4Followed) {
+                        //drive.followTrajectory(traj2);
+                        traj4Followed = true;
+                    }
+                }
+                while (deliveryTimer.seconds() < 7){
+                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
                 }
                 while (deliveryTimer.seconds() < 10){
-                    deliveryGrippers.setPosition(robotConstantsV1.DELIVERY_GRIPPERS_OPEN);
+                    if(!traj5Followed){
+                        //drive.followTrajectory(traj3);
+                        traj5Followed = true;
+                    }
                 }
                 while (deliveryTimer.seconds() < 14){
                     if(!servoSet) {
@@ -109,11 +126,11 @@ public class LeftAutoV2 extends LinearOpMode {
                 }
             }
             if(step == 2) {
-                drive.followTrajectory(traj2);
+                //drive.followTrajectory(traj4);
                 step = 3;
             }
             if(step == 3) {
-                drive.followTrajectory(traj3);
+                //drive.followTrajectory(traj5);
                 step = 4;
             }
             if(step == 4) {

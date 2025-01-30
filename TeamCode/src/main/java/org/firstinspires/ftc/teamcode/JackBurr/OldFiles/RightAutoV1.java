@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.JackBurr.Autonomous;
+package org.firstinspires.ftc.teamcode.JackBurr.OldFiles;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
 public class RightAutoV1 extends LinearOpMode {
