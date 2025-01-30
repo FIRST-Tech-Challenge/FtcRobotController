@@ -22,8 +22,8 @@ public class Intake {
     // Constructor to initialize the intake system with an OpMode and debug flag
     public Intake(OpMode opMode, boolean isDebugMode) {
         // Initialize the servos from the hardware map using the names defined in the configuration
-        intakeLeft = opMode.hardwareMap.get(CRServo.class, "intakeLeft");
-        intakeRight = opMode.hardwareMap.get(CRServo.class, "intakeRight");
+        intakeLeft = opMode.hardwareMap.get(CRServo.class, "IL");
+        intakeRight = opMode.hardwareMap.get(CRServo.class, "IR");
 
         // Set the debug flag based on the provided argument
         this.IS_DEBUG_MODE = isDebugMode;
