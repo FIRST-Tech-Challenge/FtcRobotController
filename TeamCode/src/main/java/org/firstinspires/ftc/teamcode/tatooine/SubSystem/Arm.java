@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.tatooine.SubSystem;
 
 import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.tatooine.utils.mathUtil.MathUtil;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.UnitConverter;
 import org.firstinspires.ftc.teamcode.tatooine.utils.unit.unit;
 
+@Config
 public class Arm {
 
     private DcMotorEx angleLeft = null;  // Left motor controlling angle
@@ -26,7 +29,6 @@ public class Arm {
 
     private final double ANGLE_AMP_LIMIT = 0; // Maximum allowed amperage for angle motors
 
-    private final double KF = 0; // Constant factor for force calculation
 
     // Extend system variables
     private DcMotorEx extendLeft = null; // Left motor for extension
@@ -34,24 +36,24 @@ public class Arm {
 
     private final double EXTEND_UP_LIMIT_AMPS = 0; // Upper amperage limit for extend motors
     private final double EXTEND_DOWN_LIMIT_AMPS = 0; // Lower amperage limit for extend motors
-    private final double MIN_EXTEND = 37; // Minimum extension value
-    private final double MAX_EXTEND = 60; // Maximum extension value
+    public static double MIN_EXTEND = 37; // Minimum extension value
+    public static double MAX_EXTEND = 60; // Maximum extension value
 
-    private final double LIMIT = UnitConverter.convert(42.0, unit.INCHES, unit.CM) - 20 - 5; // Conversion for limit distance
+    public static double LIMIT = UnitConverter.convert(42.0, unit.INCHES, unit.CM) - 20 - 5; // Conversion for limit distance
 
     private PIDFController anglePID = new PIDFController(0, 0.0, 0.0, 0); // PID controller for angle movement
     private PIDFController extendPID = new PIDFController(0, 0.0, 0.0, 0); // PID controller for extension movement
 
-    private static final double ANGLE_CPR = 28.0 * 70.0 * (34.0 / 16.0); // Counts per revolution for angle motors
-    private static final double EXTEND_CPR = 537.7 * (25.0 / 25.0); // Counts per revolution for extension motors
+    private final double ANGLE_CPR = 28.0 * 70.0 * (34.0 / 16.0); // Counts per revolution for angle motors
+    private final double EXTEND_CPR = 537.7 * (25.0 / 25.0); // Counts per revolution for extension motors
 
-    private double ANGLE_TIMEOUT = 0; // Timeout for angle movement
-    private double EXTEND_TIMEOUT = 0; // Timeout for extension movement
+    private final double ANGLE_TIMEOUT = 0; // Timeout for angle movement
+    private final double EXTEND_TIMEOUT = 0; // Timeout for extension movement
 
-    private double ANGLE_TOLERANCE = 0; // Tolerance for angle movement
-    private double EXTEND_TOLERANCE = 0; // Tolerance for extension movement
+    private final double ANGLE_TOLERANCE = 0; // Tolerance for angle movement
+    private final double EXTEND_TOLERANCE = 0; // Tolerance for extension movement
 
-    private double LIMIT_TOLERANCE = 0; // Tolerance for limit switch reading
+    private final double LIMIT_TOLERANCE = 0; // Tolerance for limit switch reading
 
     private final double SPOOL_DIM = 0; // Spool dimensions for extension calculation
 
@@ -63,6 +65,14 @@ public class Arm {
     private boolean IS_DEBUG_MODE = false; // Flag to indicate if debug mode is enabled
 
     private OpMode opMode = null; // OpMode reference
+
+    public static double KF = 0; // Constant factor for force calculation
+
+    public static double KP = 0;
+
+    public static double KI = 0;
+
+    public static double KD = 0;
 
     // Constructor for the Arm system, passing opMode and debug flag
     public Arm(OpMode opMode, boolean isDebug) {
@@ -188,6 +198,14 @@ public class Arm {
         return (getCurrentExtendLeft() + getCurrentExtendRight()) / 2;
     }
 
+    public static double getMaxExtend() {
+        return MAX_EXTEND;
+    }
+
+    public static double getMinExtend() {
+        return MIN_EXTEND;
+    }
+
     // Calculate the force based on the current arm angle
     public double calculateF() {
         double currentAngle = getAngle();
@@ -259,7 +277,7 @@ public class Arm {
     }
 
     // Action to check if the angle has reached the setpoint
-    public Action atSetPoint(double goal) {
+    public Action setAngle(double goal) {
         AtSetPoint atSetPoint = new AtSetPoint(goal); // Create at setpoint action
         return atSetPoint;
     }
