@@ -231,9 +231,7 @@ public class COMP_B_TELE extends LinearOpMode {
         /* Run until the driver presses stop */
        while (opModeIsActive())
 
-       {  double y = -gamepad1.left_stick_y;
-           double x = gamepad1.left_stick_x;
-           double rx = gamepad1.right_stick_x;
+       {
 
            // This button choice was made so that it is hard to hit on accident,
            // it can be freely changed based on preference.
@@ -251,27 +249,12 @@ public class COMP_B_TELE extends LinearOpMode {
 
            //rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-           // Denominator is the largest motor power (absolute value) or 1
-           // This ensures all the powers maintain the same ratio,
-           // but only if at least one is out of the range [-1, 1]
-           double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-           double frontLeftPower = (y + x + rx) / denominator;
-           double backLeftPower = (y - x + rx) / denominator;
-           double frontRightPower = (y - x - rx) / denominator;
-           double backRightPower = (y + x - rx) / denominator;
-
         if (armPosition > 90 * ARM_TICKS_PER_DEGREE && armPosition < 129 * ARM_TICKS_PER_DEGREE) { 
-               leftFrontDrive.setPower(frontLeftPower * 0.10);
-           leftBackDrive.setPower(backLeftPower * 0.10);
-           rightFrontDrive.setPower(frontRightPower * 0.10);
-           rightBackDrive.setPower(backRightPower * 0.10);
+               directDriveControl(0.1);
            } 
 
           else {
-              leftFrontDrive.setPower(frontLeftPower);
-           leftBackDrive.setPower(backLeftPower);
-           rightFrontDrive.setPower(frontRightPower);
-           rightBackDrive.setPower(backRightPower);
+              directDriveControl();
           }
 
             /* Here we handle the three buttons that have direct control of the intake speed.
@@ -505,4 +488,38 @@ public class COMP_B_TELE extends LinearOpMode {
       
     }
 }
+    private void directDriveControl() {
+        directDriveControl(1.0);
+    }
+
+    private void directDriveControl(double speedMultiplier) {
+        double max;
+
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        double r = gamepad1.right_stick_x;
+
+        // Check out TeamCode/src/main/java/org/firstinspires/ftc/teamcode/docs/OmniWheelControlDerivation.md
+        // for the derivation of these equations.
+        double powerRightFront = -x + y - r;
+        double powerRightBack  =  x + y - r;
+        double powerLeftBack   = -x + y + r;
+        double powerLeftFront  =  x + y + r;
+
+        max = Math.max(Math.max(Math.abs(powerLeftFront), Math.abs(powerRightBack)),
+                Math.max(Math.abs(powerLeftBack), Math.abs(powerLeftFront)));
+
+        // If any individual motor power is greater than 1.0, scale all values to fit in the range [-1.0, 1.0]
+        if (max > 1.0) {
+            powerRightFront  /= max;
+            powerRightBack   /= max;
+            powerLeftBack    /= max;
+            powerLeftFront   /= max;
+        }
+
+        rightFrontDrive.setPower(powerRightFront * speedMultiplier);
+        rightBackDrive.setPower(powerRightBack * speedMultiplier);
+        leftBackDrive.setPower(powerLeftBack * speedMultiplier);
+        leftFrontDrive.setPower(powerLeftFront * speedMultiplier);
+    }
 }
