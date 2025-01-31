@@ -188,10 +188,10 @@ public class ChassisSubsystem extends SubsystemBase {
         });
     }
 
-    public Command slowDriving(){
-        return new InstantCommand(()->slowDriver = 0.4);
+    public Command slowDriving(double multiplier){
+        return new InstantCommand(()->slowDriver = multiplier);
     }
     public Command stopSlowDriving(){
-        return new InstantCommand(()->slowDriver = 1);
+        return new InstantCommand(()->slowDriver = 0.8);
     }
 }

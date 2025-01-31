@@ -1,0 +1,39 @@
+package org.firstinspires.ftc.teamcode.opmode.autos.blueLeftAuto;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.closeClaw;
+import static org.firstinspires.ftc.teamcode.subsystems.Gripper.GripperConstants.score;
+
+import com.arcrobotics.ftclib.command.CommandOpMode;
+
+import org.firstinspires.ftc.teamcode.RobotContainer;
+import org.firstinspires.ftc.teamcode.utils.BT.BTController;
+
+@Autonomous(name = "test", group = "playback")
+public class test extends CommandOpMode {
+    protected RobotContainer m_robot;
+
+    @Override
+    public void initialize() {
+        m_robot= new RobotContainer(hardwareMap, new BTController(gamepad1));
+        m_robot.m_gripper.servoClaw.setPosition(closeClaw);
+        m_robot.m_gripper.rotServo2.setPosition(score);
+        enable();
+
+    }
+    @Override
+    public void runOpMode() throws InterruptedException {
+        initialize();
+        m_robot.setScore().schedule();
+        waitForStart();
+
+        // run the scheduler
+        while (!isStopRequested() && opModeIsActive()) {
+            m_robot.period();
+            run();
+        }
+        reset();
+    }
+}
