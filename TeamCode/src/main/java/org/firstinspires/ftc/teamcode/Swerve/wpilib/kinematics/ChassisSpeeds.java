@@ -82,7 +82,7 @@ public class ChassisSpeeds {
       double dtSeconds) {
     // Construct the desired pose after a timestep, relative to the current pose. The desired pose
     // has decoupled translation and rotation.
-    var desiredDeltaPose =
+    Pose2d desiredDeltaPose =
         new Pose2d(
             vxMetersPerSecond * dtSeconds,
             vyMetersPerSecond * dtSeconds,
@@ -90,7 +90,7 @@ public class ChassisSpeeds {
 
     // Find the chassis translation/rotation deltas in the robot frame that move the robot from its
     // current pose to the desired pose
-    var twist = Pose2d.kZero.log(desiredDeltaPose);
+    Twist2d twist = Pose2d.kZero.log(desiredDeltaPose);
 
     // Turn the chassis translation/rotation deltas into average velocities
     return new ChassisSpeeds(twist.dx / dtSeconds, twist.dy / dtSeconds, twist.dtheta / dtSeconds);
@@ -139,7 +139,7 @@ public class ChassisSpeeds {
       double omegaRadiansPerSecond,
       Rotation2d robotAngle) {
     // CW rotation into chassis frame
-    var rotated =
+    Translation2d rotated =
         new Translation2d(vxMetersPerSecond, vyMetersPerSecond).rotateBy(robotAngle.unaryMinus());
     return new ChassisSpeeds(rotated.getX(), rotated.getY(), omegaRadiansPerSecond);
   }
@@ -185,7 +185,7 @@ public class ChassisSpeeds {
       double omegaRadiansPerSecond,
       Rotation2d robotAngle) {
     // CCW rotation out of chassis frame
-    var rotated = new Translation2d(vxMetersPerSecond, vyMetersPerSecond).rotateBy(robotAngle);
+    Translation2d rotated = new Translation2d(vxMetersPerSecond, vyMetersPerSecond).rotateBy(robotAngle);
     return new ChassisSpeeds(rotated.getX(), rotated.getY(), omegaRadiansPerSecond);
   }
 
@@ -285,11 +285,10 @@ public class ChassisSpeeds {
 
   @Override
   public boolean equals(Object o) {
-    return o == this
-        || o instanceof ChassisSpeeds c
-            && vxMetersPerSecond == c.vxMetersPerSecond
-            && vyMetersPerSecond == c.vyMetersPerSecond
-            && omegaRadiansPerSecond == c.omegaRadiansPerSecond;
+    return o == this || (o.getClass() == ChassisSpeeds.class
+        && ((ChassisSpeeds) o).vxMetersPerSecond == vxMetersPerSecond
+        && ((ChassisSpeeds) o).vyMetersPerSecond == vyMetersPerSecond
+        && ((ChassisSpeeds) o).omegaRadiansPerSecond == omegaRadiansPerSecond);
   }
 
   @Override

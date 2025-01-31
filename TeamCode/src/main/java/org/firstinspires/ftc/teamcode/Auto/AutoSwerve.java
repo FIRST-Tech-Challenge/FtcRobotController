@@ -1,3 +1,6 @@
+// Copyright (c) 2024-2025 FTC 13532
+// All rights reserved.
+
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -5,11 +8,9 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Utils;
 
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AutoSwerve {
 

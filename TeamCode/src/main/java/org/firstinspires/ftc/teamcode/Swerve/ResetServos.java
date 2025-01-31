@@ -15,17 +15,17 @@ public class ResetServos extends LinearOpMode {
 
   @Override
   public void runOpMode() throws InterruptedException {
-    var servos = new Servo[4];
-    var encoders = new AnalogInput[4];
+    Servo[] servos = new Servo[4];
+    AnalogInput[] encoders = new AnalogInput[4];
 
     for (int i = 0; i < 4; i++) {
       String name;
       switch (i) {
-        case 0 -> name = "FL";
-        case 1 -> name = "FR";
-        case 2 -> name = "BL";
-        case 3 -> name = "BR";
-        default -> throw new IndexOutOfBoundsException();
+        case 0: name = "FL"; break;
+        case 1: name = "FR"; break;
+        case 2: name = "BL"; break;
+        case 3: name = "BR"; break;
+        default: throw new IndexOutOfBoundsException();
       }
 
       servos[i] = hardwareMap.servo.get(name + "Servo");
@@ -35,7 +35,7 @@ public class ResetServos extends LinearOpMode {
     waitForStart();
     while (opModeIsActive()) {
       for (int i = 0; i < 4; i++) {
-        var servoPos =
+        double servoPos =
             MathUtil.angleModulus(
                 (Math.PI * 2) * (encoders[i].getVoltage() / encoders[i].getMaxVoltage()));
 

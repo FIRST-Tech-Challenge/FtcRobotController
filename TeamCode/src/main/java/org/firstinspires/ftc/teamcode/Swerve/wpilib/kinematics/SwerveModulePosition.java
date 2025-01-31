@@ -33,9 +33,9 @@ public class SwerveModulePosition
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof SwerveModulePosition other
-        && Math.abs(other.distanceMeters - distanceMeters) < 1E-9
-        && angle.equals(other.angle);
+    return obj == this || (obj.getClass() == SwerveModulePosition.class
+        && Math.abs(((SwerveModulePosition) obj).distanceMeters - distanceMeters) < 1E-9
+        && angle.equals(((SwerveModulePosition) obj).angle));
   }
 
   @Override

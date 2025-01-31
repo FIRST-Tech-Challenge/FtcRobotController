@@ -158,9 +158,10 @@ public class Transform2d {
    */
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Transform2d other
-        && other.m_translation.equals(m_translation)
-        && other.m_rotation.equals(m_rotation);
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Transform2d other = (Transform2d) obj;
+    return other.m_translation.equals(m_translation) && other.m_rotation.equals(m_rotation);
   }
 
   @Override

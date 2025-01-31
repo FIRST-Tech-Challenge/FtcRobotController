@@ -224,9 +224,10 @@ public class Translation2d implements Interpolatable<Translation2d> {
    */
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Translation2d other
-        && Math.abs(other.m_x - m_x) < 1E-9
-        && Math.abs(other.m_y - m_y) < 1E-9;
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Translation2d other = (Translation2d) obj;
+    return Math.abs(other.m_x - m_x) < 1E-9 && Math.abs(other.m_y - m_y) < 1E-9;
   }
 
   @Override

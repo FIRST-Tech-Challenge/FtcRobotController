@@ -73,7 +73,7 @@ public class Pose2d implements Interpolatable<Pose2d> {
    * @return The transform that maps the other pose to the current pose.
    */
   public Transform2d minus(Pose2d other) {
-    final var pose = this.relativeTo(other);
+    final Pose2d pose = this.relativeTo(other);
     return new Transform2d(pose.getTranslation(), pose.getRotation());
   }
 
@@ -167,7 +167,7 @@ public class Pose2d implements Interpolatable<Pose2d> {
    * @return The current pose relative to the new origin pose.
    */
   public Pose2d relativeTo(Pose2d other) {
-    var transform = new Transform2d(other, this);
+    Transform2d transform = new Transform2d(other, this);
     return new Pose2d(transform.getTranslation(), transform.getRotation());
   }
 
@@ -208,7 +208,7 @@ public class Pose2d implements Interpolatable<Pose2d> {
       s = sinTheta / dtheta;
       c = (1 - cosTheta) / dtheta;
     }
-    var transform =
+    Transform2d transform =
         new Transform2d(
             new Translation2d(dx * s - dy * c, dx * c + dy * s),
             new Rotation2d(cosTheta, sinTheta));
@@ -224,11 +224,11 @@ public class Pose2d implements Interpolatable<Pose2d> {
    * @return The twist that maps this to end.
    */
   public Twist2d log(Pose2d end) {
-    final var transform = end.relativeTo(this);
-    final var dtheta = transform.getRotation().getRadians();
-    final var halfDtheta = dtheta / 2.0;
+    final Pose2d transform = end.relativeTo(this);
+    final double dtheta = transform.getRotation().getRadians();
+    final double halfDtheta = dtheta / 2.0;
 
-    final var cosMinusOne = transform.getRotation().getCos() - 1;
+    final double cosMinusOne = transform.getRotation().getCos() - 1;
 
     double halfThetaByTanOfHalfDtheta;
     if (Math.abs(cosMinusOne) < 1E-9) {
@@ -276,9 +276,10 @@ public class Pose2d implements Interpolatable<Pose2d> {
    */
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Pose2d pose
-        && m_translation.equals(pose.m_translation)
-        && m_rotation.equals(pose.m_rotation);
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Pose2d pose = (Pose2d) obj;
+    return m_translation.equals(pose.m_translation) && m_rotation.equals(pose.m_rotation);
   }
 
   @Override
@@ -293,8 +294,8 @@ public class Pose2d implements Interpolatable<Pose2d> {
     } else if (t >= 1) {
       return endValue;
     } else {
-      var twist = this.log(endValue);
-      var scaledTwist = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
+      Twist2d twist = this.log(endValue);
+      Twist2d scaledTwist = new Twist2d(twist.dx * t, twist.dy * t, twist.dtheta * t);
       return this.exp(scaledTwist);
     }
   }

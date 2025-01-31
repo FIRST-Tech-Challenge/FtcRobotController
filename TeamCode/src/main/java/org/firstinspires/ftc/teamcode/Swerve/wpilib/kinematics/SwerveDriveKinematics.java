@@ -105,7 +105,7 @@ public class SwerveDriveKinematics
    */
   public SwerveModuleState[] toSwerveModuleStates(
       ChassisSpeeds chassisSpeeds, Translation2d centerOfRotationMeters) {
-    var moduleStates = new SwerveModuleState[m_numModules];
+    SwerveModuleState[] moduleStates = new SwerveModuleState[m_numModules];
 
     if (chassisSpeeds.vxMetersPerSecond == 0.0
         && chassisSpeeds.vyMetersPerSecond == 0.0
@@ -135,7 +135,7 @@ public class SwerveDriveKinematics
       m_prevCoR = centerOfRotationMeters;
     }
 
-    var chassisSpeedsVector = new SimpleMatrix(3, 1);
+    SimpleMatrix chassisSpeedsVector = new SimpleMatrix(3, 1);
     chassisSpeedsVector.setColumn(
         0,
         0,
@@ -143,7 +143,7 @@ public class SwerveDriveKinematics
         chassisSpeeds.vyMetersPerSecond,
         chassisSpeeds.omegaRadiansPerSecond);
 
-    var moduleStatesMatrix = m_inverseKinematics.mult(chassisSpeedsVector);
+    SimpleMatrix moduleStatesMatrix = m_inverseKinematics.mult(chassisSpeedsVector);
 
     for (int i = 0; i < m_numModules; i++) {
       double x = moduleStatesMatrix.get(i * 2, 0);
@@ -192,15 +192,15 @@ public class SwerveDriveKinematics
           "Number of modules is not consistent with number of module locations provided in "
               + "constructor");
     }
-    var moduleStatesMatrix = new SimpleMatrix(m_numModules * 2, 1);
+    SimpleMatrix moduleStatesMatrix = new SimpleMatrix(m_numModules * 2, 1);
 
     for (int i = 0; i < m_numModules; i++) {
-      var module = moduleStates[i];
+      SwerveModuleState module = moduleStates[i];
       moduleStatesMatrix.set(i * 2, 0, module.speedMetersPerSecond * module.angle.getCos());
       moduleStatesMatrix.set(i * 2 + 1, module.speedMetersPerSecond * module.angle.getSin());
     }
 
-    var chassisSpeedsVector = m_forwardKinematics.mult(moduleStatesMatrix);
+    SimpleMatrix chassisSpeedsVector = m_forwardKinematics.mult(moduleStatesMatrix);
     return new ChassisSpeeds(
         chassisSpeedsVector.get(0, 0),
         chassisSpeedsVector.get(1, 0),
@@ -223,15 +223,15 @@ public class SwerveDriveKinematics
           "Number of modules is not consistent with number of module locations provided in "
               + "constructor");
     }
-    var moduleDeltaMatrix = new SimpleMatrix(m_numModules * 2, 1);
+    SimpleMatrix moduleDeltaMatrix = new SimpleMatrix(m_numModules * 2, 1);
 
     for (int i = 0; i < m_numModules; i++) {
-      var module = moduleDeltas[i];
+      SwerveModulePosition module = moduleDeltas[i];
       moduleDeltaMatrix.set(i * 2, 0, module.distanceMeters * module.angle.getCos());
       moduleDeltaMatrix.set(i * 2 + 1, module.distanceMeters * module.angle.getSin());
     }
 
-    var chassisDeltaVector = m_forwardKinematics.mult(moduleDeltaMatrix);
+    SimpleMatrix chassisDeltaVector = m_forwardKinematics.mult(moduleDeltaMatrix);
     return new Twist2d(
         chassisDeltaVector.get(0, 0), chassisDeltaVector.get(1, 0), chassisDeltaVector.get(2, 0));
   }
@@ -241,7 +241,7 @@ public class SwerveDriveKinematics
     if (start.length != end.length) {
       throw new IllegalArgumentException("Inconsistent number of modules!");
     }
-    var newPositions = new SwerveModulePosition[start.length];
+    SwerveModulePosition[] newPositions = new SwerveModulePosition[start.length];
     for (int i = 0; i < start.length; i++) {
       newPositions[i] =
           new SwerveModulePosition(end[i].distanceMeters - start[i].distanceMeters, end[i].angle);
@@ -324,7 +324,7 @@ public class SwerveDriveKinematics
 
   @Override
   public SwerveModulePosition[] copy(SwerveModulePosition[] positions) {
-    var newPositions = new SwerveModulePosition[positions.length];
+    SwerveModulePosition[] newPositions = new SwerveModulePosition[positions.length];
     for (int i = 0; i < positions.length; ++i) {
       newPositions[i] = positions[i].copy();
     }
@@ -348,7 +348,7 @@ public class SwerveDriveKinematics
     if (endValue.length != startValue.length) {
       throw new IllegalArgumentException("Inconsistent number of modules!");
     }
-    var newPositions = new SwerveModulePosition[startValue.length];
+    SwerveModulePosition[] newPositions = new SwerveModulePosition[startValue.length];
     for (int i = 0; i < startValue.length; ++i) {
       newPositions[i] = startValue[i].interpolate(endValue[i], t);
     }

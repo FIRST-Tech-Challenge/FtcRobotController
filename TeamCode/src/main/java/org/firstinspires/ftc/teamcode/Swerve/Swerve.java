@@ -86,7 +86,7 @@ public class Swerve {
 
 
   public void drive(ChassisSpeeds speeds, double dt) {
-    var translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    double translationalMagnitude = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
     if (translationalMagnitude > Module.maxDriveSpeedMetersPerSec) {
       speeds.vxMetersPerSecond *= Module.maxDriveSpeedMetersPerSec / translationalMagnitude;
       speeds.vyMetersPerSecond *= Module.maxDriveSpeedMetersPerSec / translationalMagnitude;
@@ -102,14 +102,14 @@ public class Swerve {
 
     speeds = ChassisSpeeds.discretize(speeds, dt);
 
-    var scalar = Math.cos(Units.degreesToRadians(maxErrorDeg));
+    double scalar = Math.cos(Units.degreesToRadians(maxErrorDeg));
     speeds =
         new ChassisSpeeds(
             xLimiter.calculate(speeds.vxMetersPerSecond * scalar),
             yLimiter.calculate(speeds.vyMetersPerSecond * scalar),
             yawLimiter.calculate(speeds.omegaRadiansPerSecond * scalar));
 
-    var setpoint = kinematics.toSwerveModuleStates(speeds);
+    SwerveModuleState[] setpoint = kinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpoint, Module.maxDriveSpeedMetersPerSec * speedMult);
 
@@ -121,7 +121,7 @@ public class Swerve {
 
 
   public void fieldRelativeDrive(ChassisSpeeds speeds, double dt) {
-    var yaw =
+    Rotation2d yaw =
         odometryStatus == GoBildaPinpointDriver.DeviceStatus.READY
             ? odometry.getHeading()
             : new Rotation2d();
@@ -131,14 +131,14 @@ public class Swerve {
 
 
   public void teleopDrive(double xInput, double yInput, double yawInput, double dt) {
-    var translationalMagnitude = Math.hypot(xInput, yInput);
+    double translationalMagnitude = Math.hypot(xInput, yInput);
     if (translationalMagnitude > 1) {
       xInput /= translationalMagnitude;
       yInput /= translationalMagnitude;
       translationalMagnitude = 1;
     }
 
-    var rotationalScalar = MathUtil.interpolate(1, .5, translationalMagnitude);
+    double rotationalScalar = MathUtil.interpolate(1, .5, translationalMagnitude);
 
     fieldRelativeDrive(
         new ChassisSpeeds(
@@ -174,10 +174,10 @@ public class Swerve {
 
 
   public void alignWheels(BooleanSupplier opModeActiveSupplier) {
-    var state = new SwerveModuleState();
+    SwerveModuleState state = new SwerveModuleState();
     while (opModeActiveSupplier.getAsBoolean()) {
       double maxErrorDeg = 0;
-      for (var module : modules) {
+      for (Module module : modules) {
         module.run(state);
 
         maxErrorDeg =
@@ -245,35 +245,39 @@ public class Swerve {
       double kp, ki, kd, ks;
       // TODO: Fine tune these values to stop servo hunting (needs to be redone: add in a frickin ki)
       switch (id) {
-        case 0 -> {
+        case 0: {
           pos = "FL";
           kp = 1.4;
           ki = 0;
           kd = 0.14;
           ks = 0.1;
+          break;
         }
-        case 1 -> {
+        case 1: {
           pos = "FR";
           kp = 4;
           ki = 0;
           kd = 0.15;
           ks = 0.03;
+          break;
         }
-        case 2 -> {
+        case 2: {
           pos = "BL";
           kp = 1.29;
           ki = 0;
           kd = 0.13;
           ks = 0.08;
+          break;
         }
-        case 3 -> {
+        case 3: {
           pos = "BR";
           kp = 4;
           ki = 0;
           kd = 0.15;
           ks = 0.04;
+          break;
         }
-        default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
+        default: throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
       steerPID = new PIDController(kp, ki, kd);
 
@@ -297,7 +301,7 @@ public class Swerve {
 
 
     double run(SwerveModuleState state) {
-      var servoPos = getServoPos();
+      Rotation2d servoPos = getServoPos();
       state.optimize(servoPos);
       state.cosineScale(servoPos);
 
@@ -306,7 +310,7 @@ public class Swerve {
               + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
       telemetry.addData("motor speed: ", driveMotor.getPower());
 
-      var errorDeg = state.angle.minus(servoPos).getDegrees();
+      double errorDeg = state.angle.minus(servoPos).getDegrees();
       telemetry.addData("Swerve/Module " + id + "/Angle error (Deg)", errorDeg);
       if (!MathUtil.isNear(0, errorDeg, .5)) {
         runServoVel(steerPID.calculate(getServoPos().getRadians(), state.angle.getRadians()));
@@ -335,9 +339,9 @@ public class Swerve {
         lastTime = Utils.getTimeSeconds();
         return 0;
       }
-      var currentPos = getDrivePosition();
-      var currentTime = Utils.getTimeSeconds();
-      var velocity = (currentPos - lastPos) / (currentTime - lastTime);
+      double currentPos = getDrivePosition();
+      double currentTime = Utils.getTimeSeconds();
+      double velocity = (currentPos - lastPos) / (currentTime - lastTime);
       lastPos = currentPos;
       lastTime = currentTime;
       return velocity;

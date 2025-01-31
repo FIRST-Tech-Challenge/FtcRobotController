@@ -19,7 +19,7 @@ public class SwerveTeleOp extends LinearOpMode {
   public void runOpMode() {
     telemetry.setMsTransmissionInterval(50);
 
-    var swerve = new Swerve(this);
+    Swerve swerve = new Swerve(this);
 
     waitForStart();
     while (opModeIsActive()) {

@@ -19,8 +19,8 @@ public class BlueBotTeleop extends LinearOpMode {
 
     // Does this move the robot? because if so we need it to move after the waitForStart()
     // or add the movement to the Autonomous
-    var swerve = new Swerve(this);
-    var mek = new Mekanism(this);
+    Swerve swerve = new Swerve(this);
+    Mekanism mek = new Mekanism(this);
 
     boolean bPressed = false;
     waitForStart();

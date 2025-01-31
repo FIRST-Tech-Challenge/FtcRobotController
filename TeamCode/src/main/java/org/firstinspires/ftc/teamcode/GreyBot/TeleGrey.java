@@ -4,7 +4,6 @@
 package org.firstinspires.ftc.teamcode.GreyBot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 import org.firstinspires.ftc.teamcode.Utils;
@@ -17,8 +16,8 @@ TeleGrey extends LinearOpMode {
   @Override
   public void runOpMode() {
 
-    var swerve = new Swerve(this);
-    var arm = new Mekanism(this);
+    Swerve swerve = new Swerve(this);
+    Mekanism arm = new Mekanism(this);
 
     waitForStart();
     arm.homeArm();

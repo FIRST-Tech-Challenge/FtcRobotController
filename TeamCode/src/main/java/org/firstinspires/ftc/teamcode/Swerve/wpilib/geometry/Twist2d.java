@@ -50,8 +50,10 @@ public class Twist2d {
    */
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Twist2d other
-        && Math.abs(other.dx - dx) < 1E-9
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Twist2d other = (Twist2d) obj;
+    return Math.abs(other.dx - dx) < 1E-9
         && Math.abs(other.dy - dy) < 1E-9
         && Math.abs(other.dtheta - dtheta) < 1E-9;
   }

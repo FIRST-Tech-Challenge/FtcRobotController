@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Swerve.Swerve;
 public class AutoHome extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
-    var arm = new Mekanism(this);
-    var drivebase = new Swerve(this);
+    Mekanism arm = new Mekanism(this);
+    Swerve drivebase = new Swerve(this);
 
     drivebase.initGyro();
 

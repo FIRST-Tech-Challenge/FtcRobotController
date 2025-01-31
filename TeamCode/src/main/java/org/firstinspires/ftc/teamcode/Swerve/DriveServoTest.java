@@ -20,11 +20,11 @@ public class DriveServoTest extends LinearOpMode {
     for (int i = 0; i < 4; i++) {
       String pos;
       switch (i) {
-        case 0 -> pos = "FL";
-        case 1 -> pos = "FR";
-        case 2 -> pos = "BL";
-        case 3 -> pos = "BR";
-        default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
+        case 0: pos = "FL"; break;
+        case 1: pos = "FR"; break;
+        case 2: pos = "BL"; break;
+        case 3: pos = "BR"; break;
+        default: throw new IllegalArgumentException("Module ID is out of range 0-3!");
       }
       servos[i] = hardwareMap.servo.get(pos + "Servo");
       sensors[i] = hardwareMap.analogInput.get(pos + "Encoder");
@@ -50,23 +50,27 @@ public class DriveServoTest extends LinearOpMode {
         String pos;
         boolean run;
         switch (i) {
-          case 0 -> {
+          case 0: {
             pos = "FL";
             run = gamepad1.x;
+            break;
           }
-          case 1 -> {
+          case 1: {
             pos = "FR";
             run = gamepad1.y;
+            break;
           }
-          case 2 -> {
+          case 2: {
             pos = "BL";
             run = gamepad1.a;
+            break;
           }
-          case 3 -> {
+          case 3: {
             pos = "BR";
             run = gamepad1.b;
+            break;
           }
-          default -> throw new IllegalArgumentException("Module ID is out of range 0-3!");
+          default: throw new IllegalArgumentException("Module ID is out of range 0-3!");
         }
 
         double commanded = run ? (1 - power) / 2 : 0.5;

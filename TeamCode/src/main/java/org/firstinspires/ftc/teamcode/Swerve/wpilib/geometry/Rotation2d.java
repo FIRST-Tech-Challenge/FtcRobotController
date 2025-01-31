@@ -277,8 +277,10 @@ public class Rotation2d implements Interpolatable<Rotation2d> {
    */
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof Rotation2d other
-        && Math.hypot(m_cos - other.m_cos, m_sin - other.m_sin) < 1E-9;
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Rotation2d other = (Rotation2d) obj;
+    return Math.hypot(m_cos - other.m_cos, m_sin - other.m_sin) < 1E-9;
   }
 
   @Override

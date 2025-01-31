@@ -30,9 +30,9 @@ public class SwerveModuleState implements Comparable<SwerveModuleState> {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof SwerveModuleState other
-        && Math.abs(other.speedMetersPerSecond - speedMetersPerSecond) < 1E-9
-        && angle.equals(other.angle);
+    return obj == this || (obj.getClass() == SwerveModuleState.class
+        && Math.abs(((SwerveModuleState) obj).speedMetersPerSecond - speedMetersPerSecond) < 1E-9
+        && angle.equals(((SwerveModuleState) obj).angle));
   }
 
   @Override
@@ -66,7 +66,7 @@ public class SwerveModuleState implements Comparable<SwerveModuleState> {
    * @param currentAngle The current module angle.
    */
   public void optimize(Rotation2d currentAngle) {
-    var delta = angle.minus(currentAngle);
+    Rotation2d delta = angle.minus(currentAngle);
     if (Math.abs(delta.getDegrees()) > 90.0) {
       speedMetersPerSecond *= -1;
       angle = angle.rotateBy(Rotation2d.kPi);
