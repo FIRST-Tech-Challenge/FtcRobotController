@@ -45,7 +45,7 @@ public class ArmSynchronous implements Runnable {
         }
 
         while (input.getUpArmPos() > upArmPos) {
-            input.upArm(-50);
+            input.upArm(-100);
         }
 
         input.upArm(0);
@@ -56,7 +56,7 @@ public class ArmSynchronous implements Runnable {
         }
 
         while (input.getUpArmPos() < upArmPos) {
-            input.upArm(50);
+            input.upArm(100);
         }
 
         input.upArm(0);
