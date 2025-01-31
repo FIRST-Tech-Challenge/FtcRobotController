@@ -15,7 +15,7 @@ public class BarHangDistanceSensorAction extends Action {
 
     public BarHangDistanceSensorAction(Outtake outtake, Rev2mDistanceSensor revDistance, PurePursuitAction purePursuitAction) {
         this.revDistance = revDistance;
-        closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 145);
+        closeWhenDetectAction = new CloseWhenDetectDistanceAction(revDistance, 165); //145
         closeWhenDetectAction.setName("closeWhenDetectAction");
 
         this.purePursuitAction = purePursuitAction;

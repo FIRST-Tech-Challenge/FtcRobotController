@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -110; //150-155 normal (overshoot val)
+    public static final double WALL_PICKUP_X = -125; //150-155 normal (overshoot val)
     public static final double WALL_PICKUP_Y = -790;
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
@@ -42,17 +42,17 @@ public class WallToBarHangRoundTrip extends KActionSet {
         KServoAutoAction closeClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
         this.addAction(closeClaw);
 
-        PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/300.0); // Chunking pure pursuit
+        PurePursuitAction moveToBar1 = new PurePursuitAction(driveTrain, wheelOdometry, 1.0/100.0); // Chunking pure pursuit 300
         moveToBar1.setName("moveToBar1");
         moveToBar1.setMaxTimeOutMS(3500);
         moveToBar1.setDependentActions(closeClaw);
         moveToBar1.addPoint(SPECIMEN_HANG_POS_X+150, hangPosY, 0);
         this.addAction(moveToBar1);
 
-        MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
-        raiseSpecimen.setName("raiseSpecimen");
-        raiseSpecimen.setDependentActions(closeClaw);
-        this.addAction(raiseSpecimen);
+//        MoveLSAction raiseSpecimen = new MoveLSAction(outtake, 50);
+//        raiseSpecimen.setName("raiseSpecimen");
+//        raiseSpecimen.setDependentActions(closeClaw);
+//        this.addAction(raiseSpecimen);
 
         SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake, 30);
         specimenHangReady.setName("hangSpecimenReady");
@@ -60,10 +60,10 @@ public class WallToBarHangRoundTrip extends KActionSet {
         this.addAction(specimenHangReady);
 
         //waits for everything to finish to prevent specimen from getting caught in bar
-        PurePursuitAction moveToBar2 = new PurePursuitAction(driveTrain, wheelOdometry,1.0/1500.0); // Final pure pursuit
+        PurePursuitAction moveToBar2 = new PurePursuitAction(driveTrain, wheelOdometry,1.0/250.0); // Final pure pursuit 1500
         moveToBar2.setName("moveToBar2");
         moveToBar2.setMaxTimeOutMS(1000);
-        moveToBar2.setDependentActions(closeClaw, specimenHangReady, moveToBar1, raiseSpecimen);
+        moveToBar2.setDependentActions(closeClaw, specimenHangReady, moveToBar1);
         moveToBar2.addPoint(SPECIMEN_HANG_POS_X, hangPosY, 0);
         this.addAction(moveToBar2);
 
@@ -80,7 +80,7 @@ public class WallToBarHangRoundTrip extends KActionSet {
         specimenWallReady.setDependentActions(barHangDistanceSensorAction, specimenHang);
         this.addAction(specimenWallReady);
 
-        PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry,1.0/300.0);
+        PurePursuitAction moveBarToWall = new PurePursuitAction(driveTrain, wheelOdometry,1.0/150.0); //300
         moveBarToWall.setName("moveBarToWall");
         moveBarToWall.setMaxTimeOutMS(3500);
         moveBarToWall.setDependentActions(barHangDistanceSensorAction, specimenHang);

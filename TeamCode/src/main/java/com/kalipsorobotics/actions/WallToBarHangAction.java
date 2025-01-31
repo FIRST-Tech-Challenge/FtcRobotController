@@ -14,15 +14,14 @@ public class WallToBarHangAction extends KActionSet {
 
     public WallToBarHangAction(DriveTrain driveTrain, WheelOdometry wheelOdometry, Outtake outtake, Rev2mDistanceSensor revdistance, int barY) {
 
-        WaitAction waitAtStart = new WaitAction(100);
+        WaitAction waitAtStart = new WaitAction(50);
         waitAtStart.setName("waitAtStart");
         this.addAction(waitAtStart);
 
-        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry);
+        PurePursuitAction moveToSpecimenBar = new PurePursuitAction(driveTrain, wheelOdometry,1/200);
         moveToSpecimenBar.setName("moveToSpecimenBar");
         moveToSpecimenBar.addPoint(0, 0, 0);
         moveToSpecimenBar.addPoint(FloorToBarHangRoundTrip.SPECIMEN_HANG_POS_X, barY, 0);
-        moveToSpecimenBar.setMaxCheckDoneCounter(10);
         moveToSpecimenBar.setDependentActions(waitAtStart);
         this.addAction(moveToSpecimenBar);
 
