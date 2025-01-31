@@ -393,7 +393,7 @@ public abstract class AutonomousBase extends LinearOpMode {
        robot.elbowServo.setPosition(targetElbowPosition);
        autoElbowServoTimer.reset();
     }
-    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    // Checks to see if servo reached its destination with a ?0.01 position tolerance
     boolean elbowReachedDestination(double targetElbowPosition){
         boolean reachedDestination = false;
         if(Math.abs(robot.elbowServo.getPosition() - targetElbowPosition) < 0.01) reachedDestination = true;
@@ -430,7 +430,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.wristServo.setPosition(targetWristPosition);
         autoWristServoTimer.reset();
     }
-    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    // Checks to see if servo reached its destination with a ?0.01 position tolerance
     boolean wristReachedDestination(double targetWristPosition){
         boolean reachedDestination = false;
         if(Math.abs(robot.wristServo.getPosition() - targetWristPosition) < 0.01) reachedDestination = true;
@@ -466,7 +466,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.clawServo.setPosition(targetClawPosition);
         autoClawServoTimer.reset();
     }
-    // Checks to see if servo reached its destination with a �0.01 position tolerance
+    // Checks to see if servo reached its destination with a ?0.01 position tolerance
     boolean clawReachedDestination(double targetClawPosition){
         boolean reachedDestination = false;
         if(Math.abs(robot.clawServo.getPosition() - targetClawPosition) < 0.01) reachedDestination = true;
@@ -520,7 +520,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.viperMotor.setPower( motorPower );
     } // autoViperMotorMoveToTarget
 
-    // Checks to see if viper reached its destination with a �10.0 encoder count tolerance
+    // Checks to see if viper reached its destination with a ?10.0 encoder count tolerance
     boolean viperReachedDestination( int targetExtension ){
         boolean reachedDestination = false;
         // if within tolerance set reachedDestination to true
@@ -535,12 +535,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.viperMotor.isBusy() || viperReachedDestination(targetEncoderCount)) {
             viperMoving = false;
-           robot.viperMotor.setPower( 0.001 );   // hold
+//          robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
         else if( autoViperMotorTimer.milliseconds() > timeout ) {
             viperMoving = false;
-           robot.viperMotor.setPower( 0.001 );   // hold
+//         robot.viperMotor.setPower( 0.001 );   // hold
         }
         else {
             // wait a little longer
@@ -554,12 +554,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.viperMotor.isBusy() || viperReachedDestination(targetEncoderCount)) {
             viperMoving = false;
-            robot.viperMotor.setPower( 0.001 );   // hold
+ //           robot.viperMotor.setPower( 0.001 );   // hold
         }
         // Did we timeout?
         else if( autoViperMotorTimer.milliseconds() > 3000 ) {
             viperMoving = false;
-            robot.viperMotor.setPower( 0.001 );   // hold
+//            robot.viperMotor.setPower( 0.001 );   // hold
         }
         else {
             // wait a little longer
@@ -606,7 +606,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.wormTiltMotor.setPower( power );
     } // autoTiltMotorMoveToTarget
 
-    // Checks to see if tilt reached its destination with a �1.5 degree tolerance
+    // Checks to see if tilt reached its destination with a ?1.5 degree tolerance
     boolean tiltReachedDestination( double targetAngle){
         boolean reachedDestination = false;
         // if within tolerance we set reachedDestination to true
@@ -622,12 +622,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.wormTiltMotor.isBusy() || tiltReachedDestination(targetTiltAngle)) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+ //         robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoTiltMotorTimer.milliseconds() > timeout ) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+//            robot.wormTiltMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer
@@ -641,12 +641,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.wormTiltMotor.isBusy() || tiltReachedDestination(targetTiltAngle)) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+//          robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoTiltMotorTimer.milliseconds() > 4000 ) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+//          robot.wormTiltMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer
@@ -661,12 +661,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.wormTiltMotor.isBusy() ) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+//          robot.wormTiltMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoTiltMotorTimer.milliseconds() > 6000 ) {
             tiltMoving = false;
-            robot.wormTiltMotor.setPower( 0.0 );
+//          robot.wormTiltMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer
@@ -691,12 +691,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Did the movement finish?
         if( !robot.snorkleLMotor.isBusy() ) {
             panMoving = false;
-            robot.snorkleLMotor.setPower( 0.0 );
+//          robot.snorkleLMotor.setPower( 0.0 );
         }
         // Did we timeout?
         else if( autoPanMotorTimer.milliseconds() > 5000 ) {
             panMoving = false;
-            robot.snorkleLMotor.setPower( 0.0 );
+//          robot.snorkleLMotor.setPower( 0.0 );
         }
         else {
             // wait a little longer

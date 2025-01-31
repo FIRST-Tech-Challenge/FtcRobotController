@@ -369,7 +369,7 @@ public class Hardware2025Bot
         startingArmTiltAngle = computeAbsoluteAngle( armTiltEncoder.getVoltage(), armTiltAngleOffset);
         wormTiltMotor.setDirection(DcMotor.Direction.FORWARD);
         wormTiltMotor.setPower( 0.0 );
-        wormTiltMotor.setTargetPositionTolerance( 15 );
+        wormTiltMotor.setTargetPositionTolerance( 20 );
 
         // Define and initialize the two snorkle motors
         snorkleLMotor = hwMap.get(DcMotorEx.class,"SnorkleL");   // Control Hub port 0
@@ -397,7 +397,7 @@ public class Hardware2025Bot
         viperMotor = hwMap.get(DcMotorEx.class,"viperMotor");  // Expansion Hub port 2
         viperMotor.setDirection(DcMotor.Direction.REVERSE);   // positive motor power extends
         viperMotor.setPower( 0.0 );
-        viperMotor.setTargetPositionTolerance( 20 );
+        viperMotor.setTargetPositionTolerance( 10 );
         if( isAutonomous ) {
             viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             viperMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

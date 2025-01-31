@@ -334,9 +334,9 @@ public class AutonomousLeftSpec extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-                    telemetry.update();
+//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+//                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // viper should already be in position
                 break;
             case 2:
@@ -347,9 +347,9 @@ public class AutonomousLeftSpec extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-                    telemetry.update();
+//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+//                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() );  // wait for viper to fully retract
                 break;
             case 3:
@@ -364,9 +364,9 @@ public class AutonomousLeftSpec extends AutonomousBase {
                     sleep( 50 );
                     // update all our status
                     performEveryLoop();
-                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
-                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
-                    telemetry.update();
+//                    telemetry.addData("Tilt timeout: ", "%d" , (autoTiltMotorMoving())? 1 : 0);
+//                    telemetry.addData("Viper: ", "%d %d %d" , (autoViperMotorMoving())? 1 : 0 , robot.viperMotor.getCurrentPosition() , robot.viperMotor.getTargetPosition());
+//                    telemetry.update();
                 } while( autoViperMotorMoving() || autoTiltMotorMoving() ); // while( autoViperMotorMoving() || autoTiltMotorMoving() )
                 driveToPosition( 24.4, -43.8, 32.1, DRIVE_SPEED_40, TURN_SPEED_30, DRIVE_TO );
                 break;
@@ -412,11 +412,10 @@ public class AutonomousLeftSpec extends AutonomousBase {
         robot.elbowServo.setPosition(Hardware2025Bot.ELBOW_SERVO_GRAB);
         robot.wristServo.setPosition(Hardware2025Bot.WRIST_SERVO_GRAB);
         sleep(100); // wait for claw to start moving up/back before lowering arm
-        // Don't retract arm if we are going to park
+        // Only retract arm if we're not going to park
         if(samplesScored < spikeSamples) {
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_COLLECT1_DEG, 1.0);
             autoViperMotorMoveToTarget(Hardware2025Bot.VIPER_EXTEND_AUTO_COLLECT , 0.9);
-            //autoViperMotorMoveToTarget( 1550 , 1.0);
         }
         else{
             autoTiltMotorMoveToTarget(Hardware2025Bot.TILT_ANGLE_ASCENT2_DEG, 1.0);
