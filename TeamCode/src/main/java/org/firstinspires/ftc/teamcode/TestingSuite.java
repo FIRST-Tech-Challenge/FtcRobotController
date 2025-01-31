@@ -50,7 +50,7 @@ public class TestingSuite extends LinearOpMode {
         AtomicBoolean isMotor = new AtomicBoolean(true);
         AtomicBoolean continuousMode = new AtomicBoolean(false);
 
-        while (opModeIsActive() || !isStopRequested()) {
+        while (opModeIsActive() || !isStopRequested() && menuActive.get()) {
             telemetry.addLine("=== Motor/Servo Testing Selection ===");
 
             if (!listConfirmed.get()) {
