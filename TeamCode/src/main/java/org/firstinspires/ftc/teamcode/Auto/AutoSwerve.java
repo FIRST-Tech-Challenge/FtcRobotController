@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.Utils;
 
 
@@ -148,6 +149,51 @@ public class AutoSwerve {
     }
     return Math.abs(delta_to_reference);
   }
+
+  public void odoDrive(double x, double  y, double h, double mSpd) {
+    if (mSpd > 1.0) {
+      mSpd = 1.0;
+    }
+    if (mSpd < .4) {
+      mSpd = .4;
+    }
+    boolean thereYet = true;
+    odo.update();
+    double sX = getX();
+    double sY = getY();
+    double sH = h;//direction of travel in degrees
+    while (opMode.opModeIsActive() && thereYet) {
+      setMotors(mSpd);
+      //CtrlWheels(); // may use this in long runs
+      odo.update();
+      double sHc = sH - getDeg() / 360; // normalize degree
+      if (sHc > .5) {
+        // FR BL BR FL
+        set_wheels(sHc, .5, .5, sHc);
+      }
+      if ((getX() - sX) < .2 || (getY() - sY) < .2) {
+        setMotors(.4);
+      }
+      if ((getX() - sX < .01 && (getY() - sY) < .01)) {
+        setMotors(0.0);
+        thereYet = false;
+      }
+    }// end while traveling
+  }
+    public double getX(){
+      odo.update();
+      return odo.getPosX();
+    }
+
+    public double getY(){
+      odo.update();
+      return odo.getPosY();
+    }
+
+    public double getDeg(){
+      odo.update();
+      return odo.getHeading().getDegrees();
+    }
 
   // align wheels has a angle always set where alignWheels is
   // constantly checking for the turn error and eventually compensating
