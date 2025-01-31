@@ -45,21 +45,21 @@ public class WristRemoteControl extends LinearOpMode {
 
     // This chunk controls our viper slide
     DcMotor viperSlide = null;
-    final int VIPER_MAX_WIDE = 2000;
+    final int VIPER_MAX_WIDE = 1800;
     final int VIPER_MAX_TALL = 2637;
     final int VIPER_MIN = 0;
     int viperSlidePosition = 0;
 
     // This chunk controls our claw
     Servo claw = null;
-    final double CLAW_MIN = 0.18;        // Claw is closed
+    final double CLAW_MIN = 0.2;        // Claw is closed
     final double CLAW_MAX = 0.36;       // Claw is open - Og non-wrist value was 0.8
     double claw_position = CLAW_MAX;
 
     // This chunk controls our wrist (todo: update values)
     Servo wrist = null;
-    final double WRIST_PICKUP = 0.15;       // Wrist is in intake position (picking up)
-    final double WRIST_DROPOFF = 0.8;      // Wrist is in outtake position (dropping in basket)
+    final double WRIST_PICKUP = 0.23;       // Wrist is in intake position (picking up)
+    final double WRIST_DROPOFF = 0.89;      // Wrist is in outtake position (dropping in basket)
     double wrist_position = WRIST_DROPOFF;
 
     // This chunk controls our nose picker (ascent stick)
@@ -288,7 +288,7 @@ public class WristRemoteControl extends LinearOpMode {
             RobotLog.vv("Rockin' Robots", "1");
             setViper(VIPER_MIN, 4000);
         }
-        setVertical(250, 3000);
+        setVertical(170, 3000);
         while (vertical.getCurrentPosition() > 500) {
             RobotLog.vv("Rockin' Robots", "2");
             setVertical(200, 3000);
@@ -297,9 +297,10 @@ public class WristRemoteControl extends LinearOpMode {
         setWrist(WRIST_PICKUP);
         setClaw(CLAW_MAX);
     }
-//MILLA FIX THIS the order we want of the viper and vertical moving changes based on the current robot position
+
     public void sDrivingPosition() {
         RobotLog.vv("Rockin' Robots", "sDrivingPosition()");
+        setWrist(WRIST_DROPOFF);
         if (vertical.getCurrentPosition() < 500)
         {
             RobotLog.vv("Rockin' Robots", "sDrivingPosition(): Starting from low position");
@@ -319,7 +320,6 @@ public class WristRemoteControl extends LinearOpMode {
             }
             setVertical(VERTICAL_DRIVE_POSITION, 3000);
         }
-        setWrist(WRIST_PICKUP);
     }
 
     public void xClosedPosition() {

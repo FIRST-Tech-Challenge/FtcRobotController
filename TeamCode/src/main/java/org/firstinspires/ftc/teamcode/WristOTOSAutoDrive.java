@@ -52,13 +52,13 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
     // This chunk controls our wrist
     Servo wrist = null;
-    final double WRIST_PICKUP = 0.25;           // Wrist is in intake position (picking up)
+    final double WRIST_PICKUP = 0.23;           // Wrist is in intake position (picking up)
     final double WRIST_MID = 0.4;              // Wrist is out of the way
-    final double WRIST_DROPOFF = 0.8;          // Wrist is in outtake position (dropping in basket)
+    final double WRIST_DROPOFF = 0.89;          // Wrist is in outtake position (dropping in basket)
 
     Servo ascentStick = null;
     final double ASCENT_MIN = 0.2;          // Stick is down
-    final double ASCENT_MAX = 0.6;         // Stick is up
+    final double ASCENT_MAX = 0.43;         // Stick is up
 
     final ElapsedTime runtime = new ElapsedTime();
 
@@ -68,7 +68,7 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Autonomous Ready", "You can press start");
-        telemetry.addData("This code was last updated", "01/27/2025, 7:47pm"); // Todo: Update this date when the code is updated
+        telemetry.addData("This code was last updated", "01/31/2025, 11:55 am"); // Todo: Update this date when the code is updated
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -93,18 +93,18 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         setWrist(WRIST_PICKUP);
         turnLeft(0.4, 80);
         setViper(VIPER_GROUND);
-        driveToLoc(-18, -14, 85, .5); // Get in position
+        driveToLoc(-20, -14, 85, .5); // Get in position
         setVertical(110);
         sleep(1400);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(200);
         setWrist(WRIST_MID);                                        // Protect claw by tucking wrist away
-        setVertical(VERTICAL_MAX, 3000);
-        sleep(500);
+        setVertical(VERTICAL_MAX, 2000);
+        sleep(1100);
         setViper(VIPER_MAX);
         setWrist(WRIST_DROPOFF);
-        driveToLoc(-4, -14, 0, .5);  // Go to basket
-        sleep(200);
+        driveToLoc(-3, -17, 0, 1);  // Go to basket
+        sleep(100);
         setClaw(CLAW_MAX);                                          // Drop second block
 
         // Third Sample ///////////////////////////////////////////////////////////////
@@ -112,18 +112,18 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         setWrist(WRIST_PICKUP);
         turnLeft(0.4, 100);
         setViper(VIPER_GROUND);
-        driveToLoc(-18, -20, 95, .5); // Get in position
+        driveToLoc(-20, -23, 95, .5); // Get in position
         setVertical(110);
         sleep(1300);
         setClaw(CLAW_MIN);                                          // Grab second block
         sleep(200);
         setWrist(WRIST_MID);                                        // Protect claw by tucking wrist away
-        setVertical(VERTICAL_MAX, 3000);
-        sleep(500);
+        setVertical(VERTICAL_MAX, 2000);
+        sleep(1100);
         setViper(VIPER_MAX);
         setWrist(WRIST_DROPOFF);
-        driveToLoc(-4, -15, 0, .5);  // Go to basket
-        sleep(200);
+        driveToLoc(-3, -17, 0, 1);  // Go to basket
+        sleep(100);
         setClaw(CLAW_MAX);
 
         // Park ///////////////////////////////////////////////////////////////
@@ -132,11 +132,13 @@ public class WristOTOSAutoDrive extends LinearOpMode {
         setViper(VIPER_MIN);
         sleep(700);
         setVertical(VERTICAL_MIN);
+        setAscentStick(ASCENT_MAX);                                 // Ascent stick up
         moveForward(.4, 1500);
         setAscentStick(ASCENT_MAX);                                 // Ascent stick up
+        sleep(100);
         RobotLog.vv("Rockin' Robots", "Route is done");
-        sleep(500);
-        ascentStick.close();
+        //sleep(500);
+        //ascentStick.close();
         claw.close();                                               // Release tension on the claw
         sleep(200);
         RobotLog.vv("Rockin' Robots", "Ending the program, current ascent stick: %4.2f", ascentStick.getPosition());
@@ -210,10 +212,10 @@ public class WristOTOSAutoDrive extends LinearOpMode {
 
     private void turnLeft(double speed, double target) {
         RobotLog.vv("Rockin' Robots", "turnLeft() speed: %4.2f, target: %4.2f, current: %4.2f", speed, target, hLoc);
-        leftFrontDrive.setPower(-speed);
         rightFrontDrive.setPower(speed);
-        leftBackDrive.setPower(-speed);
         rightBackDrive.setPower(speed);
+        leftFrontDrive.setPower(-speed/2);
+        leftBackDrive.setPower(-speed/2);
         getPosition();
         while(hLoc < target -2 || hLoc > target + 2) {
             sleep(10);
