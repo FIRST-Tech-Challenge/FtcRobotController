@@ -41,8 +41,8 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
         BotTelemetry.update();
 
 
-        armSynchronous a1 = new armSynchronous(input);
-        holdYawSync yawSync = new holdYawSync(input);
+        ArmSynchronous a1 = new ArmSynchronous(input);
+        HoldYawSync yawSync = new HoldYawSync(input);
 
         Actions.setupActions(input, a1, imu, yawSync);
 
@@ -81,8 +81,8 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
 
 ////
 //                /** Step 2 */
-//            Actions.driveBehindSampleFromLocations(1,"bar");
-//            Actions.pushOrReverseSampleToHumanPlayer("push");
+            Actions.driveBehindSampleFromLocations(1,"bar");
+            Actions.pushOrReverseSampleToHumanPlayer("push");
 ////
 ////            // Step 3
 //            Actions.pushOrReverseSampleToHumanPlayer("reverse");

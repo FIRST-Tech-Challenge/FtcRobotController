@@ -7,12 +7,12 @@ public class Actions {
 
  static Input input;
  static IMU imu;
- static armSynchronous a1;
- static holdYawSync holdYaw;
+ static ArmSynchronous a1;
+ static HoldYawSync holdYaw;
 
  static boolean opModeisActive;
 
- public static void setupActions(Input localInput, armSynchronous actions1, IMU inertialMeasurementUnit, holdYawSync holdYawSynchronized) {
+ public static void setupActions(Input localInput, ArmSynchronous actions1, IMU inertialMeasurementUnit, HoldYawSync holdYawSynchronized) {
    input = localInput;
    a1 = actions1;
    imu = inertialMeasurementUnit;
@@ -29,7 +29,7 @@ public class Actions {
 
     public static void driveToBarFromInitialPositionForSpecimen() {
 
-   // holdYaw.setPos(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_YAW.getValue());
+   holdYaw.setPos(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_YAW.getValue());
 
      while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_DISTANCE.getValue()) && opModeisActive)  { //inches
         input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
@@ -59,7 +59,7 @@ public class Actions {
 
 
         try {
-            Thread.sleep(300);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -270,13 +270,16 @@ public class Actions {
         // 2 grab with claw
         a1.setPos(AutoDistanceNumbers.GrabSpecimen.ARM_START_POS.getValue());
         input.claw(true,false);
+        input.automaticallyMoveWrist(false);
 
         try {
             Thread.sleep(AutoDistanceNumbers.GrabSpecimen.WAIT_TIME_MILLISECOND.getValue());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        input.automaticallyMoveWrist(false);
         input.claw(false,true);
+        input.automaticallyMoveWrist(false);
         a1.setPos(0);
     }
 

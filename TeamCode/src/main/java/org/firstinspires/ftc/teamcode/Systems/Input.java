@@ -51,13 +51,13 @@ public class Input {
 
     public void move(double power) {
 
-            if (!isSpin) {
-                motors.MoveMotor(Motors.Type.LeftBack, -power);
-                motors.MoveMotor(Motors.Type.LeftFront, -power);
-                motors.MoveMotor(Motors.Type.RightFront, -power);
-                motors.MoveMotor(Motors.Type.RightBack, -power);
-                //prob fix movement forward
-            }
+
+            motors.MoveMotor(Motors.Type.LeftBack, -power);
+            motors.MoveMotor(Motors.Type.LeftFront, -power);
+            motors.MoveMotor(Motors.Type.RightFront, -power);
+            motors.MoveMotor(Motors.Type.RightBack, -power);
+            //prob fix movement forward
+
 
             if (power != 0) {
                 isMove = true;
@@ -85,13 +85,13 @@ public class Input {
 
     public void spin(double power) {
 
-            if(!isMove) {
-                motors.MoveMotor(Motors.Type.LeftFront, power); // left front
-                motors.MoveMotor(Motors.Type.LeftBack, power); // left back
 
-                motors.MoveMotor(Motors.Type.RightFront, -power); // right front
-                motors.MoveMotor(Motors.Type.RightBack, -power); // right back
-            }
+            motors.MoveMotor(Motors.Type.LeftFront, power); // left front
+            motors.MoveMotor(Motors.Type.LeftBack, power); // left back
+
+            motors.MoveMotor(Motors.Type.RightFront, -power); // right front
+            motors.MoveMotor(Motors.Type.RightBack, -power); // right back
+
 
             if (power != 0) {
                 isSpin = true;
@@ -99,6 +99,27 @@ public class Input {
             else {
                 isSpin = false;
             }
+    }
+
+    public void moveWithStrafe(double yPower, double xPower) {
+        // Calculate motor powers using X and Y input together
+        double leftFront = yPower + xPower;
+        double rightFront = yPower - xPower;
+        double leftBack = yPower - xPower;
+        double rightBack = yPower + xPower;
+
+        // Normalize values if any is above 100
+        double max = Math.max(100.0, Math.max(Math.abs(leftFront),
+                Math.max(Math.abs(rightFront),
+                        Math.max(Math.abs(leftBack), Math.abs(rightBack)))));
+
+        motors.MoveMotor(Motors.Type.LeftFront, (leftFront / max) * 100);
+        motors.MoveMotor(Motors.Type.RightFront, (rightFront / max) * 100);
+        motors.MoveMotor(Motors.Type.LeftBack, (leftBack / max) * 100);
+        motors.MoveMotor(Motors.Type.RightBack, (rightBack / max) * 100);
+
+        isMove = (yPower != 0);
+        isStrafe = (xPower != 0);
     }
 
     public boolean isMove() {
@@ -317,17 +338,19 @@ public class Input {
         servos.setServoPosition(Servos.Type.Wrist, Constants.WRIST_NORMAL);
     }
 
-    public void automaticallyMoveWrist(boolean hangButton) {
+    public void automaticallyMoveWrist(boolean autoAlign) {
         int position;
-        if (getArmPos() < 1435) { // if the arm is vertical
-            if (hangButton && !isClawOpen()) {
-                position = 20;
-            }
-            else {
+        boolean toggle = false;
+
+        if (autoAlign && !toggle) {
+            toggle = true;
+        } else if (autoAlign && toggle) {
+            toggle = false;
+        }
+
+        if (getArmPos() < 1435 || toggle) { // if the arm is vertical
                 position = 60;
-            }
         } else {
-            if (hangButton)
             int x = (int) ((double) getArmPos() * 9/143);
             position = x - (4335/143); // a formula to make the servo always face towards the wall no matter arm position
         }

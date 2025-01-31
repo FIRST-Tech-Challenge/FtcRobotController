@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Systems.Input;
 
-public class armSynchronous implements Runnable {
+public class HoldYawSync implements Runnable {
     int pos = 0;
     Input input;
     private boolean running;
     private Thread thread;
 
 
-    public armSynchronous(Input input) {
+    public HoldYawSync(Input input) {
         this.thread = new Thread(this);
         this.input = input;
     }
-    
+
     public void setPos(int pos) {
         this.pos = pos;
     }
@@ -28,7 +28,7 @@ public class armSynchronous implements Runnable {
     public void run() {
         while (running) {
             synchronized (this) {
-                moveArm();
+                setTargetYaw();
             }
         }
     }
@@ -36,29 +36,7 @@ public class armSynchronous implements Runnable {
     public synchronized void stop() {
         running = false;
     }
-    public void moveArm() {
-        input.setArmPosition(pos);
-    }
-
-    public void extendArm(int upArmPos, int armPos) {
-        while (armPos != 0 && armPos != pos) {
-        }
-
-        while (input.getUpArmPos() > upArmPos) {
-            input.upArm(-50);
-        }
-
-        input.upArm(0);
-    }
-
-    public void retractArm(int upArmPos, int armPos) {
-        while (armPos != 0 && armPos != pos) {
-        }
-
-        while (input.getUpArmPos() < upArmPos) {
-            input.upArm(50);
-        }
-
-        input.upArm(0);
+    public void setTargetYaw() {
+        input.spinToPosition(pos);
     }
 }
