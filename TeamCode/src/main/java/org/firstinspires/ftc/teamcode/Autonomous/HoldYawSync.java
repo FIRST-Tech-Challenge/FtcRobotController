@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Systems.Input;
 
-public class holdYawSync implements Runnable {
+public class HoldYawSync implements Runnable {
     int pos = 0;
     Input input;
     private boolean running;
     private Thread thread;
 
 
-    public holdYawSync(Input input) {
+    public HoldYawSync(Input input) {
         this.thread = new Thread(this);
         this.input = input;
     }

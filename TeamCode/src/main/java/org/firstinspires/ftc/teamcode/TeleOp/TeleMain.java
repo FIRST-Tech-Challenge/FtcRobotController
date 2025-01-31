@@ -42,17 +42,14 @@ public class TeleMain extends LinearOpMode {
             double move = gamepad1.left_stick_y * 100;
             double spin = gamepad1.right_stick_x * 100;
             double strafe = gamepad1.left_stick_x * 100;
-            double intake = gamepad2.left_stick_y * 100;
 
             double armRaise = gamepad2.right_stick_y * 100;
 
-
-            input.move(move);
+            input.moveWithStrafe(move,strafe);
             input.spin(spin);
-            input.strafe(strafe);
             input.claw(gamepad2.b, gamepad2.a);
             input.upArm(armRaise);
-            input.automaticallyMoveWrist(gamepad2.right_trigger != 0);
+            input.automaticallyMoveWrist(gamepad2.left_bumper);
 
             // Multiply the game pad input by a number so that we can tune the sensitivity then turn it into and int so the code can work turning game pad input into a position
             arm += (int) (-gamepad2.left_stick_y * 35);

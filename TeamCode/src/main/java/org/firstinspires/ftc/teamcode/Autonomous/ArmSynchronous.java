@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Systems.Input;
 
-public class armSynchronous implements Runnable {
+public class ArmSynchronous implements Runnable {
     int pos = 0;
     Input input;
     private boolean running;
     private Thread thread;
 
 
-    public armSynchronous(Input input) {
+    public ArmSynchronous(Input input) {
         this.thread = new Thread(this);
         this.input = input;
     }
