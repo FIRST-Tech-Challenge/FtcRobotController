@@ -33,8 +33,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.concurrent.TimeUnit;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -72,7 +70,7 @@ public class Main extends LinearOpMode {
     public DcMotor      leftBackDrive   = null;
     public DcMotor      rightBackDrive  = null;
     public DcMotor      armMotor        = null; //the arm motor
-    public DcMotor      liftMotor       = null; // the viper slide motor
+    public DcMotor      viperMotor = null; // the viper slide motor
     public CRServo      intake          = null; //the active intake servo
     public Servo        wrist           = null; //the wrist servo
     public SparkFunOTOS otos            = null;
@@ -80,14 +78,14 @@ public class Main extends LinearOpMode {
     /* Variables that are used to set the arm to a specific position */
     int armPosition;
     int armPositionFudgeFactor;
-    final int MAX_LIFT_POSITION = liftMotorMmToTicks(480);
-    int liftPosition;
+    final int MAX_VIPER_POSITION = viperMotorMmToTicks(480);
+    int viperPosition;
     double cycleTime = 0;
     double loopTime = 0;
     double oldTime = 0;
     int armLiftComp = 0;
     IMU imu;
-    boolean retractLift;
+    boolean retractViper;
     SparkFunOTOS.Pose2D pos;
 
     @Override
@@ -119,15 +117,15 @@ public class Main extends LinearOpMode {
             three if statements, then it will set the intake servo's power to multiple speeds in
             one cycle. Which can cause strange behavior. */
 
-            if (gamepad1.left_bumper) {
-                intakeCollect();
-            }
-            else if (gamepad1.right_bumper) {
-                intakeDeposit();
-            }
-            else if (gamepad1.y) {
-                intakeOff();
-            }
+//            if (gamepad1.left_bumper) {
+//                intakeCollect();
+//            }
+//            else if (gamepad1.right_bumper) {
+//                intakeDeposit();
+//            }
+//            else if (gamepad1.y) {
+//                intakeOff();
+//            }
 
             configureFudge();
 
@@ -142,30 +140,27 @@ public class Main extends LinearOpMode {
             if(gamepad1.a){
                 /* This is the intaking/collecting arm position */
                 armCollect();
-                liftCollapsed();
+                viperCollapsed();
                 wristOut();
                 intakeCollect();
             }
 
             else if (gamepad1.b){
-
                 armClearBarrier();
             }
 
             else if (gamepad1.x){
                 /* This is the correct height to score the sample in the HIGH BASKET */
-                armScoreSampleInLow();
-
-                liftScoreInHigh();
-
-
+                retractViper = true;
+                armScoreSampleInHigh();
+                viperScoreInHigh();
             }
 
             else if (gamepad1.dpad_left) {
                     /* This turns off the intake, folds in the wrist, and moves the arm
                     back to folded inside the robot. This is also the starting configuration */
                 armCollapsed();
-                liftCollapsed();
+                viperCollapsed();
                 intakeOff();
                 wristIn();
             }
@@ -213,17 +208,17 @@ public class Main extends LinearOpMode {
             we are only incrementing it a small amount each cycle.
              */
 
-            if (gamepad2.right_bumper) {
-                liftDeltaTimeIncrement();
+            if (gamepad1.right_bumper) {
+                viperDeltaTimeIncrement();
             }
-            else if (gamepad2.left_bumper) {
-                liftDeltaTimeDecrement();
+            else if (gamepad1.left_bumper) {
+                viperDeltaTimeDecrement();
             }
 
-            liftNormalization();
-            setLiftTargetPosition();
+            viperNormalization();
+            setViperTargetPosition();
 //            TimeUnit.SECONDS.sleep(1);
-            runLift();
+            runViper();
 
             /* Check to see if our arm is over the current limit, and report via telemetry. */
             if (((DcMotorEx) armMotor).isOverCurrent()) {
@@ -274,7 +269,7 @@ public class Main extends LinearOpMode {
         );
     }
 
-    public int liftMotorMmToTicks(double mm) {
+    public int viperMotorMmToTicks(double mm) {
         /*
          * 312 rpm motor: 537.7 ticks per revolution
          * 4 stage viper slide (240mm): 5,8 rotations to fully expand
@@ -363,9 +358,8 @@ public class Main extends LinearOpMode {
     public void armScoreSpecimen() {
         armPosition = armDegreesToTicks(90);
     }
-    public void armScoreSampleInLow() {
+    public void armScoreSampleInHigh() {
         armPosition = armDegreesToTicks(110);
-        retractLift = true;
     } // 90
     public void armAttachHangingHook() {
         armPosition = armDegreesToTicks(110);
@@ -390,7 +384,7 @@ public class Main extends LinearOpMode {
         leftBackDrive   = hardwareMap.dcMotor.get("left_back");
         rightFrontDrive = hardwareMap.dcMotor.get("right_front");
         rightBackDrive  = hardwareMap.dcMotor.get("right_back");
-        liftMotor       = hardwareMap.dcMotor.get("lift_motor");
+        viperMotor = hardwareMap.dcMotor.get("viper_motor");
         armMotor        = hardwareMap.get(DcMotor.class, "dc_arm"); //the arm motor
         otos = hardwareMap.get(SparkFunOTOS.class, "otos");
 
@@ -420,17 +414,17 @@ public class Main extends LinearOpMode {
         Then we'll set the RunMode to RUN_TO_POSITION. And we'll ask it to stop and reset encoder.
         If you do not have the encoder plugged into this motor, it will not run in this code. */
         armCollapsed();
-        liftCollapsed();
+        viperCollapsed();
         armMotor.setTargetPosition(0);
         armMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE); // ----------- | risky | ---------
-        liftMotor.setTargetPosition(0);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        viperMotor.setDirection(DcMotorSimple.Direction.REVERSE); // ----------- | risky | ---------
+        viperMotor.setTargetPosition(0);
+        viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        viperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* Define and initialize servos.*/
         intake = hardwareMap.get(CRServo.class, "intake_servo");
@@ -458,13 +452,12 @@ public class Main extends LinearOpMode {
         telemetry.addLine("Version: 2");
         telemetry.addData("arm Target Position: ", armMotor.getTargetPosition());
         telemetry.addData("arm Encoder: ", armMotor.getCurrentPosition());
-        telemetry.addData("lift variable", liftPosition);
-        // telemetry.addData("X coordinate", pos.x);
-        // telemetry.addData("Y coordinate", pos.y);
-        // telemetry.addData("Heading angle", pos.h);
-        telemetry.addData("Lift Target Position",liftMotor.getTargetPosition());
-        telemetry.addData("lift current position", liftMotor.getCurrentPosition());
-        telemetry.addData("liftMotor Current:",((DcMotorEx) liftMotor).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("lift variable", viperPosition);
+        telemetry.addData("viper busy", viperMotor.isBusy());
+        telemetry.addData("Lift Target Position", viperMotor.getTargetPosition());
+        telemetry.addData("lift current position", viperMotor.getCurrentPosition());
+        telemetry.addData("liftMotor Current:",((DcMotorEx) viperMotor).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("cycle time",cycleTime);
 //        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
 //        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
         telemetry.addData("X coordinate", pos.x);
@@ -473,29 +466,29 @@ public class Main extends LinearOpMode {
         telemetry.update();
     }
     public void liftScoreInLow() {
-        liftPosition = 0;
+        viperPosition = 0;
     }
-    public void liftScoreInHigh() {
-        liftPosition = liftMotorMmToTicks(480);
+    public void viperScoreInHigh() {
+        viperPosition = viperMotorMmToTicks(480);
     }
-    public void liftCollapsed() {
-        liftPosition = 0;
+    public void viperCollapsed() {
+        viperPosition = 0;
     }
-    public void liftDeltaTimeIncrement() {
-        liftPosition += (int) (100 * cycleTime); // 2800
+    public void viperDeltaTimeIncrement() {
+        viperPosition += (int) (3600 * cycleTime); // 2800
     }
-    public void liftDeltaTimeDecrement() {
-        liftPosition -= (int) (100 * cycleTime); // 2800
+    public void viperDeltaTimeDecrement() {
+        viperPosition -= (int) (3600 * cycleTime); // 2800
     }
-    public void liftNormalization() {
+    public void viperNormalization() {
         /*here we check to see if the lift is trying to go higher than the maximum extension.
            if it is, we set the variable to the max. */
-        if (liftPosition > MAX_LIFT_POSITION){
-            liftPosition = MAX_LIFT_POSITION;
+        if (viperPosition > MAX_VIPER_POSITION){
+            viperPosition = MAX_VIPER_POSITION;
         }
         //same as above, we see if the lift is trying to go below 0, and if it is, we set it to 0.
-        if (liftPosition < 0){
-            liftPosition = 0;
+        if (viperPosition < 0){
+            viperPosition = 0;
         }
     }
     public void setArmLiftComp(){
@@ -515,7 +508,7 @@ public class Main extends LinearOpMode {
              */
 
         if (armPosition < armDegreesToTicks(45)) {
-            armLiftComp = (int) (0.25568 * liftPosition);
+            armLiftComp = (int) (0.25568 * viperPosition);
         }
         else{
             armLiftComp = 0;
@@ -532,23 +525,23 @@ public class Main extends LinearOpMode {
     }
     public void runArm() {
         // here we check if the lift should be retracted.
-        if (retractLift) {
-            liftCollapsed(); // we set the lift position to be collapsed
-            setLiftTargetPosition(); // set the position
-            runLift(); // run the motor
-            retractLift = false; // we set the retract lift variable to false
+        if (retractViper) {
+            viperCollapsed(); // we set the lift position to be collapsed
+            setViperTargetPosition(); // set the position
+            runViper(); // run the motor
         }
-        if (!liftMotor.isBusy()){ // if the lift motor is not busy retracting
-            ((DcMotorEx) armMotor).setVelocity(300);
+        if (!viperMotor.isBusy()){ // if the lift motor is not busy retracting
+            retractViper = false; // we set the retract lift variable to false
+            ((DcMotorEx) armMotor).setVelocity(1500);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // we finally run the arm motor
         }
     }
-    public void setLiftTargetPosition(){
-        liftMotor.setTargetPosition(liftPosition);
+    public void setViperTargetPosition(){
+        viperMotor.setTargetPosition(viperPosition);
     }
-    public void runLift() {
-        ((DcMotorEx) liftMotor).setVelocity(600); // 2100 velocity of the viper slide 200
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void runViper() {
+        ((DcMotorEx) viperMotor).setVelocity(3200); // 2100 velocity of the viper slide 200
+        viperMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
@@ -631,9 +624,9 @@ public class Main extends LinearOpMode {
         telemetry.addLine();
         telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
         telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
-        telemetry.addData("X coordinate", pos.x);
-        telemetry.addData("Y coordinate", pos.y);
-        telemetry.addData("Heading angle", pos.h);
+//        telemetry.addData("X coordinate", pos.x);
+//        telemetry.addData("Y coordinate", pos.y);
+//        telemetry.addData("Heading angle", pos.h);
         telemetry.update();
     }
 }
