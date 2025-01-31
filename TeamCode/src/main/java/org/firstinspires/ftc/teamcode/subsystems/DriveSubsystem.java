@@ -83,7 +83,7 @@ public class DriveSubsystem {
         // Get the correction from the PID controller
         double correction = pidController.getCorrection(targetYaw, newAngle);
 
-        movement.turn += correction;
+//        movement.turn -= correction;
         telemetry.addData("Correction angle", correction);
         setDrivePower(movement);
     }

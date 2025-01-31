@@ -41,8 +41,8 @@ public class SyborgsTeleOp extends LinearOpMode {
         }
     }
     public void initSubsystems() {
-        drive = new DriveSubsystem(hardwareMap, telemetry, imu);
         imu = IMUFactory.initIMU(hardwareMap);
+        drive = new DriveSubsystem(hardwareMap, telemetry, imu);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         slide = new SlideSubsystem(hardwareMap, telemetry);
         intakeAndWrist = new IntakeAndWristSubsystem(hardwareMap, telemetry);
