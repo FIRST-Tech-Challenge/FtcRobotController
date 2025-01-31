@@ -182,7 +182,7 @@ public class RollingIntake extends SonicSubsystemBase {
     }
 
     public void SetElbowInSampleSweepPosition() {
-        this.elbowServo.setPosition(0.2);
+        this.elbowServo.setPosition(0.01);
     }
 
     public void SetElbowInIntakePosition() {
@@ -211,6 +211,29 @@ public class RollingIntake extends SonicSubsystemBase {
         }
 
         isElbowInIntake = !isElbowInIntake;
+    }
+
+    int elbowTogglePosition = 0;
+    public void ToggleElbowAcrossAll() {
+
+        telemetry.addData("elbow position", elbowTogglePosition % 4 );
+
+        switch (elbowTogglePosition % 4) {
+            case 0:
+                SetElbowInInStart();
+                break;
+            case 1:
+                SetElbowInIntakePosition();
+                break;
+            case 2:
+                SetElbowInSampleDeliveryPosition();
+                break;
+            case 3:
+                SetElbowInSampleSweepPosition();
+                break;
+        }
+
+        elbowTogglePosition++;
     }
 
     public void Intake() {

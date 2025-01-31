@@ -178,7 +178,7 @@ public class DriveToTargetCommand extends SounderBotCommandBase {
     protected boolean isTargetReached() {
         return (Math.abs(targetX - odo.getPosX()) < distanceTolerance)
                 && (Math.abs(targetY - odo.getPosY())) < distanceTolerance
-                && Math.abs(targetHeading - odo.getHeading()) < Math.toRadians(3);
+                && Math.abs(targetHeading - odo.getHeading()) < Math.toRadians(2.5);
     }
 
     @Override

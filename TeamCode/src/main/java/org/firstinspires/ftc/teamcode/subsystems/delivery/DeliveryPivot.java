@@ -185,7 +185,7 @@ public class DeliveryPivot extends SonicSubsystemBase {
 
 
             if(Math.abs(currentTarget - position) < 30 || (GetDepth() < 27 && currentTarget >  500)) {
-                telemetry.addData("done", true);
+                //telemetry.addData("done", true);
                 motor.set(0);
             }
             else {

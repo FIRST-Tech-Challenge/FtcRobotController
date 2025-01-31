@@ -21,8 +21,8 @@ public class AlignTest extends CommandAutoOpMode {
                 double intakeDistance = 60;
                 double minIntake = 45;
 
-                int firstY = -700;
-                int secondY = -580 - 230;
+                int firstY = -750;
+                int secondY = -580 - 200;
 
                 return new SequentialCommandGroup(
                         // FIRST specimen
@@ -33,7 +33,7 @@ public class AlignTest extends CommandAutoOpMode {
                                 commandFactory.extendSpecimenSlider(6000),
                                 new SequentialCommandGroup(
                                         commandFactory.driveToTarget(580, 0, 0, .05, .4, 30, 2000),
-                                        commandFactory.sleep(200),
+                                        commandFactory.sleep(300),
                                         commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery, 1500)
                                 )
                         ),
@@ -42,11 +42,10 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.collapseSpecimenSlider(500),
                         commandFactory.openSpecimenClaw(),
 
-
                         //  Find first sample
                         new ParallelRaceGroup(
                                 commandFactory.collapseSpecimenSlider(5000),
-                                commandFactory.driveToTarget(380, firstY, -30, .9, .8, 30, 1500)
+                                commandFactory.driveToTarget(360, firstY, -25, .08, .7, 30, 2200)
                         ),
 
                         new ParallelCommandGroup(
@@ -58,19 +57,19 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.sleep(200),
 
                         // Turn to sweep
-                        commandFactory.driveToTarget(320, firstY, -120, .05, .4, 30),
+                        commandFactory.driveToTarget(320, firstY, -120, .07, .45, 40, 1200),
 
 
                         // Find next sample
                         new ParallelCommandGroup(
                                 commandFactory.pivotToJustAboveSweep(),
-                        commandFactory.driveToTarget(550, secondY, -45, .09, .6, 30, 1000)
+                        commandFactory.driveToTarget(520, secondY, -45, .09, .6, 30, 1000)
                                 ),
 
                         commandFactory.pivotToSweep(),
                         commandFactory.sleep(200),
 
-                        commandFactory.driveToTarget(350, secondY, -120, .05, .4, 30),
+                        commandFactory.driveToTarget(350, secondY, -120, .07, .45, 40, 1200),
 
 
 
@@ -87,18 +86,21 @@ public class AlignTest extends CommandAutoOpMode {
                                 )
                         ),
 
-                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery, -180),
+                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery, -180, -359, -75),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSpecimenSlider(1000),
-                                commandFactory.driveToTarget(100, -1100, 180, .05, .9, 100, 3000)
+                                commandFactory.driveToTarget(100, -1100, -180, .05, .9, 100, 3000)
                         ),
 
-                        PickupSpecimenAndDrop(intakeDistance,minIntake, deliveryDistance, minDelivery, 180),
+                        PickupSpecimenAndDrop(intakeDistance, minIntake, deliveryDistance, minDelivery, -180, -360, -125),
 
                         new ParallelCommandGroup(
                                 commandFactory.collapseSpecimenSlider(1000),
-                                commandFactory.driveToTarget(100, -1100, 0, .05, 1, 100, 3000)
+                                new SequentialCommandGroup(
+                                        commandFactory.driveToTarget(350, -250, -360, .05, 1, 2000, 750),
+                                        commandFactory.driveToTarget(50, -1100, -360, .05, 1, 100, 3000)
+                                )
                         ),
 
 
@@ -182,7 +184,12 @@ public class AlignTest extends CommandAutoOpMode {
                 );
     }
 
-    private SequentialCommandGroup PickupSpecimenAndDrop(double intakeDistance, double minIntake, double deliveryDistance, double minDelivery, double pickupHeading) {
+    private SequentialCommandGroup PickupSpecimenAndDrop(
+            double intakeDistance, double minIntake, double deliveryDistance, double minDelivery,
+            double pickupHeading,
+            double dropHeading,
+            double dropY
+            ) {
         return new SequentialCommandGroup(
 
         // Intake SECOND Specimen
@@ -196,12 +203,12 @@ public class AlignTest extends CommandAutoOpMode {
 
 
                 new ParallelRaceGroup(
-                        commandFactory.driveToTarget(300, -1100, pickupHeading, .05, .9, 140, 1000),
+                        commandFactory.driveToTarget(200, -1100, pickupHeading, .05, 1, 140, 500),
                         commandFactory.extendSpecimenSlider(6000)
                 ),
 
                 new ParallelRaceGroup(
-                        commandFactory.driveToTarget(600, -50, 0, .05, 1, 50, 1750),
+                        commandFactory.driveToTarget(600, dropY, dropHeading, .07, 1, 70, 2300),
                         commandFactory.extendSpecimenSlider(6000)
                 ),
 
@@ -209,7 +216,7 @@ public class AlignTest extends CommandAutoOpMode {
                         commandFactory.checkForwardDistance(deliveryDistance, minDelivery, 5000),
                         commandFactory.extendSpecimenSlider(6000),
                         new SequentialCommandGroup(
-                                commandFactory.sleep(500),
+                                commandFactory.sleep(200),
                                 commandFactory.alignToSpecimenDelivery(deliveryDistance, minDelivery,3000)
                         )
                 ),

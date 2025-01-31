@@ -98,6 +98,9 @@ public class MainTeleop extends OpModeTemplate {
                 .whenActive(new InstantCommand(rollingIntake::Outtake, rollingIntake))
                 .whenInactive(new InstantCommand(rollingIntake::Hold, rollingIntake));
 
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(rollingIntake::ToggleElbowAcrossAll, rollingIntake));
+
         // Specimen Slider Actions
 
         operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
