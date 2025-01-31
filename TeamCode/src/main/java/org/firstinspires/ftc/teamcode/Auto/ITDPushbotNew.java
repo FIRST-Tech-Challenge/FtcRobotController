@@ -30,13 +30,12 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/*
- * This OpMode illustrates the concept of driving a path based on time.
+/**
+ * This file illustrates the concept of driving a path based on time.
  * The code is structured as a LinearOpMode
  *
  * The code assumes that you do NOT have encoders on the wheels,
@@ -53,14 +52,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@Disabled
-@Autonomous(name="Into the Deep Pushbot Auto", group="Robot")
-public class ITD_Pushbot_Auto_Template extends LinearOpMode {
+
+// I couldn't remember how to push stuff into Git, so after I googled a bit I gave up.
+// Git is weird and I don't like it. -paige
+@Autonomous(name="ITD Pushbot New", group="Robot") // ITD stands for Into the Deep
+public class ITDPushbotNew extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor leftFrontDrive = null; //motor 2
+    private DcMotor leftFrontDrive  = null; //motor 2
     private DcMotor leftBackDrive = null; //motor 3
-    private DcMotor rightFrontDrive = null; //motor 1
+    private DcMotor rightFrontDrive  = null; //motor 1
     private DcMotor rightBackDrive = null; //motor 0
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -74,18 +75,18 @@ public class ITD_Pushbot_Auto_Template extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize the drive system variables.
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightFrontDrive  = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");
@@ -118,7 +119,7 @@ public class ITD_Pushbot_Auto_Template extends LinearOpMode {
         //telemetry.update();
         //}
 
-        // Step 3:  Drive Backward for 0.2 Seconds
+        // Step 3:  Drive Backwards for 0.2 Seconds
         leftFrontDrive.setPower(-FORWARD_SPEED);
         leftBackDrive.setPower(-FORWARD_SPEED);
         rightFrontDrive.setPower(-FORWARD_SPEED);
