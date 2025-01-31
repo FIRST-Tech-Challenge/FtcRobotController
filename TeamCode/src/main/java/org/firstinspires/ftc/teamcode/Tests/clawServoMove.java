@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Systems.BotTelemetry;
+import org.firstinspires.ftc.teamcode.Systems.Input;
 import org.firstinspires.ftc.teamcode.Systems.Servos;
 
 @Config
@@ -21,6 +22,7 @@ public class clawServoMove extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         servos = new Servos(hardwareMap);
+        Input input = new Input(hardwareMap, false);
 
         Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
         BotTelemetry.setTelemetry(telemetry, dashboardTelemetry);
@@ -32,7 +34,7 @@ public class clawServoMove extends LinearOpMode {
 
         while(opModeIsActive())
         {
-
+            input.claw(gamepad1.b, gamepad1.a);
 
             servos.setServoPosition(Servos.Type.Wrist, position);
 //            sleep(500);
