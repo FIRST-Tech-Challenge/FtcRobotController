@@ -37,6 +37,7 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         m_gripper.isOpen = false;
         m_gripper.rotServo2.setPosition(score);
         m_controller = gamepad1;
+        initStateMachine().schedule();
         resetGyro();
         configureBinds();
     }
@@ -44,13 +45,11 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return Math.signum(input)*Math.pow(input,2);
     }
     private void configureBinds() {
-        initStateMachine();
         m_controller.assignCommand(m_chassis.fieldRelativeDrive(
                         () -> squareInput(-m_controller.getAxisValue(BTController.Axes.LEFT_Y_axis)),
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.LEFT_X_axis)),
                         () -> squareInput(m_controller.getAxisValue(BTController.Axes.RIGHT_TRIGGER_axis) - m_controller.getAxisValue(BTController.Axes.LEFT_TRIGGER_axis))),
                 true, LEFT_Y, LEFT_X, RIGHT_TRIGGER,LEFT_TRIGGER).whenInactive(m_chassis.stopMotor());
-        m_controller.assignCommand(togglePickup(),false,BUMPER_RIGHT);
 //        m_controller.assignCommand(setScore(), false,BUTTON_RIGHT);
 //        m_controller.assignCommand(setIdle(), false,BUTTON_UP);
 //        m_controller.assignCommand(setIntake(), false,BUTTON_LEFT);
@@ -67,15 +66,16 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
         return new RepeatCommand(
                 new SequentialCommandGroup(
                 setIdle(),
-                    new WaitUntilCommand(m_controller.getTrigger(BUTTON_DOWN)::get),
+                    new WaitUntilCommand(m_controller.m_buttonsSuppliers[BUTTON_DOWN],
                 setIntake(),
-                    new WaitUntilCommand(m_controller.getTrigger(BUTTON_DOWN)::get),
+                    new WaitUntilCommand(m_controller.m_buttonsSuppliers[BUMPER_RIGHT],
+                togglePickup(),
                 setIdle(),
-                    new WaitUntilCommand(m_controller.getTrigger(BUTTON_DOWN)::get),
+                    new WaitUntilCommand(m_controller.m_buttonsSuppliers[BUTTON_DOWN],
                 setScore(),
-                    new WaitUntilCommand(m_controller.getTrigger(BUTTON_DOWN)::get),
+                    new WaitUntilCommand(m_controller.m_buttonsSuppliers[BUTTON_DOWN],
                 m_gripper.openClaw(),
-                    new WaitUntilCommand(m_controller.getTrigger(BUTTON_DOWN)::get)
+                    new WaitUntilCommand(m_controller.m_buttonsSuppliers[BUTTON_DOWN]
             )
         );
     }
@@ -113,7 +113,8 @@ public class RobotContainer extends com.arcrobotics.ftclib.command.Robot {
     private Command togglePickup() {
         return new RepeatCommand(
                 new SequentialCommandGroup(
-                m_pivot.set(pickup)
+                m_pivot.set(pickup),
+                m_gripper.openClaw(),
                     .andThen(new WaitUntilCommand(m_controller.getTrigger(BUMPER_RIGHT)::get)),
                 m_gripper.closeClaw()
                     .andThen(new WaitUntilCommand(m_controller.getTrigger(BUMPER_RIGHT)::get)),
