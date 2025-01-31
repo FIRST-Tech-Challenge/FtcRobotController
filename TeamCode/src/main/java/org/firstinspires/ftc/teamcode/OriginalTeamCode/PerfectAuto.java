@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -19,8 +20,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 // Team 23974 A.S.T.R.O. Vikings, water 2024-2025
 @Autonomous(name="First Auto", group ="AHHHHHHHH", preselectTeleOp = "Teleop To Use :))))")
 public class PerfectAuto extends LinearOpMode {
-    final double OPEN = 0.4;
-    final double CLOSE = 0.75;
+    final double OPEN = 0.75;
+    final double CLOSE = 0.4;
+    final double ARMROTMULT = 1;
 
     //other motors
     DcMotor armLifterLeft = null;
@@ -60,7 +62,7 @@ public class PerfectAuto extends LinearOpMode {
     }
 
     void controlArmRotate() {
-        armRotate.setTargetPosition((int) armRotPos);
+        armRotate.setTargetPosition((int) (armRotPos * ARMROTMULT));
     }
 
     void controlWristRotate(){
@@ -74,6 +76,7 @@ public class PerfectAuto extends LinearOpMode {
         armRotate = hardwareMap.dcMotor.get("armRotate");
         linearActuator = hardwareMap.dcMotor.get("linearActuator");
         wrist = hardwareMap.get(ServoImplEx.class,"wrist");
+        wrist.setPwmRange(new PwmControl.PwmRange(500, 2500));
         grabber = hardwareMap.servo.get("grabber");
 
 
@@ -100,7 +103,7 @@ public class PerfectAuto extends LinearOpMode {
         armLifterLeft.setTargetPosition((int) armPos);
         armLifterRight.setTargetPosition((int) armPos);
         linearActuator.setTargetPosition((int) actuatorPos);
-        armRotate.setTargetPosition((int) armRotPos);
+        armRotate.setTargetPosition((int) (armRotPos*ARMROTMULT));
         armLifterRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armLifterLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearActuator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -115,52 +118,58 @@ public class PerfectAuto extends LinearOpMode {
         }
 
         drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d();
+        Pose2d startPose = new Pose2d(0,0,0);
 
         Trajectory tr1 = drive.trajectoryBuilder(startPose)
-                .splineTo(new Vector2d(22.572,0), 0)
+                .splineTo(new Vector2d(20.889,0), 0)
                 .build();
         Trajectory tr2 = drive.trajectoryBuilder(tr1.end())
                 .back(10)
                 .build();
         Trajectory tr3 = drive.trajectoryBuilder(tr2.end())
-                .splineToConstantHeading(new Vector2d(19.32,38.39),0)
+                .splineTo(new Vector2d(19,38.5), 0)
                 .build();
-
+        Trajectory tr4 = drive.trajectoryBuilder(tr3.end())
+                .splineToLinearHeading(new Pose2d(3,48,Math.toRadians(-225)),0)
+                .build();
 
 
         waitForStart(); /*****  DON'T RUN ANY MOTOR MOVEMENT ABOVE THIS LINE!! You WILL get PENALTIES! And it's UNSAFE! *****/
         if (isStopRequested()) return;
 
         /***** start of manual code running or initiation or whatever *****/
-        drive.followTrajectory(tr1);
-        armRotPos = -1053.25;
-        wristRotPos = 0.71;
-//        controlWristRotate();
-//        controlArmRotate();
-        sleep(1000);
-        wristRotPos = 0.65;
-        armRotPos = -659.915;
-//        controlWristRotate();
-//        controlArmRotate();
-        drive.followTrajectory(tr2);
-        wristRotPos = 1;
-        armRotPos = 0;
-//        controlArmRotate();
-//        controlWristRotate();
-        sleep(1000);
-        drive.followTrajectory(tr3);
-        armRotPos = -600;
-//        controlArmRotate();
-        sleep(1000);
-        wristRotPos = 0.2;
-//        controlWristRotate();
-        sleep(1000);
-        controlGrabber(OPEN);
-        armRotPos = -485;
-//        controlArmRotate();
-        sleep(200);
         controlGrabber(CLOSE);
+        armRotPos = -2462.416;
+        wristRotPos = 0.615;
+        controlWristRotate();
+        controlArmRotate();
+        sleep(800);
+        drive.followTrajectory(tr1);
+        wristRotPos = 0.63;
+        armRotPos = -2392.33;
+        controlArmRotate();
+        controlWristRotate();
+        sleep(500);
+        drive.followTrajectory(tr2);
+        controlGrabber(OPEN);
+        sleep(500);
+        drive.followTrajectory(tr3);
+        armRotPos = -611;
+        wristRotPos = 0.57;
+        controlArmRotate();
+        controlWristRotate();
+        sleep(1000);
+        controlGrabber(CLOSE);
+        sleep(1000);
+        armRotPos = -2930;
+        wristRotPos = 0.63;
+        armPos = -4015.5;
+        controlWristRotate();
+        controlArmRotate();
+        controlBothArmExtenders();
+        sleep(750);
+        drive.followTrajectory(tr4);
+        controlGrabber(OPEN);
         sleep(1000);
 
 
