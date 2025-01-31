@@ -20,8 +20,8 @@ public class SampleAuto extends CommandAutoOpMode {
         public static boolean skipOuttake = false;
 
         public static String someTextField = "placeholder";
-        public static double toBucket_x = 300;
-        public static double toBucket_y = 490;
+        public static double toBucket_x = 200;
+        public static double toBucket_y = 440;
         public static double toBucket_heading = -45;
         public static double toBucket_tolerance = 100;
         public static long toBucket_timeout = 1500;
@@ -31,11 +31,11 @@ public class SampleAuto extends CommandAutoOpMode {
     public static class Sample1Config {
         public static boolean skipIntake = false;
 
-        public static int toSample_x = 500;
+        public static int toSample_x = 520;
         public static int toSample_y = 260;
         public static int toSample_tolerance = 5;
         public static long toSample_timeout = 1000;
-        public static int toBucket_x = 10;
+        public static int toBucket_x = -20;
         public static int toBucket_y = 450;
         public static int toBucket_heading = -45;
         public static int toBucket_tolerance = 10;
@@ -52,7 +52,7 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int toSample_tolerance = 5;
         public static int toSample_timeout = 1500;
 
-        public static int toBucket_x = -10;
+        public static int toBucket_x = -30;
         public static int toBucket_y = 450;
         public static int toBucket_heading = -45;
         public static int toBucket_tolerance = 10;
@@ -62,7 +62,7 @@ public class SampleAuto extends CommandAutoOpMode {
     public static class Sample3Config {
         public static boolean skipIntake = false;
 
-        public static int beforeIntakeDrive_targetX = 230;
+        public static int beforeIntakeDrive_targetX = 260;
         public static int beforeIntakeDrive_targetY = 550;
         public static int beforeIntakeDrive_heading = 15;
         public static int beforeIntakeDrive_distanceTolerance = 5;
@@ -73,7 +73,7 @@ public class SampleAuto extends CommandAutoOpMode {
         public static int IntakeFromGroundTimeout = 5000;
 
 
-        public static int ToDeliveryDrive_TargetX = -10;
+        public static int ToDeliveryDrive_TargetX = -20;
         public static int ToDeliveryDrive_TargetY = 450;
         public static int ToDeliveryDrive_TargetHeading = -45;
         public static int ToDeliveryDrive_DistanceTolerance = 10;
@@ -82,14 +82,14 @@ public class SampleAuto extends CommandAutoOpMode {
     @Config
     public static class ToEndPositionConfig {
 
-        public static int stage1_x = 3500;
-        public static int stage1_y = 500;
+        public static int stage1_x = 2700;
+        public static int stage1_y = 300;
         public static int stage1_heading = -90;
-        public static int stage1_tolerance = 10;
+        public static int stage1_tolerance = 100;
         public static int stage1_timeout = 2000;
 
         public static int stage2_x = 2100;
-        public static int stage2_y = -500;
+        public static int stage2_y = -650;
         public static int stage2_heading = -90;
         public static int stage2_tolerance = 10;
         public static int stage2_timeout = 1000;
@@ -183,7 +183,7 @@ public class SampleAuto extends CommandAutoOpMode {
                         new ParallelRaceGroup(
                                 commandFactory.sleep(300),
                                 commandFactory.extendSlider()),
-                        commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, 0.13, .5, Sample3Config.beforeIntakeDrive_distanceTolerance))
+                        commandFactory.logDebug("sample 3 drive to sample").andThen(commandFactory.driveToTarget(Sample3Config.beforeIntakeDrive_targetX, Sample3Config.beforeIntakeDrive_targetY, Sample3Config.beforeIntakeDrive_heading, 0.13, .5, Sample3Config.beforeIntakeDrive_distanceTolerance, 1000))
                 ),
                 commandFactory.collapseSlider(),
                 commandFactory.pivotTo(Sample3Config.pivotIntakePosition),
@@ -199,7 +199,7 @@ public class SampleAuto extends CommandAutoOpMode {
                 ),
 
                 commandFactory.logDebug("sample 3 extend for delivery").andThen(commandFactory.extendSliderForOuttake()),
-                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance)),
+                commandFactory.logDebug("sample 3 drive to basket").andThen(commandFactory.driveToTarget(Sample3Config.ToDeliveryDrive_TargetX, Sample3Config.ToDeliveryDrive_TargetY, Sample3Config.ToDeliveryDrive_TargetHeading, 0.13, .8, Sample3Config.ToDeliveryDrive_DistanceTolerance, 1200)),
 
                 // Sample #3
                 skipIntakeSample3 ? commandFactory.doNothing() : commandFactory.outtake(),//.andThen(new InstantCommand(() -> hold3End = true)),
