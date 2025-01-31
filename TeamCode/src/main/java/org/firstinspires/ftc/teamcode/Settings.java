@@ -72,7 +72,7 @@ public class Settings {
             @Config
             public static class Linkage {
                 // TODO: TUNE WHEN NEW SERVO GOES IN
-                public static double TRANSFER_POSITION = 0.86;
+                public static double TRANSFER_POSITION = 0.87;
                 public static double PLACE_FORWARD_POSITION = 0.75;
                 public static double PLACE_BACKWARD_POSITION = 0.0;
 
@@ -121,6 +121,7 @@ public class Settings {
             public static int LOW_RUNG = 0; // TODO TUNE
             public static int LOW_BASKET = 1430; // TODO TUNE
 
+            public static int HIGH_RUNG_PREP_AUTO = 1500;
             public static int HIGH_RUNG = 1800; // TODO TUNE
             public static int HIGH_BASKET = 3190;
 
@@ -176,7 +177,7 @@ public class Settings {
 
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
-            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
+            public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -32.5, Math.toRadians(90));
             public static Pose2d BASKET_POSE = new Pose2d(-55, -55, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
@@ -187,8 +188,8 @@ public class Settings {
             public static Pose2d RIGHT_BEFORE_PARK_POSE = new Pose2d(-45, -9.5, Math.toRadians(90));
             public static Pose2d LEFT_PARK_POSE = new Pose2d(-23, 13, Math.toRadians(180));
             public static Pose2d RIGHT_PARK_POSE = new Pose2d(60, -60, Math.toRadians(180));
-            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(49.5, -5.3, Math.toRadians(90));
-            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(59.5, -5, Math.toRadians(90));
+            public static Pose2d FIRST_PRESET_SAMPLE_POSE = new Pose2d(45, -5, Math.toRadians(90));
+            public static Pose2d SECOND_PRESET_SAMPLE_POSE = new Pose2d(55, -5, Math.toRadians(90));
             public static Vector2d SAMPLE_MIDDLEMAN = new Vector2d(35.0, -34.3);
 
             // I am adding this to push samples into human player zone
