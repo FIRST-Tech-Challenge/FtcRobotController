@@ -29,10 +29,10 @@ public class Actions {
 
     public static void driveToBarFromInitialPositionForSpecimen() {
 
-    holdYaw.setPos(AutoDistanceNumbers.HangSpecimen.DRIVE_FORWARD_YAW.getValue());
+   // holdYaw.setPos(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_YAW.getValue());
 
-     while ((input.getTravelledDistance() < AutoDistanceNumbers.HangSpecimen.DRIVE_FORWARD_DISTANCE.getValue()) && opModeisActive)  { //inches
-        input.move(-AutoDistanceNumbers.HangSpecimen.DRIVE_FORWARD_POWER.getValue());
+     while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_DISTANCE.getValue()) && opModeisActive)  { //inches
+        input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
      }
      input.move(0);
      input.resetDistance();
@@ -53,13 +53,16 @@ public class Actions {
 
      a1.extendArm(AutoDistanceNumbers.HangSpecimen.UPARM_HANG_POSITION.getValue(), 0);
 
-     input.automaticallyMoveWrist(true);
+     a1.setPos(AutoDistanceNumbers.HangSpecimen.ARM_SLIGHT_DOWN.getValue());
+
+     a1.retractArm(AutoDistanceNumbers.HangSpecimen.UPARM_SLIGHT_BACK.getValue(), 0);
+
+
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    input.automaticallyMoveWrist(false);
 
     input.claw(true,false);
 
@@ -84,39 +87,39 @@ public class Actions {
             case "bar":
                 switch (sampleX) {
                     case 1:
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_POS.getValue());
-                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSample.DISTANCE_AWAY_BAR.getValue()) {
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_AWAY_BAR.getValue()) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_TO_SAMPLE.getValue());
-                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSample.DISTANCE_TO_SAMPLE.getValue()) {
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_TO_SAMPLE_1.getValue()) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
                         break;
                     case 2:
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_POS.getValue());
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
                         while (input.getTravelledDistance() < 20) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_TO_SAMPLE.getValue());
-                        while (input.getTravelledDistance() < 25) {
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_TO_SAMPLE_2.getValue()) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_POS.getValue());
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
                         while (input.getTravelledDistance() < 20) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
-                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSample.IMU_TURN_TO_SAMPLE.getValue());
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_TO_SAMPLE.getValue());
                         while (input.getTravelledDistance() < 25) {
                             input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
@@ -124,29 +127,17 @@ public class Actions {
                         input.resetDistance();
                         break;
                     case 3:
-                        holdYaw.setPos(90);
-                        while (input.getTravelledDistance() < 20) {
-                            input.move(-20);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_AWAY_BAR.getValue()) {
+                            input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
-                        holdYaw.setPos(0);
-                        while (input.getTravelledDistance() < 30) {
-                            input.move(-20);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromBar.DISTANCE_TO_SAMPLE_3.getValue()) {
+                            input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
-                        input.move(0);
-                        input.resetDistance();
-                        holdYaw.setPos(90);
-                        while (input.getTravelledDistance() < 25) {
-                            input.move(-20);
-                        }
-                        input.move(180);
-                        input.resetDistance();
-                        holdYaw.setPos(0);
-                        while (input.getTravelledDistance() < 30) {
-                            input.move(-20);
-                        }
-                        input.move(0);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromBar.IMU_TURN_POS.getValue());
                         input.resetDistance();
                         break;
                     default:
@@ -157,25 +148,25 @@ public class Actions {
             case "observation":
                 switch (sampleX) {
                     case 1:
-                        holdYaw.setPos(90);
-                        while (input.getTravelledDistance() < 20) {
-                            input.move(-20);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromObserve.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromObserve.DISTANCE_TO_SAMPLE_1.getValue()) {
+                            input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
                         break;
                     case 2:
-                        holdYaw.setPos(90);
-                        while (input.getTravelledDistance() < 25) {
-                            input.move(-20);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromObserve.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromObserve.DISTANCE_TO_SAMPLE_2.getValue()) {
+                            input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
                         break;
                     case 3:
-                        holdYaw.setPos(90);
-                        while (input.getTravelledDistance() < 30) {
-                            input.move(-20);
+                        holdYaw.setPos(AutoDistanceNumbers.DriveBehindSampleFromObserve.IMU_TURN_TO_SAMPLE.getValue());
+                        while (input.getTravelledDistance() < AutoDistanceNumbers.DriveBehindSampleFromObserve.DISTANCE_TO_SAMPLE_3.getValue()) {
+                            input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                         }
                         input.move(0);
                         input.resetDistance();
@@ -238,19 +229,19 @@ public class Actions {
          */
         switch (pushOrReverse) {
             case "push":
-                holdYaw.setPos(180);
+                holdYaw.setPos(AutoDistanceNumbers.PushAndReverse.IMU_TURN_TO_SAMPLE.getValue());
                 //Move backwards aka behind samples
-                while ((input.getTravelledDistance() < 84) && opModeisActive)  { //inches
-                    input.move(-20);
+                while ((input.getTravelledDistance() < AutoDistanceNumbers.PushAndReverse.DISTANCE_TO_OBSERVATION.getValue()) && opModeisActive)  { //inches
+                    input.move(AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                 }
                 input.move(0);
                 input.resetDistance();
                 break;
             case "reverse":
-                holdYaw.setPos(180);
+                holdYaw.setPos(AutoDistanceNumbers.PushAndReverse.IMU_FACE_BACK.getValue());
                 //Move backwards aka behind samples
-                while ((input.getTravelledDistance() > -84) && opModeisActive)  { //inches
-                    input.move(20);
+                while ((input.getTravelledDistance() > -AutoDistanceNumbers.PushAndReverse.DISTANCE_TO_OBSERVATION.getValue()) && opModeisActive)  { //inches
+                    input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                 }
                 input.move(0);
                 input.resetDistance();
@@ -277,11 +268,11 @@ public class Actions {
     public static void grabSpecimen(int specimen){
         // 1 extend arm
         // 2 grab with claw
-        a1.setPos(2000);
+        a1.setPos(AutoDistanceNumbers.GrabSpecimen.ARM_START_POS.getValue());
         input.claw(true,false);
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(AutoDistanceNumbers.GrabSpecimen.WAIT_TIME_MILLISECOND.getValue());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -293,9 +284,9 @@ public class Actions {
         switch (pitstop) {
             case 1:
                 //drive to initial pos
-                holdYaw.setPos(270);
-                while ((input.getTravelledDistance() < 30) && opModeisActive) { //inches
-                    input.move(-20);
+                holdYaw.setPos(AutoDistanceNumbers.DriveToInitialPos.IMU_FACE_INIT_POS.getValue());
+                while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveToInitialPos.DISTANCE_FROM_PITSTOP_1.getValue()) && opModeisActive) { //inches
+                    input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                 }
                 input.move(0);
                 input.resetDistance();
@@ -303,9 +294,9 @@ public class Actions {
                 break;
             case 2:
                 //drive to initial pos
-                holdYaw.setPos(270);
-                while ((input.getTravelledDistance() < 40) && opModeisActive) { //inches
-                    input.move(-20);
+                holdYaw.setPos(AutoDistanceNumbers.DriveToInitialPos.IMU_FACE_INIT_POS.getValue());
+                while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveToInitialPos.DISTANCE_FROM_PITSTOP_2.getValue()) && opModeisActive) { //inches
+                    input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                 }
                 input.move(0);
                 input.resetDistance();
@@ -313,9 +304,9 @@ public class Actions {
                 break;
             case 3:
                 //drive to initial pos
-                holdYaw.setPos(270);
-                while ((input.getTravelledDistance() < 50) && opModeisActive) { //inches
-                    input.move(-20);
+                holdYaw.setPos(AutoDistanceNumbers.DriveToInitialPos.IMU_FACE_INIT_POS.getValue());
+                while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveToInitialPos.DISTANCE_FROM_PITSTOP_3.getValue()) && opModeisActive) { //inches
+                    input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
                 }
                 input.move(0);
                 input.resetDistance();
@@ -328,9 +319,9 @@ public class Actions {
 
     public static void driveToHumanPlayerFromBarForFinalSpecimen() {
         //drive back
-        holdYaw.setPos(45);
-        while ((input.getTravelledDistance() < 30) && opModeisActive)  { //inches
-            input.move(-20);
+        holdYaw.setPos(AutoDistanceNumbers.DriveToObserve.IMU_FACE_INIT_POS.getValue());
+        while ((input.getTravelledDistance() < AutoDistanceNumbers.DriveToObserve.DISTANCE_TO_OBSERVE.getValue()) && opModeisActive)  { //inches
+            input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
         }
         input.move(0);
         input.resetDistance();
@@ -338,9 +329,9 @@ public class Actions {
 
     public static void park () {
         //drive to observation zone from the bars
-        holdYaw.setPos(225);
-        while ((input.getTravelledDistance() < 30) && opModeisActive)  { //inches
-            input.move(-20);
+        holdYaw.setPos(AutoDistanceNumbers.Park.IMU_FACE_PARK.getValue());
+        while ((input.getTravelledDistance() < AutoDistanceNumbers.Park.DISTANCE_TO_OBSERVE.getValue()) && opModeisActive)  { //inches
+            input.move(-AutoDistanceNumbers.DriveForward.DRIVE_FORWARD_POWER.getValue());
         }
     }
 

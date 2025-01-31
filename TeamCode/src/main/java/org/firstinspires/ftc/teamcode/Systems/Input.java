@@ -327,6 +327,7 @@ public class Input {
                 position = 60;
             }
         } else {
+            if (hangButton)
             int x = (int) ((double) getArmPos() * 9/143);
             position = x - (4335/143); // a formula to make the servo always face towards the wall no matter arm position
         }

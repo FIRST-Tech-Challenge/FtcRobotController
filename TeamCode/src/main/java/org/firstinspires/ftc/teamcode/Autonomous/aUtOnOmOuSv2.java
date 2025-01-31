@@ -35,6 +35,7 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
         imu.SetYaw();
 
         input.claw(false,true);
+        input.automaticallyMoveWrist(false);
 
         BotTelemetry.addData("After Start", 0);
         BotTelemetry.update();
@@ -46,9 +47,8 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
         Actions.setupActions(input, a1, imu, yawSync);
 
         a1.start();
-        yawSync.start();
+        //yawSync.start();
 
-        int pos =  1265;
 
         while (opModeIsActive()) {
             
@@ -79,49 +79,49 @@ public class aUtOnOmOuSv2 extends LinearOpMode {
             Actions.driveToBarFromInitialPositionForSpecimen();
             Actions.hangAndReleaseSpecimen();
 
+////
+//                /** Step 2 */
+//            Actions.driveBehindSampleFromLocations(1,"bar");
+//            Actions.pushOrReverseSampleToHumanPlayer("push");
+////
+////            // Step 3
+//            Actions.pushOrReverseSampleToHumanPlayer("reverse");
+//            Actions.driveRightUntilBehindSample();
+////
+////            // Step 4
+//            Actions.pushOrReverseSampleToHumanPlayer("push");
+////
+////            // Step 5
+//            Actions.grabSpecimen(1);
+//            Actions.driveToInitialPositionFromHumanPlayerPitStopX(2);
+//            Actions.driveToBarFromInitialPositionForSpecimen();
+//            Actions.hangAndReleaseSpecimen();
+////
+////            //Step 6
+//            Actions.driveBehindSampleFromLocations(3, "bar");
+//            Actions.pushOrReverseSampleToHumanPlayer("push");
+////
+////            //Step 7
+//            Actions.grabSpecimen(2);
+//            Actions.driveToInitialPositionFromHumanPlayerPitStopX(3);
+//            Actions.driveToBarFromInitialPositionForSpecimen();
+//            Actions.hangAndReleaseSpecimen();
+////
+//            //Step 8
+//            Actions.driveToHumanPlayerFromBarForFinalSpecimen();
+//            Actions.grabSpecimen(3);
+//            Actions.driveToInitialPositionFromHumanPlayerPitStopX(1);
+//            Actions.driveToBarFromInitialPositionForSpecimen();
+//            Actions.hangAndReleaseSpecimen();
 //
-                /** Step 2 */
-            Actions.driveBehindSampleFromLocations(1,"bar");
-            Actions.pushOrReverseSampleToHumanPlayer("push");
-//
-//            // Step 3
-            Actions.pushOrReverseSampleToHumanPlayer("reverse");
-            Actions.driveRightUntilBehindSample();
-//
-//            // Step 4
-            Actions.pushOrReverseSampleToHumanPlayer("push");
-//
-//            // Step 5
-            Actions.grabSpecimen(1);
-            Actions.driveToInitialPositionFromHumanPlayerPitStopX(2);
-            Actions.driveToBarFromInitialPositionForSpecimen();
-            Actions.hangAndReleaseSpecimen();
-//
-//            //Step 6
-            Actions.driveBehindSampleFromLocations(3, "bar");
-            Actions.pushOrReverseSampleToHumanPlayer("push");
-//
-//            //Step 7
-            Actions.grabSpecimen(2);
-            Actions.driveToInitialPositionFromHumanPlayerPitStopX(3);
-            Actions.driveToBarFromInitialPositionForSpecimen();
-            Actions.hangAndReleaseSpecimen();
-//
-            //Step 8
-            Actions.driveToHumanPlayerFromBarForFinalSpecimen();
-            Actions.grabSpecimen(3);
-            Actions.driveToInitialPositionFromHumanPlayerPitStopX(1);
-            Actions.driveToBarFromInitialPositionForSpecimen();
-            Actions.hangAndReleaseSpecimen();
-
-            Actions.driveToHumanPlayerFromBarForFinalSpecimen();
-            Actions.grabSpecimen(4);
-            Actions.driveToInitialPositionFromHumanPlayerPitStopX(1);
-            Actions.driveToBarFromInitialPositionForSpecimen();
-            Actions.hangAndReleaseSpecimen();
-//
+//            Actions.driveToHumanPlayerFromBarForFinalSpecimen();
+//            Actions.grabSpecimen(4);
+//            Actions.driveToInitialPositionFromHumanPlayerPitStopX(1);
+//            Actions.driveToBarFromInitialPositionForSpecimen();
+//            Actions.hangAndReleaseSpecimen();
+////
 //            //Step 9
-            Actions.park();
+//            Actions.park();
 
 
 //            Actions.driveBehindSampleFromLocations(1, "human player");
