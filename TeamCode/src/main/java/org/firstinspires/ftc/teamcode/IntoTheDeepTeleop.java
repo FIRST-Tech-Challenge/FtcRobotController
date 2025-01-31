@@ -262,7 +262,7 @@ public class IntoTheDeepTeleop extends OpMode {
 
     public void horizontalSlides() {
         if (!isRetracting) {
-            if (gamepad2.dpad_up && (intakeSlidesMotor.getCurrentPosition() >= -950)) {
+            if (gamepad2.dpad_up && (intakeSlidesMotor.getCurrentPosition() >= -930)) { // max extension -930 ticks
                 intakeSlidesMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 intakeSlidesMotor.setPower(-0.8);
             } else if (gamepad2.dpad_down && (intakeSlidesMotor.getCurrentPosition() <= 0)) {
