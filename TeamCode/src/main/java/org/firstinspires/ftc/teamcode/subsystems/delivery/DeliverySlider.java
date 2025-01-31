@@ -62,7 +62,7 @@ public class DeliverySlider extends SonicSubsystemBase {
 
     private Supplier<Boolean> pivotLowEnoughSupplier;
 
-    public static final double MAX_POWER = .6;
+    public static final double MAX_POWER = 1;
 
     private DeliveryPivot pivot;
 
