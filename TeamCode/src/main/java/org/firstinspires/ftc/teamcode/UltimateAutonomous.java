@@ -163,7 +163,7 @@ public class UltimateAutonomous extends LinearOpMode {
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
         TrajectoryActionBuilder sampleTrajectory = pushSamples(sp, placingTrajectory);
         baseRobot.outtake.claw.close();
-        baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() - 300);
+        baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_RUNG_PREP_AUTO);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
 
         Actions.runBlocking(
@@ -427,7 +427,7 @@ public class UltimateAutonomous extends LinearOpMode {
         return previousTrajectory.endTrajectory().fresh()
                 // gets in front of the first on field sample and pushes it back
                 .setTangent(Math.toRadians(90))
-                .strafeTo(new Vector2d(15,-38))
+                .strafeTo(Settings.Autonomous.FieldPositions.SAMPLE_MIDDLEMAN)
                 .splineToLinearHeading(new Pose2d(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position,
                         Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.heading), Math.toRadians(270))
                 .lineToY(Settings.Autonomous.FieldPositions.FIRST_PRESET_SAMPLE_POSE.position.y - 45)
