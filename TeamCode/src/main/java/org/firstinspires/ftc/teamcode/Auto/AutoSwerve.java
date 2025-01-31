@@ -126,8 +126,7 @@ public class AutoSwerve {
   }
 
   public double set_Servo_Angle(AnalogInput analogInput, Servo servo, double desired_normalized_angle) {
-    double pot_voltage = analogInput.getVoltage();
-    double normalized_voltage = pot_voltage / max_voltage;
+    double normalized_voltage = analogInput.getVoltage() / max_voltage;
 
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
     double servo_speed = 0.09;
