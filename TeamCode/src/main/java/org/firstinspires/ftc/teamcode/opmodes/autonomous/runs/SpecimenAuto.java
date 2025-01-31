@@ -8,10 +8,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.base.CommandAutoOpMode;
-import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.AlignDriveTrainToSpecimenDelivery;
 
 @Autonomous
-public class AlignTest extends CommandAutoOpMode {
+public class SpecimenAuto extends CommandAutoOpMode {
 
     @Override
     protected Command createCommand() {
