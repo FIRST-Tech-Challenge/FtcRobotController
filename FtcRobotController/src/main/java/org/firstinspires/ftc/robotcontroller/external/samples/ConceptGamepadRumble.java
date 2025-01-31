@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This OpMode illustrates using the rumble feature of many gamepads.
  *
  * Note: Some gamepads "rumble" better than others.
- *   The Xbox & PS4 have a left (rumble1) and right (rumble2) rumble motor.
+ *   The Xbox & PS4 have a  (rumble1) and right (rumble2) rumble motor.
  *   These two gamepads have two distinct rumble modes: Large on the left, and small on the right
  *   The Etpark gamepad may only respond to rumble1, and may only run at full power.
  *   The Logitech F310 gamepad does not have *any* rumble ability.

@@ -61,9 +61,9 @@ public class AnimosityAndMortification extends Movable {
 
             // scissor lift
             if(gamepad1.right_stick_y > 0.5){
-                powerScissorLift(0, "up");
+                powerScissorLift(0, "ascend");
             }else if(gamepad1.right_stick_y < -0.5) {
-                powerScissorLift(0, "down");
+                powerScissorLift(0, "descend");
             }else {
                 disableScissorPower();
             }

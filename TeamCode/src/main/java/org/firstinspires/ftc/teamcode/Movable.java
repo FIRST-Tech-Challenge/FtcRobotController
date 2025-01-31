@@ -20,7 +20,6 @@ abstract class Movable extends LinearOpMode {
     static protected Servo outtakeR;
     static protected Servo outtakeL;
     static protected Servo intake;
-
     static protected boolean inverse = false;
     static protected boolean stop = false;
 
@@ -39,7 +38,7 @@ abstract class Movable extends LinearOpMode {
 //        rotatingServoR = hardwareMap.get(Servo.class, "rotatingServoR"); // change if needed
 //        rotatingServoL = hardwareMap.get(Servo.class, "rotatingServoL");
 //        outtakeR = hardwareMap.get(Servo.class, "outtakeR"); // change if needed
-//        outtakeL = hardwareMap.get(Servo.class, "outtakeL");
+//        outtakeL  `= hardwareMap.get(Servo.class, "outtakeL");
 //        intake = hardwareMap.get(Servo.class, "intake"); // change if needed
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -116,24 +115,26 @@ abstract class Movable extends LinearOpMode {
         FRW.setPower(0);
         BRW.setPower(0);
     }
-    // 0 right
-    // 5 left
-    public void powerScissorLift(int milliseconds, String direction) {
+
+    public void powerScissorLift(int miliseconds, String direction) {
+        final double LPOWER = .98;
+        final double RPOWER = 1;
+
         switch (direction) {
-            case "up":
-                FRScissorLift.setPower(1);
-                FLScissorLift.setPower(1);
-                BRScissorLift.setPower(-1);
-                BLScissorLift.setPower(-1);
-                sleep(milliseconds);
+            case "ascend":
+                FRScissorLift.setPower(RPOWER);
+                FLScissorLift.setPower(LPOWER);
+                BRScissorLift.setPower(-RPOWER);
+                BLScissorLift.setPower(-LPOWER);
+                sleep(miliseconds);
                 disableScissorPower();
                 break;
-            case "down":
-                FRScissorLift.setPower(-1);
-                FLScissorLift.setPower(-1);
-                BRScissorLift.setPower(1);
-                BLScissorLift.setPower(1);
-                sleep(milliseconds);
+            case "descend":
+                FRScissorLift.setPower(-RPOWER);
+                FLScissorLift.setPower(-LPOWER);
+                BRScissorLift.setPower(RPOWER);
+                BLScissorLift.setPower(LPOWER);
+                sleep(miliseconds);
                 disableScissorPower();
                 break;
         }

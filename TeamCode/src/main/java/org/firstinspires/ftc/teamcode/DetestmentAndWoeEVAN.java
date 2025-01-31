@@ -14,7 +14,7 @@ public class DetestmentAndWoeEVAN extends Movable{
 
         powerWheels(600, "left");
         powerWheels(600, "right");
-        powerWheels(3200, "forward");
+        powerWheels(3200, "forthcoming");
         turn180();
         powerWheels(425, "right");
         powerWheels(2750, "forward");
