@@ -1,10 +1,13 @@
 package com.kalipsorobotics.intoTheDeep;
 
+import android.util.Log;
+
 import com.kalipsorobotics.actions.SetAutoDelayAction;
 import com.kalipsorobotics.actions.WallToBarHangAction;
 import com.kalipsorobotics.actions.autoActions.FloorToBarHangRoundTrip;
 import com.kalipsorobotics.actions.autoActions.InitAuto;
 import com.kalipsorobotics.actions.KActionSet;
+import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
 import com.kalipsorobotics.actions.autoActions.PurePursuitAction;
 import com.kalipsorobotics.actions.WaitAction;
 import com.kalipsorobotics.actions.autoActions.WallToBarHangRoundTrip;
@@ -13,6 +16,7 @@ import com.kalipsorobotics.actions.outtake.OuttakeTransferReady;
 import com.kalipsorobotics.actions.outtake.SpecimenHang;
 import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.actions.outtake.SpecimenWallReady;
+import com.kalipsorobotics.actions.outtake.WallPickupDistanceSensorAction;
 import com.kalipsorobotics.localization.WheelOdometry;
 import com.kalipsorobotics.modules.DriveTrain;
 import com.kalipsorobotics.modules.IMUModule;
@@ -20,10 +24,13 @@ import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.utilities.KServo;
 import com.kalipsorobotics.utilities.OpModeUtilities;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.kalipsorobotics.modules.RevDistance;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Autonomous
 public class AutoSpecimen extends LinearOpMode {
@@ -79,7 +86,9 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(wallToBarHangAction);
         //===============end of first specimen===============
 
-
+//        WaitAction waitForHangFinish = new WaitAction(100);
+//        waitForHangFinish.setDependentActions(wallToBarHangAction);
+//        redAutoSpecimen.addAction(waitForHangFinish);
 
         //================beginning of push================
         OuttakeTransferReady outtakeTransferReady = new OuttakeTransferReady(outtake);
@@ -129,18 +138,21 @@ public class AutoSpecimen extends LinearOpMode {
         redAutoSpecimen.addAction(moveToDepot);
         //==============end of pushing================
 
+        WallPickupDistanceSensorAction wallPickupDistanceSensorAction = new WallPickupDistanceSensorAction(outtake, revDistance, moveToDepot);
+        wallPickupDistanceSensorAction.setDependentActions(specimenWallReady);
+        redAutoSpecimen.addAction(wallPickupDistanceSensorAction);
 
         //=============begin of second specimen=================
         WallToBarHangRoundTrip wallToBarHangRoundTrip2 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, revDistance, 290); //400 //375
+                outtake, revDistance, revDistance2, 290); //400 //375
         wallToBarHangRoundTrip2.setName("wallToBarHangRoundTrip2");
-        wallToBarHangRoundTrip2.setDependentActions(moveFloorSamples, specimenWallReady, moveToDepot);
+        wallToBarHangRoundTrip2.setDependentActions(wallPickupDistanceSensorAction, moveToDepot);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip2);
         //===============end of second specimen==============
 
         //============begin of third================
         WallToBarHangRoundTrip wallToBarHangRoundTrip3 = new WallToBarHangRoundTrip(driveTrain, wheelOdometry,
-                outtake, revDistance,390); //500 //450
+                outtake, revDistance,revDistance2,390); //500 //450
         wallToBarHangRoundTrip3.setName("wallToBarHangRoundTrip3");
         wallToBarHangRoundTrip3.setDependentActions(wallToBarHangRoundTrip2);
         redAutoSpecimen.addAction(wallToBarHangRoundTrip3);
@@ -165,7 +177,11 @@ public class AutoSpecimen extends LinearOpMode {
             maintainLS.setTargetTicks(MoveLSAction.getGlobalLinearSlideMaintainTicks());
             maintainLS.updateCheckDone();
 
+
+//            Log.d("WallDistance:", String.valueOf(revDistance.getDistance(DistanceUnit.MM)));
+//            Log.d("BarDistance:", String.valueOf(revDistance2.getDistance(DistanceUnit.MM)));
             redAutoSpecimen.updateCheckDone();
+
 
         }
 

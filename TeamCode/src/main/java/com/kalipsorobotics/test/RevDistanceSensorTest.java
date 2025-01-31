@@ -1,6 +1,11 @@
 package com.kalipsorobotics.test;
 
+import com.kalipsorobotics.actions.KActionSet;
 import com.kalipsorobotics.actions.autoActions.KServoAutoAction;
+import com.kalipsorobotics.actions.outtake.CloseWhenDetectDistanceAction;
+import com.kalipsorobotics.actions.outtake.MoveLSAction;
+import com.kalipsorobotics.actions.outtake.SpecimenHang;
+import com.kalipsorobotics.actions.outtake.SpecimenHangReady;
 import com.kalipsorobotics.modules.IntakeClaw;
 import com.kalipsorobotics.modules.Outtake;
 import com.kalipsorobotics.modules.RevDistance;
@@ -9,7 +14,10 @@ import com.kalipsorobotics.utilities.OpModeUtilities;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 @TeleOp
 public class RevDistanceSensorTest extends LinearOpMode {
@@ -20,20 +28,35 @@ public class RevDistanceSensorTest extends LinearOpMode {
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         Outtake outtake = Outtake.getInstance(opModeUtilities);
 
+        KActionSet darrenchan = new KActionSet();
+
+
+        SpecimenHangReady specimenHangReady = new SpecimenHangReady(outtake);
+        specimenHangReady.setName("specimenHangReady");
+        darrenchan.addAction(specimenHangReady);
+
+        KServoAutoAction closeClaw = new KServoAutoAction(outtake.getOuttakeClaw(), Outtake.OUTTAKE_CLAW_CLOSE);
+        closeClaw.setName("closeClaw");
+        darrenchan.addAction(closeClaw);
+
+        CloseWhenDetectDistanceAction checkBarDistance = new CloseWhenDetectDistanceAction(revDistance2,145);
+        checkBarDistance.setName("checkBarDistance");
+        darrenchan.addAction(checkBarDistance);
+
+
+        SpecimenHang specimenHang = new SpecimenHang(outtake);
+        specimenHang.setName("specimenHang");
+        darrenchan.addAction(specimenHang);
+        specimenHang.setDependentActions(checkBarDistance);
+
+
+
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addLine(revDistance.getDistance(DistanceUnit.MM) + "");
-            telemetry.addLine(revDistance2.getDistance(DistanceUnit.MM) + "");
-            if ((revDistance.getDistance(DistanceUnit.MM) < 45)) {
-                outtake.getOuttakeClaw().setPosition(Outtake.OUTTAKE_CLAW_CLOSE);
-                telemetry.addLine("sample grabbed");
-            }
-
-            else if ((revDistance2.getDistance(DistanceUnit.MM) < 100)) {
-                outtake.getOuttakeClaw().setPosition(Outtake.OUTTAKE_CLAW_CLOSE);
-                telemetry.addLine("specimen ready");
-            }
-
+            telemetry.addLine(revDistance.getDistance(DistanceUnit.MM) + "Distance 1 (Claw)");
+            telemetry.addLine(revDistance2.getDistance(DistanceUnit.MM) + "Distance 2 (Bar)");
+//
+            darrenchan.updateCheckDone();
             telemetry.update();
         }
     }
