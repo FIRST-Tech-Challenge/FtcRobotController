@@ -75,18 +75,17 @@ public class TwoControllers extends LinearOpMode {
     private DcMotor leftBackDrive = null; //motor 2
     private DcMotor rightBackDrive = null; //motor 1
     private DcMotor rightFrontDrive = null; //motor 0
-    private DcMotor lift = null;
-    private DcMotor lift2 = null;
-    private DcMotor hangBoi = null;
-    private Servo wrist = null;
-    private Servo leftFinger = null;
-    private Servo rightFinger = null;
+    private DcMotor shoulderLeft = null;
+    private DcMotor shoulderRight = null;
+    private DcMotor forearm = null;
+    private Servo servo = null;
+
 
     //Wrist stuff
     final double WRIST_INCREMENT = 0.001;
     final double WRIST_MAX = 1.0;
     final double WRIST_MIN = 0.25;
-    double wristPosition = 0.0;
+    double servoPosition = 0.0;
 
     //Finger stuff
     //bro i didn't know that's what he was saying to me as i was
@@ -116,12 +115,10 @@ public class TwoControllers extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive"); //motor 2
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive"); //motor 1
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive"); //motor 0
-        lift = hardwareMap.get(DcMotor.class, "lift"); //motor 0 expansion hub
-        lift2 = hardwareMap.get(DcMotor.class, "lift2"); //motor 1 expansion hub
-        hangBoi = hardwareMap.get(DcMotor.class, "hang"); //motor 2 expansion hub
-        wrist = hardwareMap.get(Servo.class, "wrist"); //servo 1 on control hub
-        leftFinger = hardwareMap.get(Servo.class, "left_finger"); //servo 0 expansion hub
-        rightFinger = hardwareMap.get(Servo.class, "right_finger"); //servo 0 control hub
+        shoulderLeft = hardwareMap.get(DcMotor.class, "shoulder_left"); //motor 0 expansion hub
+        shoulderRight = hardwareMap.get(DcMotor.class, "shoulder_right"); //motor 1 expansion hub
+        forearm = hardwareMap.get(DcMotor.class, "hang"); //motor 2 expansion hub
+        servo = hardwareMap.get(Servo.class, "servo"); //servo 1 on control hub
 
 /** ########################################################################################
  * !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -140,12 +137,12 @@ public class TwoControllers extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         //lift init stuff
-        lift.setDirection(DcMotor.Direction.FORWARD);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift2.setDirection(DcMotor.Direction.FORWARD);
-        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        hangBoi.setDirection(DcMotor.Direction.FORWARD);
-        hangBoi.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulderLeft.setDirection(DcMotor.Direction.FORWARD);
+        shoulderLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulderRight.setDirection(DcMotor.Direction.FORWARD);
+        shoulderRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        forearm.setDirection(DcMotor.Direction.FORWARD);
+        forearm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -186,58 +183,54 @@ public class TwoControllers extends LinearOpMode {
 
             //up
             if(gamepad2.right_trigger > 0.1){
-                lift.setPower(gamepad2.right_trigger*0.6);
-                lift2.setPower(-gamepad2.right_trigger*0.6);
+                shoulderLeft.setPower(gamepad2.right_trigger*0.6);
+                shoulderRight.setPower(-gamepad2.right_trigger*0.6);
             }if (gamepad2.right_trigger < 0.1){
-                lift.setPower(0);
-                lift2.setPower(0);
+                shoulderLeft.setPower(0);
+                shoulderRight.setPower(0);
             }
 
             //down
             if(gamepad2.left_trigger > 0.1){
-                lift.setPower(-gamepad2.left_trigger*0.6);
-                lift2.setPower(gamepad2.left_trigger*0.6);
+                shoulderLeft.setPower(-gamepad2.left_trigger*0.6);
+                shoulderRight.setPower(gamepad2.left_trigger*0.6);
             }if (gamepad2.left_trigger < 0.1){
-                lift.setPower(0);
-                lift2.setPower(0);
+                shoulderLeft.setPower(0);
+                shoulderRight.setPower(0);
             }
 
             //lift
             if(gamepad2.left_stick_y > 0.1){
-                hangBoi.setPower(gamepad2.left_stick_y*1.0);
+                forearm.setPower(gamepad2.left_stick_y*1.0);
             }if (gamepad2.left_stick_y < 0.1){
-                hangBoi.setPower(0);
+                forearm.setPower(0);
             }
 
             //Code for the wrist
             if (gamepad2.right_bumper) {
-                if (Double.compare(WRIST_MAX, wristPosition) >= 0){
-                    wristPosition += WRIST_INCREMENT;
-                    wrist.setPosition(wristPosition);
+                if (Double.compare(WRIST_MAX, servoPosition) >= 0){
+                    servoPosition += WRIST_INCREMENT;
+                    servo.setPosition(servoPosition);
                 }
             }
             if (gamepad2.left_bumper) {
-                if (Double.compare(WRIST_MIN, wristPosition) <= 0){
-                    wristPosition -= WRIST_INCREMENT;
-                    wrist.setPosition(wristPosition);
+                if (Double.compare(WRIST_MIN, servoPosition) <= 0){
+                    servoPosition -= WRIST_INCREMENT;
+                    servo.setPosition(servoPosition);
                 }
             }
 
 
             //Code for the claw
             if(gamepad2.b) {
-                leftFinger.setPosition(1);
             }
             if(gamepad2.a){
-                leftFinger.setPosition(-0.7);
             }
 
             //Code for the claw
             if(gamepad2.x) {
-                rightFinger.setPosition(1);
             }
             if(gamepad2.y){
-                rightFinger.setPosition(-0.7);
             }
 
             // //Code for the fingers
@@ -286,7 +279,7 @@ public class TwoControllers extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Wrist position", "%4.2f", wristPosition);
+            telemetry.addData("Wrist position", "%4.2f", servoPosition);
             // telemetry.addData("Left finger position", "%4.2f", leftFingerPosition);
             // telemetry.addData("Right finger position", "%4.2f", rightFingerPosition);
             telemetry.update();
