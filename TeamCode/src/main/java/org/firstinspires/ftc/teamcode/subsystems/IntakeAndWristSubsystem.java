@@ -17,10 +17,9 @@ public class IntakeAndWristSubsystem {
     public final double INTAKE_DEPOSIT = 0.5;
     public final double WRIST_FOLDED_IN = 0.2;
     public final double WRIST_FOLDED_OUT = 0.5;
-    public final double WRIST_NEUTRAL = 0.4;
 
     private double intakePower = INTAKE_OFF;
-    private double wristPosition = WRIST_NEUTRAL;
+    private double wristPosition = 0.4;
     public IntakeAndWristSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         intake = hardwareMap.crservo.get("IN");
@@ -52,16 +51,6 @@ public class IntakeAndWristSubsystem {
             intakePower = INTAKE_DEPOSIT;
         } else {
             intakePower = INTAKE_OFF;
-        }
-
-        if (gamepad.a) {
-            wristPosition = WRIST_FOLDED_IN;
-        }
-        else if (gamepad.b) {
-            wristPosition = WRIST_FOLDED_OUT;
-        }
-        else {
-            wristPosition = WRIST_NEUTRAL;
         }
 
     }

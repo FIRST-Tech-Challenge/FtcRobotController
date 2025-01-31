@@ -30,14 +30,14 @@ public class SyborgsBetterAuto extends LinearOpMode {
         intakeAndWrist.handleMovementAutonomous(intakeAndWrist.WRIST_NEUTRAL, intakeAndWrist.INTAKE_OFF);
         lift.handleMovementAuto(lift.SLIDE_COLLAPSED);
         arm.setPositionAuto(arm.ARM_COLLECT);
-        drive.handleMovemenetAuto(61, 0);
-        drive.handleMovemenetAuto(0, 61);
+        drive.handleMovementAuto(61, 0);
+        drive.handleMovementAuto(0, 61);
 
 
     }
-    public void initSubsystxems() {
-        drive = new DriveSubsystem(hardwareMap, telemetry);
+    public void initSubsystems() {
         imu = IMUFactory.initIMU(hardwareMap);
+        drive = new DriveSubsystem(hardwareMap, telemetry, imu);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         lift = new SlideSubsystem(hardwareMap, telemetry);
         intakeAndWrist = new IntakeAndWristSubsystem(hardwareMap, telemetry);

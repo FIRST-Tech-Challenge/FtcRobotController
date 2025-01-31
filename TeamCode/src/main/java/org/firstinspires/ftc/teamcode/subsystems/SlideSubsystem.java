@@ -43,7 +43,7 @@ public class SlideSubsystem {
             slidePosition -= 850 * cycleTime * gamepad2.left_trigger * 2;
         }
 
-        if (gamepad1.x) {
+        if (gamepad2.back) {
             holdingReset = true;
         }
         if (holdingReset) {
@@ -51,7 +51,7 @@ public class SlideSubsystem {
         } else {
             slidePosition = Common.clamp(slidePosition, SLIDE_COLLAPSED, SLIDE_SCORING_IN_HIGH_BASKET);
         }
-        if (gamepad1.y) {
+        if (gamepad2.start) {
             holdingReset = false;
             slidePosition = 0;
             slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,8 +73,9 @@ public class SlideSubsystem {
         slidePosition = pos;
         setPosition();
     }
+
     private void setPosition() {
-        slideMotor.setTargetPosition((int) Common.slideservoMMToTicks(slidePosition));
+        slideMotor.setTargetPosition((int) Common.slideServoMMToTicks(slidePosition));
         if (slideMotorEx != null) {
             slideMotorEx.setVelocity(2100);
             Common.warnIfOvercurrent(slideMotorEx, telemetry, "SlideSubsystem");

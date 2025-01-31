@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUFactory;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAndWristSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SlideSubsystem;
+import org.firstinspires.ftc.teamcode.utils.MecanumMovement;
 
 @TeleOp()
 @SuppressWarnings("unused")
@@ -32,13 +33,13 @@ public class StrafeTest extends LinearOpMode {
             if (gamepad1.dpad_down) y -= m;
             if (gamepad1.dpad_right) x += m;
             if (gamepad1.dpad_left) x -= m;
-            drive.runWithControls(x, y, gamepad1.right_stick_x, imu);
+            drive.runWithCorrections(new MecanumMovement(y, x, 0), imu);
 
             telemetry.update();
         }
     }
     public void initSubsystems() {
-        drive = new DriveSubsystem(hardwareMap, telemetry);
+        drive = new DriveSubsystem(hardwareMap, telemetry, imu);
         imu = IMUFactory.initIMU(hardwareMap);
     }
 }
