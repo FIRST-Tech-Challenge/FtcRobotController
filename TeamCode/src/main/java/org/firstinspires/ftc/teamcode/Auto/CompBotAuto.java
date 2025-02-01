@@ -119,12 +119,19 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void steer_wheels_to_central_pivot_position() {
-    //   0 deg (N)  : 0.5
-    //  45 deg (NE) : 0.375
-    //  90 deg (E)  : 0.25
-    // 180 deg (S)  : 1 or 0, stay away from this angle
-    // 270 deg (W)  : 0.75
-    // 315 deg (NW) : 0.625
+    // Instructions for the set_wheel arguments include
+    // the wheel angle, respective cartesian coordinate,
+    // and finally the value that represents the angle.
+    // Please note, stay away from 180 degrees as that
+    // rolls rolls between 1 and 0 and will potentially
+    // cause an infinite loop in set_wheels (until it's fixed).
+    //
+    //     0 deg (N)  : 0.5
+    //    45 deg (NE) : 0.375
+    //    90 deg (E)  : 0.25
+    //   180 deg (S)  : 1 or 0, stay away from this angle
+    //   270 deg (W)  : 0.75
+    //   315 deg (NW) : 0.625
 
     while (driveBase.set_wheels(
       0.625,  // Front Right
