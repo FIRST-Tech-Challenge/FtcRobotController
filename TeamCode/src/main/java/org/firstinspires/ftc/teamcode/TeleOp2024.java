@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-//https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -22,7 +22,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
     isClawOpen = false;
 }
     }
-    //https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
     @Override
     public void loop() {
         Gamepad driver = gamepad1;
