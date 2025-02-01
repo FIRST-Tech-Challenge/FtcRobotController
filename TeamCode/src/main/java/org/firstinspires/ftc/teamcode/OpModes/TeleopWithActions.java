@@ -35,6 +35,7 @@ public class TeleopWithActions extends OpMode {
     Lift lift;
     Battery battery;
     boolean firstRun = true;
+    public static double slowMultiplier = 0.5;
     @Override
     public void init() {
         dashboard = FtcDashboard.getInstance();
@@ -88,10 +89,17 @@ public class TeleopWithActions extends OpMode {
                 runningActions.put("manualLift", lift.manualControl(0));
             }
         }
+        if (gamepad1.cross){
         runningActions.put(
                 "manualDrive",
-                drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
-        );
+                drivetrain.manualControl(-gamepad1.left_stick_x*slowMultiplier, gamepad1.left_stick_y*slowMultiplier, gamepad1.right_stick_x*slowMultiplier)
+        );}
+        else {
+            runningActions.put(
+                    "manualDrive",
+                    drivetrain.manualControl(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)
+            );
+        }
         // update running actions
         HashMap<String, Action> newActions = new HashMap<>();
         for (Map.Entry<String,Action> entry : runningActions.entrySet()) {
