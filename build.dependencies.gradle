@@ -1,6 +1,11 @@
 repositories {
     mavenCentral()
-    maven { url = 'https://maven.brott.dev/' }
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+    maven {
+        url = 'https://repo.dairy.foundation/releases'
+    }
     google() // Needed for androidx
 }
 
