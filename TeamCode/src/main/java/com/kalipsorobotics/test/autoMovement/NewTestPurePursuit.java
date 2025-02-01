@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
+@TeleOp(name="pptest")
 public class NewTestPurePursuit extends LinearOpMode {
 
     @Override
@@ -22,9 +22,9 @@ public class NewTestPurePursuit extends LinearOpMode {
         PurePursuitAction purePursuitAction = new PurePursuitAction(driveTrain, wheelOdometry);
         purePursuitAction.addPoint(0, 0, 0);
         purePursuitAction.addPoint(50, 0, 0);
-        //purePursuitAction.addPoint(600, 0, 0);
-        //purePursuitAction.addPoint(0, 600, 0);
-//        purePursuitAction.addPoint(600, 600, 90);
+        purePursuitAction.addPoint(800, 0, 0);
+        purePursuitAction.addPoint(400, 300, 0);
+        purePursuitAction.addPoint(800, 300, 90);
 
 
 

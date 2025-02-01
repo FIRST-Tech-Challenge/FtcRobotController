@@ -11,6 +11,10 @@ public class SampleEndToEndSequence extends KActionSet{
         this(intakeClaw, outtake, Outtake.LS_SAMPLE_BASKET_READY_POS);
     }
     public SampleEndToEndSequence (IntakeClaw intakeClaw, Outtake outtake, double lsPos){
+        KServoAutoAction ratchetLock = new KServoAutoAction(intakeClaw.getIntakeRatchetServo(), IntakeClaw.INTAKE_RATCHET_LOCK_POS);
+        ratchetLock.setName("ratchetLock");
+        this.addAction(ratchetLock);
+
         KServoAutoAction linkageRetract = new KServoAutoAction(intakeClaw.getIntakeLinkageServo(), IntakeClaw.INTAKE_LINKAGE_IN_POS + 0.03);
         linkageRetract.setName("linkageRetract");
         this.addAction(linkageRetract);

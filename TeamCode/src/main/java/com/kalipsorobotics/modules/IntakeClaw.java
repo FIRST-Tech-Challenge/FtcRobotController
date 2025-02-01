@@ -18,7 +18,17 @@ public class IntakeClaw {
 
     public static final double INTAKE_SMALL_SWEEP_INTAKE_READY_POS = 0.46; //decrease to move more horizontal, increase to move more vertical
 
-    public static final double INTAKE_RATCHET_PUSH_POS = 0.135;
+    public static final double INTAKE_RATCHET_UNLOCK_POS = 0.135;
+
+    //INTAKE ACTION
+    public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.77; //increase to move more horizontal, decrease to move more vertical
+
+    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.728; //0.85    //increase to go down, decrease to
+    // go up
+
+    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.79;   // 0.73 //decrease to move forward, increase
+    // to move back
+
 
     //INTAKE SAMPLE IN FUNNEL
 
@@ -46,17 +56,37 @@ public class IntakeClaw {
 
     public static final double INTAKE_RATCHET_LOCK_POS = 0.273;
 
-    //INTAKE ACTION
+    public static final double INTAKE_BIG_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS = 0.867;
 
-    public  static final double INTAKE_SMALL_SWEEP_VERTICAL_POS = 0.77; //increase to move more horizontal, decrease to move more vertical
+    public static final double INTAKE_SMALL_PIVOT_TRANSFER_UNDER_RUNG_MIDDLE_POS = 0.021;
+    //big 0.867
+    //small 0.021
 
-    public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_POS = 0.728; //0.85    //increase to go down, decrease to
-    // go up
 
-    public static final double INTAKE_SMALL_PIVOT_GRAB_SAMPLE_POS = 0.75;   // 0.73 //decrease to move forward, increase
-    // to move back
 
-    public static final double INTAKE_SMALL_PIVOT_MIDDLE_TRANSFER_READY_POS = 0.002;
+
+    public static final double INTAKE_CLAW_CLOSE = 0.35;
+    public static final double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
+
+    //================INIT===================
+    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43; // Horizontal from Crossbar (parallel)
+    public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0.148;
+    public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.874;
+
+
+    public static final double INTAKE_LINKAGE_IN_POS = 0.96; //0.95
+    public static final double INTAKE_LINKAGE_MID_POS = 0.87;
+    public static final double INTAKE_LINKAGE_SAMPLE_TRANSFER_READY_HALF_POS = 0.80;
+
+
+
+
+    public static final double INTAKE_SMALL_SWEEP_SPECIMEN_POS = 0.35;
+
+    public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS = 0.645;
+
+    public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
+
 
     public static final double INTAKE_BIG_PIVOT_GRAB_SAMPLE_3_POS = 0.455;
 
@@ -77,21 +107,6 @@ public class IntakeClaw {
     private KServo intakeClawServo;
 
     private KServo intakeRatchetServo;
-
-
-    public static final double INTAKE_CLAW_CLOSE = 0.35;
-    public static final double INTAKE_CLAW_OPEN = 0.07; //increase to close claw more
-
-    public static final double INTAKE_SMALL_SWEEP_SPECIMEN_POS = 0.35;
-    public static final double INTAKE_SMALL_SWEEP_RETRACT_POS = 0.43; // Horizontal from Crossbar (parallel)
-    public static final double INTAKE_SMALL_SWEEP_THIRD_SAMPLE_BASKET_GRAB_POS =0.645;
-
-    public static final double INTAKE_BIG_PIVOT_RETRACT_POS = 0;
-    public static final double INTAKE_SMALL_PIVOT_RETRACT_POS = 0.73;
-
-    public static final double INTAKE_LINKAGE_IN_POS = 0.96; //0.95
-    public static final double INTAKE_LINKAGE_MID_POS = 0.87;
-    public static final double INTAKE_LINKAGE_OUT_POS = 0.57;
 
 
 
