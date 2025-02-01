@@ -2,6 +2,8 @@ package com.kalipsorobotics.localization;
 
 
 
+import android.graphics.PointF;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Point;
 
@@ -40,7 +42,7 @@ public class KalmanFilter {
         pY = (1 - kY) * pY + q;
 
         // Return the filtered point
-        return new Point((int) Math.round(x), (int) Math.round(y));
+        return new Point(x, y); // Return a PointF object
     }
 
     // Reset the filter
