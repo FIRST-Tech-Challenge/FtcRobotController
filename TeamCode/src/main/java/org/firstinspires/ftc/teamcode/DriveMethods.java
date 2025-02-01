@@ -45,6 +45,16 @@ public abstract class DriveMethods extends OpMode {
         }
     }
 
+    boolean slowMode2 = gamepad2.right_bumper;
+    double SLOW_2_MODE_SPEED = .15;
+        if (slowMode2) {
+        robot.wormGear.setPower(SLOW_2_MODE_SPEED * robot.wormGear.getPower());
+
+    } else {
+        robot.leftFrontDrive.setPower(robot.wormGear.getPower());
+    }
+}
+
     /**
      * Changes the slider's target position.
      * This method will make sure the robot slider length stays safe and within the legal box limit.
