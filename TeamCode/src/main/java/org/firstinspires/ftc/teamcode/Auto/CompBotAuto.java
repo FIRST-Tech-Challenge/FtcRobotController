@@ -135,7 +135,10 @@ public class CompBotAuto extends LinearOpMode {
       back_left,
       back_right,
       front_left
-    ) != 0.0) ;
+    ) != 0.0) { 
+      telemetry.addLine("Adjusting wheels");
+      telemetry.update();
+    }
   }
 
   private void steer_wheels_to_central_pivot_position() {
