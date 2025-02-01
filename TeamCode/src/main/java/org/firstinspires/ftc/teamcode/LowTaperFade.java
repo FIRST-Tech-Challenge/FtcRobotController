@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "THE ULTIMATE AUTONOMOUS", group = "Autonomous")
+@Autonomous(name = "What if Conner got a lowwwwtaperfade", group = "Autonomous")
 public class LowTaperFade extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RIGHT;
 
