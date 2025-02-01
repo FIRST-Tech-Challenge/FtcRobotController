@@ -92,7 +92,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
                 wormGearPower = 0;
             }
         }
-
+//spider
         telemetry.addData("Lift","%.1f", opLeftStickY);
 
         // let the next frame know if the toggle was pressed
