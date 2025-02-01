@@ -60,7 +60,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
         // don't allow the worm gear to go up beyond the max limit
-        if (robot.wormGearAngle() > 95 && wormGearPower > 0) {
+        if (robot.wormGearAngle() >= 85 && wormGearPower > 0) {
             wormGearPower = 0;
         }
 

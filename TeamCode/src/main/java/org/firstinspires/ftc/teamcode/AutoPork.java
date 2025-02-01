@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Autonomous
 public class AutoPork extends DriveMethods {
 
     enum State {
@@ -11,13 +13,11 @@ public class AutoPork extends DriveMethods {
         ExtraForward,
         ExtraRight,
         MoveBackward,
-        LastForward,
-        MoveLeft,
         Finished,
     }
 
     double stateStartTime = 0;
-    AutoPork.State currentState = AutoPork.State.Unstarted;
+    State currentState = State.Unstarted;
 
     @Override
     public void init() {
@@ -38,45 +38,73 @@ switch (currentState) {
         break;
     case MoveForward:
         omniDrive(0.15,0,0);
-        if (getStateTime() >=2);
-        omniDrive(0,0,0);
-        changeState(State.MoveRight);
+        if (getStateTime() >= 1) {
+            omniDrive(0, 0, 0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            changeState(State.MoveRight);
+        }
         break;
     case MoveRight:
         omniDrive(0,0.15,0);
-        if (getStateTime() >= 4);
-        omniDrive(0,0,0);
-        changeState(State.ExtraForward);
+        if (getStateTime() >= 1.8) {
+            omniDrive(0, 0, 0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            changeState(State.ExtraForward);
+        }
         break;
     case ExtraForward:
         omniDrive(0.15,0,0);
-        if(getStateTime() >= 5);
-        omniDrive(0, 0, 0);
-        changeState(State.ExtraRight);
+        if(getStateTime() >= 5.7) {
+            omniDrive(0, 0, 0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            changeState(State.ExtraRight);
+        }
         break;
     case ExtraRight:
         omniDrive(0, 0.15,0);
-        if(getStateTime() >= 6);
-        omniDrive(0, 0, 0);
-        changeState(State.MoveBackward);
+        if(getStateTime() >= 1.8) {
+            omniDrive(0, 0, 0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            changeState(State.MoveBackward);
+        }
         break;
     case MoveBackward:
         omniDrive(-0.15, 0,0);
-        if(getStateTime() >= 7);
-        omniDrive(0, 0, 0);
-        changeState(State.LastForward);
-        break;
-    case LastForward:
-        omniDrive(0.15, 0,0);
-        if(getStateTime() >= 8);
-        omniDrive(0, 0, 0);
-        changeState(State.MoveLeft);
-        break;
-    case MoveLeft:
-        omniDrive(0, -0.15,0);
-        if(getStateTime() >= 9);
-        omniDrive(0, 0, 0);
-        changeState(State.Finished);
+        if(getStateTime() >= 5.5) {
+            omniDrive(0, 0, 0);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            changeState(State.Finished);
+        }
         break;
     case Finished:
         omniDrive(0,0,0);
@@ -86,11 +114,12 @@ switch (currentState) {
 
 
     }
-    void changeState(AutoPork.State nextState) {
+    void changeState(State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();
     }
     double getStateTime() {
+
         return getRuntime() - stateStartTime;
     }
 }
