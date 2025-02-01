@@ -158,7 +158,7 @@ public class TeleOpV2 extends OpMode {
             timeNeeded = 1;
         }
         else if(state == SystemStatesV1.READY_FOR_DELIVERY){
-            timeNeeded = 1;
+            timeNeeded = 0.6;
         }
         else {
             timeNeeded = 0.3;
@@ -494,8 +494,8 @@ public class TeleOpV2 extends OpMode {
                     buttonTimer.reset();
                 }
 
-                deliverySlides.runLeftSlideToPosition(leftSlideHighBasket, 0.8);
-                deliverySlides.runRightSlideToPosition(rightSlideHighBasket, 0.8);
+                deliverySlides.runLeftSlideToPosition(leftSlideHighBasket, 1);
+                deliverySlides.runRightSlideToPosition(rightSlideHighBasket, 1);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -507,8 +507,8 @@ public class TeleOpV2 extends OpMode {
                     buttonTimer.reset();
                 }
 
-                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LOW_BASKET, 0.8);
-                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LOW_BASKET, 0.8);
+                deliverySlides.runLeftSlideToPosition(constants.LEFT_SLIDE_LOW_BASKET, 1);
+                deliverySlides.runRightSlideToPosition(constants.RIGHT_SLIDE_LOW_BASKET, 1);
                 deliveryGrippersClosed = false;
                 deliveryAxon.setPosition(constants.DELIVERY_UP);
                 slidesReset = false;
@@ -744,7 +744,7 @@ public class TeleOpV2 extends OpMode {
             case UNDER_LOW_BAR_UP:
                 return SystemStatesV1.UNDER_LOW_BAR_SLIDES_IN;
             case UNDER_LOW_BAR_SLIDES_IN:
-                return SystemStatesV1.EXTEND_AND_DROP;
+                return SystemStatesV1.ARM_UP;
             case EXTEND_AND_DROP:
                 return SystemStatesV1.START;
             default:

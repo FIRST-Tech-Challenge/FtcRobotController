@@ -23,7 +23,10 @@ public class EdgeDetectorV2 extends OpMode {
     int height = 800;
     int WIDTH_OLD_CAMERA = 1280;
     int HEIGHT_OLD_CAMERA = 960;
+    int WIDTH_LOGITECH_CAMERA = 1920;
+    int HEIGHT_LOGITECH_CAMERA = 1080;
     public boolean isOldCamera = true;
+    public boolean logitechCamera = true;
     public EdgeDetectionPipeline pipeline = new EdgeDetectionPipeline();
     @Override
     public void init() {
@@ -36,9 +39,16 @@ public class EdgeDetectorV2 extends OpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         FtcDashboard.getInstance().startCameraStream(camera, 0);
         if(isOldCamera) {
-            width = WIDTH_OLD_CAMERA;
-            height = HEIGHT_OLD_CAMERA;
-            pipeline.init(width, height, new MultipleTelemetry(telemetry, dashboard.getTelemetry()), true);
+            if(!logitechCamera) {
+                width = WIDTH_OLD_CAMERA;
+                height = HEIGHT_OLD_CAMERA;
+                pipeline.init(width, height, new MultipleTelemetry(telemetry, dashboard.getTelemetry()), true);
+            }
+            else {
+                width = WIDTH_LOGITECH_CAMERA;
+                height = HEIGHT_LOGITECH_CAMERA;
+                pipeline.init(width, height, new MultipleTelemetry(telemetry, dashboard.getTelemetry()), true);
+            }
         }
         else {
             pipeline.init(width, height, new MultipleTelemetry(telemetry, dashboard.getTelemetry()), false);
@@ -50,7 +60,7 @@ public class EdgeDetectorV2 extends OpMode {
                     camera.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT, OpenCvWebcam.StreamFormat.MJPEG);
                 }
                 else {
-                    camera.startStreaming(width, height, OpenCvCameraRotation.SIDEWAYS_RIGHT, OpenCvWebcam.StreamFormat.MJPEG);
+                    camera.startStreaming(width, height, OpenCvCameraRotation.UPSIDE_DOWN, OpenCvWebcam.StreamFormat.MJPEG);
                 }
             }
 

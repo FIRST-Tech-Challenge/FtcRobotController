@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryAxonV1;
 import org.firstinspires.ftc.teamcode.JackBurr.Servos.DeliveryGrippersV1;
 import org.firstinspires.ftc.teamcode.drive.MecanumDrive;
 
-@Disabled
 @Autonomous
 public class RightAutoV4 extends LinearOpMode {
     public int step = 1;
