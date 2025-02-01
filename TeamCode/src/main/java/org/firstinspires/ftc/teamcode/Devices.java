@@ -60,7 +60,6 @@ public class Devices {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//https://www.youtube.com/watch?v=dQw4w9WgXcQ
     }
 
     double wormGearTicks() {

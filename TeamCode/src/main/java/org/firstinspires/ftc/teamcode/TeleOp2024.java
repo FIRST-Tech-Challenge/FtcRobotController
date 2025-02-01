@@ -41,7 +41,7 @@ if (robot.clawServo.getPosition() >= 1.05) {
         }
 
         double driveLeftStickY = -driver.left_stick_y;
-        double driveRightStickY = driver.right_stick_y;
+        double driveRightStickY = -driver.right_stick_y;
         double driveLeftStickX = driver.left_stick_x;
         double driveRightStickX = driver.right_stick_x;
 
@@ -67,7 +67,14 @@ if (robot.clawServo.getPosition() >= 1.05) {
 //            wormGearPower = 0;
 //        }
 
-        robot.wormGear.setPower(wormGearPower);
+        boolean slowMode2 = gamepad2.left_bumper;
+        double SLOW_2_MODE_SPEED = .25;
+        if (slowMode2) {
+            robot.wormGear.setPower(SLOW_2_MODE_SPEED * wormGearPower);
+
+        } else {
+            robot.wormGear.setPower(wormGearPower);
+        }
 
         // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
         // Utilize this for faster access to top basket
