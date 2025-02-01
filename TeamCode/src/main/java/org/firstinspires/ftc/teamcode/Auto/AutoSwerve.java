@@ -92,12 +92,12 @@ public class AutoSwerve {
     return delta_sum;
   }
 
-  public void steer_wheels_to_central_pivot_position() {
+  public void steer_wheels_to_central_pivot_position(double fr,double bl,double br,double fl) {
     set_wheels(
-        0.125,  // Front Right
-        0.625,  // Back Left
-        0.875,  // Back Right
-        0.375   // Front Left
+        0.125 + fr,  // Front Right
+        0.625 + bl,  // Back Left
+        0.875 + br,  // Back Right
+        0.375 + fl  // Front Left
     );
   }
 

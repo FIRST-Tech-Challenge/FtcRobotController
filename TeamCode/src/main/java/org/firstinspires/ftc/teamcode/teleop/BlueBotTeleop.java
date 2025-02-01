@@ -23,6 +23,13 @@ public class BlueBotTeleop extends LinearOpMode {
   GoBildaPinpointDriver odometry;
 
   AutoSwerve driveBase;
+  boolean d_pad = false;
+  boolean lastPressed = false;
+
+  public double frOffset = -0.125;
+  public double brOffset = -0.125;
+  public double blOffset = -0.25;
+  public double flOffset = 0.25;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -43,6 +50,47 @@ public class BlueBotTeleop extends LinearOpMode {
       double currentTime = Utils.getTimeSeconds();
       double dt = currentTime - lastTime;
 
+      // 2.0.1 offsets for swerve (done by holding button and then tapping up or down on the d-pad
+      d_pad = gamepad1.dpad_down || gamepad1.dpad_up;
+      if(gamepad1.a && !lastPressed){
+        if(d_pad) {
+          if(gamepad1.dpad_up)
+            blOffset += .125;
+          else
+            blOffset -= .125;
+          lastPressed = true;
+        }
+      }
+      else if(gamepad1.b && !lastPressed) {
+        if(d_pad) {
+          if(gamepad1.dpad_up)
+            brOffset += .125;
+          else
+            brOffset -= .125;
+          lastPressed = true;
+        }
+      }
+      else if(gamepad1.x && !lastPressed) {
+        if(d_pad) {
+          if(gamepad1.dpad_up)
+            flOffset += .125;
+          else
+            flOffset -= .125;
+          lastPressed = true;
+        }
+      }
+      else if(gamepad1.y && !lastPressed) {
+        if(d_pad) {
+          if(gamepad1.dpad_up)
+            frOffset += .125;
+          else
+            frOffset -= .125;
+          lastPressed = true;
+        }
+      }
+      else
+        lastPressed = false;
+
       // 2. takes inputs and makes them work for swerve auto
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
@@ -56,11 +104,17 @@ public class BlueBotTeleop extends LinearOpMode {
         vector_angle = Math.abs(1.0 + vector_angle);
       }
       vector_angle += 0.125;
-      telemetry.addLine("Drive:        " + drive_joystick);
-      telemetry.addLine("Strafe:       " + strafe_joystick);
-      telemetry.addLine("Vector len:   " + vector_length);
-      telemetry.addLine("Vector angle: " + vector_angle);
+//      telemetry.addLine("Drive:        " + drive_joystick);
+//      telemetry.addLine("Strafe:       " + strafe_joystick);
+//      telemetry.addLine("Vector len:   " + vector_length);
+//      telemetry.addLine("Vector angle: " + vector_angle);
+//      telemetry.addLine("-------------------------");
+      telemetry.addData("fr offset: ",frOffset);
+      telemetry.addData("fl offset: ",flOffset);
+      telemetry.addData("br offset: ",brOffset);
+      telemetry.addData("bl offset: ",blOffset);
 
+      // 2.5 puts values through swerve auto
       if(vector_angle == null || vector_angle == 0.0)
         vector_angle = 0.0;
       if(vector_angle>.75 && vector_angle <1.0){
@@ -73,18 +127,15 @@ public class BlueBotTeleop extends LinearOpMode {
       }
       if(strafe_joystick!=0. || drive_joystick!=0.) {
         driveBase.set_wheels(
-            vector_angle, // Front Right
-            vector_angle, // Back Left
-            vector_angle + .125, // Back Right
-            vector_angle  // Front Left
+            vector_angle + frOffset, // Front Right
+            vector_angle + blOffset, // Back Left
+            vector_angle + brOffset, // Back Right
+            vector_angle + flOffset // Front Left
         );
         driveBase.setMotors(vector_length * 0.5);
       }
-      else if (strafe_joystick ==0. && drive_joystick==0.){
-
-      }
-      if(rotate_joystick!=0.){
-        driveBase.steer_wheels_to_central_pivot_position();
+      else {
+        driveBase.steer_wheels_to_central_pivot_position(frOffset,blOffset,brOffset,flOffset);
         driveBase.setMotors(rotate_joystick * 0.5);
       }
 

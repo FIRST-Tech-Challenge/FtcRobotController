@@ -115,7 +115,7 @@ public class Mekanism {
   // To extend arm, input from game pad 2 straight in
   public void setSlide(int x) {
 
-    telemetry.addData("slide current pos", slide.getCurrentPosition());
+//    telemetry.addData("slide current pos", slide.getCurrentPosition());
 
     //angle measure thing
     double maxLength = limitSlide * (Math.cos(Math.toRadians(pivot.getCurrentPosition() / countsPerDegree)) * 1.05);
@@ -148,9 +148,8 @@ public class Mekanism {
       x = 0;
       telemetry.addLine("Current pos under 0");
     }
-    telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
-    telemetry.addData("Limit switch: ",limitSwitch.getState());
-    telemetry.addData("limit connection: ",limitSwitch.getConnectionInfo());
+//    telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
+//    telemetry.addData("Limit switch: ",limitSwitch.getState());
 
     x *= .5;
     pivot.setPower(x);
