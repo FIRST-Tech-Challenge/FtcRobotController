@@ -184,52 +184,52 @@ public class CompBotAuto extends LinearOpMode {
 
   private void handle_place_second_specimine_in_bucket() {
     // Steer wheels so we can move away from the wall
-//    steer_to_strafe_right();
+   steer_to_strafe_right();
 
     // Move away from the wall
-//    rotate_wheels_forward(200);
+   rotate_wheels_forward(200);
 
     // Rotate wheels to turn robot toward the next specimine
     steer_wheels_to_central_pivot_position();
 
     // Steer toward next specimine location
-//    rotate_wheels_forward(250);
-//
-//    // Extend arm enough to hover over the specimine
-//    adjust_arm_extension(2000, 2500);
-//
-//    // Lower arm to the specimine
-//    move_pivot_arm_down(500);
-//
-//    // Turn on intake to pull in the specimine
-//    run_intake(2000);
-//
-//    // Raise arm to prepare for movement to the bucket
-//    move_pivot_arm_up(500);
-//
-//    // Pull in arm to ensure center of balance leads to deterministic behavior
-//    adjust_arm_extension(0, 2500);
-//
-//    // Steer back to the bucket
-//    rotate_wheels_backward(500);
-//
-//    // Raise arm to appropriate angle to be in alignment with the bucket
-//    move_pivot_arm_up(1000);
-//
-//    // Extend arm to the bucket
-//    extend_arm_all_the_way_out();
-//
-//    // Turn on outtake to drop specimine in the bucket
-//    run_outtake(1000);
-//
-//    // Raise arm just enough to move it away from the bucket
-//    move_pivot_arm_up(500);
-//
-//    // Retract the arm
-//    retract_arm_all_the_way_in();
-//
-//    // Lower arm to a safer position
-//    move_pivot_arm_down(1000);
+   rotate_wheels_forward(250);
+
+   // Extend arm enough to hover over the specimine
+   adjust_arm_extension(2000, 2500);
+
+   // Lower arm to the specimine
+   move_pivot_arm_down(500);
+
+   // Turn on intake to pull in the specimine
+   run_intake(2000);
+
+   // Raise arm to prepare for movement to the bucket
+   move_pivot_arm_up(500);
+
+   // Pull in arm to ensure center of balance leads to deterministic behavior
+   adjust_arm_extension(0, 2500);
+
+   // Steer back to the bucket
+   rotate_wheels_backward(500);
+
+   // Raise arm to appropriate angle to be in alignment with the bucket
+   move_pivot_arm_up(1000);
+
+   // Extend arm to the bucket
+   extend_arm_all_the_way_out();
+
+   // Turn on outtake to drop specimine in the bucket
+   run_outtake(1000);
+
+   // Raise arm just enough to move it away from the bucket
+   move_pivot_arm_up(500);
+
+   // Retract the arm
+   retract_arm_all_the_way_in();
+
+   // Lower arm to a safer position
+   move_pivot_arm_down(1000);
   }
 
   // ... Main ... runOpMode
@@ -241,7 +241,7 @@ public class CompBotAuto extends LinearOpMode {
 
     // Start program assuming robot is ready to place the specimine
     // in the bucket.
-    AutoState state = AutoState.place_second_specimine_in_bucket;
+    AutoState state = AutoState.place_first_specimine_in_bucket;
 
     // set direction
     if (opModeIsActive()) {
@@ -252,7 +252,10 @@ public class CompBotAuto extends LinearOpMode {
           handle_place_first_specimine_in_bucket();
 
           // Advance to next state
-          state = AutoState.place_second_specimine_in_bucket;
+          // state = AutoState.place_second_specimine_in_bucket;
+
+          // Skip placing the second block, there are errors in the code.
+          state = AutoState.complete;
         }
         else if (state == AutoState.place_second_specimine_in_bucket) {
           handle_place_second_specimine_in_bucket();
