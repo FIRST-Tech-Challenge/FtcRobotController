@@ -47,14 +47,6 @@ public class CompBotAuto extends LinearOpMode {
     sleep(250);
   }
 
-  // private void move_pivot_arm_to_position(int absolutePosition) {
-  //   // Pivot arm to top bucket position
-  //   mek.pivot.setTargetPosition(mek.pivot.getCurrentPosition() - absolutePosition);
-  
-  //   // 
-  //   mek.pivot.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-  // }
-
   private void move_pivot_arm_up(int movementTimeInMs) {
     mek.setPivot(-1, false);
     sleep(movementTimeInMs);
@@ -218,10 +210,6 @@ public class CompBotAuto extends LinearOpMode {
     move_pivot_arm_down(1000);
   }
 
-//  private void set_relative_speed(DcMotor motor) {
-//    int wheel = motor.getCurrentPosition() -
-//  }
-
   // ... Main ... runOpMode
   @Override
   public void runOpMode() throws InterruptedException {
@@ -252,16 +240,6 @@ public class CompBotAuto extends LinearOpMode {
         }
         else {
           break;
-        }
-
-        // Turn wheels to appropriate angles, keep doing this until
-        // they're close enough, then fall into this if statement.
-        if (driveBase.set_wheels(0.231, 0.24, 0.24, 0.259) == 0.0) {
-          //drive_Wheels(0.5);
-
-          // Travel to the right spot (where is this?)
-          goToPos(0.4,0.0,0.5);
-          //PushPush();
         }
       }
 
