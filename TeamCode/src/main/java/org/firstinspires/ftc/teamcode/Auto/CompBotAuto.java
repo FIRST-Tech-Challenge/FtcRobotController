@@ -144,7 +144,7 @@ public class CompBotAuto extends LinearOpMode {
   private void steer_wheels_to_central_pivot_position() {
     steer_wheels(
       0.125,  // Front Right
-      0.575,  // Back Left
+      0.625,  // Back Left
       0.875,  // Back Right
       0.375   // Front Left
     );
