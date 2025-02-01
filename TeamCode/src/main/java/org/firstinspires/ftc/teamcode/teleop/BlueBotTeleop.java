@@ -141,11 +141,12 @@ public class BlueBotTeleop extends LinearOpMode {
             vector_angle + frOffset, // Front Right
             vector_angle + blOffset, // Back Left
             vector_angle + brOffset, // Back Right
-            vector_angle + flOffset // Front Left
+            vector_angle + flOffset, // Front Left
+            fieldOrientedHeading()
         );
         driveBase.setMotors(vector_length * 0.5);
       } else if(rotate_joystick!=0) {
-        driveBase.steer_wheels_to_central_pivot_position(frRotationOffset, blRotationOffset, brRotationOffset, flRotationOffset);
+        driveBase.steer_wheels_to_central_pivot_position(frRotationOffset, blRotationOffset, brRotationOffset, flRotationOffset,fieldOrientedHeading());
         driveBase.setMotors(rotate_joystick * 0.5);
       }
       else {
@@ -205,6 +206,11 @@ public class BlueBotTeleop extends LinearOpMode {
       lastTime = currentTime;
       telemetry.update();
     }
+  }
+
+  public double fieldOrientedHeading(){
+    double heading = odometry.getHeading().getDegrees() / 360;
+    return heading;
   }
 
   public void Init() {

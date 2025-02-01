@@ -74,7 +74,7 @@ public class AutoSwerve {
 
 //  public AtomicInteger wheel_active_count;
 
-  public double set_wheels(double fr, double bl, double br, double fl) {
+  public double set_wheels(double fr, double bl, double br, double fl, double heading) {
     double delta_sum = 0.0;
     if(fr>1)
       fr -= 1;
@@ -100,12 +100,13 @@ public class AutoSwerve {
     return delta_sum;
   }
 
-  public void steer_wheels_to_central_pivot_position(double fr,double bl,double br,double fl) {
+  public void steer_wheels_to_central_pivot_position(double fr,double bl,double br,double fl,double heading) {
     set_wheels(
         1.000 - fr,  // Front Right
         1.250 - bl,  // Back Left
         0.750 - br,  // Back Right
-        1.000 - fl  // Front Left
+        1.000 - fl,  // Front Left
+        heading
     );
   }
 
@@ -185,7 +186,7 @@ public class AutoSwerve {
       double sHc = sH - getDeg() / 360; // normalize degree
       if (sHc > .5) {
         // FR BL BR FL
-        set_wheels(sHc, .5, .5, sHc);
+        set_wheels(sHc, .5, .5, sHc,odo.getHeading().getDegrees()/360);
       }
       if ((getX() - sX) < .2 || (getY() - sY) < .2) {
         setMotors(.4);

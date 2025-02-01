@@ -134,7 +134,8 @@ public class CompBotAuto extends LinearOpMode {
       front_right,
       back_left,
       back_right,
-      front_left
+      front_left,
+        odometry.getHeading().getDegrees() / 360
     ) != 0.0) { 
       telemetry.addLine("Adjusting wheels");
       telemetry.update();
@@ -281,7 +282,7 @@ public class CompBotAuto extends LinearOpMode {
 
     while(change_Yaw > 0.01 || change_Yaw < -0.01){
       telem();
-      if(driveBase.set_wheels(0.0,0.5,0.5,0.5) == 0.0){
+      if(driveBase.set_wheels(0.0,0.5,0.5,0.5, odometry.getHeading().getDegrees() / 360) == 0.0){
         if(change_Yaw>0)
           drive_Wheels(pwr,2);
         else
@@ -302,7 +303,7 @@ public class CompBotAuto extends LinearOpMode {
         break;
       change_X = odometry.getPosX() + xPos;  //get change
       telemetry.addData("X change: ",change_X);
-      if(driveBase.set_wheels(0.5, 0.49, 0.49, 0.5)==0){
+      if(driveBase.set_wheels(0.5, 0.49, 0.49, 0.5, odometry.getHeading().getDegrees() / 360)==0){
         if(change_X>0)
           drive_Wheels(pwr,0);
         else
@@ -321,7 +322,7 @@ public class CompBotAuto extends LinearOpMode {
         break;
       change_Y = odometry.getPosY() - yPos;  //get change
       telemetry.addData("Y change: ",change_Y);
-      if(driveBase.set_wheels(0.231, 0.24, 0.24, 0.259)==0){
+      if(driveBase.set_wheels(0.231, 0.24, 0.24, 0.259, odometry.getHeading().getDegrees() / 360)==0){
         if(change_Y>0)
           drive_Wheels(-pwr,1);
         else
