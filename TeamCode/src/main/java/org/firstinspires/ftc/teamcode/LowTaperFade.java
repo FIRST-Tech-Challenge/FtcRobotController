@@ -190,7 +190,8 @@ public class LowTaperFade extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        basketTrajectory.build()
+                        basketTrajectory.build(),
+                        placeBasket()
                 )
         );
 
@@ -203,13 +204,14 @@ public class LowTaperFade extends LinearOpMode {
         baseRobot.telemetry.update();
         baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-        baseRobot.logger.update("Autonomous phase", "Placing next specimen");
+        baseRobot.logger.update("Autonomous phase", "Getting next specimen");
         switch (startingPosition) {
             case RIGHT:
                 previousTrajectory = getNextSpecimen(sp, previousTrajectory);
                 previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, placementHeight, blocksScored);
                 break;
             case LEFT:
+            default:
                 previousTrajectory = runLeftSampleTrajectory(sp, previousTrajectory, blocksScored);
                 previousTrajectory = placeNextSampleInBasket(sp, previousTrajectory, blocksScored);
                 break;
@@ -260,17 +262,13 @@ public class LowTaperFade extends LinearOpMode {
     public class PlaceBasket implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_BASKET);
-            pause(1000);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-            pause(400);
+            pause(700);
             baseRobot.outtake.claw.open();
-            pause(100);
-            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
-            pause(400);
+            pause(200);
+            baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.TRANSFER);
-            pause(100);
-
+            pause(500);
             return false;
         }
     }
@@ -395,11 +393,12 @@ public class LowTaperFade extends LinearOpMode {
         switch (sp) {
             case LEFT:
                 return previousTrajectory.endTrajectory().fresh()
-                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.PARK_MIDDLEMAN,
-                                Math.toRadians(90))
-                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_BEFORE_PARK_POSE.position)
-                        .turn(Math.toRadians(90))
-                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_PARK_POSE.position);
+//                        .strafeToLinearHeading(Settings.Autonomous.FieldPositions.PARK_MIDDLEMAN,
+//                                Math.toRadians(90))
+//                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_BEFORE_PARK_POSE.position)
+//                        .turn(Math.toRadians(90))
+//                        .strafeTo(Settings.Autonomous.FieldPositions.LEFT_PARK_POSE.position)
+                        ; // TODO fix
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
                         .strafeTo(Settings.Autonomous.FieldPositions.RIGHT_PARK_POSE.position);

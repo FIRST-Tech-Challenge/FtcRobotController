@@ -181,7 +181,7 @@ public class Settings {
             // place positions for each starting position
             public static Pose2d LEFT_CHAMBER_POSE = new Pose2d(0, -29.5, Math.toRadians(90));
             public static Pose2d RIGHT_CHAMBER_POSE = new Pose2d(0, -32.5, Math.toRadians(90));
-            public static Pose2d BASKET_POSE = new Pose2d(-56.2, -56.6, Math.toRadians(45));
+            public static Pose2d BASKET_POSE = new Pose2d(-58.2, -58.6, Math.toRadians(45));
 
             public static Pose2d HP_POSE = new Pose2d(55, -54, Math.toRadians(90));
 
