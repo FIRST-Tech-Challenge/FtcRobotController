@@ -13,6 +13,7 @@ import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket
 import org.firstinspires.ftc.teamcode.BBcode.AutoUtils;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
+import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import java.util.Locale;
 
@@ -294,16 +295,18 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        PoseStorage.currentPose = odo.getPositionRR();
+        telemetry.addData("Stored Pose: ", String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", PoseStorage.currentPose.position.x, PoseStorage.currentPose.position.y, Math.toDegrees(PoseStorage.currentPose.heading.toDouble())) );
         //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
-        while(opModeIsActive()) {
-            // _leftFront.setPower(0.3);
-            odo.update();
-            Pose2d pos = odo.getPositionRR();
-            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
-
-            telemetry.update();
-        }
+//        odo.resetPosAndIMU();
+//        while(opModeIsActive()) {
+//            // _leftFront.setPower(0.3);
+//            odo.update();
+//            Pose2d pos = odo.getPositionRR();
+//            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+//
+//            telemetry.update();
+//        }
     }
 }
