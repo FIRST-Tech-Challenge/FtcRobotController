@@ -130,10 +130,10 @@ public class Mekanism {
     slideTarget = x;
 
     slide.setTargetPosition(x);
-
-    if(slide.getCurrentPosition() > slide.getTargetPosition()-5 && slide.getCurrentPosition() < slide.getTargetPosition()+5)
-      x=0;
     slide2.setTargetPosition(x);
+
+    if(!slide.isBusy())
+      slide2.setPower(0);
   }
 
 
@@ -169,7 +169,7 @@ public class Mekanism {
 
     while (limitSwitch.getState() && myOp.opModeIsActive()) {
       telemetry.addData("limit switch: ",limitSwitch.getState());
-      pivot.setPower(-.5);
+      pivot.setPower(-.1);
       slide.setPower(-0.5);
       slide2.setPower(-0.5);
 
