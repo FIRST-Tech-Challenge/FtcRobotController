@@ -71,11 +71,18 @@ if (robot.clawServo.getPosition() >= 1.05) {
         robot.wormGear.setPower(wormGearPower);
 
         // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
-//        if (!operator.x) {
+        // Utilize this for faster access to top basket
+        // If a is clicked, then the slider is set to it's minimum.
+
+       if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
-//        } else {
-//            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
-//        }
+       } else if (operator.a) {
+           sliderPosition = robot.MIN_SLIDER_TICKS
+       } else {
+           sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
+        }
+       
+       // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
