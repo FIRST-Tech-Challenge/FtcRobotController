@@ -106,8 +106,8 @@ public class CompBotAuto extends LinearOpMode {
     // Retract arm.
     retract_arm_all_the_way_in();
 
-    // Pivot the arm back down
-    move_pivot_arm_down(1000);
+    // Move arm all the way back up to know where it is
+    homeArm();
   }
 
   private void steer_wheels(double front_right, double back_left, double back_right, double front_left) {
@@ -193,7 +193,7 @@ public class CompBotAuto extends LinearOpMode {
     steer_wheels_to_central_pivot_position();
 
     // Steer toward next specimine location
-//    rotate_wheels_forward(500);
+//    rotate_wheels_forward(250);
 //
 //    // Extend arm enough to hover over the specimine
 //    adjust_arm_extension(2000, 2500);
