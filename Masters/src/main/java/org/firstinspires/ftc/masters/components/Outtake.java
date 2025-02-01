@@ -46,6 +46,8 @@ public class Outtake implements Component{
         Wall (0),
         Bucket(0),
         InitWall(0),
+        InitAutoSpec(0),
+        InitAutoSample(0),
 
         TransferToBucket_CloseClaw(100),
         TransferToBucket_Lift(0),
@@ -120,6 +122,23 @@ public class Outtake implements Component{
 
     }
 
+    public void initAutoSpecimen(){
+        position.setPosition(ITDCons.positionTransfer);
+        setAngleServoScore();
+        openClaw();
+        wrist.setPosition(ITDCons.wristFront);
+        status= Status.InitAutoSpec;
+    }
+
+    public void initAutoSample(){
+        position.setPosition(ITDCons.positionBack);
+        angleLeft.setPosition(ITDCons.angleBack);
+        angleRight.setPosition(ITDCons.angleBack);
+        closeClaw();
+        status= Status.InitAutoSample;
+
+    }
+
     public void setPID(double p){
         controller.setP(p);
     }
@@ -131,7 +150,6 @@ public class Outtake implements Component{
     public void closeClaw() {
         claw.setPosition(ITDCons.close);
     }
-
 
     public void moveToPickUpFromWall(){
         if (status==Status.ScoreSpecimen) {
@@ -173,7 +191,11 @@ public class Outtake implements Component{
     }
 
     public void scoreSpecimen(){
-        status= Status.WallToFront_lift;
+        if (status==Status.InitAutoSpec){
+            status= Status.WallToFront_move;
+        } else {
+            status = Status.WallToFront_lift;
+        }
 
         target = ITDCons.SpecimenTarget;
 
@@ -184,7 +206,7 @@ public class Outtake implements Component{
         target= ITDCons.ReleaseTarget;
     }
 
-    public void moveSlide() {
+    protected void moveSlide() {
 
 //frontRight
         int rotatePos = -outtakeSlideEncoder.getCurrentPosition();
@@ -213,13 +235,9 @@ public class Outtake implements Component{
         return outtakeSlideEncoder.getCurrentPosition();
     }
 
-    public void init(){
-//        elbow1.setPosition(ITDCons.diffyInit);
-//        elbow2.setPosition(ITDCons.diffyInit);
 
-    }
-
-    public void updateOuttake(){
+    public void update(){
+        moveSlide();
 
         telemetry.addData("status", status);
 
@@ -268,7 +286,7 @@ public class Outtake implements Component{
                 if (elapsedTime!=null && elapsedTime.milliseconds()>status.getTime()){
                     elapsedTime = new ElapsedTime();
 
-                    setAngleServoToBack();
+                    setAngleServoToMiddle();
                     position.setPosition(ITDCons.positionBack);
 
                     status = Status.TransferToBucket_Move;

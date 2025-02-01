@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters.components;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -10,6 +11,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Intake {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    PIDController pidController;
+
+    public static double p = 0.0024, i = 0.0002, d = 0.00001;
+    public static double f = 0.09;
+
     Init init;
 
     Telemetry telemetry;
@@ -21,6 +28,8 @@ public class Intake {
     public static double RETRACT_POWER = -0.6;
     public static double EXTEND_POWER = 0.6;
     public static double INTAKE_POWER = 0.9;
+
+    private int target;
 
     public Intake(Init init, Telemetry telemetry){
 
@@ -39,6 +48,9 @@ public class Intake {
         intakeRight.setPosition(ITDCons.intakeInitRight);
         intakeLeft.setPosition(ITDCons.intakeInitLeft);
 
+        pidController = new PIDController(p,i,d);
+        target =0;
+
     }
 
     public void startIntake (){
@@ -54,15 +66,22 @@ public class Intake {
     }
 
 
-
     public void retractSlide() {
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-      extendo.setPower(RETRACT_POWER);
+
+        if (target>0){
+            target = target -50;
+        }
+//        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//      extendo.setPower(RETRACT_POWER);
     }
 
     public void extendSlide() {
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        extendo.setPower(EXTEND_POWER);
+
+        if (target < ITDCons.MaxExtension){
+            target = target - 50;
+        }
+//        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        extendo.setPower(EXTEND_POWER);
     }
 
     public void stopExtendo(){
@@ -95,5 +114,20 @@ public class Intake {
         intakeLeft.setPosition(ITDCons.liftIntakeLeft);
         intakeRight.setPosition(ITDCons.liftIntakeRight);
     }
+
+    public void update(){
+
+//frontRight
+            int extendoPos = extendo.getCurrentPosition();
+
+            telemetry.addData("extendoPos",extendoPos);
+            double pid = pidController.calculate(extendoPos, target);
+
+            telemetry.addData("extendo PID",pid);
+
+            extendo.setPower(pid);
+
+        }
+
 
 }

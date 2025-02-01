@@ -26,7 +26,7 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 public class Specimen extends LinearOpMode {
 
     Pose startPose = new Pose(10,66,0);
-    Pose scoringPose = new Pose(38,65, 0);
+    Pose scoringPose = new Pose(42,65, 0);
     Pose midPoint1 = new Pose(20,34,0);
     Pose midPoint2 = new Pose(60,36,0);
     Pose pickupPose = new Pose (10,31, 0);
@@ -178,7 +178,7 @@ public class Specimen extends LinearOpMode {
         pickup1 = new Path(new BezierLine(new Point(endPushPose3), new Point(pickupPose)));
         pickup1.setLinearHeadingInterpolation(endPushPose3.getHeading(), pickupPose.getHeading());
 
-        score = new Path(new BezierLine(new Point(pickupPose), new Point(scoringPose)));
+        score = new Path(new BezierLine(new Point(pickupPose), new Point(scoringPose.getX(), scoringPose.getY()+2)));
         score.setLinearHeadingInterpolation(pickupPose.getHeading(), scoringPose.getHeading());
 
         pickUp = new Path(new BezierLine(new Point(scoringPose), new Point(pickupPose)));

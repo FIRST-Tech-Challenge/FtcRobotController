@@ -116,8 +116,8 @@ public class TeleopManualV1 extends LinearOpMode {
                 outtake.closeClaw();
             }
 
-            outtake.moveSlide();
-            outtake.updateOuttake();
+            outtake.update();
+            intake.update();
 
 
             telemetry.addData("Slide Target", outtake.getTarget());

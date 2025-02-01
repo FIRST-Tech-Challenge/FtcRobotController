@@ -50,6 +50,8 @@ public class ITDCons {
     public static int intermediateTarget = 20000;
     public static int WallTarget = 6000;
 
+    public static int MaxExtension = 10000;
+
 
 }
 
