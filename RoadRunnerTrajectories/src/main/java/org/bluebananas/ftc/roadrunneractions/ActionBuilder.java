@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
 
 import java.util.function.Function;
 
@@ -35,7 +35,7 @@ public class ActionBuilder {
                 .build();
     }
 
-    //Path for BlueBasket
+    //Path for BlueBasketPose
     public static Action BlueBasket(Function<Pose2d, TrajectoryActionBuilder> builderFunction)
     {
         //Vector2d basket_clear_position = new Vector2d(56.5, 55.875);
@@ -51,13 +51,13 @@ public class ActionBuilder {
         Vector2d outer_sample_pickup_position = new Vector2d(45, 40);
         double sample_pickup_heading = Math.toRadians(-90);
 
-        //Pose2d startPose = BlueBasket.startPose;
-        TrajectoryActionBuilder builder = builderFunction.apply(BlueBasket.pose_init);
+        //Pose2d startPose = BlueBasketPose.startPose;
+        TrajectoryActionBuilder builder = builderFunction.apply(BlueBasketPose.init);
         return builder
 
 //                .setTangent(-45)
-//                .splineToLinearHeading(BlueBasket.pose_drop, 0)
-                .strafeToLinearHeading(BlueBasket.pose_drop.position, BlueBasket.pose_drop.heading)
+//                .splineToLinearHeading(BlueBasketPose.pose_drop, 0)
+                .strafeToLinearHeading(BlueBasketPose.drop.position, BlueBasketPose.drop.heading)
 
                 //.waitSeconds(3)//bring up arm
 

@@ -9,7 +9,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
 import org.firstinspires.ftc.teamcode.BBcode.AutoUtils;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
@@ -22,13 +22,13 @@ import java.util.Locale;
 @Autonomous(name = "Blue_Basket_Auto", group = "Autonomous")
 public class Blue_Basket_Auto extends LinearOpMode {
     //Pull in the values from the class that both TeamCode and MeepMeep can access and in a way that the values can be modified in FTCDesktop
-    private static Pose2d pose_init = BlueBasket.pose_init;
-    public static double pose_init_x = BlueBasket.pose_init.position.x;
-    public static double pose_init_y = BlueBasket.pose_init.position.y;
+    private static Pose2d pose_init = BlueBasketPose.init;
+    public static double pose_init_x = BlueBasketPose.init.position.x;
+    public static double pose_init_y = BlueBasketPose.init.position.y;
     public static double pose_init_h_deg = Math.toDegrees(pose_init.heading.toDouble());
-    private static Pose2d pose_drop = BlueBasket.pose_drop;
-    public static double pose_drop_x = BlueBasket.pose_drop.position.x;
-    public static double pose_drop_y = BlueBasket.pose_drop.position.y;
+    private static Pose2d pose_drop = BlueBasketPose.drop;
+    public static double pose_drop_x = BlueBasketPose.drop.position.x;
+    public static double pose_drop_y = BlueBasketPose.drop.position.y;
     public static double pose_drop_h_deg = Math.toDegrees(pose_drop.heading.toDouble());
 
     @Override
@@ -67,7 +67,7 @@ public class Blue_Basket_Auto extends LinearOpMode {
         GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
         Action driveToDropFromOgStart, driveToDropFromStart, driveToDropFromInnerSample, driveToDropFromMiddleSample, driveToDropFromOuterSample, samplePickupInner, samplePickupMiddle, samplePickupOuter, driveToPark, armUpWait2, armUpWait3, armUpWait4, armDownWait1, armDownWait2, armDownWait3, armDownWait4, viperUpWait1, viperUpWait2, viperUpWait3, viperUpWait4, viperDownWait1, viperDownWait2, viperDownWait3, viperDownWait4, wristUpWait1, wristUpWait2, wristUpWait3, wristDownWait1, wristDownWait2, wristDownWait3, wristDownWait4, clawOpenWait1, clawOpenWait2, clawOpenWait3, clawOpenWait4, clawCloseWait1, clawCloseWait2, clawCloseWait3, clawCloseWait4;
         //drive to drop
-        driveToDropFromOgStart = drive.actionBuilder(BlueBasket.pose_basket_init_old)
+        driveToDropFromOgStart = drive.actionBuilder(BlueBasketPose.basket_init_old)
                 .setTangent(-45)
                 .splineToLinearHeading(pose_drop, 0)
                 .build();
@@ -75,32 +75,32 @@ public class Blue_Basket_Auto extends LinearOpMode {
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromInnerSample = drive.actionBuilder(BlueBasket.pose_inner_sample)
+        driveToDropFromInnerSample = drive.actionBuilder(BlueBasketPose.inner_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromMiddleSample = drive.actionBuilder(BlueBasket.pose_middle_sample)
+        driveToDropFromMiddleSample = drive.actionBuilder(BlueBasketPose.middle_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
-        driveToDropFromOuterSample = drive.actionBuilder(BlueBasket.pose_outer_sample)
+        driveToDropFromOuterSample = drive.actionBuilder(BlueBasketPose.outer_sample)
                 .strafeToLinearHeading(pose_drop.position, pose_drop.heading)
                 .build();
 
         //sample pickup
         samplePickupInner = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_inner_sample.position, BlueBasket.pose_inner_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.inner_sample.position, BlueBasketPose.inner_sample.heading)
                 .build();
         samplePickupMiddle = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_middle_sample.position, BlueBasket.pose_middle_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.middle_sample.position, BlueBasketPose.middle_sample.heading)
                 .build();
         samplePickupOuter = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_outer_sample.position, BlueBasket.pose_outer_sample.heading)
+                .strafeToLinearHeading(BlueBasketPose.outer_sample.position, BlueBasketPose.outer_sample.heading)
                 .build();
 
         //drive to park
         driveToPark = drive.actionBuilder(pose_drop)
-                .strafeToLinearHeading(BlueBasket.pose_park.position, BlueBasket.pose_park.heading)
+                .strafeToLinearHeading(BlueBasketPose.park.position, BlueBasketPose.park.heading)
                 .build();
 
 //        armUpWait1 = drive.actionBuilder(drive.pose)

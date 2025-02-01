@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
+import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasketPose;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Arm;
+import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.ChristmasLight;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.Viper;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismControllers.WristClaw;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
@@ -99,6 +100,7 @@ public class MainTeleOpQ2 extends LinearOpMode{
     GoBildaPinpointDriverRR odo; // Declare OpMode member for the Odometry Computer
     public double xOffset = -7.002384767061902; //RRTune, -6.5; measured
     public double yOffset = -1.2229245167313665;
+    private ChristmasLight _christmasLight = new ChristmasLight(this);
     @Override
     public void runOpMode() throws InterruptedException{
         // Initialization Code Goes Here
@@ -128,11 +130,26 @@ public class MainTeleOpQ2 extends LinearOpMode{
 //        telemetryHelper.initMotorTelemetry( viperMotor, "viperMotor");
         telemetryHelper.initGamepadTelemetry(gamepad1);
         telemetryHelper.initGamepadTelemetry(gamepad2);
+        //Not sure if this can be before or after waitForStart
+        if (PoseStorage.arePosesEqual(PoseStorage.currentPose, PoseStorage.center)) {
+            _christmasLight.red();
+        }
+        else {
+            _christmasLight.off();
+            odo.setPosition(PoseStorage.currentPose);
+        }
         //Where the start button is clicked, put some starting commands after
+
         waitForStart();
+        //Not sure if this can be before or after waitForStart
+        if (PoseStorage.arePosesEqual(PoseStorage.currentPose, PoseStorage.center)) {
+            _christmasLight.red();
+        }
+        else {
+            _christmasLight.off();
+            odo.setPosition(PoseStorage.currentPose);
+        }
         arm.MoveToHome();
-        //Use the following line for measuring auto locations
-//      odo.setPosition(BlueBasket.pose_basket_init_old);
         odo.setPosition(PoseStorage.currentPose);
         telemetry.addData("PositionRR", ()-> getPinpoint(odo.getPositionRR()));
         telemetry.addData("Position", ()-> getPinpoint(odo.getPosition()));
