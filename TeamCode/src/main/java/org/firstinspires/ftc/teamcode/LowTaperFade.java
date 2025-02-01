@@ -163,7 +163,6 @@ public class LowTaperFade extends LinearOpMode {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder placingTrajectory = getPlacingTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
         TrajectoryActionBuilder sampleTrajectory = pushSamples(sp, placingTrajectory);
-        TrajectoryActionBuilder placingTrajectory2 = getPlacingTrajectory(sp, sampleTrajectory, 0);
         baseRobot.outtake.claw.close();
         baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_RUNG_PREP_AUTO);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
@@ -175,7 +174,7 @@ public class LowTaperFade extends LinearOpMode {
                         unhookChamber(),
                         sampleTrajectory.build(),
                         grabSpecimenFromHP(),
-                        placingTrajectory2.build(),
+                        placingTrajectory.build(),
                         hookChamber()));
 
         return sampleTrajectory;
@@ -245,6 +244,7 @@ public class LowTaperFade extends LinearOpMode {
     public class HookChamber implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            new SequentialAction();
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_BACKWARD);
             baseRobot.outtake.verticalSlide.setPosition(ViperSlide.VerticalPosition.HIGH_RUNG.getValue() + 500);
             pause(1000);
@@ -427,7 +427,6 @@ public class LowTaperFade extends LinearOpMode {
                                 Settings.Autonomous.FieldPositions.LEFT_CHAMBER_POSE.heading);
             case RIGHT:
                 return previousTrajectory.endTrajectory().fresh()
-
                         .strafeToLinearHeading(Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.position,
                                 Settings.Autonomous.FieldPositions.RIGHT_CHAMBER_POSE.heading);
             default:
