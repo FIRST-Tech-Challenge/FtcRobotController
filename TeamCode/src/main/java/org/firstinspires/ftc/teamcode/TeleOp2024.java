@@ -39,7 +39,6 @@ if (robot.clawServo.getPosition() >= 1.05) {
                 isClawOpen = true;
             }
         }
-//https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;
@@ -60,8 +59,8 @@ if (robot.clawServo.getPosition() >= 1.05) {
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
         // don't allow the worm gear to go up beyond the max limit
-        if (robot.wormGearAngle() >= 85 && wormGearPower > 0) {
-            wormGearPower = 0;
+        if (robot.wormGearAngle() >= 85 && wormGearPower > 0.0) {
+            wormGearPower = 0.0;
         }
 
 //       if (robot.wormGearAngle() < robot.STARTING_ANGLE - 10 && wormGearPower < 0) {
@@ -77,14 +76,18 @@ if (robot.clawServo.getPosition() >= 1.05) {
        if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
        } else if (operator.a) {
-           sliderPosition = robot.MIN_SLIDER_TICKS;
+           sliderPosition = robot.MIN_SLIDER_TICKS
+       } else if (operator.right_bumper) {
+           sliderPosition = robot.sliderMotor.setPower(0);
        } else {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
-       //BAD SEMICOLON ;;;;;;;;;;;;;
+
        // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
+
+       //Set the worm gear tol -7 degrees
 
         if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
             robot.wormGear.setPower(-1);
@@ -92,7 +95,6 @@ if (robot.clawServo.getPosition() >= 1.05) {
                 wormGearPower = 0;
             }
         }
-//spider
         telemetry.addData("Lift","%.1f", opLeftStickY);
 
         // let the next frame know if the toggle was pressed
