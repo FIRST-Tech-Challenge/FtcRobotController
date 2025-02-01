@@ -15,7 +15,6 @@ public class AdaptiveCalibration {
     private static boolean initialized = false;
     private static double CALIBRATION_APPROXIMATION_COEFFICIENT;
 
-
     private AdaptiveCalibration() {
         headingTolerance = Settings.Calibration.headingTolerance;
         spacialTolerance = Settings.Calibration.spacialTolerance;
@@ -47,11 +46,13 @@ public class AdaptiveCalibration {
             this.headingError = headingError;
             this.spacialError = spacialError;
         }
+
         public RuntimeCalibrationPayload() {
             this.headingError = 0;
             this.spacialError = new Vector2d(0, 0);
         }
     }
+
     public void calibrateRuntime(RuntimeCalibrationPayload payload, MecanumDrive engine) {
         if (headingTolerance > payload.headingError) {
             engine.HEADING_CORRECTION += CALIBRATION_APPROXIMATION_COEFFICIENT;
@@ -65,6 +66,5 @@ public class AdaptiveCalibration {
             engine.SPACIAL_CORRECTION += CALIBRATION_APPROXIMATION_COEFFICIENT;
         }
     }
-
 
 }

@@ -44,7 +44,6 @@ public class Logger {
     FtcDashboard dashboard;
     Telemetry dashboardTelemetry;
 
-
     /**
      * Creates a new Logger instance
      * 
