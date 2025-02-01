@@ -15,7 +15,7 @@ public class TestKalmanOdometry extends LinearOpMode {
     @Override
     public void runOpMode() {
         SparkFunOTOS otos = hardwareMap.get(SparkFunOTOS.class, "sprk sensor OTOS");
-        KalmanFilter kalmanFilter = new KalmanFilter(0.01, 1);
+        KalmanFilter kalmanFilter = new KalmanFilter(0.2, 3);
         OdometrySpark odometrySpark = new OdometrySpark(otos);
         kalmanFilter.reset();
         waitForStart();
