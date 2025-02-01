@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Mekanism.Mekanism;
 import org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.Swerve.wpilib.geometry.Rotation2d;
 
-@Autonomous(name = "Comp Bot Auto")
+@Autonomous(name = "Comp Bot Auto", preselectTeleOp = "Blue Bot Teleop")
 public class CompBotAuto extends LinearOpMode {
 
   Mekanism mek;
@@ -108,6 +108,10 @@ public class CompBotAuto extends LinearOpMode {
 
     // Move arm all the way back up to know where it is
     mek.homeArm();
+  }
+
+  private void setIMUOffset(){
+    odometry.resetHeading(new Rotation2d(Math.toRadians(135)));
   }
 
   private void steer_wheels(double front_right, double back_left, double back_right, double front_left) {
@@ -242,7 +246,7 @@ public class CompBotAuto extends LinearOpMode {
 
     // Start program assuming robot is ready to place the specimen
     // in the bucket.
-    AutoState state = AutoState.place_second_specimine_in_bucket;
+    AutoState state = AutoState.place_first_specimine_in_bucket;
 
     // set direction
     if (opModeIsActive()) {
@@ -267,7 +271,10 @@ public class CompBotAuto extends LinearOpMode {
 //        else {
 //          break;
 //        }
-        steer_wheels_to_go_straight();
+        if(state == AutoState.place_first_specimine_in_bucket){
+          handle_place_first_specimine_in_bucket();
+          state = AutoState.place_second_specimine_in_bucket;
+        }
       }
 
       telem();
@@ -394,11 +401,11 @@ public class CompBotAuto extends LinearOpMode {
     telemetry.addData("slide goal: ", mek.slide.getTargetPosition());
     telemetry.addData("pivot current: ", mek.pivot.getCurrentPosition());
     telemetry.addData("pivot goal: ", mek.pivot.getTargetPosition());
-    telemetry.addLine(". . . . . . . . . . . . . . . .");
-    telemetry.addData("odometry Status",driveBase.odo.getDeviceStatus());
-    telemetry.addData("odometry x: ",driveBase.odo.getPosX());
-    telemetry.addData("odometry y: ",driveBase.odo.getPosY());
-    telemetry.addData("odometry yaw: ",driveBase.odo.getHeading());
+//    telemetry.addLine(". . . . . . . . . . . . . . . .");
+//    telemetry.addData("odometry Status",driveBase.odo.getDeviceStatus());
+//    telemetry.addData("odometry x: ",driveBase.odo.getPosX());
+//    telemetry.addData("odometry y: ",driveBase.odo.getPosY());
+//    telemetry.addData("odometry yaw: ",driveBase.odo.getHeading());
 //    telemetry.addLine(". . . . . . . . . . . . . . . .");
 //    telemetry.addData("ServoFR voltage: ", driveBase.servoInputFR.getVoltage());
 //    telemetry.addData("servoFL voltage: ", driveBase.servoInputFL.getVoltage());

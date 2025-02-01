@@ -134,6 +134,10 @@ public class Mekanism {
 
     if(!slide.isBusy())
       slide2.setPower(0);
+    else {
+      slide2.setTargetPosition(slide.getTargetPosition());
+      slide2.setPower(1);
+    }
   }
 
 
