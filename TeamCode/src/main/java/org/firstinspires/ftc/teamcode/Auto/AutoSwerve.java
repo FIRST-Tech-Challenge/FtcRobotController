@@ -76,6 +76,14 @@ public class AutoSwerve {
 
   public double set_wheels(double fr, double bl, double br, double fl) {
     double delta_sum = 0.0;
+    if(fr>1)
+      fr -= 1;
+    if(bl>1)
+      bl -= 1;
+    if(br>1)
+      br -= 1;
+    if(fl>1)
+      fl -= 1;
     for (int i = 0; i < 4; i++) {
       if (i == 1) {
         delta_sum += Math.abs(set_Servo_Angle(servoInputFR, servoFR, fr));
@@ -94,10 +102,10 @@ public class AutoSwerve {
 
   public void steer_wheels_to_central_pivot_position(double fr,double bl,double br,double fl) {
     set_wheels(
-        0.125 + fr,  // Front Right
-        0.625 + bl,  // Back Left
-        0.875 + br,  // Back Right
-        0.375 + fl  // Front Left
+        1.000 - fr,  // Front Right
+        1.250 - bl,  // Back Left
+        0.750 - br,  // Back Right
+        1.000 - fl  // Front Left
     );
   }
 

@@ -30,6 +30,10 @@ public class BlueBotTeleop extends LinearOpMode {
   public double brOffset = -0.125;
   public double blOffset = -0.25;
   public double flOffset = -0.25;
+  public double frRotationOffset = -0.125;
+  public double brRotationOffset = -0.125;
+  public double blRotationOffset = -0.25;
+  public double flRotationOffset = -0.25;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -50,8 +54,8 @@ public class BlueBotTeleop extends LinearOpMode {
       double currentTime = Utils.getTimeSeconds();
       double dt = currentTime - lastTime;
 
-      // 2.0.1 offsets for swerve (done by holding button and then tapping up or down on the d-pad
-      d_pad = gamepad1.dpad_down || gamepad1.dpad_up;
+      // 2.0.1 offsets for swerve (done by holding button and then tapping up or down on the d-pad    TODO: add in adjustable rotation offsets
+      d_pad = gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right;
       if (gamepad1.a && !lastPressed) {
         if (d_pad) {
           if (gamepad1.dpad_up)
@@ -109,6 +113,10 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addData("fl offset: ", flOffset);
       telemetry.addData("br offset: ", brOffset);
       telemetry.addData("bl offset: ", blOffset);
+      telemetry.addData("fr Rotation offset: ", frRotationOffset);
+      telemetry.addData("fl Rotation offset: ", flRotationOffset);
+      telemetry.addData("br Rotation offset: ", brRotationOffset);
+      telemetry.addData("bl Rotation offset: ", blRotationOffset);
 
       // 2.5 puts values through swerve auto
       if (vector_angle == null || vector_angle == 0.0)
@@ -134,7 +142,7 @@ public class BlueBotTeleop extends LinearOpMode {
         );
         driveBase.setMotors(vector_length * 0.5);
       } else {
-        driveBase.steer_wheels_to_central_pivot_position(frOffset, blOffset, brOffset, flOffset);
+        driveBase.steer_wheels_to_central_pivot_position(frRotationOffset, blRotationOffset, brRotationOffset, flRotationOffset);
         driveBase.setMotors(rotate_joystick * 0.5);
       }
 
@@ -188,9 +196,8 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addData("pivot pow: ", mek.pivot.getPower());
       telemetry.update();
       lastTime = currentTime;
+      telemetry.update();
     }
-
-    telemetry.update();
   }
 
   public void Init() {
