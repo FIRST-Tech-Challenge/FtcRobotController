@@ -28,62 +28,16 @@ public class BlueBotTeleop extends LinearOpMode {
     double lastTime = Utils.getTimeSeconds();
     while (opModeIsActive()) {
 
+      double strafe_joystick = gamepad1.left_stick_x;
+      double drive_joystick = -1 * gamepad1.left_stick_x;
 
-      // 1. Calculates deltaTime
-      double currentTime = Utils.getTimeSeconds();
-      double dt = currentTime - lastTime;
+      double vector_angle = Math.atan(drive_joystick / strafe_joystick);
+      double vector_length = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
 
-      // 2. Moves the robot based on user input
-      swerve.teleopDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, dt);
-      swerve.periodic();
-
-
-      if (gamepad2.a) {
-        mek.autoClip();
-        telemetry.addLine("Auto clip");
-      } else {
-
-        // 1. Sets the target position of the slide, limits set in Mekansim class
-        mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
-        if (mek.slideTarget < 0) mek.slideTarget = 0;
-        if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
-        telemetry.addData("Slide target position: ", mek.slideTarget);
-
-        // 1.5 Moves the slide all the way down if right bumper is pressed
-        if (gamepad2.right_bumper) {
-          mek.setSlide(0);
-          mek.slideTarget = 0;
-          sleep(1000);
-        }
-
-        // 2. Set the pivot power
-        mek.setPivot(-gamepad2.right_stick_y, gamepad2.right_bumper);
-
-        // 3. Intake/Outtake control
-        mek.runIntake(gamepad2.left_trigger > .5, gamepad2.right_trigger > .5);
-        if (gamepad2.b && !bPressed) {
-          mek.toggleWrist();
-        }
-        bPressed = gamepad2.b;
-
-        // 4. clamp/unclamp
-        if (gamepad2.x) {
-          mek.clamp();
-        } else if (gamepad2.y) {
-          mek.unclamp();
-        }
-      }
-
-      // 5. Updates the target position of the slide
-      mek.setSlide((int) mek.slideTarget);
-
-      telemetry.addLine("----------------------------------------");
-      telemetry.addData("X Pos: ",swerve.odometry.getPosX());
-      telemetry.addData("Y Pos: ",swerve.odometry.getPosY());
-      telemetry.addData("pivot input: ",-gamepad2.right_stick_y);
-      telemetry.addData("pivot pow: ",mek.pivot.getPower());
-      telemetry.update();
-      lastTime = currentTime;
+      telemetry.addLine("Drive:        " + drive_joystick);
+      telemetry.addLine("Strafe:       " + strafe_joystick);
+      telemetry.addLine("Vector len:   " + vector_length);
+      telemetry.addLine("Vector angle: " + vector_angle);
     }
   }
 }
