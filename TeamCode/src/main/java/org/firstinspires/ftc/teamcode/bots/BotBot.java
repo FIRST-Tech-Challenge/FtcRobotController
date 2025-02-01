@@ -83,6 +83,23 @@ public class BotBot {
 
     }
 
+    // define event type sample rolled in
+    public static final int EVENT_SAMPLE_ROLLED_IN = 1;
+    public static final int EVENT_SAMPLE_ROLLED_OUT = 2;
+
+    protected void triggerEvent(int type, int data){
+        onEvent(type, data);
+    }
+    protected void triggerEvent(int type){
+        triggerEvent(type, 0);
+    }
+
+    protected void onEvent(int type, int data){
+
+    }
+
+
+
     public void close(){
         shutdownTimer();
         try {
