@@ -142,7 +142,7 @@ public class CompBotAuto extends LinearOpMode {
     steer_wheels(
       0.755,  // Front Right
       0.575,  // Back Left
-      0.395,  // Back Right
+      0.325,  // Back Right
       0.375   // Front Left
     );
   }
@@ -169,12 +169,14 @@ public class CompBotAuto extends LinearOpMode {
     drive_Wheels(0.5, 0);
     sleep(rotateTimeInMs);
     drive_Wheels(0.0, 0);
+    sleep(250);
   }
 
   private void rotate_wheels_backward(int rotateTimeInMs) {
     drive_Wheels(-0.5, 0);
     sleep(rotateTimeInMs);
     drive_Wheels(0.0, 0);
+    sleep(250);
   }
 
   private void handle_place_second_specimine_in_bucket() {
