@@ -29,7 +29,7 @@ public class BlueBotTeleop extends LinearOpMode {
   public double frOffset = -0.125;
   public double brOffset = -0.125;
   public double blOffset = -0.25;
-  public double flOffset = 0.25;
+  public double flOffset = -0.25;
 
   @Override
   public void runOpMode() throws InterruptedException {
