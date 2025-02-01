@@ -156,7 +156,7 @@ public class CompBotAuto extends LinearOpMode {
     );
   }
 
-  private void steer_to_staife_right() {
+  private void steer_to_strafe_right() {
     steer_wheels(
       0.25,  // Front Right
       0.25,  // Back Left
