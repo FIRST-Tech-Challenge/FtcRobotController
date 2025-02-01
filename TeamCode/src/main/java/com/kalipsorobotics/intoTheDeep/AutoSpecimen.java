@@ -42,7 +42,6 @@ public class AutoSpecimen extends LinearOpMode {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        telemetry.setMsTransmissionInterval(40);
         OpModeUtilities opModeUtilities = new OpModeUtilities(hardwareMap, this, telemetry);
         KActionSet redAutoSpecimen = new KActionSet();
         DriveTrain.setInstanceNull();
