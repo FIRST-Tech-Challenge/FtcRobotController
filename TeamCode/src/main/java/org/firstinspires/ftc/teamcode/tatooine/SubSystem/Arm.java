@@ -25,6 +25,8 @@ public class Arm {
 
     private double startAngle = 0; // Initial starting angle of the arm
 
+    private double ANGLE_OFFSET = -5;   // Angle offset for the arm
+
     private DigitalChannel limitSwitch = null; // Limit switch to detect arm position limits
 
     private final double ANGLE_AMP_LIMIT = 0; // Maximum allowed amperage for angle motors
@@ -225,6 +227,7 @@ public class Arm {
         // Reset encoders if limit switch is pressed
         if (limitSwitch.getState()) {
             resetAngleEncoders(); // Reset encoders if limit switch is pressed
+            startAngle = ANGLE_OFFSET;
             if (power < 0) {
                 power = 0; // Prevent negative power if limit switch is pressed
             }
