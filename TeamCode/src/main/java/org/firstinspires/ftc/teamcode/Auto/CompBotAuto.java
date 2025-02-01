@@ -107,7 +107,7 @@ public class CompBotAuto extends LinearOpMode {
     retract_arm_all_the_way_in();
 
     // Move arm all the way back up to know where it is
-    homeArm();
+    mek.homeArm();
   }
 
   private void steer_wheels(double front_right, double back_left, double back_right, double front_left) {
