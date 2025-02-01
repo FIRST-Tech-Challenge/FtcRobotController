@@ -26,6 +26,9 @@ public class PurePursuitAction extends Action {
     public static final double P_ANGLE = 0.7 * 1.0 / Math.toRadians(90);
     public static final double P_XY_FAST = 1.0/100.0;
     public static final double P_ANGLE_FAST = 1.0/ Math.toRadians(30);
+    public static final double P_XY_SLOW = 1.0/800.0;
+    public static final double P_ANGLE_SLOW = 1.0/ Math.toRadians(130);
+
 
     List<Position> pathPoints = new ArrayList<Position>();
     DriveTrain driveTrain;

@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class WallToBarHangRoundTrip extends KActionSet {
 
-    public static final double WALL_PICKUP_X = -125; //150-155 normal (overshoot val)
+    public static final double WALL_PICKUP_X = -125; //150-155 normal (overshoot val) //
     public static final double WALL_PICKUP_Y = -790;
     public static final double WALL_PICKUP_PID_VALUE = 1.0/2000.0;
 
