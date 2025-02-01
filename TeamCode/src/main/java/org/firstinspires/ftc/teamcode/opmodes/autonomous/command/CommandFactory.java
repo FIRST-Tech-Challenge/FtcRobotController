@@ -138,9 +138,17 @@ public class CommandFactory {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, DeliverySlider.Direction.EXPANDING).withExpandHoldPower(-.2);
     }
 
+    public MoveSliderCommand extendSliderForOuttake2(int timeout) {
+        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition - 20, false, DeliverySlider.Direction.EXPANDING, timeout, true );
+    }
+
 //    public MoveSliderCommand extendSlider(Supplier<Boolean> endHoldingSignalProvider) {
 //        return new MoveSliderCommand(slider, telemetry, DeliverySlider.BasketDeliveryPosition, DeliverySlider.Direction.EXPANDING).withEndAction(new MoveSliderCommand.EndAction(endHoldingSignalProvider));
 //    }
+
+    public WhileSamplePresent whileSamplePresent(int timeout) {
+        return new WhileSamplePresent(intake, telemetry, timeout);
+    }
 
     public MoveSliderCommand extendSliderToSpecimen() {
         return new MoveSliderCommand(slider, telemetry, DeliverySlider.StartPosition, DeliverySlider.Direction.EXPANDING);
@@ -179,11 +187,11 @@ public class CommandFactory {
     }
 
     public MovePivotCommand pivotToSweep() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart - 100);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart - 100, 0, 0, 1, 1000);
     }
 
     public MovePivotCommand pivotToJustAboveSweep() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 400);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 500, 0, 0, 1, 1000);
     }
 
     public MovePivotCommand pivotToSpecimenInTake() {
@@ -211,6 +219,9 @@ public class CommandFactory {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.StartPositionFromStart);
     }
 
+    public MovePivotCommand pivotToGroundIntakeReady() {
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.IntakePositionFromStart + 400);
+    }
 
     public MovePivotCommand pivotToDelivery() {
         return new MovePivotCommand(pivot, telemetry, DeliveryPivot.DeliveryPositionFromStart);

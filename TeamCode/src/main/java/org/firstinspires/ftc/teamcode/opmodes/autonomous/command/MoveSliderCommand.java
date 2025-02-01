@@ -62,6 +62,12 @@ public class MoveSliderCommand extends SounderBotCommandBase {
     }
 
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction direction, int timeout) {
+        this(slider, telemetry,target, resetEncoder, direction, timeout, false);
+    }
+
+    boolean holdPowerOnTargetReach;
+
+    public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, boolean resetEncoder, DeliverySlider.Direction direction, int timeout, boolean holdPowerAfterTargetReach) {
         super(timeout);
 
         this.slider = slider;
@@ -71,6 +77,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
         this.pidController = slider.getPidController();
         this.resetEncoder = resetEncoder;
         this.direction = direction;
+        this.holdPowerOnTargetReach = holdPowerAfterTargetReach;
 
         Log.i(LOG_TAG, "Target set to: " + target + ", direction = " + direction.name());
         addRequirements(slider);
@@ -146,6 +153,10 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     @Override
     protected boolean isTargetReached() {
+        if(holdPowerOnTargetReach) {
+            return false;
+        }
+
         return Math.abs(target - position) < 40;
     }
 

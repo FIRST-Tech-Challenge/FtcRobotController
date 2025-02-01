@@ -24,9 +24,12 @@ public class MovePivotCommand extends SounderBotCommandBase{
     public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target) {
         this(pivot,telemetry, target, 0, 0, 1);
     }
-
     public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target, int startDelayMs, int endDelayMs, double maxPower) {
-        super(3000);
+        this(pivot, telemetry, target, startDelayMs, endDelayMs, maxPower, 3000);
+    }
+
+    public MovePivotCommand(DeliveryPivot pivot, Telemetry telemetry, double target, int startDelayMs, int endDelayMs, double maxPower, int timeout) {
+        super(timeout);
 
         this.pivot = pivot;
         this.telemetry = telemetry;
