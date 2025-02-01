@@ -286,22 +286,19 @@ public class Arm {
 
     // Action class to move the arm angle
     public class MoveAngle implements Action {
-        private static MoveAngle instance = null;
 
-        private MoveAngle() {
+        private double PIDPower = 0;
+
+        public MoveAngle() {
             anglePID.setSetPoint(getAngle());
         }
 
-        public static synchronized MoveAngle getInstance() {
-            if (instance == null) {
-                instance = new MoveAngle();
-            }
-            return instance;
-        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            double PIDPower = anglePID.calculate(getAngle());
+            if (!anglePID.atSetPoint()){
+                 PIDPower = anglePID.calculate(getAngle());
+            }
             setPowerAngleWithF(PIDPower);
             return true;
         }
