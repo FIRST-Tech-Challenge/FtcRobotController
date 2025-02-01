@@ -118,7 +118,7 @@ public class CompBotAuto extends LinearOpMode {
     move_pivot_arm_down(1000);
   }
 
-  private void steer_wheels_to_central_pivot_position() {
+  private void steer_wheels(double front_right, double back_left, double back_right, double front_left) {
     // Instructions for the set_wheel arguments include
     // the wheel angle, respective cartesian coordinate,
     // and finally the value that represents the angle.
@@ -133,59 +133,89 @@ public class CompBotAuto extends LinearOpMode {
     //   270 deg (W)  : 0.75
     //   315 deg (NW) : 0.625
 
+    // This function blocks until the wheels have steered to
+    // the correct angles, therefore, if a wheel gets stuck,
+    // or there's too much load to steer the wheel, this can
+    // result in an infinite loop.
+
     while (driveBase.set_wheels(
+      front_right,
+      back_left,
+      back_right,
+      front_left
+    ) != 0.0) ;
+  }
+
+  private void steer_wheels_to_central_pivot_position() {
+    steer_wheels(
       0.625,  // Front Right
       0.625,  // Back Left
       0.375,  // Back Right
       0.375   // Front Left
-    ) != 0.0) ;
+    )
+  }
+
+  private void steer_wheels_to_go_straight() {
+    steer_wheels(
+      0.5,  // Front Right
+      0.5,  // Back Left
+      0.5,  // Back Right
+      0.5   // Front Left
+    )
+  }
+
+  private void rotate_wheels_forward(int rotateTimeInMs) {
+    drive_Wheels(0.5, 0);
+    sleep(rotateTimeInMs);
+  }
+
+  private void rotate_wheels_backward(int rotateTimeInMs) {
+    drive_Wheels(-0.5, 0);
+    sleep(rotateTimeInMs);
   }
 
   private void handle_place_second_specimine_in_bucket() {
     // Rotate wheels to turn robot toward the next specimine
-
+    steer_wheels_to_central_pivot_position();
 
     // Steer toward next specimine location
-
+    rotate_wheels_forward(500);
 
     // Extend arm enough to hover over the specimine
-
+    adjust_arm_extension(2000, 2500);
 
     // Lower arm to the specimine
-
+    move_pivot_arm_down(500);
 
     // Turn on intake to pull in the specimine
-
+    run_intake(2000);
 
     // Raise arm to prepare for movement to the bucket
-
+    move_pivot_arm_up(500);
 
     // Pull in arm to ensure center of balance leads to deterministic behavior
+    adjust_arm_extension(0, 2500);
 
-
-    // Rotate wheels to position robot toward the bucket
-
-
-    // Drive to the bucket
-
+    // Steer back to the bucket
+    rotate_wheels_backward(500);
 
     // Raise arm to appropriate angle to be in alignment with the bucket
-
+    move_pivot_arm_up(1000);
 
     // Extend arm to the bucket
-
+    extend_arm_all_the_way_out();
 
     // Turn on outtake to drop specimine in the bucket
-
+    run_outtake(1000);
 
     // Raise arm just enough to move it away from the bucket
-
+    move_pivot_arm_up(500);
 
     // Retract the arm
-
+    retract_arm_all_the_way_in();
 
     // Lower arm to a safer position
-
+    move_pivot_arm_down(1000);
   }
 
 //  private void set_relative_speed(DcMotor motor) {
@@ -203,9 +233,6 @@ public class CompBotAuto extends LinearOpMode {
     // in the bucket.
     AutoState state = AutoState.place_first_specimine_in_bucket;
 
-    // TEST: Steer wheels to prepare for central pivot
-    steer_wheels_to_central_pivot_position();
-
     // set direction
     if (opModeIsActive()) {
 
@@ -218,6 +245,7 @@ public class CompBotAuto extends LinearOpMode {
           state = AutoState.place_second_specimine_in_bucket;
         }
         else if (state == AutoState.place_second_specimine_in_bucket) {
+          handle_place_second_specimine_in_bucket();
 
           // Advance to next state
           state = AutoState.complete;
