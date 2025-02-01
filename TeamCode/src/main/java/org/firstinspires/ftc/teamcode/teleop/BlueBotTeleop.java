@@ -38,6 +38,8 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addLine("Strafe:       " + strafe_joystick);
       telemetry.addLine("Vector len:   " + vector_length);
       telemetry.addLine("Vector angle: " + vector_angle);
+
+      telemetry.update();
     }
   }
 }
