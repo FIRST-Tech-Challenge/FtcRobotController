@@ -45,7 +45,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
       vector_angle = 0.5 - vector_angle;
       if (vector_angle < 0) {
-        vector_angle 1.0 - vector_angle;
+        vector_angle = 1.0 - vector_angle;
       }
 
       telemetry.addLine("Drive:        " + drive_joystick);
