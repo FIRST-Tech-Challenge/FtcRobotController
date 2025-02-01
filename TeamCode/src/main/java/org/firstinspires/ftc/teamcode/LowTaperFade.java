@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "What if Conner got a lowwwwtaperfade", group = "Autonomous")
+@Autonomous(name = "We love our teammates! Gracious and professional! \uD83D\uDC99", group = "Autonomous")
 public class LowTaperFade extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RIGHT;
 
@@ -299,6 +299,7 @@ public class LowTaperFade extends LinearOpMode {
             pause(500);
             baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
             baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_RUNG_PREP_AUTO);
+            pause(100);
             return false;
         }
     }
@@ -328,7 +329,6 @@ public class LowTaperFade extends LinearOpMode {
                 new SequentialAction(
                         placingTrajectory.build(),
                         hookChamber()
-//                        ,unhookChamber()
                 ));
         return placingTrajectory;
     }
