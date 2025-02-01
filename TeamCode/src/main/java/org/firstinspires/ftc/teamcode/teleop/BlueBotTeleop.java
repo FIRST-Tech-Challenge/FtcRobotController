@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.ODO.GoBildaPinpointDriver.GoBildaOd
 @TeleOp(name = "Blue Bot Teleop")
 public class BlueBotTeleop extends LinearOpMode {
 
-  double slideSpeed = 100;
+  double slideSpeed = 80;
   GoBildaPinpointDriver odometry;
 
   AutoSwerve driveBase;
@@ -160,7 +160,8 @@ public class BlueBotTeleop extends LinearOpMode {
       } else {
 
         // 3. Sets the target position of the slide, limits set in Mekansim class
-        mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
+        if(-gamepad2.left_stick_y != 0)
+          mek.slideTarget += -gamepad2.left_stick_y * slideSpeed;
         if (mek.slideTarget < 0) mek.slideTarget = 0;
         if (mek.slideTarget > mek.limitSlide) mek.slideTarget = mek.limitSlide;
         telemetry.addData("Slide target position: ", mek.slideTarget);
@@ -216,7 +217,6 @@ public class BlueBotTeleop extends LinearOpMode {
   public void Init() {
     odometry = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
     odometry.recalibrateIMU();
-    odometry.resetPosAndIMU();
     odometry.setOffsets(110, 30);
     odometry.setEncoderResolution(goBILDA_4_BAR_POD);
     odometry.setEncoderDirections(FORWARD, FORWARD);
