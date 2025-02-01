@@ -204,23 +204,22 @@ public class Swerve {
 
 
   public static final class Module {
-    private static final double conversionFactor;
 
     String pos = "";
     static final double maxDriveSpeedMetersPerSec;
     static final double maxSteerSpeedRadPerSec;
 
     // TODO figure this shit out(mostly done)
-    static double countsPerRevolution = 537.7;
+    double countsPerRevolution = 537.7;
     static double gearRatio = 1.1;
     static double wheelCircumferenceMeters = (96.0 / 1000.0) * Math.PI;
     static double maxMotorVelocity = 436.0 / 60.0;
 
     static double maxSpeedSecondsPer60Deg = .14 * .863;
 
+    double conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
 
     static {
-      conversionFactor = countsPerRevolution * gearRatio / wheelCircumferenceMeters;
       maxDriveSpeedMetersPerSec = (maxMotorVelocity / gearRatio) * wheelCircumferenceMeters;
 
       double maxSpeedSecondsPer60Degrees = .14 * .863;
@@ -267,6 +266,7 @@ public class Swerve {
           ki = 1.1;
           kd = 0.1;
           ks = 0.08;
+          conversionFactor += 1;
           break;
         }
         case 3: {
@@ -275,6 +275,7 @@ public class Swerve {
           ki = 1;
           kd = 0.15;
           ks = 0.04;
+          conversionFactor += 1;
           break;
         }
         default: throw new IllegalArgumentException("Module ID is out of range 0-3!");
