@@ -149,7 +149,7 @@ public class LowTaperFade extends LinearOpMode {
                             basketPhase++;
                             adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(),
                                     roadRunner);
-                            previousBasketTrajectory = placeLoop(sp, previousBasketTrajectory, PlacementHeight.CHAMBER_HIGH,
+                            previousBasketTrajectory = placeLoop(sp, previousBasketTrajectory, PlacementHeight.BASKET_HIGH,
                                     basketPhase);
                         }
                         gameLoopEnd(sp, previousBasketTrajectory);
@@ -185,7 +185,7 @@ public class LowTaperFade extends LinearOpMode {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
         TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
         baseRobot.outtake.claw.close();
-        baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.TRANSFER);
+        baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_BASKET);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
         baseRobot.intake.horizontalSlide.setPosition(ViperSlide.HorizontalPosition.COLLAPSED);
 
@@ -211,7 +211,7 @@ public class LowTaperFade extends LinearOpMode {
                 previousTrajectory = placeNextSpecimenOnChamber(sp, previousTrajectory, placementHeight, blocksScored);
                 break;
             case LEFT:
-                previousTrajectory = runLeftSpecimenTrajectory(sp, previousTrajectory, blocksScored);
+                previousTrajectory = runLeftSampleTrajectory(sp, previousTrajectory, blocksScored);
                 previousTrajectory = placeNextSampleInBasket(sp, previousTrajectory, blocksScored);
                 break;
         }
@@ -450,8 +450,8 @@ public class LowTaperFade extends LinearOpMode {
         }
     }
 
-    private TrajectoryActionBuilder runLeftSpecimenTrajectory(StartingPosition sp,
-                                                              TrajectoryActionBuilder previousTrajectory, int basketPhase) {
+    private TrajectoryActionBuilder runLeftSampleTrajectory(StartingPosition sp,
+                                                            TrajectoryActionBuilder previousTrajectory, int basketPhase) {
         TrajectoryActionBuilder speciTraj;
         switch (basketPhase) {
             case 1:
