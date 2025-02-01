@@ -36,6 +36,77 @@ public class CompBotAuto extends LinearOpMode {
     driveBase = new AutoSwerve(this, odometry);
   }
 
+  enum AutoState {
+    place_first_specimine_in_bucket,
+    place_second_specimine_in_bucket,
+    complete
+  }
+
+  private void stop_moving_pivot_arm() {
+    mek.setPivot(0, false);
+    sleep(250);
+  }
+
+  private void move_pivot_arm_up(int movementTimeInMs) {
+    mek.setPivot(-1, false);
+    sleep(movementTimeInMs);
+    stop_moving_pivot_arm();
+  }
+
+  private void move_pivot_arm_down(int movementTimeInMs) {
+    mek.setPivot(1, false);
+    sleep(movementTimeInMs);
+    stop_moving_pivot_arm();
+  }
+
+  private void adjust_arm_extension(int extensionPosition, int extensionTimeInMs) {
+    mek.setSlide(extensionPosition);
+    sleep(extensionTimeInMs);
+  }
+
+  private void extend_arm_all_the_way_out() {
+    adjust_arm_extension(4250, 5000);
+  }
+
+  private void retract_arm_all_the_way_in() {
+    adjust_arm_extension(0, 2500);
+  }
+
+  private void stop_intake_outtake() {
+    mek.runIntake(false, false);
+  }
+
+  private void run_intake(int intakeTimeInMs) {
+    mek.runIntake(true, false);
+    sleep(intakeTimeInMs);
+    stop_intake_outtake();
+  }
+
+  private void run_outtake(int outtakeTimeInMs) {
+    mek.runIntake(false, true);
+    sleep(outtakeTimeInMs);
+    stop_intake_outtake();
+  }
+
+  private void handle_place_first_specimine_in_bucket() {
+    // Arm is already in home position (vertical), move to
+    // an angle so it's pointing toward the bucket.
+    move_pivot_arm_down(500);
+
+    // Extend arm out the entire way, hopefully it will be at
+    // the bucket by the end of this blocked call.
+    extend_arm_all_the_way_out();
+
+    // Put the specimine in the bucket.
+    run_outtake(1000);
+
+    // Retract arm.
+    retract_arm_all_the_way_in();
+
+    // Pivot the arm back down
+    move_pivot_arm_down(500);
+  }
+
 //  private void set_relative_speed(DcMotor motor) {
 //    int wheel = motor.getCurrentPosition() -
 //  }
@@ -47,37 +118,41 @@ public class CompBotAuto extends LinearOpMode {
     waitForStart();
     mek.homeArm();
 
+    // Start program assuming robot is ready to place the specimine
+    // in the bucket.
+    AutoState state = AutoState.place_first_specimine_in_bucket;
+
 // set direction
     if (opModeIsActive()) {
 
+      // State machine loop
       while (opModeIsActive()) {
+        if (state == AutoState.place_first_specimine_in_bucket) {
+          handle_place_first_specimine_in_bucket();
 
+          // Advance to next state
+          state = AutoState.place_second_specimine_in_bucket;
+        }
+        else if (state == AutoState.place_second_specimine_in_bucket) {
+
+          // Advance to next state
+          state = AutoState.complete;
+        }
+        else {
+          break;
+        }
+
+        // Turn wheels to appropriate angles, keep doing this until
+        // they're close enough, then fall into this if statement.
         if (driveBase.set_wheels(0.231, 0.24, 0.24, 0.259) == 0.0) {
           //drive_Wheels(0.5);
+
+          // Travel to the right spot (where is this?)
           goToPos(0.4,0.0,0.5);
           //PushPush();
         }
       }
 
-//      rotate(45,0.5);
-//
-//      sleep(30000);
-//
-//      mek.setPivot(1,false);
-//      sleep(500);
-//      mek.setPivot(0,false);
-//      mek.setSlide(4250);
-//      sleep(5000);
-//      mek.runIntake(false,true);
-//      sleep(1000);
-//      mek.runIntake(false,false);
-//      sleep(500);
-//      mek.setPivot(-1,false);
-//      sleep(500);
-//      mek.setPivot(0,false);
-//      sleep(250);
-//      mek.setSlide(0);
-//      sleep(2500);
       telem();
       odometry.update();
     }// end runOpMode

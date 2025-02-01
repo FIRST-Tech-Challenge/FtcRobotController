@@ -196,7 +196,12 @@ public class Mekanism {
     slide2.setPower(1.0);
   }
 
-
+  /**
+   * 1,0: Intake
+   * 0,1: Outtake
+   * 1,1: Outtake
+   * 0,0: Stop
+   */
   public void runIntake(boolean intake, boolean outtake) {
     if (outtake) {
       intakeServo.setPosition(1);
