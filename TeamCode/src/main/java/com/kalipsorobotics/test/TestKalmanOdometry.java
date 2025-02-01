@@ -29,6 +29,10 @@ public class TestKalmanOdometry extends LinearOpMode {
             telemetry.addLine("x: " + noisyMeasurement.x + " y: " + noisyMeasurement.y);
             telemetry.addLine("filtered data");
             telemetry.addLine("x: " + filteredPoint.x + " y: " + filteredPoint.y);
+            if (gamepad1.a) {
+                kalmanFilter.reset();
+                telemetry.addLine("filter reset");
+            }
             telemetry.update();
         }
     }
