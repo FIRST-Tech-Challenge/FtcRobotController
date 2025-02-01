@@ -51,7 +51,7 @@ public class MoveSliderCommand extends SounderBotCommandBase {
 
     DeliverySlider.Direction direction;
 
-    private double expandHoldPower = -.1;
+    private double expandHoldPower = -.2;
 
     public MoveSliderCommand(DeliverySlider slider, Telemetry telemetry, double target, DeliverySlider.Direction direction) {
         this(slider, telemetry, target, false, direction);

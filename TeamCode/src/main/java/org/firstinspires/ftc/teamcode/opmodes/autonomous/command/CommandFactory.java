@@ -191,7 +191,7 @@ public class CommandFactory {
     }
 
     public MovePivotCommand pivotToJustAboveSweep() {
-        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 500, 0, 0, 1, 1000);
+        return new MovePivotCommand(pivot, telemetry, DeliveryPivot.SweepPositionFromStart + 400, 0, 0, 1, 1000);
     }
 
     public MovePivotCommand pivotToSpecimenInTake() {

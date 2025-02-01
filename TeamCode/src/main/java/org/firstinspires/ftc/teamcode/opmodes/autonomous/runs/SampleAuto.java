@@ -63,7 +63,7 @@ public class SampleAuto extends CommandAutoOpMode {
     public static class Sample3Config {
         public static boolean skipIntake = false;
 
-        public static int beforeIntakeDrive_targetX =300;
+        public static int beforeIntakeDrive_targetX =330;
         public static int beforeIntakeDrive_targetY = 530;
         public static int beforeIntakeDrive_heading = 15;
         public static int beforeIntakeDrive_distanceTolerance = 5;
