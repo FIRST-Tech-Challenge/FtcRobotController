@@ -16,10 +16,12 @@ public class WristClaw {
     //-----------------------------------------
     //Variable Storage:
     double openPosition = 0.73;
-    double closePosition = 0.38;
-    double upPosition = 0.36;
-    double midPosition = 0.54;
-    double downPosition = 0.87;
+    double closePosition = 0.36;
+    double upPosition = 0.31;
+    double midPosition = 0.49;
+    double specimenClipPosition = 0.49;
+    double specimenPickupPosition = 0.7;
+    double downPosition = 0.8;
     double dumpPosition = 0.36;
     double autodumpPosition = 0.26;
     double centerPosition = 0.5;
@@ -30,6 +32,8 @@ public class WristClaw {
     public void CloseClaw() {ClawCustom(closePosition);}
     public void WristUp() {WristCustom(upPosition);}
     public void WristMid() {WristCustom(midPosition);}
+    public void WristSpecimenClip() {WristCustom(specimenClipPosition);}
+    public void WristSpecimenPickup() {WristCustom(specimenPickupPosition);}
     public void WristDown() {WristCustom(downPosition);}
     public void WristDump() {WristCustom(dumpPosition);}
     public void WristAutoDump() {WristCustom(autodumpPosition);}

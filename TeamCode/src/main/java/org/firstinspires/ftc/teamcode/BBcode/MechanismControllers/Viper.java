@@ -24,8 +24,8 @@ public class Viper {
     //RPM 312 = 537.7 Ticks per Revolution
     int fullExtend = 24;
     int halfExtend = 9;
-    int specimenhangExtend = 12;
-    int submersibleExtend = 5;
+    int specimenhangExtend = 9;
+    int submersibleExtend = 16;
     int shortExtend = 3;
     int closedExtend = 0;
     //--------------------------
@@ -45,6 +45,7 @@ public class Viper {
     public boolean getIsViperExtendFull() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(fullExtend);}
     public boolean getIsViperRetractedShort() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(shortExtend + 0.5);}
     public boolean getIsViperExtendClosed() {return _viperMotor.getCurrentPosition() < InchConverterToTicks(closedExtend + 0.5);}
+    public boolean getIsViperExtendSub() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(submersibleExtend);}
     public boolean getIsViperExtendSpecimenHang() {return _viperMotor.getCurrentPosition() > InchConverterToTicks(specimenhangExtend);}
 
     public void StopAndResetEncoder() {_viperMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
