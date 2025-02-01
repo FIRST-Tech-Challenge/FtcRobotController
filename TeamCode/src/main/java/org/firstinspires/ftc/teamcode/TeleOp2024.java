@@ -77,6 +77,8 @@ if (robot.clawServo.getPosition() >= 1.05) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
        } else if (operator.a) {
            sliderPosition = robot.MIN_SLIDER_TICKS
+       } else if (operator.right_bumper) {
+           sliderPosition = robot.sliderMotor.setPower(0);
        } else {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
