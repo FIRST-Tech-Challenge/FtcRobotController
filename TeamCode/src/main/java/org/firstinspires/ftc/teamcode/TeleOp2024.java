@@ -40,7 +40,6 @@ if (robot.clawServo.getPosition() >= 1.05) {
             }
         }
 
-
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;
         double driveLeftStickX = driver.left_stick_x;
@@ -60,8 +59,8 @@ if (robot.clawServo.getPosition() >= 1.05) {
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
         // don't allow the worm gear to go up beyond the max limit
-        if (robot.wormGearAngle() >= 85 && wormGearPower > 0) {
-            wormGearPower = 0;
+        if (robot.wormGearAngle() >= 85 && wormGearPower > 0.0) {
+            wormGearPower = 0.0;
         }
 
 //       if (robot.wormGearAngle() < robot.STARTING_ANGLE - 10 && wormGearPower < 0) {
@@ -71,14 +70,29 @@ if (robot.clawServo.getPosition() >= 1.05) {
         robot.wormGear.setPower(wormGearPower);
 
         // When the button "X" is held on the Operator's Controller, then set the slider to it's maximum length, and hold until this is released.
-//        if (!operator.x) {
+        // Utilize this for faster access to top basket
+        // If a is clicked, then the slider is set to it's minimum.
+
+       if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
-//        } else {
-//            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
-//        }
+       } else if (operator.a) {
+           sliderPosition = robot.MIN_SLIDER_TICKS
+       } else {
+           sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
+        }
+
+       // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
+       //Set the worm gear tol -7 degrees
+
+        if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
+            robot.wormGear.setPower(-1);
+            if (robot.wormGearAngle() == -7) {
+                wormGearPower = 0;
+            }
+        }
         telemetry.addData("Lift","%.1f", opLeftStickY);
 
         // let the next frame know if the toggle was pressed

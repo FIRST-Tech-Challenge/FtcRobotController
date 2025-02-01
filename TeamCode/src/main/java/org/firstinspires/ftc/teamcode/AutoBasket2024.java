@@ -19,6 +19,7 @@ public class AutoBasket2024 extends DriveMethods {
         OpenClaw,
         MoveBack
     }
+
     State currentState = State.Unstarted;
 
     @Override
@@ -30,7 +31,7 @@ public class AutoBasket2024 extends DriveMethods {
     public void loop() {
         telemetry.addData("code", "running");
         telemetry.addData("time", "%.1f", getRuntime());
-        telemetry.addData("sliderLength","%.1f", (double) robot.sliderMotor.getCurrentPosition());
+        telemetry.addData("sliderLength", "%.1f", (double) robot.sliderMotor.getCurrentPosition());
         telemetry.addData("imu", "%.1f", robot.imu.getRobotYawPitchRollAngles().getYaw());
 
         telemetry.addData("state", currentState);
@@ -40,8 +41,8 @@ public class AutoBasket2024 extends DriveMethods {
                 break;
             case TightenClaw:
                 robot.clawServo.setPosition(1.20);
-              changeState(State.StrafeRight);
-              break;
+                changeState(State.StrafeRight);
+                break;
             case StrafeRight:
                 omniDrive(0, 0.25, 0);
 
@@ -64,7 +65,7 @@ public class AutoBasket2024 extends DriveMethods {
                 omniDrive(0.15, 0, 0);
 
                 if (getStateTime() >= 1.1) {
-                    omniDrive(0, 0, 0 );
+                    omniDrive(0, 0, 0);
                     changeState(State.ExtendSlider);
                 }
                 break;
@@ -94,13 +95,14 @@ public class AutoBasket2024 extends DriveMethods {
         }
 //spider
     }
+
     void changeState(State nextState) {
         currentState = nextState;
         stateStartTime = getRuntime();
     }
 
     double getStateTime() {
-       return getRuntime() - stateStartTime;
+        return getRuntime() - stateStartTime;
     }
 
 
@@ -123,4 +125,4 @@ public class AutoBasket2024 extends DriveMethods {
 //                    changeState(State.RaiseArm);
 //                }
 //                break;
-    }
+}
