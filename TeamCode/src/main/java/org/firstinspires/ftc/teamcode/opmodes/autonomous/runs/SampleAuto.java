@@ -32,7 +32,7 @@ public class SampleAuto extends CommandAutoOpMode {
     public static class Sample1Config {
         public static boolean skipIntake = false;
 
-        public static int toSample_x = 530;
+        public static int toSample_x = 515;
         public static int toSample_y = 250;
         public static int toSample_tolerance = 5;
         public static long toSample_timeout = 1000;
@@ -48,7 +48,7 @@ public class SampleAuto extends CommandAutoOpMode {
         public static boolean skipIntake = false;
 
         public static int toSample_x = 500;
-        public static int toSample_y = 520;
+        public static int toSample_y = 540;
         public static int toSample_heading = 0;
         public static int toSample_tolerance = 5;
         public static int toSample_timeout = 1500;
@@ -63,7 +63,7 @@ public class SampleAuto extends CommandAutoOpMode {
     public static class Sample3Config {
         public static boolean skipIntake = false;
 
-        public static int beforeIntakeDrive_targetX =330;
+        public static int beforeIntakeDrive_targetX =265;
         public static int beforeIntakeDrive_targetY = 530;
         public static int beforeIntakeDrive_heading = 15;
         public static int beforeIntakeDrive_distanceTolerance = 5;
