@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.command.SounderBotBaseRunCommand;
 import org.firstinspires.ftc.teamcode.opmodes.OpModeTemplate;
 import org.firstinspires.ftc.teamcode.opmodes.PowerMode;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.AlignToSampleUsingLimelight;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.command.MovePivotRelativelyCommand;
 import org.firstinspires.ftc.teamcode.subsystems.climb.HangingArm;
 import org.firstinspires.ftc.teamcode.subsystems.delivery.DeliveryPivot;
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenClaw;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSlider;
 //import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 import org.firstinspires.ftc.teamcode.subsystems.specimen.SpecimenSliderClaw;
+import org.firstinspires.ftc.teamcode.subsystems.vision.LimeLight;
 
 /**
  * This is old mainTeleop
@@ -100,6 +102,9 @@ public class MainTeleop extends OpModeTemplate {
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(rollingIntake::ToggleElbowAcrossAll, rollingIntake));
+
+        //driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+        //        .whenPressed(new AlignToSampleUsingLimelight(driveTrain, limeLight, telemetry, 3000));
 
         // Specimen Slider Actions
 
@@ -183,7 +188,7 @@ public class MainTeleop extends OpModeTemplate {
                 .whenHeld(new InstantCommand(driveTrain::ToggleDriveDirection, driveTrain));
 
         // Register all subsystems
-        register(driveTrain, deliveryPivot, deliverySlider, feedback, rollingIntake, specimenSlider);//, limeLight);
+        register(driveTrain, deliveryPivot, deliverySlider, feedback, rollingIntake, specimenSlider); //, limeLight);
 
         // update telemetry every loop
         schedule(SounderBotBaseRunCommand.createTelemetryEnabledOnlyInstance(telemetry));

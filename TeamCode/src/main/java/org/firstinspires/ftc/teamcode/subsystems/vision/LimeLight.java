@@ -18,45 +18,41 @@ public class LimeLight extends SonicSubsystemBase {
 
     private Limelight3A limelight;
 
-    private Servo servo;
-
-
     public LimeLight(HardwareMap hardwareMap, Telemetry telemetry) {
         /* instantiate motors */
 
         this.telemetry = telemetry;
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        servo = hardwareMap.get(Servo.class, "LimelightServo");
 
         telemetry.setMsTransmissionInterval(11);
 
         limelight.pipelineSwitch(7);
 
         limelight.start();
-        servo.setPosition(1);
     }
 
     @Override
     public void periodic() {
         super.periodic();
 
-//        if(limelight != null) {
-//            LLResult result = limelight.getLatestResult();
-//            if (result != null) {
-//                if (result.isValid()) {
-//                    Pose3D botpose = result.getBotpose();
-//                    telemetry.addData("tx", result.getTx());
-//                    telemetry.addData("ty", result.getTy());
-//                    telemetry.addData("Botpose", botpose.toString());
-//                    telemetry.update();
-//                    return;
-//                }
-//            }
-//        }
-//        telemetry.addLine("No sample found");
-//        telemetry.update();
+        if(limelight != null) {
+            LLResult result = limelight.getLatestResult();
+            if (result != null) {
+                if (result.isValid()) {
+                    Pose3D botpose = result.getBotpose();
+                    telemetry.addData("tx", result.getTx());
+                    telemetry.addData("ty", result.getTy());
+                    telemetry.addData("Botpose", botpose.toString());
+                    telemetry.update();
+                    return;
+                }
+            }
+        }
+        telemetry.addLine("No sample found");
+        telemetry.update();
     }
+
 
     public class LimelightResult {
 

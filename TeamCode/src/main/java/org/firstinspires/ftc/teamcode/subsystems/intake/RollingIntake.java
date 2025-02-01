@@ -92,8 +92,8 @@ public class RollingIntake extends SonicSubsystemBase {
                     this.leftServo.setPower(-1);
                     this.rightServo.setPower(1);
                 } else if(state == IntakeState.IntakeAuto) {
-                    this.leftServo.setPower(-.3);
-                    this.rightServo.setPower(.3);
+                    this.leftServo.setPower(-.4);
+                    this.rightServo.setPower(.4);
                 }
 
             } else {
