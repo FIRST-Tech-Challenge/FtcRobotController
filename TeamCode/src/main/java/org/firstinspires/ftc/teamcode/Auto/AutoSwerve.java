@@ -92,6 +92,15 @@ public class AutoSwerve {
     return delta_sum;
   }
 
+  public void steer_wheels_to_central_pivot_position() {
+    set_wheels(
+        0.125,  // Front Right
+        0.625,  // Back Left
+        0.875,  // Back Right
+        0.375   // Front Left
+    );
+  }
+
   // distance to drive by encoder
   // turns on motor for a drive distance
   // dist in meters
@@ -132,10 +141,10 @@ public class AutoSwerve {
 
     double delta_to_reference = desired_normalized_angle - normalized_voltage;
     double servo_speed = 0.09;
-//    if(delta_to_reference > 0.05)
-//      servo_speed = delta_to_reference;
-//    if(servo_speed > .25)
-//      servo_speed = .25;
+    if(delta_to_reference > 0.05)
+      servo_speed = delta_to_reference;
+    if(servo_speed > .25)
+      servo_speed = .25;
 
     double tolerance = 0.01;
 
