@@ -125,6 +125,7 @@ public class BlueBotTeleop extends LinearOpMode {
         vector_angle -= 1;
       if (vector_angle < 0)
         vector_angle += 1;
+
       if (vector_angle > .75 && vector_angle < 1.0) {
         vector_angle -= .5;
         vector_length *= -1;
@@ -133,6 +134,7 @@ public class BlueBotTeleop extends LinearOpMode {
         vector_angle += .5;
         vector_length *= -1;
       }
+
       if (strafe_joystick != 0. || drive_joystick != 0.) {
         driveBase.set_wheels(
             vector_angle + frOffset, // Front Right
@@ -141,9 +143,13 @@ public class BlueBotTeleop extends LinearOpMode {
             vector_angle + flOffset // Front Left
         );
         driveBase.setMotors(vector_length * 0.5);
-      } else {
+      } else if(rotate_joystick!=0) {
         driveBase.steer_wheels_to_central_pivot_position(frRotationOffset, blRotationOffset, brRotationOffset, flRotationOffset);
         driveBase.setMotors(rotate_joystick * 0.5);
+      }
+      else {
+        driveBase.stopServo();
+        driveBase.setMotors(0);
       }
 
       if (gamepad2.a) {
