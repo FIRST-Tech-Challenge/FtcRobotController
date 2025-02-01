@@ -50,7 +50,7 @@ public class NoActionTeleOp extends LinearOpMode {
 
             // Arm angle and extension control
             arm.setPowerAngleWithF(gamepadEx2.getStick(GamepadKeys.Stick.LEFT_STICK_Y));
-            arm.setPowerExtendWithLimits(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
+            arm.setPowerExtend(gamepadEx2.getStick(GamepadKeys.Stick.RIGHT_STICK_Y));
 
             // Reset IMU when Start button is pressed on gamepad1
             if (gamepadEx1.justPressedButton(GamepadKeys.Button.START)) {
@@ -61,7 +61,7 @@ public class NoActionTeleOp extends LinearOpMode {
             if (gamepadEx2.justPressedButton(GamepadKeys.Button.CROSS)) {
                 wrist.home();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.CIRCLE)) {
-                wrist.intake();
+                wrist.intakeFlat();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.TRIANGLE)) {
                 wrist.straight();
             } else if (gamepadEx2.justPressedButton(GamepadKeys.Button.SQUARE)) {

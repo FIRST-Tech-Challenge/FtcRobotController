@@ -25,7 +25,9 @@ public class Wrist {
 
     private final double FRONT = 0;
     private final double STRAIGHT = 0;
-    private final double INTAKE = 0;
+    private final double INTAKE_FLAT = 0;
+
+    private final double INTAKE_UP = 0;
     private final double SCORE_SAMPLE = 0;
     private final double HOME = 0;
     private final double BACK = 1;
@@ -116,9 +118,14 @@ public class Wrist {
     }
 
     // Move wrist to the INTAKE position
-    public void intake() {
-        setPositionWrist(INTAKE);
-        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to INTAKE position");
+    public void intakeFlat() {
+        setPositionWrist(INTAKE_FLAT);
+        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to INTAKE_FLAT position");
+    }
+
+    public void intakeUp(){
+        setPositionWrist(INTAKE_UP);
+        DebugUtils.logDebugMessage(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Moving wrist to INTAKE_UP position");
     }
 
     // Move wrist to the SCORE_SAMPLE position

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -274,7 +275,7 @@ public class Arm {
     }
 
     // Action to move the arm extension
-    public Action moveExtend(double goal) {
+    public Action moveExtend() {
         MoveExtend moveExtend = new MoveExtend(); // Create move extend action
         return moveExtend;
     }
@@ -282,6 +283,10 @@ public class Arm {
     public Action setExtend(double goal){
         SetExtend setExtend = new SetExtend(goal);
         return setExtend;
+    }
+
+    public Action intaking(double extend){
+        return new ParallelAction(setExtend(extend), setAngle((extend/ getMaxExtend())));
     }
 
     // Action class to move the arm angle
@@ -324,6 +329,8 @@ public class Arm {
     // Action class to move the arm extension
     public class MoveExtend implements Action {
 
+        private double PIDPower = 0;
+
         public MoveExtend(){
             extendPID.setSetPoint(getExtend());
         }
@@ -331,7 +338,13 @@ public class Arm {
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             // Calculate power using PID and apply with limits
-            double PIDPower = extendPID.calculate(getExtend());
+            if (Math.abs(Math.cos(Math.toRadians(getAngle())) * getExtend()) >= LIMIT){
+                extendPID.setSetPoint(LIMIT);
+            }
+            if (!extendPID.atSetPoint()) {
+                PIDPower = extendPID.calculate(getExtend());
+            }
+            setPowerExtend(PIDPower);
 
             return true; // Return true if extension is not at setpoint
         }
@@ -343,6 +356,7 @@ public class Arm {
         public SetExtend(double goal){
             this.goal = goal;
             extendPID.reset();
+            goal = MathUtil.wrap(goal, 0, getMaxExtend());
             extendPID.setSetPoint(goal);
 
         }
