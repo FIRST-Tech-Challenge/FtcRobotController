@@ -119,7 +119,7 @@ public class CompBotAuto extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     initRobot(this);
     waitForStart();
-    mek.homeArm();
+    //mek.homeArm();
 
     // Start program assuming robot is ready to place the specimine
     // in the bucket.

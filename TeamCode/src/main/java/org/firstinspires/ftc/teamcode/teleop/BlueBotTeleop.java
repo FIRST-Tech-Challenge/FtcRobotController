@@ -40,7 +40,7 @@ public class BlueBotTeleop extends LinearOpMode {
 
       if (gamepad2.a) {
         mek.autoClip();
-
+        telemetry.addLine("Auto clip");
       } else {
 
         // 1. Sets the target position of the slide, limits set in Mekansim class
@@ -81,7 +81,7 @@ public class BlueBotTeleop extends LinearOpMode {
       telemetry.addData("X Pos: ",swerve.odometry.getPosX());
       telemetry.addData("Y Pos: ",swerve.odometry.getPosY());
       telemetry.addData("pivot input: ",-gamepad2.right_stick_y);
-      telemetry.addData("pivot pos: ",mek.pivot.getPower());
+      telemetry.addData("pivot pow: ",mek.pivot.getPower());
       telemetry.update();
       lastTime = currentTime;
     }

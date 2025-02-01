@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.Mekanism;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
@@ -32,7 +33,7 @@ public class Mekanism {
   private final Servo ramp1, ramp2;
 
   public final int limitSlide = 4200;
-  public final double limitPivot = 3000;
+  public final double limitPivot = 3500;
   public final double countsPerDegree = 41.855;
   public final double countsPerInch = 120.88;
 
@@ -138,21 +139,24 @@ public class Mekanism {
 
   public void setPivot(double x, boolean raiseLimit) {
     double current_pos = pivot.getCurrentPosition();
-    double skip = x;
     if(raiseLimit)
       current_pos+=500;
-    if (current_pos >= limitPivot) {
+    if (current_pos >= limitPivot && x > 0 ) {
       x = 0;
       telemetry.addLine("Current pos over limit");
-    } else if (pivot.getCurrentPosition() <= 0) {
+    } else if (pivot.getCurrentPosition() <= 0 && x < 0) {
       x = 0;
       telemetry.addLine("Current pos under 0");
     }
     telemetry.addData("Pivot current pos", pivot.getCurrentPosition());
+    telemetry.addData("Limit switch: ",limitSwitch.getState());
 
-    //skip *= .5;
-    telemetry.addData("Skip: ",skip);
-    pivot.setPower(skip);
+    x *= .5;
+    pivot.setPower(x);
+    if(x > 0)
+      pivot.setTargetPosition(4000);
+    else
+      pivot.setTargetPosition(0);
   }
 
 
@@ -163,7 +167,7 @@ public class Mekanism {
     slide.setMode(RUN_USING_ENCODER);
     slide2.setMode(RUN_USING_ENCODER);
 
-    while (limitSwitch.getState() && pivotTimer.milliseconds() < 2500 && myOp.opModeIsActive()) {
+    while (limitSwitch.getState() && myOp.opModeIsActive()) {
       telemetry.addData("limit switch: ",limitSwitch.getState());
       pivot.setPower(-.5);
       slide.setPower(-0.5);
