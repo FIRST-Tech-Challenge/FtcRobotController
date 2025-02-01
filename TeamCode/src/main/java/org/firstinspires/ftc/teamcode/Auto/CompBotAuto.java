@@ -47,9 +47,13 @@ public class CompBotAuto extends LinearOpMode {
     sleep(250);
   }
 
-  private void move_pivot_arm_to_position(int absolutePosition) {
-    mek.pivot.setTargetPosition(absolutePosition);
-  }
+  // private void move_pivot_arm_to_position(int absolutePosition) {
+  //   // Pivot arm to top bucket position
+  //   mek.pivot.setTargetPosition(mek.pivot.getCurrentPosition() - absolutePosition);
+  
+  //   // 
+  //   mek.pivot.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+  // }
 
   private void move_pivot_arm_up(int movementTimeInMs) {
     mek.setPivot(-1, false);
@@ -114,15 +118,31 @@ public class CompBotAuto extends LinearOpMode {
     move_pivot_arm_down(1000);
   }
 
+  private void steer_wheels_to_central_pivot_position() {
+    //   0 deg (N)  : 0.5
+    //  45 deg (NE) : 0.375
+    //  90 deg (E)  : 0.25
+    // 180 deg (S)  : 1 or 0, stay away from this angle
+    // 270 deg (W)  : 0.75
+    // 315 deg (NW) : 0.625
+
+    while (driveBase.set_wheels(
+      0.625,  // Front Right
+      0.625,  // Back Left
+      0.375,  // Back Right
+      0.375   // Front Left
+    ) != 0.0) ;
+  }
+
   private void handle_place_second_specimine_in_bucket() {
-    // Rotate wheels to position robot toward the next specimine
+    // Rotate wheels to turn robot toward the next specimine
 
 
-    // Drive to next specimine location
+    // Steer toward next specimine location
 
 
     // Extend arm enough to hover over the specimine
-    // adjust_arm_extension()
+
 
     // Lower arm to the specimine
 
@@ -176,7 +196,10 @@ public class CompBotAuto extends LinearOpMode {
     // in the bucket.
     AutoState state = AutoState.place_first_specimine_in_bucket;
 
-// set direction
+    // TEST: Steer wheels to prepare for central pivot
+    steer_wheels_to_central_pivot_position();
+
+    // set direction
     if (opModeIsActive()) {
 
       // State machine loop
