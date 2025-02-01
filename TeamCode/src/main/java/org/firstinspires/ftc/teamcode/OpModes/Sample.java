@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Pivot.Pivot;
 import org.firstinspires.ftc.teamcode.Mechanisms.Robot.Robot;
 
 @Config
-@Autonomous(name = "Red Sample", group = "Autonomous")
-public class RedSample extends LinearOpMode {
+@Autonomous(name = "Sample", group = "Autonomous")
+public class Sample extends LinearOpMode {
     // Use FTCDashboard
     FtcDashboard dashboard;
     Robot robot;
