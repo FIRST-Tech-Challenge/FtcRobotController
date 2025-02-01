@@ -7,11 +7,13 @@ public class WristClaw {
     OpMode _opMode;
     Servo _wrist;
     Servo _claw;
+    ChristmasLight _light;
     public WristClaw (OpMode opMode)
     {
         _opMode = opMode;
         _wrist = _opMode.hardwareMap.tryGet(Servo.class, "wrist");
         _claw = _opMode.hardwareMap.tryGet(Servo.class, "claw");
+        _light = new ChristmasLight(opMode);
     }
     //-----------------------------------------
     //Variable Storage:
@@ -28,8 +30,13 @@ public class WristClaw {
     double wristInit = 0.755;
     //-----------------------------------------
 
-    public void OpenClaw() {ClawCustom(openPosition);}
-    public void CloseClaw() {ClawCustom(closePosition);}
+    public void OpenClaw() {
+        ClawCustom(openPosition);
+        _light.blue();
+    }
+    public void CloseClaw() {
+        ClawCustom(closePosition);
+        _light.green();}
     public void WristUp() {WristCustom(upPosition);}
     public void WristMid() {WristCustom(midPosition);}
     public void WristSpecimenClip() {WristCustom(specimenClipPosition);}

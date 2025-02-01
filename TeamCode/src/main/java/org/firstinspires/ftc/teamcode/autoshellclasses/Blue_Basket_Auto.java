@@ -1,24 +1,20 @@
 package org.firstinspires.ftc.teamcode.autoshellclasses;
 
-import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.bluebananas.ftc.roadrunneractions.TrajectoryActionBuilders.BlueBasket;
+import org.firstinspires.ftc.teamcode.BBcode.AutoUtils;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.ViperArmActions;
 import org.firstinspires.ftc.teamcode.BBcode.MechanismActionBuilders.WristClawActions;
+import org.firstinspires.ftc.teamcode.BBcode.PoseStorage;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-
-import java.lang.annotation.Native;
 import java.util.Locale;
 
 
@@ -38,7 +34,6 @@ public class Blue_Basket_Auto extends LinearOpMode {
     @Override
     public void runOpMode() {
     //Initialization steps
-
         //Creates instance of MechanismActionBuilders
         WristClawActions _WristClawActions = new WristClawActions(this);
         ViperArmActions _ViperArmActions = new ViperArmActions(this);
@@ -49,6 +44,9 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
         //Initializes Pinpoint
         PinpointDrive drive = new PinpointDrive(hardwareMap, pose_init);
+
+        //Imports AutoUtils
+        AutoUtils _AutoUtils = new AutoUtils(drive);
 
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
@@ -211,23 +209,20 @@ public class Blue_Basket_Auto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        // JOSHUANOTE: This is where you put the final set of actions.
-                        //ActionBuilder.BlueRightOption1(drive::actionBuilder)
-                       // test
                         driveToDropFromStart,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         samplePickupOuter,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         driveToDropFromOuterSample,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         samplePickupMiddle,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         driveToDropFromMiddleSample,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         samplePickupInner,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         driveToDropFromInnerSample,
-                        drive.actionBuilder(drive.pose).waitSeconds(2).build(),
+                        _AutoUtils.Wait(2),
                         driveToPark
 
 //                        _ViperArmActions.MoveArmToHighBasket(),
@@ -300,16 +295,18 @@ public class Blue_Basket_Auto extends LinearOpMode {
                         )
         );
         odo = hardwareMap.get(GoBildaPinpointDriverRR.class,"pinpoint");
+        PoseStorage.currentPose = odo.getPositionRR();
+        telemetry.addData("Stored Pose: ", String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", PoseStorage.currentPose.position.x, PoseStorage.currentPose.position.y, Math.toDegrees(PoseStorage.currentPose.heading.toDouble())) );
         //odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
         //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
-        while(opModeIsActive()) {
-            // _leftFront.setPower(0.3);
-            odo.update();
-            Pose2d pos = odo.getPositionRR();
-            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
-
-            telemetry.update();
-        }
+//        odo.resetPosAndIMU();
+//        while(opModeIsActive()) {
+//            // _leftFront.setPower(0.3);
+//            odo.update();
+//            Pose2d pos = odo.getPositionRR();
+//            String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.position.x, pos.position.y, Math.toDegrees(pos.heading.toDouble()));
+//
+//            telemetry.update();
+//        }
     }
 }
