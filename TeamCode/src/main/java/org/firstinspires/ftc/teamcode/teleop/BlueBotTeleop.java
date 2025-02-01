@@ -29,7 +29,7 @@ public class BlueBotTeleop extends LinearOpMode {
     while (opModeIsActive()) {
 
       double strafe_joystick = gamepad1.left_stick_x;
-      double drive_joystick = -1 * gamepad1.left_stick_x;
+      double drive_joystick = -gamepad1.left_stick_y;
 
       double vector_angle = Math.atan(drive_joystick / strafe_joystick);
       double vector_length = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
