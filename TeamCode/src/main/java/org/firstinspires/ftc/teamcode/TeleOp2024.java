@@ -59,8 +59,8 @@ if (robot.clawServo.getPosition() >= 1.05) {
         telemetry.addData("Worm Gear Angle", "%.1f", robot.wormGearAngle());
 
         // don't allow the worm gear to go up beyond the max limit
-        if (robot.wormGearAngle() >= 85 && wormGearPower > 0.0) {
-            wormGearPower = 0.0;
+        if (robot.wormGearAngle() >= 85 && wormGearPower > 0) {
+            wormGearPower = 0;
         }
 
 //       if (robot.wormGearAngle() < robot.STARTING_ANGLE - 10 && wormGearPower < 0) {
@@ -83,11 +83,11 @@ if (robot.clawServo.getPosition() >= 1.05) {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
 
+       //BAD SEMICOLON ;;;;;;;;;;;;;
+
        // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
-
-       //Set the worm gear tol -7 degrees
 
         if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
             robot.wormGear.setPower(-1);
