@@ -40,7 +40,6 @@ if (robot.clawServo.getPosition() >= 1.05) {
             }
         }
 
-
         double driveLeftStickY = -driver.left_stick_y;
         double driveRightStickY = driver.right_stick_y;
         double driveLeftStickX = driver.left_stick_x;
@@ -77,15 +76,23 @@ if (robot.clawServo.getPosition() >= 1.05) {
        if (!operator.x) {
             sliderPosition = sliderPosition + 10.0 * opRightStickY;
        } else if (operator.a) {
-           sliderPosition = robot.MIN_SLIDER_TICKS;
+           sliderPosition = robot.MIN_SLIDER_TICKS
        } else {
            sliderPosition = robot.MAX_SAFE_SLIDER_TICKS;
         }
+
+       //BAD SEMICOLON ;;;;;;;;;;;;;
 
        // End "X" & "A" Button Code
 
         sliderPosition = setSliderAndReturnConstraint(sliderPosition);
 
+        if (operator.right_bumper && operator.left_bumper && driver.right_bumper && driver.left_bumper) {
+            robot.wormGear.setPower(-1);
+            if (robot.wormGearAngle() == -7) {
+                wormGearPower = 0;
+            }
+        }
         telemetry.addData("Lift","%.1f", opLeftStickY);
 
         // let the next frame know if the toggle was pressed
