@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.utils.MenuHelper;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Autonomous(name = "THE ULTIMATE AUTONOMOUS", group = "Autonomous")
-public class UltimateAutonomous extends LinearOpMode {
+@Autonomous(name = "What if Conner got a lowwwwtaperfade", group = "Autonomous")
+public class LowTaperFade extends LinearOpMode {
     StartingPosition startingPosition = StartingPosition.RIGHT;
 
     private static final String[] MENU_OPTIONS = {
@@ -344,7 +344,7 @@ public class UltimateAutonomous extends LinearOpMode {
                         trajectory.build()));
     }
 
-    private TrajectoryActionBuilder getParkingTrajectory(UltimateAutonomous.StartingPosition sp,
+    private TrajectoryActionBuilder getParkingTrajectory(LowTaperFade.StartingPosition sp,
                                                          TrajectoryActionBuilder previousTrajectory) {
         // Helper method to get parking trajectory based on starting position
         switch (sp) {
