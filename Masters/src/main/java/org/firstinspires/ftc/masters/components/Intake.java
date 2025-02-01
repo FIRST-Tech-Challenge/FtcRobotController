@@ -32,7 +32,7 @@ public class Intake {
     private int target;
 
     public Intake(Init init, Telemetry telemetry){
-
+        this.telemetry = telemetry;
         this.init = init;
 
         intakeLeft = init.getIntakeLeft();

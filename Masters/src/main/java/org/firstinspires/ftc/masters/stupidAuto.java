@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.components.Init;
 import org.firstinspires.ftc.masters.components.Outtake;
 
 @Config // Enables FTC Dashboard
-@Autonomous(name = "Stupid")
+//@Autonomous(name = "Stupid")
 public class stupidAuto extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();

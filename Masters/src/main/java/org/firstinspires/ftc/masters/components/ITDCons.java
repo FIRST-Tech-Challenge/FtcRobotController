@@ -25,6 +25,7 @@ public class ITDCons {
     public static double wristBack = 0.77;
 
     public static double positionBack = 0;
+    public static double positionInitSpec=0.4;
     public static double positionTransfer = 0.5;
     public static double positionFront =1;
 

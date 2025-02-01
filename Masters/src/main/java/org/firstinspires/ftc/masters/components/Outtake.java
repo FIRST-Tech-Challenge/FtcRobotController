@@ -22,7 +22,7 @@ public class Outtake implements Component{
     public int target = 0;
 
     private final Servo claw;
-    private final Servo wrist, angleLeft, angleRight, position;
+    public final Servo wrist, angleLeft, angleRight, position;
     private final DcMotor outtakeSlideLeft;
     private final DcMotor outtakeSlideRight;
     public final DcMotor outtakeSlideEncoder;
@@ -119,13 +119,15 @@ public class Outtake implements Component{
         angleRight.setPosition(ITDCons.angleBack);
         claw.setPosition(ITDCons.open);
         status= Status.InitWall;
+        controller.setP(0.002);
+        position.getController().pwmDisable();
 
     }
 
     public void initAutoSpecimen(){
-        position.setPosition(ITDCons.positionTransfer);
+        //position.setPosition(ITDCons.positionInitSpec);
         setAngleServoScore();
-        openClaw();
+        closeClaw();
         wrist.setPosition(ITDCons.wristFront);
         status= Status.InitAutoSpec;
     }

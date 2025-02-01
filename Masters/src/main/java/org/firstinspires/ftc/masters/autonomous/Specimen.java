@@ -22,11 +22,11 @@ import org.firstinspires.ftc.masters.pedroPathing.constants.LConstants;
 //position are setup with pedro coordinate from blue side
 //auto can be used for blue and red
 
-@Autonomous(name="specimen")
+@Autonomous(name="Specimen")
 public class Specimen extends LinearOpMode {
 
     Pose startPose = new Pose(10,66,0);
-    Pose scoringPose = new Pose(42,65, 0);
+    Pose scoringPose = new Pose(48,65, 0);
     Pose midPoint1 = new Pose(20,34,0);
     Pose midPoint2 = new Pose(60,36,0);
     Pose pickupPose = new Pose (10,31, 0);
@@ -62,23 +62,24 @@ public class Specimen extends LinearOpMode {
         buildPaths();
 
         PathState state = PathState.Start;
+        outtake.initAutoSpecimen();
 
         waitForStart();
 
-        outtake.setTarget(ITDCons.SpecimenTarget);
+        outtake.scoreSpecimen();
         follower.followPath(scorePreload);
+        elapsedTime= new ElapsedTime();
 
         while (opModeIsActive() && !isStopRequested()) {
 
 
-
             switch (state){
                 case Start:
-                    if (!follower.isBusy()){
+                    if (!follower.isBusy() || elapsedTime.milliseconds()>3000){
+                        follower.breakFollowing();
                         outtake.openClaw();
                         elapsedTime = new ElapsedTime();
                         state = PathState.ScorePreload;
-                        outtake.setStatus(Outtake.Status.ScoreSpecimen);
 
                     }
                     break;
@@ -86,7 +87,7 @@ public class Specimen extends LinearOpMode {
                     if (elapsedTime!=null && elapsedTime.milliseconds()>150){
                         follower.followPath(pushSample1);
                         state = PathState.Sample1;
-                        //outtake.moveToPickUpFromWall();
+                        outtake.moveToPickUpFromWall();
                         elapsedTime = null;
                     }
                     break;
@@ -144,7 +145,8 @@ public class Specimen extends LinearOpMode {
             }
 
 
-            //outtake.updateOuttake();
+            outtake.update();
+            intake.update();
             follower.update();
         }
     }
