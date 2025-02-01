@@ -31,12 +31,17 @@ public class BlueBotTeleop extends LinearOpMode {
       double strafe_joystick = gamepad1.left_stick_x;
       double drive_joystick = -1 * gamepad1.left_stick_y;
 
-      double vector_angle = 180.0 - Math.atan2(drive_joystick, strafe_joystick) * (180.0 / Math.PI);
+      double vector_angle = Math.atan2(drive_joystick, strafe_joystick) * (180.0 / Math.PI);
       double vector_length = Math.sqrt(Math.pow(strafe_joystick, 2.0) + Math.pow(drive_joystick, 2.0));
 
       if (vector_angle < 0) {
         vector_angle = Math.abs(360.0 - -vector_angle);
       }
+
+      vector_angle = (vector_angle + 270.0) % 360.0;
+
+      // Normalize so the angle works with AutoSwerve
+      vector_angle /= 360.0;
 
       telemetry.addLine("Drive:        " + drive_joystick);
       telemetry.addLine("Strafe:       " + strafe_joystick);
