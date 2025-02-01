@@ -146,11 +146,11 @@ public class LowTaperFade extends LinearOpMode {
                         TrajectoryActionBuilder previousBasketTrajectory = basketLoopSetup(sp);
                         int basketPhase = 1;
                         while (basketPhase < 4) {
-                            basketPhase++;
                             adaptiveCalibration.calibrateRuntime(new AdaptiveCalibration.RuntimeCalibrationPayload(),
                                     roadRunner);
                             previousBasketTrajectory = placeLoop(sp, previousBasketTrajectory, PlacementHeight.BASKET_HIGH,
                                     basketPhase);
+                            basketPhase++;
                         }
                         gameLoopEnd(sp, previousBasketTrajectory);
                         break;
@@ -183,7 +183,7 @@ public class LowTaperFade extends LinearOpMode {
 
     public TrajectoryActionBuilder basketLoopSetup(StartingPosition sp) {
         baseRobot.logger.update("Autonomous phase", "Placing initial specimen on chamber");
-        TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, roadRunner.actionBuilder(initialPose), 0);
+        TrajectoryActionBuilder basketTrajectory = getBasketTrajectory(sp, roadRunner.actionBuilder(initialPose), 1);
         baseRobot.outtake.claw.close();
         baseRobot.outtake.verticalSlide.setPosition(Settings.Hardware.VerticalSlide.HIGH_BASKET);
         baseRobot.outtake.linkage.setPosition(Linkage.Position.PLACE_FORWARD);
