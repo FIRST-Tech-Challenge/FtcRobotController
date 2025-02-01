@@ -47,6 +47,10 @@ public class CompBotAuto extends LinearOpMode {
     sleep(250);
   }
 
+  private void move_pivot_arm_to_position(int absolutePosition) {
+    mek.pivot.setTargetPosition(absolutePosition);
+  }
+
   private void move_pivot_arm_up(int movementTimeInMs) {
     mek.setPivot(-1, false);
     sleep(movementTimeInMs);
@@ -65,7 +69,7 @@ public class CompBotAuto extends LinearOpMode {
   }
 
   private void extend_arm_all_the_way_out() {
-    adjust_arm_extension(4250, 1000);
+    adjust_arm_extension(4250, 2500);
   }
 
   private void retract_arm_all_the_way_in() {
@@ -108,6 +112,53 @@ public class CompBotAuto extends LinearOpMode {
 
     // Pivot the arm back down
     move_pivot_arm_down(1000);
+  }
+
+  private void handle_place_second_specimine_in_bucket() {
+    // Rotate wheels to position robot toward the next specimine
+
+
+    // Drive to next specimine location
+
+
+    // Extend arm enough to hover over the specimine
+    // adjust_arm_extension()
+
+    // Lower arm to the specimine
+
+
+    // Turn on intake to pull in the specimine
+
+
+    // Raise arm to prepare for movement to the bucket
+
+
+    // Pull in arm to ensure center of balance leads to deterministic behavior
+
+
+    // Rotate wheels to position robot toward the bucket
+
+
+    // Drive to the bucket
+
+
+    // Raise arm to appropriate angle to be in alignment with the bucket
+
+
+    // Extend arm to the bucket
+
+
+    // Turn on outtake to drop specimine in the bucket
+
+
+    // Raise arm just enough to move it away from the bucket
+
+
+    // Retract the arm
+
+
+    // Lower arm to a safer position
+
   }
 
 //  private void set_relative_speed(DcMotor motor) {
