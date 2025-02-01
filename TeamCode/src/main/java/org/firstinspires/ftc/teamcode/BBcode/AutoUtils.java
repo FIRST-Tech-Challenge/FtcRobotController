@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode.BBcode;
 
+import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Pose2d;
-
-import org.firstinspires.ftc.teamcode.PinpointDrive;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class AutoUtils {
-    PinpointDrive drive;
-    public AutoUtils(PinpointDrive d) {drive = d;}
-    //----------------------------------------------
-    public Action Wait(double seconds) {
+    public static Action Wait(double seconds) {
         return new Action() {
+            final ElapsedTime timer = new ElapsedTime();
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                return drive.actionBuilder(new Pose2d(0,0,0)).waitSeconds(seconds).build().run(telemetryPacket);
+                return !(timer.seconds() >= seconds);
             }
         };
     }

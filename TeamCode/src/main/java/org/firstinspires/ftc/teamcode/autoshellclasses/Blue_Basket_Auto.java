@@ -45,9 +45,6 @@ public class Blue_Basket_Auto extends LinearOpMode {
         //Initializes Pinpoint
         PinpointDrive drive = new PinpointDrive(hardwareMap, pose_init);
 
-        //Imports AutoUtils
-        AutoUtils _AutoUtils = new AutoUtils(drive);
-
         //closes claw on init
         Actions.runBlocking(_WristClawActions.CloseClaw());
 
@@ -210,19 +207,19 @@ public class Blue_Basket_Auto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         driveToDropFromStart,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         samplePickupOuter,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         driveToDropFromOuterSample,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         samplePickupMiddle,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         driveToDropFromMiddleSample,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         samplePickupInner,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         driveToDropFromInnerSample,
-                        _AutoUtils.Wait(2),
+                        AutoUtils.Wait(2),
                         driveToPark
 
 //                        _ViperArmActions.MoveArmToHighBasket(),
