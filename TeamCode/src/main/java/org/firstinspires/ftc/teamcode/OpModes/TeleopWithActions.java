@@ -35,7 +35,7 @@ public class TeleopWithActions extends OpMode {
     Lift lift;
     Battery battery;
     boolean firstRun = true;
-    public static double slowMultiplier = 0.5;
+    public static double slowMultiplier = 0.25;
     @Override
     public void init() {
         dashboard = FtcDashboard.getInstance();
