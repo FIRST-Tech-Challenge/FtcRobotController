@@ -249,6 +249,10 @@ public class Arm {
     public void setPowerExtend(double power) {
         // Prevent movement if within power limits
         //TODO: rewrite Amper Limit for extention
+        if (power < 0 && getCurrentExtend() >= EXTEND_DOWN_LIMIT_AMPS){
+            power = 0;
+            resetExtendEncoders();;
+        }
         extendLeft.setPower(power); // Set power for left extension motor
         extendRight.setPower(power); // Set power for right extension motor
 
@@ -256,12 +260,6 @@ public class Arm {
         DebugUtils.logDebug(opMode.telemetry, IS_DEBUG_MODE, SUBSYSTEM_NAME, "Extend Power", power);
     }
 
-    // Set power to the extension motors with limit checks
-    public void setPowerExtendWithLimits(double power) {
-        // Prevent movement if extension exceeds limit
-       //TODO: LIMIT
-        setPowerExtend(power); // Apply the power to the extension motors
-    }
 
     // Action to move the arm angle
     public Action moveAngle() {
@@ -271,34 +269,51 @@ public class Arm {
 
     // Action to check if the angle has reached the setpoint
     public Action setAngle(double goal) {
-        AtSetPoint atSetPoint = new AtSetPoint(goal); // Create at setpoint action
-        return atSetPoint;
+        SetAngle setAngle = new SetAngle(goal); // Create at setpoint action
+        return setAngle;
     }
 
     // Action to move the arm extension
     public Action moveExtend(double goal) {
-        MoveExtend moveExtend = new MoveExtend(goal); // Create move extend action
+        MoveExtend moveExtend = new MoveExtend(); // Create move extend action
         return moveExtend;
+    }
+
+    public Action setExtend(double goal){
+        SetExtend setExtend = new SetExtend(goal);
+        return setExtend;
     }
 
     // Action class to move the arm angle
     public class MoveAngle implements Action {
+        private static MoveAngle instance = null;
+
+        private MoveAngle() {
+            anglePID.setSetPoint(getAngle());
+        }
+
+        public static synchronized MoveAngle getInstance() {
+            if (instance == null) {
+                instance = new MoveAngle();
+            }
+            return instance;
+        }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            // Calculate power using PID and apply with force compensation
             double PIDPower = anglePID.calculate(getAngle());
             setPowerAngleWithF(PIDPower);
-            return true; // Continue running
+            return true;
         }
     }
 
     // Action class to check if the angle is at setpoint
-    public class AtSetPoint implements Action {
+    public class SetAngle implements Action {
         private double goal = getAngle(); // Goal for the angle
 
-        public AtSetPoint(double goal) {
+        public SetAngle(double goal) {
             this.goal = goal; // Set goal for the angle
+            anglePID.reset();
             anglePID.setSetPoint(goal); // Update PID setpoint
         }
 
@@ -311,19 +326,32 @@ public class Arm {
 
     // Action class to move the arm extension
     public class MoveExtend implements Action {
-        private double goal = 0; // Goal for the extension
 
-        public MoveExtend(double goal) {
-            this.goal = goal; // Set goal for the extension
-            extendPID.setSetPoint(goal); // Update PID setpoint
+        public MoveExtend(){
+            extendPID.setSetPoint(getExtend());
         }
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             // Calculate power using PID and apply with limits
             double PIDPower = extendPID.calculate(getExtend());
-            setPowerExtendWithLimits(PIDPower);
-            return !extendPID.atSetPoint(); // Return true if extension is not at setpoint
+
+            return true; // Return true if extension is not at setpoint
+        }
+    }
+
+    public class SetExtend implements Action{
+        private double goal = 0;
+
+        public SetExtend(double goal){
+            this.goal = goal;
+            extendPID.reset();
+            extendPID.setSetPoint(goal);
+
+        }
+
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            return !extendPID.atSetPoint();
         }
     }
 }
