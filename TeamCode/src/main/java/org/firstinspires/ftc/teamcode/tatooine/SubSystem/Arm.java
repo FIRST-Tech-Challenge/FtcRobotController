@@ -47,7 +47,7 @@ public class Arm {
     private PIDFController extendPID = new PIDFController(0, 0.0, 0.0, 0); // PID controller for extension movement
 
     private final double ANGLE_CPR = 28.0 * 70.0 * (34.0 / 16.0); // Counts per revolution for angle motors
-    private final double EXTEND_CPR = 537.7 * (25.0 / 25.0); // Counts per revolution for extension motors
+    private final double EXTEND_CPR = 537.7; // Counts per revolution for extension motors
 
     private final double ANGLE_TIMEOUT = 0; // Timeout for angle movement
     private final double EXTEND_TIMEOUT = 0; // Timeout for extension movement
@@ -127,17 +127,17 @@ public class Arm {
     // Reset encoders for extension motors
     public void resetExtendEncoders() {
         extendLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extendRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        extendLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     // Reset encoders for angle motors
     public void resetAngleEncoders() {
         angleLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         angleRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         angleRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        angleLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     // Get the current angle of the left arm motor
@@ -248,14 +248,7 @@ public class Arm {
     // Set power to the extension motors
     public void setPowerExtend(double power) {
         // Prevent movement if within power limits
-        if (getCurrentExtend() >= EXTEND_DOWN_LIMIT_AMPS && getCurrentExtend() <= EXTEND_UP_LIMIT_AMPS && power > 0) {
-            power = 0; // No movement within limits
-        } else if (getCurrentExtend() >= EXTEND_UP_LIMIT_AMPS) {
-            resetExtendEncoders(); // Reset encoders if extension motor reaches upper limit
-            if (power < 0) {
-                power = 0; // Prevent negative power if extension is above limit
-            }
-        }
+        //TODO: rewrite Amper Limit for extention
         extendLeft.setPower(power); // Set power for left extension motor
         extendRight.setPower(power); // Set power for right extension motor
 
@@ -266,10 +259,7 @@ public class Arm {
     // Set power to the extension motors with limit checks
     public void setPowerExtendWithLimits(double power) {
         // Prevent movement if extension exceeds limit
-        if ((getExtend() - LIMIT_TOLERANCE >= LIMIT * Math.cos(Math.toRadians(getAngle()))) ||
-                (getExtend() + LIMIT_TOLERANCE >= LIMIT * Math.cos(Math.toRadians(getAngle())))) {
-            power = 0; // No movement if limit is exceeded
-        }
+       //TODO: LIMIT
         setPowerExtend(power); // Apply the power to the extension motors
     }
 
