@@ -250,6 +250,7 @@ public class Swerve {
           ki = 1;
           kd = 0.14;
           ks = 0.1;
+          //conversionFactor += .01;
           break;
         }
         case 1: {
@@ -258,6 +259,7 @@ public class Swerve {
           ki = 1;
           kd = 0.05;
           ks = 0.03;
+          //conversionFactor += .01;
           break;
         }
         case 2: {
@@ -265,8 +267,8 @@ public class Swerve {
           kp = 1.29;
           ki = 1.1;
           kd = 0.1;
-          ks = 0.08;
-          conversionFactor += 1;
+          ks = 0.04;
+          //conversionFactor += .01;
           break;
         }
         case 3: {
@@ -275,7 +277,7 @@ public class Swerve {
           ki = 1;
           kd = 0.15;
           ks = 0.04;
-          conversionFactor += 1;
+          //conversionFactor -= .01;
           break;
         }
         default: throw new IllegalArgumentException("Module ID is out of range 0-3!");
@@ -307,8 +309,7 @@ public class Swerve {
       state.cosineScale(servoPos);
 
       driveMotor.setPower(
-          driveFeedforward.calculate(state.speedMetersPerSecond)
-              + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond));
+          (driveFeedforward.calculate(state.speedMetersPerSecond) + drivePID.calculate(getDriveVelocity(), state.speedMetersPerSecond)) * 1.20);
       telemetry.addData("motor speed: ", driveMotor.getPower());
 
       double errorDeg = state.angle.minus(servoPos).getDegrees();
